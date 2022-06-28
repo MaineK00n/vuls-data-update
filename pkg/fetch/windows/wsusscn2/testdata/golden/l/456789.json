@@ -1,0 +1,11 @@
+{
+  "language": {
+    "text": "en"
+  },
+  "title": {
+    "text": "Visual Studio 2022 version 17.4.7 update"
+  },
+  "description": {
+    "text": "This security update applies to all editions of Visual Studio 2022, and will update client machines on the LTSC channel to version 17.4.7. The client machines must be enabled to receive this administrator update, and by default Visual Studio must be closed on the client in order for the update to succeed. For further details, refer to https://aka.ms/vs/17/release/5007364."
+  }
+}

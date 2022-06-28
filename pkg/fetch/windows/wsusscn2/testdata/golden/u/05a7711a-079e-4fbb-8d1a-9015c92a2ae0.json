@@ -1,0 +1,17 @@
+{
+  "creationdate": "2020-09-07T18:00:37Z",
+  "defaultlanguage": "en",
+  "updateid": "05a7711a-079e-4fbb-8d1a-9015c92a2ae0",
+  "revisionid": "234567",
+  "isleaf": "true",
+  "isbundle": "true",
+  "categories": {},
+  "languages": {},
+  "supersededby": {
+    "revision": [
+      {
+        "id": "345678"
+      }
+    ]
+  }
+}

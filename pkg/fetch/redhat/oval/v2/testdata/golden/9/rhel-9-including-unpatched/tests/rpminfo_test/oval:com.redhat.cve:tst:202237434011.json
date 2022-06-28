@@ -1,0 +1,10 @@
+{
+  "check": "at least one",
+  "comment": "zlib-debugsource is installed",
+  "id": "oval:com.redhat.cve:tst:202237434011",
+  "version": "636",
+  "object": {
+    "object_ref": "oval:com.redhat.cve:obj:202237434006"
+  },
+  "state": {}
+}

@@ -1,0 +1,6 @@
+{
+  "id": "oval:org.opensuse.security:obj:2009049583",
+  "version": "1",
+  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+  "Name": "SUSE-Manager-Server-release"
+}

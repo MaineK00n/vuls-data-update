@@ -1,0 +1,10 @@
+{
+  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+  "id": "oval:com.oracle.elsa:ste:20070057004",
+  "attr_version": "501",
+  "evr": {
+    "text": "30:9.3.3-8.el5",
+    "datatype": "evr_string",
+    "operation": "less than"
+  }
+}

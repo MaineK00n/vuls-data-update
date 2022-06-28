@@ -1,0 +1,134 @@
+{
+  "auxiliary_cloud/kubernetes/enum_kubernetes": {
+    "name": "Kubernetes Enumeration",
+    "fullname": "auxiliary/cloud/kubernetes/enum_kubernetes",
+    "aliases": [
+
+    ],
+    "rank": 300,
+    "disclosure_date": null,
+    "type": "auxiliary",
+    "author": [
+      "alanfoster",
+      "Spencer McIntyre"
+    ],
+    "description": "Enumerate a Kubernetes API to report useful resources such as available namespaces,\n          pods, secrets, etc.\n\n          Useful resources will be highlighted using the HIGHLIGHT_NAME_PATTERN option.",
+    "references": [
+
+    ],
+    "platform": "Linux,Unix",
+    "arch": "",
+    "rport": null,
+    "autofilter_ports": [
+      80,
+      8080,
+      443,
+      8000,
+      8888,
+      8880,
+      8008,
+      3000,
+      8443
+    ],
+    "autofilter_services": [
+      "http",
+      "https"
+    ],
+    "targets": null,
+    "mod_time": "2021-10-07 12:35:53 +0000",
+    "path": "/modules/auxiliary/cloud/kubernetes/enum_kubernetes.rb",
+    "is_install_path": true,
+    "ref_name": "cloud/kubernetes/enum_kubernetes",
+    "check": false,
+    "post_auth": false,
+    "default_credential": false,
+    "notes": {
+      "SideEffects": [
+        "ioc-in-logs"
+      ],
+      "Reliability": [
+
+      ],
+      "Stability": [
+        "crash-safe"
+      ]
+    },
+    "session_types": [
+      "meterpreter"
+    ],
+    "needs_cleanup": false
+  },
+  "exploit_windows/smb/smb_doublepulsar_rce": {
+    "name": "SMB DOUBLEPULSAR Remote Code Execution",
+    "fullname": "exploit/windows/smb/smb_doublepulsar_rce",
+    "aliases": [
+      "exploit/windows/smb/doublepulsar_rce"
+    ],
+    "rank": 500,
+    "disclosure_date": "2017-04-14",
+    "type": "exploit",
+    "author": [
+      "Equation Group",
+      "Shadow Brokers",
+      "zerosum0x0",
+      "Luke Jennings",
+      "wvu <wvu@metasploit.com>",
+      "Jacob Robles"
+    ],
+    "description": "This module executes a Metasploit payload against the Equation Group's\n        DOUBLEPULSAR implant for SMB as popularly deployed by ETERNALBLUE.\n\n        While this module primarily performs code execution against the implant,\n        the \"Neutralize implant\" target allows you to disable the implant.",
+    "references": [
+      "MSB-MS17-010",
+      "CVE-2017-0143",
+      "CVE-2017-0144",
+      "CVE-2017-0145",
+      "CVE-2017-0146",
+      "CVE-2017-0147",
+      "CVE-2017-0148",
+      "URL-https://zerosum0x0.blogspot.com/2017/04/doublepulsar-initial-smb-backdoor-ring.html",
+      "URL-https://countercept.com/blog/analyzing-the-doublepulsar-kernel-dll-injection-technique/",
+      "URL-https://www.countercept.com/blog/doublepulsar-usermode-analysis-generic-reflective-dll-loader/",
+      "URL-https://github.com/countercept/doublepulsar-detection-script",
+      "URL-https://github.com/countercept/doublepulsar-c2-traffic-decryptor",
+      "URL-https://gist.github.com/msuiche/50a36710ee59709d8c76fa50fc987be1"
+    ],
+    "platform": "Windows",
+    "arch": "x64",
+    "rport": 445,
+    "autofilter_ports": [
+      139,
+      445
+    ],
+    "autofilter_services": [
+      "netbios-ssn",
+      "microsoft-ds"
+    ],
+    "targets": [
+      "Execute payload (x64)",
+      "Neutralize implant"
+    ],
+    "mod_time": "2020-05-07 20:22:56 +0000",
+    "path": "/modules/exploits/windows/smb/smb_doublepulsar_rce.rb",
+    "is_install_path": true,
+    "ref_name": "windows/smb/smb_doublepulsar_rce",
+    "check": true,
+    "post_auth": false,
+    "default_credential": false,
+    "notes": {
+      "AKA": [
+        "DOUBLEPULSAR"
+      ],
+      "RelatedModules": [
+        "auxiliary/scanner/smb/smb_ms17_010",
+        "exploit/windows/smb/ms17_010_eternalblue"
+      ],
+      "Stability": [
+        "crash-os-down"
+      ],
+      "Reliability": [
+        "repeatable-session"
+      ]
+    },
+    "session_types": false,
+    "needs_cleanup": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "oval:com.redhat.cve:ste:20052541001",
+  "version": "636",
+  "signature_keyid": {
+    "text": "199e2f91fd431d51",
+    "operation": "equals"
+  },
+  "evr": {},
+  "arch": {}
+}

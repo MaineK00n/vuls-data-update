@@ -1,0 +1,44 @@
+{
+  "id": "oval:org.opensuse.security:def:20051038",
+  "version": "1",
+  "class": "vulnerability",
+  "metadata": {
+    "Title": "CVE-2005-1038",
+    "affected": {
+      "family": "unix",
+      "Platform": [
+        "openSUSE 10.2"
+      ]
+    },
+    "reference": [
+      {
+        "ref_id": "CVE-2005-1038",
+        "ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-1038",
+        "source": "CVE"
+      }
+    ],
+    "Description": "\n\tcrontab in Vixie cron 4.1, when running with the -e option, allows local users to read the cron files of other users by changing the file being edited to a symlink.  NOTE: there is insufficient information to know whether this is a duplicate of CVE-2001-0235.\n\t",
+    "advisory": {
+      "Severity": "",
+      "cve": {},
+      "issued": {},
+      "updated": {},
+      "affected_cpe_list": {
+        "Cpe": null
+      }
+    }
+  },
+  "criteria": {
+    "operator": "AND",
+    "criterions": [
+      {
+        "test_ref": "oval:org.opensuse.security:tst:2009038564",
+        "comment": "suse102 is installed"
+      },
+      {
+        "test_ref": "oval:org.opensuse.security:tst:2009038565",
+        "comment": "cron less than 4.1-70"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "oval:com.ubuntu.jammy:obj:200224390000000",
+  "version": "1",
+  "comment": "The 'gcc-arm-none-eabi' package binaries.",
+  "Path": ".",
+  "Filename": "manifest",
+  "pattern": {
+    "operation": "pattern match",
+    "datatype": "string",
+    "var_ref": "oval:com.ubuntu.jammy:var:200224390000000",
+    "var_check": "at least one"
+  },
+  "instance": {
+    "text": "1",
+    "operation": "greater than or equal",
+    "datatype": "int"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "update_id": "23e2eefb-e159-41df-8918-7994eee5b6f2",
+  "title": "2023-04 Cumulative Update Preview for Windows 11 Version 22H2 for arm64-based Systems (KB5025305)",
+  "description": "Install this update to resolve issues in Windows. For a complete listing of the issues that are included in this update, see the associated Microsoft Knowledge Base article for more information. After you install this item, you may have to restart your computer.",
+  "architecture": "n/a",
+  "classification": "Updates",
+  "supported_products": "Windows11",
+  "supported_languages": "all",
+  "security_bulliten": "n/a",
+  "msrc_severity": "n/a",
+  "kb_article": "5025305",
+  "more_info": "https://support.microsoft.com/help/5025305",
+  "support_url": "https://support.microsoft.com/help/5025305",
+  "supersededby": [
+    {
+      "title": "2023-05 Cumulative Update for Windows 11 Version 22H2 for arm64-based Systems (KB5026372)",
+      "update_id": "0b97c243-5833-4bf3-bcf8-77063e53c42a"
+    },
+    {
+      "title": "2023-05 Cumulative Update Preview for Windows 11 Version 22H2 for arm64-based Systems (KB5026446)",
+      "update_id": "acbe4fd0-394e-40e8-a96b-c4facae62c8b"
+    }
+  ],
+  "supersedes": [
+    "2023-02 Cumulative Update Preview for Windows 11 Version 22H2 for arm64-based Systems (KB5022913) UUP",
+    "2022-09 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5017321)",
+    "2023-04 Cumulative Update for Windows 11 Version 22H2 for arm64-based Systems (KB5025239)",
+    "2023-03 Cumulative Update Preview for Windows 11 Version 22H2 for arm64-based Systems (KB5023778)",
+    "2022-09 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5019311)",
+    "2022-09 Cumulative Update Preview for Windows 11 Version 22H2 for ARM64-based Systems (KB5017389)",
+    "2022-10 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5019509)",
+    "2022-10 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5018427)",
+    "2022-10 Cumulative Update Preview for Windows 11 Version 22H2 for ARM64-based Systems (KB5018496)",
+    "2022-11 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5019980)",
+    "2023-01 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5022303)",
+    "2022-12 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5021255)",
+    "2022-11 Cumulative Update Preview for Windows 11 Version 22H2 for ARM64-based Systems (KB5020044)",
+    "2023-01 Cumulative Update Preview for Windows 11 Version 22H2 for ARM64-based Systems (KB5022360)",
+    "2023-02 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5022845)",
+    "2023-02 Cumulative Update Preview for Windows 11 Version 22H2 for ARM64-based Systems (KB5022913)",
+    "2023-03 Cumulative Update for Windows 11 Version 22H2 for ARM64-based Systems (KB5023706)"
+  ],
+  "reboot_behavior": "Can request restart",
+  "user_input": "No",
+  "connectivity": "No",
+  "uninstall_notes": "n/a",
+  "uninstall_steps": "n/a",
+  "last_modified": "4/25/2023"
+}

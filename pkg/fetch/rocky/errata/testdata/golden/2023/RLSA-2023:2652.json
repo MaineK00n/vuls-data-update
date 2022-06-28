@@ -1,0 +1,84 @@
+{
+  "affectedProducts": [
+    "Rocky Linux 9"
+  ],
+  "cves": [
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-2319",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-2319"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-27530",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-27530"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-27539",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-27539"
+    }
+  ],
+  "description": "The pcs packages provide a command-line configuration system for the Pacemaker and Corosync utilities.\n\nSecurity Fix(es):\n\n* pcs: webpack: Regression of CVE-2023-28154 fixes in the Rocky Linux (CVE-2023-2319)\n\n* rubygem-rack: Denial of service in Multipart MIME parsing (CVE-2023-27530)\n\n* rubygem-rack: denial of service in header parsing (CVE-2023-27539)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints (BZ#2180697)\n\n* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources (BZ#2180704)\n\n* [WebUI] fence levels prevent loading of cluster status (BZ#2183180)",
+  "fixes": [
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2176477",
+      "ticket": "2176477"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2179649",
+      "ticket": "2179649"
+    },
+    {
+      "description": "* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints",
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2180697",
+      "ticket": "2180697"
+    },
+    {
+      "description": "* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources",
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2180704",
+      "ticket": "2180704"
+    },
+    {
+      "description": "* [WebUI] fence levels prevent loading of cluster status",
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2183180",
+      "ticket": "2183180"
+    }
+  ],
+  "name": "RLSA-2023:2652",
+  "publishedAt": "2023-05-25T19:53:02.753307Z",
+  "rpms": {
+    "Rocky Linux 9": {
+      "nvras": [
+        "pcs-0:0.11.4-7.el9_2.aarch64.rpm",
+        "pcs-0:0.11.4-7.el9_2.src.rpm",
+        "pcs-0:0.11.4-7.el9_2.x86_64.rpm",
+        "pcs-snmp-0:0.11.4-7.el9_2.aarch64.rpm",
+        "pcs-snmp-0:0.11.4-7.el9_2.x86_64.rpm",
+        "pcs-0:0.11.4-7.el9_2.ppc64le.rpm",
+        "pcs-0:0.11.4-7.el9_2.s390x.rpm",
+        "pcs-snmp-0:0.11.4-7.el9_2.ppc64le.rpm",
+        "pcs-snmp-0:0.11.4-7.el9_2.s390x.rpm"
+      ]
+    }
+  },
+  "severity": "SEVERITY_IMPORTANT",
+  "shortCode": "RL",
+  "synopsis": "Important: pcs security and bug fix update",
+  "topic": "An update is available for pcs.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+  "type": "TYPE_SECURITY"
+}

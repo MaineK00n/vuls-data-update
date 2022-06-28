@@ -1,0 +1,53 @@
+{
+  "class": "vulnerability",
+  "id": "oval:com.ubuntu.jammy:def:202221220000000",
+  "version": "1",
+  "metadata": {
+    "Title": "CVE-2022-2122 on Ubuntu 22.04 LTS (jammy) - medium.",
+    "Description": "DOS / potential heap overwrite in qtdemux using zlib decompression. Integer overflow in qtdemux element in qtdemux_inflate function which causes a segfault, or could cause a heap overwrite, depending on libc and OS. Depending on the libc used, and the underlying OS capabilities, it could be just a segfault or a heap overwrite.\n\nUpdate Instructions:\n\nRun `sudo ua fix CVE-2022-2122` to fix the vulnerability. The problem can be corrected\nby updating your system to the following package versions:\n\ngstreamer1.0-gtk3 - 1.20.3-0ubuntu1\ngstreamer1.0-plugins-good - 1.20.3-0ubuntu1\ngstreamer1.0-pulseaudio - 1.20.3-0ubuntu1\ngstreamer1.0-qt5 - 1.20.3-0ubuntu1\nlibgstreamer-plugins-good1.0-0 - 1.20.3-0ubuntu1\nNo subscription required",
+    "affected": {
+      "family": "unix",
+      "Platform": "Ubuntu 22.04 LTS"
+    },
+    "reference": {
+      "source": "CVE",
+      "ref_id": "CVE-2022-2122",
+      "ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-2122"
+    },
+    "advisory": {
+      "Severity": "Medium",
+      "Rights": "Copyright (C) 2022 Canonical Ltd.",
+      "PublicDate": "2022-07-19 20:15:00 UTC",
+      "Bug": null,
+      "cve": {},
+      "PublicDateAtUsn": "",
+      "AssignedTo": "leosilva",
+      "DiscoveredBy": "",
+      "Crd": "",
+      "Ref": [
+        "https://ubuntu.com/security/CVE-2022-2122",
+        "https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1225"
+      ]
+    }
+  },
+  "notes": {
+    "Note": "rodrigo-zaiden> openjfx includes qtdemux.c from gstreamer and might be affected. leosilva> same as CVE-2022-1922,23,24 and 25."
+  },
+  "criteria": {
+    "criterias": [
+      {
+        "operator": "OR",
+        "criterions": [
+          {
+            "test_ref": "oval:com.ubuntu.jammy:tst:202219200000000",
+            "comment": "gst-plugins-good1.0 package in jammy is affected. An update containing the fix has been completed and is pending publication (note: '1.20.3-0ubuntu1')."
+          },
+          {
+            "test_ref": "oval:com.ubuntu.jammy:tst:202221220000010",
+            "comment": "openjfx package in jammy is affected and may need fixing."
+          }
+        ]
+      }
+    ]
+  }
+}

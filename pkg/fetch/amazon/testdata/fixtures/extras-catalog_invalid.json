@@ -1,0 +1,4 @@
+[
+  {"n": "emacs", "inst": ["emacs"], "versions": ["25.3"], "deprecated-at": "2018-11-14"},
+  {"n": "kernel-5.15", "inst": ["kernel"], "versions": ["stable"]}
+]

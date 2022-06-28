@@ -1,0 +1,13 @@
+{
+  "id": "oval:org.opensuse.security:tst:2009077611",
+  "version": "1",
+  "comment": "krb5-32bit is <1.4.3-19.49.53.1",
+  "check": "at least one",
+  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+  "object": {
+    "object_ref": "oval:org.opensuse.security:obj:2009031038"
+  },
+  "state": {
+    "state_ref": "oval:org.opensuse.security:ste:2009041060"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "check": "at least one",
+  "comment": "zlib-devel is installed",
+  "id": "oval:com.redhat.cve:tst:202237434001",
+  "version": "636",
+  "object": {
+    "object_ref": "oval:com.redhat.cve:obj:202237434001"
+  },
+  "state": {}
+}

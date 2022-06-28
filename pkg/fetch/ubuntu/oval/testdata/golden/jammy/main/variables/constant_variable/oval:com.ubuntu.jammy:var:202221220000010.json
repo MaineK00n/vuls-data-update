@@ -1,0 +1,12 @@
+{
+  "id": "oval:com.ubuntu.jammy:var:202221220000010",
+  "version": "1",
+  "datatype": "string",
+  "comment": "'openjfx' package binaries",
+  "Value": [
+    "libopenjfx-java",
+    "libopenjfx-jni",
+    "openjfx",
+    "openjfx-source"
+  ]
+}

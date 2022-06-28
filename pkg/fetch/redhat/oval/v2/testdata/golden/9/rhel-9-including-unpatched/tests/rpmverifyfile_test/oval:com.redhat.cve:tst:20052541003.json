@@ -1,0 +1,12 @@
+{
+  "check": "at least one",
+  "comment": "Red Hat Enterprise Linux 9 is installed",
+  "id": "oval:com.redhat.cve:tst:20052541003",
+  "version": "636",
+  "object": {
+    "object_ref": "oval:com.redhat.cve:obj:20052541002"
+  },
+  "state": {
+    "state_ref": "oval:com.redhat.cve:ste:20052541002"
+  }
+}
