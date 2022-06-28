@@ -1,0 +1,5 @@
+https://gitlab.com/gitlab-org/advisories-community/-/tree/main/go
+https://developer.github.com/v4/enum/securityadvisoryecosystem/ Go
+https://osv-vulnerabilities.storage.googleapis.com/Go/all.zip
+https://storage.googleapis.com/go-vulndb
+https://github.com/golang/vulndb

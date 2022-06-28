@@ -1,0 +1,5 @@
+https://cwe.mitre.org/data/xml/cwec_latest.xml.zip
+
+- CWE Top 25
+- OWASP TOP 10
+- CWE/SANS Top 25

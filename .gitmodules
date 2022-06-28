@@ -1,0 +1,6 @@
+[submodule "source"]
+	path = source
+	url = https://github.com/MaineK00n/vuls-data-source.git
+[submodule "output"]
+	path = output
+	url = https://github.com/MaineK00n/vuls-data.git

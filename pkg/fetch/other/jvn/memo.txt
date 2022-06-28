@@ -1,0 +1,3 @@
+https://jvndb.jvn.jp/ja/feed/
+- JVNDBRSS
+- 脆弱性対策情報詳細
