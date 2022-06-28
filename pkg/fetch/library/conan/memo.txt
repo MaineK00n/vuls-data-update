@@ -1,0 +1,1 @@
+https://gitlab.com/gitlab-org/advisories-community/-/tree/main/conan

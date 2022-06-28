@@ -1,0 +1,2 @@
+https://www.first.org/epss/data_stats
+https://epss.cyentia.com/epss_scores-YYYY-MM-DD.csv.gz

@@ -1,0 +1,3 @@
+https://gitlab.com/gitlab-org/advisories-community/-/tree/main/packagist
+https://developer.github.com/v4/enum/securityadvisoryecosystem/ Composer
+https://github.com/FriendsOfPHP/security-advisories
