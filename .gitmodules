@@ -1,0 +1,6 @@
+[submodule "pkg/fetch/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker"]
+	path = pkg/fetch/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker
+	url = https://github.com/MaineK00n/ubuntu-security-tracker.git
+[submodule "pkg/fetch/gentoo/testdata/fixtures/glsa"]
+	path = pkg/fetch/gentoo/testdata/fixtures/glsa
+	url = https://github.com/MaineK00n/glsa.git

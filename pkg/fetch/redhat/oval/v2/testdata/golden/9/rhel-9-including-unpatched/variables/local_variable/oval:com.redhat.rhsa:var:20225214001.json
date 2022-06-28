@@ -1,0 +1,17 @@
+{
+  "comment": "Get saved_entry in /boot/grub2/grubenv",
+  "datatype": "int",
+  "id": "oval:com.redhat.rhsa:var:20225214001",
+  "version": "635",
+  "arithmetic": {
+    "arithmetic_operation": "add",
+    "literal_component": {
+      "text": "1",
+      "datatype": "int"
+    },
+    "object_component": {
+      "item_field": "text",
+      "object_ref": "oval:com.redhat.rhsa:obj:20225214004"
+    }
+  }
+}

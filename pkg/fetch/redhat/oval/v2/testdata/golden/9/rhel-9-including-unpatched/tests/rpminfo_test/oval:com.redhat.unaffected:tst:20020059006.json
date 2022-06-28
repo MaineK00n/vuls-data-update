@@ -1,0 +1,11 @@
+{
+  "check": "at least one",
+  "comment": "zlib is not installed",
+  "id": "oval:com.redhat.unaffected:tst:20020059006",
+  "version": "635",
+  "check_existence": "none_exist",
+  "object": {
+    "object_ref": "oval:com.redhat.cve:obj:202237434003"
+  },
+  "state": {}
+}

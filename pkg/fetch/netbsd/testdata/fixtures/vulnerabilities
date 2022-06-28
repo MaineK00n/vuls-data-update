@@ -1,0 +1,29 @@
+# $NetBSD: pkg-vulnerabilities,v 1.10905 2023/05/23 08:14:53 wiz Exp $
+#
+#FORMAT 1.0.0
+#
+# Please read "Handling packages with security problems" in the pkgsrc
+# guide before editing this file.
+#
+# Note: NEVER remove entries from this file; this should document *all*
+# known package vulnerabilities so it is entirely appropriate to have
+# multiple entries in this file for a single package, and to contain
+# entries for packages which have been removed from pkgsrc.
+#
+# New entries should be added at the end of this file.
+#
+# Please ask pkgsrc-security to update the copy on ftp.NetBSD.org after
+# making changes to this file.
+#
+# The command to run for this update is "./pkg-vuln-update.sh", but it needs
+# access to the private GPG key for pkgsrc-security.
+#
+# If you have comments/additions/corrections, please contact
+# pkgsrc-security@NetBSD.org.
+#
+# Note: If this file format changes, please do not forget to update
+# pkgsrc/mk/scripts/genreadme.awk which also parses this file.
+#
+# package		type of exploit		URL
+cfengine<1.5.3nb3	remote-root-shell	ftp://ftp.NetBSD.org/pub/NetBSD/security/advisories/NetBSD-SA2000-013.txt.asc
+navigator<4.75		remote-user-access	http://www.cert.org/advisories/CA-2000-15.html

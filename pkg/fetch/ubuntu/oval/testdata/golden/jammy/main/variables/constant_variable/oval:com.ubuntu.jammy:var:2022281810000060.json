@@ -1,0 +1,26 @@
+{
+  "id": "oval:com.ubuntu.jammy:var:2022281810000060",
+  "version": "1",
+  "datatype": "string",
+  "comment": "'nvidia-graphics-drivers-455' package binaries",
+  "Value": [
+    "libnvidia-cfg1-435",
+    "libnvidia-common-435",
+    "libnvidia-common-455",
+    "libnvidia-compute-435",
+    "libnvidia-decode-435",
+    "libnvidia-encode-435",
+    "libnvidia-fbc1-435",
+    "libnvidia-gl-435",
+    "libnvidia-ifr1-435",
+    "nvidia-compute-utils-435",
+    "nvidia-dkms-435",
+    "nvidia-driver-435",
+    "nvidia-headless-435",
+    "nvidia-headless-no-dkms-435",
+    "nvidia-kernel-common-435",
+    "nvidia-kernel-source-435",
+    "nvidia-utils-435",
+    "xserver-xorg-video-nvidia-435"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": "oval:org.opensuse.security:def:19990524",
+  "version": "1",
+  "class": "vulnerability",
+  "metadata": {
+    "Title": "CVE-1999-0524",
+    "affected": {
+      "family": "unix",
+      "Platform": [
+        "SUSE Linux Enterprise Desktop 15",
+        "SUSE Linux Enterprise High Performance Computing 15",
+        "SUSE Linux Enterprise Module for Basesystem 15",
+        "SUSE Linux Enterprise Module for Development Tools 15",
+        "SUSE Linux Enterprise Server 15",
+        "SUSE Linux Enterprise Server for SAP Applications 15"
+      ]
+    },
+    "reference": [
+      {
+        "ref_id": "Mitre CVE-1999-0524",
+        "ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-1999-0524",
+        "source": "CVE"
+      },
+      {
+        "ref_id": "SUSE CVE-1999-0524",
+        "ref_url": "https://www.suse.com/security/cve/CVE-1999-0524",
+        "source": "SUSE CVE"
+      }
+    ],
+    "Description": "\n    ICMP information such as (1) netmask and (2) timestamp is allowed from arbitrary hosts.\n    ",
+    "advisory": {
+      "from": "security@suse.de",
+      "Severity": "Moderate",
+      "cve": {
+        "text": "CVE-1999-0524",
+        "href": "https://www.suse.com/security/cve/CVE-1999-0524/",
+        "impact": "moderate"
+      },
+      "bugzilla": [
+        {
+          "text": "SUSE bug 992991",
+          "href": "https://bugzilla.suse.com/992991"
+        }
+      ],
+      "issued": {
+        "date": "2021-04-30"
+      },
+      "updated": {
+        "date": "2022-04-14"
+      },
+      "affected_cpe_list": {
+        "Cpe": [
+          "cpe:/o:suse:sle-module-basesystem:15",
+          "cpe:/o:suse:sle-module-development-tools:15",
+          "cpe:/o:suse:sle_hpc:15",
+          "cpe:/o:suse:sled:15",
+          "cpe:/o:suse:sles:15",
+          "cpe:/o:suse:sles_sap:15"
+        ]
+      }
+    }
+  },
+  "criteria": {
+    "operator": "AND",
+    "criterias": [
+      {
+        "operator": "OR",
+        "criterions": [
+          {
+            "test_ref": "oval:org.opensuse.security:tst:2009242640",
+            "comment": "SUSE Linux Enterprise Server 15 is installed"
+          },
+          {
+            "test_ref": "oval:org.opensuse.security:tst:2009276218",
+            "comment": "SUSE Linux Enterprise Server for SAP Applications 15 is installed"
+          }
+        ]
+      },
+      {
+        "operator": "OR",
+        "criterions": [
+          {
+            "test_ref": "oval:org.opensuse.security:tst:2009334017",
+            "comment": "kernel-default is not affected"
+          },
+          {
+            "test_ref": "oval:org.opensuse.security:tst:2009333928",
+            "comment": "kernel-source is not affected"
+          }
+        ]
+      }
+    ]
+  }
+}

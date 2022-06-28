@@ -1,0 +1,32 @@
+{
+  "id": "oval:com.redhat.rhba:obj:20070331003",
+  "attr_version": "635",
+  "behaviors": {
+    "noconfigfiles": "true",
+    "noghostfiles": "true",
+    "nogroup": "true",
+    "nolinkto": "true",
+    "nomd_5": "true",
+    "nomode": "true",
+    "nomtime": "true",
+    "nordev": "true",
+    "nosize": "true",
+    "nouser": "true"
+  },
+  "name": {
+    "operation": "pattern match"
+  },
+  "epoch": {
+    "operation": "pattern match"
+  },
+  "version": {
+    "operation": "pattern match"
+  },
+  "release": {
+    "operation": "pattern match"
+  },
+  "arch": {
+    "operation": "pattern match"
+  },
+  "filepath": "/etc/redhat-release"
+}

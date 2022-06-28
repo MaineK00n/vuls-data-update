@@ -1,0 +1,88 @@
+{
+  "id": "oval:com.redhat.cve:def:20052541",
+  "version": "636",
+  "class": "vulnerability",
+  "metadata": {
+    "title": "CVE-2005-2541 tar: does not properly warn the user when extracting setuid or setgid files (moderate)",
+    "reference": [
+      {
+        "ref_id": "CVE-2005-2541",
+        "ref_url": "https://access.redhat.com/security/cve/CVE-2005-2541",
+        "source": "CVE"
+      }
+    ],
+    "description": "DOCUMENTATION: The MITRE CVE dictionary describes this issue as: Tar 1.15.1 does not properly warn the user when extracting setuid or setgid files, which may allow local users or remote attackers to gain privileges. \n            STATEMENT: This CVE was assigned to what is the documented and expected behaviour of tar.  There are currently no plans to change tar behaviour to strip setuid and setgid bits when extracting archives.",
+    "advisory": {
+      "from": "secalert@redhat.com",
+      "severity": "Moderate",
+      "updated": {
+        "date": "2021-06-28"
+      },
+      "cve": [
+        {
+          "text": "CVE-2005-2541",
+          "cvss3": "7.0/CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "href": "https://access.redhat.com/security/cve/CVE-2005-2541",
+          "impact": "moderate",
+          "public": "20050804"
+        }
+      ],
+      "affected": {
+        "resolution": [
+          {
+            "state": "Will not fix",
+            "component": [
+              "tar"
+            ]
+          }
+        ]
+      },
+      "affected_cpe_list": {
+        "cpe": [
+          "cpe:/a:redhat:enterprise_linux:9",
+          "cpe:/a:redhat:enterprise_linux:9::appstream",
+          "cpe:/a:redhat:enterprise_linux:9::crb",
+          "cpe:/a:redhat:enterprise_linux:9::highavailability",
+          "cpe:/a:redhat:enterprise_linux:9::nfv",
+          "cpe:/a:redhat:enterprise_linux:9::realtime",
+          "cpe:/a:redhat:enterprise_linux:9::resilientstorage",
+          "cpe:/a:redhat:enterprise_linux:9::sap",
+          "cpe:/a:redhat:enterprise_linux:9::sap_hana",
+          "cpe:/a:redhat:enterprise_linux:9::supplementary",
+          "cpe:/o:redhat:enterprise_linux:9",
+          "cpe:/o:redhat:enterprise_linux:9::baseos"
+        ]
+      },
+      "issued": {}
+    },
+    "affected": {}
+  },
+  "criteria": {
+    "operator": "OR",
+    "criterias": [
+      {
+        "operator": "AND",
+        "criterions": [
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20052541003",
+            "comment": "Red Hat Enterprise Linux 9 is installed"
+          },
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20052541001",
+            "comment": "tar is installed"
+          },
+          {
+            "test_ref": "oval:com.redhat.cve:tst:20052541002",
+            "comment": "tar is signed with Red Hat redhatrelease2 key"
+          }
+        ]
+      }
+    ],
+    "criterions": [
+      {
+        "test_ref": "oval:com.redhat.cve:tst:20052541004",
+        "comment": "Red Hat Enterprise Linux must be installed"
+      }
+    ]
+  }
+}

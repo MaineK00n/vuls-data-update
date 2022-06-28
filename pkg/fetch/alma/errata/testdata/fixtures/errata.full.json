@@ -1,0 +1,285 @@
+{
+  "schema_version": "1.0",
+  "data": [
+    {
+      "id": "ALBA-2021:3049",
+      "issued_date": 1628589283,
+      "updated_date": 1628589276,
+      "severity": "None",
+      "title": "pcsc-lite bug fix and enhancement update",
+      "description": "PC/SC Lite provides a Windows SCard compatible interface for communicating\nwith smart cards, smart card readers, and other security tokens.\n\nBug Fixes:\n\n* Increase global reader array size to 48 to address issue with RHCS secure\nchannel creation (BZ#1972569)\n\n* Increase global reader array size to 48 to address issue with RHCS secure\nchannel creation (pcsc-lite-ccid) (BZ#1973405)",
+      "type": "bugfix",
+      "packages": [
+        {
+          "name": "pcsc-lite-ccid",
+          "epoch": "0",
+          "version": "1.4.29",
+          "release": "5.1.el8_4",
+          "arch": "x86_64",
+          "src": "pcsc-lite-ccid-1.4.29-5.1.el8_4.src.rpm",
+          "filename": "pcsc-lite-ccid-1.4.29-5.1.el8_4.x86_64.rpm",
+          "checksum": "6933a8e1a026bec08a291e032209a481ad99c9282b19354d4adb3e136c3b6dde",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0
+        },
+        {
+          "name": "pcsc-lite-devel",
+          "epoch": "0",
+          "version": "1.8.23",
+          "release": "4.1.el8_4",
+          "arch": "i686",
+          "src": "pcsc-lite-1.8.23-4.1.el8_4.src.rpm",
+          "filename": "pcsc-lite-devel-1.8.23-4.1.el8_4.i686.rpm",
+          "checksum": "0be495deb451fee7e52a1ff6a135c2fe4e100ac94707b2e53ca1f322590c2d11",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0
+        },
+        {
+          "name": "pcsc-lite-devel",
+          "epoch": "0",
+          "version": "1.8.23",
+          "release": "4.1.el8_4",
+          "arch": "x86_64",
+          "src": "pcsc-lite-1.8.23-4.1.el8_4.src.rpm",
+          "filename": "pcsc-lite-devel-1.8.23-4.1.el8_4.x86_64.rpm",
+          "checksum": "66a7f38c3427acb68a0b13e6036d0e11e57e1be166d610b3d3d23719dceaba13",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0
+        },
+        {
+          "name": "pcsc-lite-ccid",
+          "epoch": "0",
+          "version": "1.4.29",
+          "release": "5.1.el8_4",
+          "arch": "aarch64",
+          "src": "pcsc-lite-ccid-1.4.29-5.1.el8_4.src.rpm",
+          "filename": "pcsc-lite-ccid-1.4.29-5.1.el8_4.aarch64.rpm",
+          "checksum": "02a5850312d30e028470d6f15f0ba94434e6dd2c455c7a3878cfcd106cdc809b",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0
+        },
+        {
+          "name": "pcsc-lite-ccid",
+          "epoch": "0",
+          "version": "1.4.29",
+          "release": "5.1.el8_4",
+          "arch": "ppc64le",
+          "src": "pcsc-lite-ccid-1.4.29-5.1.el8_4.src.rpm",
+          "filename": "pcsc-lite-ccid-1.4.29-5.1.el8_4.ppc64le.rpm",
+          "checksum": "5ca94ac7120135e443d59e205aa493f95c0005094d294c72e835aa5f4bc9cc6c",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0
+        }
+      ],
+      "modules": [],
+      "references": [
+        {
+          "id": "ALBA-2021-3049",
+          "type": "self",
+          "href": "https://errata.almalinux.org/8/ALBA-2021-3049.html"
+        }
+      ]
+    },
+    {
+      "id": "ALSA-2019:3708",
+      "issued_date": 1572983623,
+      "updated_date": 1651142818,
+      "severity": "Moderate",
+      "title": "Moderate: mariadb:10.3 security and bug fix update",
+      "description": "MariaDB is a multi-user, multi-threaded SQL database server that is binary compatible with MySQL. \n\nThe following packages have been upgraded to a later upstream version: mariadb (10.3.17), galera (25.3.26). (BZ#1701687, BZ#1711265, BZ#1741358)\n\nSecurity Fix(es):\n\n* mysql: InnoDB unspecified vulnerability (CPU Jan 2019) (CVE-2019-2510)\n\n* mysql: Server: DDL unspecified vulnerability (CPU Jan 2019) (CVE-2019-2537)\n\n* mysql: Server: Replication unspecified vulnerability (CPU Apr 2019) (CVE-2019-2614)\n\n* mysql: Server: Security: Privileges unspecified vulnerability (CPU Apr 2019) (CVE-2019-2627)\n\n* mysql: InnoDB unspecified vulnerability (CPU Apr 2019) (CVE-2019-2628)\n\n* mysql: Server: Pluggable Auth unspecified vulnerability (CPU Jul 2019) (CVE-2019-2737)\n\n* mysql: Server: Security: Privileges unspecified vulnerability (CPU Jul 2019) (CVE-2019-2739)\n\n* mysql: Server: XML unspecified vulnerability (CPU Jul 2019) (CVE-2019-2740)\n\n* mysql: InnoDB unspecified vulnerability (CPU Jul 2019) (CVE-2019-2758)\n\n* mysql: Server: Parser unspecified vulnerability (CPU Jul 2019) (CVE-2019-2805)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nAdditional Changes:\n\nFor detailed information on changes in this release, see the AlmaLinux Release Notes linked from the References section.",
+      "type": "security",
+      "packages": [
+        {
+          "name": "Judy",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.5.0+2632+14ced695",
+          "arch": "x86_64",
+          "src": "Judy-1.0.5-18.module_el8.5.0+2632+14ced695.src.rpm",
+          "filename": "Judy-1.0.5-18.module_el8.5.0+2632+14ced695.x86_64.rpm",
+          "checksum": "d02fc1640496c6b160680668c7082350371dc946b267813ab6d5de6615c738f1",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb:10.3:8050020220427075058:c5368500:x86_64"
+        },
+        {
+          "name": "Judy",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.3.0+2028+5e3224e9",
+          "arch": "i686",
+          "src": "Judy-1.0.5-18.module_el8.3.0+2028+5e3224e9.src.rpm",
+          "filename": "Judy-1.0.5-18.module_el8.3.0+2028+5e3224e9.i686.rpm",
+          "checksum": "679dc41d7df4dcbac8317331894e44fd329abd01f2b17411a11415e9b900eb17",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb-devel:10.3:8030020210324132345:229f0a1c:x86_64"
+        },
+        {
+          "name": "Judy-devel",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.3.0+2028+5e3224e9",
+          "arch": "i686",
+          "src": "Judy-1.0.5-18.module_el8.3.0+2028+5e3224e9.src.rpm",
+          "filename": "Judy-devel-1.0.5-18.module_el8.3.0+2028+5e3224e9.i686.rpm",
+          "checksum": "a5d4175218d19bd0a7d766a871e269563144014b89cf744902b3a737cf6e2a91",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb-devel:10.3:8030020210324132345:229f0a1c:x86_64"
+        },
+        {
+          "name": "Judy-devel",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.3.0+2028+5e3224e9",
+          "arch": "x86_64",
+          "src": "Judy-1.0.5-18.module_el8.3.0+2028+5e3224e9.src.rpm",
+          "filename": "Judy-devel-1.0.5-18.module_el8.3.0+2028+5e3224e9.x86_64.rpm",
+          "checksum": "fa6951b6cf8e47a6ab6d2489273fc502e21622ffbe15a4088d68d90c914529fd",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb-devel:10.3:8030020210324132345:229f0a1c:x86_64"
+        },
+        {
+          "name": "Judy",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.6.0+2761+593e5e59",
+          "arch": "aarch64",
+          "src": "Judy-1.0.5-18.module_el8.6.0+2761+593e5e59.src.rpm",
+          "filename": "Judy-1.0.5-18.module_el8.6.0+2761+593e5e59.aarch64.rpm",
+          "checksum": "d6a69d3a722b634e22140ac45951705586f6eacae111d6eddf8f0783a90dff0e",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb:10.5:8060020220420124706:9edba152:aarch64"
+        },
+        {
+          "name": "Judy",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.6.0+2867+72759d2f",
+          "arch": "ppc64le",
+          "src": "Judy-1.0.5-18.module_el8.6.0+2867+72759d2f.src.rpm",
+          "filename": "Judy-1.0.5-18.module_el8.6.0+2867+72759d2f.ppc64le.rpm",
+          "checksum": "42f8c8f57ae6c40142f826e44310a4fe8b0a5e996c2251190b01c9ea7112babe",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb:10.3:8060020220503130727:9edba152:ppc64le"
+        },
+        {
+          "name": "Judy-devel",
+          "epoch": "0",
+          "version": "1.0.5",
+          "release": "18.module_el8.6.0+2867+72759d2f",
+          "arch": "ppc64le",
+          "src": "Judy-1.0.5-18.module_el8.6.0+2867+72759d2f.src.rpm",
+          "filename": "Judy-devel-1.0.5-18.module_el8.6.0+2867+72759d2f.ppc64le.rpm",
+          "checksum": "a3a17bcb9b6e948e66e8e1479c1b753ec633f43f0060f5f9ad72b130ae8222b3",
+          "checksum_type": "sha256",
+          "reboot_suggested": 0,
+          "module": "mariadb-devel:10.3:8060020220503130727:9edba152:ppc64le"
+        }
+      ],
+      "modules": [
+        {
+          "name": "mariadb",
+          "arch": "x86_64",
+          "stream": "10.3",
+          "version": "8050020220427075058",
+          "context": "c5368500"
+        },
+        {
+          "name": "mariadb-devel",
+          "arch": "x86_64",
+          "stream": "10.3",
+          "version": "8030020210324132345",
+          "context": "229f0a1c"
+        },
+        {
+          "name": "mariadb",
+          "arch": "aarch64",
+          "stream": "10.5",
+          "version": "8060020220420124706",
+          "context": "9edba152"
+        },
+        {
+          "name": "mariadb",
+          "arch": "ppc64le",
+          "stream": "10.3",
+          "version": "8060020220503130727",
+          "context": "9edba152"
+        },
+        {
+          "name": "mariadb-devel",
+          "arch": "ppc64le",
+          "stream": "10.3",
+          "version": "8060020220503130727",
+          "context": "9edba152"
+        }
+      ],
+      "references": [
+        {
+          "id": "CVE-2019-2510",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2510"
+        },
+        {
+          "id": "CVE-2019-2537",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2537"
+        },
+        {
+          "id": "CVE-2019-2614",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2614"
+        },
+        {
+          "id": "CVE-2019-2627",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2627"
+        },
+        {
+          "id": "CVE-2019-2628",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2628"
+        },
+        {
+          "id": "CVE-2019-2737",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2737"
+        },
+        {
+          "id": "CVE-2019-2739",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2739"
+        },
+        {
+          "id": "CVE-2019-2740",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2740"
+        },
+        {
+          "id": "CVE-2019-2758",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2758"
+        },
+        {
+          "id": "CVE-2019-2805",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2019-2805"
+        },
+        {
+          "id": "CVE-2020-2922",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2020-2922"
+        },
+        {
+          "id": "CVE-2021-2007",
+          "type": "cve",
+          "href": "https://vulners.com/cve/CVE-2021-2007"
+        }
+      ]
+    }
+  ]
+}

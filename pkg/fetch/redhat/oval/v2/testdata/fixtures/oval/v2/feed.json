@@ -1,0 +1,47 @@
+{
+    "feed": {
+        "id": "red-hat-vulnerabilities-oval",
+        "title": "Red Hat Vulnerabilities OVAL",
+        "updated": "2023-05-25T18:17:55.212771",
+        "entry": [
+            {
+                "id": "oval:/RHEL9/jboss-ws-5-including-unpatched.oval.xml.bz2",
+                "title": "OVAL Definitions",
+                "link": [
+                    {
+                        "href": "https://access.redhat.com/security/data/oval/v2/RHEL9/jboss-ws-5-including-unpatched.oval.xml.bz2",
+                        "length": 17012
+                    }
+                ],
+                "updated": "2023-10-30T20:50:40Z",
+                "content": {
+                    "type": "application/x-bzip2",
+                    "src": "https://access.redhat.com/security/data/oval/v2/RHEL9/jboss-ws-5-including-unpatched.oval.xml.bz2"
+                },
+                "format": {
+                    "schema": "https://oval.mitre.org/language/version5.10/index.html",
+                    "version": "5.10"
+                }
+            },
+            {
+                "id": "oval:/RHEL9/rhel-9-including-unpatched.oval.xml.bz2",
+                "title": "OVAL Definitions",
+                "link": [
+                    {
+                        "href": "https://access.redhat.com/security/data/oval/v2/RHEL9/rhel-9-including-unpatched.oval.xml.bz2",
+                        "length": 695332
+                    }
+                ],
+                "updated": "2023-05-25T18:17:16Z",
+                "content": {
+                    "type": "application/x-bzip2",
+                    "src": "https://access.redhat.com/security/data/oval/v2/RHEL9/rhel-9-including-unpatched.oval.xml.bz2"
+                },
+                "format": {
+                    "schema": "https://oval.mitre.org/language/version5.10/index.html",
+                    "version": "5.10"
+                }
+            }
+        ]
+    }
+}

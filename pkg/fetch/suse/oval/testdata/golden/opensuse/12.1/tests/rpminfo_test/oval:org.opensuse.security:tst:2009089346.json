@@ -1,0 +1,13 @@
+{
+  "id": "oval:org.opensuse.security:tst:2009089346",
+  "version": "1",
+  "comment": "flash-player-gnome is <11.2.202.243-30.1",
+  "check": "at least one",
+  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+  "object": {
+    "object_ref": "oval:org.opensuse.security:obj:2009035114"
+  },
+  "state": {
+    "state_ref": "oval:org.opensuse.security:ste:2009042137"
+  }
+}

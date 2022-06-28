@@ -1,0 +1,8 @@
+{
+  "id": "oval:com.redhat.rhba:ste:20070331002",
+  "version": "635",
+  "signature_keyid": {
+    "text": "5326810137017186",
+    "operation": "equals"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "check": "at least one",
+  "comment": "jws5-tomcat is installed",
+  "id": "oval:com.redhat.cve:tst:20188014001",
+  "version": "636",
+  "object": {
+    "object_ref": "oval:com.redhat.cve:obj:20188014001"
+  },
+  "state": {}
+}

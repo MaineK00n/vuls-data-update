@@ -1,0 +1,115 @@
+{
+  "ID": "202305-28",
+  "Title": "snakeyaml: Multiple Vulnerabilities",
+  "Synopsis": "Multiple vulnerabilities have been found in snakeyaml, the worst of which could result in denial of service.",
+  "Product": {
+    "Text": "snakeyaml",
+    "Type": "ebuild"
+  },
+  "Announced": "2023-05-21",
+  "Revised": {
+    "Text": "2023-05-21",
+    "Count": "1"
+  },
+  "Bug": [
+    "776796",
+    "868621"
+  ],
+  "Access": "remote",
+  "Affected": {
+    "Package": [
+      {
+        "Name": "dev-java/snakeyaml",
+        "Auto": "yes",
+        "Arch": "*",
+        "Unaffected": [
+          {
+            "Text": "1.33",
+            "Range": "ge",
+            "Slot": ""
+          }
+        ],
+        "Vulnerable": [
+          {
+            "Text": "1.33",
+            "Range": "lt",
+            "Slot": ""
+          }
+        ]
+      }
+    ],
+    "Service": {
+      "Text": "",
+      "Type": "",
+      "Fixed": ""
+    }
+  },
+  "Background": {
+    "Text": "\n        <p>snakeyaml is a YAML 1.1 parser and emitter for Java.</p>\n    "
+  },
+  "Description": {
+    "Text": "\n        <p>Multiple vulnerabilities have been discovered in snakeyaml. Please review the CVE identifiers referenced below for details.</p>\n    "
+  },
+  "Impact": {
+    "Type": "low",
+    "Text": "\n        <p>Please review the referenced CVE identifiers for details.</p>\n    "
+  },
+  "Workaround": {
+    "Text": "\n        <p>There is no known workaround at this time.</p>\n    "
+  },
+  "Resolution": {
+    "Text": "\n        \n        \n        \n    ",
+    "P": [
+      {
+        "Text": "All snakeyaml users should upgrade to the latest version:",
+        "URI": {
+          "Text": "",
+          "Link": ""
+        },
+        "Br": null,
+        "I": null,
+        "Code": "",
+        "P": ""
+      }
+    ],
+    "Code": [
+      "\n          # emerge --sync\n          # emerge --ask --oneshot --verbose \">=dev-java/snakeyaml-1.33\"\n        "
+    ]
+  },
+  "References": {
+    "URI": [
+      {
+        "Text": "CVE-2017-18640",
+        "Link": "https://nvd.nist.gov/vuln/detail/CVE-2017-18640"
+      },
+      {
+        "Text": "CVE-2022-38749",
+        "Link": "https://nvd.nist.gov/vuln/detail/CVE-2022-38749"
+      },
+      {
+        "Text": "CVE-2022-38750",
+        "Link": "https://nvd.nist.gov/vuln/detail/CVE-2022-38750"
+      },
+      {
+        "Text": "CVE-2022-38751",
+        "Link": "https://nvd.nist.gov/vuln/detail/CVE-2022-38751"
+      },
+      {
+        "Text": "CVE-2022-38752",
+        "Link": "https://nvd.nist.gov/vuln/detail/CVE-2022-38752"
+      }
+    ]
+  },
+  "Metadata": [
+    {
+      "Text": "ajak",
+      "Tag": "requester",
+      "Timestamp": "2023-05-21T19:44:41.839877Z"
+    },
+    {
+      "Text": "ajak",
+      "Tag": "submitter",
+      "Timestamp": "2023-05-21T19:44:41.842236Z"
+    }
+  ]
+}

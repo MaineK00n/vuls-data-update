@@ -1,0 +1,139 @@
+{
+  "affectedProducts": [
+    "Rocky Linux 9"
+  ],
+  "cves": [
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2022-25881",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-25881"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2022-4904",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-4904"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-23918",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23918"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-23920",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23920"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-23936",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23936"
+    },
+    {
+      "cvss3BaseScore": "UNKNOWN",
+      "cvss3ScoringVector": "UNKNOWN",
+      "cwe": "UNKNOWN",
+      "name": "CVE-2023-24807",
+      "sourceBy": "MITRE",
+      "sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24807"
+    }
+  ],
+  "description": "Node.js is a software development platform for building fast and scalable network applications in the JavaScript programming language. \n\nThe following packages have been upgraded to a later upstream version: nodejs (16.19.1), nodejs-nodemon (2.0.20).\n\nSecurity Fix(es):\n\n* c-ares: buffer overflow in config_sortlist() due to missing string length check (CVE-2022-4904)\n\n* http-cache-semantics: Regular Expression Denial of Service (ReDoS) vulnerability (CVE-2022-25881)\n\n* Node.js: Permissions policies can be bypassed via process.mainModule (CVE-2023-23918)\n\n* Node.js: Fetch API did not protect against CRLF injection in host headers (CVE-2023-23936)\n\n* Node.js: insecure loading of ICU data through ICU_DATA environment variable (CVE-2023-23920)\n\n* Node.js: Regular Expression Denial of Service in Headers fetch API (CVE-2023-24807)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+  "fixes": [
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2165824",
+      "ticket": "2165824"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2168631",
+      "ticket": "2168631"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2171935",
+      "ticket": "2171935"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2172190",
+      "ticket": "2172190"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2172204",
+      "ticket": "2172204"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2172217",
+      "ticket": "2172217"
+    },
+    {
+      "sourceBy": "Red Hat",
+      "sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2178076",
+      "ticket": "2178076"
+    }
+  ],
+  "name": "RLSA-2023:2655",
+  "publishedAt": "2023-05-25T19:53:09.847906Z",
+  "rpms": {
+    "Rocky Linux 9": {
+      "nvras": [
+        "nodejs-1:16.19.1-1.el9_2.aarch64.rpm",
+        "nodejs-1:16.19.1-1.el9_2.s390x.rpm",
+        "nodejs-1:16.19.1-1.el9_2.src.rpm",
+        "nodejs-debuginfo-1:16.19.1-1.el9_2.aarch64.rpm",
+        "nodejs-debuginfo-1:16.19.1-1.el9_2.s390x.rpm",
+        "nodejs-debugsource-1:16.19.1-1.el9_2.aarch64.rpm",
+        "nodejs-debugsource-1:16.19.1-1.el9_2.s390x.rpm",
+        "nodejs-docs-1:16.19.1-1.el9_2.noarch.rpm",
+        "nodejs-full-i18n-1:16.19.1-1.el9_2.aarch64.rpm",
+        "nodejs-full-i18n-1:16.19.1-1.el9_2.s390x.rpm",
+        "nodejs-libs-1:16.19.1-1.el9_2.aarch64.rpm",
+        "nodejs-libs-1:16.19.1-1.el9_2.s390x.rpm",
+        "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.aarch64.rpm",
+        "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.s390x.rpm",
+        "nodejs-nodemon-0:2.0.20-3.el9_2.noarch.rpm",
+        "nodejs-nodemon-0:2.0.20-3.el9_2.src.rpm",
+        "npm-1:8.19.3-1.16.19.1.1.el9_2.aarch64.rpm",
+        "npm-1:8.19.3-1.16.19.1.1.el9_2.s390x.rpm",
+        "nodejs-1:16.19.1-1.el9_2.ppc64le.rpm",
+        "nodejs-1:16.19.1-1.el9_2.x86_64.rpm",
+        "nodejs-debuginfo-1:16.19.1-1.el9_2.ppc64le.rpm",
+        "nodejs-debuginfo-1:16.19.1-1.el9_2.x86_64.rpm",
+        "nodejs-debugsource-1:16.19.1-1.el9_2.ppc64le.rpm",
+        "nodejs-debugsource-1:16.19.1-1.el9_2.x86_64.rpm",
+        "nodejs-full-i18n-1:16.19.1-1.el9_2.ppc64le.rpm",
+        "nodejs-full-i18n-1:16.19.1-1.el9_2.x86_64.rpm",
+        "nodejs-libs-1:16.19.1-1.el9_2.i686.rpm",
+        "nodejs-libs-1:16.19.1-1.el9_2.ppc64le.rpm",
+        "nodejs-libs-1:16.19.1-1.el9_2.x86_64.rpm",
+        "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.ppc64le.rpm",
+        "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.x86_64.rpm",
+        "npm-1:8.19.3-1.16.19.1.1.el9_2.ppc64le.rpm",
+        "npm-1:8.19.3-1.16.19.1.1.el9_2.x86_64.rpm"
+      ]
+    }
+  },
+  "severity": "SEVERITY_MODERATE",
+  "shortCode": "RL",
+  "synopsis": "Moderate: nodejs and nodejs-nodemon security, bug fix, and enhancement update",
+  "topic": "An update is available for nodejs, nodejs-nodemon.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+  "type": "TYPE_SECURITY"
+}

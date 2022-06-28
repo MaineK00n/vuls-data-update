@@ -1,0 +1,12 @@
+{
+  "id": "oval:com.redhat.cve:ste:20188014002",
+  "attr_version": "636",
+  "name": {
+    "text": "^redhat-release",
+    "operation": "pattern match"
+  },
+  "version": {
+    "text": "^9[^\\d]",
+    "operation": "pattern match"
+  }
+}

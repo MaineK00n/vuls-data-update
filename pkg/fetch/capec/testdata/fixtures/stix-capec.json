@@ -1,0 +1,895 @@
+{
+    "id": "bundle--36b5a045-c220-403a-96c1-02500df07699",
+    "objects": [
+        {
+            "created": "2023-01-30T20:40:28.791035Z",
+            "definition": {
+                "statement": "CAPEC is sponsored by US-CERT in the office of Cybersecurity and Communications at the U.S. Department of Homeland Security. Copyright © 2007 - 2023, The MITRE Corporation. CAPEC and the CAPEC logo are trademarks of The MITRE Corporation."
+            },
+            "definition_type": "statement",
+            "id": "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d",
+            "spec_version": "2.1",
+            "type": "marking-definition"
+        },
+        {
+            "created": "2023-01-30T20:40:28.791901Z",
+            "id": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "identity_class": "organization",
+            "modified": "2023-01-30T20:40:28.791901Z",
+            "name": "The MITRE Corporation",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "identity"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "In applications, particularly web applications, access to functionality is mitigated by an authorization framework. This framework maps Access Control Lists (ACLs) to elements of the application's functionality; particularly URL's for web apps. In the case that the administrator failed to specify an ACL for a particular element, an attacker may be able to access it with impunity. An attacker with the ability to access functionality not properly constrained by ACLs can obtain sensitive information and possibly compromise the entire application. Such an attacker can access resources that must be available only to users at a higher privilege level, can access management sections of the application, or can run queries for data that they otherwise not supposed to.",
+            "external_references": [
+                {
+                    "external_id": "CAPEC-1",
+                    "source_name": "capec",
+                    "url": "https://capec.mitre.org/data/definitions/1.html"
+                },
+                {
+                    "external_id": "CWE-276",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/276.html"
+                },
+                {
+                    "external_id": "CWE-285",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/285.html"
+                },
+                {
+                    "external_id": "CWE-434",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/434.html"
+                },
+                {
+                    "external_id": "CWE-693",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/693.html"
+                },
+                {
+                    "external_id": "CWE-732",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/732.html"
+                },
+                {
+                    "external_id": "CWE-1191",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1191.html"
+                },
+                {
+                    "external_id": "CWE-1193",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1193.html"
+                },
+                {
+                    "external_id": "CWE-1220",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1220.html"
+                },
+                {
+                    "external_id": "CWE-1297",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1297.html"
+                },
+                {
+                    "external_id": "CWE-1311",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1311.html"
+                },
+                {
+                    "external_id": "CWE-1314",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1314.html"
+                },
+                {
+                    "external_id": "CWE-1315",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1315.html"
+                },
+                {
+                    "external_id": "CWE-1318",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1318.html"
+                },
+                {
+                    "external_id": "CWE-1320",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1320.html"
+                },
+                {
+                    "external_id": "CWE-1321",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1321.html"
+                },
+                {
+                    "external_id": "CWE-1327",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/1327.html"
+                },
+                {
+                    "description": "Hijack Execution Flow: ServicesFile Permissions Weakness",
+                    "external_id": "T1574.010",
+                    "source_name": "ATTACK",
+                    "url": "https://attack.mitre.org/wiki/Technique/T1574/010"
+                }
+            ],
+            "id": "attack-pattern--92cdcd3d-d734-4442-afc3-4599f261498b",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "Accessing Functionality Not Properly Constrained by ACLs",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "attack-pattern",
+            "x_capec_abstraction": "Standard",
+            "x_capec_can_precede_refs": [
+                "attack-pattern--9ad2c2eb-9939-4590-9683-2e789692d262"
+            ],
+            "x_capec_child_of_refs": [
+                "attack-pattern--fd669b7d-0e79-473c-9808-a860dfb0c871"
+            ],
+            "x_capec_consequences": {
+                "Access_Control": [
+                    "Gain Privileges"
+                ],
+                "Authorization": [
+                    "Gain Privileges"
+                ],
+                "Confidentiality": [
+                    "Gain Privileges"
+                ]
+            },
+            "x_capec_domains": [
+                "Software",
+                "Hardware"
+            ],
+            "x_capec_example_instances": [
+                "\n               <xhtml:p>Implementing the Model-View-Controller (MVC) within Java EE's Servlet paradigm using a \"Single front controller\" pattern that demands that brokered HTTP requests be authenticated before hand-offs to other Action Servlets.</xhtml:p>\n               <xhtml:p>If no security-constraint is placed on those Action Servlets, such that positively no one can access them, the front controller can be subverted.</xhtml:p>\n            "
+            ],
+            "x_capec_execution_flow": "<h2> Execution Flow </h2><div><h3>Explore</h3><ol><li> <p> <b>Survey: </b>The attacker surveys the target application, possibly as a valid and authenticated user</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Spidering web sites for all available links</td></tr><tr><td>Brute force guessing of resource names</td></tr><tr><td>Brute force guessing of user names / credentials</td></tr><tr><td>Brute force guessing of function names / actions</td></tr></tbody></table><li> <p> <b>Identify Functionality: </b>At each step, the attacker notes the resource or functionality access mechanism invoked upon performing specific actions</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Use the web inventory of all forms and inputs and apply attack data to those inputs.</td></tr><tr><td>Use a packet sniffer to capture and record network traffic</td></tr><tr><td>Execute the software in a debugger and record API calls into the operating system or important libraries. This might occur in an environment other than a production environment, in order to find weaknesses that can be exploited in a production environment.</td></tr></tbody></table></ol></div><div><h3>Experiment</h3><ol><li> <p> <b>Iterate over access capabilities: </b>Possibly as a valid user, the attacker then tries to access each of the noted access mechanisms directly in order to perform functions not constrained by the ACLs.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Fuzzing of API parameters (URL parameters, OS API parameters, protocol parameters)</td></tr></tbody></table></ol></div>",
+            "x_capec_likelihood_of_attack": "High",
+            "x_capec_parent_of_refs": [
+                "attack-pattern--74bac7d9-693d-40d2-82bf-eb132f13bcaf",
+                "attack-pattern--3ba20dcc-8fec-4d74-a472-eb9694fe8142",
+                "attack-pattern--1abd165a-57e9-4b78-9221-7b6fcdc57810",
+                "attack-pattern--e8a8a8f5-3ad5-4d3f-a35b-48036147266b"
+            ],
+            "x_capec_prerequisites": [
+                "The application must be navigable in a manner that associates elements (subsections) of the application with ACLs.",
+                "The various resources, or individual URLs, must be somehow discoverable by the attacker",
+                "The administrator must have forgotten to associate an ACL or has associated an inappropriately permissive ACL with a particular navigable resource."
+            ],
+            "x_capec_resources_required": [
+                "None: No specialized resources are required to execute this type of attack."
+            ],
+            "x_capec_skills_required": {
+                "Low": "In order to discover unrestricted resources, the attacker does not need special tools or skills. They only have to observe the resources or access mechanisms invoked as each action is performed and then try and access those access mechanisms directly."
+            },
+            "x_capec_status": "Draft",
+            "x_capec_typical_severity": "High",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "\n               <xhtml:p>In a J2EE setting, administrators can associate a role that is impossible for the authenticator to grant users, such as \"NoAccess\", with all Servlets to which access is guarded by a limited number of servlets visible to, and accessible by, the user.</xhtml:p>\n               <xhtml:p>Having done so, any direct access to those protected Servlets will be prohibited by the web container.</xhtml:p>\n               <xhtml:p>In a more general setting, the administrator must mark every resource besides the ones supposed to be exposed to the user as accessible by a role impossible for the user to assume. The default security setting must be to deny access and then grant access only to those resources intended by business logic.</xhtml:p>\n            ",
+            "id": "course-of-action--0d8de0b8-e9fd-44b2-8f1f-f8aae79949be",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "coa-1-0",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--c796a053-8016-4098-9d01-e680e042cb24",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--0d8de0b8-e9fd-44b2-8f1f-f8aae79949be",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--92cdcd3d-d734-4442-afc3-4599f261498b",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "This attack pattern involves causing a buffer overflow through manipulation of environment variables. Once the adversary finds that they can modify an environment variable, they may try to overflow associated buffers. This attack leverages implicit trust often placed in environment variables.",
+            "external_references": [
+                {
+                    "external_id": "CAPEC-10",
+                    "source_name": "capec",
+                    "url": "https://capec.mitre.org/data/definitions/10.html"
+                },
+                {
+                    "external_id": "CWE-120",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/120.html"
+                },
+                {
+                    "external_id": "CWE-302",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/302.html"
+                },
+                {
+                    "external_id": "CWE-118",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/118.html"
+                },
+                {
+                    "external_id": "CWE-119",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/119.html"
+                },
+                {
+                    "external_id": "CWE-74",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/74.html"
+                },
+                {
+                    "external_id": "CWE-99",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/99.html"
+                },
+                {
+                    "external_id": "CWE-20",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/20.html"
+                },
+                {
+                    "external_id": "CWE-680",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/680.html"
+                },
+                {
+                    "external_id": "CWE-733",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/733.html"
+                },
+                {
+                    "external_id": "CWE-697",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/697.html"
+                },
+                {
+                    "description": "Buffer Overflow via Environment Variables",
+                    "source_name": "OWASP Attacks",
+                    "url": "https://owasp.org/www-community/attacks/Buffer_Overflow_via_Environment_Variables"
+                },
+                {
+                    "description": "G. Hoglund, G. McGraw, Exploiting Software: How to Break Code, 2004--02, Addison-Wesley",
+                    "external_id": "REF-1",
+                    "source_name": "reference_from_CAPEC"
+                },
+                {
+                    "description": "Sharefuzz",
+                    "external_id": "REF-2",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "http://sharefuzz.sourceforge.net"
+                }
+            ],
+            "id": "attack-pattern--4a29d66d-8617-4382-b456-578ecdb1609e",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "Buffer Overflow via Environment Variables",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "attack-pattern",
+            "x_capec_abstraction": "Detailed",
+            "x_capec_can_follow_refs": [
+                "attack-pattern--ca989a50-b24e-4917-a234-ce4788fa21c7"
+            ],
+            "x_capec_child_of_refs": [
+                "attack-pattern--77e51461-7843-411c-a90e-852498957f76"
+            ],
+            "x_capec_consequences": {
+                "Access_Control": [
+                    "Gain Privileges"
+                ],
+                "Authorization": [
+                    "Gain Privileges"
+                ],
+                "Availability": [
+                    "Unreliable Execution",
+                    "Execute Unauthorized Commands (Run Arbitrary Code)"
+                ],
+                "Confidentiality": [
+                    "Execute Unauthorized Commands (Run Arbitrary Code)",
+                    "Read Data",
+                    "Gain Privileges"
+                ],
+                "Integrity": [
+                    "Execute Unauthorized Commands (Run Arbitrary Code)",
+                    "Modify Data"
+                ]
+            },
+            "x_capec_domains": [
+                "Software"
+            ],
+            "x_capec_example_instances": [
+                "\n               <xhtml:p>A buffer overflow in sccw allows local users to gain root access via the $HOME environmental variable. See also: CVE-1999-0906</xhtml:p>\n            ",
+                "\n               <xhtml:p>A buffer overflow in the rlogin program involves its consumption of the $TERM environmental variable. See also: CVE-1999-0046</xhtml:p>\n            "
+            ],
+            "x_capec_execution_flow": "<h2> Execution Flow </h2><div><h3>Explore</h3><ol><li> <p> <b>Identify target application: </b>The adversary identifies a target application or program to perform the buffer overflow on. In this attack the adversary looks for an application that loads the content of an environment variable into a buffer.</p></li></ol></div><div><h3>Experiment</h3><ol><li> <p> <b>Find injection vector: </b>The adversary identifies an injection vector to deliver the excessive content to the targeted application's buffer.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Change the values of environment variables thought to be used by the application to contain excessive data. If the program is loading the value of the environment variable into a buffer, this could cause a crash and an attack vector will be found.</td></tr></tbody></table><li> <p> <b>Craft overflow content: </b>The adversary crafts the content to be injected. If the intent is to simply cause the software to crash, the content need only consist of an excessive quantity of random data. If the intent is to leverage the overflow for execution of arbitrary code, the adversary crafts the payload in such a way that the overwritten return address is replaced with one of the adversary's choosing.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Create malicious shellcode that will execute when the program execution is returned to it.</td></tr><tr><td>Use a NOP-sled in the overflow content to more easily \"slide\" into the malicious code. This is done so that the exact return address need not be correct, only in the range of all of the NOPs</td></tr></tbody></table></ol></div><div><h3>Exploit</h3><ol><li> <p> <b>Overflow the buffer: </b>Using the injection vector, the adversary injects the crafted overflow content into the buffer.</p></li></ol></div>",
+            "x_capec_extended_description": "Although the focus of this attack is putting excessive content into an environment variable that is loaded into a buffer, environment variables can be used to assist a classic buffer overflow attack as well. In the case where the buffer used in a traditional buffer overflow attack is not large enough to store the adversary's shell code, they will store the shell code in an environment variable and attempt to return to its address, rather than back into the data they wrote to the buffer.",
+            "x_capec_likelihood_of_attack": "High",
+            "x_capec_prerequisites": [
+                "The application uses environment variables.",
+                "An environment variable exposed to the user is vulnerable to a buffer overflow.",
+                "The vulnerable environment variable uses untrusted data.",
+                "Tainted data used in the environment variables is not properly validated. For instance boundary checking is not done before copying the input data to a buffer."
+            ],
+            "x_capec_skills_required": {
+                "High": "Exploiting a buffer overflow to inject malicious code into the stack of a software system or even the heap can require a higher skill level.",
+                "Low": "An attacker can simply overflow a buffer by inserting a long string into an attacker-modifiable injection vector. The result can be a DoS."
+            },
+            "x_capec_status": "Draft",
+            "x_capec_typical_severity": "High",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Do not expose environment variable to the user.",
+            "id": "course-of-action--0dfd5de3-6691-47d2-abfd-21299e9f040b",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "coa-10-0",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--6afe60c3-f515-4128-a724-0989e27e5bb0",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--0dfd5de3-6691-47d2-abfd-21299e9f040b",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--4a29d66d-8617-4382-b456-578ecdb1609e",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "An adversary, through a previously installed malicious application, performs malicious actions against a third-party Software as a Service (SaaS) application (also known as a cloud based application) by leveraging the persistent and implicit trust placed on a trusted user's session. This attack is executed after a trusted user is authenticated into a cloud service, \"piggy-backing\" on the authenticated session, and exploiting the fact that the cloud service believes it is only interacting with the trusted user. If successful, the actions embedded in the malicious application will be processed and accepted by the targeted SaaS application and executed at the trusted user's privilege level.",
+            "external_references": [
+                {
+                    "external_id": "CAPEC-510",
+                    "source_name": "capec",
+                    "url": "https://capec.mitre.org/data/definitions/510.html"
+                },
+                {
+                    "external_id": "CWE-346",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/346.html"
+                },
+                {
+                    "description": "Ami Luttwak, A new Zeus variant targeting Salesforce.com – Research and Analysis, Adallom, Inc.",
+                    "external_id": "REF-438",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "http://www.adallom.com/blog/a-new-zeus-variant-targeting-salesforce-com-accounts-research-and-analysis/"
+                }
+            ],
+            "id": "attack-pattern--56b4150a-10fd-42cd-85ff-1063625ec5f4",
+            "modified": "2014-06-23T00:00:00.000Z",
+            "name": "SaaS User Request Forgery",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "attack-pattern",
+            "x_capec_abstraction": "Standard",
+            "x_capec_child_of_refs": [
+                "attack-pattern--2351ee64-dd85-4bc3-bb43-aaa2ca5c1228"
+            ],
+            "x_capec_domains": [
+                "Software"
+            ],
+            "x_capec_likelihood_of_attack": "High",
+            "x_capec_prerequisites": [
+                "An adversary must be able install a purpose built malicious application onto the trusted user's system and convince the user to execute it while authenticated to the SaaS application."
+            ],
+            "x_capec_skills_required": {
+                "Medium": "This attack pattern often requires the technical ability to modify a malicious software package (e.g. Zeus) to spider a targeted site and a way to trick a user into a malicious software download."
+            },
+            "x_capec_status": "Draft",
+            "x_capec_typical_severity": "Medium",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "To limit one's exposure to this type of attack, tunnel communications through a secure proxy service.",
+            "id": "course-of-action--e62f0d4e-f4f4-4170-83dc-b3e1355d1c94",
+            "modified": "2014-06-23T00:00:00.000Z",
+            "name": "coa-510-0",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--f0e244a6-ae66-4ca3-bd73-5e27032bc927",
+            "modified": "2014-06-23T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--e62f0d4e-f4f4-4170-83dc-b3e1355d1c94",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--56b4150a-10fd-42cd-85ff-1063625ec5f4",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Detection of this type of attack can be done through heuristic analysis of behavioral anomalies (a la credit card fraud detection) which can be used to identify inhuman behavioral patterns. (e.g., spidering)",
+            "id": "course-of-action--ac725580-35cd-425b-84ba-2c7669ba0116",
+            "modified": "2014-06-23T00:00:00.000Z",
+            "name": "coa-510-1",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2020-07-30T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Enable at least AES Kerberos encryption for tickets.",
+            "id": "course-of-action--dd7827a3-05d8-4f6b-a821-c18bae857754",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "coa-652-5",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2020-07-30T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--e8864ef8-634a-4587-9b9f-7dffc85bb827",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--dd7827a3-05d8-4f6b-a821-c18bae857754",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--755bb5ac-2eee-4e54-9864-92812666120c",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2020-07-30T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--c6950a75-d731-468c-a735-bd8659dd2c6c",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--ab6c4df3-7bf9-4fdd-8c2a-9055c0aea441",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--755bb5ac-2eee-4e54-9864-92812666120c",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2020-07-30T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "An adversary guesses or obtains (i.e. steals or purchases) legitimate operating system credentials (e.g. userID/password) to achieve authentication and to perform authorized actions on the system, under the guise of an authenticated user or service. This applies to any Operating System.",
+            "external_references": [
+                {
+                    "external_id": "CAPEC-653",
+                    "source_name": "capec",
+                    "url": "https://capec.mitre.org/data/definitions/653.html"
+                },
+                {
+                    "external_id": "CWE-522",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/522.html"
+                },
+                {
+                    "external_id": "CWE-307",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/307.html"
+                },
+                {
+                    "external_id": "CWE-308",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/308.html"
+                },
+                {
+                    "external_id": "CWE-309",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/309.html"
+                },
+                {
+                    "external_id": "CWE-262",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/262.html"
+                },
+                {
+                    "external_id": "CWE-263",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/263.html"
+                },
+                {
+                    "external_id": "CWE-654",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/654.html"
+                },
+                {
+                    "description": "Dan Goodin, Attackers can use Zoom to steal users’ Windows credentials with no warning, 2020--04---01, Ars Technica",
+                    "external_id": "REF-575",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "https://arstechnica.com/information-technology/2020/04/unpatched-zoom-bug-lets-attackers-steal-windows-credentials-with-no-warning/"
+                },
+                {
+                    "description": "Jeff Warren, How Attackers are Stealing Your Credentials with Mimikatz, 2017--07---11, STEALTHbits Technologies, Inc.",
+                    "external_id": "REF-576",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "https://blog.stealthbits.com/how-attackers-are-stealing-your-credentials-with-mimikatz/"
+                }
+            ],
+            "id": "attack-pattern--2618d0a4-06d0-4bde-8271-2df61ed8297a",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "Use of Known Operating System Credentials",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "attack-pattern",
+            "x_capec_abstraction": "Standard",
+            "x_capec_can_follow_refs": [
+                "attack-pattern--a9dc4914-409a-4f71-80df-c5cc3923d112",
+                "attack-pattern--8d88a81c-bde9-4fb3-acbe-901c783d6427",
+                "attack-pattern--addd93c9-9278-4185-b402-e505d632c815",
+                "attack-pattern--a390cb72-b4de-4750-ae05-be556c89f4be",
+                "attack-pattern--f724f0f3-20e6-450c-be4a-f373ea08834d",
+                "attack-pattern--fab7fb48-4503-4e03-980f-9bc827be929f",
+                "attack-pattern--03a731ef-751b-43de-9159-9667d4be4d1a",
+                "attack-pattern--8c7bab16-5ecd-4778-9b04-c185bceed170"
+            ],
+            "x_capec_can_precede_refs": [
+                "attack-pattern--22802ed6-ddc6-4da7-b6be-60b10d26198b"
+            ],
+            "x_capec_child_of_refs": [
+                "attack-pattern--886a7175-e28a-4e6d-bd22-3b1497e31dc7"
+            ],
+            "x_capec_consequences": {
+                "Access_Control": [
+                    "Gain Privileges"
+                ],
+                "Authentication": [
+                    "Gain Privileges"
+                ],
+                "Authorization": [
+                    "Read Data"
+                ],
+                "Confidentiality": [
+                    "Gain Privileges",
+                    "Read Data"
+                ],
+                "Integrity": [
+                    "Modify Data"
+                ]
+            },
+            "x_capec_domains": [
+                "Software"
+            ],
+            "x_capec_example_instances": [
+                "Adversaries exploited the Zoom video conferencing application during the 2020 COVID-19 pandemic to exfiltrate Windows domain credentials from a target system. The attack entailed sending Universal Naming Convention (UNC) paths within the Zoom chat window of an unprotected Zoom call. If the victim clicked on the link, their Windows usernames and the corresponding Net-NTLM-v2 hashes were sent to the address contained in the link. The adversary was then able to infiltrate and laterally move within the Windows domain by passing the acquired credentials to shared network resources. This further provided adversaries with access to Outlook servers and network storage devices. [REF-575]",
+                "Mimikatz, a post-exploitation Windows credential harvester, can be used to gather and exploit Windows credentials. This malware has been used in several known cyberattacks, such as the Petya Ransomeware attacks. [REF-576]"
+            ],
+            "x_capec_execution_flow": "<h2> Execution Flow </h2><div><h3>Explore</h3><ol><li> <p> <b>Acquire known operating system credentials: </b>The adversary must obtain known operating system credentials in order to access the target system, application, or service within the domain.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>An adversary purchases breached operating system username/password combinations or leaked hashed passwords from the dark web.</td></tr><tr><td>An adversary leverages a key logger or phishing attack to steal user credentials as they are provided.</td></tr><tr><td>An adversary conducts a sniffing attack to steal operating system credentials as they are transmitted.</td></tr><tr><td>An adversary gains access to a system/files and exfiltrates password hashes.</td></tr><tr><td>An adversary examines outward-facing configuration and properties files to discover hardcoded credentials.</td></tr></tbody></table></ol></div><div><h3>Experiment</h3><ol><li> <p> <b>Attempt authentication: </b>Try each operating system credential against various systems, applications, and services within the domain until the target grants access.</p></li><table><tbody><tr><th>Techniques</th></tr><tr><td>Manually or automatically enter each credential through the target's interface.</td></tr></tbody></table></ol></div><div><h3>Exploit</h3><ol><li> <p> <b>Impersonate: </b>An adversary can use successful experiments or authentications to impersonate an authorized user or system, or to laterally move within the network</p></li><li> <p> <b>Spoofing: </b>Malicious data can be injected into the target system or into other systems on the network. The adversary can also pose as a legitimate user to perform social engineering attacks.</p></li><li> <p> <b>Data Exfiltration: </b>The adversary can obtain sensitive data contained within system files or application configuration.</p></li></ol></div>",
+            "x_capec_extended_description": "\n            <xhtml:p>This attack can be extremely harmful when the operating system credentials used are for a root or admin user. Once an adversary gains access using credentials with elevated privileges, they are free to alter important system files which can effect other users who may use the system or other users on the system's network.</xhtml:p>\n         ",
+            "x_capec_likelihood_of_attack": "High",
+            "x_capec_parent_of_refs": [
+                "attack-pattern--f2654def-b86d-4ddb-888f-de6b50a103a2",
+                "attack-pattern--056a463d-6303-438e-a43f-992cee52fb95"
+            ],
+            "x_capec_prerequisites": [
+                "The system/application uses one factor password-based authentication, SSO, and/or cloud-based authentication.",
+                "The system/application does not have a sound password policy that is being enforced.",
+                "The system/application does not implement an effective password throttling mechanism.",
+                "The adversary possesses a list of known user accounts and corresponding passwords that may exist on the target."
+            ],
+            "x_capec_resources_required": [
+                "A list of known credentials for the targeted domain.",
+                "A custom script that leverages a credential list to launch an attack."
+            ],
+            "x_capec_skills_required": {
+                "Low": "Once an adversary obtains a known credential, leveraging it is trivial."
+            },
+            "x_capec_status": "Draft",
+            "x_capec_typical_severity": "High",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2020-07-30T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Leverage multi-factor authentication for all authentication services and prior to granting an entity access to the network.",
+            "id": "course-of-action--b1c371ce-f966-4db4-8193-eb03cd1d8190",
+            "modified": "2022-09-29T00:00:00.000Z",
+            "name": "coa-653-0",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "An adversary may try certain common or default usernames and passwords to gain access into the system and perform unauthorized actions. An adversary may try an intelligent brute force using empty passwords, known vendor default credentials, as well as a dictionary of common usernames and passwords. Many vendor products come preconfigured with default (and thus well-known) usernames and passwords that should be deleted prior to usage in a production environment. It is a common mistake to forget to remove these default login credentials. Another problem is that users would pick very simple (common) passwords (e.g. \"secret\" or \"password\") that make it easier for the attacker to gain access to the system compared to using a brute force attack or even a dictionary attack using a full dictionary.",
+            "external_references": [
+                {
+                    "external_id": "CAPEC-70",
+                    "source_name": "capec",
+                    "url": "https://capec.mitre.org/data/definitions/70.html"
+                },
+                {
+                    "external_id": "CWE-521",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/521.html"
+                },
+                {
+                    "external_id": "CWE-262",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/262.html"
+                },
+                {
+                    "external_id": "CWE-263",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/263.html"
+                },
+                {
+                    "external_id": "CWE-798",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/798.html"
+                },
+                {
+                    "external_id": "CWE-654",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/654.html"
+                },
+                {
+                    "external_id": "CWE-308",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/308.html"
+                },
+                {
+                    "external_id": "CWE-309",
+                    "source_name": "cwe",
+                    "url": "http://cwe.mitre.org/data/definitions/309.html"
+                },
+                {
+                    "description": "Valid Accounts:Default Accounts",
+                    "external_id": "T1078.001",
+                    "source_name": "ATTACK",
+                    "url": "https://attack.mitre.org/wiki/Technique/T1078/001"
+                },
+                {
+                    "description": "Corporate IoT – a path to intrusion, 2019--10---05, Microsoft Security Response Center (MSRC)",
+                    "external_id": "REF-572",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "https://msrc-blog.microsoft.com/2019/08/05/corporate-iot-a-path-to-intrusion"
+                },
+                {
+                    "description": "Risks of Default Passwords on the Internet, 2016--10---07, Cybersecurity and Infrastructure Security Agency (CISA)",
+                    "external_id": "REF-574",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "https://www.us-cert.gov/ncas/alerts/TA13-175A"
+                },
+                {
+                    "description": "OWASP Web Security Testing Guide, The Open Web Application Security Project (OWASP)",
+                    "external_id": "REF-596",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.html"
+                },
+                {
+                    "description": "OWASP Web Security Testing Guide, The Open Web Application Security Project (OWASP)",
+                    "external_id": "REF-597",
+                    "source_name": "reference_from_CAPEC",
+                    "url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/02-Testing_for_Default_Credentials.html"
+                }
+            ],
+            "id": "attack-pattern--8c7bab16-5ecd-4778-9b04-c185bceed170",
+            "modified": "2021-06-24T00:00:00.000Z",
+            "name": "Try Common or Default Usernames and Passwords",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "attack-pattern",
+            "x_capec_abstraction": "Detailed",
+            "x_capec_can_precede_refs": [
+                "attack-pattern--03a731ef-751b-43de-9159-9667d4be4d1a",
+                "attack-pattern--22802ed6-ddc6-4da7-b6be-60b10d26198b",
+                "attack-pattern--886a7175-e28a-4e6d-bd22-3b1497e31dc7",
+                "attack-pattern--f2654def-b86d-4ddb-888f-de6b50a103a2",
+                "attack-pattern--2618d0a4-06d0-4bde-8271-2df61ed8297a"
+            ],
+            "x_capec_child_of_refs": [
+                "attack-pattern--8d88a81c-bde9-4fb3-acbe-901c783d6427"
+            ],
+            "x_capec_consequences": {
+                "Access_Control": [
+                    "Gain Privileges"
+                ],
+                "Authorization": [
+                    "Gain Privileges"
+                ],
+                "Confidentiality": [
+                    "Gain Privileges"
+                ]
+            },
+            "x_capec_domains": [
+                "Software"
+            ],
+            "x_capec_example_instances": [
+                "A user sets their password to \"123\" or intentionally leaves their password blank. If the system does not have password strength enforcement against a sound password policy, this password may be admitted. Passwords like these two examples are two simple and common passwords that are easily able to be guessed by the adversary.",
+                "Cisco 2700 Series Wireless Location Appliances (version 2.1.34.0 and earlier) have a default administrator username \"root\" with a password \"password\". This allows remote attackers to easily obtain administrative privileges. See also: CVE-2006-5288",
+                "In April 2019, adversaries attacked several popular IoT devices (a VOIP phone, an office printer, and a video decoder) across multiple customer locations. An investigation conducted by the Microsoft Security Resposne Center (MSRC) discovered that these devices were used to gain initial access to corporate networks. In two of the cases, the passwords for the devices were deployed without changing the default manufacturer’s passwords and in the third instance the latest security update had not been applied to the device. [REF-572]"
+            ],
+            "x_capec_likelihood_of_attack": "Medium",
+            "x_capec_prerequisites": [
+                "The system uses one factor password based authentication.The adversary has the means to interact with the system."
+            ],
+            "x_capec_resources_required": [
+                "Technology or vendor specific list of default usernames and passwords."
+            ],
+            "x_capec_skills_required": {
+                "Low": "An adversary just needs to gain access to common default usernames/passwords specific to the technologies used by the system. Additionally, a brute force attack leveraging common passwords can be easily realized if the user name is known."
+            },
+            "x_capec_status": "Draft",
+            "x_capec_typical_severity": "High",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Delete all default account credentials that may be put in by the product vendor.",
+            "id": "course-of-action--a5bb8adb-a8f3-466a-af09-898ca2b29b74",
+            "modified": "2021-06-24T00:00:00.000Z",
+            "name": "coa-70-0",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Use language APIs rather than relying on passing data to the operating system shell or command line. Doing so ensures that the available protection mechanisms in the language are intact and applicable.",
+            "id": "course-of-action--ca12abfd-929e-4a4d-9bc0-c87d1daf98db",
+            "modified": "2021-06-24T00:00:00.000Z",
+            "name": "coa-88-0",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--9de3eaad-1ea7-4658-a9af-71b7e6a839d3",
+            "modified": "2021-06-24T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--ca12abfd-929e-4a4d-9bc0-c87d1daf98db",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--bfdeb5d3-c9da-44eb-bfd3-d3db719acfb3",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "Filter all incoming data to escape or remove characters or strings that can be potentially misinterpreted as operating system or shell commands",
+            "id": "course-of-action--23d88ce3-abfc-4664-b193-3c5a020033f6",
+            "modified": "2021-06-24T00:00:00.000Z",
+            "name": "coa-88-1",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "course-of-action",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--318ffd75-623d-4e4e-82ef-fe62b9837bef",
+            "modified": "2021-06-24T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--23d88ce3-abfc-4664-b193-3c5a020033f6",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--bfdeb5d3-c9da-44eb-bfd3-d3db719acfb3",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "id": "relationship--0c786816-7b0c-4fe7-b657-7e339aea5498",
+            "modified": "2023-01-24T00:00:00.000Z",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "relationship_type": "mitigates",
+            "source_ref": "course-of-action--b8cee0cf-4567-40f0-a8d6-0b1d71c03c27",
+            "spec_version": "2.1",
+            "target_ref": "attack-pattern--a00c2cc2-bd4f-4594-9ec1-b021b62ac896",
+            "type": "relationship",
+            "x_capec_version": "3.9"
+        },
+        {
+            "created": "2014-06-23T00:00:00.000Z",
+            "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+            "description": "This attack pattern has been deprecated as it a generalization of CAPEC-230: XML Nested Payloads and CAPEC-231: XML Oversized Payloads. Please refer to these CAPECs going forward.",
+            "external_references": [
+                {
+                    "external_id": "CAPEC-99",
+                    "source_name": "capec",
+                    "url": "https://capec.mitre.org/data/definitions/99.html"
+                }
+            ],
+            "id": "attack-pattern--28be41f9-7246-4484-869d-f0e2e82690ee",
+            "modified": "2019-09-30T00:00:00.000Z",
+            "name": "DEPRECATED: XML Parser Attack",
+            "object_marking_refs": [
+                "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+            ],
+            "spec_version": "2.1",
+            "type": "attack-pattern",
+            "x_capec_abstraction": "Standard",
+            "x_capec_status": "Deprecated",
+            "x_capec_version": "3.9"
+        }
+    ],
+    "type": "bundle"
+}

@@ -1,0 +1,12 @@
+{
+  "check": "at least one",
+  "comment": "Red Hat Enterprise Linux 5 is installed",
+  "id": "oval:com.redhat.rhba:tst:20070331005",
+  "version": "635",
+  "object": {
+    "object_ref": "oval:com.redhat.rhba:obj:20070331003"
+  },
+  "state": {
+    "state_ref": "oval:com.redhat.rhba:ste:20070331003"
+  }
+}
