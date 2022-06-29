@@ -4,7 +4,10 @@ import (
 	"fmt"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alma"
 )
 
 var (
@@ -50,6 +53,9 @@ func newCmdFetchOS() *cobra.Command {
 func fetchOSRun(name string) error {
 	switch name {
 	case "alma":
+		if err := alma.Fetch(); err != nil {
+			return errors.Wrap(err, "faled to fetch almalinux")
+		}
 	case "alpine":
 	case "amazon":
 	case "arch":
