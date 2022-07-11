@@ -1,0 +1,19 @@
+{
+  "apkurl": "{{urlprefix}}/{{distroversion}}/{{reponame}}/{{arch}}/{{pkg.name}}-{{pkg.ver}}.apk",
+  "archs": [
+    "armhf",
+    "x86",
+    "x86_64"
+  ],
+  "reponame": "main",
+  "urlprefix": "https://dl-cdn.alpinelinux.org/alpine",
+  "distroversion": "v3.2",
+  "packages": {
+    "CVE-2016-9401": [
+      {
+        "name": "bash",
+        "version": "4.3.33-r2"
+      }
+    ]
+  }
+}
