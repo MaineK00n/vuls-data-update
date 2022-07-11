@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
+	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/google/go-cmp v0.5.8
 	github.com/hashicorp/go-retryablehttp v0.7.1
@@ -13,6 +14,7 @@ require (
 
 require (
 	github.com/VividCortex/ewma v1.1.1 // indirect
+	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
@@ -21,5 +23,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8 // indirect
 	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 )

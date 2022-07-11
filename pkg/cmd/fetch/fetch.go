@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alma"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alpine"
 )
 
 var (
@@ -54,9 +55,12 @@ func fetchOSRun(name string) error {
 	switch name {
 	case "alma":
 		if err := alma.Fetch(); err != nil {
-			return errors.Wrap(err, "faled to fetch almalinux")
+			return errors.Wrap(err, "failed to fetch almalinux")
 		}
 	case "alpine":
+		if err := alpine.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch alpine linux")
+		}
 	case "amazon":
 	case "arch":
 	case "debian":
@@ -136,7 +140,7 @@ func fetchOtherRun(name string) error {
 	case "msfdb":
 	case "nvd":
 	default:
-		return fmt.Errorf("accepts %q, received %q", supportOS, name)
+		return fmt.Errorf("accepts %q, received %q", supportOther, name)
 	}
 	return nil
 }

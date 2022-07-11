@@ -1,0 +1,29 @@
+{
+  "apkurl": "{{urlprefix}}/{{distroversion}}/{{reponame}}/{{arch}}/{{pkg.name}}-{{pkg.ver}}.apk",
+  "archs": [
+    "aarch64",
+    "armhf",
+    "armv7",
+    "ppc64le",
+    "s390x",
+    "x86",
+    "x86_64"
+  ],
+  "reponame": "main",
+  "urlprefix": "https://dl-cdn.alpinelinux.org/alpine",
+  "distroversion": "v3.16",
+  "packages": {
+    "CVE-2017-9798": [
+      {
+        "name": "apache2",
+        "version": "2.4.27-r1"
+      }
+    ],
+    "CVE-2018-11763": [
+      {
+        "name": "apache2",
+        "version": "2.4.35-r0"
+      }
+    ]
+  }
+}
