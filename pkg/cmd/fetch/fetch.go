@@ -10,6 +10,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alma"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alpine"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/amazon"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
 )
 
 var (
@@ -67,6 +68,9 @@ func fetchOSRun(name string) error {
 			return errors.Wrap(err, "failed to fetch amazon linux")
 		}
 	case "arch":
+		if err := arch.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch arch linux")
+		}
 	case "debian":
 	case "epel":
 	case "fedora":
