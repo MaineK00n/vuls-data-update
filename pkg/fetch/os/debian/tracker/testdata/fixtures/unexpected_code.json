@@ -1,0 +1,16 @@
+{
+  "389-ds-base": {
+    "CVE-xxxx-xxxx": {
+      "releases": {
+        "squeeze": {
+          "status": "resolved",
+          "repositories": {
+            "squeeze": "0"
+          },
+          "fixed_version": "0",
+          "urgency": "unimportant"
+        }
+      }
+    }
+  }
+}
