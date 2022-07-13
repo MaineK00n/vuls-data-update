@@ -11,6 +11,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alpine"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
+	do "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian/oval"
 	dt "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian/tracker"
 )
 
@@ -75,6 +76,9 @@ func fetchOSRun(name string) error {
 	case "debian":
 		if err := dt.Fetch(); err != nil {
 			return errors.Wrap(err, "failed to fetch debian security tracker")
+		}
+		if err := do.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch debian oval")
 		}
 	case "epel":
 	case "fedora":
