@@ -17,7 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/exp/maps"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian/codename"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
@@ -74,7 +74,6 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Debian OVAL")
 	ovals, err := options.walkIndexOf()
 	if err != nil {
 		return errors.Wrap(err, "walk index of")
@@ -82,9 +81,9 @@ func Fetch(opts ...Option) error {
 
 	for _, ovalname := range ovals {
 		code := strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml"), "oval-definitions-")
-		v, ok := debian.CodeToVer[code]
+		v, ok := codename.CodeToVer[code]
 		if !ok {
-			return errors.Errorf("unexpected codename. accepts %q, received %q", maps.Keys(debian.CodeToVer), code)
+			return errors.Errorf("unexpected codename. accepts %q, received %q", maps.Keys(codename.CodeToVer), code)
 		}
 
 		log.Printf("[INFO] Fetch Debian %s OVAL", v)
