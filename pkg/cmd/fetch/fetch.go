@@ -12,6 +12,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
 )
 
 var (
@@ -80,6 +81,9 @@ func fetchOSRun(name string) error {
 	case "fedora":
 	case "gentoo":
 	case "oracle":
+		if err := oracle.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch oracle linux")
+		}
 	case "redhat":
 	case "rocky":
 	case "suse":
