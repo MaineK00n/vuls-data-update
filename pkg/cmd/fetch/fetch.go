@@ -13,6 +13,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
 )
 
 var (
@@ -88,6 +89,9 @@ func fetchOSRun(name string) error {
 	case "rocky":
 	case "suse":
 	case "ubuntu":
+		if err := ubuntu.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch ubuntu")
+		}
 	case "windows":
 	default:
 		return fmt.Errorf("accepts %q, received %q", supportOS, name)
