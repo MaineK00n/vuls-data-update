@@ -4,3 +4,6 @@
 [submodule "output"]
 	path = output
 	url = https://github.com/MaineK00n/vuls-data.git
+[submodule "pkg/fetch/os/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker"]
+	path = pkg/fetch/os/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker
+	url = https://github.com/MaineK00n/ubuntu-security-tracker.git

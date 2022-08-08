@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/tracker"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
@@ -54,10 +55,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch ubuntu oval")
 	}
 
-	// log.Println("[INFO] Fetch Ubuntu Security Tracker")
-	// if err := tracker.Fetch(tracker.WithDir(filepath.Join(options.dir, "tracker")), tracker.WithRetry(options.retry)); err != nil {
-	// 	return errors.Wrap(err, "fetch ubuntu security tracker")
-	// }
+	log.Println("[INFO] Fetch Ubuntu Security Tracker")
+	if err := tracker.Fetch(tracker.WithDir(filepath.Join(options.dir, "tracker")), tracker.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch ubuntu security tracker")
+	}
 
 	return nil
 }
