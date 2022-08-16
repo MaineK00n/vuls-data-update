@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions
+	xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd
+						http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd
+						http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd
+						http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
+	xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+	xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+	<generator>
+		<oval:product_name>Marcus Updateinfo to OVAL Converter</oval:product_name>
+		<oval:schema_version>5.5</oval:schema_version>
+		<oval:timestamp>2013-08-14T17:14:44</oval:timestamp>
+	</generator>
+	<definitions>
+		<definition id="oval:org.opensuse.security:def: 20125252" version="1" class="vulnerability">
+			<metadata>
+				<title> CVE-2012-5252</title>
+				<affected family="unix">
+					<platform>openSUSE 12.1</platform>
+					<platform>openSUSE 12.1 Update</platform>
+				</affected>
+				<reference ref_id=" CVE-2012-5252" ref_url="http://cve.mitre.org/cgi-bin/cvename.cgi?name= CVE-2012-5252" source="CVE" />
+				<description>
+    Unknown.
+    </description>
+			</metadata>
+			<criteria operator="OR">
+				<criteria operator="OR">
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089345" comment="flash-player-11.2.202.243-30.1 is installed" />
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089345" comment="flash-player-11.2.202.243-30.1 is installed" />
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089346" comment="flash-player-gnome-11.2.202.243-30.1 is installed" />
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089347" comment="flash-player-kde4-11.2.202.243-30.1 is installed" />
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089345" comment="flash-player-11.2.202.243-30.1 is installed" />
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089346" comment="flash-player-gnome-11.2.202.243-30.1 is installed" />
+					<criterion test_ref="oval:org.opensuse.security:tst:2009089347" comment="flash-player-kde4-11.2.202.243-30.1 is installed" />
+				</criteria>
+			</criteria>
+		</definition>
+	</definitions>
+	<tests>
+		<rpminfo_test id="oval:org.opensuse.security:tst:2009089345" version="1" comment="flash-player is &lt;11.2.202.243-30.1" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<object object_ref="oval:org.opensuse.security:obj:2009030601" />
+			<state state_ref="oval:org.opensuse.security:ste:2009042137" />
+		</rpminfo_test>
+		<rpminfo_test id="oval:org.opensuse.security:tst:2009089346" version="1" comment="flash-player-gnome is &lt;11.2.202.243-30.1" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<object object_ref="oval:org.opensuse.security:obj:2009035114" />
+			<state state_ref="oval:org.opensuse.security:ste:2009042137" />
+		</rpminfo_test>
+		<rpminfo_test id="oval:org.opensuse.security:tst:2009089347" version="1" comment="flash-player-kde4 is &lt;11.2.202.243-30.1" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<object object_ref="oval:org.opensuse.security:obj:2009035115" />
+			<state state_ref="oval:org.opensuse.security:ste:2009042137" />
+		</rpminfo_test>
+	</tests>
+	<objects>
+		<rpminfo_object id="oval:org.opensuse.security:obj:2009030601" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<name>flash-player</name>
+		</rpminfo_object>
+		<rpminfo_object id="oval:org.opensuse.security:obj:2009035114" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<name>flash-player-gnome</name>
+		</rpminfo_object>
+		<rpminfo_object id="oval:org.opensuse.security:obj:2009035115" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<name>flash-player-kde4</name>
+		</rpminfo_object>
+	</objects>
+	<states>
+		<rpminfo_state id="oval:org.opensuse.security:ste:2009042137" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<evr datatype="evr_string" operation="less than">0:11.2.202.243-30.1</evr>
+		</rpminfo_state>
+	</states>
+</oval_definitions>

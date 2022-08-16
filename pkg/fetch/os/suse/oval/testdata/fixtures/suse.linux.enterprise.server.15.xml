@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions
+    xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
+    xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+    xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+    <generator>
+        <oval:product_name>Marcus Updateinfo to OVAL Converter</oval:product_name>
+        <oval:schema_version>5.5</oval:schema_version>
+        <oval:timestamp>2022-08-10T06:39:21</oval:timestamp>
+    </generator>
+    <definitions>
+        <definition id="oval:org.opensuse.security:def:19990524" version="1" class="vulnerability">
+            <metadata>
+                <title>CVE-1999-0524</title>
+                <affected family="unix">
+                    <platform>SUSE Linux Enterprise Desktop 15</platform>
+                    <platform>SUSE Linux Enterprise High Performance Computing 15</platform>
+                    <platform>SUSE Linux Enterprise Module for Basesystem 15</platform>
+                    <platform>SUSE Linux Enterprise Module for Development Tools 15</platform>
+                    <platform>SUSE Linux Enterprise Server 15</platform>
+                    <platform>SUSE Linux Enterprise Server for SAP Applications 15</platform>
+                </affected>
+                <reference ref_id="Mitre CVE-1999-0524" ref_url="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-1999-0524" source="CVE" />
+                <reference ref_id="SUSE CVE-1999-0524" ref_url="https://www.suse.com/security/cve/CVE-1999-0524" source="SUSE CVE" />
+                <description>
+    ICMP information such as (1) netmask and (2) timestamp is allowed from arbitrary hosts.
+    </description>
+                <advisory from="security@suse.de">
+                    <issued date="2021-04-30" />
+                    <updated date="2022-04-14" />
+                    <severity>Moderate</severity>
+                    <cve impact="moderate" href="https://www.suse.com/security/cve/CVE-1999-0524/">CVE-1999-0524</cve>
+                    <bugzilla href="https://bugzilla.suse.com/992991">SUSE bug 992991</bugzilla>
+                    <affected_cpe_list>
+                        <cpe>cpe:/o:suse:sle-module-basesystem:15</cpe>
+                        <cpe>cpe:/o:suse:sle-module-development-tools:15</cpe>
+                        <cpe>cpe:/o:suse:sle_hpc:15</cpe>
+                        <cpe>cpe:/o:suse:sled:15</cpe>
+                        <cpe>cpe:/o:suse:sles:15</cpe>
+                        <cpe>cpe:/o:suse:sles_sap:15</cpe>
+                    </affected_cpe_list>
+                </advisory>
+            </metadata>
+            <criteria operator="AND">
+                <criteria operator="OR">
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009242640" comment="SUSE Linux Enterprise Server 15 is installed" />
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009276218" comment="SUSE Linux Enterprise Server for SAP Applications 15 is installed" />
+                </criteria>
+                <criteria operator="OR">
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009334017" comment="kernel-default is not affected" />
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009333928" comment="kernel-source is not affected" />
+                </criteria>
+            </criteria>
+        </definition>
+        <definition id="oval:org.opensuse.security:def:20220330" version="1" class="vulnerability">
+            <metadata>
+                <title>CVE-2022-0330</title>
+                <affected family="unix">
+                    <platform>SUSE Linux Enterprise Desktop 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Desktop 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise High Performance Computing 15</platform>
+                    <platform>SUSE Linux Enterprise High Performance Computing 15 SP1</platform>
+                    <platform>SUSE Linux Enterprise High Performance Computing 15 SP2</platform>
+                    <platform>SUSE Linux Enterprise High Performance Computing 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise High Performance Computing 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Micro 5.1</platform>
+                    <platform>SUSE Linux Enterprise Micro 5.2</platform>
+                    <platform>SUSE Linux Enterprise Module for Basesystem 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Module for Basesystem 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Module for Development Tools 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Module for Development Tools 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Module for Legacy 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Module for Legacy 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Module for Live Patching 15</platform>
+                    <platform>SUSE Linux Enterprise Module for Live Patching 15 SP1</platform>
+                    <platform>SUSE Linux Enterprise Module for Live Patching 15 SP2</platform>
+                    <platform>SUSE Linux Enterprise Module for Live Patching 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Module for Public Cloud 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Module for Public Cloud 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Module for Realtime packages 15 SP2</platform>
+                    <platform>SUSE Linux Enterprise Module for Realtime packages 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Real Time 15 SP2</platform>
+                    <platform>SUSE Linux Enterprise Real Time 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Server 15</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP1</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP1-BCL</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP1-LTSS</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP2</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP2-BCL</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP2-LTSS</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Server 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Server 15-LTSS</platform>
+                    <platform>SUSE Linux Enterprise Server for SAP Applications 15</platform>
+                    <platform>SUSE Linux Enterprise Server for SAP Applications 15 SP1</platform>
+                    <platform>SUSE Linux Enterprise Server for SAP Applications 15 SP2</platform>
+                    <platform>SUSE Linux Enterprise Server for SAP Applications 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Server for SAP Applications 15 SP4</platform>
+                    <platform>SUSE Linux Enterprise Storage 7.1</platform>
+                    <platform>SUSE Linux Enterprise Workstation Extension 15 SP3</platform>
+                    <platform>SUSE Linux Enterprise Workstation Extension 15 SP4</platform>
+                    <platform>SUSE Manager Proxy 4.2</platform>
+                    <platform>SUSE Manager Proxy 4.3</platform>
+                    <platform>SUSE Manager Retail Branch Server 4.2</platform>
+                    <platform>SUSE Manager Retail Branch Server 4.3</platform>
+                    <platform>SUSE Manager Server 4.2</platform>
+                    <platform>SUSE Manager Server 4.3</platform>
+                </affected>
+                <reference ref_id="Mitre CVE-2022-0330" ref_url="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-0330" source="CVE" />
+                <reference ref_id="SUSE CVE-2022-0330" ref_url="https://www.suse.com/security/cve/CVE-2022-0330" source="SUSE CVE" />
+                <reference ref_id="SUSE-IU-2022:282-1" ref_url="https://lists.suse.com/pipermail/sle-updates/2022-February/021863.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:283-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010313.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:284-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-March/010324.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:814-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-July/011574.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:817-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-July/011575.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:836-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-July/011573.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:853-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-July/011592.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:859-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-July/011593.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-IU-2022:878-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-July/011591.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0362-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010210.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0363-1" ref_url="https://lists.suse.com/pipermail/sle-updates/2022-February/021670.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0364-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010215.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0365-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010211.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0367-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010213.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0370-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010216.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0371-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010217.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0372-1" ref_url="https://lists.suse.com/pipermail/sle-updates/2022-February/021678.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0477-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010246.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0543-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010282.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0544-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010284.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:0555-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-February/010290.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1569-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010966.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1575-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010969.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1580-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010975.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1589-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010984.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1591-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010976.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1605-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010983.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1637-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010990.html" source="SUSE-SU" />
+                <reference ref_id="SUSE-SU-2022:1640-1" ref_url="https://lists.suse.com/pipermail/sle-security-updates/2022-May/010991.html" source="SUSE-SU" />
+                <reference ref_id="openSUSE-SU-2022:0363-1" ref_url="https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/K4ZJSATCJ2GMGCX6RSG2TU2YU4DDOMVQ/" source="SUSE-SU" />
+                <reference ref_id="openSUSE-SU-2022:0366-1" ref_url="https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/CFUCZRWH2IP7FOHVYO3TO3G5PFWQXLP6/" source="SUSE-SU" />
+                <reference ref_id="openSUSE-SU-2022:0370-1" ref_url="https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/ASMTCFCDULHGAOBQUFJH4PHVCQSTF7S6/" source="SUSE-SU" />
+                <description>
+    A random memory access flaw was found in the Linux kernel's GPU i915 kernel driver functionality in the way a user may run malicious code on the GPU. This flaw allows a local user to crash the system or escalate their privileges on the system.
+    </description>
+                <advisory from="security@suse.de">
+                    <issued date="2022-03-01" />
+                    <updated date="2022-07-21" />
+                    <severity>Important</severity>
+                    <cve impact="important" cvss3="7/CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H" href="https://www.suse.com/security/cve/CVE-2022-0330/">CVE-2022-0330</cve>
+                    <bugzilla href="https://bugzilla.suse.com/1194880">SUSE bug 1194880</bugzilla>
+                    <bugzilla href="https://bugzilla.suse.com/1195950">SUSE bug 1195950</bugzilla>
+                    <affected_cpe_list>
+                        <cpe>cpe:/o:suse:ses:7.1</cpe>
+                        <cpe>cpe:/o:suse:sle-live-patching:15</cpe>
+                        <cpe>cpe:/o:suse:sle-live-patching:15:sp1</cpe>
+                        <cpe>cpe:/o:suse:sle-module-basesystem:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-module-basesystem:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sle-module-development-tools:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-module-development-tools:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sle-module-legacy:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-module-legacy:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sle-module-live-patching:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sle-module-live-patching:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-module-public-cloud:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-module-public-cloud:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sle-module-rt:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sle-module-rt:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-we:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle-we:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sle_hpc:15</cpe>
+                        <cpe>cpe:/o:suse:sle_hpc:15:sp1</cpe>
+                        <cpe>cpe:/o:suse:sle_hpc:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sle_hpc:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sle_hpc:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sle_rt:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sle_rt:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sled:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sled:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sles-ltss:15</cpe>
+                        <cpe>cpe:/o:suse:sles-ltss:15:sp1</cpe>
+                        <cpe>cpe:/o:suse:sles-ltss:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sles:15</cpe>
+                        <cpe>cpe:/o:suse:sles:15:sp1</cpe>
+                        <cpe>cpe:/o:suse:sles:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sles:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sles:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:sles_bcl:15:sp1</cpe>
+                        <cpe>cpe:/o:suse:sles_bcl:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sles_sap:15</cpe>
+                        <cpe>cpe:/o:suse:sles_sap:15:sp1</cpe>
+                        <cpe>cpe:/o:suse:sles_sap:15:sp2</cpe>
+                        <cpe>cpe:/o:suse:sles_sap:15:sp3</cpe>
+                        <cpe>cpe:/o:suse:sles_sap:15:sp4</cpe>
+                        <cpe>cpe:/o:suse:suse-manager-proxy:4.2</cpe>
+                        <cpe>cpe:/o:suse:suse-manager-proxy:4.3</cpe>
+                        <cpe>cpe:/o:suse:suse-manager-retail-branch-server:4.2</cpe>
+                        <cpe>cpe:/o:suse:suse-manager-retail-branch-server:4.3</cpe>
+                        <cpe>cpe:/o:suse:suse-manager-server:4.2</cpe>
+                        <cpe>cpe:/o:suse:suse-manager-server:4.3</cpe>
+                        <cpe>cpe:/o:suse:suse-microos:5.1</cpe>
+                        <cpe>cpe:/o:suse:suse-microos:5.2</cpe>
+                    </affected_cpe_list>
+                </advisory>
+            </metadata>
+            <criteria operator="OR">
+                <criteria operator="AND">
+                    <criteria operator="OR">
+                        <criterion test_ref="oval:org.opensuse.security:tst:2009669877" comment="SUSE Linux Enterprise High Performance Computing 15 SP3 is installed" />
+                    </criteria>
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009667454" comment="reiserfs-kmp-default-5.3.18-150300.59.49.1 is installed" />
+                </criteria>
+                <criteria operator="AND">
+                    <criteria operator="OR">
+                        <criterion test_ref="oval:org.opensuse.security:tst:2009669927" comment="SUSE Linux Enterprise Server 15 SP4 is installed" />
+                        <criterion test_ref="oval:org.opensuse.security:tst:2009681299" comment="SUSE Manager Server 4.3 is installed" />
+                    </criteria>
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009691334" comment="reiserfs-kmp-default-5.14.21-150400.22.1 is installed" />
+                </criteria>
+                <criteria operator="AND">
+                    <criterion test_ref="oval:org.opensuse.security:tst:2009276218" comment="SUSE Linux Enterprise Server for SAP Applications 15 is installed" />
+                    <criteria operator="OR">
+                        <!-- For kernel default affectedness we evaluate affectedness for the lowest kernel without livepatch for the issue, and for each livepatched kernel version we check if no livepatch is installed with the right version or higher
+   OR(
+       AND(affected kernel1, NONE SATISFY(livepatch for kernel1 >= fixed livepatch1 version installed)),
+       AND(affected kernel2, NONE SATISFY(livepatch for kernel2 >= fixed livepatch2 version installed)),
+       kernel <= version before first livepatch provided
+   ) -->
+                        <criteria operator="OR">
+                            <criteria operator="AND">
+                                <criterion test_ref="oval:org.opensuse.security:tst:2009698720" comment="kernel-default 4.12.14-150.72.1 is installed" />
+                                <criterion test_ref="oval:org.opensuse.security:tst:2009698721" comment="no kernel-livepatch-4_12_14-150_72-default is greater or equal than 16-150000.2.1" />
+                            </criteria>
+                            <criterion test_ref="oval:org.opensuse.security:tst:2009698726" comment="kernel-default is less than 4.12.14-150.78.1" />
+                        </criteria>
+                    </criteria>
+                </criteria>
+            </criteria>
+        </definition>
+    </definitions>
+    <tests>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009242640" version="1" comment="sles-release is ==15" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009030884" />
+            <state state_ref="oval:org.opensuse.security:ste:2009061809" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009276218" version="1" comment="SLES_SAP-release is ==15" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009047546" />
+            <state state_ref="oval:org.opensuse.security:ste:2009061809" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009334017" version="1" comment="kernel-default is ==0" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009030416" />
+            <state state_ref="oval:org.opensuse.security:ste:2009079458" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009333928" version="1" comment="kernel-source is ==0" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009030418" />
+            <state state_ref="oval:org.opensuse.security:ste:2009079458" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009669877" version="1" comment="SLE_HPC-release is ==15.3" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009051714" />
+            <state state_ref="oval:org.opensuse.security:ste:2009074736" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009667454" version="1" comment="reiserfs-kmp-default is &lt;5.3.18-150300.59.49.1 for aarch64,ppc64le,s390x,x86_64" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009046423" />
+            <state state_ref="oval:org.opensuse.security:ste:2009157321" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009669927" version="1" comment="sles-release is ==15.4" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009030884" />
+            <state state_ref="oval:org.opensuse.security:ste:2009156779" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009681299" version="1" comment="SUSE-Manager-Server-release is ==4.3" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009049583" />
+            <state state_ref="oval:org.opensuse.security:ste:2009160410" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009691334" version="1" comment="reiserfs-kmp-default is &lt;5.14.21-150400.22.1" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009046423" />
+            <state state_ref="oval:org.opensuse.security:ste:2009161423" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009698720" version="1" comment="kernel-default is ==4.12.14-150.72.1" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009030416" />
+            <state state_ref="oval:org.opensuse.security:ste:2009166508" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009698721" version="1" comment="kernel-livepatch-4_12_14-150_72-default is &gt;=16-150000.2.1" check="none satisfy" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009051571" />
+            <state state_ref="oval:org.opensuse.security:ste:2009166509" />
+        </rpminfo_test>
+        <rpminfo_test id="oval:org.opensuse.security:tst:2009698726" version="1" comment="kernel-default is &lt;4.12.14-150.78.1" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <object object_ref="oval:org.opensuse.security:obj:2009030416" />
+            <state state_ref="oval:org.opensuse.security:ste:2009166514" />
+        </rpminfo_test>
+    </tests>
+    <objects>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009030884" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>sles-release</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009047546" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>SLES_SAP-release</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009030416" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>kernel-default</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009030418" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>kernel-source</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009051714" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>SLE_HPC-release</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009046423" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>reiserfs-kmp-default</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009049583" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>SUSE-Manager-Server-release</name>
+        </rpminfo_object>
+        <rpminfo_object id="oval:org.opensuse.security:obj:2009051571" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <name>kernel-livepatch-4_12_14-150_72-default</name>
+        </rpminfo_object>
+    </objects>
+    <states>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009061809" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <version operation="equals">15</version>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009079458" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <version operation="equals">0</version>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009074736" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <version operation="equals">15.3</version>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009157321" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <arch datatype="string" operation="pattern match">(aarch64|ppc64le|s390x|x86_64)</arch>
+            <evr datatype="evr_string" operation="less than">0:5.3.18-150300.59.49.1</evr>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009156779" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <version operation="equals">15.4</version>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009160410" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <version operation="equals">4.3</version>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009161423" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <evr datatype="evr_string" operation="less than">0:5.14.21-150400.22.1</evr>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009166508" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <evr datatype="evr_string" operation="equals">0:4.12.14-150.72.1</evr>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009166509" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <evr datatype="evr_string" operation="greater than or equal">0:16-150000.2.1-0</evr>
+        </rpminfo_state>
+        <rpminfo_state id="oval:org.opensuse.security:ste:2009166514" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <evr datatype="evr_string" operation="less than">0:4.12.14-150.78.1</evr>
+        </rpminfo_state>
+    </states>
+</oval_definitions>
