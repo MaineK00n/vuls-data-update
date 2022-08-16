@@ -73,7 +73,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		urls:  map[string]string{},
-		dir:   filepath.Join(util.CacheDir(), "source", "suse", "oval"),
+		dir:   filepath.Join(util.SourceDir(), "suse", "oval"),
 		retry: 3,
 	}
 

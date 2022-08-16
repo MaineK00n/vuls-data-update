@@ -68,7 +68,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		repoURL: defaultRepoURL,
-		dir:     filepath.Join(util.CacheDir(), "source", "ubuntu", "tracker"),
+		dir:     filepath.Join(util.SourceDir(), "ubuntu", "tracker"),
 		retry:   3,
 	}
 
@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	cloneDir := filepath.Join(util.CacheDir(), "clone")
+	cloneDir := filepath.Join(util.SourceDir(), "clone")
 	if err := os.RemoveAll(cloneDir); err != nil {
 		return errors.Wrapf(err, "remove %s", cloneDir)
 	}

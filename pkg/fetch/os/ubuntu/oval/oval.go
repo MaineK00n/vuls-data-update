@@ -79,7 +79,7 @@ func Fetch(opts ...Option) error {
 			"impish":  fmt.Sprintf(mainURLFormat, "impish"),
 			"jammy":   fmt.Sprintf(mainURLFormat, "jammy"),
 		},
-		dir:   filepath.Join(util.CacheDir(), "source", "ubuntu", "oval"),
+		dir:   filepath.Join(util.SourceDir(), "ubuntu", "oval"),
 		retry: 3,
 	}
 
