@@ -1,0 +1,2 @@
+https://cve.mitre.org/data/downloads/allitems.xml.gz
+https://cve.mitre.org/data/downloads/allitems-cvrf.xml

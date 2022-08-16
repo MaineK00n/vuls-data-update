@@ -1,0 +1,376 @@
+name: Update vuls-data
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    name: fetch vuls-data-source
+    runs-on: ubuntu-latest
+    steps:
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          submodules: recursive
+
+      - name: update source submodule
+        run: git submodule update --remote --recursive source
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+
+      - name: go install
+        run: go install ./cmd/vuls-data-update
+
+      - name: fetch os alma
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os alma
+          cd source
+          git add alma
+          git commit --allow-empty -m "update alma"
+          git push origin HEAD:main
+          cd ..
+
+      - name: fetch os alpine
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os alpine
+          cd source
+          git add alpine
+          git commit --allow-empty -m "update alpine"
+          git push origin HEAD:main
+          cd ..
+
+      - name: fetch os amazon
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os amazon
+          cd source
+          git add amazon
+          git commit --allow-empty -m "update amazon"
+          git push origin HEAD:main
+          cd ..
+
+      - name: fetch os arch
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os arch
+          cd source
+          git add arch
+          git commit --allow-empty -m "update arch"
+          git push origin HEAD:main
+          cd ..
+
+      - name: fetch os debian
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os debian
+          cd source
+          git add debian
+          git commit --allow-empty -m "update debian"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: fetch os epel
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os epel
+      #     cd source
+      #     git add epel
+      #     git commit --allow-empty -m "update epel"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch os fedora
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os fedora
+      #     cd source
+      #     git add fedora
+      #     git commit --allow-empty -m "update fedora"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch os gentoo
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os gentoo
+      #     cd source
+      #     git add gentoo
+      #     git commit --allow-empty -m "update gentoo"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: fetch os oracle
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os oracle
+          cd source
+          git add oracle
+          git commit --allow-empty -m "update oracle"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: fetch os redhat
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os redhat
+      #     cd source
+      #     git add redhat
+      #     git commit --allow-empty -m "update redhat"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch os rocky
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os rocky
+      #     cd source
+      #     git add rocky
+      #     git commit --allow-empty -m "update rocky"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: fetch os suse
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os suse
+          cd source
+          git add suse
+          git commit --allow-empty -m "update suse"
+          git push origin HEAD:main
+          cd ..
+
+      - name: fetch os ubuntu
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os ubuntu
+          cd source
+          git add ubuntu
+          git commit --allow-empty -m "update ubuntu"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: fetch os windows
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os windows
+      #     cd source
+      #     git add windows
+      #     git commit --allow-empty -m "update windows"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library cargo
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library cargo
+      #     cd source
+      #     git add cargo
+      #     git commit --allow-empty -m "update cargo"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library composer
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library composer
+      #     cd source
+      #     git add composer
+      #     git commit --allow-empty -m "update composer"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library conan
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library conan
+      #     cd source
+      #     git add conan
+      #     git commit --allow-empty -m "update conan"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library erlang
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library erlang
+      #     cd source
+      #     git add erlang
+      #     git commit --allow-empty -m "update erlang"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library go
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library go
+      #     cd source
+      #     git add go
+      #     git commit --allow-empty -m "update go"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library maven
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library maven
+      #     cd source
+      #     git add maven
+      #     git commit --allow-empty -m "update maven"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library npm
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library npm
+      #     cd source
+      #     git add npm
+      #     git commit --allow-empty -m "update npm"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library nuget
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library nuget
+      #     cd source
+      #     git add nuget
+      #     git commit --allow-empty -m "update nuget"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library pip
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library pip
+      #     cd source
+      #     git add pip
+      #     git commit --allow-empty -m "update pip"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch library rubygems
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch library rubygems
+      #     cd source
+      #     git add rubygems
+      #     git commit --allow-empty -m "update rubygems"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other cti
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other cti
+      #     cd source
+      #     git add cti
+      #     git commit --allow-empty -m "update cti"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other cwe
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other cwe
+      #     cd source
+      #     git add cwe
+      #     git commit --allow-empty -m "update cwe"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: fetch other epss
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other epss
+          cd source
+          git add epss
+          git commit --allow-empty -m "update epss"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: fetch other exploit
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other exploit
+      #     cd source
+      #     git add exploit
+      #     git commit --allow-empty -m "update exploit"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other jvn
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other jvn
+      #     cd source
+      #     git add jvn
+      #     git commit --allow-empty -m "update jvn"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other kev
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other kev
+      #     cd source
+      #     git add kev
+      #     git commit --allow-empty -m "update kev"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other mitre
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other mitre
+      #     cd source
+      #     git add mitre
+      #     git commit --allow-empty -m "update mitre"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other msfdb
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other msfdb
+      #     cd source
+      #     git add msfdb
+      #     git commit --allow-empty -m "update msfdb"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other nvd
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other nvd
+      #     cd source
+      #     git add nvd
+      #     git commit --allow-empty -m "update nvd"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: Check git status
+        if: ${{ success() || failure() }}
+        id: status
+        run: echo "::set-output name=status::$(git status -s)"
+
+      - name: update source submodule commit
+        if: ${{ steps.status.outputs.status }}
+        run: |
+          git add source
+          git commit -m "chore(ci): update source submodule"
+          git push
+
+  # build:

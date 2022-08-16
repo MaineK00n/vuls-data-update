@@ -1,0 +1,2 @@
+https://gitlab.com/gitlab-org/advisories-community/-/tree/main/maven
+https://developer.github.com/v4/enum/securityadvisoryecosystem/ Maven

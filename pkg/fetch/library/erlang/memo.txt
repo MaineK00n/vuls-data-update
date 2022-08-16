@@ -1,0 +1,1 @@
+https://developer.github.com/v4/enum/securityadvisoryecosystem/ Erlang
