@@ -8,6 +8,7 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/google/go-cmp v0.5.8
 	github.com/hashicorp/go-retryablehttp v0.7.1
+	github.com/hashicorp/go-version v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.5.0
 	golang.org/x/exp v0.0.0-20220706164943-b4a6d9510983
