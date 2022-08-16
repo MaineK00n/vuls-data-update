@@ -6,6 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -54,10 +55,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch suse oval")
 	}
 
-	// log.Println("[INFO] Fetch SUSE CVRF")
-	// if err := cvrf.Fetch(cvrf.WithDir(filepath.Join(options.dir, "cvrf")), cvrf.WithRetry(options.retry)); err != nil {
-	// 	return errors.Wrap(err, "fetch suse cvrf")
-	// }
+	log.Println("[INFO] Fetch SUSE CVRF")
+	if err := cvrf.Fetch(cvrf.WithDir(filepath.Join(options.dir, "cvrf")), cvrf.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch suse cvrf")
+	}
 
 	return nil
 }

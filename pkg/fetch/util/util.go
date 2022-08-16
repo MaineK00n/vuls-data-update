@@ -1,13 +1,16 @@
 package util
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
 )
 
 func CacheDir() string {
@@ -55,5 +58,47 @@ func FetchURL(url string, retry int) ([]byte, error) {
 }
 
 func FetchConcurrently(urls []string, concurrency, wait, retry int) ([][]byte, error) {
-	return nil, nil
+	g, ctx := errgroup.WithContext(context.Background())
+	urlChan := make(chan string)
+	go func() {
+		defer close(urlChan)
+		for _, u := range urls {
+			urlChan <- u
+		}
+	}()
+
+	respChan := make(chan []byte, len(urls))
+	timeout := time.After(10 * 60 * time.Second)
+	for i := 0; i < concurrency; i++ {
+		g.Go(func() error {
+			for u := range urlChan {
+				bs, err := FetchURL(u, retry)
+				if err != nil {
+					return err
+				}
+				select {
+				case respChan <- bs:
+				case <-ctx.Done():
+					return ctx.Err()
+				case <-timeout:
+					return errors.New("timeout")
+				}
+				time.Sleep(time.Duration(wait) * time.Second)
+			}
+			return nil
+		})
+	}
+	go func() {
+		g.Wait()
+		close(respChan)
+	}()
+
+	bss := make([][]byte, 0, len(urls))
+	for r := range respChan {
+		bss = append(bss, r)
+	}
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+	return bss, nil
 }

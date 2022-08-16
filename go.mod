@@ -13,6 +13,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	golang.org/x/exp v0.0.0-20220706164943-b4a6d9510983
 	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
 )
 
 require (
