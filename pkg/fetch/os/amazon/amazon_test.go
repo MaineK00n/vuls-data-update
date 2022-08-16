@@ -76,11 +76,17 @@ func TestFetch(t *testing.T) {
 				case strings.HasSuffix(r.URL.Path, "/mirror.list"):
 					switch {
 					case strings.HasPrefix(r.URL.Path, "/2018.03/"):
-						w.Write([]byte(fmt.Sprintf("http://%s/2018.03/updates/2778354585d0/x86_64", r.Host)))
+						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2018.03/updates/2778354585d0/x86_64", r.Host))); err != nil {
+							t.Error("unexpected error:", err)
+						}
 					case strings.HasPrefix(r.URL.Path, "/2/"):
-						w.Write([]byte(fmt.Sprintf("http://%s/2/core/2.0/x86_64/5454bdaaf3e2fa8d3aac354bd0b9f21079f8efbfc8b04fb40db462ed434f9f04", r.Host)))
+						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2/core/2.0/x86_64/5454bdaaf3e2fa8d3aac354bd0b9f21079f8efbfc8b04fb40db462ed434f9f04", r.Host))); err != nil {
+							t.Error("unexpected error:", err)
+						}
 					case strings.HasPrefix(r.URL.Path, "/core/mirrors/2022"):
-						w.Write([]byte(fmt.Sprintf("http://%s/2022/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host)))
+						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2022/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host))); err != nil {
+							t.Error("unexpected error:", err)
+						}
 					}
 				case strings.HasSuffix(r.URL.Path, "/repomd.xml"):
 					http.ServeFile(w, r, tt.repomd)
@@ -116,6 +122,10 @@ func TestFetch(t *testing.T) {
 			}
 
 			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+				if err != nil {
+					return err
+				}
+
 				if info.IsDir() {
 					return nil
 				}
