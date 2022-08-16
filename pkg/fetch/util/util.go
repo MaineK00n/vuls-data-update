@@ -89,7 +89,7 @@ func FetchConcurrently(urls []string, concurrency, wait, retry int) ([][]byte, e
 		})
 	}
 	go func() {
-		g.Wait()
+		_ = g.Wait()
 		close(respChan)
 	}()
 
