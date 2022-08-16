@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 				Releasemd: "https://al2022-repos-us-west-2-9761ab97.s3.dualstack.us-west-2.amazonaws.com/core/releasemd.xml",
 			},
 		},
-		dir:   filepath.Join(util.CacheDir(), "source", "amazon"),
+		dir:   filepath.Join(util.SourceDir(), "amazon"),
 		retry: 3,
 	}
 

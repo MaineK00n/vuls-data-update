@@ -19,6 +19,18 @@ func CacheDir() string {
 	return dir
 }
 
+func SourceDir() string {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return filepath.Join(CacheDir(), "source")
+	}
+	srcDir := filepath.Join(pwd, "source")
+	if f, err := os.Stat(srcDir); os.IsNotExist(err) || !f.IsDir() {
+		return CacheDir()
+	}
+	return srcDir
+}
+
 func FetchURL(url string, retry int) ([]byte, error) {
 	rc := retryablehttp.NewClient()
 	rc.RetryMax = retry

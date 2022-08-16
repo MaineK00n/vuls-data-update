@@ -66,7 +66,7 @@ func Fetch(opts ...Option) error {
 
 	options := &options{
 		urls:  urls,
-		dir:   filepath.Join(util.CacheDir(), "source", "alma"),
+		dir:   filepath.Join(util.SourceDir(), "alma"),
 		retry: 3,
 	}
 
