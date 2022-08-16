@@ -15,12 +15,13 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
 )
 
 var (
 	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
 	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
-	supportOther   = []string{"cti", "cwe", "exploit", "jvn", "kev", "mitre", "msfdb", "nvd"}
+	supportOther   = []string{"cti", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msfdb", "nvd"}
 )
 
 func NewCmdFetch() *cobra.Command {
@@ -157,6 +158,10 @@ func fetchOtherRun(name string) error {
 	switch name {
 	case "cti":
 	case "cwe":
+	case "epss":
+		if err := epss.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch epss")
+		}
 	case "exploit":
 	case "jvn":
 	case "kev":

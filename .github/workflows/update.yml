@@ -294,15 +294,15 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch other epss
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other epss
-      #     cd source
-      #     git add epss
-      #     git commit --allow-empty -m "update epss"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other epss
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other epss
+          cd source
+          git add epss
+          git commit --allow-empty -m "update epss"
+          git push origin HEAD:main
+          cd ..
 
       # - name: fetch other exploit
       #   if: ${{ success() || failure() }}
