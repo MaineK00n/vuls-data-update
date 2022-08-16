@@ -1,0 +1,66 @@
+name: Update vuls-data
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    name: fetch vuls-data-source
+    runs-on: ubuntu-latest
+    steps:
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+          submodules: recursive
+
+      - name: update source submodule
+        run: git submodule update --remote --recursive source
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+
+      - name: go install
+        run: go install ./cmd/vuls-data-update
+
+      - name: fetch os alma
+        run: |
+          vuls-data-update fetch os alma
+          cd source
+          git add alma
+          git commit -m "update alma"
+          git pull
+          git push
+          cd ..
+
+      - name: fetch os alpine
+        run: |
+          vuls-data-update fetch os alpine
+          cd source
+          git add alpine
+          git commit -m "update alpine"
+          git pull
+          git push
+          cd ..
+      
+
+      - name: Check git status
+        id: status
+        run: git submodule update --remote --recursive
+
+      - name: update source submodule commit
+        if: ${{ steps.status.outputs.status }}
+        run: |
+          git add source
+          git commit -m "update source submodule"
+          git push
+
+  # build:
