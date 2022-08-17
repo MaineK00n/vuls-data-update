@@ -13,6 +13,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
@@ -88,6 +89,9 @@ func fetchOSRun(name string) error {
 			return errors.Wrap(err, "failed to fetch oracle linux")
 		}
 	case "redhat":
+		if err := redhat.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch redhat")
+		}
 	case "rocky":
 	case "suse":
 		if err := suse.Fetch(); err != nil {
