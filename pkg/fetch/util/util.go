@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
@@ -68,7 +69,7 @@ func FetchConcurrently(urls []string, concurrency, wait, retry int) ([][]byte, e
 	}()
 
 	respChan := make(chan []byte, len(urls))
-	timeout := time.After(10 * 60 * time.Second)
+	bar := pb.Full.Start(len(urls))
 	for i := 0; i < concurrency; i++ {
 		g.Go(func() error {
 			for u := range urlChan {
@@ -78,10 +79,9 @@ func FetchConcurrently(urls []string, concurrency, wait, retry int) ([][]byte, e
 				}
 				select {
 				case respChan <- bs:
+					bar.Increment()
 				case <-ctx.Done():
 					return ctx.Err()
-				case <-timeout:
-					return errors.New("timeout")
 				}
 				time.Sleep(time.Duration(wait) * time.Second)
 			}
@@ -90,6 +90,7 @@ func FetchConcurrently(urls []string, concurrency, wait, retry int) ([][]byte, e
 	}
 	go func() {
 		_ = g.Wait()
+		bar.Finish()
 		close(respChan)
 	}()
 
