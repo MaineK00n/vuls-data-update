@@ -141,13 +141,33 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      - name: fetch os suse
+      # - name: fetch os suse
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch os suse
+      #     cd source
+      #     git add suse
+      #     git commit --allow-empty -m "update suse"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: fetch os suse-cvrf
         if: ${{ success() || failure() }}
         run: |
-          vuls-data-update fetch os suse
+          vuls-data-update fetch os suse-cvrf
           cd source
-          git add suse
-          git commit --allow-empty -m "update suse"
+          git add suse/cvrf
+          git commit --allow-empty -m "update suse cvrf"
+          git push origin HEAD:main
+          cd ..
+
+      - name: fetch os suse-oval
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os suse-oval
+          cd source
+          git add suse/oval
+          git commit --allow-empty -m "update suse oval"
           git push origin HEAD:main
           cd ..
 
@@ -361,13 +381,7 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      - name: Check git status
-        if: ${{ success() || failure() }}
-        id: status
-        run: echo "::set-output name=status::$(git status -s)"
-
       - name: update source submodule commit
-        if: ${{ steps.status.outputs.status }}
         run: |
           git add source
           git commit -m "chore(ci): update source submodule"

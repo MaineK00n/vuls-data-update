@@ -11,6 +11,7 @@ import (
 	"github.com/cheggaaa/pb/v3"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
+	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -102,4 +103,12 @@ func FetchConcurrently(urls []string, concurrency, wait, retry int) ([][]byte, e
 		return nil, err
 	}
 	return bss, nil
+}
+
+func Unique[T comparable](s []T) []T {
+	m := map[T]struct{}{}
+	for _, v := range s {
+		m[v] = struct{}{}
+	}
+	return maps.Keys(m)
 }
