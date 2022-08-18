@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -86,36 +87,51 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "unmarshal almalinux %s", v)
 		}
 
-		var secErrata []Erratum
+		var advs []Advisory
+		calcDateFn := func(v int) *time.Time {
+			t := time.Unix(int64(v), 0).UTC()
+			return &t
+		}
 		for _, e := range root.Data {
 			if e.Type != "security" {
 				continue
 			}
-			secErrata = append(secErrata, e)
+			advs = append(advs, Advisory{
+				ID:          e.ID,
+				Type:        e.Type,
+				Title:       e.Title,
+				Description: e.Description,
+				Severity:    e.Severity,
+				Packages:    e.Packages,
+				Modules:     e.Modules,
+				References:  e.References,
+				IssuedDate:  calcDateFn(e.IssuedDate),
+				UpdatedDate: calcDateFn(e.UpdatedDate),
+			})
 		}
 
 		dir := filepath.Join(options.dir, v)
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.Wrapf(err, "remove %s", dir)
 		}
-		bar := pb.StartNew(len(secErrata))
-		for _, e := range secErrata {
+		bar := pb.StartNew(len(advs))
+		for _, a := range advs {
 			if err := func() error {
-				y := strings.Split(strings.TrimPrefix(e.ID, "ALSA-"), ":")[0]
+				y := strings.Split(strings.TrimPrefix(a.ID, "ALSA-"), ":")[0]
 
 				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
 					return errors.Wrapf(err, "mkdir %s", dir)
 				}
 
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", e.ID)))
+				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)))
 				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", e.ID)))
+					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)))
 				}
 				defer f.Close()
 
 				enc := json.NewEncoder(f)
 				enc.SetIndent("", "  ")
-				if err := enc.Encode(e); err != nil {
+				if err := enc.Encode(a); err != nil {
 					return errors.Wrap(err, "encode data")
 				}
 				return nil
