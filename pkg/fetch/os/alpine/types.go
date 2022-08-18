@@ -8,23 +8,20 @@ type secdb struct {
 	Urlprefix     string   `json:"urlprefix"`
 	Distroversion string   `json:"distroversion"`
 	Packages      []struct {
-		Pkg struct {
-			Name     string              `json:"name"`
-			Secfixes map[string][]string `json:"secfixes"`
-		} `json:"pkg"`
+		Pkg Package `json:"pkg"`
 	} `json:"packages"`
 }
 
 type Advisory struct {
-	Apkurl        string               `json:"apkurl"`
-	Archs         []string             `json:"archs"`
-	Reponame      string               `json:"reponame"`
-	Urlprefix     string               `json:"urlprefix"`
-	Distroversion string               `json:"distroversion"`
-	Packages      map[string][]Package `json:"packages"`
+	Apkurl        string    `json:"apkurl"`
+	Archs         []string  `json:"archs"`
+	Reponame      string    `json:"reponame"`
+	Urlprefix     string    `json:"urlprefix"`
+	Distroversion string    `json:"distroversion"`
+	Packages      []Package `json:"packages"`
 }
 
 type Package struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
+	Name     string              `json:"name"`
+	Secfixes map[string][]string `json:"secfixes"`
 }

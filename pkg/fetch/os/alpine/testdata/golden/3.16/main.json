@@ -12,18 +12,17 @@
   "reponame": "main",
   "urlprefix": "https://dl-cdn.alpinelinux.org/alpine",
   "distroversion": "v3.16",
-  "packages": {
-    "CVE-2017-9798": [
-      {
-        "name": "apache2",
-        "version": "2.4.27-r1"
+  "packages": [
+    {
+      "name": "apache2",
+      "secfixes": {
+        "2.4.27-r1": [
+          "CVE-2017-9798"
+        ],
+        "2.4.35-r0": [
+          "CVE-2018-11763"
+        ]
       }
-    ],
-    "CVE-2018-11763": [
-      {
-        "name": "apache2",
-        "version": "2.4.35-r0"
-      }
-    ]
-  }
+    }
+  ]
 }

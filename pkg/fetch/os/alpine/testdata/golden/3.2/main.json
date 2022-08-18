@@ -8,12 +8,14 @@
   "reponame": "main",
   "urlprefix": "https://dl-cdn.alpinelinux.org/alpine",
   "distroversion": "v3.2",
-  "packages": {
-    "CVE-2016-9401": [
-      {
-        "name": "bash",
-        "version": "4.3.33-r2"
+  "packages": [
+    {
+      "name": "bash",
+      "secfixes": {
+        "4.3.33-r2": [
+          "CVE-2016-9401"
+        ]
       }
-    ]
-  }
+    }
+  ]
 }
