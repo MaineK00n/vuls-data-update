@@ -107,18 +107,20 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	resps, err := util.FetchConcurrently(cveURLs, options.concurrency, options.wait, options.retry)
-	if err != nil {
-		return errors.Wrap(err, "fetch concurrently")
-	}
-
-	advs := make([]CVRF, 0, len(resps))
-	for _, resp := range resps {
-		var a CVRF
-		if err := xml.Unmarshal(resp, &a); err != nil {
-			return errors.Wrap(err, "xml unmarshal")
+	advs := make([]CVRF, 0, len(cveURLs))
+	for idx := range util.ChunkSlice(len(cveURLs), 1000) {
+		resps, err := util.FetchConcurrently(cveURLs[idx.From:idx.To], options.concurrency, options.wait, options.retry)
+		if err != nil {
+			return errors.Wrap(err, "fetch concurrently")
 		}
-		advs = append(advs, a)
+
+		for _, resp := range resps {
+			var a CVRF
+			if err := xml.Unmarshal(resp, &a); err != nil {
+				return errors.Wrap(err, "xml unmarshal")
+			}
+			advs = append(advs, a)
+		}
 	}
 
 	if err := os.RemoveAll(options.dir); err != nil {

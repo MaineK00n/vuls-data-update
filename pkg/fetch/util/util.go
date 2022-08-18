@@ -112,3 +112,25 @@ func Unique[T comparable](s []T) []T {
 	}
 	return maps.Keys(m)
 }
+
+type IndexChunk struct {
+	From, To int
+}
+
+func ChunkSlice(length int, chunkSize int) <-chan IndexChunk {
+	ch := make(chan IndexChunk)
+
+	go func() {
+		defer close(ch)
+
+		for i := 0; i < length; i += chunkSize {
+			idx := IndexChunk{i, i + chunkSize}
+			if length < idx.To {
+				idx.To = length
+			}
+			ch <- idx
+		}
+	}()
+
+	return ch
+}
