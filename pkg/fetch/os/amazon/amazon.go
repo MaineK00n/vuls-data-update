@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -140,7 +141,7 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) fetch(version string) ([]Update, error) {
+func (opts options) fetch(version string) ([]Advisory, error) {
 	bs, err := util.FetchURL(opts.mirrorURLs[version].Mirror, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
@@ -152,7 +153,7 @@ func (opts options) fetch(version string) ([]Update, error) {
 		mirrors = append(mirrors, scanner.Text())
 	}
 
-	var updates []Update
+	var advs []Advisory
 	for _, mirror := range mirrors {
 		u, err := url.JoinPath(mirror, "/repodata/repomd.xml")
 		if err != nil {
@@ -171,9 +172,41 @@ func (opts options) fetch(version string) ([]Update, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch updateinfo")
 		}
-		updates = append(updates, us...)
+
+		parseDateFn := func(v string) *time.Time {
+			if v == "" {
+				return nil
+			}
+			if t, err := time.Parse("2006-01-02 15:04", v); err == nil {
+				return &t
+			}
+			log.Printf(`[WARN] error time.Parse date="%s"`, v)
+			return nil
+		}
+		for _, u := range us {
+			advs = append(advs, Advisory{
+				ID:          u.ID,
+				Type:        u.Type,
+				Author:      u.Author,
+				From:        u.From,
+				Status:      u.Status,
+				Version:     u.Version,
+				Title:       u.Title,
+				Description: u.Description,
+				Severity:    u.Severity,
+				Pkglist: Pkglist{
+					Short:      u.Pkglist.Short,
+					Name:       u.Pkglist.Name,
+					Repository: "",
+					Package:    u.Pkglist.Package,
+				},
+				References: u.References,
+				Issued:     parseDateFn(u.Issued.Date),
+				Updated:    parseDateFn(u.Updated.Date),
+			})
+		}
 	}
-	return updates, nil
+	return advs, nil
 }
 
 func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
@@ -200,7 +233,7 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 	return updateInfoPath, nil
 }
 
-func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
+func (opts options) fetchUpdateInfo(updateinfoURL string) ([]update, error) {
 	bs, err := util.FetchURL(updateinfoURL, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")

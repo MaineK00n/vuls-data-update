@@ -121,15 +121,15 @@ jobs:
           git push origin HEAD:main
           cd ..
 
-      # - name: fetch os redhat
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch os redhat
-      #     cd source
-      #     git add redhat
-      #     git commit --allow-empty -m "update redhat"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch os redhat
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os redhat
+          cd source
+          git add redhat
+          git commit --allow-empty -m "update redhat"
+          git push origin HEAD:main
+          cd ..
 
       # - name: fetch os rocky
       #   if: ${{ success() || failure() }}

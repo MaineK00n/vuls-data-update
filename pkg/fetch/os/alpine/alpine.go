@@ -180,25 +180,17 @@ func (opts options) fetchAdvisory(release string, files []string) (map[string]Ad
 		if err := json.Unmarshal(bs, &secdb); err != nil {
 			return nil, errors.Wrapf(err, "unmarshal alpine linux %s %s", release, f)
 		}
-
+		pkgs := make([]Package, 0, len(secdb.Packages))
+		for _, p := range secdb.Packages {
+			pkgs = append(pkgs, p.Pkg)
+		}
 		advs[f] = Advisory{
 			Apkurl:        secdb.Apkurl,
 			Archs:         secdb.Archs,
 			Reponame:      secdb.Reponame,
 			Urlprefix:     secdb.Urlprefix,
 			Distroversion: secdb.Distroversion,
-			Packages:      map[string][]Package{},
-		}
-
-		for _, p := range secdb.Packages {
-			for v, cves := range p.Pkg.Secfixes {
-				for _, cve := range cves {
-					advs[f].Packages[cve] = append(advs[f].Packages[cve], Package{
-						Name:    p.Pkg.Name,
-						Version: v,
-					})
-				}
-			}
+			Packages:      pkgs,
 		}
 	}
 	return advs, nil

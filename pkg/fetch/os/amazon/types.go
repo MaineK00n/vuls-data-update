@@ -1,5 +1,7 @@
 package amazon
 
+import "time"
+
 type releasemd struct {
 	Releases struct {
 		Release []struct {
@@ -23,10 +25,10 @@ type repomd struct {
 }
 
 type updates struct {
-	Update []Update `xml:"update"`
+	Update []update `xml:"update"`
 }
 
-type Update struct {
+type update struct {
 	ID      string `xml:"id"`
 	Author  string `xml:"author,attr"`
 	From    string `xml:"from,attr"`
@@ -40,28 +42,51 @@ type Update struct {
 	Updated struct {
 		Date string `xml:"date,attr"`
 	} `xml:"updated"`
-	Severity    string `xml:"severity"`
-	Description string `xml:"description"`
-	References  struct {
-		Reference []struct {
-			Href  string `xml:"href,attr"`
-			ID    string `xml:"id,attr"`
-			Title string `xml:"title,attr"`
-			Type  string `xml:"type,attr"`
-		} `xml:"reference"`
-	} `xml:"references"`
-	Pkglist struct {
-		Collection struct {
-			Short   string `xml:"short,attr"`
-			Name    string `xml:"name"`
-			Package []struct {
-				Arch     string `xml:"arch,attr"`
-				Epoch    string `xml:"epoch,attr"`
-				Name     string `xml:"name,attr"`
-				Release  string `xml:"release,attr"`
-				Version  string `xml:"version,attr"`
-				Filename string `xml:"filename"`
-			} `xml:"package"`
-		} `xml:"collection"`
-	} `xml:"pkglist"`
+	Severity    string      `xml:"severity"`
+	Description string      `xml:"description"`
+	References  []Reference `xml:"references>reference"`
+	Pkglist     struct {
+		Short   string    `xml:"short,attr"`
+		Name    string    `xml:"name"`
+		Package []Package `xml:"package"`
+	} `xml:"pkglist>collection"`
+}
+
+type Advisory struct {
+	ID          string      `json:"id,omitempty"`
+	Type        string      `json:"type,omitempty"`
+	Author      string      `json:"author,omitempty"`
+	From        string      `json:"from,omitempty"`
+	Status      string      `json:"status,omitempty"`
+	Version     string      `json:"version,omitempty"`
+	Title       string      `json:"title,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Severity    string      `json:"severity,omitempty"`
+	Pkglist     Pkglist     `json:"pkglist,omitempty"`
+	References  []Reference `json:"references,omitempty"`
+	Issued      *time.Time  `json:"issued,omitempty"`
+	Updated     *time.Time  `json:"updated,omitempty"`
+}
+
+type Pkglist struct {
+	Short      string    `json:"short,omitempty"`
+	Name       string    `json:"name,omitempty"`
+	Repository string    `json:"repository,omitempty"`
+	Package    []Package `json:"package,omitempty"`
+}
+
+type Package struct {
+	Arch     string `xml:"arch,attr" json:"arch,omitempty"`
+	Epoch    string `xml:"epoch,attr" json:"epoch,omitempty"`
+	Name     string `xml:"name,attr" json:"name,omitempty"`
+	Release  string `xml:"release,attr" json:"release,omitempty"`
+	Version  string `xml:"version,attr" json:"version,omitempty"`
+	Filename string `xml:"filename" json:"filename,omitempty"`
+}
+
+type Reference struct {
+	Href  string `xml:"href,attr" json:"href,omitempty"`
+	ID    string `xml:"id,attr" json:"id,omitempty"`
+	Title string `xml:"title,attr" json:"title,omitempty"`
+	Type  string `xml:"type,attr" json:"type,omitempty"`
 }
