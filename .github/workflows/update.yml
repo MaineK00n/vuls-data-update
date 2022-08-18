@@ -154,7 +154,7 @@ jobs:
       - name: fetch os suse-cvrf
         if: ${{ success() || failure() }}
         run: |
-          vuls-data-update fetch os suse-cvrf
+          /usr/bin/time -f "real(s): %e, memory(kb): %M" vuls-data-update fetch os suse-cvrf
           cd source
           git add suse/cvrf
           git commit --allow-empty -m "update suse cvrf"
