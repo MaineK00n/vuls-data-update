@@ -107,28 +107,23 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	advs := make([]CVRF, 0, len(cveURLs))
-	for idx := range util.ChunkSlice(len(cveURLs), 1000) {
-		resps, err := util.FetchConcurrently(cveURLs[idx.From:idx.To], options.concurrency, options.wait, options.retry)
-		if err != nil {
-			return errors.Wrap(err, "fetch concurrently")
-		}
-
-		for _, resp := range resps {
-			var a CVRF
-			if err := xml.Unmarshal(resp, &a); err != nil {
-				return errors.Wrap(err, "xml unmarshal")
-			}
-			advs = append(advs, a)
-		}
+	resps, err := util.FetchConcurrently(cveURLs, options.concurrency, options.wait, options.retry)
+	if err != nil {
+		return errors.Wrap(err, "fetch concurrently")
 	}
 
 	if err := os.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
-	bar := pb.StartNew(len(advs))
-	for _, adv := range advs {
+
+	bar := pb.StartNew(len(resps))
+	for _, resp := range resps {
 		if err := func() error {
+			var adv CVRF
+			if err := xml.Unmarshal(resp, &adv); err != nil {
+				return errors.Wrap(err, "xml unmarshal")
+			}
+
 			y := strings.Split(adv.Vulnerability.CVE, "-")[1]
 
 			if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
