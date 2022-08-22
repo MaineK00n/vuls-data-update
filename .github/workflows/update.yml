@@ -301,15 +301,15 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch other cwe
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other cwe
-      #     cd source
-      #     git add cwe
-      #     git commit --allow-empty -m "update cwe"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other cwe
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other cwe
+          cd source
+          git add cwe
+          git commit --allow-empty -m "update cwe"
+          git push origin HEAD:main
+          cd ..
 
       - name: fetch other epss
         if: ${{ success() || failure() }}
