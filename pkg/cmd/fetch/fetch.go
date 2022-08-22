@@ -18,6 +18,7 @@ import (
 	susecvrf "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/cvrf"
 	suseoval "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
 )
 
@@ -172,6 +173,9 @@ func fetchOtherRun(name string) error {
 	switch name {
 	case "cti":
 	case "cwe":
+		if err := cwe.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch cwe")
+		}
 	case "epss":
 		if err := epss.Fetch(); err != nil {
 			return errors.Wrap(err, "failed to fetch epss")
