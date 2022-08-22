@@ -363,6 +363,7 @@ jobs:
 
       - name: update source submodule commit
         run: |
+          git pull
           git add source
           git commit -m "chore(ci): update source submodule"
           git push
