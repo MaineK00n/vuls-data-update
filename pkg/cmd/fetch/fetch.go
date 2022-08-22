@@ -20,6 +20,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/kev"
 )
 
 var (
@@ -183,6 +184,9 @@ func fetchOtherRun(name string) error {
 	case "exploit":
 	case "jvn":
 	case "kev":
+		if err := kev.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch kev")
+		}
 	case "mitre":
 	case "msfdb":
 	case "nvd":

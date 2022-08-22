@@ -341,15 +341,15 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch other kev
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other kev
-      #     cd source
-      #     git add kev
-      #     git commit --allow-empty -m "update kev"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other kev
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other kev
+          cd source
+          git add kev
+          git commit --allow-empty -m "update kev"
+          git push origin HEAD:main
+          cd ..
 
       # - name: fetch other mitre
       #   if: ${{ success() || failure() }}
