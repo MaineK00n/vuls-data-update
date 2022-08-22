@@ -141,33 +141,13 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch os suse
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch os suse
-      #     cd source
-      #     git add suse
-      #     git commit --allow-empty -m "update suse"
-      #     git push origin HEAD:main
-      #     cd ..
-
-      - name: fetch os suse-cvrf
+      - name: fetch os suse
         if: ${{ success() || failure() }}
         run: |
-          /usr/bin/time -f "real(s): %e, memory(kb): %M" vuls-data-update fetch os suse-cvrf
+          vuls-data-update fetch os suse
           cd source
-          git add suse/cvrf
-          git commit --allow-empty -m "update suse cvrf"
-          git push origin HEAD:main
-          cd ..
-
-      - name: fetch os suse-oval
-        if: ${{ success() || failure() }}
-        run: |
-          vuls-data-update fetch os suse-oval
-          cd source
-          git add suse/oval
-          git commit --allow-empty -m "update suse oval"
+          git add suse
+          git commit --allow-empty -m "update suse"
           git push origin HEAD:main
           cd ..
 
