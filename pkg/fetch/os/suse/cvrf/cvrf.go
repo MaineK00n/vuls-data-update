@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -107,48 +107,70 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	resps, err := util.FetchConcurrently(cveURLs, options.concurrency, options.wait, options.retry)
-	if err != nil {
-		return errors.Wrap(err, "fetch concurrently")
-	}
-
-	if err := os.RemoveAll(options.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", options.dir)
-	}
-
-	bar := pb.StartNew(len(resps))
-	for _, resp := range resps {
-		if err := func() error {
-			var adv CVRF
-			if err := xml.Unmarshal(resp, &adv); err != nil {
-				return errors.Wrap(err, "xml unmarshal")
-			}
-
-			y := strings.Split(adv.Vulnerability.CVE, "-")[1]
-
-			if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
-			}
-
-			f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)))
-			}
-			defer f.Close()
-
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(adv); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
+	oldCVEs := map[string]struct{}{}
+	if err := filepath.WalkDir(options.dir, func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
 			return nil
-		}(); err != nil {
-			return err
 		}
 
-		bar.Increment()
+		_, f := filepath.Split(path)
+		if !strings.HasPrefix(f, "CVE-") {
+			return nil
+		}
+
+		oldCVEs[strings.TrimSuffix(f, ".json")] = struct{}{}
+
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", options.dir)
 	}
-	bar.Finish()
+
+	for idx := range util.ChunkSlice(len(cveURLs), 1000) {
+		resps, err := util.FetchConcurrently(cveURLs[idx.From:idx.To], options.concurrency, options.wait, options.retry)
+		if err != nil {
+			return errors.Wrap(err, "fetch concurrently")
+		}
+
+		for _, resp := range resps {
+			if err := func() error {
+				var adv CVRF
+				if err := xml.Unmarshal(resp, &adv); err != nil {
+					return errors.Wrap(err, "xml unmarshal")
+				}
+
+				y := strings.Split(adv.Vulnerability.CVE, "-")[1]
+
+				if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
+					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
+				}
+
+				f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)))
+				if err != nil {
+					return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)))
+				}
+				defer f.Close()
+
+				enc := json.NewEncoder(f)
+				enc.SetIndent("", "  ")
+				if err := enc.Encode(adv); err != nil {
+					return errors.Wrap(err, "encode data")
+				}
+
+				delete(oldCVEs, adv.Vulnerability.CVE)
+
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+	}
+
+	for cve := range oldCVEs {
+		if err := os.Remove(filepath.Join(options.dir, fmt.Sprintf("%s.json", cve))); err != nil {
+			return errors.Wrap(err, "remove old cve")
+		}
+	}
+
 	return nil
 }
 
