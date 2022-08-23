@@ -301,15 +301,15 @@ jobs:
           git push origin HEAD:main
           cd ..
 
-      # - name: fetch other exploit
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other exploit
-      #     cd source
-      #     git add exploit
-      #     git commit --allow-empty -m "update exploit"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other exploit
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other exploit
+          cd source
+          git add exploit
+          git commit --allow-empty -m "update exploit"
+          git push origin HEAD:main
+          cd ..
 
       # - name: fetch other jvn
       #   if: ${{ success() || failure() }}
