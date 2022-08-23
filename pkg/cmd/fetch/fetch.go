@@ -19,12 +19,13 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/kev"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/msf"
 )
 
 var (
 	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
 	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
-	supportOther   = []string{"cti", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msfdb", "nvd"}
+	supportOther   = []string{"cti", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msf", "nvd"}
 )
 
 func NewCmdFetch() *cobra.Command {
@@ -178,7 +179,10 @@ func fetchOtherRun(name string) error {
 			return errors.Wrap(err, "failed to fetch kev")
 		}
 	case "mitre":
-	case "msfdb":
+	case "msf":
+		if err := msf.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch msf")
+		}
 	case "nvd":
 	default:
 		return fmt.Errorf("accepts %q, received %q", supportOther, name)

@@ -341,15 +341,15 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch other msfdb
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other msfdb
-      #     cd source
-      #     git add msfdb
-      #     git commit --allow-empty -m "update msfdb"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other msf
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other msf
+          cd source
+          git add msf
+          git commit --allow-empty -m "update msf"
+          git push origin HEAD:main
+          cd ..
 
       # - name: fetch other nvd
       #   if: ${{ success() || failure() }}
