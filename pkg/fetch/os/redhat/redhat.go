@@ -4,9 +4,10 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/pkg/errors"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
-	"github.com/pkg/errors"
 )
 
 type options struct {
