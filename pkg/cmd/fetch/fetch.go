@@ -15,18 +15,17 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse"
-	susecvrf "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/cvrf"
-	suseoval "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/kev"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/msf"
 )
 
 var (
-	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "gentoo", "oracle", "redhat", "rocky", "suse", "suse-cvrf", "suse-oval", "ubuntu", "windows"}
+	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
 	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
-	supportOther   = []string{"cti", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msfdb", "nvd"}
+	supportOther   = []string{"cti", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msf", "nvd"}
 )
 
 func NewCmdFetch() *cobra.Command {
@@ -100,14 +99,6 @@ func fetchOSRun(name string) error {
 	case "suse":
 		if err := suse.Fetch(); err != nil {
 			return errors.Wrap(err, "failed to fetch suse")
-		}
-	case "suse-cvrf":
-		if err := susecvrf.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch suse-cvrf")
-		}
-	case "suse-oval":
-		if err := suseoval.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch suse-oval")
 		}
 	case "ubuntu":
 		if err := ubuntu.Fetch(); err != nil {
@@ -188,7 +179,10 @@ func fetchOtherRun(name string) error {
 			return errors.Wrap(err, "failed to fetch kev")
 		}
 	case "mitre":
-	case "msfdb":
+	case "msf":
+		if err := msf.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch msf")
+		}
 	case "nvd":
 	default:
 		return fmt.Errorf("accepts %q, received %q", supportOther, name)
