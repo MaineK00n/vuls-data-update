@@ -9,3 +9,6 @@
 [submodule "pkg/fetch/os/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker"]
 	path = pkg/fetch/os/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker
 	url = https://github.com/MaineK00n/ubuntu-security-tracker.git
+[submodule "pkg/fetch/other/exploit/githubrepos/testdata/fixtures/PoC-in-GitHub"]
+	path = pkg/fetch/other/exploit/githubrepos/testdata/fixtures/PoC-in-GitHub
+	url = https://github.com/MaineK00n/PoC-in-GitHub.git
