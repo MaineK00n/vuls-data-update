@@ -331,15 +331,15 @@ jobs:
           git push origin HEAD:main
           cd ..
 
-      # - name: fetch other mitre
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other mitre
-      #     cd source
-      #     git add mitre
-      #     git commit --allow-empty -m "update mitre"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other mitre
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other mitre
+          cd source
+          git add mitre
+          git commit --allow-empty -m "update mitre"
+          git push origin HEAD:main
+          cd ..
 
       - name: fetch other msf
         if: ${{ success() || failure() }}

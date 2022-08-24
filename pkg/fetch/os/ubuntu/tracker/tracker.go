@@ -147,7 +147,7 @@ func Fetch(opts ...Option) error {
 				y := strings.Split(adv.Candidate, "-")[1]
 
 				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
+					return errors.Wrapf(err, "mkdir %s", filepath.Join(dir, y))
 				}
 
 				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.Candidate)))
