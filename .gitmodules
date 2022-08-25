@@ -12,3 +12,6 @@
 [submodule "pkg/fetch/other/exploit/githubrepos/testdata/fixtures/PoC-in-GitHub"]
 	path = pkg/fetch/other/exploit/githubrepos/testdata/fixtures/PoC-in-GitHub
 	url = https://github.com/MaineK00n/PoC-in-GitHub.git
+[submodule "pkg/fetch/other/exploit/trickest/testdata/fixtures/trickest"]
+	path = pkg/fetch/other/exploit/trickest/testdata/fixtures/trickest
+	url = https://github.com/MaineK00n/trickest.git
