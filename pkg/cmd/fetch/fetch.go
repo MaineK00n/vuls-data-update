@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
+	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
 	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
 	supportOther   = []string{"cti", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msf", "nvd"}
 )
@@ -88,6 +88,7 @@ func fetchOSRun(name string) error {
 		}
 	case "epel":
 	case "fedora":
+	case "freebsd":
 	case "gentoo":
 	case "oracle":
 		if err := oracle.Fetch(); err != nil {
