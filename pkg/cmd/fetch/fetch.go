@@ -12,6 +12,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse"
@@ -89,6 +90,9 @@ func fetchOSRun(name string) error {
 	case "epel":
 	case "fedora":
 	case "freebsd":
+		if err := freebsd.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch freebsd")
+		}
 	case "gentoo":
 	case "oracle":
 		if err := oracle.Fetch(); err != nil {

@@ -101,15 +101,15 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch os freebsd
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch os freebsd
-      #     cd source
-      #     git add freebsd
-      #     git commit --allow-empty -m "update freebsd"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch os freebsd
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch os freebsd
+          cd source
+          git add freebsd
+          git commit --allow-empty -m "update freebsd"
+          git push origin HEAD:main
+          cd ..
 
       # - name: fetch os gentoo
       #   if: ${{ success() || failure() }}
