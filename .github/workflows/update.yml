@@ -321,15 +321,15 @@ jobs:
           git push origin HEAD:main
           cd ..
 
-      # - name: fetch other jvn
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other jvn
-      #     cd source
-      #     git add jvn
-      #     git commit --allow-empty -m "update jvn"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other jvn
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other jvn
+          cd source
+          git add jvn
+          git commit --allow-empty -m "update jvn"
+          git push origin HEAD:main
+          cd ..
 
       - name: fetch other kev
         if: ${{ success() || failure() }}
