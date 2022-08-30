@@ -20,6 +20,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/exploit"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/jvn"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/mitre"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/msf"
@@ -184,6 +185,9 @@ func fetchOtherRun(name string) error {
 			return errors.Wrap(err, "failed to fetch exploit")
 		}
 	case "jvn":
+		if err := jvn.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch jvn")
+		}
 	case "kev":
 		if err := kev.Fetch(); err != nil {
 			return errors.Wrap(err, "failed to fetch kev")
