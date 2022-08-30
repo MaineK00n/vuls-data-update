@@ -284,10 +284,10 @@ func build(a advisory) map[string]Advisory {
 		if t, err := time.Parse("2006-01-02 15:04:05", v); err == nil {
 			return &t
 		}
-		if t, err := time.Parse("2006-01-02 15:04:05 +0000", v); err == nil {
+		if t, err := time.Parse("2006-01-02 15:04:05 -0700", v); err == nil {
 			return &t
 		}
-		if t, err := time.Parse("2006-01-02 15:04:05 UTC", v); err == nil {
+		if t, err := time.Parse("2006-01-02 15:04:05 MST", v); err == nil {
 			return &t
 		}
 		log.Printf(`[WARN] error time.Parse date="%s"`, v)
