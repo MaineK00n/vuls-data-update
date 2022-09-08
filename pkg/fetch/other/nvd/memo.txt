@@ -1,5 +1,0 @@
-https://nvd.nist.gov/vuln/data-feeds
-- JSON feeds
-- CPE Match Feed
-
-- https://nvd.nist.gov/feeds/xml/cpe/dictionary/official-cpe-dictionary_v2.3.xml.gz

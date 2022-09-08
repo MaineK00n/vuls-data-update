@@ -24,6 +24,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/mitre"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/msf"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/nvd"
 )
 
 var (
@@ -201,6 +202,9 @@ func fetchOtherRun(name string) error {
 			return errors.Wrap(err, "failed to fetch msf")
 		}
 	case "nvd":
+		if err := nvd.Fetch(); err != nil {
+			return errors.Wrap(err, "failed to fetch nvd")
+		}
 	default:
 		return fmt.Errorf("accepts %q, received %q", supportOther, name)
 	}
