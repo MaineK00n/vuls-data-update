@@ -243,6 +243,7 @@ func (opts options) fetchUpdateInfo(updateinfoURL string) ([]update, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "open updateinfo as gzip")
 	}
+	defer gr.Close()
 
 	var us updates
 	if err := xml.NewDecoder(gr).Decode(&us); err != nil {

@@ -81,6 +81,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "read csv.gz")
 	}
+	defer gr.Close()
 
 	var scores Scores
 	cr := csv.NewReader(gr)
