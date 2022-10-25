@@ -34,7 +34,7 @@ func newCmdBuildOS() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "os <os name>",
 		Short:     "Build OS data source",
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		ValidArgs: supportOS,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return buildOSRun(args[0])
@@ -72,7 +72,7 @@ func newCmdBuildLibrary() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "library <library name>",
 		Short:     "Build Library data source",
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		ValidArgs: supportLibrary,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return buildLibraryRun(args[0])
