@@ -1,13 +1,20 @@
 {
-  "id": "CVE-2007-0494",
-  "elsa_id": "ELSA-2007-0057",
   "definition_id": "oval:com.oracle.elsa:def:20070057",
+  "class": "patch",
   "title": "\nELSA-2007-0057:  Moderate: bind security update  (MODERATE)\n",
   "description": "\n [30:9.3.3-8]\n - added fix for #224445 - CVE-2007-0493 BIND might crash after\n   attempting to read free()-ed memory\n - added fix for #225229 - CVE-2007-0494 BIND dnssec denial of service\n - Resolves: rhbz#224445\n - Resolves: rhbz#225229 \n",
-  "severity": "MODERATE",
   "affected": {
     "family": "unix",
     "platform": "Oracle Linux 5"
+  },
+  "advisory": {
+    "severity": "MODERATE",
+    "rights": "Copyright 2007 Oracle, Inc.",
+    "issued": "2007-06-26T00:00:00Z",
+    "cves": [
+      "CVE-2007-0493",
+      "CVE-2007-0494"
+    ]
   },
   "packages": [
     {
@@ -107,7 +114,5 @@
       "source": "CVE",
       "url": "https://linux.oracle.com/cve/CVE-2007-0494.html"
     }
-  ],
-  "issued": "2007-06-26T00:00:00Z",
-  "rights": "Copyright 2007 Oracle, Inc."
+  ]
 }

@@ -14,7 +14,6 @@ import (
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -88,32 +87,29 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "parse rpminfo_test")
 	}
 
-	osAdvs := parseDefinitions(root.Definitions.Definitions, tests)
-	for v, advs := range osAdvs {
+	osDefs := parseDefinitions(root.Definitions.Definitions, tests)
+	for v, defs := range osDefs {
 		log.Printf("[INFO] Fetched Oracle Linux %s OVAL", v)
 		dir := filepath.Join(options.dir, v)
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.Wrapf(err, "remove %s", dir)
 		}
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return errors.Wrapf(err, "mkdir %s", dir)
+		}
 
-		bar := pb.StartNew(len(advs))
-		for _, adv := range advs {
+		bar := pb.StartNew(len(defs))
+		for _, def := range defs {
 			if err := func() error {
-				y := strings.Split(adv.ID, "-")[1]
-
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
-				}
-
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+				f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+					return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				}
 				defer f.Close()
 
 				enc := json.NewEncoder(f)
 				enc.SetIndent("", "  ")
-				if err := enc.Encode(adv); err != nil {
+				if err := enc.Encode(def); err != nil {
 					return errors.Wrap(err, "encode data")
 				}
 				return nil
@@ -191,25 +187,16 @@ func followTestRefs(test rpminfoTest, objects map[string]string, states map[stri
 	return p, nil
 }
 
-func parseDefinitions(ovalDefs []definition, tests map[string]Package) map[string][]Advisory {
-	advs := map[string]map[string]Advisory{}
+func parseDefinitions(ovalDefs []definition, tests map[string]Package) map[string][]Definition {
+	defs := map[string][]Definition{}
 	for _, d := range ovalDefs {
-		var elsaID string
 		var rs []Reference
 		for _, r := range d.References {
-			if r.Source == "elsa" {
-				elsaID = r.RefID
-			}
 			rs = append(rs, Reference{
 				ID:     r.RefID,
 				Source: r.Source,
 				URL:    r.RefURL,
 			})
-		}
-
-		osVer := strings.TrimPrefix(d.Affected.Platform, "Oracle Linux ")
-		if _, ok := advs[osVer]; !ok {
-			advs[osVer] = map[string]Advisory{}
 		}
 
 		var issued *time.Time
@@ -220,31 +207,32 @@ func parseDefinitions(ovalDefs []definition, tests map[string]Package) map[strin
 			log.Printf(`[WARN] error time.Parse definition id="%s", date="%s", err="%s"`, d.ID, d.Advisory.Issued, err)
 		}
 
+		cves := make([]string, 0, len(d.Advisory.Cves))
 		for _, c := range d.Advisory.Cves {
-			advs[osVer][c.Text] = Advisory{
-				ID:           c.Text,
-				ELSAID:       elsaID,
-				DefinitionID: d.ID,
-				Title:        d.Title,
-				Description:  d.Description,
-				Severity:     d.Advisory.Severity,
-				Affected: Affected{
-					Family:   d.Affected.Family,
-					Platform: d.Affected.Platform,
-				},
-				Packages:   walkCriterion(d.Criteria, tests),
-				References: rs,
-				Issued:     issued,
-				Rights:     d.Advisory.Rights,
-			}
+			cves = append(cves, c.Text)
 		}
-	}
 
-	osAdvs := map[string][]Advisory{}
-	for osVer, advMap := range advs {
-		osAdvs[osVer] = maps.Values(advMap)
+		osVer := strings.TrimPrefix(d.Affected.Platform, "Oracle Linux ")
+		defs[osVer] = append(defs[osVer], Definition{
+			DefinitionID: d.ID,
+			Class:        d.Class,
+			Title:        d.Title,
+			Description:  d.Description,
+			Affected: Affected{
+				Family:   d.Affected.Family,
+				Platform: d.Affected.Platform,
+			},
+			Advisory: Advisory{
+				Severity: d.Advisory.Severity,
+				Rights:   d.Advisory.Rights,
+				Issued:   issued,
+				Cves:     cves,
+			},
+			Packages:   walkCriterion(d.Criteria, tests),
+			References: rs,
+		})
 	}
-	return osAdvs
+	return defs
 }
 
 func walkCriterion(cri criteria, tests map[string]Package) []Package {
