@@ -87,7 +87,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Debian %s OVAL", v)
-		advs, err := options.fetchOVAL(ovalname)
+		defs, err := options.fetchOVAL(ovalname)
 		if err != nil {
 			return errors.Wrapf(err, "fetch debian %s oval", v)
 		}
@@ -96,30 +96,22 @@ func Fetch(opts ...Option) error {
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.Wrapf(err, "remove %s", dir)
 		}
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return errors.Wrapf(err, "mkdir %s", dir)
+		}
 
-		bar := pb.StartNew(len(advs))
-		for _, adv := range advs {
+		bar := pb.StartNew(len(defs))
+		for _, def := range defs {
 			if err := func() error {
-				var y string
-				if strings.HasPrefix(adv.ID, "CVE-") {
-					y = strings.Split(adv.ID, "-")[1]
-				} else {
-					y = strings.Split(adv.ID, "-")[0]
-				}
-
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
-				}
-
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+				f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+					return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				}
 				defer f.Close()
 
 				enc := json.NewEncoder(f)
 				enc.SetIndent("", "  ")
-				if err := enc.Encode(adv); err != nil {
+				if err := enc.Encode(def); err != nil {
 					return errors.Wrap(err, "encode data")
 				}
 				return nil
@@ -146,7 +138,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	}
 
 	var ovals []string
-	d.Find("a").Each(func(i int, selection *goquery.Selection) {
+	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
 		if !strings.HasPrefix(txt, "oval-definitions-") {
 			return
@@ -156,7 +148,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	return ovals, nil
 }
 
-func (opts options) fetchOVAL(ovalname string) ([]Advisory, error) {
+func (opts options) fetchOVAL(ovalname string) ([]Definition, error) {
 	u, err := url.JoinPath(opts.baseURL, ovalname)
 	if err != nil {
 		return nil, errors.Wrap(err, "join url path")
@@ -239,16 +231,11 @@ func followTestRefs(test dpkginfoTest, objects map[string]string, states map[str
 	return p, nil
 }
 
-func parseDefinitions(ovalDefs []definition, tests map[string]Package) []Advisory {
-	patches := map[string]Advisory{}
-	vulnerabilities := map[string]Advisory{}
+func parseDefinitions(ovalDefs []definition, tests map[string]Package) []Definition {
+	var defs []Definition
 	for _, d := range ovalDefs {
-		var cves []string
 		var rs []Reference
 		for _, r := range d.References {
-			if r.Source == "CVE" {
-				cves = append(cves, r.RefID)
-			}
 			rs = append(rs, Reference{
 				ID:     r.RefID,
 				Source: r.Source,
@@ -268,59 +255,26 @@ func parseDefinitions(ovalDefs []definition, tests map[string]Package) []Advisor
 			}
 		}
 
-		switch d.Class {
-		case "patch":
-			for _, cve := range cves {
-				patches[cve] = Advisory{
-					ID:           cve,
-					DSAID:        d.Debian.DSA,
-					DefinitionID: d.ID,
-					Title:        d.Title,
-					Description:  d.Description,
-					MoreInfo:     d.Debian.MoreInfo,
-					Affected: Affected{
-						Family:   d.Affected.Family,
-						Platform: d.Affected.Platform,
-						Product:  d.Affected.Product,
-					},
-					Package:    *pkg,
-					Date:       date,
-					References: rs,
-				}
-			}
-		case "vulnerability":
-			for _, cve := range cves {
-				vulnerabilities[cve] = Advisory{
-					ID:           cve,
-					DSAID:        d.Debian.DSA,
-					DefinitionID: d.ID,
-					Title:        d.Title,
-					Description:  d.Description,
-					MoreInfo:     d.Debian.MoreInfo,
-					Affected: Affected{
-						Family:   d.Affected.Family,
-						Platform: d.Affected.Platform,
-						Product:  d.Affected.Product,
-					},
-					Package:    *pkg,
-					Date:       date,
-					References: rs,
-				}
-			}
-		default:
-			log.Printf("[WARN] unknown class: %s", d.Class)
-		}
+		defs = append(defs, Definition{
+			DefinitionID: d.ID,
+			Class:        d.Class,
+			Title:        d.Title,
+			Description:  d.Description,
+			Debian: Debian{
+				DSA:      d.Debian.DSA,
+				MoreInfo: d.Debian.MoreInfo,
+				Date:     date,
+			},
+			Affected: Affected{
+				Family:   d.Affected.Family,
+				Platform: d.Affected.Platform,
+				Product:  d.Affected.Product,
+			},
+			Package:    *pkg,
+			References: rs,
+		})
 	}
-
-	var advs []Advisory
-	for _, cve := range append(maps.Keys(patches), maps.Keys(vulnerabilities)...) {
-		if adv, ok := patches[cve]; ok {
-			advs = append(advs, adv)
-		} else {
-			advs = append(advs, vulnerabilities[cve])
-		}
-	}
-	return advs
+	return defs
 }
 
 func walkCriterion(cri criteria, tests map[string]Package) *Package {
