@@ -55,7 +55,7 @@ func newCmdFetchOS() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "os <os name>",
 		Short:     "Fetch OS data source",
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		ValidArgs: supportOS,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return fetchOSRun(args[0])
@@ -124,7 +124,7 @@ func newCmdFetchLibrary() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "library <library name>",
 		Short:     "Fetch Library data source",
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		ValidArgs: supportLibrary,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return fetchLibraryRun(args[0])
@@ -158,7 +158,7 @@ func newCmdFetchOther() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "other <data name>",
 		Short:     "Fetch Other data source",
-		Args:      cobra.ExactValidArgs(1),
+		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		ValidArgs: supportOther,
 		RunE: func(_ *cobra.Command, args []string) error {
 			return fetchOtherRun(args[0])
