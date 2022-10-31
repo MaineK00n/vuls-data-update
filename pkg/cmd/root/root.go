@@ -19,9 +19,7 @@ func NewCmdRoot() *cobra.Command {
 			$ vuls-data-update fetch os debian
 			$ vuls-data-update fetch library cargo
 			$ vuls-data-update fetch other nvd
-			$ vuls-data-update build os debian
-			$ vuls-data-update build library cargo
-			$ vuls-data-update build other
+			$ vuls-data-update build
 		`),
 	}
 

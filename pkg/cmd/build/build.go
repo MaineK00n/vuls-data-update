@@ -2,113 +2,102 @@ package build
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/mitre"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 )
 
 var (
-	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
-	supportLibrary = []string{"cargo"}
+	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
+	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
+	supportOther   = []string{"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "cti"}
 )
 
 func NewCmdBuild() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "build <subcommand> (<os>)",
+		Use:   "build",
 		Short: "Build data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update build os debian
-			$ vuls-data-update build library cargo
-			$ vuls-data-update build other
-		`),
-	}
-
-	cmd.AddCommand(newCmdBuildOS())
-	cmd.AddCommand(newCmdBuildLibrary())
-	cmd.AddCommand(newCmdBuildOther())
-
-	return cmd
-}
-
-func newCmdBuildOS() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:       "os <os name>",
-		Short:     "Build OS data source",
-		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-		ValidArgs: supportOS,
-		RunE: func(_ *cobra.Command, args []string) error {
-			return buildOSRun(args[0])
-		},
-		Example: heredoc.Doc(`
-			$ vuls-data-update build os debian
-		`),
-	}
-	return cmd
-}
-
-func buildOSRun(name string) error {
-	switch name {
-	case "alma":
-	case "alpine":
-	case "amazon":
-	case "arch":
-	case "debian":
-	case "epel":
-	case "fedora":
-	case "gentoo":
-	case "oracle":
-	case "redhat":
-	case "rocky":
-	case "suse":
-	case "ubuntu":
-	case "windows":
-	default:
-		return fmt.Errorf("accepts %q, received %q", supportOS, name)
-	}
-	return nil
-}
-
-func newCmdBuildLibrary() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:       "library <library name>",
-		Short:     "Build Library data source",
-		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-		ValidArgs: supportLibrary,
-		RunE: func(_ *cobra.Command, args []string) error {
-			return buildLibraryRun(args[0])
-		},
-		Example: heredoc.Doc(`
-			$ vuls-data-update build library cargo
-		`),
-	}
-	return cmd
-}
-
-func buildLibraryRun(name string) error {
-	switch name {
-	case "cargo":
-	default:
-		return fmt.Errorf("accepts %q, received %q", supportLibrary, name)
-	}
-	return nil
-}
-
-func newCmdBuildOther() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "other <os name>",
-		Short: "Build Other data source",
-		Args:  cobra.NoArgs,
+		Args:  cobra.ExactArgs(0),
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return buildOtherRun()
+			return build()
 		},
 		Example: heredoc.Doc(`
-			$ vuls-data-update build other
+			$ vuls-data-update build
 		`),
 	}
 	return cmd
 }
 
-func buildOtherRun() error {
-	fmt.Println("other")
+func build() error {
+	log.Printf("[INFO] Remove Vulnerability")
+	if err := os.RemoveAll(filepath.Join(util.DestDir(), "vulnerability")); err != nil {
+		return errors.Wrapf(err, "remove %s", filepath.Join(util.DestDir(), "vulnerability"))
+	}
+
+	for _, name := range supportOther {
+		switch name {
+		case "cti":
+		case "cwe":
+		case "epss":
+		case "exploit":
+		case "jvn":
+		case "kev":
+		case "mitre":
+			if err := mitre.Build(); err != nil {
+				return errors.Wrap(err, "failed to build mitre")
+			}
+		case "msf":
+		case "nvd":
+		default:
+			return fmt.Errorf("accepts %q, received %q", supportOther, name)
+		}
+	}
+
+	for _, name := range supportOS {
+		switch name {
+		case "alma":
+		case "alpine":
+		case "amazon":
+		case "arch":
+		case "debian":
+		case "epel":
+		case "fedora":
+		case "freebsd":
+		case "gentoo":
+		case "oracle":
+		case "redhat":
+		case "rocky":
+		case "suse":
+		case "ubuntu":
+		case "windows":
+		default:
+			return fmt.Errorf("accepts %q, received %q", supportOS, name)
+		}
+	}
+
+	for _, name := range supportLibrary {
+		switch name {
+		case "cargo":
+		case "composer":
+		case "conan":
+		case "erlang":
+		case "golang":
+		case "maven":
+		case "npm":
+		case "nuget":
+		case "pip":
+		case "rubygems":
+		default:
+			return fmt.Errorf("accepts %q, received %q", supportLibrary, name)
+		}
+	}
+
 	return nil
 }
