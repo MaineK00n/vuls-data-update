@@ -6,8 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 )
 
 func TestBuild(t *testing.T) {

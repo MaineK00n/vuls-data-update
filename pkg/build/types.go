@@ -7,6 +7,7 @@ type Vulnerability struct {
 	Title       map[string]string    `json:"title,omitempty"`
 	Description map[string]string    `json:"description,omitempty"`
 	CVSS        map[string][]CVSS    `json:"cvss,omitempty"`
+	EPSS        *EPSS                `json:"epss,omitempty"`
 	CWE         map[string][]string  `json:"cwe,omitempty"`
 	Published   map[string]time.Time `json:"published,omitempty"`
 	Modified    map[string]time.Time `json:"modified,omitempty"`
@@ -19,6 +20,11 @@ type CVSS struct {
 	Vector   string
 	Score    *float64
 	Severity string
+}
+
+type EPSS struct {
+	EPSS       *float64 `json:"epss,omitempty"`
+	Percentile *float64 `json:"percentile,omitempty"`
 }
 
 type Reference struct {

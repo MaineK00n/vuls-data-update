@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/mitre"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
@@ -44,15 +45,33 @@ func build() error {
 		switch name {
 		case "cti":
 		case "cwe":
+			// if err := cwe.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build cwe")
+			// }
 		case "epss":
+			if err := epss.Build(); err != nil {
+				return errors.Wrap(err, "failed to build epss")
+			}
 		case "exploit":
+			// if err := exploit.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build exploit")
+			// }
 		case "jvn":
+			// if err := jvn.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build jvn")
+			// }
 		case "kev":
+			// if err := kev.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build kev")
+			// }
 		case "mitre":
 			if err := mitre.Build(); err != nil {
 				return errors.Wrap(err, "failed to build mitre")
 			}
 		case "msf":
+			// if err := msf.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build msf")
+			// }
 		case "nvd":
 			if err := nvd.Build(); err != nil {
 				return errors.Wrap(err, "failed to build nvd")
