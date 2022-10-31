@@ -94,8 +94,14 @@ func Build(opts ...Option) error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		fill(&sv, &dv)
+		fillVulnerability(&sv, &dv)
 
+		if err := df.Truncate(0); err != nil {
+			return errors.Wrap(err, "truncate file")
+		}
+		if _, err := df.Seek(0, 0); err != nil {
+			return errors.Wrap(err, "set offset")
+		}
 		enc := json.NewEncoder(df)
 		enc.SetIndent("", "  ")
 		if err := enc.Encode(dv); err != nil {
@@ -110,40 +116,47 @@ func Build(opts ...Option) error {
 	return nil
 }
 
-func fill(sv *mitre.Vulnerability, dv *build.Vulnerability) {
+func fillVulnerability(sv *mitre.Vulnerability, dv *build.Vulnerability) {
 	if dv.ID == "" {
 		dv.ID = sv.CVE
 	}
 
+	if dv.Title == nil {
+		dv.Title = map[string]string{}
+	}
 	if sv.Title != "" {
-		if dv.Title == nil {
-			dv.Title = map[string]string{}
-		}
 		dv.Title["mitre"] = sv.Title
 	}
 
+	if dv.Description == nil {
+		dv.Description = map[string]string{}
+	}
 	if sv.Notes.Description != "" {
-		if dv.Description == nil {
-			dv.Description = map[string]string{}
-		}
 		dv.Description["mitre"] = sv.Notes.Description
 	}
+
+	if dv.Published == nil {
+		dv.Published = map[string]time.Time{}
+	}
 	if sv.Notes.Published != nil {
-		if dv.Published == nil {
-			dv.Published = map[string]time.Time{}
-		}
 		dv.Published["mitre"] = *sv.Notes.Published
 	}
+
+	if dv.Modified == nil {
+		dv.Modified = map[string]time.Time{}
+	}
 	if sv.Notes.Modified != nil {
-		if dv.Modified == nil {
-			dv.Modified = map[string]time.Time{}
-		}
 		dv.Modified["mitre"] = *sv.Notes.Modified
 	}
+
 	for _, r := range sv.References {
+		lhs, rhs, found := strings.Cut(r.Description, ":")
+		if !found {
+			rhs = lhs
+		}
 		dv.References = append(dv.References, build.Reference{
-			Source: strings.Split(r.Description, ":")[0],
-			ID:     r.Description,
+			Source: lhs,
+			Name:   rhs,
 			URL:    r.URL,
 		})
 	}

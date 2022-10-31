@@ -2,7 +2,6 @@ package build
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/mitre"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 )
 
@@ -36,7 +36,6 @@ func NewCmdBuild() *cobra.Command {
 }
 
 func build() error {
-	log.Printf("[INFO] Remove Vulnerability")
 	if err := os.RemoveAll(filepath.Join(util.DestDir(), "vulnerability")); err != nil {
 		return errors.Wrapf(err, "remove %s", filepath.Join(util.DestDir(), "vulnerability"))
 	}
@@ -55,6 +54,9 @@ func build() error {
 			}
 		case "msf":
 		case "nvd":
+			if err := nvd.Build(); err != nil {
+				return errors.Wrap(err, "failed to build nvd")
+			}
 		default:
 			return fmt.Errorf("accepts %q, received %q", supportOther, name)
 		}
