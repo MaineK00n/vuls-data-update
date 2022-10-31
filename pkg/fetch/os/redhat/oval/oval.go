@@ -151,7 +151,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			log.Printf(`[INFO] Fetch %s`, ovalName)
-			advs, err := options.fetchOVAL(u, cpe2repo)
+			defs, err := options.fetchOVAL(u, cpe2repo)
 			if err != nil {
 				return errors.Wrapf(err, "fetch redhat %s", v)
 			}
@@ -160,29 +160,22 @@ func Fetch(opts ...Option) error {
 			if err := os.RemoveAll(dir); err != nil {
 				return errors.Wrapf(err, "remove %s", dir)
 			}
+			if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+				return errors.Wrapf(err, "mkdir %s", dir)
+			}
 
-			bar := pb.StartNew(len(advs))
-			for _, adv := range advs {
+			bar := pb.StartNew(len(defs))
+			for _, def := range defs {
 				if err := func() error {
-					y := strings.Split(adv.ID, "-")[1]
-
-					if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-						return errors.Wrapf(err, "mkdir %s", filepath.Join(dir, y))
-					}
-
-					name := adv.ID
-					if adv.RHSAID != "" {
-						name = fmt.Sprintf("%s-%s", name, adv.RHSAID)
-					}
-					f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", name)))
+					f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 					if err != nil {
-						return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", name)))
+						return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 					}
 					defer f.Close()
 
 					enc := json.NewEncoder(f)
 					enc.SetIndent("", "  ")
-					if err := enc.Encode(adv); err != nil {
+					if err := enc.Encode(def); err != nil {
 						return errors.Wrap(err, "encode data")
 					}
 					return nil
@@ -230,7 +223,7 @@ func (opts options) walkIndexOf(indexOfURL string) ([]string, error) {
 	return urls, nil
 }
 
-func (opts options) fetchOVAL(url string, cpe2repo map[string][]string) ([]Advisory, error) {
+func (opts options) fetchOVAL(url string, cpe2repo map[string][]string) ([]Definition, error) {
 	bs, err := util.FetchURL(url, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch oval")
@@ -319,8 +312,8 @@ func followTestRefs(test rpminfoTest, objects map[string]string, states map[stri
 	return &p, nil
 }
 
-func parseDefinitions(ovalDefs []definition, tests map[string]Package, cpe2repo map[string][]string) []Advisory {
-	advs := []Advisory{}
+func parseDefinitions(ovalDefs []definition, tests map[string]Package, cpe2repo map[string][]string) []Definition {
+	defs := []Definition{}
 
 	parseDateFn := func(layouts []string, v string) *time.Time {
 		if v == "" {
@@ -336,140 +329,68 @@ func parseDefinitions(ovalDefs []definition, tests map[string]Package, cpe2repo 
 	}
 
 	for _, d := range ovalDefs {
-		switch d.Class {
-		case "patch":
-			var rhsaID string
-			var rs []Reference
-			for _, r := range d.References {
-				if r.Source == "RHSA" {
-					rhsaID = r.RefID
-				}
-				rs = append(rs, Reference{
-					ID:     r.RefID,
-					Source: r.Source,
-					URL:    r.RefURL,
-				})
-			}
-			if rhsaID == "" {
-				log.Printf("[WARN] not found RHSA-ID. definition id: %s", d.ID)
-			}
-
-			for _, b := range d.Advisory.Bugzillas {
-				rs = append(rs, Reference{
-					ID:     b.Title,
-					Source: "BUG",
-					URL:    b.URL,
-				})
-			}
-
-			affected := Affected{
+		def := Definition{
+			DefinitionID: d.ID,
+			Class:        d.Class,
+			Title:        d.Title,
+			Description:  d.Description,
+			Affected: Affected{
 				Family:    d.Affected.Family,
 				Platforms: d.Affected.Platform,
-			}
-			for _, cpe := range d.Advisory.AffectedCPEList {
-				affected.CPEs = append(affected.CPEs, CPE{
-					CPE:        cpe,
-					Repository: cpe2repo[cpe],
-				})
-			}
-
-			issued := parseDateFn([]string{"2006-01-02"}, d.Advisory.Issued.Date)
-			updated := parseDateFn([]string{"2006-01-02"}, d.Advisory.Updated.Date)
-
-			pkgs := collectPkgs(d.Criteria, tests, false, nil)
-
-			for _, cve := range d.Advisory.Cves {
-				advs = append(advs, Advisory{
-					ID:           cve.CveID,
-					RHSAID:       rhsaID,
-					DefinitionID: d.ID,
-					Title:        d.Title,
-					Description:  d.Description,
-					CVSS2:        cve.Cvss2,
-					CVSS3:        cve.Cvss3,
-					Cwe:          cve.Cwe,
-					Severity:     d.Advisory.Severity,
-					Impact:       cve.Impact,
-					Affected:     affected,
-					Packages:     pkgs,
-					References:   rs,
-					Public:       parseDateFn([]string{"20060102", "20060102:1504"}, cve.Public),
-					Issued:       issued,
-					Updated:      updated,
-				})
-			}
-		case "vulnerability":
-			var rs []Reference
-			for _, r := range d.References {
-				rs = append(rs, Reference{
-					ID:     r.RefID,
-					Source: r.Source,
-					URL:    r.RefURL,
-				})
-			}
-
-			for _, b := range d.Advisory.Bugzillas {
-				rs = append(rs, Reference{
-					ID:     b.Title,
-					Source: "BUG",
-					URL:    b.URL,
-				})
-			}
-
-			affected := Affected{
-				Family:    d.Affected.Family,
-				Platforms: d.Affected.Platform,
-			}
-			for _, cpe := range d.Advisory.AffectedCPEList {
-				affected.CPEs = append(affected.CPEs, CPE{
-					CPE:        cpe,
-					Repository: cpe2repo[cpe],
-				})
-			}
-			component2state := map[string]string{}
-			if d.Advisory.Affected.State != "" {
-				affected.Resolution = &Resolution{
-					State:     d.Advisory.Affected.State,
-					Component: d.Advisory.Affected.Component,
-				}
-				for _, c := range d.Advisory.Affected.Component {
-					component2state[c] = d.Advisory.Affected.State
-				}
-			}
-
-			issued := parseDateFn([]string{"2006-01-02"}, d.Advisory.Issued.Date)
-			updated := parseDateFn([]string{"2006-01-02"}, d.Advisory.Updated.Date)
-
-			var isUnaffected bool
-			if strings.HasPrefix(d.ID, "oval:com.redhat.unaffected:def:") {
-				isUnaffected = true
-			}
-			pkgs := collectPkgs(d.Criteria, tests, isUnaffected, component2state)
-
-			for _, cve := range d.Advisory.Cves {
-				advs = append(advs, Advisory{
-					ID:           cve.CveID,
-					DefinitionID: d.ID,
-					Title:        d.Title,
-					Description:  d.Description,
-					CVSS2:        cve.Cvss2,
-					CVSS3:        cve.Cvss3,
-					Cwe:          cve.Cwe,
-					Severity:     d.Advisory.Severity,
-					Impact:       cve.Impact,
-					Affected:     affected,
-					Packages:     pkgs,
-					References:   rs,
-					Public:       parseDateFn([]string{"20060102", "20060102:1504"}, cve.Public),
-					Issued:       issued,
-					Updated:      updated,
-				})
-			}
-		default:
-			log.Printf("[WARN] unknown class: %s", d.Class)
+			},
+			Advisory: Advisory{
+				Severity: d.Advisory.Severity,
+				Issued:   parseDateFn([]string{"2006-01-02"}, d.Advisory.Issued.Date),
+				Updated:  parseDateFn([]string{"2006-01-02"}, d.Advisory.Updated.Date),
+			},
 		}
+
+		for _, r := range d.References {
+			def.References = append(def.References, Reference{
+				ID:     r.RefID,
+				Source: r.Source,
+				URL:    r.RefURL,
+			})
+		}
+
+		for _, cve := range d.Advisory.Cves {
+			def.Advisory.CVEs = append(def.Advisory.CVEs, CVE{
+				CVEID:  cve.CveID,
+				CVSS2:  cve.Cvss2,
+				CVSS3:  cve.Cvss3,
+				CWE:    cve.Cwe,
+				Impact: cve.Impact,
+				Href:   cve.Href,
+				Public: parseDateFn([]string{"20060102", "20060102:1504"}, cve.Public),
+			})
+		}
+
+		for _, b := range d.Advisory.Bugzillas {
+			def.Advisory.Bugzillas = append(def.Advisory.Bugzillas, Bugzilla(b))
+		}
+
+		for _, cpe := range d.Advisory.AffectedCPEList {
+			def.Advisory.CPEs = append(def.Advisory.CPEs, CPE{
+				CPE:        cpe,
+				Repository: cpe2repo[cpe],
+			})
+		}
+
+		component2state := map[string]string{}
+		if d.Advisory.Affected.State != "" {
+			def.Advisory.Affected = &Resolution{
+				State:     d.Advisory.Affected.State,
+				Component: d.Advisory.Affected.Component,
+			}
+			for _, c := range d.Advisory.Affected.Component {
+				component2state[c] = d.Advisory.Affected.State
+			}
+		}
+		def.Packages = collectPkgs(d.Criteria, tests, strings.HasPrefix(d.ID, "oval:com.redhat.unaffected:def:"), component2state)
+
+		defs = append(defs, def)
 	}
-	return advs
+	return defs
 }
 
 func collectPkgs(cri criteria, tests map[string]Package, isUnaffected bool, componenct2state map[string]string) []Package {

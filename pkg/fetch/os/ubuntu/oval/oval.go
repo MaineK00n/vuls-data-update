@@ -78,6 +78,7 @@ func Fetch(opts ...Option) error {
 			"hirsute": fmt.Sprintf(mainURLFormat, "hirsute"),
 			"impish":  fmt.Sprintf(mainURLFormat, "impish"),
 			"jammy":   fmt.Sprintf(mainURLFormat, "jammy"),
+			"kinetic": fmt.Sprintf(mainURLFormat, "kinetic"),
 		},
 		dir:   filepath.Join(util.SourceDir(), "ubuntu", "oval"),
 		retry: 3,
@@ -94,7 +95,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Ubuntu %s", v)
-		advs, err := options.fetchOVAL(url)
+		defs, err := options.fetchOVAL(url)
 		if err != nil {
 			return errors.Wrapf(err, "fetch ubuntu %s", v)
 		}
@@ -103,25 +104,22 @@ func Fetch(opts ...Option) error {
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.Wrapf(err, "remove %s", dir)
 		}
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return errors.Wrapf(err, "mkdir %s", dir)
+		}
 
-		bar := pb.StartNew(len(advs))
-		for _, adv := range advs {
+		bar := pb.StartNew(len(defs))
+		for _, def := range defs {
 			if err := func() error {
-				y := strings.Split(adv.ID, "-")[1]
-
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
-				}
-
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+				f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+					return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				}
 				defer f.Close()
 
 				enc := json.NewEncoder(f)
 				enc.SetIndent("", "  ")
-				if err := enc.Encode(adv); err != nil {
+				if err := enc.Encode(def); err != nil {
 					return errors.Wrap(err, "encode data")
 				}
 				return nil
@@ -137,7 +135,7 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) fetchOVAL(url string) ([]Advisory, error) {
+func (opts options) fetchOVAL(url string) ([]Definition, error) {
 	bs, err := util.FetchURL(url, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch oval")
@@ -220,88 +218,77 @@ func followTestRefs(test dpkginfoTest, objects map[string]string, states map[str
 	return p, nil
 }
 
-func parseDefinitions(ovalDefs []definition, tests map[string]Package) []Advisory {
-	var advs []Advisory
+func parseDefinitions(ovalDefs []definition, tests map[string]Package) []Definition {
+	var defs []Definition
+
+	parseDateFn := func(v string) *time.Time {
+		if v == "" || v == "unknown" {
+			return nil
+		}
+		if t, err := time.Parse("2006-01-02", v); err == nil {
+			return &t
+		}
+		if t, err := time.Parse("2006-01-02 15:04:05", v); err == nil {
+			return &t
+		}
+		if t, err := time.Parse("2006-01-02 15:04:05 -0700", v); err == nil {
+			return &t
+		}
+		if t, err := time.Parse("2006-01-02 15:04:05 MST", v); err == nil {
+			return &t
+		}
+		log.Printf(`[WARN] error time.Parse date="%s"`, v)
+		return nil
+	}
+
 	for _, d := range ovalDefs {
 		switch d.Class {
 		case "inventory":
 		case "vulnerability":
-			var cves []string
-			var rs []Reference
-			for _, r := range d.References {
-				if r.Source == "CVE" {
-					cves = append(cves, r.RefID)
-				}
-				rs = append(rs, Reference{
-					ID:     r.RefID,
-					Source: r.Source,
-					URL:    r.RefURL,
-				})
-			}
-
-			for _, r := range d.Advisory.Refs {
-				rs = append(rs, Reference{
-					Source: "REF",
-					URL:    r.URL,
-				})
-			}
-			for _, b := range d.Advisory.Bugs {
-				rs = append(rs, Reference{
-					Source: "BUG",
-					URL:    b.URL,
-				})
-			}
-
-			parseDateFn := func(v string) *time.Time {
-				if v == "" || v == "unknown" {
-					return nil
-				}
-				if t, err := time.Parse("2006-01-02", v); err == nil {
-					return &t
-				}
-				if t, err := time.Parse("2006-01-02 15:04:05", v); err == nil {
-					return &t
-				}
-				if t, err := time.Parse("2006-01-02 15:04:05 -0700", v); err == nil {
-					return &t
-				}
-				if t, err := time.Parse("2006-01-02 15:04:05 MST", v); err == nil {
-					return &t
-				}
-				log.Printf(`[WARN] error time.Parse date="%s"`, v)
-				return nil
-			}
-
-			pkgs := walkCriterion(d.Criteria, tests)
-
-			for _, cve := range cves {
-				advs = append(advs, Advisory{
-					ID:           cve,
-					DefinitionID: d.ID,
-					Title:        d.Title,
-					Description:  d.Description,
-					Note:         d.Note,
-					Severity:     d.Advisory.Severity,
-					Affected: Affected{
-						Family:   d.Affected.Family,
-						Platform: d.Affected.Platform,
-					},
-					Packages:        pkgs,
-					References:      rs,
+			def := Definition{
+				DefinitionID: d.ID,
+				Class:        d.Class,
+				Title:        d.Title,
+				Description:  d.Description,
+				Note:         d.Note,
+				Affected: Affected{
+					Family:   d.Affected.Family,
+					Platform: d.Affected.Platform,
+				},
+				Advisory: Advisory{
+					Severity:        d.Advisory.Severity,
 					PublicDate:      parseDateFn(d.Advisory.PublicDate),
 					PublicDateAtUSN: parseDateFn(d.Advisory.PublicDateAtUSN),
 					CRD:             parseDateFn(d.Advisory.CRD),
 					AssignedTo:      d.Advisory.AssignedTo,
 					DiscoveredBy:    d.Advisory.DiscoveredBy,
 					Rights:          d.Advisory.Rights,
+				},
+				Packages: walkCriterion(d.Criteria, tests),
+			}
+
+			for _, r := range d.Advisory.Refs {
+				def.Advisory.References = append(def.Advisory.References, r.URL)
+			}
+
+			for _, b := range d.Advisory.Bugs {
+				def.Advisory.Bugzillas = append(def.Advisory.Bugzillas, b.URL)
+			}
+
+			for _, r := range d.References {
+				def.References = append(def.References, Reference{
+					ID:     r.RefID,
+					Source: r.Source,
+					URL:    r.RefURL,
 				})
 			}
 
+			defs = append(defs, def)
 		default:
 			log.Printf("[WARN] unknown class: %s", d.Class)
 		}
 	}
-	return advs
+	return defs
 }
 
 var notePattern = regexp.MustCompile(`^.*\(note: '(.*)'\)`)

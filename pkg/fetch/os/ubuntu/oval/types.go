@@ -190,27 +190,33 @@ type constantVariable struct {
 	Value    []string `xml:"value"`
 }
 
-type Advisory struct {
-	ID              string      `json:"id"`
-	DefinitionID    string      `json:"definition_id"`
-	Title           string      `json:"title"`
-	Description     string      `json:"description"`
-	Note            string      `json:"note"`
-	Severity        string      `json:"severity"`
-	Affected        Affected    `json:"affected"`
-	Packages        []Package   `json:"packages"`
-	References      []Reference `json:"references"`
-	PublicDate      *time.Time  `json:"public_date,omitempty"`
-	PublicDateAtUSN *time.Time  `json:"public_date_at_usn,omitempty"`
-	CRD             *time.Time  `json:"crd,omitempty"`
-	AssignedTo      string      `json:"assigned_to,omitempty"`
-	DiscoveredBy    string      `json:"discovered_by,omitempty"`
-	Rights          string      `json:"rights"`
+type Definition struct {
+	DefinitionID string      `json:"definition_id"`
+	Class        string      `json:"class"`
+	Title        string      `json:"title"`
+	Description  string      `json:"description"`
+	Note         string      `json:"note"`
+	Affected     Affected    `json:"affected"`
+	Advisory     Advisory    `json:"advisory"`
+	Packages     []Package   `json:"packages"`
+	References   []Reference `json:"references"`
 }
 
 type Affected struct {
 	Family   string `json:"family"`
 	Platform string `json:"platform"`
+}
+
+type Advisory struct {
+	Severity        string     `json:"severity,omitempty"`
+	References      []string   `json:"references,omitempty"`
+	Bugzillas       []string   `json:"bugzillas,omitempty"`
+	PublicDate      *time.Time `json:"public_date,omitempty"`
+	PublicDateAtUSN *time.Time `json:"public_date_at_usn,omitempty"`
+	CRD             *time.Time `json:"crd,omitempty"`
+	AssignedTo      string     `json:"assigned_to,omitempty"`
+	DiscoveredBy    string     `json:"discovered_by,omitempty"`
+	Rights          string     `json:"rights,omitempty"`
 }
 
 type Package struct {

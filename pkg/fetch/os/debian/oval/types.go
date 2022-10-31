@@ -160,17 +160,21 @@ type dpkginfoState struct {
 	} `xml:"evr"`
 }
 
-type Advisory struct {
-	ID           string      `json:"id"`
-	DSAID        string      `json:"dsa_id,omitempty"`
+type Definition struct {
 	DefinitionID string      `json:"definition_id"`
+	Class        string      `json:"class"`
 	Title        string      `json:"title"`
 	Description  string      `json:"description"`
-	MoreInfo     string      `json:"moreinfo,omitempty"`
+	Debian       Debian      `json:"debian"`
 	Affected     Affected    `json:"affected"`
 	Package      Package     `json:"package"`
-	Date         *time.Time  `json:"date,omitempty"`
 	References   []Reference `json:"references"`
+}
+
+type Debian struct {
+	DSA      string     `json:"dsa,omitempty"`
+	MoreInfo string     `json:"moreinfo,omitempty"`
+	Date     *time.Time `json:"date,omitempty"`
 }
 
 type Affected struct {

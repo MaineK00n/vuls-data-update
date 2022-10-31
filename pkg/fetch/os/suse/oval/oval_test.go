@@ -27,24 +27,24 @@ func TestFetch(t *testing.T) {
 		{
 			name: "happy path",
 			testdata: map[string]string{
-				"opensuse 10.2":                   "testdata/fixtures/opensuse.10.2.xml",
-				"opensuse 12.1":                   "testdata/fixtures/opensuse.12.1.xml",
-				"opensuse 13.2":                   "testdata/fixtures/opensuse.13.2.xml",
-				"opensuse tumbleweed":             "testdata/fixtures/opensuse.tumbleweed.xml",
-				"opensuse.leap 15.2":              "testdata/fixtures/opensuse.leap.15.2.xml",
-				"suse.linux.enterprise.server 9":  "testdata/fixtures/suse.linux.enterprise.server.9.xml",
-				"suse.linux.enterprise.server 10": "testdata/fixtures/suse.linux.enterprise.server.10.xml",
-				"suse.linux.enterprise.server 15": "testdata/fixtures/suse.linux.enterprise.server.15.xml",
+				"opensuse 10.2":                   "testdata/fixtures/opensuse.10.2.xml.gz",
+				"opensuse 12.1":                   "testdata/fixtures/opensuse.12.1.xml.gz",
+				"opensuse 13.2":                   "testdata/fixtures/opensuse.13.2.xml.gz",
+				"opensuse tumbleweed":             "testdata/fixtures/opensuse.tumbleweed.xml.gz",
+				"opensuse.leap 15.2":              "testdata/fixtures/opensuse.leap.15.2.xml.gz",
+				"suse.linux.enterprise.server 9":  "testdata/fixtures/suse.linux.enterprise.server.9.xml.gz",
+				"suse.linux.enterprise.server 10": "testdata/fixtures/suse.linux.enterprise.server.10.xml.gz",
+				"suse.linux.enterprise.server 15": "testdata/fixtures/suse.linux.enterprise.server.15.xml.gz",
 			},
 		},
 		{
 			name:     "invalid name",
-			testdata: map[string]string{"SUSE Linux Enterprise Server 15": "testdata/fixtures/suse.linux.enterprise.server.15.xml"},
+			testdata: map[string]string{"SUSE Linux Enterprise Server 15": "testdata/fixtures/suse.linux.enterprise.server.15.xml.gz"},
 			hasError: true,
 		},
 		{
 			name:     "invalid version",
-			testdata: map[string]string{"suse.linux.enterprise.server 0": "testdata/fixtures/suse.linux.enterprise.server.15.xml"},
+			testdata: map[string]string{"suse.linux.enterprise.server 0": "testdata/fixtures/suse.linux.enterprise.server.15.xml.gz"},
 			hasError: true,
 		},
 	}
@@ -58,7 +58,7 @@ func TestFetch(t *testing.T) {
 					if !found {
 						continue
 					}
-					if strings.HasSuffix(r.URL.Path, fmt.Sprintf("%s.%s.xml", name, ver)) {
+					if strings.HasSuffix(r.URL.Path, fmt.Sprintf("%s.%s.xml.gz", name, ver)) {
 						datapath = dp
 						break
 					}
@@ -99,10 +99,9 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				dir, y := filepath.Split(filepath.Clean(dir))
 				dir, v := filepath.Split(filepath.Clean(dir))
 				_, osname := filepath.Split(filepath.Clean(dir))
-				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", osname, v, y, file))
+				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", osname, v, file))
 				if err != nil {
 					return err
 				}

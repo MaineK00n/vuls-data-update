@@ -125,18 +125,22 @@ type rpminfoState struct {
 	} `xml:"evr"`
 }
 
-type Advisory struct {
-	ID           string      `json:"id"`
-	ELSAID       string      `json:"elsa_id"`
+type Definition struct {
 	DefinitionID string      `json:"definition_id"`
+	Class        string      `json:"class"`
 	Title        string      `json:"title"`
 	Description  string      `json:"description"`
-	Severity     string      `json:"severity"`
 	Affected     Affected    `json:"affected"`
+	Advisory     Advisory    `json:"advisory"`
 	Packages     []Package   `json:"packages"`
 	References   []Reference `json:"references"`
-	Issued       *time.Time  `json:"issued,omitempty"`
-	Rights       string      `json:"rights"`
+}
+
+type Advisory struct {
+	Severity string     `json:"severity"`
+	Rights   string     `json:"rights"`
+	Issued   *time.Time `json:"issued,omitempty"`
+	Cves     []string   `json:"cves"`
 }
 
 type Affected struct {
