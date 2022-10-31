@@ -1,6 +1,8 @@
 package oval
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -19,10 +21,10 @@ import (
 )
 
 var (
-	urlFormat  = "https://ftp.suse.com/pub/projects/security/oval/%s.%s.xml"
+	urlFormat  = "https://ftp.suse.com/pub/projects/security/oval/%s.%s.xml.gz"
 	osVersions = map[string][]string{
 		"opensuse":                      {"10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "12.1", "12.2", "12.3", "13.1", "13.2", "tumbleweed"},
-		"opensuse.leap":                 {"42.1", "42.2", "42.3", "15.0", "15.1", "15.2", "15.3"},
+		"opensuse.leap":                 {"42.1", "42.2", "42.3", "15.0", "15.1", "15.2", "15.3", "15.4"},
 		"suse.linux.enterprise.desktop": {"10", "11", "12", "15"},
 		"suse.linux.enterprise.server":  {"9", "10", "11", "12", "15"},
 	}
@@ -99,7 +101,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch %s", name)
-		advs, err := options.fetchOVAL(url)
+		defs, err := options.fetchOVAL(url)
 		if err != nil {
 			return errors.Wrapf(err, "fetch %s", name)
 		}
@@ -108,25 +110,22 @@ func Fetch(opts ...Option) error {
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.Wrapf(err, "remove %s", dir)
 		}
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return errors.Wrapf(err, "mkdir %s", dir)
+		}
 
-		bar := pb.StartNew(len(advs))
-		for _, adv := range advs {
+		bar := pb.StartNew(len(defs))
+		for _, def := range defs {
 			if err := func() error {
-				y := strings.Split(adv.ID, "-")[1]
-
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", filepath.Join(dir, y))
-				}
-
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+				f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.ID)))
+					return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
 				}
 				defer f.Close()
 
 				enc := json.NewEncoder(f)
 				enc.SetIndent("", "  ")
-				if err := enc.Encode(adv); err != nil {
+				if err := enc.Encode(def); err != nil {
 					return errors.Wrap(err, "encode data")
 				}
 				return nil
@@ -141,15 +140,20 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) fetchOVAL(url string) ([]Advisory, error) {
+func (opts options) fetchOVAL(url string) ([]Definition, error) {
 	bs, err := util.FetchURL(url, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch oval")
 	}
 
+	r, err := gzip.NewReader(bytes.NewReader(bs))
+	if err != nil {
+		return nil, errors.Wrap(err, "open oval as gzip")
+	}
+
 	var root root
-	if err := xml.Unmarshal(bs, &root); err != nil {
-		return nil, errors.Wrap(err, "unmarshal oval")
+	if err := xml.NewDecoder(r).Decode(&root); err != nil {
+		return nil, errors.Wrap(err, "decode oval")
 	}
 
 	tests, err := parseTests(root)
@@ -253,84 +257,75 @@ func followTestRefs(test rpminfoTest, objects map[string]string, states map[stri
 	return &p, nil
 }
 
-func parseDefinitions(xmlname string, ovalDefs []definition, tests map[string]Package) []Advisory {
-	advs := []Advisory{}
-	for _, d := range ovalDefs {
-		switch d.Class {
-		case "vulnerability":
-			cves := d.Advisory.Cves
-			if len(cves) == 0 && strings.Contains(xmlname, "opensuse.1") || strings.Contains(xmlname, "suse.linux.enterprise.desktop.10") || strings.Contains(xmlname, "suse.linux.enterprise.server.9") || strings.Contains(xmlname, "suse.linux.enterprise.server.10") {
-				t := strings.TrimSpace(d.Title)
-				if strings.HasPrefix(t, "CVE-") {
-					cves = append(cves, cve{
-						CveID: t,
-						Href:  fmt.Sprintf("https://cve.mitre.org/cgi-bin/cvename.cgi?name=%s", d.Title),
-					})
-				}
-			}
-			if len(cves) == 0 {
-				log.Printf(`[WARN] no cves. DefinitionID: %s`, d.ID)
-				continue
-			}
+func parseDefinitions(xmlname string, ovalDefs []definition, tests map[string]Package) []Definition {
+	defs := []Definition{}
 
-			var rs []Reference
-			for _, r := range d.References {
-				rs = append(rs, Reference{
-					ID:     r.RefID,
-					Source: r.Source,
-					URL:    r.RefURL,
-				})
-			}
-
-			for _, b := range d.Advisory.Bugzillas {
-				rs = append(rs, Reference{
-					ID:     b.Title,
-					Source: "BUG",
-					URL:    b.URL,
-				})
-			}
-
-			parseDateFn := func(v string) *time.Time {
-				if v == "" {
-					return nil
-				}
-				if t, err := time.Parse("2006-01-02", v); err == nil {
-					return &t
-				}
-				log.Printf(`[WARN] error time.Parse date="%s"`, v)
-				return nil
-			}
-
-			issued := parseDateFn(d.Advisory.Issued.Date)
-			updated := parseDateFn(d.Advisory.Updated.Date)
-
-			pkgs := collectPkgs(xmlname, d.Criteria, tests)
-
-			for _, cve := range cves {
-				advs = append(advs, Advisory{
-					ID:           cve.CveID,
-					DefinitionID: d.ID,
-					Title:        d.Title,
-					Description:  d.Description,
-					CVSS3:        cve.Cvss3,
-					Severity:     d.Advisory.Severity,
-					Impact:       cve.Impact,
-					Affected: Affected{
-						Family:    d.Affected.Family,
-						Platforms: d.Affected.Platform,
-						CPEs:      d.Advisory.AffectedCPEList,
-					},
-					Packages:   pkgs,
-					References: rs,
-					Issued:     issued,
-					Updated:    updated,
-				})
-			}
-		default:
-			log.Printf("[WARN] unknown class: %s", d.Class)
+	parseDateFn := func(v string) *time.Time {
+		if v == "" {
+			return nil
 		}
+		if t, err := time.Parse("2006-01-02", v); err == nil {
+			return &t
+		}
+		log.Printf(`[WARN] error time.Parse date="%s"`, v)
+		return nil
 	}
-	return advs
+
+	for _, d := range ovalDefs {
+		def := Definition{
+			DefinitionID: d.ID,
+			Class:        d.Class,
+			Title:        d.Title,
+			Description:  d.Description,
+			Affected: Affected{
+				Family:    d.Affected.Family,
+				Platforms: d.Affected.Platform,
+			},
+			Advisory: Advisory{
+				Severity: d.Advisory.Severity,
+				CPEs:     d.Advisory.AffectedCPEList,
+				Issued:   parseDateFn(d.Advisory.Issued.Date),
+				Updated:  parseDateFn(d.Advisory.Updated.Date),
+			},
+			Packages: collectPkgs(xmlname, d.Criteria, tests),
+		}
+
+		for _, cve := range d.Advisory.Cves {
+			def.Advisory.CVEs = append(def.Advisory.CVEs, CVE{
+				CVEID:  cve.CveID,
+				CVSS3:  cve.Cvss3,
+				Imapct: cve.Impact,
+				Href:   cve.Href,
+			})
+		}
+		if len(def.Advisory.CVEs) == 0 && strings.Contains(xmlname, "opensuse.1") || strings.Contains(xmlname, "suse.linux.enterprise.desktop.10") || strings.Contains(xmlname, "suse.linux.enterprise.server.9") || strings.Contains(xmlname, "suse.linux.enterprise.server.10") {
+			t := strings.TrimSpace(d.Title)
+			if strings.HasPrefix(t, "CVE-") {
+				def.Advisory.CVEs = append(def.Advisory.CVEs, CVE{
+					CVEID: t,
+					Href:  fmt.Sprintf("https://cve.mitre.org/cgi-bin/cvename.cgi?name=%s", d.Title),
+				})
+			}
+		}
+		if len(def.Advisory.CVEs) == 0 {
+			log.Printf(`[WARN] no cves. DefinitionID: %s`, d.ID)
+		}
+
+		for _, r := range d.References {
+			def.References = append(def.References, Reference{
+				ID:     r.RefID,
+				Source: r.Source,
+				URL:    r.RefURL,
+			})
+		}
+
+		for _, b := range d.Advisory.Bugzillas {
+			def.Advisory.Bugzillas = append(def.Advisory.Bugzillas, Bugzilla(b))
+		}
+
+		defs = append(defs, def)
+	}
+	return defs
 }
 
 func collectPkgs(xmlname string, cri criteria, tests map[string]Package) []Package {

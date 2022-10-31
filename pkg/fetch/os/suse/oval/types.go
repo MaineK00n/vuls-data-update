@@ -135,25 +135,41 @@ type rpminfoState struct {
 	} `xml:"signature_keyid"`
 }
 
-type Advisory struct {
-	ID           string      `json:"id"`
+type Definition struct {
 	DefinitionID string      `json:"definition_id"`
+	Class        string      `json:"class"`
 	Title        string      `json:"title"`
 	Description  string      `json:"description"`
-	CVSS3        string      `json:"cvss3,omitempty"`
-	Severity     string      `json:"severity,omitempty"`
-	Impact       string      `json:"impact,omitempty"`
 	Affected     Affected    `json:"affected"`
+	Advisory     Advisory    `json:"advisory"`
 	Packages     []Package   `json:"packages"`
 	References   []Reference `json:"references"`
-	Issued       *time.Time  `json:"issued,omitempty"`
-	Updated      *time.Time  `json:"updated,omitempty"`
 }
 
 type Affected struct {
 	Family    string   `json:"family"`
 	Platforms []string `json:"platforms"`
-	CPEs      []string `json:"cpes,omitempty"`
+}
+
+type Advisory struct {
+	Severity  string     `json:"severity,omitempty"`
+	CVEs      []CVE      `json:"cves,omitempty"`
+	Bugzillas []Bugzilla `json:"bugzillas,omitempty"`
+	CPEs      []string   `json:"cpes,omitempty"`
+	Issued    *time.Time `json:"issued,omitempty"`
+	Updated   *time.Time `json:"updated,omitempty"`
+}
+
+type CVE struct {
+	CVEID  string `json:"cve_id,omitempty"`
+	CVSS3  string `json:"cvss3,omitempty"`
+	Imapct string `json:"imapct,omitempty"`
+	Href   string `json:"href,omitempty"`
+}
+
+type Bugzilla struct {
+	URL   string `json:"url,omitempty"`
+	Title string `json:"title,omitempty"`
 }
 
 type Package struct {
