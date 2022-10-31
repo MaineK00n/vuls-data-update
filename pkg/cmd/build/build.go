@@ -11,6 +11,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/mitre"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/msf"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 )
@@ -69,9 +70,9 @@ func build() error {
 				return errors.Wrap(err, "failed to build mitre")
 			}
 		case "msf":
-			// if err := msf.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build msf")
-			// }
+			if err := msf.Build(); err != nil {
+				return errors.Wrap(err, "failed to build msf")
+			}
 		case "nvd":
 			if err := nvd.Build(); err != nil {
 				return errors.Wrap(err, "failed to build nvd")

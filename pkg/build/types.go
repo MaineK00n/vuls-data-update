@@ -9,6 +9,7 @@ type Vulnerability struct {
 	CVSS        map[string][]CVSS    `json:"cvss,omitempty"`
 	EPSS        *EPSS                `json:"epss,omitempty"`
 	CWE         map[string][]string  `json:"cwe,omitempty"`
+	Metasploit  []Metasploit         `json:"metasploit,omitempty"`
 	Published   map[string]time.Time `json:"published,omitempty"`
 	Modified    map[string]time.Time `json:"modified,omitempty"`
 	References  []Reference          `json:"references,omitempty"`
@@ -25,6 +26,13 @@ type CVSS struct {
 type EPSS struct {
 	EPSS       *float64 `json:"epss,omitempty"`
 	Percentile *float64 `json:"percentile,omitempty"`
+}
+
+type Metasploit struct {
+	Name        string   `json:"name,omitempty"`
+	Title       string   `json:"title,omitempty"`
+	Description string   `json:"description,omitempty"`
+	URLs        []string `json:"urls,omitempty"`
 }
 
 type Reference struct {
