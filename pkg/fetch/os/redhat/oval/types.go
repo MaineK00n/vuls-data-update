@@ -296,30 +296,46 @@ type repositoryToCPE struct {
 	} `json:"data"`
 }
 
-type Advisory struct {
-	ID           string      `json:"id,omitempty"`
-	RHSAID       string      `json:"rhsa_id,omitempty"`
+type Definition struct {
 	DefinitionID string      `json:"definition_id,omitempty"`
+	Class        string      `json:"class,omitempty"`
 	Title        string      `json:"title,omitempty"`
 	Description  string      `json:"description,omitempty"`
-	CVSS2        string      `json:"cvss2,omitempty"`
-	CVSS3        string      `json:"cvss3,omitempty"`
-	Cwe          string      `json:"cwe,omitempty"`
-	Severity     string      `json:"severity,omitempty"`
-	Impact       string      `json:"impact,omitempty"`
 	Affected     Affected    `json:"affected,omitempty"`
+	Advisory     Advisory    `json:"advisory,omitempty"`
 	Packages     []Package   `json:"packages,omitempty"`
 	References   []Reference `json:"references,omitempty"`
-	Public       *time.Time  `json:"public,omitempty"`
-	Issued       *time.Time  `json:"issued,omitempty"`
-	Updated      *time.Time  `json:"updated,omitempty"`
 }
 
 type Affected struct {
-	Family     string      `json:"family,omitempty"`
-	Platforms  []string    `json:"platforms,omitempty"`
-	CPEs       []CPE       `json:"cpes,omitempty"`
-	Resolution *Resolution `json:"resolution,omitempty"`
+	Family    string   `json:"family,omitempty"`
+	Platforms []string `json:"platforms,omitempty"`
+}
+
+type Advisory struct {
+	Severity  string      `json:"severity,omitempty"`
+	CVEs      []CVE       `json:"cves,omitempty"`
+	Bugzillas []Bugzilla  `json:"bugzillas,omitempty"`
+	CPEs      []CPE       `json:"cpes,omitempty"`
+	Affected  *Resolution `json:"affected,omitempty"`
+	Issued    *time.Time  `json:"issued,omitempty"`
+	Updated   *time.Time  `json:"updated,omitempty"`
+}
+
+type CVE struct {
+	CVEID  string     `json:"cve_id,omitempty"`
+	CVSS2  string     `json:"cvss2,omitempty"`
+	CVSS3  string     `json:"cvss3,omitempty"`
+	CWE    string     `json:"cwe,omitempty"`
+	Impact string     `json:"impact,omitempty"`
+	Href   string     `json:"href,omitempty"`
+	Public *time.Time `json:"public,omitempty"`
+}
+
+type Bugzilla struct {
+	ID    string `json:"id,omitempty"`
+	URL   string `json:"url,omitempty"`
+	Title string `json:"title,omitempty"`
 }
 
 type CPE struct {
