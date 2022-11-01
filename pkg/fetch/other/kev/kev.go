@@ -90,9 +90,9 @@ func Fetch(opts ...Option) error {
 		return nil
 	}
 
-	vs := make([]Vulenrability, 0, len(catalog.Vulnerabilities))
+	vs := make([]Vulnerability, 0, len(catalog.Vulnerabilities))
 	for _, v := range catalog.Vulnerabilities {
-		vs = append(vs, Vulenrability{
+		vs = append(vs, Vulnerability{
 			CveID:             v.CveID,
 			VendorProject:     v.VendorProject,
 			Product:           v.Product,

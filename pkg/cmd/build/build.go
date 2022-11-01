@@ -10,16 +10,11 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/mitre"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/msf"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
-)
-
-var (
-	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
-	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
-	supportOther   = []string{"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "cti"}
 )
 
 func NewCmdBuild() *cobra.Command {
@@ -42,7 +37,12 @@ func build() error {
 		return errors.Wrapf(err, "remove %s", filepath.Join(util.DestDir(), "vulnerability"))
 	}
 
-	for _, name := range supportOther {
+	for _, name := range []string{
+		"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
+		"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
+		"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
+		"cwe", "cti",
+	} {
 		switch name {
 		case "cti":
 		case "cwe":
@@ -62,9 +62,9 @@ func build() error {
 			// 	return errors.Wrap(err, "failed to build jvn")
 			// }
 		case "kev":
-			// if err := kev.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build kev")
-			// }
+			if err := kev.Build(); err != nil {
+				return errors.Wrap(err, "failed to build kev")
+			}
 		case "mitre":
 			if err := mitre.Build(); err != nil {
 				return errors.Wrap(err, "failed to build mitre")
@@ -77,13 +77,8 @@ func build() error {
 			if err := nvd.Build(); err != nil {
 				return errors.Wrap(err, "failed to build nvd")
 			}
-		default:
-			return fmt.Errorf("accepts %q, received %q", supportOther, name)
-		}
-	}
 
-	for _, name := range supportOS {
-		switch name {
+		// os
 		case "alma":
 		case "alpine":
 		case "amazon":
@@ -99,13 +94,8 @@ func build() error {
 		case "suse":
 		case "ubuntu":
 		case "windows":
-		default:
-			return fmt.Errorf("accepts %q, received %q", supportOS, name)
-		}
-	}
 
-	for _, name := range supportLibrary {
-		switch name {
+		// library
 		case "cargo":
 		case "composer":
 		case "conan":
@@ -117,9 +107,12 @@ func build() error {
 		case "pip":
 		case "rubygems":
 		default:
-			return fmt.Errorf("accepts %q, received %q", supportLibrary, name)
+			return fmt.Errorf("accepts %q, received %q", []string{
+				"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "cti",
+				"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
+				"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
+			}, name)
 		}
 	}
-
 	return nil
 }

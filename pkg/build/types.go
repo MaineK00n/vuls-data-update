@@ -10,6 +10,7 @@ type Vulnerability struct {
 	EPSS        *EPSS                `json:"epss,omitempty"`
 	CWE         map[string][]string  `json:"cwe,omitempty"`
 	Metasploit  []Metasploit         `json:"metasploit,omitempty"`
+	KEV         *KEV                 `json:"kev,omitempty"`
 	Published   map[string]time.Time `json:"published,omitempty"`
 	Modified    map[string]time.Time `json:"modified,omitempty"`
 	References  []Reference          `json:"references,omitempty"`
@@ -33,6 +34,13 @@ type Metasploit struct {
 	Title       string   `json:"title,omitempty"`
 	Description string   `json:"description,omitempty"`
 	URLs        []string `json:"urls,omitempty"`
+}
+
+type KEV struct {
+	Title          string     `json:"title,omitempty"`
+	Description    string     `json:"description,omitempty"`
+	RequiredAction string     `json:"required_action,omitempty"`
+	DueDate        *time.Time `json:"due_date,omitempty"`
 }
 
 type Reference struct {
