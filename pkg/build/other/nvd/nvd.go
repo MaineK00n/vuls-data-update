@@ -256,8 +256,7 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 
 func getDetect(sv *nvd.CVEItem) build.DetectCPE {
 	d := build.DetectCPE{
-		ID:             sv.Cve.CVEDataMeta.ID,
-		Configurations: make([]build.CPEConfiguration, 0, len(sv.Configurations.Nodes)),
+		ID: sv.Cve.CVEDataMeta.ID,
 	}
 	for _, n := range sv.Configurations.Nodes {
 		var configuration build.CPEConfiguration
@@ -301,7 +300,9 @@ func getDetect(sv *nvd.CVEItem) build.DetectCPE {
 				})
 			}
 		}
-		d.Configurations = append(d.Configurations, configuration)
+		if len(configuration.Vulnerable) > 0 {
+			d.Configurations = append(d.Configurations, configuration)
+		}
 	}
 	return d
 }
