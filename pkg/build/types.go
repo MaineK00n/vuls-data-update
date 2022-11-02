@@ -10,6 +10,7 @@ type Vulnerability struct {
 	EPSS        *EPSS                `json:"epss,omitempty"`
 	CWE         map[string][]string  `json:"cwe,omitempty"`
 	Metasploit  []Metasploit         `json:"metasploit,omitempty"`
+	Exploit     *Exploit             `json:"exploit,omitempty"`
 	KEV         *KEV                 `json:"kev,omitempty"`
 	Published   map[string]time.Time `json:"published,omitempty"`
 	Modified    map[string]time.Time `json:"modified,omitempty"`
@@ -17,11 +18,11 @@ type Vulnerability struct {
 }
 
 type CVSS struct {
-	Version  string
-	Source   string
-	Vector   string
-	Score    *float64
-	Severity string
+	Version  string   `json:"version,omitempty"`
+	Source   string   `json:"source,omitempty"`
+	Vector   string   `json:"vector,omitempty"`
+	Score    *float64 `json:"score,omitempty"`
+	Severity string   `json:"severity,omitempty"`
 }
 
 type EPSS struct {
@@ -34,6 +35,45 @@ type Metasploit struct {
 	Title       string   `json:"title,omitempty"`
 	Description string   `json:"description,omitempty"`
 	URLs        []string `json:"urls,omitempty"`
+}
+
+type Exploit struct {
+	NVD       []string    `json:"nvd,omitempty"`
+	ExploitDB []ExploitDB `json:"exploit_db,omitempty"`
+	GitHub    []GitHub    `json:"github,omitempty"`
+	InTheWild []InTheWild `json:"inthewild,omitempty"`
+	Trickest  *Trickest   `json:"trickest,omitempty"`
+}
+
+type ExploitDB struct {
+	ID          string `json:"name,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Description string `json:"description,omitempty"`
+	URL         string `json:"url,omitempty"`
+	FileURL     string `json:"file_url,omitempty"`
+}
+
+type GitHub struct {
+	Name    string `json:"name,omitempty"`
+	Stars   int    `json:"stars,omitempty"`
+	Forks   int    `json:"forks,omitempty"`
+	Watches int    `json:"watches,omitempty"`
+	URL     string `json:"url,omitempty"`
+}
+
+type InTheWild struct {
+	Source string `json:"source,omitempty"`
+	URL    string `json:"url,omitempty"`
+}
+
+type Trickest struct {
+	Description string       `json:"description,omitempty"`
+	PoC         *TrickestPoc `json:"poc,omitempty"`
+}
+
+type TrickestPoc struct {
+	Reference []string `json:"reference,omitempty"`
+	GitHub    []string `json:"github,omitempty"`
 }
 
 type KEV struct {
