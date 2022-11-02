@@ -55,9 +55,9 @@ type ExploitDB struct {
 
 type GitHub struct {
 	Name    string `json:"name,omitempty"`
-	Stars   int    `json:"stars,omitempty"`
-	Forks   int    `json:"forks,omitempty"`
-	Watches int    `json:"watches,omitempty"`
+	Stars   int    `json:"stars"`
+	Forks   int    `json:"forks"`
+	Watches int    `json:"watches"`
 	URL     string `json:"url,omitempty"`
 }
 
