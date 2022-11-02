@@ -11,6 +11,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/mitre"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/msf"
@@ -59,9 +60,9 @@ func build() error {
 				return errors.Wrap(err, "failed to build exploit")
 			}
 		case "jvn":
-			// if err := jvn.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build jvn")
-			// }
+			if err := jvn.Build(); err != nil {
+				return errors.Wrap(err, "failed to build jvn")
+			}
 		case "kev":
 			if err := kev.Build(); err != nil {
 				return errors.Wrap(err, "failed to build kev")

@@ -11,10 +11,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/build"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/nvd"
-	"github.com/pkg/errors"
 )
 
 type options struct {
@@ -142,7 +143,6 @@ func Build(opts ...Option) error {
 			if err := enc.Encode(dd); err != nil {
 				return errors.Wrap(err, "encode json")
 			}
-
 		}
 		return nil
 	}); err != nil {
@@ -156,6 +156,19 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 	if dv.ID == "" {
 		dv.ID = sv.Cve.CVEDataMeta.ID
 	}
+
+	if dv.Advisory == nil {
+		dv.Advisory = map[string]build.Advisory{}
+	}
+	dv.Advisory["nvd"] = build.Advisory{
+		ID:  sv.Cve.CVEDataMeta.ID,
+		URL: fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", sv.Cve.CVEDataMeta.ID),
+	}
+
+	if dv.Title == nil {
+		dv.Title = map[string]string{}
+	}
+	dv.Title["nvd"] = sv.Cve.CVEDataMeta.ID
 
 	if dv.Description == nil {
 		dv.Description = map[string]string{}
@@ -214,8 +227,11 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 		}
 	}
 
+	if dv.References == nil {
+		dv.References = map[string][]build.Reference{}
+	}
 	for _, r := range sv.Cve.References.ReferenceData {
-		dv.References = append(dv.References, build.Reference{
+		dv.References["nvd"] = append(dv.References["nvd"], build.Reference{
 			Source: r.Refsource,
 			Name:   r.Name,
 			Tags:   r.Tags,
@@ -237,7 +253,8 @@ func getDetect(sv *nvd.CVEItem) build.DetectCPE {
 				for _, c := range child.CpeMatch {
 					if c.Vulnerable {
 						configuration.Vulnerable = append(configuration.Vulnerable, build.CPE{
-							Cpe23URI:              c.Cpe23URI,
+							Version:               "2.3",
+							CPE:                   c.Cpe23URI,
 							VersionEndExcluding:   c.VersionEndExcluding,
 							VersionEndIncluding:   c.VersionEndIncluding,
 							VersionStartExcluding: c.VersionStartExcluding,
@@ -245,7 +262,8 @@ func getDetect(sv *nvd.CVEItem) build.DetectCPE {
 						})
 					} else {
 						configuration.RunningOn = append(configuration.RunningOn, build.CPE{
-							Cpe23URI:              c.Cpe23URI,
+							Version:               "2.3",
+							CPE:                   c.Cpe23URI,
 							VersionEndExcluding:   c.VersionEndExcluding,
 							VersionEndIncluding:   c.VersionEndIncluding,
 							VersionStartExcluding: c.VersionStartExcluding,
@@ -260,7 +278,8 @@ func getDetect(sv *nvd.CVEItem) build.DetectCPE {
 					continue
 				}
 				configuration.Vulnerable = append(configuration.Vulnerable, build.CPE{
-					Cpe23URI:              c.Cpe23URI,
+					Version:               "2.3",
+					CPE:                   c.Cpe23URI,
 					VersionEndExcluding:   c.VersionEndExcluding,
 					VersionEndIncluding:   c.VersionEndIncluding,
 					VersionStartExcluding: c.VersionStartExcluding,

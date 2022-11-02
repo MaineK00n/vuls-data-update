@@ -121,6 +121,14 @@ func fillVulnerability(sv *mitre.Vulnerability, dv *build.Vulnerability) {
 		dv.ID = sv.CVE
 	}
 
+	if dv.Advisory == nil {
+		dv.Advisory = map[string]build.Advisory{}
+	}
+	dv.Advisory["mitre"] = build.Advisory{
+		ID:  sv.CVE,
+		URL: fmt.Sprintf("https://cve.mitre.org/cgi-bin/cvename.cgi?name=%s", sv.CVE),
+	}
+
 	if dv.Title == nil {
 		dv.Title = map[string]string{}
 	}
@@ -149,12 +157,15 @@ func fillVulnerability(sv *mitre.Vulnerability, dv *build.Vulnerability) {
 		dv.Modified["mitre"] = *sv.Notes.Modified
 	}
 
+	if dv.References == nil {
+		dv.References = map[string][]build.Reference{}
+	}
 	for _, r := range sv.References {
 		lhs, rhs, found := strings.Cut(r.Description, ":")
 		if !found {
 			rhs = lhs
 		}
-		dv.References = append(dv.References, build.Reference{
+		dv.References["mitre"] = append(dv.References["mitre"], build.Reference{
 			Source: lhs,
 			Name:   rhs,
 			URL:    r.URL,

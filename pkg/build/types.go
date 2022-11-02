@@ -3,18 +3,24 @@ package build
 import "time"
 
 type Vulnerability struct {
-	ID          string               `json:"id,omitempty"`
-	Title       map[string]string    `json:"title,omitempty"`
-	Description map[string]string    `json:"description,omitempty"`
-	CVSS        map[string][]CVSS    `json:"cvss,omitempty"`
-	EPSS        *EPSS                `json:"epss,omitempty"`
-	CWE         map[string][]string  `json:"cwe,omitempty"`
-	Metasploit  []Metasploit         `json:"metasploit,omitempty"`
-	Exploit     *Exploit             `json:"exploit,omitempty"`
-	KEV         *KEV                 `json:"kev,omitempty"`
-	Published   map[string]time.Time `json:"published,omitempty"`
-	Modified    map[string]time.Time `json:"modified,omitempty"`
-	References  []Reference          `json:"references,omitempty"`
+	ID          string                 `json:"id,omitempty"`
+	Advisory    map[string]Advisory    `json:"advisory,omitempty"`
+	Title       map[string]string      `json:"title,omitempty"`
+	Description map[string]string      `json:"description,omitempty"`
+	CVSS        map[string][]CVSS      `json:"cvss,omitempty"`
+	EPSS        *EPSS                  `json:"epss,omitempty"`
+	CWE         map[string][]string    `json:"cwe,omitempty"`
+	Metasploit  []Metasploit           `json:"metasploit,omitempty"`
+	Exploit     *Exploit               `json:"exploit,omitempty"`
+	KEV         *KEV                   `json:"kev,omitempty"`
+	Published   map[string]time.Time   `json:"published,omitempty"`
+	Modified    map[string]time.Time   `json:"modified,omitempty"`
+	References  map[string][]Reference `json:"references,omitempty"`
+}
+
+type Advisory struct {
+	ID  string `json:"id,omitempty"`
+	URL string `json:"url,omitempty"`
 }
 
 type CVSS struct {
@@ -101,9 +107,10 @@ type CPEConfiguration struct {
 }
 
 type CPE struct {
-	Cpe23URI              string  `json:"cpe23Uri,omitempty"`
-	VersionEndExcluding   *string `json:"versionEndExcluding,omitempty"`
-	VersionEndIncluding   *string `json:"versionEndIncluding,omitempty"`
-	VersionStartExcluding *string `json:"versionStartExcluding,omitempty"`
-	VersionStartIncluding *string `json:"versionStartIncluding,omitempty"`
+	Version               string  `json:"version,omitempty"`
+	CPE                   string  `json:"cpe,omitempty"`
+	VersionEndExcluding   *string `json:"version_end_excluding,omitempty"`
+	VersionEndIncluding   *string `json:"version_end_including,omitempty"`
+	VersionStartExcluding *string `json:"version_start_excluding,omitempty"`
+	VersionStartIncluding *string `json:"version_start_including,omitempty"`
 }
