@@ -3,24 +3,51 @@ package build
 import "time"
 
 type Vulnerability struct {
-	ID          string                 `json:"id,omitempty"`
-	Advisory    map[string]Advisory    `json:"advisory,omitempty"`
-	Title       map[string]string      `json:"title,omitempty"`
-	Description map[string]string      `json:"description,omitempty"`
-	CVSS        map[string][]CVSS      `json:"cvss,omitempty"`
-	EPSS        *EPSS                  `json:"epss,omitempty"`
-	CWE         map[string][]string    `json:"cwe,omitempty"`
-	Metasploit  []Metasploit           `json:"metasploit,omitempty"`
-	Exploit     *Exploit               `json:"exploit,omitempty"`
-	KEV         *KEV                   `json:"kev,omitempty"`
-	Published   map[string]time.Time   `json:"published,omitempty"`
-	Modified    map[string]time.Time   `json:"modified,omitempty"`
-	References  map[string][]Reference `json:"references,omitempty"`
+	ID          string        `json:"id,omitempty"`
+	Advisory    *Advisories   `json:"advisory,omitempty"`
+	Title       *Titles       `json:"title,omitempty"`
+	Description *Descriptions `json:"description,omitempty"`
+	CVSS        *CVSSes       `json:"cvss,omitempty"`
+	EPSS        *EPSS         `json:"epss,omitempty"`
+	CWE         *CWEs         `json:"cwe,omitempty"`
+	Metasploit  []Metasploit  `json:"metasploit,omitempty"`
+	Exploit     *Exploit      `json:"exploit,omitempty"`
+	KEV         *KEV          `json:"kev,omitempty"`
+	Mitigation  *Mitigation   `json:"mitigation,omitempty"`
+	Published   *Publisheds   `json:"published,omitempty"`
+	Modified    *Modifieds    `json:"modified,omitempty"`
+	References  *References   `json:"references,omitempty"`
 }
 
+type Advisories struct {
+	MITRE *Advisory  `json:"mitre,omitempty"`
+	NVD   *Advisory  `json:"nvd,omitempty"`
+	JVN   []Advisory `json:"jvn,omitempty"`
+	Alma  []Advisory `json:"alma,omitempty"`
+}
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
 	URL string `json:"url,omitempty"`
+}
+
+type Titles struct {
+	MITRE string            `json:"mitre,omitempty"`
+	NVD   string            `json:"nvd,omitempty"`
+	JVN   map[string]string `json:"jvn,omitempty"`
+	Alma  map[string]string `json:"alma,omitempty"`
+}
+
+type Descriptions struct {
+	MITRE string            `json:"mitre,omitempty"`
+	NVD   string            `json:"nvd,omitempty"`
+	JVN   map[string]string `json:"jvn,omitempty"`
+	Alma  map[string]string `json:"alma,omitempty"`
+}
+
+type CVSSes struct {
+	NVD  []CVSS            `json:"nvd,omitempty"`
+	JVN  map[string][]CVSS `json:"jvn,omitempty"`
+	Alma map[string][]CVSS `json:"alma,omitempty"`
 }
 
 type CVSS struct {
@@ -34,6 +61,11 @@ type CVSS struct {
 type EPSS struct {
 	EPSS       *float64 `json:"epss,omitempty"`
 	Percentile *float64 `json:"percentile,omitempty"`
+}
+
+type CWEs struct {
+	NVD []string            `json:"nvd,omitempty"`
+	JVN map[string][]string `json:"jvn,omitempty"`
 }
 
 type Metasploit struct {
@@ -89,6 +121,31 @@ type KEV struct {
 	DueDate        *time.Time `json:"due_date,omitempty"`
 }
 
+type Mitigation struct {
+	NVD []string `json:"nvd,omitempty"`
+}
+
+type Publisheds struct {
+	MITRE *time.Time            `json:"mitre,omitempty"`
+	NVD   *time.Time            `json:"nvd,omitempty"`
+	JVN   map[string]*time.Time `json:"jvn,omitempty"`
+	Alma  map[string]*time.Time `json:"alma,omitempty"`
+}
+
+type Modifieds struct {
+	MITRE *time.Time            `json:"mitre,omitempty"`
+	NVD   *time.Time            `json:"nvd,omitempty"`
+	JVN   map[string]*time.Time `json:"jvn,omitempty"`
+	Alma  map[string]*time.Time `json:"alma,omitempty"`
+}
+
+type References struct {
+	MITRE []Reference            `json:"mitre,omitempty"`
+	NVD   []Reference            `json:"nvd,omitempty"`
+	JVN   map[string][]Reference `json:"jvn,omitempty"`
+	Alma  map[string][]Reference `json:"alma,omitempty"`
+}
+
 type Reference struct {
 	Source string   `json:"source,omitempty"`
 	Name   string   `json:"name,omitempty"`
@@ -113,4 +170,17 @@ type CPE struct {
 	VersionEndIncluding   *string `json:"version_end_including,omitempty"`
 	VersionStartExcluding *string `json:"version_start_excluding,omitempty"`
 	VersionStartIncluding *string `json:"version_start_including,omitempty"`
+}
+
+type DetectPackage struct {
+	ID       string    `json:"id,omitempty"`
+	Packages []Package `json:"packages,omitempty"`
+}
+
+type Package struct {
+	Name            string   `json:"name,omitempty"`
+	Status          string   `json:"status,omitempty"`
+	FixedVersion    string   `json:"fixed_version,omitempty"`
+	ModularityLabel string   `json:"modularity_label,omitempty"`
+	Arch            []string `json:"arch,omitempty"`
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alma"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -82,6 +83,9 @@ func build() error {
 
 		// os
 		case "alma":
+			if err := alma.Build(); err != nil {
+				return errors.Wrap(err, "failed to build alma")
+			}
 		case "alpine":
 		case "amazon":
 		case "arch":

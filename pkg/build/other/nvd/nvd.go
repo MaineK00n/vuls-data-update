@@ -9,9 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
@@ -158,46 +158,46 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 	}
 
 	if dv.Advisory == nil {
-		dv.Advisory = map[string]build.Advisory{}
+		dv.Advisory = &build.Advisories{}
 	}
-	dv.Advisory["nvd"] = build.Advisory{
+	dv.Advisory.NVD = &build.Advisory{
 		ID:  sv.Cve.CVEDataMeta.ID,
 		URL: fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", sv.Cve.CVEDataMeta.ID),
 	}
 
 	if dv.Title == nil {
-		dv.Title = map[string]string{}
+		dv.Title = &build.Titles{}
 	}
-	dv.Title["nvd"] = sv.Cve.CVEDataMeta.ID
+	dv.Title.NVD = sv.Cve.CVEDataMeta.ID
 
 	if dv.Description == nil {
-		dv.Description = map[string]string{}
+		dv.Description = &build.Descriptions{}
 	}
 	for _, d := range sv.Cve.Description.DescriptionData {
 		if d.Lang == "en" {
-			dv.Description["nvd"] = d.Value
+			dv.Description.NVD = d.Value
 		}
 	}
 
 	if dv.Published == nil {
-		dv.Published = map[string]time.Time{}
+		dv.Published = &build.Publisheds{}
 	}
 	if sv.PublishedDate != nil {
-		dv.Published["nvd"] = *sv.PublishedDate
+		dv.Published.NVD = sv.PublishedDate
 	}
 
 	if dv.Modified == nil {
-		dv.Modified = map[string]time.Time{}
+		dv.Modified = &build.Modifieds{}
 	}
 	if sv.LastModifiedDate != nil {
-		dv.Modified["nvd"] = *sv.LastModifiedDate
+		dv.Modified.NVD = sv.LastModifiedDate
 	}
 
 	if dv.CVSS == nil {
-		dv.CVSS = map[string][]build.CVSS{}
+		dv.CVSS = &build.CVSSes{}
 	}
 	if sv.Impact.BaseMetricV2 != nil {
-		dv.CVSS["nvd"] = append(dv.CVSS["nvd"], build.CVSS{
+		dv.CVSS.NVD = append(dv.CVSS.NVD, build.CVSS{
 			Version:  sv.Impact.BaseMetricV2.CvssV2.Version,
 			Source:   "NIST",
 			Vector:   sv.Impact.BaseMetricV2.CvssV2.VectorString,
@@ -207,7 +207,7 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 	}
 
 	if sv.Impact.BaseMetricV3 != nil {
-		dv.CVSS["nvd"] = append(dv.CVSS["nvd"], build.CVSS{
+		dv.CVSS.NVD = append(dv.CVSS.NVD, build.CVSS{
 			Version:  sv.Impact.BaseMetricV3.CvssV3.Version,
 			Source:   "NIST",
 			Vector:   sv.Impact.BaseMetricV3.CvssV3.VectorString,
@@ -217,26 +217,40 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 	}
 
 	if dv.CWE == nil {
-		dv.CWE = map[string][]string{}
+		dv.CWE = &build.CWEs{}
 	}
 	for _, p := range sv.Cve.Problemtype.ProblemtypeData {
 		for _, d := range p.Description {
 			if d.Lang == "en" {
-				dv.CWE["nvd"] = append(dv.CWE["nvd"], strings.TrimPrefix(strings.TrimPrefix(d.Value, "NVD-"), "CWE-"))
+				dv.CWE.NVD = append(dv.CWE.NVD, strings.TrimPrefix(strings.TrimPrefix(d.Value, "NVD-"), "CWE-"))
 			}
 		}
 	}
 
 	if dv.References == nil {
-		dv.References = map[string][]build.Reference{}
+		dv.References = &build.References{}
 	}
 	for _, r := range sv.Cve.References.ReferenceData {
-		dv.References["nvd"] = append(dv.References["nvd"], build.Reference{
+		dv.References.NVD = append(dv.References.NVD, build.Reference{
 			Source: r.Refsource,
 			Name:   r.Name,
 			Tags:   r.Tags,
 			URL:    r.URL,
 		})
+
+		if slices.Contains(r.Tags, "Exploit") {
+			if dv.Exploit == nil {
+				dv.Exploit = &build.Exploit{}
+			}
+			dv.Exploit.NVD = append(dv.Exploit.NVD, r.URL)
+		}
+
+		if slices.Contains(r.Tags, "Mitigation") {
+			if dv.Mitigation == nil {
+				dv.Mitigation = &build.Mitigation{}
+			}
+			dv.Mitigation.NVD = append(dv.Mitigation.NVD, r.URL)
+		}
 	}
 }
 

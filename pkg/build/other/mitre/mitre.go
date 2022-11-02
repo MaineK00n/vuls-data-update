@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -122,50 +121,50 @@ func fillVulnerability(sv *mitre.Vulnerability, dv *build.Vulnerability) {
 	}
 
 	if dv.Advisory == nil {
-		dv.Advisory = map[string]build.Advisory{}
+		dv.Advisory = &build.Advisories{}
 	}
-	dv.Advisory["mitre"] = build.Advisory{
+	dv.Advisory.MITRE = &build.Advisory{
 		ID:  sv.CVE,
 		URL: fmt.Sprintf("https://cve.mitre.org/cgi-bin/cvename.cgi?name=%s", sv.CVE),
 	}
 
 	if dv.Title == nil {
-		dv.Title = map[string]string{}
+		dv.Title = &build.Titles{}
 	}
 	if sv.Title != "" {
-		dv.Title["mitre"] = sv.Title
+		dv.Title.MITRE = sv.Title
 	}
 
 	if dv.Description == nil {
-		dv.Description = map[string]string{}
+		dv.Description = &build.Descriptions{}
 	}
 	if sv.Notes.Description != "" {
-		dv.Description["mitre"] = sv.Notes.Description
+		dv.Description.MITRE = sv.Notes.Description
 	}
 
 	if dv.Published == nil {
-		dv.Published = map[string]time.Time{}
+		dv.Published = &build.Publisheds{}
 	}
 	if sv.Notes.Published != nil {
-		dv.Published["mitre"] = *sv.Notes.Published
+		dv.Published.MITRE = sv.Notes.Published
 	}
 
 	if dv.Modified == nil {
-		dv.Modified = map[string]time.Time{}
+		dv.Modified = &build.Modifieds{}
 	}
 	if sv.Notes.Modified != nil {
-		dv.Modified["mitre"] = *sv.Notes.Modified
+		dv.Modified.MITRE = sv.Notes.Modified
 	}
 
 	if dv.References == nil {
-		dv.References = map[string][]build.Reference{}
+		dv.References = &build.References{}
 	}
 	for _, r := range sv.References {
 		lhs, rhs, found := strings.Cut(r.Description, ":")
 		if !found {
 			rhs = lhs
 		}
-		dv.References["mitre"] = append(dv.References["mitre"], build.Reference{
+		dv.References.MITRE = append(dv.References.MITRE, build.Reference{
 			Source: lhs,
 			Name:   rhs,
 			URL:    r.URL,

@@ -168,39 +168,54 @@ func fillVulnerability(cve string, sv *jvn.Advisory, dv *build.Vulnerability) {
 	}
 
 	if dv.Advisory == nil {
-		dv.Advisory = map[string]build.Advisory{}
+		dv.Advisory = &build.Advisories{}
 	}
-	dv.Advisory["jvn"] = build.Advisory{
+	dv.Advisory.JVN = append(dv.Advisory.JVN, build.Advisory{
 		ID:  sv.VulinfoID,
 		URL: fmt.Sprintf("https://jvndb.jvn.jp/ja/contents/%s/%s.html", strings.Split(sv.VulinfoID, "-")[1], sv.VulinfoID),
-	}
+	})
 
 	if dv.Title == nil {
-		dv.Title = map[string]string{}
+		dv.Title = &build.Titles{JVN: map[string]string{}}
 	}
-	dv.Title["jvn"] = sv.Title
+	if dv.Title.JVN == nil {
+		dv.Title.JVN = map[string]string{}
+	}
+	dv.Title.JVN[sv.VulinfoID] = sv.Title
 
 	if dv.Description == nil {
-		dv.Description = map[string]string{}
+		dv.Description = &build.Descriptions{JVN: map[string]string{}}
 	}
-	dv.Description["jvn"] = sv.VulinfoDescription
+	if dv.Description.JVN == nil {
+		dv.Description.JVN = map[string]string{}
+	}
+	dv.Description.JVN[sv.VulinfoID] = sv.VulinfoDescription
 
 	if dv.Published == nil {
-		dv.Published = map[string]time.Time{}
+		dv.Published = &build.Publisheds{}
+	}
+	if dv.Published.JVN == nil {
+		dv.Published.JVN = map[string]*time.Time{}
 	}
 	if sv.DateFirstPublished != nil {
-		dv.Published["jvn"] = *sv.DateFirstPublished
+		dv.Published.JVN[sv.VulinfoID] = sv.DateFirstPublished
 	}
 
 	if dv.Modified == nil {
-		dv.Modified = map[string]time.Time{}
+		dv.Modified = &build.Modifieds{}
+	}
+	if dv.Modified.JVN == nil {
+		dv.Modified.JVN = map[string]*time.Time{}
 	}
 	if sv.DateLastUpdated != nil {
-		dv.Published["jvn"] = *sv.DateLastUpdated
+		dv.Modified.JVN[sv.VulinfoID] = sv.DateLastUpdated
 	}
 
 	if dv.CVSS == nil {
-		dv.CVSS = map[string][]build.CVSS{}
+		dv.CVSS = &build.CVSSes{}
+	}
+	if dv.CVSS.JVN == nil {
+		dv.CVSS.JVN = map[string][]build.CVSS{}
 	}
 	for _, e := range sv.Impact.Cvss {
 		var score *float64
@@ -211,7 +226,7 @@ func fillVulnerability(cve string, sv *jvn.Advisory, dv *build.Vulnerability) {
 			log.Printf(`[WARN] unexpected CVSS BaseScore. accepts: float64, expected: %s`, e.Base)
 		}
 
-		dv.CVSS["jvn"] = append(dv.CVSS["jvn"], build.CVSS{
+		dv.CVSS.JVN[sv.VulinfoID] = append(dv.CVSS.JVN[sv.VulinfoID], build.CVSS{
 			Version:  e.Version,
 			Source:   "JVN",
 			Vector:   e.Vector,
@@ -221,21 +236,27 @@ func fillVulnerability(cve string, sv *jvn.Advisory, dv *build.Vulnerability) {
 	}
 
 	if dv.CWE == nil {
-		dv.CWE = map[string][]string{}
+		dv.CWE = &build.CWEs{}
+	}
+	if dv.CWE.JVN == nil {
+		dv.CWE.JVN = map[string][]string{}
 	}
 	if dv.References == nil {
-		dv.References = map[string][]build.Reference{}
+		dv.References = &build.References{}
+	}
+	if dv.References.JVN == nil {
+		dv.References.JVN = map[string][]build.Reference{}
 	}
 	for _, r := range sv.Related {
 		switch r.Type {
 		case "vendor", "advisory":
-			dv.References["jvn"] = append(dv.References["jvn"], build.Reference{
+			dv.References.JVN[sv.VulinfoID] = append(dv.References.JVN[sv.VulinfoID], build.Reference{
 				Source: r.Name,
 				Name:   r.VulinfoID,
 				URL:    r.URL,
 			})
 		case "cwe":
-			dv.CWE["jvn"] = append(dv.CWE["jvn"], strings.TrimPrefix(r.VulinfoID, "CWE-"))
+			dv.CWE.JVN[sv.VulinfoID] = append(dv.CWE.JVN[sv.VulinfoID], strings.TrimPrefix(r.VulinfoID, "CWE-"))
 		}
 	}
 }
