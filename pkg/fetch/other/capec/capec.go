@@ -63,7 +63,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Printf("[INFO] Fetch Common Attack Pattern Enumerations and Classifications")
+	log.Printf("[INFO] Fetch Common Attack Pattern Enumerations and Classifications: CAPEC")
 	bs, err := util.FetchURL(options.dataURL, options.retry)
 	if err != nil {
 		return errors.Wrap(err, "fetch capec data")

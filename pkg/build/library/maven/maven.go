@@ -1,4 +1,4 @@
-package debian
+package maven
 
 import (
 	"log"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/oval"
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/tracker"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/library/maven/ghsa"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/library/maven/glsa"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 )
 
@@ -53,23 +53,23 @@ func WithDestDetectDir(dir string) Option {
 
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "debian"),
+		srcDir:        filepath.Join(util.SourceDir(), "maven"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "debian"),
+		destDetectDir: filepath.Join(util.DestDir(), "library", "maven"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Debian OVAL")
-	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
-		return errors.Wrap(err, "build debian oval")
+	log.Println("[INFO] Build Maven GHSA")
+	if err := ghsa.Build(ghsa.WithSrcDir(filepath.Join(options.srcDir, "ghsa")), ghsa.WithDestVulnDir(options.destVulnDir), ghsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "ghsa"))); err != nil {
+		return errors.Wrap(err, "build maven ghsa")
 	}
 
-	log.Println("[INFO] Build Debian Security Tracker")
-	if err := tracker.Build(tracker.WithSrcDir(filepath.Join(options.srcDir, "tracker")), tracker.WithDestVulnDir(options.destVulnDir), tracker.WithDestDetectDir(filepath.Join(options.destDetectDir, "tracker"))); err != nil {
-		return errors.Wrap(err, "build debian security tracker")
+	log.Println("[INFO] Build Maven GLSA")
+	if err := glsa.Build(glsa.WithSrcDir(filepath.Join(options.srcDir, "glsa")), glsa.WithDestVulnDir(options.destVulnDir), glsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "glsa"))); err != nil {
+		return errors.Wrap(err, "build maven glsa")
 	}
 
 	return nil

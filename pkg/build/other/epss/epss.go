@@ -111,7 +111,7 @@ func Build(opts ...Option) error {
 
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "walk mitre")
+		return errors.Wrap(err, "walk epss")
 	}
 
 	return nil

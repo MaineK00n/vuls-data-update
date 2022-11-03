@@ -1,4 +1,4 @@
-package debian
+package windows
 
 import (
 	"log"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/oval"
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/tracker"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/windows/bulletin"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/windows/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 )
 
@@ -53,23 +53,23 @@ func WithDestDetectDir(dir string) Option {
 
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "debian"),
+		srcDir:        filepath.Join(util.SourceDir(), "windows"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "debian"),
+		destDetectDir: filepath.Join(util.DestDir(), "os", "windows"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Debian OVAL")
-	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
-		return errors.Wrap(err, "build debian oval")
+	log.Println("[INFO] Build Windows Bulletin")
+	if err := bulletin.Build(bulletin.WithSrcDir(filepath.Join(options.srcDir, "bulletin")), bulletin.WithDestVulnDir(options.destVulnDir), bulletin.WithDestDetectDir(filepath.Join(options.destDetectDir, "bulletin"))); err != nil {
+		return errors.Wrap(err, "build windows bulletin")
 	}
 
-	log.Println("[INFO] Build Debian Security Tracker")
-	if err := tracker.Build(tracker.WithSrcDir(filepath.Join(options.srcDir, "tracker")), tracker.WithDestVulnDir(options.destVulnDir), tracker.WithDestDetectDir(filepath.Join(options.destDetectDir, "tracker"))); err != nil {
-		return errors.Wrap(err, "build debian security tracker")
+	log.Println("[INFO] Build Windows CVRF")
+	if err := cvrf.Build(cvrf.WithSrcDir(filepath.Join(options.srcDir, "cvrf")), cvrf.WithDestVulnDir(options.destVulnDir), cvrf.WithDestDetectDir(filepath.Join(options.destDetectDir, "cvrf"))); err != nil {
+		return errors.Wrap(err, "build windows cvrf")
 	}
 
 	return nil

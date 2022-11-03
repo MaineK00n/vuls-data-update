@@ -45,15 +45,20 @@ func build() error {
 	}
 
 	for _, name := range []string{
-		"debian",
-		// "mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
-		// "alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
-		// "cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
-		// "cwe", "capec", "attack",
+		"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
+		"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
+		"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
+		"cwe", "capec", "attack",
 	} {
 		switch name {
 		case "attack":
+			// if err := attack.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build attack")
+			// }
 		case "capec":
+			// if err := capec.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build capec")
+			// }
 		case "cwe":
 			// if err := cwe.Build(); err != nil {
 			// 	return errors.Wrap(err, "failed to build cwe")
@@ -109,27 +114,87 @@ func build() error {
 				return errors.Wrap(err, "failed to build debian")
 			}
 		case "epel":
+			// if err := epel.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build epel")
+			// }
 		case "fedora":
+			// if err := fedora.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build fedora")
+			// }
 		case "freebsd":
+			// if err := freebsd.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build freebsd")
+			// }
 		case "gentoo":
+			// if err := gentoo.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build gentoo")
+			// }
 		case "oracle":
+			// if err := oracle.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build oracle")
+			// }
 		case "redhat":
+			// if err := redhat.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build redhat")
+			// }
 		case "rocky":
+			// if err := rocky.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build rocky")
+			// }
 		case "suse":
+			// if err := suse.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build suse")
+			// }
 		case "ubuntu":
+			// if err := ubuntu.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build ubuntu")
+			// }
 		case "windows":
+			// if err := windows.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build windows")
+			// }
 
 		// library
 		case "cargo":
+			// if err := cargo.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build cargo")
+			// }
 		case "composer":
+			// if err := composer.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build composer")
+			// }
 		case "conan":
+			// if err := conan.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build conan")
+			// }
 		case "erlang":
+			// if err := erlang.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build erlang")
+			// }
 		case "golang":
+			// if err := golang.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build golang")
+			// }
 		case "maven":
+			// if err := maven.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build maven")
+			// }
 		case "npm":
+			// if err := npm.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build npm")
+			// }
 		case "nuget":
+			// if err := nuget.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build nuget")
+			// }
 		case "pip":
+			// if err := pip.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build pip")
+			// }
 		case "rubygems":
+			// if err := rubygems.Build(); err != nil {
+			// 	return errors.Wrap(err, "failed to build rubygems")
+			// }
 		default:
 			return fmt.Errorf("accepts %q, received %q", []string{
 				"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "capec", "attack",

@@ -1,4 +1,4 @@
-package debian
+package ubuntu
 
 import (
 	"log"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/oval"
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/tracker"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu/tracker"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 )
 
@@ -53,23 +53,23 @@ func WithDestDetectDir(dir string) Option {
 
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "debian"),
+		srcDir:        filepath.Join(util.SourceDir(), "ubuntu"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "debian"),
+		destDetectDir: filepath.Join(util.DestDir(), "os", "ubuntu"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Debian OVAL")
+	log.Println("[INFO] Build Ubuntu OVAL")
 	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
-		return errors.Wrap(err, "build debian oval")
+		return errors.Wrap(err, "build ubuntu oval")
 	}
 
-	log.Println("[INFO] Build Debian Security Tracker")
+	log.Println("[INFO] Build Ubuntu Security Tracker")
 	if err := tracker.Build(tracker.WithSrcDir(filepath.Join(options.srcDir, "tracker")), tracker.WithDestVulnDir(options.destVulnDir), tracker.WithDestDetectDir(filepath.Join(options.destDetectDir, "tracker"))); err != nil {
-		return errors.Wrap(err, "build debian security tracker")
+		return errors.Wrap(err, "build ubuntu security tracker")
 	}
 
 	return nil
