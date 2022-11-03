@@ -26,6 +26,7 @@ type Advisories struct {
 	Alma   []Advisory `json:"alma,omitempty"`
 	Alpine *Advisory  `json:"alpine,omitempty"`
 	Amazon []Advisory `json:"amazon,omitempty"`
+	Arch   []Advisory `json:"arch,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -39,6 +40,7 @@ type Titles struct {
 	Alma   map[string]string `json:"alma,omitempty"`
 	Alpine string            `json:"alpine,omitempty"`
 	Amazon map[string]string `json:"amazon,omitempty"`
+	Arch   map[string]string `json:"arch,omitempty"`
 }
 
 type Descriptions struct {
@@ -54,6 +56,7 @@ type CVSSes struct {
 	JVN    map[string][]CVSS `json:"jvn,omitempty"`
 	Alma   map[string][]CVSS `json:"alma,omitempty"`
 	Amazon map[string][]CVSS `json:"amazon,omitempty"`
+	Arch   map[string][]CVSS `json:"arch,omitempty"`
 }
 
 type CVSS struct {
@@ -153,6 +156,7 @@ type References struct {
 	JVN    map[string][]Reference `json:"jvn,omitempty"`
 	Alma   map[string][]Reference `json:"alma,omitempty"`
 	Amazon map[string][]Reference `json:"amazon,omitempty"`
+	Arch   map[string][]Reference `json:"arch,omitempty"`
 }
 
 type Reference struct {
@@ -189,6 +193,7 @@ type DetectPackage struct {
 type Package struct {
 	Name            string   `json:"name,omitempty"`
 	Status          string   `json:"status,omitempty"`
+	AffectedVersion string   `json:"affected_version,omitempty"`
 	FixedVersion    string   `json:"fixed_version,omitempty"`
 	ModularityLabel string   `json:"modularity_label,omitempty"`
 	Arch            []string `json:"arch,omitempty"`
