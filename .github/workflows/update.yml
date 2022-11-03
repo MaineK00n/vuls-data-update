@@ -281,13 +281,23 @@ jobs:
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch other cti
+      # - name: fetch other attack
       #   if: ${{ success() || failure() }}
       #   run: |
-      #     vuls-data-update fetch other cti
+      #     vuls-data-update fetch other attack
       #     cd source
-      #     git add cti
-      #     git commit --allow-empty -m "update cti"
+      #     git add attack
+      #     git commit --allow-empty -m "update attack"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: fetch other capec
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update fetch other capec
+      #     cd source
+      #     git add capec
+      #     git commit --allow-empty -m "update capec"
       #     git push origin HEAD:main
       #     cd ..
 
@@ -361,15 +371,15 @@ jobs:
           git push origin HEAD:main
           cd ..
 
-      # - name: fetch other nvd
-      #   if: ${{ success() || failure() }}
-      #   run: |
-      #     vuls-data-update fetch other nvd
-      #     cd source
-      #     git add nvd
-      #     git commit --allow-empty -m "update nvd"
-      #     git push origin HEAD:main
-      #     cd ..
+      - name: fetch other nvd
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update fetch other nvd
+          cd source
+          git add nvd
+          git commit --allow-empty -m "update nvd"
+          git push origin HEAD:main
+          cd ..
 
       - name: update source submodule commit
         run: |
