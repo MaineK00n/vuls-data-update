@@ -135,11 +135,16 @@ func Build(opts ...Option) error {
 
 			ddf, err := os.OpenFile(filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)), os.O_RDWR|os.O_CREATE, 0644)
 			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)))
+				return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)))
 			}
 			defer ddf.Close()
 
-			dd := getDetect(r.VulinfoID, &sv)
+			var dd build.DetectCPE
+			if err := json.NewDecoder(ddf).Decode(&dd); err != nil && !errors.Is(err, io.EOF) {
+				return errors.Wrap(err, "decode json")
+			}
+
+			fillDetect(&dd, r.VulinfoID, &sv)
 
 			if err := ddf.Truncate(0); err != nil {
 				return errors.Wrap(err, "truncate file")
@@ -261,8 +266,11 @@ func fillVulnerability(cve string, sv *jvn.Advisory, dv *build.Vulnerability) {
 	}
 }
 
-func getDetect(cve string, sv *jvn.Advisory) build.DetectCPE {
-	d := build.DetectCPE{ID: cve}
+func fillDetect(dd *build.DetectCPE, cve string, sv *jvn.Advisory) {
+	if dd.ID == "" {
+		dd.ID = cve
+	}
+
 	var cs []build.CPE
 	for _, a := range sv.Affected {
 		if a.CPE == nil {
@@ -273,8 +281,11 @@ func getDetect(cve string, sv *jvn.Advisory) build.DetectCPE {
 			CPE:     a.CPE.Text,
 		})
 	}
-	if len(cs) > 0 {
-		d.Configurations = []build.CPEConfiguration{{Vulnerable: cs}}
+	if len(cs) == 0 {
+		return
 	}
-	return d
+	if dd.Configurations == nil {
+		dd.Configurations = map[string][]build.CPEConfiguration{}
+	}
+	dd.Configurations[sv.VulinfoID] = []build.CPEConfiguration{{Vulnerable: cs}}
 }

@@ -1,4 +1,4 @@
-package nvd_test
+package alpine_test
 
 import (
 	"io/fs"
@@ -6,9 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alpine"
 	"github.com/google/go-cmp/cmp"
-
-	"github.com/MaineK00n/vuls-data-update/pkg/build/other/nvd"
 )
 
 func TestBuild(t *testing.T) {
@@ -26,7 +25,7 @@ func TestBuild(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := t.TempDir()
-			err := nvd.Build(nvd.WithSrcDir(tt.srcDir), nvd.WithDestVulnDir(filepath.Join(d, "vulnerability")), nvd.WithDestDetectDir(filepath.Join(d, "cpe")))
+			err := alpine.Build(alpine.WithSrcDir(tt.srcDir), alpine.WithDestVulnDir(filepath.Join(d, "vulnerability")), alpine.WithDestDetectDir(filepath.Join(d, "os")))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -45,9 +44,18 @@ func TestBuild(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				dir, y := filepath.Split(filepath.Clean(dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), y, file))
-				if err != nil {
-					return err
+
+				var want []byte
+				if filepath.Base(dir) == "vulnerability" {
+					want, err = os.ReadFile(filepath.Join("testdata", "golden", "vulnerability", y, file))
+					if err != nil {
+						return err
+					}
+				} else {
+					want, err = os.ReadFile(filepath.Join("testdata", "golden", "os", "alpine", filepath.Base(dir), y, file))
+					if err != nil {
+						return err
+					}
 				}
 
 				got, err := os.ReadFile(path)

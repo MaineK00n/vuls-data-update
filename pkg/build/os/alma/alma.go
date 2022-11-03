@@ -132,14 +132,25 @@ func Build(opts ...Option) error {
 				return errors.Wrap(err, "encode json")
 			}
 
-			ddf, err := os.Create(filepath.Join(options.destDetectDir, v, y, fmt.Sprintf("%s.json", r.ID)))
+			ddf, err := os.OpenFile(filepath.Join(options.destDetectDir, v, y, fmt.Sprintf("%s.json", r.ID)), os.O_RDWR|os.O_CREATE, 0644)
 			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.ID)))
+				return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, v, y, fmt.Sprintf("%s.json", r.ID)))
 			}
 			defer ddf.Close()
 
-			dd := getDetect(r.ID, &sv)
+			var dd build.DetectPackage
+			if err := json.NewDecoder(ddf).Decode(&dd); err != nil && !errors.Is(err, io.EOF) {
+				return errors.Wrap(err, "decode json")
+			}
 
+			fillDetect(&dd, r.ID, &sv)
+
+			if err := ddf.Truncate(0); err != nil {
+				return errors.Wrap(err, "truncate file")
+			}
+			if _, err := ddf.Seek(0, 0); err != nil {
+				return errors.Wrap(err, "set offset")
+			}
 			enc = json.NewEncoder(ddf)
 			enc.SetIndent("", "  ")
 			if err := enc.Encode(dd); err != nil {
@@ -234,9 +245,9 @@ func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnera
 	}
 }
 
-func getDetect(cve string, sv *alma.Advisory) build.DetectPackage {
-	d := build.DetectPackage{
-		ID: cve,
+func fillDetect(dd *build.DetectPackage, cve string, sv *alma.Advisory) {
+	if dd.ID == "" {
+		dd.ID = cve
 	}
 
 	type pkg struct {
@@ -250,8 +261,12 @@ func getDetect(cve string, sv *alma.Advisory) build.DetectPackage {
 	for _, p := range sv.Packages {
 		ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}] = append(ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}], p.Arch)
 	}
+
+	if dd.Packages == nil {
+		dd.Packages = map[string][]build.Package{}
+	}
 	for _, p := range sv.Packages {
-		d.Packages = append(d.Packages, build.Package{
+		dd.Packages[sv.ID] = append(dd.Packages[sv.ID], build.Package{
 			Name:            p.Name,
 			Status:          "fixed",
 			FixedVersion:    constructVersion(p.Epoch, p.Version, p.Release),
@@ -259,7 +274,6 @@ func getDetect(cve string, sv *alma.Advisory) build.DetectPackage {
 			Arch:            ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}],
 		})
 	}
-	return d
 }
 
 func constructVersion(epoch, version, release string) string {

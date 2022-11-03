@@ -56,7 +56,7 @@ func TestBuild(t *testing.T) {
 				}
 
 				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					t.Errorf("Build(). (-expected +got):\n%s", diff)
 				}
 
 				return nil

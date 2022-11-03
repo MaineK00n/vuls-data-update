@@ -20,10 +20,11 @@ type Vulnerability struct {
 }
 
 type Advisories struct {
-	MITRE *Advisory  `json:"mitre,omitempty"`
-	NVD   *Advisory  `json:"nvd,omitempty"`
-	JVN   []Advisory `json:"jvn,omitempty"`
-	Alma  []Advisory `json:"alma,omitempty"`
+	MITRE  *Advisory  `json:"mitre,omitempty"`
+	NVD    *Advisory  `json:"nvd,omitempty"`
+	JVN    []Advisory `json:"jvn,omitempty"`
+	Alma   []Advisory `json:"alma,omitempty"`
+	Alpine *Advisory  `json:"alpine,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -154,8 +155,8 @@ type Reference struct {
 }
 
 type DetectCPE struct {
-	ID             string             `json:"id,omitempty"`
-	Configurations []CPEConfiguration `json:"configurations,omitempty"`
+	ID             string                        `json:"id,omitempty"`
+	Configurations map[string][]CPEConfiguration `json:"configurations,omitempty"`
 }
 
 type CPEConfiguration struct {
@@ -173,8 +174,8 @@ type CPE struct {
 }
 
 type DetectPackage struct {
-	ID       string    `json:"id,omitempty"`
-	Packages []Package `json:"packages,omitempty"`
+	ID       string               `json:"id,omitempty"`
+	Packages map[string][]Package `json:"packages,omitempty"`
 }
 
 type Package struct {
@@ -183,4 +184,5 @@ type Package struct {
 	FixedVersion    string   `json:"fixed_version,omitempty"`
 	ModularityLabel string   `json:"modularity_label,omitempty"`
 	Arch            []string `json:"arch,omitempty"`
+	Repository      string   `json:"repository,omitempty"`
 }

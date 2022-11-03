@@ -130,14 +130,25 @@ func Build(opts ...Option) error {
 				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDetectDir, y))
 			}
 
-			ddf, err := os.Create(filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", sv.Cve.CVEDataMeta.ID)))
+			ddf, err := os.OpenFile(filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", sv.Cve.CVEDataMeta.ID)), os.O_RDWR|os.O_CREATE, 0644)
 			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", sv.Cve.CVEDataMeta.ID)))
+				return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", sv.Cve.CVEDataMeta.ID)))
 			}
 			defer ddf.Close()
 
-			dd := getDetect(&sv)
+			var dd build.DetectCPE
+			if err := json.NewDecoder(ddf).Decode(&dd); err != nil && !errors.Is(err, io.EOF) {
+				return errors.Wrap(err, "decode json")
+			}
 
+			fillDetect(&dd, &sv)
+
+			if err := ddf.Truncate(0); err != nil {
+				return errors.Wrap(err, "truncate file")
+			}
+			if _, err := ddf.Seek(0, 0); err != nil {
+				return errors.Wrap(err, "set offset")
+			}
 			enc = json.NewEncoder(ddf)
 			enc.SetIndent("", "  ")
 			if err := enc.Encode(dd); err != nil {
@@ -254,10 +265,11 @@ func fillVulnerability(sv *nvd.CVEItem, dv *build.Vulnerability) {
 	}
 }
 
-func getDetect(sv *nvd.CVEItem) build.DetectCPE {
-	d := build.DetectCPE{
-		ID: sv.Cve.CVEDataMeta.ID,
+func fillDetect(dd *build.DetectCPE, sv *nvd.CVEItem) {
+	if dd.ID == "" {
+		dd.ID = sv.Cve.CVEDataMeta.ID
 	}
+
 	for _, n := range sv.Configurations.Nodes {
 		var configuration build.CPEConfiguration
 		switch n.Operator {
@@ -300,9 +312,13 @@ func getDetect(sv *nvd.CVEItem) build.DetectCPE {
 				})
 			}
 		}
-		if len(configuration.Vulnerable) > 0 {
-			d.Configurations = append(d.Configurations, configuration)
+
+		if len(configuration.Vulnerable) == 0 {
+			continue
 		}
+		if dd.Configurations == nil {
+			dd.Configurations = map[string][]build.CPEConfiguration{}
+		}
+		dd.Configurations[sv.Cve.CVEDataMeta.ID] = append(dd.Configurations[sv.Cve.CVEDataMeta.ID], configuration)
 	}
-	return d
 }
