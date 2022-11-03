@@ -32,10 +32,11 @@ type Advisory struct {
 }
 
 type Titles struct {
-	MITRE string            `json:"mitre,omitempty"`
-	NVD   string            `json:"nvd,omitempty"`
-	JVN   map[string]string `json:"jvn,omitempty"`
-	Alma  map[string]string `json:"alma,omitempty"`
+	MITRE  string            `json:"mitre,omitempty"`
+	NVD    string            `json:"nvd,omitempty"`
+	JVN    map[string]string `json:"jvn,omitempty"`
+	Alma   map[string]string `json:"alma,omitempty"`
+	Alpine string            `json:"alpine,omitempty"`
 }
 
 type Descriptions struct {

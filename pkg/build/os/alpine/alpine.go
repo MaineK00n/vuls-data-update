@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build"
@@ -100,6 +101,9 @@ func Build(opts ...Option) error {
 						}
 
 						y := strings.Split(id, "-")[1]
+						if _, err := strconv.Atoi(y); err != nil {
+							continue
+						}
 						if err := os.MkdirAll(filepath.Join(options.destVulnDir, y), os.ModePerm); err != nil {
 							return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destVulnDir, y))
 						}
@@ -177,11 +181,15 @@ func fillVulnerability(cve string, dv *build.Vulnerability) {
 	if dv.Advisory == nil {
 		dv.Advisory = &build.Advisories{}
 	}
-
 	dv.Advisory.Alpine = &build.Advisory{
 		ID:  cve,
 		URL: fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", cve),
 	}
+
+	if dv.Title == nil {
+		dv.Title = &build.Titles{}
+	}
+	dv.Title.Alpine = cve
 }
 
 func fillDetect(dd *build.DetectPackage, cve, name, version string, arches []string, repo string) {
