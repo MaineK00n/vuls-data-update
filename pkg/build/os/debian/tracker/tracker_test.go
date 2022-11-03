@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian/tracker"
 )
 
 func TestBuild(t *testing.T) {
@@ -26,7 +26,7 @@ func TestBuild(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := t.TempDir()
-			err := debian.Build(debian.WithSrcDir(tt.srcDir), debian.WithDestVulnDir(filepath.Join(d, "vulnerability")), debian.WithDestDetectDir(filepath.Join(d, "os")))
+			err := tracker.Build(tracker.WithSrcDir(tt.srcDir), tracker.WithDestVulnDir(filepath.Join(d, "vulnerability")), tracker.WithDestDetectDir(filepath.Join(d, "os")))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
