@@ -1,16 +1,16 @@
-package rocky
+package attack
 
 import (
 	"encoding/json"
+	"log"
 	"path/filepath"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
-// modular package: https://kojidev.rockylinux.org/kojifiles/packages/httpd/2.4/8030020210413025317.30b713e6/
-
-const dataURL = "https://errata.rockylinux.org/api/advisories"
+const dataURL = "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json"
 
 type options struct {
 	dataURL string
@@ -55,7 +55,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "rocky"),
+		dir:     filepath.Join(util.SourceDir(), "attack"),
 		retry:   3,
 	}
 
@@ -63,13 +63,14 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Printf("[INFO] Fetch MITRE ATT&CK")
 	bs, err := util.FetchURL(options.dataURL, options.retry)
 	if err != nil {
-		return errors.Wrap(err, "fetch cvrf data")
+		return errors.Wrap(err, "fetch attack data")
 	}
 
-	var advisories interface{}
-	if err := json.Unmarshal(bs, &advisories); err != nil {
+	var attack interface{}
+	if err := json.Unmarshal(bs, &attack); err != nil {
 		return errors.Wrap(err, "unmarshal json")
 	}
 

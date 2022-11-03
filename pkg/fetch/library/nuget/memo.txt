@@ -1,2 +1,0 @@
-https://gitlab.com/gitlab-org/advisories-community/-/tree/main/nuget
-https://developer.github.com/v4/enum/securityadvisoryecosystem/ Nuget

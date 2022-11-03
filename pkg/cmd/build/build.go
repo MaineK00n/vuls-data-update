@@ -45,10 +45,11 @@ func build() error {
 		"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
 		"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
 		"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
-		"cwe", "cti",
+		"cwe", "capec", "attack",
 	} {
 		switch name {
-		case "cti":
+		case "attack":
+		case "capec":
 		case "cwe":
 			// if err := cwe.Build(); err != nil {
 			// 	return errors.Wrap(err, "failed to build cwe")
@@ -118,7 +119,7 @@ func build() error {
 		case "rubygems":
 		default:
 			return fmt.Errorf("accepts %q, received %q", []string{
-				"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "cti",
+				"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "capec", "attack",
 				"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
 				"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
 			}, name)

@@ -1,16 +1,19 @@
-package rocky
+package fedora
 
 import (
-	"encoding/json"
 	"path/filepath"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
-// modular package: https://kojidev.rockylinux.org/kojifiles/packages/httpd/2.4/8030020210413025317.30b713e6/
+const dataURL = "https://dl.fedoraproject.org/pub/fedora/linux/"
 
-const dataURL = "https://errata.rockylinux.org/api/advisories"
+// https://dl.fedoraproject.org/pub/fedora-secondary/
+// https://dl.fedoraproject.org/pub/archive/fedora/linux/
+// https://dl.fedoraproject.org/pub/archive/fedora-secondary/
+// get path to updateinfo and modules from fullfilelist (e.g. https://dl.fedoraproject.org/pub/fedora/fullfilelist)
 
 type options struct {
 	dataURL string
@@ -55,7 +58,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "rocky"),
+		dir:     filepath.Join(util.SourceDir(), "fedora"),
 		retry:   3,
 	}
 
@@ -63,14 +66,9 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	bs, err := util.FetchURL(options.dataURL, options.retry)
+	_, err := util.FetchURL(options.dataURL, options.retry)
 	if err != nil {
-		return errors.Wrap(err, "fetch cvrf data")
-	}
-
-	var advisories interface{}
-	if err := json.Unmarshal(bs, &advisories); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+		return errors.Wrap(err, "fetch updateinfo data")
 	}
 
 	return nil

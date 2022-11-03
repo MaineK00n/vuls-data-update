@@ -1,4 +1,0 @@
-https://github.com/pypa/advisory-database
-https://gitlab.com/gitlab-org/advisories-community/-/tree/main/pypi
-https://developer.github.com/v4/enum/securityadvisoryecosystem/ Pip
-https://osv-vulnerabilities.storage.googleapis.com/PyPI/all.zip

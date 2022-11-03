@@ -1,0 +1,82 @@
+package golang
+
+import (
+	"log"
+	"path/filepath"
+
+	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/golang/db"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/golang/ghsa"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/golang/glsa"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/golang/govulndb"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/golang/osv"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+)
+
+type options struct {
+	dir   string
+	retry int
+}
+
+type Option interface {
+	apply(*options)
+}
+
+type dirOption string
+
+func (d dirOption) apply(opts *options) {
+	opts.dir = string(d)
+}
+
+func WithDir(dir string) Option {
+	return dirOption(dir)
+}
+
+type retryOption int
+
+func (r retryOption) apply(opts *options) {
+	opts.retry = int(r)
+}
+
+func WithRetry(retry int) Option {
+	return retryOption(retry)
+}
+
+func Fetch(opts ...Option) error {
+	options := &options{
+		dir:   filepath.Join(util.SourceDir(), "golang"),
+		retry: 3,
+	}
+
+	for _, o := range opts {
+		o.apply(options)
+	}
+
+	log.Println("[INFO] Fetch Golang DB")
+	if err := db.Fetch(db.WithDir(filepath.Join(options.dir, "db")), db.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch golang db")
+	}
+
+	log.Println("[INFO] Fetch Golang GHSA")
+	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch golang ghsa")
+	}
+
+	log.Println("[INFO] Fetch Golang GLSA")
+	if err := glsa.Fetch(glsa.WithDir(filepath.Join(options.dir, "glsa")), glsa.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch golang glsa")
+	}
+
+	log.Println("[INFO] Fetch Golang go-vulndb")
+	if err := govulndb.Fetch(govulndb.WithDir(filepath.Join(options.dir, "go-vulndb")), govulndb.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch golang govulndb")
+	}
+
+	log.Println("[INFO] Fetch Golang OSV")
+	if err := osv.Fetch(osv.WithDir(filepath.Join(options.dir, "osv")), osv.WithRetry(options.retry)); err != nil {
+		return errors.Wrap(err, "fetch golang osv")
+	}
+
+	return nil
+}
