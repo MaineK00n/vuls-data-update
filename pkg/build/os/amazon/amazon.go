@@ -1,4 +1,4 @@
-package alma
+package amazon
 
 import (
 	"encoding/json"
@@ -8,14 +8,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/build"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alma"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/amazon"
+	"github.com/pkg/errors"
 )
 
 type options struct {
@@ -60,16 +60,16 @@ func WithDestDetectDir(dir string) Option {
 
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "alma"),
+		srcDir:        filepath.Join(util.SourceDir(), "amazon"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "alma"),
+		destDetectDir: filepath.Join(util.DestDir(), "os", "amazon"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	log.Printf("[INFO] Build AlmaLinux")
+	log.Printf("[INFO] Build Amazon Linux")
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)
 	}
@@ -88,7 +88,7 @@ func Build(opts ...Option) error {
 		}
 		defer sf.Close()
 
-		var sv alma.Advisory
+		var sv amazon.Advisory
 		if err := json.NewDecoder(sf).Decode(&sv); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
@@ -101,6 +101,9 @@ func Build(opts ...Option) error {
 			dir, _ := filepath.Split(filepath.Dir(path))
 			v := filepath.Base(dir)
 			y := strings.Split(r.ID, "-")[1]
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
 			if err := os.MkdirAll(filepath.Join(options.destVulnDir, y), os.ModePerm); err != nil {
 				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destVulnDir, y))
 			}
@@ -161,13 +164,13 @@ func Build(opts ...Option) error {
 
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "walk alma")
+		return errors.Wrap(err, "walk amazon")
 	}
 
 	return nil
 }
 
-func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnerability) {
+func fillVulnerability(cve, version string, sv *amazon.Advisory, dv *build.Vulnerability) {
 	if dv.ID == "" {
 		dv.ID = cve
 	}
@@ -175,78 +178,83 @@ func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnera
 	if dv.Advisory == nil {
 		dv.Advisory = &build.Advisories{}
 	}
-	dv.Advisory.Alma = append(dv.Advisory.Alma, build.Advisory{
+	var u string
+	switch version {
+	case "1":
+		u = fmt.Sprintf("https://alas.aws.amazon.com/ALAS%s.html", strings.TrimPrefix(sv.ID, "ALAS"))
+	case "2":
+		u = fmt.Sprintf("https://alas.aws.amazon.com/AL2/ALAS%s.html", strings.TrimPrefix(sv.ID, "ALAS2"))
+	case "2022":
+		u = fmt.Sprintf("https://alas.aws.amazon.com/AL2022/ALAS%s.html", strings.TrimPrefix(sv.ID, "ALAS2022"))
+	}
+	dv.Advisory.Amazon = append(dv.Advisory.Amazon, build.Advisory{
 		ID:  sv.ID,
-		URL: fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", version, strings.ReplaceAll(sv.ID, ":", "-")),
+		URL: u,
 	})
 
 	if dv.Title == nil {
 		dv.Title = &build.Titles{}
 	}
-	if dv.Title.Alma == nil {
-		dv.Title.Alma = map[string]string{}
+	if dv.Title.Amazon == nil {
+		dv.Title.Amazon = map[string]string{}
 	}
-	dv.Title.Alma[sv.ID] = sv.Title
+	dv.Title.Amazon[sv.ID] = sv.Title
 
 	if dv.Description == nil {
 		dv.Description = &build.Descriptions{}
 	}
-	if dv.Description.Alma == nil {
-		dv.Description.Alma = map[string]string{}
+	if dv.Description.Amazon == nil {
+		dv.Description.Amazon = map[string]string{}
 	}
-	dv.Description.Alma[sv.ID] = sv.Description
+	dv.Description.Amazon[sv.ID] = sv.Description
 
 	if dv.Published == nil {
 		dv.Published = &build.Publisheds{}
 	}
-	if dv.Published.Alma == nil {
-		dv.Published.Alma = map[string]*time.Time{}
+	if dv.Published.Amazon == nil {
+		dv.Published.Amazon = map[string]*time.Time{}
 	}
-	if sv.IssuedDate != nil {
-		dv.Published.Alma[sv.ID] = sv.IssuedDate
+	if sv.Issued != nil {
+		dv.Published.Amazon[sv.ID] = sv.Issued
 	}
 
 	if dv.Modified == nil {
 		dv.Modified = &build.Modifieds{}
 	}
-	if dv.Modified.Alma == nil {
-		dv.Modified.Alma = map[string]*time.Time{}
+	if dv.Modified.Amazon == nil {
+		dv.Modified.Amazon = map[string]*time.Time{}
 	}
-	if sv.UpdatedDate != nil {
-		dv.Modified.Alma[sv.ID] = sv.UpdatedDate
+	if sv.Updated != nil {
+		dv.Modified.Amazon[sv.ID] = sv.Updated
 	}
 
 	if dv.CVSS == nil {
 		dv.CVSS = &build.CVSSes{}
 	}
-	if dv.CVSS.Alma == nil {
-		dv.CVSS.Alma = map[string][]build.CVSS{}
+	if dv.CVSS.Amazon == nil {
+		dv.CVSS.Amazon = map[string][]build.CVSS{}
 	}
-	dv.CVSS.Alma[sv.ID] = append(dv.CVSS.Alma[sv.ID], build.CVSS{
-		Source:   "AlmaLinux",
+	dv.CVSS.Amazon[sv.ID] = append(dv.CVSS.Amazon[sv.ID], build.CVSS{
+		Source:   "AmazonLinux",
 		Severity: sv.Severity,
 	})
 
 	if dv.References == nil {
 		dv.References = &build.References{}
 	}
-	if dv.References.Alma == nil {
-		dv.References.Alma = map[string][]build.Reference{}
+	if dv.References.Amazon == nil {
+		dv.References.Amazon = map[string][]build.Reference{}
 	}
 	for _, r := range sv.References {
-		source := "MISC"
-		if r.Type == "self" {
-			source = "ALMA"
-		}
-		dv.References.Alma[sv.ID] = append(dv.References.Alma[sv.ID], build.Reference{
-			Source: source,
+		dv.References.Amazon[sv.ID] = append(dv.References.Amazon[sv.ID], build.Reference{
+			Source: r.Type,
 			Name:   r.ID,
 			URL:    r.Href,
 		})
 	}
 }
 
-func fillDetect(dd *build.DetectPackage, cve string, sv *alma.Advisory) {
+func fillDetect(dd *build.DetectPackage, cve string, sv *amazon.Advisory) {
 	if dd.ID == "" {
 		dd.ID = cve
 	}
@@ -256,23 +264,21 @@ func fillDetect(dd *build.DetectPackage, cve string, sv *alma.Advisory) {
 		epoch   string
 		version string
 		release string
-		module  string
 	}
 	ps := map[pkg][]string{}
-	for _, p := range sv.Packages {
-		ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}] = append(ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}], p.Arch)
+	for _, p := range sv.Pkglist.Package {
+		ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release}] = append(ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release}], p.Arch)
 	}
 
 	if dd.Packages == nil {
 		dd.Packages = map[string][]build.Package{}
 	}
-	for _, p := range sv.Packages {
+	for _, p := range sv.Pkglist.Package {
 		dd.Packages[sv.ID] = append(dd.Packages[sv.ID], build.Package{
-			Name:            p.Name,
-			Status:          "fixed",
-			FixedVersion:    constructVersion(p.Epoch, p.Version, p.Release),
-			ModularityLabel: p.Module,
-			Arch:            ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}],
+			Name:         p.Name,
+			Status:       "fixed",
+			FixedVersion: constructVersion(p.Epoch, p.Version, p.Release),
+			Arch:         ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release}],
 		})
 	}
 }

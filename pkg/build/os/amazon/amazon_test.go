@@ -1,4 +1,4 @@
-package alpine_test
+package amazon_test
 
 import (
 	"io/fs"
@@ -6,9 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/amazon"
 	"github.com/google/go-cmp/cmp"
-
-	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alpine"
 )
 
 func TestBuild(t *testing.T) {
@@ -26,7 +25,7 @@ func TestBuild(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := t.TempDir()
-			err := alpine.Build(alpine.WithSrcDir(tt.srcDir), alpine.WithDestVulnDir(filepath.Join(d, "vulnerability")), alpine.WithDestDetectDir(filepath.Join(d, "os")))
+			err := amazon.Build(amazon.WithSrcDir(tt.srcDir), amazon.WithDestVulnDir(filepath.Join(d, "vulnerability")), amazon.WithDestDetectDir(filepath.Join(d, "os")))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -53,7 +52,7 @@ func TestBuild(t *testing.T) {
 						return err
 					}
 				} else {
-					want, err = os.ReadFile(filepath.Join("testdata", "golden", "os", "alpine", filepath.Base(dir), y, file))
+					want, err = os.ReadFile(filepath.Join("testdata", "golden", "os", "amazon", filepath.Base(dir), y, file))
 					if err != nil {
 						return err
 					}

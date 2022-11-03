@@ -11,10 +11,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/build"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alpine"
-	"github.com/pkg/errors"
 )
 
 type options struct {

@@ -25,6 +25,7 @@ type Advisories struct {
 	JVN    []Advisory `json:"jvn,omitempty"`
 	Alma   []Advisory `json:"alma,omitempty"`
 	Alpine *Advisory  `json:"alpine,omitempty"`
+	Amazon []Advisory `json:"amazon,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -37,19 +38,22 @@ type Titles struct {
 	JVN    map[string]string `json:"jvn,omitempty"`
 	Alma   map[string]string `json:"alma,omitempty"`
 	Alpine string            `json:"alpine,omitempty"`
+	Amazon map[string]string `json:"amazon,omitempty"`
 }
 
 type Descriptions struct {
-	MITRE string            `json:"mitre,omitempty"`
-	NVD   string            `json:"nvd,omitempty"`
-	JVN   map[string]string `json:"jvn,omitempty"`
-	Alma  map[string]string `json:"alma,omitempty"`
+	MITRE  string            `json:"mitre,omitempty"`
+	NVD    string            `json:"nvd,omitempty"`
+	JVN    map[string]string `json:"jvn,omitempty"`
+	Alma   map[string]string `json:"alma,omitempty"`
+	Amazon map[string]string `json:"amazon,omitempty"`
 }
 
 type CVSSes struct {
-	NVD  []CVSS            `json:"nvd,omitempty"`
-	JVN  map[string][]CVSS `json:"jvn,omitempty"`
-	Alma map[string][]CVSS `json:"alma,omitempty"`
+	NVD    []CVSS            `json:"nvd,omitempty"`
+	JVN    map[string][]CVSS `json:"jvn,omitempty"`
+	Alma   map[string][]CVSS `json:"alma,omitempty"`
+	Amazon map[string][]CVSS `json:"amazon,omitempty"`
 }
 
 type CVSS struct {
@@ -128,24 +132,27 @@ type Mitigation struct {
 }
 
 type Publisheds struct {
-	MITRE *time.Time            `json:"mitre,omitempty"`
-	NVD   *time.Time            `json:"nvd,omitempty"`
-	JVN   map[string]*time.Time `json:"jvn,omitempty"`
-	Alma  map[string]*time.Time `json:"alma,omitempty"`
+	MITRE  *time.Time            `json:"mitre,omitempty"`
+	NVD    *time.Time            `json:"nvd,omitempty"`
+	JVN    map[string]*time.Time `json:"jvn,omitempty"`
+	Alma   map[string]*time.Time `json:"alma,omitempty"`
+	Amazon map[string]*time.Time `json:"amazon,omitempty"`
 }
 
 type Modifieds struct {
-	MITRE *time.Time            `json:"mitre,omitempty"`
-	NVD   *time.Time            `json:"nvd,omitempty"`
-	JVN   map[string]*time.Time `json:"jvn,omitempty"`
-	Alma  map[string]*time.Time `json:"alma,omitempty"`
+	MITRE  *time.Time            `json:"mitre,omitempty"`
+	NVD    *time.Time            `json:"nvd,omitempty"`
+	JVN    map[string]*time.Time `json:"jvn,omitempty"`
+	Alma   map[string]*time.Time `json:"alma,omitempty"`
+	Amazon map[string]*time.Time `json:"amazon,omitempty"`
 }
 
 type References struct {
-	MITRE []Reference            `json:"mitre,omitempty"`
-	NVD   []Reference            `json:"nvd,omitempty"`
-	JVN   map[string][]Reference `json:"jvn,omitempty"`
-	Alma  map[string][]Reference `json:"alma,omitempty"`
+	MITRE  []Reference            `json:"mitre,omitempty"`
+	NVD    []Reference            `json:"nvd,omitempty"`
+	JVN    map[string][]Reference `json:"jvn,omitempty"`
+	Alma   map[string][]Reference `json:"alma,omitempty"`
+	Amazon map[string][]Reference `json:"amazon,omitempty"`
 }
 
 type Reference struct {

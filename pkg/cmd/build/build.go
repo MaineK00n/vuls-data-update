@@ -11,6 +11,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alma"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alpine"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -93,6 +94,9 @@ func build() error {
 				return errors.Wrap(err, "failed to build alpine")
 			}
 		case "amazon":
+			if err := amazon.Build(); err != nil {
+				return errors.Wrap(err, "failed to build amazon")
+			}
 		case "arch":
 		case "debian":
 		case "epel":
