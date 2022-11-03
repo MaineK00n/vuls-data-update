@@ -20,13 +20,15 @@ type Vulnerability struct {
 }
 
 type Advisories struct {
-	MITRE  *Advisory  `json:"mitre,omitempty"`
-	NVD    *Advisory  `json:"nvd,omitempty"`
-	JVN    []Advisory `json:"jvn,omitempty"`
-	Alma   []Advisory `json:"alma,omitempty"`
-	Alpine *Advisory  `json:"alpine,omitempty"`
-	Amazon []Advisory `json:"amazon,omitempty"`
-	Arch   []Advisory `json:"arch,omitempty"`
+	MITRE                 *Advisory             `json:"mitre,omitempty"`
+	NVD                   *Advisory             `json:"nvd,omitempty"`
+	JVN                   []Advisory            `json:"jvn,omitempty"`
+	Alma                  map[string][]Advisory `json:"alma,omitempty"`
+	Alpine                map[string]Advisory   `json:"alpine,omitempty"`
+	Amazon                map[string][]Advisory `json:"amazon,omitempty"`
+	Arch                  []Advisory            `json:"arch,omitempty"`
+	DebianOVAL            map[string][]Advisory `json:"debian_oval,omitempty"`
+	DebianSecurityTracker map[string]Advisory   `json:"debian_security_tracker,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -34,29 +36,33 @@ type Advisory struct {
 }
 
 type Titles struct {
-	MITRE  string            `json:"mitre,omitempty"`
-	NVD    string            `json:"nvd,omitempty"`
-	JVN    map[string]string `json:"jvn,omitempty"`
-	Alma   map[string]string `json:"alma,omitempty"`
-	Alpine string            `json:"alpine,omitempty"`
-	Amazon map[string]string `json:"amazon,omitempty"`
-	Arch   map[string]string `json:"arch,omitempty"`
+	MITRE                 string                       `json:"mitre,omitempty"`
+	NVD                   string                       `json:"nvd,omitempty"`
+	JVN                   map[string]string            `json:"jvn,omitempty"`
+	Alma                  map[string]map[string]string `json:"alma,omitempty"`
+	Alpine                map[string]string            `json:"alpine,omitempty"`
+	Amazon                map[string]map[string]string `json:"amazon,omitempty"`
+	Arch                  map[string]string            `json:"arch,omitempty"`
+	DebianOVAL            map[string]map[string]string `json:"debian_oval,omitempty"`
+	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
 }
 
 type Descriptions struct {
-	MITRE  string            `json:"mitre,omitempty"`
-	NVD    string            `json:"nvd,omitempty"`
-	JVN    map[string]string `json:"jvn,omitempty"`
-	Alma   map[string]string `json:"alma,omitempty"`
-	Amazon map[string]string `json:"amazon,omitempty"`
+	MITRE                 string                       `json:"mitre,omitempty"`
+	NVD                   string                       `json:"nvd,omitempty"`
+	JVN                   map[string]string            `json:"jvn,omitempty"`
+	Alma                  map[string]map[string]string `json:"alma,omitempty"`
+	Amazon                map[string]map[string]string `json:"amazon,omitempty"`
+	DebianOVAL            map[string]map[string]string `json:"debian_oval,omitempty"`
+	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
 }
 
 type CVSSes struct {
-	NVD    []CVSS            `json:"nvd,omitempty"`
-	JVN    map[string][]CVSS `json:"jvn,omitempty"`
-	Alma   map[string][]CVSS `json:"alma,omitempty"`
-	Amazon map[string][]CVSS `json:"amazon,omitempty"`
-	Arch   map[string][]CVSS `json:"arch,omitempty"`
+	NVD    []CVSS                       `json:"nvd,omitempty"`
+	JVN    map[string][]CVSS            `json:"jvn,omitempty"`
+	Alma   map[string]map[string][]CVSS `json:"alma,omitempty"`
+	Amazon map[string]map[string][]CVSS `json:"amazon,omitempty"`
+	Arch   map[string][]CVSS            `json:"arch,omitempty"`
 }
 
 type CVSS struct {
@@ -135,28 +141,30 @@ type Mitigation struct {
 }
 
 type Publisheds struct {
-	MITRE  *time.Time            `json:"mitre,omitempty"`
-	NVD    *time.Time            `json:"nvd,omitempty"`
-	JVN    map[string]*time.Time `json:"jvn,omitempty"`
-	Alma   map[string]*time.Time `json:"alma,omitempty"`
-	Amazon map[string]*time.Time `json:"amazon,omitempty"`
+	MITRE  *time.Time                       `json:"mitre,omitempty"`
+	NVD    *time.Time                       `json:"nvd,omitempty"`
+	JVN    map[string]*time.Time            `json:"jvn,omitempty"`
+	Alma   map[string]map[string]*time.Time `json:"alma,omitempty"`
+	Amazon map[string]map[string]*time.Time `json:"amazon,omitempty"`
 }
 
 type Modifieds struct {
-	MITRE  *time.Time            `json:"mitre,omitempty"`
-	NVD    *time.Time            `json:"nvd,omitempty"`
-	JVN    map[string]*time.Time `json:"jvn,omitempty"`
-	Alma   map[string]*time.Time `json:"alma,omitempty"`
-	Amazon map[string]*time.Time `json:"amazon,omitempty"`
+	MITRE  *time.Time                       `json:"mitre,omitempty"`
+	NVD    *time.Time                       `json:"nvd,omitempty"`
+	JVN    map[string]*time.Time            `json:"jvn,omitempty"`
+	Alma   map[string]map[string]*time.Time `json:"alma,omitempty"`
+	Amazon map[string]map[string]*time.Time `json:"amazon,omitempty"`
 }
 
 type References struct {
-	MITRE  []Reference            `json:"mitre,omitempty"`
-	NVD    []Reference            `json:"nvd,omitempty"`
-	JVN    map[string][]Reference `json:"jvn,omitempty"`
-	Alma   map[string][]Reference `json:"alma,omitempty"`
-	Amazon map[string][]Reference `json:"amazon,omitempty"`
-	Arch   map[string][]Reference `json:"arch,omitempty"`
+	MITRE                 []Reference                       `json:"mitre,omitempty"`
+	NVD                   []Reference                       `json:"nvd,omitempty"`
+	JVN                   map[string][]Reference            `json:"jvn,omitempty"`
+	Alma                  map[string]map[string][]Reference `json:"alma,omitempty"`
+	Amazon                map[string]map[string][]Reference `json:"amazon,omitempty"`
+	Arch                  map[string][]Reference            `json:"arch,omitempty"`
+	DebianOVAL            map[string]map[string][]Reference `json:"debian_oval,omitempty"`
+	DebianSecurityTracker map[string][]Reference            `json:"debian_security_tracker,omitempty"`
 }
 
 type Reference struct {

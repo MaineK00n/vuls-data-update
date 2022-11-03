@@ -122,7 +122,7 @@ func Build(opts ...Option) error {
 				return errors.Wrap(err, "decode json")
 			}
 
-			fillVulnerability(r.ID, v, &sv, &dv)
+			fillVulnerability(&dv, &sv, r.ID, v)
 
 			if err := dvf.Truncate(0); err != nil {
 				return errors.Wrap(err, "truncate file")
@@ -170,13 +170,16 @@ func Build(opts ...Option) error {
 	return nil
 }
 
-func fillVulnerability(cve, version string, sv *amazon.Advisory, dv *build.Vulnerability) {
+func fillVulnerability(dv *build.Vulnerability, sv *amazon.Advisory, cve, version string) {
 	if dv.ID == "" {
 		dv.ID = cve
 	}
 
 	if dv.Advisory == nil {
 		dv.Advisory = &build.Advisories{}
+	}
+	if dv.Advisory.Amazon == nil {
+		dv.Advisory.Amazon = map[string][]build.Advisory{}
 	}
 	var u string
 	switch version {
@@ -187,7 +190,7 @@ func fillVulnerability(cve, version string, sv *amazon.Advisory, dv *build.Vulne
 	case "2022":
 		u = fmt.Sprintf("https://alas.aws.amazon.com/AL2022/ALAS%s.html", strings.TrimPrefix(sv.ID, "ALAS2022"))
 	}
-	dv.Advisory.Amazon = append(dv.Advisory.Amazon, build.Advisory{
+	dv.Advisory.Amazon[version] = append(dv.Advisory.Amazon[version], build.Advisory{
 		ID:  sv.ID,
 		URL: u,
 	})
@@ -196,45 +199,60 @@ func fillVulnerability(cve, version string, sv *amazon.Advisory, dv *build.Vulne
 		dv.Title = &build.Titles{}
 	}
 	if dv.Title.Amazon == nil {
-		dv.Title.Amazon = map[string]string{}
+		dv.Title.Amazon = map[string]map[string]string{}
 	}
-	dv.Title.Amazon[sv.ID] = sv.Title
+	if dv.Title.Amazon[version] == nil {
+		dv.Title.Amazon[version] = map[string]string{}
+	}
+	dv.Title.Amazon[version][sv.ID] = sv.Title
 
 	if dv.Description == nil {
 		dv.Description = &build.Descriptions{}
 	}
 	if dv.Description.Amazon == nil {
-		dv.Description.Amazon = map[string]string{}
+		dv.Description.Amazon = map[string]map[string]string{}
 	}
-	dv.Description.Amazon[sv.ID] = sv.Description
+	if dv.Description.Amazon[version] == nil {
+		dv.Description.Amazon[version] = map[string]string{}
+	}
+	dv.Description.Amazon[version][sv.ID] = sv.Description
 
 	if dv.Published == nil {
 		dv.Published = &build.Publisheds{}
 	}
 	if dv.Published.Amazon == nil {
-		dv.Published.Amazon = map[string]*time.Time{}
+		dv.Published.Amazon = map[string]map[string]*time.Time{}
+	}
+	if dv.Published.Amazon[version] == nil {
+		dv.Published.Amazon[version] = map[string]*time.Time{}
 	}
 	if sv.Issued != nil {
-		dv.Published.Amazon[sv.ID] = sv.Issued
+		dv.Published.Amazon[version][sv.ID] = sv.Issued
 	}
 
 	if dv.Modified == nil {
 		dv.Modified = &build.Modifieds{}
 	}
 	if dv.Modified.Amazon == nil {
-		dv.Modified.Amazon = map[string]*time.Time{}
+		dv.Modified.Amazon = map[string]map[string]*time.Time{}
+	}
+	if dv.Modified.Amazon[version] == nil {
+		dv.Modified.Amazon[version] = map[string]*time.Time{}
 	}
 	if sv.Updated != nil {
-		dv.Modified.Amazon[sv.ID] = sv.Updated
+		dv.Modified.Amazon[version][sv.ID] = sv.Updated
 	}
 
 	if dv.CVSS == nil {
 		dv.CVSS = &build.CVSSes{}
 	}
 	if dv.CVSS.Amazon == nil {
-		dv.CVSS.Amazon = map[string][]build.CVSS{}
+		dv.CVSS.Amazon = map[string]map[string][]build.CVSS{}
 	}
-	dv.CVSS.Amazon[sv.ID] = append(dv.CVSS.Amazon[sv.ID], build.CVSS{
+	if dv.CVSS.Amazon[version] == nil {
+		dv.CVSS.Amazon[version] = map[string][]build.CVSS{}
+	}
+	dv.CVSS.Amazon[version][sv.ID] = append(dv.CVSS.Amazon[version][sv.ID], build.CVSS{
 		Source:   "AmazonLinux",
 		Severity: sv.Severity,
 	})
@@ -243,10 +261,13 @@ func fillVulnerability(cve, version string, sv *amazon.Advisory, dv *build.Vulne
 		dv.References = &build.References{}
 	}
 	if dv.References.Amazon == nil {
-		dv.References.Amazon = map[string][]build.Reference{}
+		dv.References.Amazon = map[string]map[string][]build.Reference{}
+	}
+	if dv.References.Amazon[version] == nil {
+		dv.References.Amazon[version] = map[string][]build.Reference{}
 	}
 	for _, r := range sv.References {
-		dv.References.Amazon[sv.ID] = append(dv.References.Amazon[sv.ID], build.Reference{
+		dv.References.Amazon[version][sv.ID] = append(dv.References.Amazon[version][sv.ID], build.Reference{
 			Source: r.Type,
 			Name:   r.ID,
 			URL:    r.Href,

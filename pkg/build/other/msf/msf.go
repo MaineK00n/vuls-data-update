@@ -110,7 +110,7 @@ func Build(opts ...Option) error {
 				return errors.Wrap(err, "decode json")
 			}
 
-			fillVulnerability(cve, &m, &dv)
+			fillVulnerability(&dv, &m, cve)
 
 			if err := df.Truncate(0); err != nil {
 				return errors.Wrap(err, "truncate file")
@@ -133,7 +133,7 @@ func Build(opts ...Option) error {
 	return nil
 }
 
-func fillVulnerability(id string, sv *build.Metasploit, dv *build.Vulnerability) {
+func fillVulnerability(dv *build.Vulnerability, sv *build.Metasploit, id string) {
 	if dv.ID == "" {
 		dv.ID = id
 	}

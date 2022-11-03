@@ -119,7 +119,7 @@ func Build(opts ...Option) error {
 				return errors.Wrap(err, "decode json")
 			}
 
-			fillVulnerability(r.ID, v, &sv, &dv)
+			fillVulnerability(&dv, &sv, r.ID, v)
 
 			if err := dvf.Truncate(0); err != nil {
 				return errors.Wrap(err, "truncate file")
@@ -167,7 +167,7 @@ func Build(opts ...Option) error {
 	return nil
 }
 
-func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnerability) {
+func fillVulnerability(dv *build.Vulnerability, sv *alma.Advisory, cve, version string) {
 	if dv.ID == "" {
 		dv.ID = cve
 	}
@@ -175,7 +175,10 @@ func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnera
 	if dv.Advisory == nil {
 		dv.Advisory = &build.Advisories{}
 	}
-	dv.Advisory.Alma = append(dv.Advisory.Alma, build.Advisory{
+	if dv.Advisory.Alma == nil {
+		dv.Advisory.Alma = map[string][]build.Advisory{}
+	}
+	dv.Advisory.Alma[version] = append(dv.Advisory.Alma[version], build.Advisory{
 		ID:  sv.ID,
 		URL: fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", version, strings.ReplaceAll(sv.ID, ":", "-")),
 	})
@@ -184,45 +187,60 @@ func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnera
 		dv.Title = &build.Titles{}
 	}
 	if dv.Title.Alma == nil {
-		dv.Title.Alma = map[string]string{}
+		dv.Title.Alma = map[string]map[string]string{}
 	}
-	dv.Title.Alma[sv.ID] = sv.Title
+	if dv.Title.Alma[version] == nil {
+		dv.Title.Alma[version] = map[string]string{}
+	}
+	dv.Title.Alma[version][sv.ID] = sv.Title
 
 	if dv.Description == nil {
 		dv.Description = &build.Descriptions{}
 	}
 	if dv.Description.Alma == nil {
-		dv.Description.Alma = map[string]string{}
+		dv.Description.Alma = map[string]map[string]string{}
 	}
-	dv.Description.Alma[sv.ID] = sv.Description
+	if dv.Description.Alma[version] == nil {
+		dv.Description.Alma[version] = map[string]string{}
+	}
+	dv.Description.Alma[version][sv.ID] = sv.Description
 
 	if dv.Published == nil {
 		dv.Published = &build.Publisheds{}
 	}
 	if dv.Published.Alma == nil {
-		dv.Published.Alma = map[string]*time.Time{}
+		dv.Published.Alma = map[string]map[string]*time.Time{}
+	}
+	if dv.Published.Alma[version] == nil {
+		dv.Published.Alma[version] = map[string]*time.Time{}
 	}
 	if sv.IssuedDate != nil {
-		dv.Published.Alma[sv.ID] = sv.IssuedDate
+		dv.Published.Alma[version][sv.ID] = sv.IssuedDate
 	}
 
 	if dv.Modified == nil {
 		dv.Modified = &build.Modifieds{}
 	}
 	if dv.Modified.Alma == nil {
-		dv.Modified.Alma = map[string]*time.Time{}
+		dv.Modified.Alma = map[string]map[string]*time.Time{}
+	}
+	if dv.Modified.Alma[version] == nil {
+		dv.Modified.Alma[version] = map[string]*time.Time{}
 	}
 	if sv.UpdatedDate != nil {
-		dv.Modified.Alma[sv.ID] = sv.UpdatedDate
+		dv.Modified.Alma[version][sv.ID] = sv.UpdatedDate
 	}
 
 	if dv.CVSS == nil {
 		dv.CVSS = &build.CVSSes{}
 	}
 	if dv.CVSS.Alma == nil {
-		dv.CVSS.Alma = map[string][]build.CVSS{}
+		dv.CVSS.Alma = map[string]map[string][]build.CVSS{}
 	}
-	dv.CVSS.Alma[sv.ID] = append(dv.CVSS.Alma[sv.ID], build.CVSS{
+	if dv.CVSS.Alma[version] == nil {
+		dv.CVSS.Alma[version] = map[string][]build.CVSS{}
+	}
+	dv.CVSS.Alma[version][sv.ID] = append(dv.CVSS.Alma[version][sv.ID], build.CVSS{
 		Source:   "AlmaLinux",
 		Severity: sv.Severity,
 	})
@@ -231,14 +249,17 @@ func fillVulnerability(cve, version string, sv *alma.Advisory, dv *build.Vulnera
 		dv.References = &build.References{}
 	}
 	if dv.References.Alma == nil {
-		dv.References.Alma = map[string][]build.Reference{}
+		dv.References.Alma = map[string]map[string][]build.Reference{}
+	}
+	if dv.References.Alma[version] == nil {
+		dv.References.Alma[version] = map[string][]build.Reference{}
 	}
 	for _, r := range sv.References {
 		source := "MISC"
 		if r.Type == "self" {
 			source = "ALMA"
 		}
-		dv.References.Alma[sv.ID] = append(dv.References.Alma[sv.ID], build.Reference{
+		dv.References.Alma[version][sv.ID] = append(dv.References.Alma[version][sv.ID], build.Reference{
 			Source: source,
 			Name:   r.ID,
 			URL:    r.Href,

@@ -123,7 +123,7 @@ func Build(opts ...Option) error {
 							return errors.Wrap(err, "decode json")
 						}
 
-						fillVulnerability(id, &dv)
+						fillVulnerability(&dv, id, strings.TrimPrefix(sv.Distroversion, "v"))
 
 						if err := dvf.Truncate(0); err != nil {
 							return errors.Wrap(err, "truncate file")
@@ -174,7 +174,7 @@ func Build(opts ...Option) error {
 	return nil
 }
 
-func fillVulnerability(cve string, dv *build.Vulnerability) {
+func fillVulnerability(dv *build.Vulnerability, cve, version string) {
 	if dv.ID == "" {
 		dv.ID = cve
 	}
@@ -182,7 +182,10 @@ func fillVulnerability(cve string, dv *build.Vulnerability) {
 	if dv.Advisory == nil {
 		dv.Advisory = &build.Advisories{}
 	}
-	dv.Advisory.Alpine = &build.Advisory{
+	if dv.Advisory.Alpine == nil {
+		dv.Advisory.Alpine = map[string]build.Advisory{}
+	}
+	dv.Advisory.Alpine[version] = build.Advisory{
 		ID:  cve,
 		URL: fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", cve),
 	}
@@ -190,7 +193,10 @@ func fillVulnerability(cve string, dv *build.Vulnerability) {
 	if dv.Title == nil {
 		dv.Title = &build.Titles{}
 	}
-	dv.Title.Alpine = cve
+	if dv.Title.Alpine == nil {
+		dv.Title.Alpine = map[string]string{}
+	}
+	dv.Title.Alpine[version] = cve
 }
 
 func fillDetect(dd *build.DetectPackage, cve, name, version string, arches []string, repo string) {

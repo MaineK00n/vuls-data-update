@@ -13,6 +13,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alpine"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/arch"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -44,10 +45,11 @@ func build() error {
 	}
 
 	for _, name := range []string{
-		"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
-		"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
-		"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
-		"cwe", "capec", "attack",
+		"debian",
+		// "mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
+		// "alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
+		// "cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
+		// "cwe", "capec", "attack",
 	} {
 		switch name {
 		case "attack":
@@ -103,6 +105,9 @@ func build() error {
 				return errors.Wrap(err, "failed to build arch")
 			}
 		case "debian":
+			if err := debian.Build(); err != nil {
+				return errors.Wrap(err, "failed to build debian")
+			}
 		case "epel":
 		case "fedora":
 		case "freebsd":
