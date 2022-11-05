@@ -30,6 +30,7 @@ type Advisories struct {
 	DebianOVAL            map[string][]Advisory `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string]Advisory   `json:"debian_security_tracker,omitempty"`
 	FreeBSD               []Advisory            `json:"freebsd,omitempty"`
+	Oracle                map[string][]Advisory `json:"oracle,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -47,6 +48,7 @@ type Titles struct {
 	DebianOVAL            map[string]map[string]string `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
 	FreeBSD               map[string]string            `json:"freebsd,omitempty"`
+	Oracle                map[string]map[string]string `json:"oracle,omitempty"`
 }
 
 type Descriptions struct {
@@ -58,6 +60,7 @@ type Descriptions struct {
 	DebianOVAL            map[string]map[string]string `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
 	FreeBSD               map[string]string            `json:"freebsd,omitempty"`
+	Oracle                map[string]map[string]string `json:"oracle,omitempty"`
 }
 
 type CVSSes struct {
@@ -66,6 +69,7 @@ type CVSSes struct {
 	Alma   map[string]map[string][]CVSS `json:"alma,omitempty"`
 	Amazon map[string]map[string][]CVSS `json:"amazon,omitempty"`
 	Arch   map[string][]CVSS            `json:"arch,omitempty"`
+	Oracle map[string]map[string][]CVSS `json:"oracle,omitempty"`
 }
 
 type CVSS struct {
@@ -150,6 +154,7 @@ type Publisheds struct {
 	Alma    map[string]map[string]*time.Time `json:"alma,omitempty"`
 	Amazon  map[string]map[string]*time.Time `json:"amazon,omitempty"`
 	FreeBSD map[string]*time.Time            `json:"freebsd,omitempty"`
+	Oracle  map[string]map[string]*time.Time `json:"oracle,omitempty"`
 }
 
 type Modifieds struct {
@@ -171,6 +176,7 @@ type References struct {
 	DebianOVAL            map[string]map[string][]Reference `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string][]Reference            `json:"debian_security_tracker,omitempty"`
 	FreeBSD               map[string][]Reference            `json:"freebsd,omitempty"`
+	Oracle                map[string]map[string][]Reference `json:"oracle,omitempty"`
 }
 
 type Reference struct {

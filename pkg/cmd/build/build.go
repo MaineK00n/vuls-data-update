@@ -15,6 +15,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/debian"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/freebsd"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/oracle"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -46,7 +47,7 @@ func build() error {
 	}
 
 	for _, name := range []string{
-		"freebsd",
+		"oracle",
 		// "mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev",
 		// "alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
 		// "cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
@@ -132,9 +133,9 @@ func build() error {
 			// 	return errors.Wrap(err, "failed to build gentoo")
 			// }
 		case "oracle":
-			// if err := oracle.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build oracle")
-			// }
+			if err := oracle.Build(); err != nil {
+				return errors.Wrap(err, "failed to build oracle")
+			}
 		case "redhat":
 			// if err := redhat.Build(); err != nil {
 			// 	return errors.Wrap(err, "failed to build redhat")
