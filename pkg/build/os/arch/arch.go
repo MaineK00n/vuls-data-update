@@ -226,11 +226,24 @@ func fillDetect(dd *build.DetectPackage, cve string, sv *arch.VulnerabilityGroup
 		dd.Packages = map[string][]build.Package{}
 	}
 	for _, p := range sv.Packages {
+		var vs []build.Version
+		if sv.Affected != "" {
+			vs = append(vs, build.Version{
+				Operator: "ge",
+				Version:  sv.Affected,
+			})
+		}
+		if sv.Fixed != "" {
+			vs = append(vs, build.Version{
+				Operator: "lt",
+				Version:  sv.Fixed,
+			})
+		}
+
 		dd.Packages[sv.Name] = append(dd.Packages[sv.Name], build.Package{
-			Name:            p,
-			Status:          sv.Status,
-			AffectedVersion: sv.Affected,
-			FixedVersion:    sv.Fixed,
+			Name:    p,
+			Status:  sv.Status,
+			Version: [][]build.Version{vs},
 		})
 	}
 }

@@ -1,15 +1,15 @@
 {
-  "id": "CVE-2016-5405",
+  "id": "3110b29e-c82d-4287-9f6c-db82bb883b1e",
   "packages": {
-    "oval:org.debian:def:146538946343347138556114190089672013680": [
+    "3110b29e-c82d-4287-9f6c-db82bb883b1e": [
       {
-        "name": "389-ds-base",
+        "name": "zeek",
         "status": "fixed",
         "version": [
           [
             {
               "operator": "lt",
-              "version": "0:1.3.5.15-1"
+              "version": "5.0.1"
             }
           ]
         ]

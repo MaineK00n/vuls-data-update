@@ -208,10 +208,10 @@ func fillDetect(dd *build.DetectPackage, cve, name, version string, arches []str
 		dd.Packages = map[string][]build.Package{}
 	}
 	dd.Packages[cve] = append(dd.Packages[cve], build.Package{
-		Name:         name,
-		Status:       "fixed",
-		FixedVersion: version,
-		Arch:         arches,
-		Repository:   repo,
+		Name:       name,
+		Status:     "fixed",
+		Version:    [][]build.Version{{{Operator: "lt", Version: version}}},
+		Arch:       arches,
+		Repository: repo,
 	})
 }

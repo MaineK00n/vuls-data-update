@@ -245,9 +245,9 @@ func fillDetect(dd *build.DetectPackage, sv *oval.Definition, cve string) {
 	default:
 		dd.Packages[sv.DefinitionID] = []build.Package{
 			{
-				Name:         sv.Package.Name,
-				Status:       "fixed",
-				FixedVersion: sv.Package.FixedVersion,
+				Name:    sv.Package.Name,
+				Status:  "fixed",
+				Version: [][]build.Version{{{Operator: "lt", Version: sv.Package.FixedVersion}}},
 			},
 		}
 	}

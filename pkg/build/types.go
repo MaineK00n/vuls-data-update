@@ -29,6 +29,7 @@ type Advisories struct {
 	Arch                  []Advisory            `json:"arch,omitempty"`
 	DebianOVAL            map[string][]Advisory `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string]Advisory   `json:"debian_security_tracker,omitempty"`
+	FreeBSD               []Advisory            `json:"freebsd,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -45,6 +46,7 @@ type Titles struct {
 	Arch                  map[string]string            `json:"arch,omitempty"`
 	DebianOVAL            map[string]map[string]string `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
+	FreeBSD               map[string]string            `json:"freebsd,omitempty"`
 }
 
 type Descriptions struct {
@@ -55,6 +57,7 @@ type Descriptions struct {
 	Amazon                map[string]map[string]string `json:"amazon,omitempty"`
 	DebianOVAL            map[string]map[string]string `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
+	FreeBSD               map[string]string            `json:"freebsd,omitempty"`
 }
 
 type CVSSes struct {
@@ -141,19 +144,21 @@ type Mitigation struct {
 }
 
 type Publisheds struct {
-	MITRE  *time.Time                       `json:"mitre,omitempty"`
-	NVD    *time.Time                       `json:"nvd,omitempty"`
-	JVN    map[string]*time.Time            `json:"jvn,omitempty"`
-	Alma   map[string]map[string]*time.Time `json:"alma,omitempty"`
-	Amazon map[string]map[string]*time.Time `json:"amazon,omitempty"`
+	MITRE   *time.Time                       `json:"mitre,omitempty"`
+	NVD     *time.Time                       `json:"nvd,omitempty"`
+	JVN     map[string]*time.Time            `json:"jvn,omitempty"`
+	Alma    map[string]map[string]*time.Time `json:"alma,omitempty"`
+	Amazon  map[string]map[string]*time.Time `json:"amazon,omitempty"`
+	FreeBSD map[string]*time.Time            `json:"freebsd,omitempty"`
 }
 
 type Modifieds struct {
-	MITRE  *time.Time                       `json:"mitre,omitempty"`
-	NVD    *time.Time                       `json:"nvd,omitempty"`
-	JVN    map[string]*time.Time            `json:"jvn,omitempty"`
-	Alma   map[string]map[string]*time.Time `json:"alma,omitempty"`
-	Amazon map[string]map[string]*time.Time `json:"amazon,omitempty"`
+	MITRE   *time.Time                       `json:"mitre,omitempty"`
+	NVD     *time.Time                       `json:"nvd,omitempty"`
+	JVN     map[string]*time.Time            `json:"jvn,omitempty"`
+	Alma    map[string]map[string]*time.Time `json:"alma,omitempty"`
+	Amazon  map[string]map[string]*time.Time `json:"amazon,omitempty"`
+	FreeBSD map[string]*time.Time            `json:"freebsd,omitempty"`
 }
 
 type References struct {
@@ -165,6 +170,7 @@ type References struct {
 	Arch                  map[string][]Reference            `json:"arch,omitempty"`
 	DebianOVAL            map[string]map[string][]Reference `json:"debian_oval,omitempty"`
 	DebianSecurityTracker map[string][]Reference            `json:"debian_security_tracker,omitempty"`
+	FreeBSD               map[string][]Reference            `json:"freebsd,omitempty"`
 }
 
 type Reference struct {
@@ -199,11 +205,15 @@ type DetectPackage struct {
 }
 
 type Package struct {
-	Name            string   `json:"name,omitempty"`
-	Status          string   `json:"status,omitempty"`
-	AffectedVersion string   `json:"affected_version,omitempty"`
-	FixedVersion    string   `json:"fixed_version,omitempty"`
-	ModularityLabel string   `json:"modularity_label,omitempty"`
-	Arch            []string `json:"arch,omitempty"`
-	Repository      string   `json:"repository,omitempty"`
+	Name            string      `json:"name,omitempty"`
+	Status          string      `json:"status,omitempty"`
+	Version         [][]Version `json:"version,omitempty"`
+	ModularityLabel string      `json:"modularity_label,omitempty"`
+	Arch            []string    `json:"arch,omitempty"`
+	Repository      string      `json:"repository,omitempty"`
+}
+
+type Version struct {
+	Operator string `json:"operator,omitempty"`
+	Version  string `json:"version,omitempty"`
 }

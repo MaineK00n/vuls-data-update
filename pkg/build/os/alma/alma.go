@@ -291,7 +291,7 @@ func fillDetect(dd *build.DetectPackage, cve string, sv *alma.Advisory) {
 		dd.Packages[sv.ID] = append(dd.Packages[sv.ID], build.Package{
 			Name:            p.Name,
 			Status:          "fixed",
-			FixedVersion:    constructVersion(p.Epoch, p.Version, p.Release),
+			Version:         [][]build.Version{{{Operator: "lt", Version: constructVersion(p.Epoch, p.Version, p.Release)}}},
 			ModularityLabel: p.Module,
 			Arch:            ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release, module: p.Module}],
 		})

@@ -296,10 +296,10 @@ func fillDetect(dd *build.DetectPackage, cve string, sv *amazon.Advisory) {
 	}
 	for _, p := range sv.Pkglist.Package {
 		dd.Packages[sv.ID] = append(dd.Packages[sv.ID], build.Package{
-			Name:         p.Name,
-			Status:       "fixed",
-			FixedVersion: constructVersion(p.Epoch, p.Version, p.Release),
-			Arch:         ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release}],
+			Name:    p.Name,
+			Status:  "fixed",
+			Version: [][]build.Version{{{Operator: "lt", Version: constructVersion(p.Epoch, p.Version, p.Release)}}},
+			Arch:    ps[pkg{name: p.Name, epoch: p.Epoch, version: p.Version, release: p.Release}],
 		})
 	}
 }

@@ -211,7 +211,7 @@ func fillDetect(dd *build.DetectPackage, sv *tracker.Advisory) {
 			p.Status = "not affected"
 			if svp.FixedVersion != "0" {
 				p.Status = "fixed"
-				p.FixedVersion = svp.FixedVersion
+				p.Version = [][]build.Version{{{Operator: "lt", Version: svp.FixedVersion}}}
 			}
 		case "open", "undetermined":
 			p.Status = svp.Status
