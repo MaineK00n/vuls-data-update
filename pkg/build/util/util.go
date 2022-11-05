@@ -3,6 +3,8 @@ package util
 import (
 	"os"
 	"path/filepath"
+
+	"golang.org/x/exp/maps"
 )
 
 func CacheDir() string {
@@ -36,4 +38,12 @@ func DestDir() string {
 		return CacheDir()
 	}
 	return destDir
+}
+
+func Unique[T comparable](s []T) []T {
+	m := map[T]struct{}{}
+	for _, v := range s {
+		m[v] = struct{}{}
+	}
+	return maps.Keys(m)
 }

@@ -95,67 +95,73 @@ func Build(opts ...Option) error {
 		}
 
 		for _, r := range sv.Related {
-			if r.Type != "advisory" || r.Name != "Common Vulnerabilities and Exposures (CVE)" {
-				continue
-			}
+			if err := func() error {
+				if r.Type != "advisory" || r.Name != "Common Vulnerabilities and Exposures (CVE)" {
+					return nil
+				}
 
-			y := strings.Split(r.VulinfoID, "-")[1]
-			if err := os.MkdirAll(filepath.Join(options.destVulnDir, y), os.ModePerm); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destVulnDir, y))
-			}
+				y := strings.Split(r.VulinfoID, "-")[1]
+				if err := os.MkdirAll(filepath.Join(options.destVulnDir, y), os.ModePerm); err != nil {
+					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destVulnDir, y))
+				}
 
-			dvf, err := os.OpenFile(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", r.VulinfoID)), os.O_RDWR|os.O_CREATE, 0644)
-			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", r.VulinfoID)))
-			}
-			defer dvf.Close()
+				dvf, err := os.OpenFile(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", r.VulinfoID)), os.O_RDWR|os.O_CREATE, 0644)
+				if err != nil {
+					return errors.Wrapf(err, "open %s", filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", r.VulinfoID)))
+				}
+				defer dvf.Close()
 
-			var dv build.Vulnerability
-			if err := json.NewDecoder(dvf).Decode(&dv); err != nil && !errors.Is(err, io.EOF) {
-				return errors.Wrap(err, "decode json")
-			}
+				var dv build.Vulnerability
+				if err := json.NewDecoder(dvf).Decode(&dv); err != nil && !errors.Is(err, io.EOF) {
+					return errors.Wrap(err, "decode json")
+				}
 
-			fillVulnerability(&dv, &sv, r.VulinfoID)
+				fillVulnerability(&dv, &sv, r.VulinfoID)
 
-			if err := dvf.Truncate(0); err != nil {
-				return errors.Wrap(err, "truncate file")
-			}
-			if _, err := dvf.Seek(0, 0); err != nil {
-				return errors.Wrap(err, "set offset")
-			}
-			enc := json.NewEncoder(dvf)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(dv); err != nil {
-				return errors.Wrap(err, "encode json")
-			}
+				if err := dvf.Truncate(0); err != nil {
+					return errors.Wrap(err, "truncate file")
+				}
+				if _, err := dvf.Seek(0, 0); err != nil {
+					return errors.Wrap(err, "set offset")
+				}
+				enc := json.NewEncoder(dvf)
+				enc.SetIndent("", "  ")
+				if err := enc.Encode(dv); err != nil {
+					return errors.Wrap(err, "encode json")
+				}
 
-			if err := os.MkdirAll(filepath.Join(options.destDetectDir, y), os.ModePerm); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDetectDir, y))
-			}
+				if err := os.MkdirAll(filepath.Join(options.destDetectDir, y), os.ModePerm); err != nil {
+					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDetectDir, y))
+				}
 
-			ddf, err := os.OpenFile(filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)), os.O_RDWR|os.O_CREATE, 0644)
-			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)))
-			}
-			defer ddf.Close()
+				ddf, err := os.OpenFile(filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)), os.O_RDWR|os.O_CREATE, 0644)
+				if err != nil {
+					return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, y, fmt.Sprintf("%s.json", r.VulinfoID)))
+				}
+				defer ddf.Close()
 
-			var dd build.DetectCPE
-			if err := json.NewDecoder(ddf).Decode(&dd); err != nil && !errors.Is(err, io.EOF) {
-				return errors.Wrap(err, "decode json")
-			}
+				var dd build.DetectCPE
+				if err := json.NewDecoder(ddf).Decode(&dd); err != nil && !errors.Is(err, io.EOF) {
+					return errors.Wrap(err, "decode json")
+				}
 
-			fillDetect(&dd, r.VulinfoID, &sv)
+				fillDetect(&dd, r.VulinfoID, &sv)
 
-			if err := ddf.Truncate(0); err != nil {
-				return errors.Wrap(err, "truncate file")
-			}
-			if _, err := ddf.Seek(0, 0); err != nil {
-				return errors.Wrap(err, "set offset")
-			}
-			enc = json.NewEncoder(ddf)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(dd); err != nil {
-				return errors.Wrap(err, "encode json")
+				if err := ddf.Truncate(0); err != nil {
+					return errors.Wrap(err, "truncate file")
+				}
+				if _, err := ddf.Seek(0, 0); err != nil {
+					return errors.Wrap(err, "set offset")
+				}
+				enc = json.NewEncoder(ddf)
+				enc.SetIndent("", "  ")
+				if err := enc.Encode(dd); err != nil {
+					return errors.Wrap(err, "encode json")
+				}
+
+				return nil
+			}(); err != nil {
+				return err
 			}
 		}
 
@@ -228,7 +234,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *jvn.Advisory, cve string) {
 		if err == nil {
 			score = &f
 		} else {
-			log.Printf(`[WARN] unexpected CVSS BaseScore. accepts: float64, expected: %s`, e.Base)
+			log.Printf(`[WARN] unexpected CVSS BaseScore. accepts: float64, received: %s`, e.Base)
 		}
 
 		dv.CVSS.JVN[sv.VulinfoID] = append(dv.CVSS.JVN[sv.VulinfoID], build.CVSS{

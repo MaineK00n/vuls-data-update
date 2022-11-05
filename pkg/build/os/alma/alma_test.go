@@ -1,13 +1,16 @@
 package alma_test
 
 import (
+	"encoding/json"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/build"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/alma"
 )
 
@@ -45,27 +48,50 @@ func TestBuild(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				dir, y := filepath.Split(filepath.Clean(dir))
-
-				var want []byte
 				if filepath.Base(dir) == "vulnerability" {
-					want, err = os.ReadFile(filepath.Join("testdata", "golden", "vulnerability", y, file))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", "vulnerability", y, file))
 					if err != nil {
 						return err
+					}
+
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Build(). (-expected +got):\n%s", diff)
 					}
 				} else {
-					want, err = os.ReadFile(filepath.Join("testdata", "golden", "os", "alma", filepath.Base(dir), y, file))
+					wantb, err := os.ReadFile(filepath.Join("testdata", "golden", "os", "alma", filepath.Base(dir), y, file))
 					if err != nil {
 						return err
 					}
-				}
 
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
+					var want build.DetectPackage
+					if err := json.Unmarshal(wantb, &want); err != nil {
+						return err
+					}
 
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Build(). (-expected +got):\n%s", diff)
+					gotb, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+
+					var got build.DetectPackage
+					if err := json.Unmarshal(gotb, &got); err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got, []cmp.Option{
+						cmpopts.SortSlices(func(i, j build.Package) bool {
+							if i.Name == j.Name {
+								return i.ModularityLabel < j.ModularityLabel
+							}
+							return i.Name < j.Name
+						})}...); diff != "" {
+						t.Errorf("Build(). (-expected +got):\n%s", diff)
+					}
 				}
 
 				return nil

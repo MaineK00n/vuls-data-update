@@ -31,6 +31,7 @@ type Advisories struct {
 	DebianSecurityTracker map[string]Advisory   `json:"debian_security_tracker,omitempty"`
 	FreeBSD               []Advisory            `json:"freebsd,omitempty"`
 	Oracle                map[string][]Advisory `json:"oracle,omitempty"`
+	RedHat                map[string][]Advisory `json:"redhat,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -49,6 +50,7 @@ type Titles struct {
 	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
 	FreeBSD               map[string]string            `json:"freebsd,omitempty"`
 	Oracle                map[string]map[string]string `json:"oracle,omitempty"`
+	RedHat                map[string]map[string]string `json:"redhat,omitempty"`
 }
 
 type Descriptions struct {
@@ -61,6 +63,7 @@ type Descriptions struct {
 	DebianSecurityTracker map[string]string            `json:"debian_security_tracker,omitempty"`
 	FreeBSD               map[string]string            `json:"freebsd,omitempty"`
 	Oracle                map[string]map[string]string `json:"oracle,omitempty"`
+	RedHat                map[string]map[string]string `json:"redhat,omitempty"`
 }
 
 type CVSSes struct {
@@ -70,6 +73,7 @@ type CVSSes struct {
 	Amazon map[string]map[string][]CVSS `json:"amazon,omitempty"`
 	Arch   map[string][]CVSS            `json:"arch,omitempty"`
 	Oracle map[string]map[string][]CVSS `json:"oracle,omitempty"`
+	RedHat map[string]map[string][]CVSS `json:"redhat,omitempty"`
 }
 
 type CVSS struct {
@@ -86,8 +90,9 @@ type EPSS struct {
 }
 
 type CWEs struct {
-	NVD []string            `json:"nvd,omitempty"`
-	JVN map[string][]string `json:"jvn,omitempty"`
+	NVD    []string                       `json:"nvd,omitempty"`
+	JVN    map[string][]string            `json:"jvn,omitempty"`
+	RedHat map[string]map[string][]string `json:"redhat,omitempty"`
 }
 
 type Metasploit struct {
@@ -155,6 +160,7 @@ type Publisheds struct {
 	Amazon  map[string]map[string]*time.Time `json:"amazon,omitempty"`
 	FreeBSD map[string]*time.Time            `json:"freebsd,omitempty"`
 	Oracle  map[string]map[string]*time.Time `json:"oracle,omitempty"`
+	RedHat  map[string]map[string]*time.Time `json:"redhat,omitempty"`
 }
 
 type Modifieds struct {
@@ -164,6 +170,7 @@ type Modifieds struct {
 	Alma    map[string]map[string]*time.Time `json:"alma,omitempty"`
 	Amazon  map[string]map[string]*time.Time `json:"amazon,omitempty"`
 	FreeBSD map[string]*time.Time            `json:"freebsd,omitempty"`
+	RedHat  map[string]map[string]*time.Time `json:"redhat,omitempty"`
 }
 
 type References struct {
@@ -177,6 +184,7 @@ type References struct {
 	DebianSecurityTracker map[string][]Reference            `json:"debian_security_tracker,omitempty"`
 	FreeBSD               map[string][]Reference            `json:"freebsd,omitempty"`
 	Oracle                map[string]map[string][]Reference `json:"oracle,omitempty"`
+	RedHat                map[string]map[string][]Reference `json:"redhat,omitempty"`
 }
 
 type Reference struct {
@@ -214,9 +222,15 @@ type Package struct {
 	ModularityLabel string      `json:"modularity_label,omitempty"`
 	Arch            []string    `json:"arch,omitempty"`
 	Repository      string      `json:"repository,omitempty"`
+	CPE             []string    `json:"cpe,omitempty"`
 }
 
 type Version struct {
 	Operator string `json:"operator,omitempty"`
 	Version  string `json:"version,omitempty"`
+}
+
+type RepositoryToCPE struct {
+	Repository string   `json:"repository,omitempty"`
+	CPEs       []string `json:"cpes,omitempty"`
 }
