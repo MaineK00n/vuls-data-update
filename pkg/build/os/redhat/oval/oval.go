@@ -70,7 +70,8 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	// stream: repository: cpe
+	log.Println("[INFO] Build RedHat OVAL")
+
 	repositoryToCPE := map[string]map[string][]string{}
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)

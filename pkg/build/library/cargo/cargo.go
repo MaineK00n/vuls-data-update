@@ -1,7 +1,6 @@
 package cargo
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -63,17 +62,14 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Cargo DB")
 	if err := db.Build(db.WithSrcDir(filepath.Join(options.srcDir, "db")), db.WithDestVulnDir(options.destVulnDir), db.WithDestDetectDir(filepath.Join(options.destDetectDir, "db"))); err != nil {
 		return errors.Wrap(err, "build cargo db")
 	}
 
-	log.Println("[INFO] Build Cargo GHSA")
 	if err := ghsa.Build(ghsa.WithSrcDir(filepath.Join(options.srcDir, "ghsa")), ghsa.WithDestVulnDir(options.destVulnDir), ghsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "ghsa"))); err != nil {
 		return errors.Wrap(err, "build cargo ghsa")
 	}
 
-	log.Println("[INFO] Build Cargo OSV")
 	if err := osv.Build(osv.WithSrcDir(filepath.Join(options.srcDir, "osv")), osv.WithDestVulnDir(options.destVulnDir), osv.WithDestDetectDir(filepath.Join(options.destDetectDir, "osv"))); err != nil {
 		return errors.Wrap(err, "build cargo osv")
 	}

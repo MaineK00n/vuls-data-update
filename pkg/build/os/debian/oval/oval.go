@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,6 +68,7 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Build Debian OVAL")
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)
 	}

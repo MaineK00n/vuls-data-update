@@ -1,7 +1,6 @@
 package nuget
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -63,17 +62,14 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Nuget GHSA")
 	if err := ghsa.Build(ghsa.WithSrcDir(filepath.Join(options.srcDir, "ghsa")), ghsa.WithDestVulnDir(options.destVulnDir), ghsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "ghsa"))); err != nil {
 		return errors.Wrap(err, "build nuget ghsa")
 	}
 
-	log.Println("[INFO] Build Nuget GLSA")
 	if err := glsa.Build(glsa.WithSrcDir(filepath.Join(options.srcDir, "glsa")), glsa.WithDestVulnDir(options.destVulnDir), glsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "glsa"))); err != nil {
 		return errors.Wrap(err, "build nuget glsa")
 	}
 
-	log.Println("[INFO] Build Nuget OSV")
 	if err := osv.Build(osv.WithSrcDir(filepath.Join(options.srcDir, "osv")), osv.WithDestVulnDir(options.destVulnDir), osv.WithDestDetectDir(filepath.Join(options.destDetectDir, "osv"))); err != nil {
 		return errors.Wrap(err, "build nuget osv")
 	}

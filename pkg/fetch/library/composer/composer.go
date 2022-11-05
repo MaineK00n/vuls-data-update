@@ -1,7 +1,6 @@
 package composer
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -51,17 +50,14 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Composer DB")
 	if err := db.Fetch(db.WithDir(filepath.Join(options.dir, "db")), db.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch composer db")
 	}
 
-	log.Println("[INFO] Fetch Composer GHSA")
 	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch composer ghsa")
 	}
 
-	log.Println("[INFO] Fetch Composer GLSA")
 	if err := glsa.Fetch(glsa.WithDir(filepath.Join(options.dir, "glsa")), glsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch composer glsa")
 	}

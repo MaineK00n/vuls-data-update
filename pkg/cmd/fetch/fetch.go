@@ -70,212 +70,233 @@ func NewCmdFetch() *cobra.Command {
 
 func newCmdFetchOS() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:       "os <os name>",
+		Use:       "os ([os name])",
 		Short:     "Fetch OS data source",
-		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
 		ValidArgs: supportOS,
 		RunE: func(_ *cobra.Command, args []string) error {
-			return fetchOSRun(args[0])
+			as := args
+			if len(as) == 0 {
+				as = supportOS
+			}
+			return fetchOSRun(as)
 		},
 		Example: heredoc.Doc(`
+			$ vuls-data-update fetch os
 			$ vuls-data-update fetch os debian
 		`),
 	}
 	return cmd
 }
 
-func fetchOSRun(name string) error {
-	switch name {
-	case "alma":
-		if err := alma.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch almalinux")
+func fetchOSRun(names []string) error {
+	for _, name := range names {
+		switch name {
+		case "alma":
+			if err := alma.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch almalinux")
+			}
+		case "alpine":
+			if err := alpine.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch alpine linux")
+			}
+		case "amazon":
+			if err := amazon.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch amazon linux")
+			}
+		case "arch":
+			if err := arch.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch arch linux")
+			}
+		case "debian":
+			if err := debian.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch debian")
+			}
+		case "epel":
+			if err := epel.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch epel")
+			}
+		case "fedora":
+			if err := fedora.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch fedora")
+			}
+		case "freebsd":
+			if err := freebsd.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch freebsd")
+			}
+		case "gentoo":
+			if err := gentoo.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch gentoo")
+			}
+		case "oracle":
+			if err := oracle.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch oracle linux")
+			}
+		case "redhat":
+			if err := redhat.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat")
+			}
+		case "rocky":
+			if err := rocky.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch rocky")
+			}
+		case "suse":
+			if err := suse.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch suse")
+			}
+		case "ubuntu":
+			if err := ubuntu.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch ubuntu")
+			}
+		case "windows":
+			if err := windows.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch windows")
+			}
+		default:
+			return fmt.Errorf("accepts %q, received %q", supportOS, name)
 		}
-	case "alpine":
-		if err := alpine.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch alpine linux")
-		}
-	case "amazon":
-		if err := amazon.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch amazon linux")
-		}
-	case "arch":
-		if err := arch.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch arch linux")
-		}
-	case "debian":
-		if err := debian.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch debian")
-		}
-	case "epel":
-		if err := epel.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch epel")
-		}
-	case "fedora":
-		if err := fedora.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch fedora")
-		}
-	case "freebsd":
-		if err := freebsd.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch freebsd")
-		}
-	case "gentoo":
-		if err := gentoo.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch gentoo")
-		}
-	case "oracle":
-		if err := oracle.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch oracle linux")
-		}
-	case "redhat":
-		if err := redhat.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch redhat")
-		}
-	case "rocky":
-		if err := rocky.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch rocky")
-		}
-	case "suse":
-		if err := suse.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch suse")
-		}
-	case "ubuntu":
-		if err := ubuntu.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch ubuntu")
-		}
-	case "windows":
-		if err := windows.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch windows")
-		}
-	default:
-		return fmt.Errorf("accepts %q, received %q", supportOS, name)
 	}
 	return nil
 }
 
 func newCmdFetchLibrary() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:       "library <library name>",
+		Use:       "library ([library name])",
 		Short:     "Fetch Library data source",
-		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
 		ValidArgs: supportLibrary,
 		RunE: func(_ *cobra.Command, args []string) error {
-			return fetchLibraryRun(args[0])
+			as := args
+			if len(as) == 0 {
+				as = supportLibrary
+			}
+			return fetchLibraryRun(as)
 		},
 		Example: heredoc.Doc(`
+			$ vuls-data-update fetch library
 			$ vuls-data-update fetch library cargo
 		`),
 	}
 	return cmd
 }
 
-func fetchLibraryRun(name string) error {
-	switch name {
-	case "cargo":
-		if err := cargo.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch cargo")
+func fetchLibraryRun(names []string) error {
+	for _, name := range names {
+		switch name {
+		case "cargo":
+			if err := cargo.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch cargo")
+			}
+		case "composer":
+			if err := composer.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch composer")
+			}
+		case "conan":
+			if err := conan.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch conan")
+			}
+		case "erlang":
+			if err := erlang.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch erlang")
+			}
+		case "golang":
+			if err := golang.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch golang")
+			}
+		case "maven":
+			if err := maven.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch maven")
+			}
+		case "npm":
+			if err := npm.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch npm")
+			}
+		case "nuget":
+			if err := nuget.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch nuget")
+			}
+		case "pip":
+			if err := pip.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch pip")
+			}
+		case "rubygems":
+			if err := rubygems.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch rubygems")
+			}
+		default:
+			return fmt.Errorf("accepts %q, received %q", supportLibrary, name)
 		}
-	case "composer":
-		if err := composer.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch composer")
-		}
-	case "conan":
-		if err := conan.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch conan")
-		}
-	case "erlang":
-		if err := erlang.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch erlang")
-		}
-	case "golang":
-		if err := golang.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch golang")
-		}
-	case "maven":
-		if err := maven.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch maven")
-		}
-	case "npm":
-		if err := npm.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch npm")
-		}
-	case "nuget":
-		if err := nuget.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch nuget")
-		}
-	case "pip":
-		if err := pip.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch pip")
-		}
-	case "rubygems":
-		if err := rubygems.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch rubygems")
-		}
-	default:
-		return fmt.Errorf("accepts %q, received %q", supportLibrary, name)
 	}
 	return nil
 }
 
 func newCmdFetchOther() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:       "other <data name>",
+		Use:       "other ([data name])",
 		Short:     "Fetch Other data source",
-		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
 		ValidArgs: supportOther,
 		RunE: func(_ *cobra.Command, args []string) error {
-			return fetchOtherRun(args[0])
+			as := args
+			if len(as) == 0 {
+				as = supportOther
+			}
+			return fetchOtherRun(as)
 		},
 		Example: heredoc.Doc(`
+			$ vuls-data-update fetch other	
 			$ vuls-data-update fetch other nvd
 		`),
 	}
 	return cmd
 }
 
-func fetchOtherRun(name string) error {
-	switch name {
-	case "attack":
-		if err := attack.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch attack")
+func fetchOtherRun(names []string) error {
+	for _, name := range names {
+		switch name {
+		case "attack":
+			if err := attack.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch attack")
+			}
+		case "capec":
+			if err := capec.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch capec")
+			}
+		case "cwe":
+			if err := cwe.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch cwe")
+			}
+		case "epss":
+			if err := epss.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch epss")
+			}
+		case "exploit":
+			if err := exploit.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch exploit")
+			}
+		case "jvn":
+			if err := jvn.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch jvn")
+			}
+		case "kev":
+			if err := kev.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch kev")
+			}
+		case "mitre":
+			if err := mitre.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch mitre")
+			}
+		case "msf":
+			if err := msf.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch msf")
+			}
+		case "nvd":
+			if err := nvd.Fetch(); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd")
+			}
+		default:
+			return fmt.Errorf("accepts %q, received %q", supportOther, name)
 		}
-	case "capec":
-		if err := capec.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch capec")
-		}
-	case "cwe":
-		if err := cwe.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch cwe")
-		}
-	case "epss":
-		if err := epss.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch epss")
-		}
-	case "exploit":
-		if err := exploit.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch exploit")
-		}
-	case "jvn":
-		if err := jvn.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch jvn")
-		}
-	case "kev":
-		if err := kev.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch kev")
-		}
-	case "mitre":
-		if err := mitre.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch mitre")
-		}
-	case "msf":
-		if err := msf.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch msf")
-		}
-	case "nvd":
-		if err := nvd.Fetch(); err != nil {
-			return errors.Wrap(err, "failed to fetch nvd")
-		}
-	default:
-		return fmt.Errorf("accepts %q, received %q", supportOther, name)
 	}
 	return nil
 }

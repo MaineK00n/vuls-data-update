@@ -1,7 +1,6 @@
 package windows
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -62,12 +61,10 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Windows Bulletin")
 	if err := bulletin.Build(bulletin.WithSrcDir(filepath.Join(options.srcDir, "bulletin")), bulletin.WithDestVulnDir(options.destVulnDir), bulletin.WithDestDetectDir(filepath.Join(options.destDetectDir, "bulletin"))); err != nil {
 		return errors.Wrap(err, "build windows bulletin")
 	}
 
-	log.Println("[INFO] Build Windows CVRF")
 	if err := cvrf.Build(cvrf.WithSrcDir(filepath.Join(options.srcDir, "cvrf")), cvrf.WithDestVulnDir(options.destVulnDir), cvrf.WithDestDetectDir(filepath.Join(options.destDetectDir, "cvrf"))); err != nil {
 		return errors.Wrap(err, "build windows cvrf")
 	}

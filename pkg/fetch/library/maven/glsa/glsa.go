@@ -1,6 +1,7 @@
 package glsa
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -63,6 +64,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch Maven GLSA")
 	cloneDir := filepath.Join(util.SourceDir(), "clone")
 	if err := os.RemoveAll(cloneDir); err != nil {
 		return errors.Wrapf(err, "remove %s", cloneDir)

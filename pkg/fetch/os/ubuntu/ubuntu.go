@@ -1,7 +1,6 @@
 package ubuntu
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -50,12 +49,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Ubuntu OVAL")
 	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch ubuntu oval")
 	}
 
-	log.Println("[INFO] Fetch Ubuntu Security Tracker")
 	if err := tracker.Fetch(tracker.WithDir(filepath.Join(options.dir, "tracker")), tracker.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch ubuntu security tracker")
 	}

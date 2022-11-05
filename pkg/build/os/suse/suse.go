@@ -1,7 +1,6 @@
 package suse
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -62,12 +61,10 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build SUSE OVAL")
 	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
 		return errors.Wrap(err, "build suse oval")
 	}
 
-	log.Println("[INFO] Build SUSE CVRF")
 	if err := cvrf.Build(cvrf.WithSrcDir(filepath.Join(options.srcDir, "cvrf")), cvrf.WithDestVulnDir(options.destVulnDir), cvrf.WithDestDetectDir(filepath.Join(options.destDetectDir, "cvrf"))); err != nil {
 		return errors.Wrap(err, "build suse cvrf")
 	}

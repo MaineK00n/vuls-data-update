@@ -1,6 +1,7 @@
 package bulletin
 
 import (
+	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -63,6 +64,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch Windows Bulletin")
 	_, err := util.FetchURL(options.dataURL, options.retry)
 	if err != nil {
 		return errors.Wrap(err, "fetch bulletin data")

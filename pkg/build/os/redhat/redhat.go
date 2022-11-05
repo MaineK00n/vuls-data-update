@@ -1,7 +1,6 @@
 package redhat
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -61,12 +60,10 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build RedHat OVAL")
 	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
 		return errors.Wrap(err, "build redhat oval")
 	}
 
-	// log.Println("[INFO] Build RedHat Security API")
 	// if err := api.Build(api.WithSrcDir(filepath.Join(options.srcDir, "api")), api.WithDestVulnDir(options.destVulnDir), api.WithDestDetectDir(filepath.Join(options.destDetectDir, "api"))); err != nil {
 	// 	return errors.Wrap(err, "build redhat security api")
 	// }

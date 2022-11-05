@@ -1,7 +1,6 @@
 package pip
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -64,22 +63,18 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Pip DB")
 	if err := db.Build(db.WithSrcDir(filepath.Join(options.srcDir, "db")), db.WithDestVulnDir(options.destVulnDir), db.WithDestDetectDir(filepath.Join(options.destDetectDir, "db"))); err != nil {
 		return errors.Wrap(err, "build pip db")
 	}
 
-	log.Println("[INFO] Build Pip GHSA")
 	if err := ghsa.Build(ghsa.WithSrcDir(filepath.Join(options.srcDir, "ghsa")), ghsa.WithDestVulnDir(options.destVulnDir), ghsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "ghsa"))); err != nil {
 		return errors.Wrap(err, "build pip ghsa")
 	}
 
-	log.Println("[INFO] Build Pip GLSA")
 	if err := glsa.Build(glsa.WithSrcDir(filepath.Join(options.srcDir, "glsa")), glsa.WithDestVulnDir(options.destVulnDir), glsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "glsa"))); err != nil {
 		return errors.Wrap(err, "build pip glsa")
 	}
 
-	log.Println("[INFO] Build Pip OSV")
 	if err := osv.Build(osv.WithSrcDir(filepath.Join(options.srcDir, "osv")), osv.WithDestVulnDir(options.destVulnDir), osv.WithDestDetectDir(filepath.Join(options.destDetectDir, "osv"))); err != nil {
 		return errors.Wrap(err, "build pip osv")
 	}

@@ -54,7 +54,7 @@ func Build(opts ...Option) error {
 	options := &options{
 		srcDir:        filepath.Join(util.SourceDir(), "conan"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "conan"),
+		destDetectDir: filepath.Join(util.DestDir(), "library", "conan"),
 	}
 
 	for _, o := range opts {

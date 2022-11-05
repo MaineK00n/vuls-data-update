@@ -87,6 +87,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch SUSE OVAL")
 	for name, url := range options.urls {
 		osname, version, found := strings.Cut(name, " ")
 		if !found {

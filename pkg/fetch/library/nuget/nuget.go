@@ -1,7 +1,6 @@
 package nuget
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -51,17 +50,14 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Nuget GHSA")
 	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch nuget ghsa")
 	}
 
-	log.Println("[INFO] Fetch Nuget GLSA")
 	if err := glsa.Fetch(glsa.WithDir(filepath.Join(options.dir, "glsa")), glsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch nuget glsa")
 	}
 
-	log.Println("[INFO] Fetch Nuget OSV")
 	if err := osv.Fetch(osv.WithDir(filepath.Join(options.dir, "osv")), osv.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch nuget osv")
 	}

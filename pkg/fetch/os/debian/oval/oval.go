@@ -74,6 +74,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch Debian OVAL")
 	ovals, err := options.walkIndexOf()
 	if err != nil {
 		return errors.Wrap(err, "walk index of")

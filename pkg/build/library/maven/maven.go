@@ -1,7 +1,6 @@
 package maven
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -62,12 +61,10 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Maven GHSA")
 	if err := ghsa.Build(ghsa.WithSrcDir(filepath.Join(options.srcDir, "ghsa")), ghsa.WithDestVulnDir(options.destVulnDir), ghsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "ghsa"))); err != nil {
 		return errors.Wrap(err, "build maven ghsa")
 	}
 
-	log.Println("[INFO] Build Maven GLSA")
 	if err := glsa.Build(glsa.WithSrcDir(filepath.Join(options.srcDir, "glsa")), glsa.WithDestVulnDir(options.destVulnDir), glsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "glsa"))); err != nil {
 		return errors.Wrap(err, "build maven glsa")
 	}

@@ -54,7 +54,7 @@ func Build(opts ...Option) error {
 	options := &options{
 		srcDir:        filepath.Join(util.SourceDir(), "erlang"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "erlang"),
+		destDetectDir: filepath.Join(util.DestDir(), "library", "erlang"),
 	}
 
 	for _, o := range opts {

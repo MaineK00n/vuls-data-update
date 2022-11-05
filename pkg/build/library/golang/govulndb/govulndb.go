@@ -2,6 +2,7 @@ package govulndb
 
 import (
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -54,13 +55,14 @@ func Build(opts ...Option) error {
 	options := &options{
 		srcDir:        filepath.Join(util.SourceDir(), "golang", "govulndb"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "golang", "govulndb"),
+		destDetectDir: filepath.Join(util.DestDir(), "library", "golang", "govulndb"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Build Golang go-vulndb")
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)
 	}

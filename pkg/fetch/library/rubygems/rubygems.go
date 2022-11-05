@@ -1,7 +1,6 @@
 package rubygems
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -52,22 +51,18 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Rubygems DB")
 	if err := db.Fetch(db.WithDir(filepath.Join(options.dir, "db")), db.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch rubygems db")
 	}
 
-	log.Println("[INFO] Fetch Rubygems GHSA")
 	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch rubygems ghsa")
 	}
 
-	log.Println("[INFO] Fetch Rubygems GLSA")
 	if err := glsa.Fetch(glsa.WithDir(filepath.Join(options.dir, "glsa")), glsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch rubygems glsa")
 	}
 
-	log.Println("[INFO] Fetch Rubygems OSV")
 	if err := osv.Fetch(osv.WithDir(filepath.Join(options.dir, "osv")), osv.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch rubygems osv")
 	}

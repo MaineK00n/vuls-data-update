@@ -1,7 +1,6 @@
 package maven
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -50,12 +49,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Maven GHSA")
 	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch maven ghsa")
 	}
 
-	log.Println("[INFO] Fetch Maven GLSA")
 	if err := glsa.Fetch(glsa.WithDir(filepath.Join(options.dir, "glsa")), glsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch maven glsa")
 	}

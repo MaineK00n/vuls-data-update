@@ -115,6 +115,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch RedHat OVAL")
 	log.Println("[INFO] Fetch Redhat Repository to CPE")
 	var repo2cpe repositoryToCPE
 	bs, err := util.FetchURL(options.repositoryToCPEURL, options.retry)

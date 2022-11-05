@@ -2,6 +2,7 @@ package glsa
 
 import (
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -54,13 +55,14 @@ func Build(opts ...Option) error {
 	options := &options{
 		srcDir:        filepath.Join(util.SourceDir(), "npm", "glsa"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "npm", "glsa"),
+		destDetectDir: filepath.Join(util.DestDir(), "library", "npm", "glsa"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Build Npm GLSA")
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)
 	}

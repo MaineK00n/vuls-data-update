@@ -76,6 +76,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch Ubuntu Security Tracker")
 	cloneDir := filepath.Join(util.SourceDir(), "clone")
 	if err := os.RemoveAll(cloneDir); err != nil {
 		return errors.Wrapf(err, "remove %s", cloneDir)

@@ -2,6 +2,7 @@ package oval
 
 import (
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -61,6 +62,7 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Build Ubuntu OVAL")
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)
 	}

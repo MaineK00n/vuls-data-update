@@ -1,7 +1,6 @@
 package golang
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -65,27 +64,22 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Golang DB")
 	if err := db.Build(db.WithSrcDir(filepath.Join(options.srcDir, "db")), db.WithDestVulnDir(options.destVulnDir), db.WithDestDetectDir(filepath.Join(options.destDetectDir, "db"))); err != nil {
 		return errors.Wrap(err, "build golang db")
 	}
 
-	log.Println("[INFO] Build Golang GHSA")
 	if err := ghsa.Build(ghsa.WithSrcDir(filepath.Join(options.srcDir, "ghsa")), ghsa.WithDestVulnDir(options.destVulnDir), ghsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "ghsa"))); err != nil {
 		return errors.Wrap(err, "build golang ghsa")
 	}
 
-	log.Println("[INFO] Build Golang GLSA")
 	if err := glsa.Build(glsa.WithSrcDir(filepath.Join(options.srcDir, "glsa")), glsa.WithDestVulnDir(options.destVulnDir), glsa.WithDestDetectDir(filepath.Join(options.destDetectDir, "glsa"))); err != nil {
 		return errors.Wrap(err, "build golang glsa")
 	}
 
-	log.Println("[INFO] Build Golang go-vulndb")
 	if err := govulndb.Build(govulndb.WithSrcDir(filepath.Join(options.srcDir, "govulndb")), govulndb.WithDestVulnDir(options.destVulnDir), govulndb.WithDestDetectDir(filepath.Join(options.destDetectDir, "govulndb"))); err != nil {
 		return errors.Wrap(err, "build golang govulndb")
 	}
 
-	log.Println("[INFO] Build Golang OSV")
 	if err := osv.Build(osv.WithSrcDir(filepath.Join(options.srcDir, "osv")), osv.WithDestVulnDir(options.destVulnDir), osv.WithDestDetectDir(filepath.Join(options.destDetectDir, "osv"))); err != nil {
 		return errors.Wrap(err, "build golang osv")
 	}

@@ -2,6 +2,7 @@ package osv
 
 import (
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -54,13 +55,14 @@ func Build(opts ...Option) error {
 	options := &options{
 		srcDir:        filepath.Join(util.SourceDir(), "npm", "osv"),
 		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "npm", "osv"),
+		destDetectDir: filepath.Join(util.DestDir(), "library", "npm", "osv"),
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Build Npm OSV")
 	if err := os.RemoveAll(options.destDetectDir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.destDetectDir)
 	}

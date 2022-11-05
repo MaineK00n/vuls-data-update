@@ -1,7 +1,6 @@
 package cargo
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -51,17 +50,14 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Cargo DB")
 	if err := db.Fetch(db.WithDir(filepath.Join(options.dir, "db")), db.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch cargo db")
 	}
 
-	log.Println("[INFO] Fetch Cargo GHSA")
 	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch cargo ghsa")
 	}
 
-	log.Println("[INFO] Fetch Cargo OSV")
 	if err := osv.Fetch(osv.WithDir(filepath.Join(options.dir, "osv")), osv.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch cargo osv")
 	}

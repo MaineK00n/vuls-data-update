@@ -1,7 +1,6 @@
 package windows
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -50,12 +49,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch Windows Bulletin")
 	if err := bulletin.Fetch(bulletin.WithDir(filepath.Join(options.dir, "bulletin")), bulletin.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch windows bulletin")
 	}
 
-	log.Println("[INFO] Fetch Windows CVRF")
 	if err := cvrf.Fetch(cvrf.WithDir(filepath.Join(options.dir, "cvrf")), cvrf.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch windows cvrf")
 	}

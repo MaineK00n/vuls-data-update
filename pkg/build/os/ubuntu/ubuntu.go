@@ -1,7 +1,6 @@
 package ubuntu
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -62,12 +61,10 @@ func Build(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Build Ubuntu OVAL")
 	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
 		return errors.Wrap(err, "build ubuntu oval")
 	}
 
-	log.Println("[INFO] Build Ubuntu Security Tracker")
 	if err := tracker.Build(tracker.WithSrcDir(filepath.Join(options.srcDir, "tracker")), tracker.WithDestVulnDir(options.destVulnDir), tracker.WithDestDetectDir(filepath.Join(options.destDetectDir, "tracker"))); err != nil {
 		return errors.Wrap(err, "build ubuntu security tracker")
 	}

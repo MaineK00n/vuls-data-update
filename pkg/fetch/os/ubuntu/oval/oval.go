@@ -88,6 +88,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch Ubuntu OVAL")
 	for code, url := range options.urls {
 		v, ok := codename.CodeToVer[code]
 		if !ok {
