@@ -13,10 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
 const baseURL = "https://ftp.suse.com/pub/projects/security/oval/"
@@ -330,7 +331,7 @@ func parseDefinitions(xmlname string, ovalDefs []definition, tests map[string]Pa
 			def.Advisory.CVEs = append(def.Advisory.CVEs, CVE{
 				CVEID:  cve.CveID,
 				CVSS3:  cve.Cvss3,
-				Imapct: cve.Impact,
+				Impact: cve.Impact,
 				Href:   cve.Href,
 			})
 		}
@@ -366,7 +367,7 @@ func parseDefinitions(xmlname string, ovalDefs []definition, tests map[string]Pa
 
 func collectPkgs(xmlname string, cri criteria, tests map[string]Package) []Package {
 	if strings.HasPrefix(xmlname, "opensuse.12") {
-		v := fmt.Sprintf("openSUSE %s", strings.TrimSuffix(strings.TrimPrefix(xmlname, "opensuse."), ".xml"))
+		v := fmt.Sprintf("openSUSE %s", strings.TrimSuffix(strings.TrimPrefix(xmlname, "opensuse."), ".xml.gz"))
 		_, pkgs := walkCriterion(cri, tests)
 		for i := range pkgs {
 			pkgs[i].Platform = v
@@ -473,141 +474,3 @@ func isOSComment(comment string) bool {
 	}
 	return false
 }
-
-// func getOSVersion(platform string) (string, error) {
-// 	if strings.HasPrefix(platform, "suse") {
-// 		s := strings.TrimPrefix(platform, "suse")
-// 		if len(s) < 3 {
-// 			return "", errors.Errorf(`unexpected version string. expected: "suse\d{3}(-.+)?", actual: "%s"`, platform)
-// 		}
-// 		lhs, _, _ := strings.Cut(s, "-")
-// 		v := fmt.Sprintf("%s.%s", lhs[:2], lhs[2:])
-// 		if _, err := version.NewVersion(v); err != nil {
-// 			return "", errors.Wrap(err, "parse version")
-// 		}
-// 		return v, nil
-// 	}
-
-// 	if strings.HasPrefix(platform, "sled") {
-// 		s := strings.TrimPrefix(platform, "sled")
-// 		major, rhs, found := strings.Cut(s, "-")
-// 		if _, err := version.NewVersion(major); err != nil {
-// 			return "", errors.Wrap(err, "parse version")
-// 		}
-// 		if !found {
-// 			return major, nil
-// 		}
-// 		for _, s := range strings.Split(rhs, "-") {
-// 			if strings.HasPrefix(s, "sp") {
-// 				sp, err := strconv.Atoi(strings.TrimPrefix(s, "sp"))
-// 				if err != nil {
-// 					return "", errors.Wrap(err, "parse sp version")
-// 				}
-// 				v := major
-// 				if sp != 0 {
-// 					v = fmt.Sprintf("%s.%d", major, sp)
-// 				}
-// 				if _, err := version.NewVersion(v); err != nil {
-// 					return "", errors.Wrap(err, "parse version")
-// 				}
-// 				return v, nil
-// 			}
-// 		}
-// 		return major, nil
-// 	}
-
-// 	if strings.HasPrefix(platform, "sles") {
-// 		s := strings.TrimPrefix(platform, "sles")
-// 		major, rhs, found := strings.Cut(s, "-")
-// 		if _, err := version.NewVersion(major); err != nil {
-// 			return "", errors.Wrap(err, "parse version")
-// 		}
-// 		if !found {
-// 			return major, nil
-// 		}
-// 		for _, s := range strings.Split(rhs, "-") {
-// 			if strings.HasPrefix(s, "sp") {
-// 				sp, err := strconv.Atoi(strings.TrimPrefix(s, "sp"))
-// 				if err != nil {
-// 					return "", errors.Wrap(err, "parse sp version")
-// 				}
-// 				v := major
-// 				if sp != 0 {
-// 					v = fmt.Sprintf("%s.%d", major, sp)
-// 				}
-// 				if _, err := version.NewVersion(v); err != nil {
-// 					return "", errors.Wrap(err, "parse version")
-// 				}
-// 				return v, nil
-// 			}
-// 		}
-// 		return major, nil
-// 	}
-
-// 	if strings.HasPrefix(platform, "core9") {
-// 		return "9", nil
-// 	}
-
-// 	if strings.HasPrefix(platform, "openSUSE") {
-// 		if strings.HasPrefix(platform, "openSUSE Leap") {
-// 			// e.g. openSUSE Leap 15.0
-// 			ss := strings.Fields(platform)
-// 			if len(ss) < 3 {
-// 				return "", errors.Errorf(`unexpected version string. expected: "openSUSE Leap <Version>", actual: "%s"`, platform)
-// 			}
-// 			if _, err := version.NewVersion(ss[2]); err != nil {
-// 				return "", errors.Wrap(err, "parse version")
-// 			}
-// 			return ss[2], nil
-// 		}
-// 		// e.g. openSUSE 13.2, openSUSE Tumbleweed
-// 		ss := strings.Fields(platform)
-// 		if len(ss) < 2 {
-// 			return "", errors.Errorf(`unexpected version string. expected: "openSUSE <Version>", actual: "%s"`, platform)
-// 		}
-// 		if ss[1] == "Tumbleweed" {
-// 			return "tumbleweed", nil
-// 		}
-// 		if _, err := version.NewVersion(ss[1]); err != nil {
-// 			return "", errors.Wrap(err, "parse version")
-// 		}
-// 		return ss[1], nil
-// 	}
-
-// 	if strings.HasPrefix(platform, "SUSE Linux Enterprise") {
-// 		// e.g. SUSE Linux Enterprise Storage 7, SUSE Linux Enterprise Micro 5.1
-// 		if strings.HasPrefix(platform, "SUSE Linux Enterprise Storage") || strings.HasPrefix(platform, "SUSE Linux Enterprise Micro") {
-// 			return "", nil
-// 		}
-
-// 		ss := strings.Fields(strings.ReplaceAll(platform, "-", " "))
-// 		var sp int
-// 		for i := len(ss) - 1; i > 0; i-- {
-// 			if strings.HasPrefix(ss[i], "SP") {
-// 				var err error
-// 				sp, err = strconv.Atoi(strings.TrimPrefix(ss[i], "SP"))
-// 				if err != nil {
-// 					return "", errors.Wrap(err, "parse sp version")
-// 				}
-// 			}
-// 			if major, err := strconv.Atoi(ss[i]); err == nil {
-// 				v := fmt.Sprintf("%d", major)
-// 				if sp != 0 {
-// 					v = fmt.Sprintf("%d.%d", major, sp)
-// 				}
-// 				if _, err := version.NewVersion(v); err != nil {
-// 					return "", errors.Wrap(err, "parse version")
-// 				}
-// 				return v, nil
-// 			}
-// 		}
-// 		return "", errors.Errorf(`unexpected version string. expected: "SUSE Linux Enterprise .+ <Major Version>.*( SP\d.*)?", actual: "%s"`, platform)
-// 	}
-
-// 	if strings.HasPrefix(platform, "SUSE Manager") {
-// 		// e.g. SUSE Manager Proxy 4.0, SUSE Manager Server 4.0
-// 		return "", nil
-// 	}
-
-// 	return "", errors.Errorf(`not support platform. platform: "%s"`, platform)
-// }

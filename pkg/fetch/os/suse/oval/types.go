@@ -163,7 +163,7 @@ type Advisory struct {
 type CVE struct {
 	CVEID  string `json:"cve_id,omitempty"`
 	CVSS3  string `json:"cvss3,omitempty"`
-	Imapct string `json:"imapct,omitempty"`
+	Impact string `json:"impact,omitempty"`
 	Href   string `json:"href,omitempty"`
 }
 

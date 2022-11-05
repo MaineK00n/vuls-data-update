@@ -20,6 +20,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/oracle"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/redhat"
 	redhatOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/redhat/oval"
+	suseOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/suse/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -195,9 +196,9 @@ func build(names []string) error {
 			// 	return errors.Wrap(err, "failed to build suse")
 			// }
 		case "suse-oval":
-			// if err := suseOval.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build suse")
-			// }
+			if err := suseOval.Build(); err != nil {
+				return errors.Wrap(err, "failed to build suse")
+			}
 		case "ubuntu":
 			// if err := ubuntu.Build(); err != nil {
 			// 	return errors.Wrap(err, "failed to build ubuntu")

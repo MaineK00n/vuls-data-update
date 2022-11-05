@@ -207,8 +207,8 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve oval.CV
 	if dv.Advisory == nil {
 		dv.Advisory = &build.Advisories{}
 	}
-	if dv.Advisory.RedHat == nil {
-		dv.Advisory.RedHat = map[string][]build.Advisory{}
+	if dv.Advisory.RedHatOVAL == nil {
+		dv.Advisory.RedHatOVAL = map[string][]build.Advisory{}
 	}
 	a := build.Advisory{
 		ID: sv.DefinitionID,
@@ -226,38 +226,38 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve oval.CV
 			log.Printf(`[WARN] unexpected DefinitionID format. accepts: ["cve", "rhsa", "rhba", "rhea", "unaffected"], received: "%s"`, lhs)
 		}
 	}
-	dv.Advisory.RedHat[version] = append(dv.Advisory.RedHat[version], a)
+	dv.Advisory.RedHatOVAL[version] = append(dv.Advisory.RedHatOVAL[version], a)
 
 	if dv.Title == nil {
 		dv.Title = &build.Titles{}
 	}
-	if dv.Title.RedHat == nil {
-		dv.Title.RedHat = map[string]map[string]string{}
+	if dv.Title.RedHatOVAL == nil {
+		dv.Title.RedHatOVAL = map[string]map[string]string{}
 	}
-	if dv.Title.RedHat[version] == nil {
-		dv.Title.RedHat[version] = map[string]string{}
+	if dv.Title.RedHatOVAL[version] == nil {
+		dv.Title.RedHatOVAL[version] = map[string]string{}
 	}
-	dv.Title.RedHat[version][sv.DefinitionID] = sv.Title
+	dv.Title.RedHatOVAL[version][sv.DefinitionID] = sv.Title
 
 	if dv.Description == nil {
 		dv.Description = &build.Descriptions{}
 	}
-	if dv.Description.RedHat == nil {
-		dv.Description.RedHat = map[string]map[string]string{}
+	if dv.Description.RedHatOVAL == nil {
+		dv.Description.RedHatOVAL = map[string]map[string]string{}
 	}
-	if dv.Description.RedHat[version] == nil {
-		dv.Description.RedHat[version] = map[string]string{}
+	if dv.Description.RedHatOVAL[version] == nil {
+		dv.Description.RedHatOVAL[version] = map[string]string{}
 	}
-	dv.Description.RedHat[version][sv.DefinitionID] = sv.Description
+	dv.Description.RedHatOVAL[version][sv.DefinitionID] = sv.Description
 
 	if dv.CVSS == nil {
 		dv.CVSS = &build.CVSSes{}
 	}
-	if dv.CVSS.RedHat == nil {
-		dv.CVSS.RedHat = map[string]map[string][]build.CVSS{}
+	if dv.CVSS.RedHatOVAL == nil {
+		dv.CVSS.RedHatOVAL = map[string]map[string][]build.CVSS{}
 	}
-	if dv.CVSS.RedHat[version] == nil {
-		dv.CVSS.RedHat[version] = map[string][]build.CVSS{}
+	if dv.CVSS.RedHatOVAL[version] == nil {
+		dv.CVSS.RedHatOVAL[version] = map[string][]build.CVSS{}
 	}
 	var cvsses []build.CVSS
 	if cve.CVSS2 != "" {
@@ -307,65 +307,65 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve oval.CV
 			Severity: cve.Impact,
 		})
 	}
-	dv.CVSS.RedHat[version][sv.DefinitionID] = cvsses
+	dv.CVSS.RedHatOVAL[version][sv.DefinitionID] = cvsses
 
 	if cve.CWE != "" {
 		if dv.CWE == nil {
 			dv.CWE = &build.CWEs{}
 		}
-		if dv.CWE.RedHat == nil {
-			dv.CWE.RedHat = map[string]map[string][]string{}
+		if dv.CWE.RedHatOVAL == nil {
+			dv.CWE.RedHatOVAL = map[string]map[string][]string{}
 		}
-		if dv.CWE.RedHat[version] == nil {
-			dv.CWE.RedHat[version] = map[string][]string{}
+		if dv.CWE.RedHatOVAL[version] == nil {
+			dv.CWE.RedHatOVAL[version] = map[string][]string{}
 		}
-		dv.CWE.RedHat[version][sv.DefinitionID] = []string{strings.TrimPrefix(cve.CWE, "CWE-")}
+		dv.CWE.RedHatOVAL[version][sv.DefinitionID] = []string{strings.TrimPrefix(cve.CWE, "CWE-")}
 	}
 
 	if dv.Published == nil {
 		dv.Published = &build.Publisheds{}
 	}
-	if dv.Published.RedHat == nil {
-		dv.Published.RedHat = map[string]map[string]*time.Time{}
+	if dv.Published.RedHatOVAL == nil {
+		dv.Published.RedHatOVAL = map[string]map[string]*time.Time{}
 	}
-	if dv.Published.RedHat[version] == nil {
-		dv.Published.RedHat[version] = map[string]*time.Time{}
+	if dv.Published.RedHatOVAL[version] == nil {
+		dv.Published.RedHatOVAL[version] = map[string]*time.Time{}
 	}
 	if sv.Advisory.Issued != nil {
-		dv.Published.RedHat[version][sv.DefinitionID] = sv.Advisory.Issued
+		dv.Published.RedHatOVAL[version][sv.DefinitionID] = sv.Advisory.Issued
 	}
 
 	if dv.Modified == nil {
 		dv.Modified = &build.Modifieds{}
 	}
-	if dv.Modified.RedHat == nil {
-		dv.Modified.RedHat = map[string]map[string]*time.Time{}
+	if dv.Modified.RedHatOVAL == nil {
+		dv.Modified.RedHatOVAL = map[string]map[string]*time.Time{}
 	}
-	if dv.Modified.RedHat[version] == nil {
-		dv.Modified.RedHat[version] = map[string]*time.Time{}
+	if dv.Modified.RedHatOVAL[version] == nil {
+		dv.Modified.RedHatOVAL[version] = map[string]*time.Time{}
 	}
 	if sv.Advisory.Updated != nil {
-		dv.Modified.RedHat[version][sv.DefinitionID] = sv.Advisory.Updated
+		dv.Modified.RedHatOVAL[version][sv.DefinitionID] = sv.Advisory.Updated
 	}
 
 	if dv.References == nil {
 		dv.References = &build.References{}
 	}
-	if dv.References.RedHat == nil {
-		dv.References.RedHat = map[string]map[string][]build.Reference{}
+	if dv.References.RedHatOVAL == nil {
+		dv.References.RedHatOVAL = map[string]map[string][]build.Reference{}
 	}
-	if dv.References.RedHat[version] == nil {
-		dv.References.RedHat[version] = map[string][]build.Reference{}
+	if dv.References.RedHatOVAL[version] == nil {
+		dv.References.RedHatOVAL[version] = map[string][]build.Reference{}
 	}
 	for _, b := range sv.Advisory.Bugzillas {
-		dv.References.RedHat[version][sv.DefinitionID] = append(dv.References.RedHat[version][sv.DefinitionID], build.Reference{
+		dv.References.RedHatOVAL[version][sv.DefinitionID] = append(dv.References.RedHatOVAL[version][sv.DefinitionID], build.Reference{
 			Source: "RHBUG",
 			Name:   b.Title,
 			URL:    b.URL,
 		})
 	}
 	for _, r := range sv.References {
-		dv.References.RedHat[version][sv.DefinitionID] = append(dv.References.RedHat[version][sv.DefinitionID], build.Reference{
+		dv.References.RedHatOVAL[version][sv.DefinitionID] = append(dv.References.RedHatOVAL[version][sv.DefinitionID], build.Reference{
 			Source: r.Source,
 			Name:   r.ID,
 			URL:    r.URL,
