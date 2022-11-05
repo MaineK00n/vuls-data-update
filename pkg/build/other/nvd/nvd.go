@@ -276,23 +276,31 @@ func fillDetect(dd *build.DetectCPE, sv *nvd.CVEItem) {
 		case "AND":
 			for _, child := range n.Children {
 				for _, c := range child.CpeMatch {
+					var vs []build.Version
+					if c.VersionEndExcluding != nil {
+						vs = append(vs, build.Version{Operator: "lt", Version: *c.VersionEndExcluding})
+					}
+					if c.VersionEndIncluding != nil {
+						vs = append(vs, build.Version{Operator: "le", Version: *c.VersionEndIncluding})
+					}
+					if c.VersionStartExcluding != nil {
+						vs = append(vs, build.Version{Operator: "gt", Version: *c.VersionStartExcluding})
+					}
+					if c.VersionStartIncluding != nil {
+						vs = append(vs, build.Version{Operator: "ge", Version: *c.VersionStartIncluding})
+					}
+
 					if c.Vulnerable {
 						configuration.Vulnerable = append(configuration.Vulnerable, build.CPE{
-							Version:               "2.3",
-							CPE:                   c.Cpe23URI,
-							VersionEndExcluding:   c.VersionEndExcluding,
-							VersionEndIncluding:   c.VersionEndIncluding,
-							VersionStartExcluding: c.VersionStartExcluding,
-							VersionStartIncluding: c.VersionStartIncluding,
+							CPEVersion: "2.3",
+							CPE:        c.Cpe23URI,
+							Version:    vs,
 						})
 					} else {
 						configuration.RunningOn = append(configuration.RunningOn, build.CPE{
-							Version:               "2.3",
-							CPE:                   c.Cpe23URI,
-							VersionEndExcluding:   c.VersionEndExcluding,
-							VersionEndIncluding:   c.VersionEndIncluding,
-							VersionStartExcluding: c.VersionStartExcluding,
-							VersionStartIncluding: c.VersionStartIncluding,
+							CPEVersion: "2.3",
+							CPE:        c.Cpe23URI,
+							Version:    vs,
 						})
 					}
 				}
@@ -302,13 +310,24 @@ func fillDetect(dd *build.DetectCPE, sv *nvd.CVEItem) {
 				if !c.Vulnerable {
 					continue
 				}
+
+				var vs []build.Version
+				if c.VersionEndExcluding != nil {
+					vs = append(vs, build.Version{Operator: "lt", Version: *c.VersionEndExcluding})
+				}
+				if c.VersionEndIncluding != nil {
+					vs = append(vs, build.Version{Operator: "le", Version: *c.VersionEndIncluding})
+				}
+				if c.VersionStartExcluding != nil {
+					vs = append(vs, build.Version{Operator: "gt", Version: *c.VersionStartExcluding})
+				}
+				if c.VersionStartIncluding != nil {
+					vs = append(vs, build.Version{Operator: "ge", Version: *c.VersionStartIncluding})
+				}
 				configuration.Vulnerable = append(configuration.Vulnerable, build.CPE{
-					Version:               "2.3",
-					CPE:                   c.Cpe23URI,
-					VersionEndExcluding:   c.VersionEndExcluding,
-					VersionEndIncluding:   c.VersionEndIncluding,
-					VersionStartExcluding: c.VersionStartExcluding,
-					VersionStartIncluding: c.VersionStartIncluding,
+					CPEVersion: "2.3",
+					CPE:        c.Cpe23URI,
+					Version:    vs,
 				})
 			}
 		}

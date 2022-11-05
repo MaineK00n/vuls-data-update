@@ -191,12 +191,9 @@ type CPEConfiguration struct {
 }
 
 type CPE struct {
-	Version               string  `json:"version,omitempty"`
-	CPE                   string  `json:"cpe,omitempty"`
-	VersionEndExcluding   *string `json:"version_end_excluding,omitempty"`
-	VersionEndIncluding   *string `json:"version_end_including,omitempty"`
-	VersionStartExcluding *string `json:"version_start_excluding,omitempty"`
-	VersionStartIncluding *string `json:"version_start_including,omitempty"`
+	CPEVersion string    `json:"cpe_version,omitempty"`
+	CPE        string    `json:"cpe,omitempty"`
+	Version    []Version `json:"version,omitempty"`
 }
 
 type DetectPackage struct {

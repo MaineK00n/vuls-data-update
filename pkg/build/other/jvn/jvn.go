@@ -277,8 +277,8 @@ func fillDetect(dd *build.DetectCPE, cve string, sv *jvn.Advisory) {
 			continue
 		}
 		cs = append(cs, build.CPE{
-			Version: a.CPE.Version,
-			CPE:     a.CPE.Text,
+			CPEVersion: a.CPE.Version,
+			CPE:        a.CPE.Text,
 		})
 	}
 	if len(cs) == 0 {
