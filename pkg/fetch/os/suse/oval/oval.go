@@ -7,47 +7,38 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 )
 
-var (
-	urlFormat  = "https://ftp.suse.com/pub/projects/security/oval/%s.%s.xml.gz"
-	osVersions = map[string][]string{
-		"opensuse":                      {"10.2", "10.3", "11.0", "11.1", "11.2", "11.3", "11.4", "12.1", "12.2", "12.3", "13.1", "13.2", "tumbleweed"},
-		"opensuse.leap":                 {"42.1", "42.2", "42.3", "15.0", "15.1", "15.2", "15.3", "15.4"},
-		"suse.linux.enterprise.desktop": {"10", "11", "12", "15"},
-		"suse.linux.enterprise.server":  {"9", "10", "11", "12", "15"},
-	}
-)
+const baseURL = "https://ftp.suse.com/pub/projects/security/oval/"
 
 type options struct {
-	urls  map[string]string
-	dir   string
-	retry int
+	baseURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type urlOption map[string]string
+type baseURLOption string
 
-func (u urlOption) apply(opts *options) {
-	opts.urls = u
+func (u baseURLOption) apply(opts *options) {
+	opts.baseURL = string(u)
 }
 
-func WithURLs(urls map[string]string) Option {
-	return urlOption(urls)
+func WithBaseURL(url string) Option {
+	return baseURLOption(url)
 }
 
 type dirOption string
@@ -72,15 +63,9 @@ func WithRetry(retry int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		urls:  map[string]string{},
-		dir:   filepath.Join(util.SourceDir(), "suse", "oval"),
-		retry: 3,
-	}
-
-	for osname, versions := range osVersions {
-		for _, v := range versions {
-			options.urls[fmt.Sprintf("%s %s", osname, v)] = fmt.Sprintf(urlFormat, osname, v)
-		}
+		baseURL: baseURL,
+		dir:     filepath.Join(util.SourceDir(), "suse", "oval"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -88,23 +73,36 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch SUSE OVAL")
-	for name, url := range options.urls {
-		osname, version, found := strings.Cut(name, " ")
-		if !found {
-			return errors.Errorf(`unexpected name. accepts: "<osname> <version>", received: "%s"`, name)
-		}
-		versions, ok := osVersions[osname]
-		if !ok {
-			return errors.Errorf(`unexpected osname. accepts: "%s", received: "%s"`, maps.Keys(osVersions), osname)
-		}
-		if !slices.Contains(versions, version) {
-			return errors.Errorf(`unexpected version. accepts: "%s", received: "%s"`, versions, version)
+	ovals, err := options.walkIndexOf()
+	if err != nil {
+		return errors.Wrap(err, "walk index of")
+	}
+
+	for _, ovalname := range ovals {
+		var osname, version string
+		if strings.HasPrefix(ovalname, "suse.linux.enterprise.desktop") {
+			osname = "suse.linux.enterprise.desktop"
+			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "suse.linux.enterprise.desktop.")
+		} else if strings.HasPrefix(ovalname, "suse.linux.enterprise.server") {
+			osname = "suse.linux.enterprise.server"
+			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "suse.linux.enterprise.server.")
+		} else if strings.HasPrefix(ovalname, "opensuse.tumbleweed") {
+			osname = "opensuse"
+			version = "tumbleweed"
+		} else if strings.HasPrefix(ovalname, "opensuse.leap") {
+			osname = "opensuse.leap"
+			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "opensuse.leap.")
+		} else if strings.HasPrefix(ovalname, "opensuse") {
+			osname = "opensuse"
+			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "opensuse.")
+		} else {
+			return errors.Wrapf(err, `unexpected ovalname. accepts: "<osname>.<version>.xml.gz", received: "%s"`, ovalname)
 		}
 
-		log.Printf("[INFO] Fetch %s", name)
-		defs, err := options.fetchOVAL(url)
+		log.Printf("[INFO] Fetch %s", fmt.Sprintf("%s %s", osname, version))
+		defs, err := options.fetchOVAL(ovalname)
 		if err != nil {
-			return errors.Wrapf(err, "fetch %s", name)
+			return errors.Wrapf(err, "fetch %s", fmt.Sprintf("%s %s", osname, version))
 		}
 
 		dir := filepath.Join(options.dir, osname, version)
@@ -141,8 +139,45 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) fetchOVAL(url string) ([]Definition, error) {
-	bs, err := util.FetchURL(url, opts.retry)
+func (opts options) walkIndexOf() ([]string, error) {
+	bs, err := util.FetchURL(opts.baseURL, opts.retry)
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch index of")
+	}
+
+	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if err != nil {
+		return nil, errors.Wrap(err, "parse as html")
+	}
+
+	var ovals []string
+	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
+		txt := selection.Text()
+		if !strings.HasSuffix(txt, ".xml.gz") {
+			return
+		}
+		if !(strings.HasPrefix(txt, "opensuse") ||
+			strings.HasPrefix(txt, "opensuse.leap") ||
+			strings.HasPrefix(txt, "opensuse.tumbleweed") ||
+			strings.HasPrefix(txt, "suse.linux.enterprise.desktop") ||
+			strings.HasPrefix(txt, "suse.linux.enterprise.server")) || strings.HasPrefix(txt, "opensuse.leap.micro") {
+			return
+		}
+		if strings.Contains(txt, "-patch") || strings.Contains(txt, "-affected") || strings.Contains(txt, "-sp") {
+			return
+		}
+		ovals = append(ovals, txt)
+	})
+	return ovals, nil
+}
+
+func (opts options) fetchOVAL(ovalname string) ([]Definition, error) {
+	u, err := url.JoinPath(opts.baseURL, ovalname)
+	if err != nil {
+		return nil, errors.Wrap(err, "join url path")
+	}
+
+	bs, err := util.FetchURL(u, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch oval")
 	}
@@ -162,7 +197,7 @@ func (opts options) fetchOVAL(url string) ([]Definition, error) {
 		return nil, errors.Wrap(err, "parse rpminfo_test")
 	}
 
-	return parseDefinitions(path.Base(url), root.Definitions.Definitions, tests), nil
+	return parseDefinitions(ovalname, root.Definitions.Definitions, tests), nil
 }
 
 func parseTests(root root) (map[string]Package, error) {
