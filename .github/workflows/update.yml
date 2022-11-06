@@ -424,3 +424,10 @@ jobs:
           git commit --allow-empty -m "update vulnerability"
           git push origin HEAD:main
           cd ..
+
+      - name: update output submodule commit
+        run: |
+          git pull
+          git add source
+          git commit -m "chore(ci): update output submodule"
+          git push
