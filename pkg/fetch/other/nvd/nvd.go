@@ -113,13 +113,15 @@ func Fetch(opts ...Option) error {
 	if err := os.MkdirAll(options.dir, os.ModePerm); err != nil {
 		return errors.Wrapf(err, "mkdir %s", options.dir)
 	}
-	f, err := os.Create(filepath.Join(options.dir, "cpe-dictionary.json"))
+	f, err := os.Create(filepath.Join(options.dir, "cpe-dictionary.json.gz"))
 	if err != nil {
-		return errors.Wrapf(err, "create %s", filepath.Join(options.dir, "cpe-dictionary.json"))
+		return errors.Wrapf(err, "create %s", filepath.Join(options.dir, "cpe-dictionary.json.gz"))
 	}
 	defer f.Close()
 
-	enc := json.NewEncoder(f)
+	gw := gzip.NewWriter(f)
+	defer gw.Close()
+	enc := json.NewEncoder(gw)
 	enc.SetIndent("", "  ")
 	if err := enc.Encode(cpeDict); err != nil {
 		return errors.Wrap(err, "encode data")
