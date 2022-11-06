@@ -428,6 +428,6 @@ jobs:
       - name: update output submodule commit
         run: |
           git pull
-          git add source
+          git add output
           git commit -m "chore(ci): update output submodule"
           git push
