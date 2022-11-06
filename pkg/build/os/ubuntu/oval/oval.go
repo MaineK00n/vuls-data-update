@@ -252,7 +252,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve, versio
 	}
 	for _, b := range sv.Advisory.Bugzillas {
 		dv.References.UbuntuOVAL[version][sv.DefinitionID] = append(dv.References.UbuntuOVAL[version][sv.DefinitionID], build.Reference{
-			Source: "UBUNTUBUG",
+			Source: "BUG",
 			Name:   b,
 			URL:    fmt.Sprintf("https://bugs.launchpad.net/ubuntu/+bug/%s", b),
 		})

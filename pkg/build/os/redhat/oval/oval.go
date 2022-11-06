@@ -359,7 +359,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve oval.CV
 	}
 	for _, b := range sv.Advisory.Bugzillas {
 		dv.References.RedHatOVAL[version][sv.DefinitionID] = append(dv.References.RedHatOVAL[version][sv.DefinitionID], build.Reference{
-			Source: "RHBUG",
+			Source: "BUG",
 			Name:   b.Title,
 			URL:    b.URL,
 		})

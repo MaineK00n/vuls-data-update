@@ -460,7 +460,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve oval.CV
 	}
 	for _, b := range sv.Advisory.Bugzillas {
 		dv.References.SUSEOVAL[version][sv.DefinitionID] = append(dv.References.SUSEOVAL[version][sv.DefinitionID], build.Reference{
-			Source: "SUSEBUG",
+			Source: "BUG",
 			Name:   b.Title,
 			URL:    b.URL,
 		})

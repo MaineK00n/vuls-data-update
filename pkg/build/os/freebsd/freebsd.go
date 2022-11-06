@@ -261,7 +261,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *freebsd.Advisory, id string)
 				u = fmt.Sprintf("https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=%s", rhs)
 			}
 			dv.References.FreeBSD[sv.Vid] = append(dv.References.FreeBSD[sv.Vid], build.Reference{
-				Source: "FreeBSDBUG",
+				Source: "BUG",
 				Name:   r.Text,
 				URL:    u,
 			})

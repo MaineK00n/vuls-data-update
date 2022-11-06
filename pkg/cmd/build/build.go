@@ -25,6 +25,7 @@ import (
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/suse/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu"
 	ubuntuOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu/oval"
+	ubuntuTracker "github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu/tracker"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -212,9 +213,9 @@ func build(names []string) error {
 				return errors.Wrap(err, "failed to build ubuntu")
 			}
 		case "ubuntu-tracker":
-			// if err := ubuntuTracker.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build ubuntu")
-			// }
+			if err := ubuntuTracker.Build(); err != nil {
+				return errors.Wrap(err, "failed to build ubuntu")
+			}
 		case "windows":
 			// if err := windows.Build(); err != nil {
 			// 	return errors.Wrap(err, "failed to build windows")

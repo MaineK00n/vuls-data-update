@@ -209,7 +209,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *arch.VulnerabilityGroup, cve
 	}
 	if sv.Ticket != "" {
 		dv.References.Arch[sv.Name] = append(dv.References.Arch[sv.Name], build.Reference{
-			Source: "ARCHBUG",
+			Source: "BUG",
 			Name:   fmt.Sprintf("FS#%s", sv.Ticket),
 			URL:    fmt.Sprintf("https://bugs.archlinux.org/task/%s", sv.Ticket),
 		})

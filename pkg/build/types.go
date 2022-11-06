@@ -35,6 +35,7 @@ type Advisories struct {
 	SUSEOVAL              map[string][]Advisory `json:"suse_oval,omitempty"`
 	SUSECVRF              *Advisory             `json:"suse_cvrf,omitempty"`
 	UbuntuOVAL            map[string][]Advisory `json:"ubuntu_oval,omitempty"`
+	UbuntuSecurityTracker *Advisory             `json:"ubuntu_security_tracker,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -57,6 +58,7 @@ type Titles struct {
 	SUSEOVAL              map[string]map[string]string `json:"suse_oval,omitempty"`
 	SUSECVRF              string                       `json:"suse_cvrf,omitempty"`
 	UbuntuOVAL            map[string]map[string]string `json:"ubuntu_oval,omitempty"`
+	UbuntuSecurityTracker string                       `json:"ubuntu_security_tracker,omitempty"`
 }
 
 type Descriptions struct {
@@ -73,19 +75,21 @@ type Descriptions struct {
 	SUSEOVAL              map[string]map[string]string `json:"suse_oval,omitempty"`
 	SUSECVRF              string                       `json:"suse_cvrf,omitempty"`
 	UbuntuOVAL            map[string]map[string]string `json:"ubuntu_oval,omitempty"`
+	UbuntuSecurityTracker string                       `json:"ubuntu_security_tracker,omitempty"`
 }
 
 type CVSSes struct {
-	NVD        []CVSS                       `json:"nvd,omitempty"`
-	JVN        map[string][]CVSS            `json:"jvn,omitempty"`
-	Alma       map[string]map[string][]CVSS `json:"alma,omitempty"`
-	Amazon     map[string]map[string][]CVSS `json:"amazon,omitempty"`
-	Arch       map[string][]CVSS            `json:"arch,omitempty"`
-	Oracle     map[string]map[string][]CVSS `json:"oracle,omitempty"`
-	RedHatOVAL map[string]map[string][]CVSS `json:"redhat_oval,omitempty"`
-	SUSEOVAL   map[string]map[string][]CVSS `json:"suse_oval,omitempty"`
-	SUSECVRF   []CVSS                       `json:"suse_cvrf,omitempty"`
-	UbuntuOVAL map[string]map[string][]CVSS `json:"ubuntu_oval,omitempty"`
+	NVD                   []CVSS                       `json:"nvd,omitempty"`
+	JVN                   map[string][]CVSS            `json:"jvn,omitempty"`
+	Alma                  map[string]map[string][]CVSS `json:"alma,omitempty"`
+	Amazon                map[string]map[string][]CVSS `json:"amazon,omitempty"`
+	Arch                  map[string][]CVSS            `json:"arch,omitempty"`
+	Oracle                map[string]map[string][]CVSS `json:"oracle,omitempty"`
+	RedHatOVAL            map[string]map[string][]CVSS `json:"redhat_oval,omitempty"`
+	SUSEOVAL              map[string]map[string][]CVSS `json:"suse_oval,omitempty"`
+	SUSECVRF              []CVSS                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL            map[string]map[string][]CVSS `json:"ubuntu_oval,omitempty"`
+	UbuntuSecurityTracker []CVSS                       `json:"ubuntu_security_tracker,omitempty"`
 }
 
 type CVSS struct {
@@ -161,21 +165,23 @@ type KEV struct {
 }
 
 type Mitigation struct {
-	NVD []string `json:"nvd,omitempty"`
+	NVD                   []string `json:"nvd,omitempty"`
+	UbuntuSecurityTracker string   `json:"ubuntu_security_tracker,omitempty"`
 }
 
 type Publisheds struct {
-	MITRE      *time.Time                       `json:"mitre,omitempty"`
-	NVD        *time.Time                       `json:"nvd,omitempty"`
-	JVN        map[string]*time.Time            `json:"jvn,omitempty"`
-	Alma       map[string]map[string]*time.Time `json:"alma,omitempty"`
-	Amazon     map[string]map[string]*time.Time `json:"amazon,omitempty"`
-	FreeBSD    map[string]*time.Time            `json:"freebsd,omitempty"`
-	Oracle     map[string]map[string]*time.Time `json:"oracle,omitempty"`
-	RedHatOVAL map[string]map[string]*time.Time `json:"redhat_oval,omitempty"`
-	SUSEOVAL   map[string]map[string]*time.Time `json:"suse_oval,omitempty"`
-	SUSECVRF   *time.Time                       `json:"suse_cvrf,omitempty"`
-	UbuntuOVAL map[string]map[string]*time.Time `json:"ubuntu_oval,omitempty"`
+	MITRE                 *time.Time                       `json:"mitre,omitempty"`
+	NVD                   *time.Time                       `json:"nvd,omitempty"`
+	JVN                   map[string]*time.Time            `json:"jvn,omitempty"`
+	Alma                  map[string]map[string]*time.Time `json:"alma,omitempty"`
+	Amazon                map[string]map[string]*time.Time `json:"amazon,omitempty"`
+	FreeBSD               map[string]*time.Time            `json:"freebsd,omitempty"`
+	Oracle                map[string]map[string]*time.Time `json:"oracle,omitempty"`
+	RedHatOVAL            map[string]map[string]*time.Time `json:"redhat_oval,omitempty"`
+	SUSEOVAL              map[string]map[string]*time.Time `json:"suse_oval,omitempty"`
+	SUSECVRF              *time.Time                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL            map[string]map[string]*time.Time `json:"ubuntu_oval,omitempty"`
+	UbuntuSecurityTracker *time.Time                       `json:"ubuntu_security_tracker,omitempty"`
 }
 
 type Modifieds struct {
@@ -205,6 +211,7 @@ type References struct {
 	SUSEOVAL              map[string]map[string][]Reference `json:"suse_oval,omitempty"`
 	SUSECVRF              []Reference                       `json:"suse_cvrf,omitempty"`
 	UbuntuOVAL            map[string]map[string][]Reference `json:"ubuntu_oval,omitempty"`
+	UbuntuSecurityTracker []Reference                       `json:"ubuntu_security_tracker,omitempty"`
 }
 
 type Reference struct {
