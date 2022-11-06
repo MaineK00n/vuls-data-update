@@ -20,6 +20,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/oracle"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/redhat"
 	redhatOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/redhat/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/suse"
+	suseCvrf "github.com/MaineK00n/vuls-data-update/pkg/build/os/suse/cvrf"
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/suse/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
@@ -188,13 +190,13 @@ func build(names []string) error {
 			// 	return errors.Wrap(err, "failed to build rocky")
 			// }
 		case "suse":
-			// if err := suse.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build suse")
-			// }
+			if err := suse.Build(); err != nil {
+				return errors.Wrap(err, "failed to build suse")
+			}
 		case "suse-cvrf":
-			// if err := suseCvrf.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build suse")
-			// }
+			if err := suseCvrf.Build(); err != nil {
+				return errors.Wrap(err, "failed to build suse")
+			}
 		case "suse-oval":
 			if err := suseOval.Build(); err != nil {
 				return errors.Wrap(err, "failed to build suse")

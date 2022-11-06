@@ -33,6 +33,7 @@ type Advisories struct {
 	Oracle                map[string][]Advisory `json:"oracle,omitempty"`
 	RedHatOVAL            map[string][]Advisory `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string][]Advisory `json:"suse_oval,omitempty"`
+	SUSECVRF              *Advisory             `json:"suse_cvrf,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -53,6 +54,7 @@ type Titles struct {
 	Oracle                map[string]map[string]string `json:"oracle,omitempty"`
 	RedHatOVAL            map[string]map[string]string `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string]map[string]string `json:"suse_oval,omitempty"`
+	SUSECVRF              string                       `json:"suse_cvrf,omitempty"`
 }
 
 type Descriptions struct {
@@ -67,6 +69,7 @@ type Descriptions struct {
 	Oracle                map[string]map[string]string `json:"oracle,omitempty"`
 	RedHatOVAL            map[string]map[string]string `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string]map[string]string `json:"suse_oval,omitempty"`
+	SUSECVRF              string                       `json:"suse_cvrf,omitempty"`
 }
 
 type CVSSes struct {
@@ -78,6 +81,7 @@ type CVSSes struct {
 	Oracle     map[string]map[string][]CVSS `json:"oracle,omitempty"`
 	RedHatOVAL map[string]map[string][]CVSS `json:"redhat_oval,omitempty"`
 	SUSEOVAL   map[string]map[string][]CVSS `json:"suse_oval,omitempty"`
+	SUSECVRF   []CVSS                       `json:"suse_cvrf,omitempty"`
 }
 
 type CVSS struct {
@@ -166,6 +170,7 @@ type Publisheds struct {
 	Oracle     map[string]map[string]*time.Time `json:"oracle,omitempty"`
 	RedHatOVAL map[string]map[string]*time.Time `json:"redhat_oval,omitempty"`
 	SUSEOVAL   map[string]map[string]*time.Time `json:"suse_oval,omitempty"`
+	SUSECVRF   *time.Time                       `json:"suse_cvrf,omitempty"`
 }
 
 type Modifieds struct {
@@ -177,6 +182,7 @@ type Modifieds struct {
 	FreeBSD    map[string]*time.Time            `json:"freebsd,omitempty"`
 	RedHatOVAL map[string]map[string]*time.Time `json:"redhat_oval,omitempty"`
 	SUSEOVAL   map[string]map[string]*time.Time `json:"suse_oval,omitempty"`
+	SUSECVRF   *time.Time                       `json:"suse_cvrf,omitempty"`
 }
 
 type References struct {
@@ -192,6 +198,7 @@ type References struct {
 	Oracle                map[string]map[string][]Reference `json:"oracle,omitempty"`
 	RedHatOVAL            map[string]map[string][]Reference `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string]map[string][]Reference `json:"suse_oval,omitempty"`
+	SUSECVRF              []Reference                       `json:"suse_cvrf,omitempty"`
 }
 
 type Reference struct {

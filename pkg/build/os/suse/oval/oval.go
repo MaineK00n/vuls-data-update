@@ -268,6 +268,10 @@ func getOSVersion(platform string) (string, error) {
 
 	if strings.HasPrefix(platform, "openSUSE") {
 		if strings.HasPrefix(platform, "openSUSE Leap") {
+			if strings.HasPrefix(platform, "openSUSE Leap Micro") {
+				return "", nil
+			}
+
 			// e.g. openSUSE Leap 15.0
 			ss := strings.Fields(platform)
 			if len(ss) < 3 {
@@ -402,7 +406,7 @@ func fillVulnerability(dv *build.Vulnerability, sv *oval.Definition, cve oval.CV
 			if s, err := strconv.ParseFloat(lhs, 64); err == nil {
 				c.Score = &s
 			} else {
-				log.Printf(`[WARN] unexpected CVSS2 Base Score. accepts: float64, received: "%s"`, lhs)
+				log.Printf(`[WARN] unexpected CVSS3 Base Score. accepts: float64, received: "%s"`, lhs)
 			}
 		} else {
 			log.Printf(`[WARN] unexpected CVSS3 string. accepts: "<Base Score>/<CVSS3 Vector>", received: "%s"`, cve.CVSS3)
