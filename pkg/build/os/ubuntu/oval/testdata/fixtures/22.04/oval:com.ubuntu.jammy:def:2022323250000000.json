@@ -3,7 +3,7 @@
   "class": "vulnerability",
   "title": "CVE-2022-32325 on Ubuntu 22.04 LTS (jammy) - low.",
   "description": "JPEGOPTIM v1.4.7 was discovered to contain a segmentation violation which is caused by a READ memory access at jpegoptim.c.",
-  "note": "mdeslaur\u003e comment in jpegoptim bug seems to indicate it may be a problem in libjpeg-turbo. No fix available as of 2022-08-26, marking as deferred",
+  "note": "mdeslaur\u003e comment in jpegoptim bug seems to indicate it may be a problem in libjpeg-turbo. No fix available as of 2022-07-25, marking as deferred",
   "affected": {
     "family": "unix",
     "platform": "Ubuntu 22.04 LTS"
@@ -22,15 +22,18 @@
   "packages": [
     {
       "name": "jpegoptim",
-      "status": "deferred"
+      "status": "deferred",
+      "note": "2022-07-25"
     },
     {
       "name": "libjpeg-turbo",
-      "status": "deferred"
+      "status": "deferred",
+      "note": "2022-07-25"
     },
     {
       "name": "libjpeg9",
-      "status": "deferred"
+      "status": "deferred",
+      "note": "2022-07-25"
     }
   ],
   "references": [

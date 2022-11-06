@@ -1,0 +1,39 @@
+{
+  "definition_id": "oval:com.ubuntu.jammy:def:202221220000000",
+  "class": "vulnerability",
+  "title": "CVE-2022-2122 on Ubuntu 22.04 LTS (jammy) - medium.",
+  "description": "DOS / potential heap overwrite in qtdemux using zlib decompression. Integer overflow in qtdemux element in qtdemux_inflate function which causes a segfault, or could cause a heap overwrite, depending on libc and OS. Depending on the libc used, and the underlying OS capabilities, it could be just a segfault or a heap overwrite.\n\nUpdate Instructions:\n\nRun `sudo ua fix CVE-2022-2122` to fix the vulnerability. The problem can be corrected\nby updating your system to the following package versions:\n\ngstreamer1.0-gtk3 - 1.20.3-0ubuntu1\ngstreamer1.0-plugins-good - 1.20.3-0ubuntu1\ngstreamer1.0-pulseaudio - 1.20.3-0ubuntu1\ngstreamer1.0-qt5 - 1.20.3-0ubuntu1\nlibgstreamer-plugins-good1.0-0 - 1.20.3-0ubuntu1\nNo subscription required",
+  "note": "rodrigo-zaiden\u003e openjfx includes qtdemux.c from gstreamer and might be affected. leosilva\u003e same as CVE-2022-1922,23,24 and 25.",
+  "affected": {
+    "family": "unix",
+    "platform": "Ubuntu 22.04 LTS"
+  },
+  "advisory": {
+    "severity": "Medium",
+    "references": [
+      "https://ubuntu.com/security/CVE-2022-2122",
+      "https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1225"
+    ],
+    "public_date": "2022-07-19T20:15:00Z",
+    "assigned_to": "leosilva",
+    "rights": "Copyright (C) 2022 Canonical Ltd."
+  },
+  "packages": [
+    {
+      "name": "gst-plugins-good1.0",
+      "status": "pending",
+      "note": "1.20.3-0ubuntu1"
+    },
+    {
+      "name": "openjfx",
+      "status": "needs-triage"
+    }
+  ],
+  "references": [
+    {
+      "id": "CVE-2022-2122",
+      "source": "CVE",
+      "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-2122"
+    }
+  ]
+}

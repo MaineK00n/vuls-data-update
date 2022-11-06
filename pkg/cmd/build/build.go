@@ -23,6 +23,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/build/os/suse"
 	suseCvrf "github.com/MaineK00n/vuls-data-update/pkg/build/os/suse/cvrf"
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/suse/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu"
+	ubuntuOval "github.com/MaineK00n/vuls-data-update/pkg/build/os/ubuntu/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/exploit"
 	"github.com/MaineK00n/vuls-data-update/pkg/build/other/jvn"
@@ -202,13 +204,13 @@ func build(names []string) error {
 				return errors.Wrap(err, "failed to build suse")
 			}
 		case "ubuntu":
-			// if err := ubuntu.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build ubuntu")
-			// }
+			if err := ubuntu.Build(); err != nil {
+				return errors.Wrap(err, "failed to build ubuntu")
+			}
 		case "ubuntu-oval":
-			// if err := ubuntuOval.Build(); err != nil {
-			// 	return errors.Wrap(err, "failed to build ubuntu")
-			// }
+			if err := ubuntuOval.Build(); err != nil {
+				return errors.Wrap(err, "failed to build ubuntu")
+			}
 		case "ubuntu-tracker":
 			// if err := ubuntuTracker.Build(); err != nil {
 			// 	return errors.Wrap(err, "failed to build ubuntu")

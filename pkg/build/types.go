@@ -34,6 +34,7 @@ type Advisories struct {
 	RedHatOVAL            map[string][]Advisory `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string][]Advisory `json:"suse_oval,omitempty"`
 	SUSECVRF              *Advisory             `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL            map[string][]Advisory `json:"ubuntu_oval,omitempty"`
 }
 type Advisory struct {
 	ID  string `json:"id,omitempty"`
@@ -55,6 +56,7 @@ type Titles struct {
 	RedHatOVAL            map[string]map[string]string `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string]map[string]string `json:"suse_oval,omitempty"`
 	SUSECVRF              string                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL            map[string]map[string]string `json:"ubuntu_oval,omitempty"`
 }
 
 type Descriptions struct {
@@ -70,6 +72,7 @@ type Descriptions struct {
 	RedHatOVAL            map[string]map[string]string `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string]map[string]string `json:"suse_oval,omitempty"`
 	SUSECVRF              string                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL            map[string]map[string]string `json:"ubuntu_oval,omitempty"`
 }
 
 type CVSSes struct {
@@ -82,6 +85,7 @@ type CVSSes struct {
 	RedHatOVAL map[string]map[string][]CVSS `json:"redhat_oval,omitempty"`
 	SUSEOVAL   map[string]map[string][]CVSS `json:"suse_oval,omitempty"`
 	SUSECVRF   []CVSS                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL map[string]map[string][]CVSS `json:"ubuntu_oval,omitempty"`
 }
 
 type CVSS struct {
@@ -171,6 +175,7 @@ type Publisheds struct {
 	RedHatOVAL map[string]map[string]*time.Time `json:"redhat_oval,omitempty"`
 	SUSEOVAL   map[string]map[string]*time.Time `json:"suse_oval,omitempty"`
 	SUSECVRF   *time.Time                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL map[string]map[string]*time.Time `json:"ubuntu_oval,omitempty"`
 }
 
 type Modifieds struct {
@@ -199,6 +204,7 @@ type References struct {
 	RedHatOVAL            map[string]map[string][]Reference `json:"redhat_oval,omitempty"`
 	SUSEOVAL              map[string]map[string][]Reference `json:"suse_oval,omitempty"`
 	SUSECVRF              []Reference                       `json:"suse_cvrf,omitempty"`
+	UbuntuOVAL            map[string]map[string][]Reference `json:"ubuntu_oval,omitempty"`
 }
 
 type Reference struct {
