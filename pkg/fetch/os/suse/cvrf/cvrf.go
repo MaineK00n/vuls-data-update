@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/fs"
+	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -94,6 +95,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch SUSE CVRF")
 	cves, err := options.walkIndexOf()
 	if err != nil {
 		return errors.Wrap(err, "walk index of")
@@ -109,6 +111,10 @@ func Fetch(opts ...Option) error {
 
 	oldCVEs := map[string]struct{}{}
 	if err := filepath.WalkDir(options.dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if d.IsDir() {
 			return nil
 		}
@@ -186,7 +192,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	}
 
 	var cves []string
-	d.Find("a").Each(func(i int, selection *goquery.Selection) {
+	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
 		if !strings.HasPrefix(txt, "cvrf-CVE-") {
 			return

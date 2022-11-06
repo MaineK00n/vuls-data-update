@@ -1,2 +1,0 @@
-https://osv-vulnerabilities.storage.googleapis.com/crates.io/all.zip
-https://github.com/RustSec/advisory-db

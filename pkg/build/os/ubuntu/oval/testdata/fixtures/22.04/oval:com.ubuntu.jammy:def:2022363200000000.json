@@ -1,0 +1,44 @@
+{
+  "definition_id": "oval:com.ubuntu.jammy:def:2022363200000000",
+  "class": "vulnerability",
+  "title": "CVE-2022-36320 on Ubuntu 22.04 LTS (jammy) - medium.",
+  "description": "[Unknown description]",
+  "note": "tyhicks\u003e mozjs contains a copy of the SpiderMonkey JavaScript engine mdeslaur\u003e starting with Ubuntu 22.04, the firefox package is just a script that installs the Firefox snap",
+  "affected": {
+    "family": "unix",
+    "platform": "Ubuntu 22.04 LTS"
+  },
+  "advisory": {
+    "severity": "Medium",
+    "references": [
+      "https://ubuntu.com/security/CVE-2022-36320",
+      "https://www.mozilla.org/en-US/security/advisories/mfsa2022-30/#CVE-2022-36320",
+      "https://ubuntu.com/security/notices/USN-5536-1"
+    ],
+    "public_date": "2022-07-27T00:00:00Z",
+    "public_date_at_usn": "2022-07-27T00:00:00Z",
+    "assigned_to": "chrisccoulson",
+    "rights": "Copyright (C) 2022 Canonical Ltd."
+  },
+  "packages": [
+    {
+      "name": "mozjs78",
+      "status": "needs-triage"
+    },
+    {
+      "name": "mozjs91",
+      "status": "needs-triage"
+    },
+    {
+      "name": "thunderbird",
+      "status": "needed"
+    }
+  ],
+  "references": [
+    {
+      "id": "CVE-2022-36320",
+      "source": "CVE",
+      "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-36320"
+    }
+  ]
+}

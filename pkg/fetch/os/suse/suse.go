@@ -1,7 +1,6 @@
 package suse
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -50,12 +49,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch SUSE OVAL")
 	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch suse oval")
 	}
 
-	log.Println("[INFO] Fetch SUSE CVRF")
 	if err := cvrf.Fetch(cvrf.WithDir(filepath.Join(options.dir, "cvrf")), cvrf.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch suse cvrf")
 	}

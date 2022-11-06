@@ -1,3 +1,0 @@
-https://gitlab.com/gitlab-org/advisories-community/-/tree/main/gem
-https://developer.github.com/v4/enum/securityadvisoryecosystem/ Rubygems
-https://github.com/rubysec/ruby-advisory-db

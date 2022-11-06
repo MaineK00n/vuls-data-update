@@ -69,6 +69,7 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	log.Println("[INFO] Fetch Debian Security Tracker")
 	bs, err := util.FetchURL(options.advisoryURL, options.retry)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")

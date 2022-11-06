@@ -6,8 +6,8 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -21,67 +21,31 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata map[string]string
+		indexof  string
 		hasError bool
 	}{
 		{
-			name: "happy path",
-			testdata: map[string]string{
-				"opensuse 10.2":                   "testdata/fixtures/opensuse.10.2.xml.gz",
-				"opensuse 12.1":                   "testdata/fixtures/opensuse.12.1.xml.gz",
-				"opensuse 13.2":                   "testdata/fixtures/opensuse.13.2.xml.gz",
-				"opensuse tumbleweed":             "testdata/fixtures/opensuse.tumbleweed.xml.gz",
-				"opensuse.leap 15.2":              "testdata/fixtures/opensuse.leap.15.2.xml.gz",
-				"suse.linux.enterprise.server 9":  "testdata/fixtures/suse.linux.enterprise.server.9.xml.gz",
-				"suse.linux.enterprise.server 10": "testdata/fixtures/suse.linux.enterprise.server.10.xml.gz",
-				"suse.linux.enterprise.server 15": "testdata/fixtures/suse.linux.enterprise.server.15.xml.gz",
-			},
-		},
-		{
-			name:     "invalid name",
-			testdata: map[string]string{"SUSE Linux Enterprise Server 15": "testdata/fixtures/suse.linux.enterprise.server.15.xml.gz"},
-			hasError: true,
-		},
-		{
-			name:     "invalid version",
-			testdata: map[string]string{"suse.linux.enterprise.server 0": "testdata/fixtures/suse.linux.enterprise.server.15.xml.gz"},
-			hasError: true,
+			name:    "happy path",
+			indexof: "testdata/fixtures/indexof_valid.html",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				var datapath string
-				for s, dp := range tt.testdata {
-					name, ver, found := strings.Cut(s, " ")
-					if !found {
-						continue
-					}
-					if strings.HasSuffix(r.URL.Path, fmt.Sprintf("%s.%s.xml.gz", name, ver)) {
-						datapath = dp
-						break
-					}
-				}
-
-				if datapath == "" {
+				if strings.HasSuffix(r.URL.Path, "/") {
+					http.ServeFile(w, r, tt.indexof)
+				} else if strings.HasSuffix(r.URL.Path, ".xml.gz") {
+					_, f := path.Split(r.URL.Path)
+					http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/%s", f))
+				} else {
 					http.NotFound(w, r)
 				}
-				http.ServeFile(w, r, datapath)
 			}))
 			defer ts.Close()
 
-			urls := map[string]string{}
-			for code, datapath := range tt.testdata {
-				u, err := url.JoinPath(ts.URL, datapath)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				urls[code] = u
-			}
-
 			dir := t.TempDir()
-			err := oval.Fetch(oval.WithURLs(urls), oval.WithDir(dir), oval.WithRetry(0))
+			err := oval.Fetch(oval.WithBaseURL(ts.URL), oval.WithDir(dir), oval.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -100,7 +64,7 @@ func TestFetch(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				dir, v := filepath.Split(filepath.Clean(dir))
-				_, osname := filepath.Split(filepath.Clean(dir))
+				osname := filepath.Base(dir)
 				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", osname, v, file))
 				if err != nil {
 					return err

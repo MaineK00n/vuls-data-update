@@ -1,0 +1,40 @@
+{
+  "definition_id": "oval:org.opensuse.security:def:20011267",
+  "class": "vulnerability",
+  "title": "CVE-2001-1267",
+  "description": "\n\tUnknown.\n\t",
+  "affected": {
+    "family": "unix",
+    "platforms": [
+      "SUSE CORE 9 for AMD64 and Intel EM64T",
+      "SUSE CORE 9 for IBM POWER",
+      "SUSE CORE 9 for IBM S/390 31bit",
+      "SUSE CORE 9 for IBM zSeries 64bit",
+      "SUSE CORE 9 for Itanium Processor Family",
+      "SUSE CORE 9 for x86"
+    ]
+  },
+  "advisory": {
+    "cves": [
+      {
+        "cve_id": "CVE-2001-1267",
+        "href": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2001-1267"
+      }
+    ]
+  },
+  "packages": [
+    {
+      "name": "tar",
+      "status": "released",
+      "fixed_version": "0:1.13.25-325.10",
+      "platform": "core9"
+    }
+  ],
+  "references": [
+    {
+      "id": "CVE-2001-1267",
+      "source": "CVE",
+      "url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2001-1267"
+    }
+  ]
+}

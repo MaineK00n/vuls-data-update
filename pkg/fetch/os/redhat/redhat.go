@@ -1,7 +1,6 @@
 package redhat
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -49,12 +48,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Println("[INFO] Fetch RedHat OVAL")
 	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry)); err != nil {
 		return errors.Wrap(err, "fetch redhat oval")
 	}
 
-	// log.Println("[INFO] Fetch RedHat API")
 	// if err := api.Fetch(api.WithDir(filepath.Join(options.dir, "api")), api.WithRetry(options.retry)); err != nil {
 	// 	return errors.Wrap(err, "fetch redhat api")
 	// }

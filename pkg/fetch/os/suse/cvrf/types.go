@@ -1,5 +1,7 @@
 package cvrf
 
+import "time"
+
 type CVRF struct {
 	DocumentTitle     string `xml:"DocumentTitle" json:"document_title,omitempty"`
 	DocumentType      string `xml:"DocumentType" json:"document_type,omitempty"`
@@ -21,8 +23,8 @@ type CVRF struct {
 				Description string `xml:"Description" json:"description,omitempty"`
 			} `xml:"Revision" json:"revision,omitempty"`
 		} `xml:"RevisionHistory" json:"revision_history,omitempty"`
-		InitialReleaseDate string `xml:"InitialReleaseDate" json:"initial_release_date,omitempty"`
-		CurrentReleaseDate string `xml:"CurrentReleaseDate" json:"current_release_date,omitempty"`
+		InitialReleaseDate *time.Time `xml:"InitialReleaseDate" json:"initial_release_date,omitempty"`
+		CurrentReleaseDate *time.Time `xml:"CurrentReleaseDate" json:"current_release_date,omitempty"`
 		Generator          struct {
 			Engine string `xml:"Engine" json:"engine,omitempty"`
 			Date   string `xml:"Date" json:"date,omitempty"`

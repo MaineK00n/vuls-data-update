@@ -1,0 +1,42 @@
+{
+  "vid": "0a5cf6d8-600a-11e6-a6c3-14dae9d210b8",
+  "topic": "FreeBSD -- SCTP SCTP_SS_VALUE kernel memory corruption and disclosure",
+  "description": "\n\t\u003ch1\u003eProblem Description:\u003c/h1\u003e\n\t\u003cp\u003eDue to insufficient validation of the SCTP stream ID,\n\twhich serves as an array index, a local unprivileged attacker\n\tcan read or write 16-bits of kernel memory.\u003c/p\u003e\n\t\u003ch1\u003eImpact:\u003c/h1\u003e\n\t\u003cp\u003eAn unprivileged process can read or modify 16-bits of\n\tmemory which belongs to the kernel. This may lead to\n\texposure of sensitive information or allow privilege\n\tescalation.\u003c/p\u003e\n      ",
+  "affects": [
+    {
+      "name": "FreeBSD-kernel",
+      "range": [
+        {
+          "lt": "10.1_5",
+          "ge": "10.1"
+        },
+        {
+          "lt": "10.0_17",
+          "ge": "10.0"
+        },
+        {
+          "lt": "9.3_9",
+          "ge": "9.3"
+        },
+        {
+          "lt": "8.4_23",
+          "ge": "8.4"
+        }
+      ]
+    }
+  ],
+  "dates": {
+    "discovery": "2015-01-27T00:00:00Z",
+    "entry": "2016-08-11T00:00:00Z"
+  },
+  "references": [
+    {
+      "source": "CVE",
+      "text": "CVE-2014-8612"
+    },
+    {
+      "source": "FreebsdSA",
+      "text": "SA-15:02.kmem"
+    }
+  ]
+}

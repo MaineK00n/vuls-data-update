@@ -1,0 +1,43 @@
+{
+    "name": "Kubernetes Enumeration",
+    "fullname": "auxiliary/cloud/kubernetes/enum_kubernetes",
+    "rank": 300,
+    "type": "auxiliary",
+    "author": [
+        "alanfoster",
+        "Spencer McIntyre"
+    ],
+    "description": "Enumerate a Kubernetes API to report useful resources such as available namespaces,\n          pods, secrets, etc.\n\n          Useful resources will be highlighted using the HIGHLIGHT_NAME_PATTERN option.",
+    "platform": "Linux,Unix",
+    "autofilter_ports": [
+        80,
+        8080,
+        443,
+        8000,
+        8888,
+        8880,
+        8008,
+        3000,
+        8443
+    ],
+    "autofilter_services": [
+        "http",
+        "https"
+    ],
+    "mod_time": "2021-10-07T12:35:53Z",
+    "path": "/modules/auxiliary/cloud/kubernetes/enum_kubernetes.rb",
+    "is_install_path": true,
+    "ref_name": "cloud/kubernetes/enum_kubernetes",
+    "notes": {
+        "SideEffects": [
+            "ioc-in-logs"
+        ],
+        "Stability": [
+            "crash-safe"
+        ]
+    },
+    "session_types": [
+        "meterpreter"
+    ],
+    "needs_cleanup": false
+}

@@ -10,18 +10,20 @@ import (
 
 func NewCmdRoot() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "vuls-data-update <command> <subcommand> (<os>)",
+		Use:           "vuls-data-update <command> <subcommand> ([os|library|other])",
 		Short:         "Vuls data update",
 		Long:          "Fetch and Build data source",
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		Example: heredoc.Doc(`
+			$ vuls-data-update fetch os
 			$ vuls-data-update fetch os debian
+			$ vuls-data-update fetch library
 			$ vuls-data-update fetch library cargo
+			$ vuls-data-update fetch other
 			$ vuls-data-update fetch other nvd
-			$ vuls-data-update build os debian
-			$ vuls-data-update build library cargo
-			$ vuls-data-update build other
+			$ vuls-data-update build
+			$ vuls-data-update build nvd ubuntu
 		`),
 	}
 

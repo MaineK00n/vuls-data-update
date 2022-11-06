@@ -20,7 +20,7 @@ type catalog struct {
 	} `json:"vulnerabilities"`
 }
 
-type Vulenrability struct {
+type Vulnerability struct {
 	CveID             string     `json:"cveID,omitempty"`
 	VendorProject     string     `json:"vendorProject,omitempty"`
 	Product           string     `json:"product,omitempty"`
