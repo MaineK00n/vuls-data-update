@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
@@ -42,7 +43,12 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/mitre"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/msf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/nvd"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
+
+type options struct {
+	dir string
+}
 
 var (
 	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
@@ -51,6 +57,10 @@ var (
 )
 
 func NewCmdFetch() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
 	cmd := &cobra.Command{
 		Use:   "fetch <subcommand> <data source>",
 		Short: "Fetch data source",
@@ -61,14 +71,16 @@ func NewCmdFetch() *cobra.Command {
 		`),
 	}
 
-	cmd.AddCommand(newCmdFetchOS())
-	cmd.AddCommand(newCmdFetchLibrary())
-	cmd.AddCommand(newCmdFetchOther())
+	cmd.PersistentFlags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	cmd.AddCommand(newCmdFetchOS(options))
+	cmd.AddCommand(newCmdFetchLibrary(options))
+	cmd.AddCommand(newCmdFetchOther(options))
 
 	return cmd
 }
 
-func newCmdFetchOS() *cobra.Command {
+func newCmdFetchOS(opts *options) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "os ([os name])",
 		Short:     "Fetch OS data source",
@@ -79,7 +91,7 @@ func newCmdFetchOS() *cobra.Command {
 			if len(as) == 0 {
 				as = supportOS
 			}
-			return fetchOSRun(as)
+			return fetchOSRun(as, opts)
 		},
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch os
@@ -89,67 +101,67 @@ func newCmdFetchOS() *cobra.Command {
 	return cmd
 }
 
-func fetchOSRun(names []string) error {
+func fetchOSRun(names []string, opts *options) error {
 	for _, name := range names {
 		switch name {
 		case "alma":
-			if err := alma.Fetch(); err != nil {
+			if err := alma.Fetch(alma.WithDir(filepath.Join(opts.dir, "alma"))); err != nil {
 				return errors.Wrap(err, "failed to fetch almalinux")
 			}
 		case "alpine":
-			if err := alpine.Fetch(); err != nil {
+			if err := alpine.Fetch(alpine.WithDir(filepath.Join(opts.dir, "alpine"))); err != nil {
 				return errors.Wrap(err, "failed to fetch alpine linux")
 			}
 		case "amazon":
-			if err := amazon.Fetch(); err != nil {
+			if err := amazon.Fetch(amazon.WithDir(filepath.Join(opts.dir, "amazon"))); err != nil {
 				return errors.Wrap(err, "failed to fetch amazon linux")
 			}
 		case "arch":
-			if err := arch.Fetch(); err != nil {
+			if err := arch.Fetch(arch.WithDir(filepath.Join(opts.dir, "arch"))); err != nil {
 				return errors.Wrap(err, "failed to fetch arch linux")
 			}
 		case "debian":
-			if err := debian.Fetch(); err != nil {
+			if err := debian.Fetch(debian.WithDir(filepath.Join(opts.dir, "debian"))); err != nil {
 				return errors.Wrap(err, "failed to fetch debian")
 			}
 		case "epel":
-			if err := epel.Fetch(); err != nil {
+			if err := epel.Fetch(epel.WithDir(filepath.Join(opts.dir, "epel"))); err != nil {
 				return errors.Wrap(err, "failed to fetch epel")
 			}
 		case "fedora":
-			if err := fedora.Fetch(); err != nil {
+			if err := fedora.Fetch(fedora.WithDir(filepath.Join(opts.dir, "fedora"))); err != nil {
 				return errors.Wrap(err, "failed to fetch fedora")
 			}
 		case "freebsd":
-			if err := freebsd.Fetch(); err != nil {
+			if err := freebsd.Fetch(freebsd.WithDir(filepath.Join(opts.dir, "freebsd"))); err != nil {
 				return errors.Wrap(err, "failed to fetch freebsd")
 			}
 		case "gentoo":
-			if err := gentoo.Fetch(); err != nil {
+			if err := gentoo.Fetch(gentoo.WithDir(filepath.Join(opts.dir, "gentoo"))); err != nil {
 				return errors.Wrap(err, "failed to fetch gentoo")
 			}
 		case "oracle":
-			if err := oracle.Fetch(); err != nil {
+			if err := oracle.Fetch(oracle.WithDir(filepath.Join(opts.dir, "oracle"))); err != nil {
 				return errors.Wrap(err, "failed to fetch oracle linux")
 			}
 		case "redhat":
-			if err := redhat.Fetch(); err != nil {
+			if err := redhat.Fetch(redhat.WithDir(filepath.Join(opts.dir, "redhat"))); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat")
 			}
 		case "rocky":
-			if err := rocky.Fetch(); err != nil {
+			if err := rocky.Fetch(rocky.WithDir(filepath.Join(opts.dir, "rocky"))); err != nil {
 				return errors.Wrap(err, "failed to fetch rocky")
 			}
 		case "suse":
-			if err := suse.Fetch(); err != nil {
+			if err := suse.Fetch(suse.WithDir(filepath.Join(opts.dir, "suse"))); err != nil {
 				return errors.Wrap(err, "failed to fetch suse")
 			}
 		case "ubuntu":
-			if err := ubuntu.Fetch(); err != nil {
+			if err := ubuntu.Fetch(ubuntu.WithDir(filepath.Join(opts.dir, "ubuntu"))); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu")
 			}
 		case "windows":
-			if err := windows.Fetch(); err != nil {
+			if err := windows.Fetch(windows.WithDir(filepath.Join(opts.dir, "windows"))); err != nil {
 				return errors.Wrap(err, "failed to fetch windows")
 			}
 		default:
@@ -159,7 +171,7 @@ func fetchOSRun(names []string) error {
 	return nil
 }
 
-func newCmdFetchLibrary() *cobra.Command {
+func newCmdFetchLibrary(opts *options) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "library ([library name])",
 		Short:     "Fetch Library data source",
@@ -170,7 +182,7 @@ func newCmdFetchLibrary() *cobra.Command {
 			if len(as) == 0 {
 				as = supportLibrary
 			}
-			return fetchLibraryRun(as)
+			return fetchLibraryRun(as, opts)
 		},
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch library
@@ -180,47 +192,47 @@ func newCmdFetchLibrary() *cobra.Command {
 	return cmd
 }
 
-func fetchLibraryRun(names []string) error {
+func fetchLibraryRun(names []string, opts *options) error {
 	for _, name := range names {
 		switch name {
 		case "cargo":
-			if err := cargo.Fetch(); err != nil {
+			if err := cargo.Fetch(cargo.WithDir(filepath.Join(opts.dir, "cargo"))); err != nil {
 				return errors.Wrap(err, "failed to fetch cargo")
 			}
 		case "composer":
-			if err := composer.Fetch(); err != nil {
+			if err := composer.Fetch(composer.WithDir(filepath.Join(opts.dir, "composer"))); err != nil {
 				return errors.Wrap(err, "failed to fetch composer")
 			}
 		case "conan":
-			if err := conan.Fetch(); err != nil {
+			if err := conan.Fetch(conan.WithDir(filepath.Join(opts.dir, "conan"))); err != nil {
 				return errors.Wrap(err, "failed to fetch conan")
 			}
 		case "erlang":
-			if err := erlang.Fetch(); err != nil {
+			if err := erlang.Fetch(erlang.WithDir(filepath.Join(opts.dir, "erlang"))); err != nil {
 				return errors.Wrap(err, "failed to fetch erlang")
 			}
 		case "golang":
-			if err := golang.Fetch(); err != nil {
+			if err := golang.Fetch(golang.WithDir(filepath.Join(opts.dir, "golang"))); err != nil {
 				return errors.Wrap(err, "failed to fetch golang")
 			}
 		case "maven":
-			if err := maven.Fetch(); err != nil {
+			if err := maven.Fetch(maven.WithDir(filepath.Join(opts.dir, "maven"))); err != nil {
 				return errors.Wrap(err, "failed to fetch maven")
 			}
 		case "npm":
-			if err := npm.Fetch(); err != nil {
+			if err := npm.Fetch(npm.WithDir(filepath.Join(opts.dir, "npm"))); err != nil {
 				return errors.Wrap(err, "failed to fetch npm")
 			}
 		case "nuget":
-			if err := nuget.Fetch(); err != nil {
+			if err := nuget.Fetch(nuget.WithDir(filepath.Join(opts.dir, "nuget"))); err != nil {
 				return errors.Wrap(err, "failed to fetch nuget")
 			}
 		case "pip":
-			if err := pip.Fetch(); err != nil {
+			if err := pip.Fetch(pip.WithDir(filepath.Join(opts.dir, "pip"))); err != nil {
 				return errors.Wrap(err, "failed to fetch pip")
 			}
 		case "rubygems":
-			if err := rubygems.Fetch(); err != nil {
+			if err := rubygems.Fetch(rubygems.WithDir(filepath.Join(opts.dir, "rubygems"))); err != nil {
 				return errors.Wrap(err, "failed to fetch rubygems")
 			}
 		default:
@@ -230,7 +242,7 @@ func fetchLibraryRun(names []string) error {
 	return nil
 }
 
-func newCmdFetchOther() *cobra.Command {
+func newCmdFetchOther(opts *options) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       "other ([data name])",
 		Short:     "Fetch Other data source",
@@ -241,7 +253,7 @@ func newCmdFetchOther() *cobra.Command {
 			if len(as) == 0 {
 				as = supportOther
 			}
-			return fetchOtherRun(as)
+			return fetchOtherRun(as, opts)
 		},
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch other	
@@ -251,47 +263,47 @@ func newCmdFetchOther() *cobra.Command {
 	return cmd
 }
 
-func fetchOtherRun(names []string) error {
+func fetchOtherRun(names []string, opts *options) error {
 	for _, name := range names {
 		switch name {
 		case "attack":
-			if err := attack.Fetch(); err != nil {
+			if err := attack.Fetch(attack.WithDir(filepath.Join(opts.dir, "attack"))); err != nil {
 				return errors.Wrap(err, "failed to fetch attack")
 			}
 		case "capec":
-			if err := capec.Fetch(); err != nil {
+			if err := capec.Fetch(capec.WithDir(filepath.Join(opts.dir, "capec"))); err != nil {
 				return errors.Wrap(err, "failed to fetch capec")
 			}
 		case "cwe":
-			if err := cwe.Fetch(); err != nil {
+			if err := cwe.Fetch(cwe.WithDir(filepath.Join(opts.dir, "cwe"))); err != nil {
 				return errors.Wrap(err, "failed to fetch cwe")
 			}
 		case "epss":
-			if err := epss.Fetch(); err != nil {
+			if err := epss.Fetch(epss.WithDir(filepath.Join(opts.dir, "epss"))); err != nil {
 				return errors.Wrap(err, "failed to fetch epss")
 			}
 		case "exploit":
-			if err := exploit.Fetch(); err != nil {
+			if err := exploit.Fetch(exploit.WithDir(filepath.Join(opts.dir, "exploit"))); err != nil {
 				return errors.Wrap(err, "failed to fetch exploit")
 			}
 		case "jvn":
-			if err := jvn.Fetch(); err != nil {
+			if err := jvn.Fetch(jvn.WithDir(filepath.Join(opts.dir, "jvn"))); err != nil {
 				return errors.Wrap(err, "failed to fetch jvn")
 			}
 		case "kev":
-			if err := kev.Fetch(); err != nil {
+			if err := kev.Fetch(kev.WithDir(filepath.Join(opts.dir, "kev"))); err != nil {
 				return errors.Wrap(err, "failed to fetch kev")
 			}
 		case "mitre":
-			if err := mitre.Fetch(); err != nil {
+			if err := mitre.Fetch(mitre.WithDir(filepath.Join(opts.dir, "mitre"))); err != nil {
 				return errors.Wrap(err, "failed to fetch mitre")
 			}
 		case "msf":
-			if err := msf.Fetch(); err != nil {
+			if err := msf.Fetch(msf.WithDir(filepath.Join(opts.dir, "msf"))); err != nil {
 				return errors.Wrap(err, "failed to fetch msf")
 			}
 		case "nvd":
-			if err := nvd.Fetch(); err != nil {
+			if err := nvd.Fetch(nvd.WithDir(filepath.Join(opts.dir, "nvd"))); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd")
 			}
 		default:
