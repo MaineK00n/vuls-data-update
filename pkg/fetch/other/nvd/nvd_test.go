@@ -82,7 +82,7 @@ func TestFetch(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				wantdir := filepath.Join("testdata", "golden", filepath.Base(dir), file)
-				if file == "cpe-dictionary.json" {
+				if file == "cpe-dictionary.json.gz" {
 					wantdir = filepath.Join("testdata", "golden", file)
 				}
 				want, err := os.ReadFile(wantdir)

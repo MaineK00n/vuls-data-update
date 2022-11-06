@@ -83,7 +83,7 @@ func Build(opts ...Option) error {
 		}
 
 		switch filepath.Base(path) {
-		case "cpe-dictionary.json":
+		case "cpe-dictionary.json.gz":
 		default:
 			sf, err := os.Open(path)
 			if err != nil {

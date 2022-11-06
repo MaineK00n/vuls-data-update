@@ -71,48 +71,39 @@ func Build(opts ...Option) error {
 		}
 		defer sf.Close()
 
-		var scores epss.Scores
-		if err := json.NewDecoder(sf).Decode(&scores); err != nil {
+		var sv epss.EPSS
+		if err := json.NewDecoder(sf).Decode(&sv); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
-		for _, s := range scores.Scores {
-			if err := func() error {
-				y := strings.Split(s.ID, "-")[1]
+		y := strings.Split(sv.ID, "-")[1]
+		if err := os.MkdirAll(filepath.Join(options.destDir, y), os.ModePerm); err != nil {
+			return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDir, y))
+		}
 
-				if err := os.MkdirAll(filepath.Join(options.destDir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDir, y))
-				}
+		df, err := os.OpenFile(filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.ID)), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+		if err != nil {
+			return errors.Wrapf(err, "open %s", filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.ID)))
+		}
+		defer df.Close()
 
-				df, err := os.OpenFile(filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", s.ID)), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
-				if err != nil {
-					return errors.Wrapf(err, "open %s", filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", s.ID)))
-				}
-				defer df.Close()
+		var dv build.Vulnerability
+		if err := json.NewDecoder(df).Decode(&dv); err != nil && !errors.Is(err, io.EOF) {
+			return errors.Wrap(err, "decode json")
+		}
 
-				var dv build.Vulnerability
-				if err := json.NewDecoder(df).Decode(&dv); err != nil && !errors.Is(err, io.EOF) {
-					return errors.Wrap(err, "decode json")
-				}
+		fillVulnerability(&dv, &sv)
 
-				fillVulnerability(&dv, &s)
-
-				if err := df.Truncate(0); err != nil {
-					return errors.Wrap(err, "truncate file")
-				}
-				if _, err := df.Seek(0, 0); err != nil {
-					return errors.Wrap(err, "set offset")
-				}
-				enc := json.NewEncoder(df)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(dv); err != nil {
-					return errors.Wrap(err, "encode json")
-				}
-
-				return nil
-			}(); err != nil {
-				return err
-			}
+		if err := df.Truncate(0); err != nil {
+			return errors.Wrap(err, "truncate file")
+		}
+		if _, err := df.Seek(0, 0); err != nil {
+			return errors.Wrap(err, "set offset")
+		}
+		enc := json.NewEncoder(df)
+		enc.SetIndent("", "  ")
+		if err := enc.Encode(dv); err != nil {
+			return errors.Wrap(err, "encode json")
 		}
 
 		return nil

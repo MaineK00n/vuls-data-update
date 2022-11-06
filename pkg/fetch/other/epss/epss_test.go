@@ -1,7 +1,6 @@
 package epss_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -65,23 +64,14 @@ func TestFetch(t *testing.T) {
 					return nil
 				}
 
-				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(path)))
+				dir, file := filepath.Split(path)
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
 				if err != nil {
 					return err
 				}
 
-				var want epss.Scores
-				if err := json.Unmarshal(wantb, &want); err != nil {
-					return err
-				}
-
-				gotb, err := os.ReadFile(path)
+				got, err := os.ReadFile(path)
 				if err != nil {
-					return err
-				}
-
-				var got epss.Scores
-				if err := json.Unmarshal(gotb, &got); err != nil {
 					return err
 				}
 

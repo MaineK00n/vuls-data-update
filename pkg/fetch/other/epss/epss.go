@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -83,7 +85,11 @@ func Fetch(opts ...Option) error {
 	}
 	defer gr.Close()
 
-	var scores Scores
+	var (
+		model     string
+		scoreDate *time.Time
+		epsses    []EPSS
+	)
 	cr := csv.NewReader(gr)
 	for {
 		r, err := cr.Read()
@@ -102,7 +108,7 @@ func Fetch(opts ...Option) error {
 				log.Printf(`[WARN] unexpected model version. expected: "#model_version:<version>", actual: "%s"`, r[0])
 				break
 			}
-			scores.Model = strings.TrimPrefix(r[0], "#model_version:")
+			model = strings.TrimPrefix(r[0], "#model_version:")
 
 			if !strings.HasPrefix(r[1], "score_date:") {
 				log.Printf(`[WARN] unexpected score date. expected: "#score_date:<2006-01-02T15:04:05-0700>", actual: "%s"`, r[1])
@@ -113,7 +119,7 @@ func Fetch(opts ...Option) error {
 				log.Printf(`[WARN] error time.Parse date="%s"`, strings.TrimPrefix(r[1], "score_date:"))
 				break
 			}
-			scores.ScoreDate = &t
+			scoreDate = &t
 		case 3:
 			if !strings.HasPrefix(r[0], "CVE-") {
 				break
@@ -128,8 +134,10 @@ func Fetch(opts ...Option) error {
 				log.Printf(`[WARN] error parse EPSS Percentile. strconv.ParseFloat(%s, 64)`, r[2])
 				break
 			}
-			scores.Scores = append(scores.Scores, EPSS{
+			epsses = append(epsses, EPSS{
 				ID:         r[0],
+				Model:      model,
+				ScoreDate:  scoreDate,
 				EPSS:       epss,
 				Percentile: percentile,
 			})
@@ -141,19 +149,34 @@ func Fetch(opts ...Option) error {
 	if err := os.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
-	if err := os.MkdirAll(options.dir, os.ModePerm); err != nil {
-		return errors.Wrapf(err, "mkdir %s", options.dir)
-	}
-	f, err := os.Create(filepath.Join(options.dir, "epss.json"))
-	if err != nil {
-		return errors.Wrapf(err, "create %s", filepath.Join(options.dir, "epss.json"))
-	}
-	defer f.Close()
 
-	enc := json.NewEncoder(f)
-	enc.SetIndent("", "  ")
-	if err := enc.Encode(scores); err != nil {
-		return errors.Wrap(err, "encode data")
+	bar := pb.StartNew(len(epsses))
+	for _, e := range epsses {
+		if err := func() error {
+			y := strings.Split(e.ID, "-")[1]
+
+			if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
+				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
+			}
+			f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", e.ID)))
+			if err != nil {
+				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", e.ID)))
+			}
+			defer f.Close()
+
+			enc := json.NewEncoder(f)
+			enc.SetIndent("", "  ")
+			if err := enc.Encode(e); err != nil {
+				return errors.Wrap(err, "encode data")
+			}
+
+			return nil
+		}(); err != nil {
+			return err
+		}
+
+		bar.Increment()
 	}
+	bar.Finish()
 	return nil
 }
