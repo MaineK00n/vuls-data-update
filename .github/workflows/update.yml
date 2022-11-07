@@ -9,6 +9,9 @@ jobs:
     name: fetch vuls-data-source
     runs-on: ubuntu-latest
     steps:
+      - name: install gzip, bzip2, xz
+        run: sudo apt-get install -y gzip bzip2 xz
+
       - name: set Git config
         run: |
           git config --global user.email "action@github.com"
@@ -31,10 +34,17 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
+      - name: check disk size
+        run: df -h --total
+
+      - name: check .git source output size
+        run: du -sh .git source output
+
       - name: fetch os alma
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os alma
+          find source/alma -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add alma
           git commit --allow-empty -m "update alma"
@@ -45,6 +55,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os alpine
+          find source/alpine -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add alpine
           git commit --allow-empty -m "update alpine"
@@ -55,6 +66,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os amazon
+          find source/amazon -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add amazon
           git commit --allow-empty -m "update amazon"
@@ -65,6 +77,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os arch
+          find source/arch -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add arch
           git commit --allow-empty -m "update arch"
@@ -75,6 +88,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os debian
+          find source/debian -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add debian
           git commit --allow-empty -m "update debian"
@@ -85,6 +99,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch os epel
+      #     find source/epel -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add epel
       #     git commit --allow-empty -m "update epel"
@@ -95,6 +110,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch os fedora
+      #     find source/fedora -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add fedora
       #     git commit --allow-empty -m "update fedora"
@@ -105,6 +121,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os freebsd
+          find source/freebsd -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add freebsd
           git commit --allow-empty -m "update freebsd"
@@ -115,6 +132,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch os gentoo
+      #     find source/gentoo -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add gentoo
       #     git commit --allow-empty -m "update gentoo"
@@ -125,6 +143,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os oracle
+          find source/oracle -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add oracle
           git commit --allow-empty -m "update oracle"
@@ -135,6 +154,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os redhat
+          find source/redhat -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add redhat
           git commit --allow-empty -m "update redhat"
@@ -145,6 +165,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch os rocky
+      #     find source/rocky -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add rocky
       #     git commit --allow-empty -m "update rocky"
@@ -155,6 +176,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os suse
+          find source/suse -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add suse
           git commit --allow-empty -m "update suse"
@@ -165,6 +187,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch os ubuntu
+          find source/ubuntu -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add ubuntu
           git commit --allow-empty -m "update ubuntu"
@@ -175,6 +198,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch os windows
+      #     find source/windows -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add windows
       #     git commit --allow-empty -m "update windows"
@@ -185,6 +209,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library cargo
+      #     find source/cargo -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add cargo
       #     git commit --allow-empty -m "update cargo"
@@ -195,6 +220,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library composer
+      #     find source/composer -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add composer
       #     git commit --allow-empty -m "update composer"
@@ -205,6 +231,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library conan
+      #     find source/conan -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add conan
       #     git commit --allow-empty -m "update conan"
@@ -215,19 +242,21 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library erlang
+      #     find source/erlang -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add erlang
       #     git commit --allow-empty -m "update erlang"
       #     git push origin HEAD:main
       #     cd ..
 
-      # - name: fetch library go
+      # - name: fetch library golang
       #   if: ${{ success() || failure() }}
       #   run: |
-      #     vuls-data-update fetch library go
+      #     vuls-data-update fetch library golang
+      #     find source/golang -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
-      #     git add go
-      #     git commit --allow-empty -m "update go"
+      #     git add golang
+      #     git commit --allow-empty -m "update golang"
       #     git push origin HEAD:main
       #     cd ..
 
@@ -235,6 +264,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library maven
+      #     find source/maven -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add maven
       #     git commit --allow-empty -m "update maven"
@@ -245,6 +275,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library npm
+      #     find source/npm -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add npm
       #     git commit --allow-empty -m "update npm"
@@ -255,6 +286,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library nuget
+      #     find source/nuget -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add nuget
       #     git commit --allow-empty -m "update nuget"
@@ -265,6 +297,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library pip
+      #     find source/pip -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add pip
       #     git commit --allow-empty -m "update pip"
@@ -275,6 +308,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch library rubygems
+      #     find source/rubygems -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add rubygems
       #     git commit --allow-empty -m "update rubygems"
@@ -285,6 +319,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch other attack
+      #     find source/attack -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add attack
       #     git commit --allow-empty -m "update attack"
@@ -295,6 +330,7 @@ jobs:
       #   if: ${{ success() || failure() }}
       #   run: |
       #     vuls-data-update fetch other capec
+      #     find source/capec -name "*.json" -exec bzip2 -f9 {} \;
       #     cd source
       #     git add capec
       #     git commit --allow-empty -m "update capec"
@@ -305,6 +341,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other cwe
+          find source/cwe -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add cwe
           git commit --allow-empty -m "update cwe"
@@ -315,6 +352,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other epss
+          find source/epss -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add epss
           git commit --allow-empty -m "update epss"
@@ -325,6 +363,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other exploit
+          find source/exploit -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add exploit
           git commit --allow-empty -m "update exploit"
@@ -335,6 +374,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other jvn
+          find source/jvn -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add jvn
           git commit --allow-empty -m "update jvn"
@@ -345,6 +385,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other kev
+          find source/kev -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add kev
           git commit --allow-empty -m "update kev"
@@ -355,6 +396,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other mitre
+          find source/mitre -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add mitre
           git commit --allow-empty -m "update mitre"
@@ -365,6 +407,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other msf
+          find source/msf -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add msf
           git commit --allow-empty -m "update msf"
@@ -375,6 +418,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           vuls-data-update fetch other nvd
+          find source/nvd -name "*.json" -exec bzip2 -f9 {} \;
           cd source
           git add nvd
           git commit --allow-empty -m "update nvd"
@@ -394,6 +438,9 @@ jobs:
      if: ${{ always() }}
      needs: fetch
      steps:
+      - name: install gzip, bzip2, xz
+        run: sudo apt-get install -y gzip bzip2 xz
+
       - name: set Git config
         run: |
           git config --global user.email "action@github.com"
@@ -416,14 +463,399 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
-      - name: build
+      - name: check disk size
+        run: df -h --total
+
+      - name: check .git source output size
+        run: du -sh .git source output
+
+      - name: remove output
+        run: rm -rf output
+
+      - name: build mitre
+        if: ${{ success() || failure() }}
         run: |
-          vuls-data-update build
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 mitre
+          rm -rf source/mitre
           cd output
-          git add vulnerability cpe os
-          git commit --allow-empty -m "update vulnerability"
+          git add mitre
+          git commit --allow-empty -m "update mitre"
           git push origin HEAD:main
           cd ..
+
+      - name: build nvd
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 nvd
+          rm -rf source/nvd
+          cd output
+          git add nvd
+          git commit --allow-empty -m "update nvd"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build jvn
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 jvn
+          rm -rf source/jvn
+          cd output
+          git add jvn
+          git commit --allow-empty -m "update jvn"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build msf
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 msf
+          rm -rf source/msf
+          cd output
+          git add msf
+          git commit --allow-empty -m "update msf"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build exploit
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 exploit
+          rm -rf source/exploit
+          cd output
+          git add exploit
+          git commit --allow-empty -m "update exploit"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build kev
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 kev
+          rm -rf source/kev
+          cd output
+          git add kev
+          git commit --allow-empty -m "update kev"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build epss
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 epss
+          rm -rf source/epss
+          cd output
+          git add epss
+          git commit --allow-empty -m "update epss"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build alma
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 alma
+          rm -rf source/alma
+          cd output
+          git add alma
+          git commit --allow-empty -m "update alma"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build alpine
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 alpine
+          rm -rf source/alpine
+          cd output
+          git add alpine
+          git commit --allow-empty -m "update alpine"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build amazon
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 amazon
+          rm -rf source/amazon
+          cd output
+          git add amazon
+          git commit --allow-empty -m "update amazon"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build arch
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 arch
+          rm -rf source/arch
+          cd output
+          git add arch
+          git commit --allow-empty -m "update arch"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build debian
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 debian
+          rm -rf source/debian
+          cd output
+          git add debian
+          git commit --allow-empty -m "update debian"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: build epel
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 epel
+      #     rm -rf source/epel
+      #     cd output
+      #     git add epel
+      #     git commit --allow-empty -m "update epel"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build fedora
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 fedora
+      #     rm -rf source/fedora
+      #     cd output
+      #     git add fedora
+      #     git commit --allow-empty -m "update fedora"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: build freebsd
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 freebsd
+          rm -rf source/freebsd
+          cd output
+          git add freebsd
+          git commit --allow-empty -m "update freebsd"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: build gentoo
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 gentoo
+      #     rm -rf source/gentoo
+      #     cd output
+      #     git add gentoo
+      #     git commit --allow-empty -m "update gentoo"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: build oracle
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 oracle
+          rm -rf source/oracle
+          cd output
+          git add oracle
+          git commit --allow-empty -m "update oracle"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build redhat
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 redhat
+          rm -rf source/redhat
+          cd output
+          git add redhat
+          git commit --allow-empty -m "update redhat"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: build rocky
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 rocky
+      #     rm -rf source/rocky
+      #     cd output
+      #     git add rocky
+      #     git commit --allow-empty -m "update rocky"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: build suse
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 suse
+          rm -rf source/suse
+          cd output
+          git add suse
+          git commit --allow-empty -m "update suse"
+          git push origin HEAD:main
+          cd ..
+
+      - name: build ubuntu
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 ubuntu
+          rm -rf source/ubuntu
+          cd output
+          git add ubuntu
+          git commit --allow-empty -m "update ubuntu"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: build windows
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 windows
+      #     rm -rf source/windows
+      #     cd output
+      #     git add windows
+      #     git commit --allow-empty -m "update windows"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build cargo
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 cargo
+      #     rm -rf source/cargo
+      #     cd output
+      #     git add cargo
+      #     git commit --allow-empty -m "update cargo"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build composer
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 composer
+      #     rm -rf source/composer
+      #     cd output
+      #     git add composer
+      #     git commit --allow-empty -m "update composer"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build conan
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 conan
+      #     rm -rf source/conan
+      #     cd output
+      #     git add conan
+      #     git commit --allow-empty -m "update conan"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build erlang
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 erlang
+      #     rm -rf source/erlang
+      #     cd output
+      #     git add erlang
+      #     git commit --allow-empty -m "update erlang"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build golang
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 golang
+      #     rm -rf source/golang
+      #     cd output
+      #     git add golang
+      #     git commit --allow-empty -m "update golang"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build maven
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 maven
+      #     rm -rf source/maven
+      #     cd output
+      #     git add maven
+      #     git commit --allow-empty -m "update maven"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build npm
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 npm
+      #     rm -rf source/npm
+      #     cd output
+      #     git add npm
+      #     git commit --allow-empty -m "update npm"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build nuget
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 nuget
+      #     rm -rf source/nuget
+      #     cd output
+      #     git add nuget
+      #     git commit --allow-empty -m "update nuget"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build pip
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 pip
+      #     rm -rf source/pip
+      #     cd output
+      #     git add pip
+      #     git commit --allow-empty -m "update pip"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build rubygems
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 rubygems
+      #     rm -rf source/rubygems
+      #     cd output
+      #     git add rubygems
+      #     git commit --allow-empty -m "update rubygems"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      - name: build cwe
+        if: ${{ success() || failure() }}
+        run: |
+          vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 cwe
+          rm -rf source/cwe
+          cd output
+          git add cwe
+          git commit --allow-empty -m "update cwe"
+          git push origin HEAD:main
+          cd ..
+
+      # - name: build capec
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 capec
+      #     rm -rf source/capec
+      #     cd output
+      #     git add capec
+      #     git commit --allow-empty -m "update capec"
+      #     git push origin HEAD:main
+      #     cd ..
+
+      # - name: build attack
+      #   if: ${{ success() || failure() }}
+      #   run: |
+      #     vuls-data-update build --rm-vuln-dir=false --source-compress-format=bzip2 --destination-compress-format=bzip2 attack
+      #     rm -rf source/attack
+      #     cd output
+      #     git add attack
+      #     git commit --allow-empty -m "update attack"
+      #     git push origin HEAD:main
+      #     cd ..
 
       - name: update output submodule commit
         run: |

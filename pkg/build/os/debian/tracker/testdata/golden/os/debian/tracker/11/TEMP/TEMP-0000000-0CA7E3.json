@@ -1,11 +1,1 @@
-{
-  "id": "TEMP-0000000-0CA7E3",
-  "packages": {
-    "TEMP-0000000-0CA7E3": [
-      {
-        "name": "wordpress",
-        "status": "not affected"
-      }
-    ]
-  }
-}
+{"id":"TEMP-0000000-0CA7E3","packages":{"TEMP-0000000-0CA7E3":[{"name":"wordpress","status":"not affected"}]}}

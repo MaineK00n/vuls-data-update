@@ -1,9 +1,9 @@
 package capec
 
 import (
+	"encoding/json"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -12,8 +12,10 @@ import (
 )
 
 type options struct {
-	srcDir  string
-	destDir string
+	srcDir             string
+	srcCompressFormat  string
+	destDir            string
+	destCompressFormat string
 }
 
 type Option interface {
@@ -30,6 +32,16 @@ func WithSrcDir(dir string) Option {
 	return srcDirOption(dir)
 }
 
+type srcCompressFormatOption string
+
+func (d srcCompressFormatOption) apply(opts *options) {
+	opts.srcCompressFormat = string(d)
+}
+
+func WithSrcCompressFormat(compress string) Option {
+	return srcCompressFormatOption(compress)
+}
+
 type destDirOption string
 
 func (d destDirOption) apply(opts *options) {
@@ -40,10 +52,22 @@ func WithDestDir(dir string) Option {
 	return destDirOption(dir)
 }
 
+type destCompressFormatOption string
+
+func (d destCompressFormatOption) apply(opts *options) {
+	opts.destCompressFormat = string(d)
+}
+
+func WithDestCompressFormat(compress string) Option {
+	return destCompressFormatOption(compress)
+}
+
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:  filepath.Join(util.SourceDir(), "capec"),
-		destDir: filepath.Join(util.DestDir(), "vulnerability"),
+		srcDir:             filepath.Join(util.SourceDir(), "capec"),
+		srcCompressFormat:  "",
+		destDir:            filepath.Join(util.DestDir(), "vulnerability"),
+		destCompressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -60,11 +84,15 @@ func Build(opts ...Option) error {
 			return nil
 		}
 
-		sf, err := os.Open(path)
+		sbs, err := util.Open(path, options.srcCompressFormat)
 		if err != nil {
 			return errors.Wrapf(err, "open %s", path)
 		}
-		defer sf.Close()
+
+		var sv any
+		if err := json.Unmarshal(sbs, &sv); err != nil {
+			return errors.Wrap(err, "unmarshal json")
+		}
 
 		return nil
 	}); err != nil {

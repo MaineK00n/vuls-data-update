@@ -11,9 +11,11 @@ import (
 )
 
 type options struct {
-	srcDir        string
-	destVulnDir   string
-	destDetectDir string
+	srcDir             string
+	srcCompressFormat  string
+	destVulnDir        string
+	destDetectDir      string
+	destCompressFormat string
 }
 
 type Option interface {
@@ -28,6 +30,16 @@ func (d srcDirOption) apply(opts *options) {
 
 func WithSrcDir(dir string) Option {
 	return srcDirOption(dir)
+}
+
+type srcCompressFormatOption string
+
+func (d srcCompressFormatOption) apply(opts *options) {
+	opts.srcCompressFormat = string(d)
+}
+
+func WithSrcCompressFormat(compress string) Option {
+	return srcCompressFormatOption(compress)
 }
 
 type destVulnDirOption string
@@ -50,22 +62,34 @@ func WithDestDetectDir(dir string) Option {
 	return destDetectDirOption(dir)
 }
 
+type destCompressFormatOption string
+
+func (d destCompressFormatOption) apply(opts *options) {
+	opts.destCompressFormat = string(d)
+}
+
+func WithDestCompressFormat(compress string) Option {
+	return destCompressFormatOption(compress)
+}
+
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "windows"),
-		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "windows"),
+		srcDir:             filepath.Join(util.SourceDir(), "windows"),
+		srcCompressFormat:  "",
+		destVulnDir:        filepath.Join(util.DestDir(), "vulnerability"),
+		destDetectDir:      filepath.Join(util.DestDir(), "os", "windows"),
+		destCompressFormat: "",
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	if err := bulletin.Build(bulletin.WithSrcDir(filepath.Join(options.srcDir, "bulletin")), bulletin.WithDestVulnDir(options.destVulnDir), bulletin.WithDestDetectDir(filepath.Join(options.destDetectDir, "bulletin"))); err != nil {
+	if err := bulletin.Build(bulletin.WithSrcDir(filepath.Join(options.srcDir, "bulletin")), bulletin.WithSrcCompressFormat(options.srcCompressFormat), bulletin.WithDestVulnDir(options.destVulnDir), bulletin.WithDestDetectDir(filepath.Join(options.destDetectDir, "bulletin")), bulletin.WithDestCompressFormat(options.destCompressFormat)); err != nil {
 		return errors.Wrap(err, "build windows bulletin")
 	}
 
-	if err := cvrf.Build(cvrf.WithSrcDir(filepath.Join(options.srcDir, "cvrf")), cvrf.WithDestVulnDir(options.destVulnDir), cvrf.WithDestDetectDir(filepath.Join(options.destDetectDir, "cvrf"))); err != nil {
+	if err := cvrf.Build(cvrf.WithSrcDir(filepath.Join(options.srcDir, "cvrf")), cvrf.WithSrcCompressFormat(options.srcCompressFormat), cvrf.WithDestVulnDir(options.destVulnDir), cvrf.WithDestDetectDir(filepath.Join(options.destDetectDir, "cvrf")), cvrf.WithDestCompressFormat(options.destCompressFormat)); err != nil {
 		return errors.Wrap(err, "build windows cvrf")
 	}
 

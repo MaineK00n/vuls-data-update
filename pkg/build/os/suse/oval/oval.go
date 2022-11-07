@@ -21,9 +21,11 @@ import (
 )
 
 type options struct {
-	srcDir        string
-	destVulnDir   string
-	destDetectDir string
+	srcDir             string
+	srcCompressFormat  string
+	destVulnDir        string
+	destDetectDir      string
+	destCompressFormat string
 }
 
 type Option interface {
@@ -38,6 +40,16 @@ func (d srcDirOption) apply(opts *options) {
 
 func WithSrcDir(dir string) Option {
 	return srcDirOption(dir)
+}
+
+type srcCompressFormatOption string
+
+func (d srcCompressFormatOption) apply(opts *options) {
+	opts.srcCompressFormat = string(d)
+}
+
+func WithSrcCompressFormat(compress string) Option {
+	return srcCompressFormatOption(compress)
 }
 
 type destVulnDirOption string
@@ -60,11 +72,23 @@ func WithDestDetectDir(dir string) Option {
 	return destDetectDirOption(dir)
 }
 
+type destCompressFormatOption string
+
+func (d destCompressFormatOption) apply(opts *options) {
+	opts.destCompressFormat = string(d)
+}
+
+func WithDestCompressFormat(compress string) Option {
+	return destCompressFormatOption(compress)
+}
+
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "suse", "oval"),
-		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "suse", "oval"),
+		srcDir:             filepath.Join(util.SourceDir(), "suse", "oval"),
+		srcCompressFormat:  "",
+		destVulnDir:        filepath.Join(util.DestDir(), "vulnerability"),
+		destDetectDir:      filepath.Join(util.DestDir(), "os", "suse", "oval"),
+		destCompressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -84,14 +108,13 @@ func Build(opts ...Option) error {
 			return nil
 		}
 
-		sf, err := os.Open(path)
+		sbs, err := util.Open(path, options.srcCompressFormat)
 		if err != nil {
 			return errors.Wrapf(err, "open %s", path)
 		}
-		defer sf.Close()
 
 		var sv oval.Definition
-		if err := json.NewDecoder(sf).Decode(&sv); err != nil {
+		if err := json.Unmarshal(sbs, &sv); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
@@ -110,75 +133,55 @@ func Build(opts ...Option) error {
 		osname := filepath.Base(filepath.Dir(filepath.Dir(path)))
 		for _, cve := range sv.Advisory.CVEs {
 			y := strings.Split(cve.CVEID, "-")[1]
-			if err := func() error {
-				if err := os.MkdirAll(filepath.Join(options.destVulnDir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destVulnDir, y))
-				}
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
 
-				dvf, err := os.OpenFile(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", cve.CVEID)), os.O_RDWR|os.O_CREATE, 0644)
-				if err != nil {
-					return errors.Wrapf(err, "open %s", filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", cve.CVEID)))
-				}
-				defer dvf.Close()
+			dvbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", cve.CVEID)), options.destCompressFormat), options.destCompressFormat)
+			if err != nil {
+				return errors.Wrapf(err, "open %s", filepath.Join(options.destVulnDir, y, cve.CVEID))
+			}
 
-				var dv build.Vulnerability
-				if err := json.NewDecoder(dvf).Decode(&dv); err != nil && !errors.Is(err, io.EOF) {
-					return errors.Wrap(err, "decode json")
+			var dv build.Vulnerability
+			if len(dvbs) > 0 {
+				if err := json.Unmarshal(dvbs, &dv); err != nil {
+					return errors.Wrap(err, "unmarshal json")
 				}
+			}
 
-				fillVulnerability(&dv, &sv, cve, fmt.Sprintf("%s.%s", osname, filepath.Base(filepath.Dir(path))))
+			fillVulnerability(&dv, &sv, cve, fmt.Sprintf("%s.%s", osname, filepath.Base(filepath.Dir(path))))
 
-				if err := dvf.Truncate(0); err != nil {
-					return errors.Wrap(err, "truncate file")
-				}
-				if _, err := dvf.Seek(0, 0); err != nil {
-					return errors.Wrap(err, "set offset")
-				}
-				enc := json.NewEncoder(dvf)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(dv); err != nil {
-					return errors.Wrap(err, "encode json")
-				}
+			dvbs, err = json.Marshal(dv)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", cve.CVEID)), options.destCompressFormat), dvbs, options.destCompressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.destVulnDir, y, cve.CVEID))
 			}
 
 			for v, pkgs := range verpkgs {
-				if err := func() error {
-					if err := os.MkdirAll(filepath.Join(options.destDetectDir, osname, v, y), os.ModePerm); err != nil {
-						return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDetectDir, osname, v, y))
-					}
+				ddbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destDetectDir, osname, v, y, fmt.Sprintf("%s.json", cve.CVEID)), options.destCompressFormat), options.destCompressFormat)
+				if err != nil {
+					return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, osname, v, y, cve.CVEID))
+				}
 
-					ddf, err := os.OpenFile(filepath.Join(options.destDetectDir, osname, v, y, fmt.Sprintf("%s.json", cve.CVEID)), os.O_RDWR|os.O_CREATE, 0644)
-					if err != nil {
-						return errors.Wrapf(err, "open %s", filepath.Join(options.destDetectDir, osname, v, y, fmt.Sprintf("%s.json", cve.CVEID)))
+				var dd build.DetectPackage
+				if len(ddbs) > 0 {
+					if err := json.Unmarshal(ddbs, &dd); err != nil && !errors.Is(err, io.EOF) {
+						return errors.Wrap(err, "unmarshal json")
 					}
-					defer ddf.Close()
+				}
 
-					var dd build.DetectPackage
-					if err := json.NewDecoder(ddf).Decode(&dd); err != nil && !errors.Is(err, io.EOF) {
-						return errors.Wrap(err, "decode json")
-					}
+				fillDetect(&dd, cve.CVEID, sv.DefinitionID, pkgs)
 
-					fillDetect(&dd, cve.CVEID, sv.DefinitionID, pkgs)
+				ddbs, err = json.Marshal(dd)
+				if err != nil {
+					return errors.Wrap(err, "marshal json")
+				}
 
-					if err := ddf.Truncate(0); err != nil {
-						return errors.Wrap(err, "truncate file")
-					}
-					if _, err := ddf.Seek(0, 0); err != nil {
-						return errors.Wrap(err, "set offset")
-					}
-					enc := json.NewEncoder(ddf)
-					enc.SetIndent("", "  ")
-					if err := enc.Encode(dd); err != nil {
-						return errors.Wrap(err, "encode json")
-					}
-
-					return nil
-				}(); err != nil {
-					return err
+				if err := util.Write(util.BuildFilePath(filepath.Join(options.destDetectDir, osname, v, y, fmt.Sprintf("%s.json", cve.CVEID)), options.destCompressFormat), ddbs, options.destCompressFormat); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.destVulnDir, osname, v, y, cve.CVEID))
 				}
 			}
 
