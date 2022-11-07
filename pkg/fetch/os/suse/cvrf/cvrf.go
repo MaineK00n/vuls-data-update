@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -21,11 +22,12 @@ import (
 const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf-cve/"
 
 type options struct {
-	baseURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        int
+	baseURL        string
+	dir            string
+	retry          int
+	concurrency    int
+	wait           int
+	compressFormat string
 }
 
 type Option interface {
@@ -82,13 +84,24 @@ func WithWait(wait int) Option {
 	return waitOption(wait)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:     baseURL,
-		dir:         filepath.Join(util.SourceDir(), "suse", "cvrf"),
-		retry:       3,
-		concurrency: 20,
-		wait:        1,
+		baseURL:        baseURL,
+		dir:            filepath.Join(util.SourceDir(), "suse", "cvrf"),
+		retry:          3,
+		concurrency:    20,
+		wait:           1,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -138,36 +151,26 @@ func Fetch(opts ...Option) error {
 		}
 
 		for _, resp := range resps {
-			if err := func() error {
-				var adv CVRF
-				if err := xml.Unmarshal(resp, &adv); err != nil {
-					return errors.Wrap(err, "xml unmarshal")
-				}
-
-				y := strings.Split(adv.Vulnerability.CVE, "-")[1]
-
-				if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
-				}
-
-				f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)))
-				}
-				defer f.Close()
-
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(adv); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-
-				delete(oldCVEs, adv.Vulnerability.CVE)
-
-				return nil
-			}(); err != nil {
-				return err
+			var adv CVRF
+			if err := xml.Unmarshal(resp, &adv); err != nil {
+				return errors.Wrap(err, "xml unmarshal")
 			}
+
+			y := strings.Split(adv.Vulnerability.CVE, "-")[1]
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
+
+			bs, err := json.Marshal(adv)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
+
+			if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, adv.Vulnerability.CVE))
+			}
+
+			delete(oldCVEs, adv.Vulnerability.CVE)
 		}
 	}
 

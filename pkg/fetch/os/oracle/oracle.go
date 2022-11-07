@@ -21,9 +21,10 @@ import (
 const advisoryURL = "https://linux.oracle.com/security/oval/com.oracle.elsa-all.xml.bz2"
 
 type options struct {
-	advisoryURL string
-	dir         string
-	retry       int
+	advisoryURL    string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -60,11 +61,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		advisoryURL: advisoryURL,
-		dir:         filepath.Join(util.SourceDir(), "oracle"),
-		retry:       3,
+		advisoryURL:    advisoryURL,
+		dir:            filepath.Join(util.SourceDir(), "oracle"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -100,21 +112,13 @@ func Fetch(opts ...Option) error {
 
 		bar := pb.StartNew(len(defs))
 		for _, def := range defs {
-			if err := func() error {
-				f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)))
-				}
-				defer f.Close()
+			bs, err := json.Marshal(def)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(def); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, def.DefinitionID))
 			}
 
 			bar.Increment()

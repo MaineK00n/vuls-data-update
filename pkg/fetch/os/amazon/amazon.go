@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,9 +24,10 @@ import (
 )
 
 type options struct {
-	mirrorURLs map[string]MirrorURL
-	dir        string
-	retry      int
+	mirrorURLs     map[string]MirrorURL
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type MirrorURL struct {
@@ -67,6 +69,16 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
 		mirrorURLs: map[string]MirrorURL{
@@ -77,8 +89,9 @@ func Fetch(opts ...Option) error {
 				Releasemd: "https://al2022-repos-us-west-2-9761ab97.s3.dualstack.us-west-2.amazonaws.com/core/releasemd.xml",
 			},
 		},
-		dir:   filepath.Join(util.SourceDir(), "amazon"),
-		retry: 3,
+		dir:            filepath.Join(util.SourceDir(), "amazon"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -110,27 +123,18 @@ func Fetch(opts ...Option) error {
 		}
 		bar := pb.StartNew(len(us))
 		for _, u := range us {
-			if err := func() error {
-				y := strings.Split(u.ID, "-")[1]
+			y := strings.Split(u.ID, "-")[1]
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
 
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
-				}
+			bs, err := json.Marshal(u)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", u.ID)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", u.ID)))
-				}
-				defer f.Close()
-
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(u); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", u.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, u.ID))
 			}
 
 			bar.Increment()

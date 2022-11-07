@@ -10,9 +10,11 @@ import (
 )
 
 type options struct {
-	srcDir        string
-	destVulnDir   string
-	destDetectDir string
+	srcDir             string
+	srcCompressFormat  string
+	destVulnDir        string
+	destDetectDir      string
+	destCompressFormat string
 }
 
 type Option interface {
@@ -27,6 +29,16 @@ func (d srcDirOption) apply(opts *options) {
 
 func WithSrcDir(dir string) Option {
 	return srcDirOption(dir)
+}
+
+type srcCompressFormatOption string
+
+func (d srcCompressFormatOption) apply(opts *options) {
+	opts.srcCompressFormat = string(d)
+}
+
+func WithSrcCompressFormat(compress string) Option {
+	return srcCompressFormatOption(compress)
 }
 
 type destVulnDirOption string
@@ -49,22 +61,34 @@ func WithDestDetectDir(dir string) Option {
 	return destDetectDirOption(dir)
 }
 
+type destCompressFormatOption string
+
+func (d destCompressFormatOption) apply(opts *options) {
+	opts.destCompressFormat = string(d)
+}
+
+func WithDestCompressFormat(compress string) Option {
+	return destCompressFormatOption(compress)
+}
+
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:        filepath.Join(util.SourceDir(), "redhat"),
-		destVulnDir:   filepath.Join(util.DestDir(), "vulnerability"),
-		destDetectDir: filepath.Join(util.DestDir(), "os", "redhat"),
+		srcDir:             filepath.Join(util.SourceDir(), "redhat"),
+		srcCompressFormat:  "",
+		destVulnDir:        filepath.Join(util.DestDir(), "vulnerability"),
+		destDetectDir:      filepath.Join(util.DestDir(), "os", "redhat"),
+		destCompressFormat: "",
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval"))); err != nil {
+	if err := oval.Build(oval.WithSrcDir(filepath.Join(options.srcDir, "oval")), oval.WithSrcCompressFormat(options.srcCompressFormat), oval.WithDestVulnDir(options.destVulnDir), oval.WithDestDetectDir(filepath.Join(options.destDetectDir, "oval")), oval.WithDestCompressFormat(options.destCompressFormat)); err != nil {
 		return errors.Wrap(err, "build redhat oval")
 	}
 
-	// if err := api.Build(api.WithSrcDir(filepath.Join(options.srcDir, "api")), api.WithDestVulnDir(options.destVulnDir), api.WithDestDetectDir(filepath.Join(options.destDetectDir, "api"))); err != nil {
+	// if err := api.Build(api.WithSrcDir(filepath.Join(options.srcDir, "api")), api.WithSrcCompressFormat(options.srcCompressFormat), api.WithDestVulnDir(options.destVulnDir), api.WithDestDetectDir(filepath.Join(options.destDetectDir, "api")), api.WithDestCompressFormat(options.destCompressFormat)); err != nil {
 	// 	return errors.Wrap(err, "build redhat security api")
 	// }
 

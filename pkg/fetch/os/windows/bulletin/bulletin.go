@@ -14,9 +14,10 @@ const dataURL = "https://download.microsoft.com/download/6/7/3/673E4349-1CA5-40B
 // https://download.microsoft.com/download/6/7/3/673E4349-1CA5-40B9-8879-095C72D5B49D/BulletinSearch2001-2008.xlsx
 
 type options struct {
-	dataURL string
-	dir     string
-	retry   int
+	dataURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -53,11 +54,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "windows", "bulletin"),
-		retry:   3,
+		dataURL:        dataURL,
+		dir:            filepath.Join(util.SourceDir(), "windows", "bulletin"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {

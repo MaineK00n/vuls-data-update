@@ -11,8 +11,9 @@ import (
 )
 
 type options struct {
-	dir   string
-	retry int
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -39,6 +40,16 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
 		dir:   filepath.Join(util.SourceDir(), "ubuntu"),
@@ -49,11 +60,11 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry)); err != nil {
+	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry), oval.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch ubuntu oval")
 	}
 
-	if err := tracker.Fetch(tracker.WithDir(filepath.Join(options.dir, "tracker")), tracker.WithRetry(options.retry)); err != nil {
+	if err := tracker.Fetch(tracker.WithDir(filepath.Join(options.dir, "tracker")), tracker.WithRetry(options.retry), tracker.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch ubuntu security tracker")
 	}
 

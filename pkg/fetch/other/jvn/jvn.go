@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -24,9 +25,10 @@ const (
 )
 
 type options struct {
-	urls  []string
-	dir   string
-	retry int
+	urls           []string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -63,6 +65,16 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	var urls []string
 	for y := oldestYear; y <= time.Now().Year(); y++ {
@@ -85,6 +97,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "parse url")
 		}
 		y := strings.TrimSuffix(strings.TrimPrefix(path.Base(uu.Path), "jvndb_detail_"), ".rdf")
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
 
 		log.Printf("[INFO] Fetch JVNDB Feed %s", y)
 		bs, err := util.FetchURL(u, options.retry)
@@ -131,21 +146,13 @@ func Fetch(opts ...Option) error {
 		}
 		bar := pb.StartNew(len(feed.Vulinfo))
 		for _, a := range feed.Vulinfo {
-			if err := func() error {
-				f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", a.VulinfoID)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", a.VulinfoID)))
-				}
-				defer f.Close()
+			bs, err := json.Marshal(a)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(a); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", a.VulinfoID)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, a.VulinfoID))
 			}
 
 			bar.Increment()

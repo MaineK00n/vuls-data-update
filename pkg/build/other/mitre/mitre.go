@@ -3,11 +3,10 @@ package mitre
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -18,8 +17,10 @@ import (
 )
 
 type options struct {
-	srcDir  string
-	destDir string
+	srcDir             string
+	srcCompressFormat  string
+	destDir            string
+	destCompressFormat string
 }
 
 type Option interface {
@@ -36,6 +37,16 @@ func WithSrcDir(dir string) Option {
 	return srcDirOption(dir)
 }
 
+type srcCompressFormatOption string
+
+func (d srcCompressFormatOption) apply(opts *options) {
+	opts.srcCompressFormat = string(d)
+}
+
+func WithSrcCompressFormat(compress string) Option {
+	return srcCompressFormatOption(compress)
+}
+
 type destDirOption string
 
 func (d destDirOption) apply(opts *options) {
@@ -46,10 +57,22 @@ func WithDestDir(dir string) Option {
 	return destDirOption(dir)
 }
 
+type destCompressFormatOption string
+
+func (d destCompressFormatOption) apply(opts *options) {
+	opts.destCompressFormat = string(d)
+}
+
+func WithDestCompressFormat(compress string) Option {
+	return destCompressFormatOption(compress)
+}
+
 func Build(opts ...Option) error {
 	options := &options{
-		srcDir:  filepath.Join(util.SourceDir(), "mitre"),
-		destDir: filepath.Join(util.DestDir(), "vulnerability"),
+		srcDir:             filepath.Join(util.SourceDir(), "mitre"),
+		srcCompressFormat:  "",
+		destDir:            filepath.Join(util.DestDir(), "vulnerability"),
+		destCompressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -66,45 +89,37 @@ func Build(opts ...Option) error {
 			return nil
 		}
 
-		sf, err := os.Open(path)
+		sbs, err := util.Open(path, options.srcCompressFormat)
 		if err != nil {
 			return errors.Wrapf(err, "open %s", path)
 		}
-		defer sf.Close()
 
 		var sv mitre.Vulnerability
-		if err := json.NewDecoder(sf).Decode(&sv); err != nil {
+		if err := json.Unmarshal(sbs, &sv); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
 		y := strings.Split(sv.CVE, "-")[1]
-		if err := os.MkdirAll(filepath.Join(options.destDir, y), os.ModePerm); err != nil {
-			return errors.Wrapf(err, "mkdir %s", filepath.Join(options.destDir, y))
+		if _, err := strconv.Atoi(y); err != nil {
+			return nil
 		}
 
-		df, err := os.OpenFile(filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.CVE)), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+		dbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.CVE)), options.destCompressFormat), options.destCompressFormat)
 		if err != nil {
-			return errors.Wrapf(err, "open %s", filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.CVE)))
+			return errors.Wrapf(err, "open %s", filepath.Join(options.destDir, y, sv.CVE))
 		}
-		defer df.Close()
 
 		var dv build.Vulnerability
-		if err := json.NewDecoder(df).Decode(&dv); err != nil && !errors.Is(err, io.EOF) {
-			return errors.Wrap(err, "decode json")
+		if len(dbs) > 0 {
+			if err := json.Unmarshal(dbs, &dv); err != nil {
+				return errors.Wrap(err, "unmarshal json")
+			}
 		}
 
 		fillVulnerability(&dv, &sv)
 
-		if err := df.Truncate(0); err != nil {
-			return errors.Wrap(err, "truncate file")
-		}
-		if _, err := df.Seek(0, 0); err != nil {
-			return errors.Wrap(err, "set offset")
-		}
-		enc := json.NewEncoder(df)
-		enc.SetIndent("", "  ")
-		if err := enc.Encode(dv); err != nil {
-			return errors.Wrap(err, "encode json")
+		if err := util.Write(util.BuildFilePath(filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.CVE)), options.destCompressFormat), dbs, options.destCompressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.destDir, y, sv.CVE))
 		}
 
 		return nil

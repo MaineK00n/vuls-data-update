@@ -31,9 +31,10 @@ const (
 )
 
 type options struct {
-	feedURL *FeedURL
-	dir     string
-	retry   int
+	feedURL        *FeedURL
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type FeedURL struct {
@@ -78,6 +79,16 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	u := FeedURL{
 		CVE: []string{
@@ -93,13 +104,18 @@ func Fetch(opts ...Option) error {
 	}
 
 	options := &options{
-		feedURL: &u,
-		dir:     filepath.Join(util.SourceDir(), "nvd"),
-		retry:   3,
+		feedURL:        &u,
+		dir:            filepath.Join(util.SourceDir(), "nvd"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
 		o.apply(options)
+	}
+
+	if err := os.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
 	cpeDict, err := options.fetchCPEDictinoary()
@@ -107,24 +123,17 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch cpe dictionary")
 	}
 
-	if err := os.RemoveAll(options.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", options.dir)
-	}
-	if err := os.MkdirAll(options.dir, os.ModePerm); err != nil {
-		return errors.Wrapf(err, "mkdir %s", options.dir)
-	}
-	f, err := os.Create(filepath.Join(options.dir, "cpe-dictionary.json.gz"))
+	bs, err := json.Marshal(cpeDict)
 	if err != nil {
-		return errors.Wrapf(err, "create %s", filepath.Join(options.dir, "cpe-dictionary.json.gz"))
+		return errors.Wrap(err, "marshal json")
 	}
-	defer f.Close()
 
-	gw := gzip.NewWriter(f)
-	defer gw.Close()
-	enc := json.NewEncoder(gw)
-	enc.SetIndent("", "  ")
-	if err := enc.Encode(cpeDict); err != nil {
-		return errors.Wrap(err, "encode data")
+	compress := options.compressFormat
+	if compress == "" {
+		compress = "gzip"
+	}
+	if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, "cpe-dictionary.json"), compress), bs, compress); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "cpe-dictionary"))
 	}
 
 	cpeMatch, err := options.fetchCPEMatch()
@@ -162,27 +171,18 @@ func Fetch(opts ...Option) error {
 
 		bar := pb.StartNew(len(cves[feedname]))
 		for _, cve := range cves[feedname] {
-			if err := func() error {
-				y := strings.Split(cve.Cve.CVEDataMeta.ID, "-")[1]
+			y := strings.Split(cve.Cve.CVEDataMeta.ID, "-")[1]
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
 
-				if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
-				}
+			bs, err := json.Marshal(cve)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID)))
-				}
-				defer f.Close()
-
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(cve); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, cve.Cve.CVEDataMeta.ID))
 			}
 
 			bar.Increment()

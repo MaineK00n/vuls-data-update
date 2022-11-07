@@ -14,9 +14,10 @@ import (
 const defaultRepoURL = "https://github.com/pypa/advisory-database"
 
 type options struct {
-	repoURL string
-	dir     string
-	retry   int
+	repoURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -53,11 +54,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		repoURL: defaultRepoURL,
-		dir:     filepath.Join(util.SourceDir(), "pip", "db"),
-		retry:   3,
+		repoURL:        defaultRepoURL,
+		dir:            filepath.Join(util.SourceDir(), "pip", "db"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {

@@ -20,9 +20,10 @@ import (
 const dataURL = "https://cwe.mitre.org/data/xml/cwec_latest.xml.zip"
 
 type options struct {
-	dataURL string
-	dir     string
-	retry   int
+	dataURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -59,11 +60,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "cwe"),
-		retry:   3,
+		dataURL:        dataURL,
+		dir:            filepath.Join(util.SourceDir(), "cwe"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -114,21 +126,13 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(weaknesses))
 	for _, w := range weaknesses {
-		if err := func() error {
-			f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", w.ID)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", w.ID)))
-			}
-			defer f.Close()
+		bs, err := json.Marshal(w)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
 
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(w); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", w.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, w.ID))
 		}
 
 		bar.Increment()
@@ -148,21 +152,13 @@ func Fetch(opts ...Option) error {
 
 	bar = pb.StartNew(len(categories))
 	for _, c := range categories {
-		if err := func() error {
-			f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", c.ID)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", c.ID)))
-			}
-			defer f.Close()
+		bs, err := json.Marshal(c)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
 
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(c); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", c.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, c.ID))
 		}
 
 		bar.Increment()
@@ -182,21 +178,13 @@ func Fetch(opts ...Option) error {
 
 	bar = pb.StartNew(len(views))
 	for _, v := range views {
-		if err := func() error {
-			f, err := os.Create(filepath.Join(dir, fmt.Sprintf("%s.json", v.ID)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(dir, fmt.Sprintf("%s.json", v.ID)))
-			}
-			defer f.Close()
+		bs, err := json.Marshal(v)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
 
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(v); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", v.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, v.ID))
 		}
 
 		bar.Increment()

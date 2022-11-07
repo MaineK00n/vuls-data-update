@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/cheggaaa/pb/v3"
@@ -19,9 +20,10 @@ import (
 const advisoryURL = "https://security-tracker.debian.org/tracker/data/json"
 
 type options struct {
-	advisoryURL string
-	dir         string
-	retry       int
+	advisoryURL    string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -58,11 +60,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		advisoryURL: advisoryURL,
-		dir:         filepath.Join(util.SourceDir(), "debian", "tracker"),
-		retry:       3,
+		advisoryURL:    advisoryURL,
+		dir:            filepath.Join(util.SourceDir(), "debian", "tracker"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -133,32 +146,23 @@ func Fetch(opts ...Option) error {
 		as := maps.Values(advs)
 		bar := pb.StartNew(len(as))
 		for _, a := range as {
-			if err := func() error {
-				var y string
-				if strings.HasPrefix(a.ID, "CVE-") {
-					y = strings.Split(a.ID, "-")[1]
-				} else {
-					y = strings.Split(a.ID, "-")[0]
+			var y string
+			if strings.HasPrefix(a.ID, "CVE-") {
+				y = strings.Split(a.ID, "-")[1]
+				if _, err := strconv.Atoi(y); err != nil {
+					continue
 				}
+			} else {
+				y = strings.Split(a.ID, "-")[0]
+			}
 
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
-				}
+			bs, err := json.Marshal(a)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)))
-				}
-				defer f.Close()
-
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(a); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, a.ID))
 			}
 
 			bar.Increment()

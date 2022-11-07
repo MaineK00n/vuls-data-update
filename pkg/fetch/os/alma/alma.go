@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -20,9 +21,10 @@ const urlFormat = "https://errata.almalinux.org/%s/errata.full.json"
 var versions = []string{"8", "9"}
 
 type options struct {
-	urls  map[string]string
-	dir   string
-	retry int
+	urls           map[string]string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -59,6 +61,16 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	urls := map[string]string{}
 	for _, v := range versions {
@@ -66,9 +78,10 @@ func Fetch(opts ...Option) error {
 	}
 
 	options := &options{
-		urls:  urls,
-		dir:   filepath.Join(util.SourceDir(), "alma"),
-		retry: 3,
+		urls:           urls,
+		dir:            filepath.Join(util.SourceDir(), "alma"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -116,27 +129,18 @@ func Fetch(opts ...Option) error {
 		}
 		bar := pb.StartNew(len(advs))
 		for _, a := range advs {
-			if err := func() error {
-				y := strings.Split(strings.TrimPrefix(a.ID, "ALSA-"), ":")[0]
+			y := strings.Split(strings.TrimPrefix(a.ID, "ALSA-"), ":")[0]
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
 
-				if err := os.MkdirAll(filepath.Join(dir, y), os.ModePerm); err != nil {
-					return errors.Wrapf(err, "mkdir %s", dir)
-				}
+			bs, err := json.Marshal(a)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				f, err := os.Create(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)))
-				}
-				defer f.Close()
-
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(a); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, a.ID))
 			}
 
 			bar.Increment()
