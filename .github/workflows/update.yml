@@ -9,9 +9,6 @@ jobs:
     name: fetch vuls-data-source
     runs-on: ubuntu-latest
     steps:
-      - name: install gzip, bzip2, xz
-        run: sudo apt-get install -y gzip bzip2 xz
-
       - name: set Git config
         run: |
           git config --global user.email "action@github.com"
@@ -403,9 +400,6 @@ jobs:
      if: ${{ always() }}
      needs: fetch
      steps:
-      - name: install gzip, bzip2, xz
-        run: sudo apt-get install -y gzip bzip2 xz
-
       - name: set Git config
         run: |
           git config --global user.email "action@github.com"
