@@ -43,8 +43,8 @@ type options struct {
 
 var (
 	supports = []string{
-		"mitre", "nvd", "jvn", "", "msf", "exploit", "kev", "cwe", "capec", "attack",
-		"alma", "alpine", "amazon", "arch", "debian", "debian-oval", "debian-tracker", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "redhat-api", "redhat-oval", "rocky", "suse", "suse-cvrf", "suse-oval", "ubuntu", "ubuntu-oval", "ubuntu-tracker", "windows",
+		"mitre", "nvd", "jvn", "epss", "msf", "exploit", "kev", "cwe", "capec", "attack",
+		"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows",
 		"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems",
 	}
 )
@@ -61,8 +61,11 @@ func NewCmdBuild() *cobra.Command {
 		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
 		ValidArgs: supports,
 		RunE: func(_ *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				args = supports
+			}
+			
 			var as []string
-
 			m := map[string]bool{"cwe": false, "capec": false, "attack": false}
 			for _, a := range args {
 				if _, ok := m[a]; ok {
@@ -75,9 +78,6 @@ func NewCmdBuild() *cobra.Command {
 				if m[k] {
 					as = append(as, k)
 				}
-			}
-			if len(as) == 0 {
-				as = supports
 			}
 			return build(as, options)
 		},
