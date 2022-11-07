@@ -23,9 +23,10 @@ import (
 const dataURL = "https://epss.cyentia.com/epss_scores-current.csv.gz"
 
 type options struct {
-	dataURL string
-	dir     string
-	retry   int
+	dataURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -62,11 +63,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "epss"),
-		retry:   3,
+		dataURL:        dataURL,
+		dir:            filepath.Join(util.SourceDir(), "epss"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -152,27 +164,18 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(epsses))
 	for _, e := range epsses {
-		if err := func() error {
-			y := strings.Split(e.ID, "-")[1]
+		y := strings.Split(e.ID, "-")[1]
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
 
-			if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
-			}
-			f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", e.ID)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", e.ID)))
-			}
-			defer f.Close()
+		bs, err := json.Marshal(e)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
 
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(e); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", e.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, e.ID))
 		}
 
 		bar.Increment()

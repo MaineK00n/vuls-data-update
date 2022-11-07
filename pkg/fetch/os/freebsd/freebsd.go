@@ -20,9 +20,10 @@ import (
 const dataURL = "https://vuxml.freebsd.org/freebsd/vuln.xml.bz2"
 
 type options struct {
-	dataURL string
-	dir     string
-	retry   int
+	dataURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -59,11 +60,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "freebsd"),
-		retry:   3,
+		dataURL:        dataURL,
+		dir:            filepath.Join(util.SourceDir(), "freebsd"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -210,21 +222,13 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(advs))
 	for _, a := range advs {
-		if err := func() error {
-			f, err := os.Create(filepath.Join(options.dir, fmt.Sprintf("%s.json", a.Vid)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", a.Vid)))
-			}
-			defer f.Close()
+		bs, err := json.Marshal(a)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
 
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(a); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, fmt.Sprintf("%s.json", a.Vid)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, a.Vid))
 		}
 
 		bar.Increment()

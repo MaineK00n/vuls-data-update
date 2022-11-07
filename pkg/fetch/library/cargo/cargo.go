@@ -12,8 +12,9 @@ import (
 )
 
 type options struct {
-	dir   string
-	retry int
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -40,6 +41,16 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
 		dir:   filepath.Join(util.SourceDir(), "cargo"),
@@ -50,15 +61,15 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	if err := db.Fetch(db.WithDir(filepath.Join(options.dir, "db")), db.WithRetry(options.retry)); err != nil {
+	if err := db.Fetch(db.WithDir(filepath.Join(options.dir, "db")), db.WithRetry(options.retry), db.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch cargo db")
 	}
 
-	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry)); err != nil {
+	if err := ghsa.Fetch(ghsa.WithDir(filepath.Join(options.dir, "ghsa")), ghsa.WithRetry(options.retry), ghsa.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch cargo ghsa")
 	}
 
-	if err := osv.Fetch(osv.WithDir(filepath.Join(options.dir, "osv")), osv.WithRetry(options.retry)); err != nil {
+	if err := osv.Fetch(osv.WithDir(filepath.Join(options.dir, "osv")), osv.WithRetry(options.retry), osv.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch cargo osv")
 	}
 

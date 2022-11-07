@@ -18,9 +18,10 @@ import (
 const dataURL = "https://raw.githubusercontent.com/rapid7/metasploit-framework/master/db/modules_metadata_base.json"
 
 type options struct {
-	dataURL string
-	dir     string
-	retry   int
+	dataURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -57,11 +58,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "msf"),
-		retry:   3,
+		dataURL:        dataURL,
+		dir:            filepath.Join(util.SourceDir(), "msf"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -195,25 +207,15 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(modules))
 	for _, m := range modules {
-		if err := func() error {
-			dir, file := filepath.Split(m.Fullname)
-			if err := os.MkdirAll(filepath.Join(options.dir, dir), os.ModePerm); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, dir))
-			}
-			f, err := os.Create(filepath.Join(options.dir, dir, fmt.Sprintf("%s.json", file)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, dir, fmt.Sprintf("%s.json", file)))
-			}
-			defer f.Close()
+		dir, file := filepath.Split(m.Fullname)
 
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(m); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		bs, err := json.Marshal(m)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
+
+		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, dir, fmt.Sprintf("%s.json", file)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, dir, file))
 		}
 
 		bar.Increment()

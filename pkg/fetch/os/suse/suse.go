@@ -11,8 +11,9 @@ import (
 )
 
 type options struct {
-	dir   string
-	retry int
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -39,21 +40,32 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dir:   filepath.Join(util.SourceDir(), "suse"),
-		retry: 3,
+		dir:            filepath.Join(util.SourceDir(), "suse"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry)); err != nil {
+	if err := oval.Fetch(oval.WithDir(filepath.Join(options.dir, "oval")), oval.WithRetry(options.retry), oval.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch suse oval")
 	}
 
-	if err := cvrf.Fetch(cvrf.WithDir(filepath.Join(options.dir, "cvrf")), cvrf.WithRetry(options.retry)); err != nil {
+	if err := cvrf.Fetch(cvrf.WithDir(filepath.Join(options.dir, "cvrf")), cvrf.WithRetry(options.retry), cvrf.WithCompressFormat(options.compressFormat)); err != nil {
 		return errors.Wrap(err, "fetch suse cvrf")
 	}
 

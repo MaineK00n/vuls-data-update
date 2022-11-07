@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,9 +22,10 @@ import (
 const dataURL = "https://cve.mitre.org/data/downloads/allitems-cvrf.xml"
 
 type options struct {
-	dataURL string
-	dir     string
-	retry   int
+	dataURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -60,11 +62,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
-		dir:     filepath.Join(util.SourceDir(), "mitre"),
-		retry:   3,
+		dataURL:        dataURL,
+		dir:            filepath.Join(util.SourceDir(), "mitre"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -129,27 +142,18 @@ func Fetch(opts ...Option) error {
 	}
 	bar := pb.StartNew(len(vs))
 	for _, v := range vs {
-		if err := func() error {
-			y := strings.Split(v.CVE, "-")[1]
+		y := strings.Split(v.CVE, "-")[1]
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
 
-			if err := os.MkdirAll(filepath.Join(options.dir, y), os.ModePerm); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Join(options.dir, y))
-			}
+		bs, err := json.Marshal(v)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
 
-			f, err := os.Create(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", v.CVE)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", v.CVE)))
-			}
-			defer f.Close()
-
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(v); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", v.CVE)), options.compressFormat), bs, options.compressFormat); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, v.CVE))
 		}
 
 		bar.Increment()

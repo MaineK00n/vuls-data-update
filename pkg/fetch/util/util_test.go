@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -23,7 +24,7 @@ func TestUnique(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if diff := cmp.Diff(tt.want, util.Unique(tt.args)); diff != "" {
+			if diff := cmp.Diff(tt.want, util.Unique(tt.args), cmpopts.SortSlices(func(i, j int) bool { return i < j })); diff != "" {
 				t.Errorf("Unique(). (-expected +got):\n%s", diff)
 			}
 		})

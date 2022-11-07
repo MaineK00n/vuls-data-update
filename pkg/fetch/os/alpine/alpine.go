@@ -18,9 +18,10 @@ import (
 const baseURL = "https://secdb.alpinelinux.org/"
 
 type options struct {
-	baseURL string
-	dir     string
-	retry   int
+	baseURL        string
+	dir            string
+	retry          int
+	compressFormat string
 }
 
 type Option interface {
@@ -57,11 +58,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type compressFormatOption string
+
+func (c compressFormatOption) apply(opts *options) {
+	opts.compressFormat = string(c)
+}
+
+func WithCompressFormat(compress string) Option {
+	return compressFormatOption(compress)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL: baseURL,
-		dir:     filepath.Join(util.SourceDir(), "alpine"),
-		retry:   3,
+		baseURL:        baseURL,
+		dir:            filepath.Join(util.SourceDir(), "alpine"),
+		retry:          3,
+		compressFormat: "",
 	}
 
 	for _, o := range opts {
@@ -93,21 +105,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "mkdir %s", dir)
 		}
 		for filename, adv := range advs {
-			if err := func() error {
-				f, err := os.Create(filepath.Join(dir, filename))
-				if err != nil {
-					return errors.Wrapf(err, "create %s", filepath.Join(dir, filename))
-				}
-				defer f.Close()
+			bs, err := json.Marshal(adv)
+			if err != nil {
+				return errors.Wrap(err, "marshal json")
+			}
 
-				enc := json.NewEncoder(f)
-				enc.SetIndent("", "  ")
-				if err := enc.Encode(adv); err != nil {
-					return errors.Wrap(err, "encode data")
-				}
-				return nil
-			}(); err != nil {
-				return err
+			if err := util.Write(util.BuildFilePath(filepath.Join(dir, filename), options.compressFormat), bs, options.compressFormat); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, filename))
 			}
 		}
 	}
@@ -126,7 +130,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	}
 
 	var releases []string
-	d.Find("a").Each(func(i int, selection *goquery.Selection) {
+	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
 		if !strings.HasPrefix(txt, "v") {
 			return
@@ -153,7 +157,7 @@ func (opts options) walkDistroVersion(release string) ([]string, error) {
 	}
 
 	var files []string
-	d.Find("a").Each(func(i int, selection *goquery.Selection) {
+	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
 		if !strings.HasSuffix(txt, ".json") {
 			return

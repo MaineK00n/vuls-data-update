@@ -7,6 +7,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/slices"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/cargo"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/composer"
@@ -47,7 +48,8 @@ import (
 )
 
 type options struct {
-	dir string
+	dir            string
+	compressFormat string
 }
 
 var (
@@ -64,6 +66,12 @@ func NewCmdFetch() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fetch <subcommand> <data source>",
 		Short: "Fetch data source",
+		PreRunE: func(_ *cobra.Command, _ []string) error {
+			if !slices.Contains([]string{"", "gzip", "bzip2", "xz"}, options.compressFormat) {
+				return errors.New(`--destination-compress-format flag allows ["", "gzip", "bzip2", "xz"].`)
+			}
+			return nil
+		},
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch os debian
 			$ vuls-data-update fetch library cargo
@@ -72,6 +80,7 @@ func NewCmdFetch() *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+	cmd.PersistentFlags().StringVarP(&options.compressFormat, "compress-format", "f", "", `compression format. available: ["gzip", "bzip2", "xz"]`)
 
 	cmd.AddCommand(newCmdFetchOS(options))
 	cmd.AddCommand(newCmdFetchLibrary(options))
@@ -105,63 +114,63 @@ func fetchOSRun(names []string, opts *options) error {
 	for _, name := range names {
 		switch name {
 		case "alma":
-			if err := alma.Fetch(alma.WithDir(filepath.Join(opts.dir, "alma"))); err != nil {
+			if err := alma.Fetch(alma.WithDir(filepath.Join(opts.dir, "alma")), alma.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch almalinux")
 			}
 		case "alpine":
-			if err := alpine.Fetch(alpine.WithDir(filepath.Join(opts.dir, "alpine"))); err != nil {
+			if err := alpine.Fetch(alpine.WithDir(filepath.Join(opts.dir, "alpine")), alpine.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch alpine linux")
 			}
 		case "amazon":
-			if err := amazon.Fetch(amazon.WithDir(filepath.Join(opts.dir, "amazon"))); err != nil {
+			if err := amazon.Fetch(amazon.WithDir(filepath.Join(opts.dir, "amazon")), amazon.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch amazon linux")
 			}
 		case "arch":
-			if err := arch.Fetch(arch.WithDir(filepath.Join(opts.dir, "arch"))); err != nil {
+			if err := arch.Fetch(arch.WithDir(filepath.Join(opts.dir, "arch")), arch.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch arch linux")
 			}
 		case "debian":
-			if err := debian.Fetch(debian.WithDir(filepath.Join(opts.dir, "debian"))); err != nil {
+			if err := debian.Fetch(debian.WithDir(filepath.Join(opts.dir, "debian")), debian.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch debian")
 			}
 		case "epel":
-			if err := epel.Fetch(epel.WithDir(filepath.Join(opts.dir, "epel"))); err != nil {
+			if err := epel.Fetch(epel.WithDir(filepath.Join(opts.dir, "epel")), epel.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch epel")
 			}
 		case "fedora":
-			if err := fedora.Fetch(fedora.WithDir(filepath.Join(opts.dir, "fedora"))); err != nil {
+			if err := fedora.Fetch(fedora.WithDir(filepath.Join(opts.dir, "fedora")), fedora.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch fedora")
 			}
 		case "freebsd":
-			if err := freebsd.Fetch(freebsd.WithDir(filepath.Join(opts.dir, "freebsd"))); err != nil {
+			if err := freebsd.Fetch(freebsd.WithDir(filepath.Join(opts.dir, "freebsd")), freebsd.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch freebsd")
 			}
 		case "gentoo":
-			if err := gentoo.Fetch(gentoo.WithDir(filepath.Join(opts.dir, "gentoo"))); err != nil {
+			if err := gentoo.Fetch(gentoo.WithDir(filepath.Join(opts.dir, "gentoo")), gentoo.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch gentoo")
 			}
 		case "oracle":
-			if err := oracle.Fetch(oracle.WithDir(filepath.Join(opts.dir, "oracle"))); err != nil {
+			if err := oracle.Fetch(oracle.WithDir(filepath.Join(opts.dir, "oracle")), oracle.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch oracle linux")
 			}
 		case "redhat":
-			if err := redhat.Fetch(redhat.WithDir(filepath.Join(opts.dir, "redhat"))); err != nil {
+			if err := redhat.Fetch(redhat.WithDir(filepath.Join(opts.dir, "redhat")), redhat.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat")
 			}
 		case "rocky":
-			if err := rocky.Fetch(rocky.WithDir(filepath.Join(opts.dir, "rocky"))); err != nil {
+			if err := rocky.Fetch(rocky.WithDir(filepath.Join(opts.dir, "rocky")), rocky.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch rocky")
 			}
 		case "suse":
-			if err := suse.Fetch(suse.WithDir(filepath.Join(opts.dir, "suse"))); err != nil {
+			if err := suse.Fetch(suse.WithDir(filepath.Join(opts.dir, "suse")), suse.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse")
 			}
 		case "ubuntu":
-			if err := ubuntu.Fetch(ubuntu.WithDir(filepath.Join(opts.dir, "ubuntu"))); err != nil {
+			if err := ubuntu.Fetch(ubuntu.WithDir(filepath.Join(opts.dir, "ubuntu")), ubuntu.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu")
 			}
 		case "windows":
-			if err := windows.Fetch(windows.WithDir(filepath.Join(opts.dir, "windows"))); err != nil {
+			if err := windows.Fetch(windows.WithDir(filepath.Join(opts.dir, "windows")), windows.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows")
 			}
 		default:
@@ -196,43 +205,43 @@ func fetchLibraryRun(names []string, opts *options) error {
 	for _, name := range names {
 		switch name {
 		case "cargo":
-			if err := cargo.Fetch(cargo.WithDir(filepath.Join(opts.dir, "cargo"))); err != nil {
+			if err := cargo.Fetch(cargo.WithDir(filepath.Join(opts.dir, "cargo")), cargo.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch cargo")
 			}
 		case "composer":
-			if err := composer.Fetch(composer.WithDir(filepath.Join(opts.dir, "composer"))); err != nil {
+			if err := composer.Fetch(composer.WithDir(filepath.Join(opts.dir, "composer")), composer.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch composer")
 			}
 		case "conan":
-			if err := conan.Fetch(conan.WithDir(filepath.Join(opts.dir, "conan"))); err != nil {
+			if err := conan.Fetch(conan.WithDir(filepath.Join(opts.dir, "conan")), conan.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch conan")
 			}
 		case "erlang":
-			if err := erlang.Fetch(erlang.WithDir(filepath.Join(opts.dir, "erlang"))); err != nil {
+			if err := erlang.Fetch(erlang.WithDir(filepath.Join(opts.dir, "erlang")), erlang.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch erlang")
 			}
 		case "golang":
-			if err := golang.Fetch(golang.WithDir(filepath.Join(opts.dir, "golang"))); err != nil {
+			if err := golang.Fetch(golang.WithDir(filepath.Join(opts.dir, "golang")), golang.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch golang")
 			}
 		case "maven":
-			if err := maven.Fetch(maven.WithDir(filepath.Join(opts.dir, "maven"))); err != nil {
+			if err := maven.Fetch(maven.WithDir(filepath.Join(opts.dir, "maven")), maven.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch maven")
 			}
 		case "npm":
-			if err := npm.Fetch(npm.WithDir(filepath.Join(opts.dir, "npm"))); err != nil {
+			if err := npm.Fetch(npm.WithDir(filepath.Join(opts.dir, "npm")), npm.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch npm")
 			}
 		case "nuget":
-			if err := nuget.Fetch(nuget.WithDir(filepath.Join(opts.dir, "nuget"))); err != nil {
+			if err := nuget.Fetch(nuget.WithDir(filepath.Join(opts.dir, "nuget")), nuget.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch nuget")
 			}
 		case "pip":
-			if err := pip.Fetch(pip.WithDir(filepath.Join(opts.dir, "pip"))); err != nil {
+			if err := pip.Fetch(pip.WithDir(filepath.Join(opts.dir, "pip")), pip.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch pip")
 			}
 		case "rubygems":
-			if err := rubygems.Fetch(rubygems.WithDir(filepath.Join(opts.dir, "rubygems"))); err != nil {
+			if err := rubygems.Fetch(rubygems.WithDir(filepath.Join(opts.dir, "rubygems")), rubygems.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch rubygems")
 			}
 		default:
@@ -267,43 +276,43 @@ func fetchOtherRun(names []string, opts *options) error {
 	for _, name := range names {
 		switch name {
 		case "attack":
-			if err := attack.Fetch(attack.WithDir(filepath.Join(opts.dir, "attack"))); err != nil {
+			if err := attack.Fetch(attack.WithDir(filepath.Join(opts.dir, "attack")), attack.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch attack")
 			}
 		case "capec":
-			if err := capec.Fetch(capec.WithDir(filepath.Join(opts.dir, "capec"))); err != nil {
+			if err := capec.Fetch(capec.WithDir(filepath.Join(opts.dir, "capec")), capec.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch capec")
 			}
 		case "cwe":
-			if err := cwe.Fetch(cwe.WithDir(filepath.Join(opts.dir, "cwe"))); err != nil {
+			if err := cwe.Fetch(cwe.WithDir(filepath.Join(opts.dir, "cwe")), cwe.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch cwe")
 			}
 		case "epss":
-			if err := epss.Fetch(epss.WithDir(filepath.Join(opts.dir, "epss"))); err != nil {
+			if err := epss.Fetch(epss.WithDir(filepath.Join(opts.dir, "epss")), epss.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch epss")
 			}
 		case "exploit":
-			if err := exploit.Fetch(exploit.WithDir(filepath.Join(opts.dir, "exploit"))); err != nil {
+			if err := exploit.Fetch(exploit.WithDir(filepath.Join(opts.dir, "exploit")), exploit.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch exploit")
 			}
 		case "jvn":
-			if err := jvn.Fetch(jvn.WithDir(filepath.Join(opts.dir, "jvn"))); err != nil {
+			if err := jvn.Fetch(jvn.WithDir(filepath.Join(opts.dir, "jvn")), jvn.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch jvn")
 			}
 		case "kev":
-			if err := kev.Fetch(kev.WithDir(filepath.Join(opts.dir, "kev"))); err != nil {
+			if err := kev.Fetch(kev.WithDir(filepath.Join(opts.dir, "kev")), kev.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch kev")
 			}
 		case "mitre":
-			if err := mitre.Fetch(mitre.WithDir(filepath.Join(opts.dir, "mitre"))); err != nil {
+			if err := mitre.Fetch(mitre.WithDir(filepath.Join(opts.dir, "mitre")), mitre.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch mitre")
 			}
 		case "msf":
-			if err := msf.Fetch(msf.WithDir(filepath.Join(opts.dir, "msf"))); err != nil {
+			if err := msf.Fetch(msf.WithDir(filepath.Join(opts.dir, "msf")), msf.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch msf")
 			}
 		case "nvd":
-			if err := nvd.Fetch(nvd.WithDir(filepath.Join(opts.dir, "nvd"))); err != nil {
+			if err := nvd.Fetch(nvd.WithDir(filepath.Join(opts.dir, "nvd")), nvd.WithCompressFormat(opts.compressFormat)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd")
 			}
 		default:
