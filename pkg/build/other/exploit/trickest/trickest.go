@@ -101,6 +101,7 @@ func Build(opts ...Option) error {
 
 		y := strings.Split(sv.ID, "-")[1]
 		if _, err := strconv.Atoi(y); err != nil {
+			log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, sv.ID)
 			return nil
 		}
 

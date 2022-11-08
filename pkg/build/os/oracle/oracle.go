@@ -121,7 +121,8 @@ func Build(opts ...Option) error {
 			v := strings.TrimPrefix(sv.Affected.Platform, "Oracle Linux ")
 			y := strings.Split(cve, "-")[1]
 			if _, err := strconv.Atoi(y); err != nil {
-				return nil
+				log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, cve)
+				continue
 			}
 
 			dvbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", cve)), options.destCompressFormat), options.destCompressFormat)

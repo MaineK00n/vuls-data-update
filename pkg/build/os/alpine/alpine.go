@@ -121,13 +121,14 @@ func Build(opts ...Option) error {
 				for _, cve := range cves {
 					for _, id := range strings.Fields(cve) {
 						if !strings.HasPrefix(id, "CVE-") {
-							return nil
+							continue
 						}
 
 						v := strings.TrimPrefix(sv.Distroversion, "v")
 						y := strings.Split(id, "-")[1]
 						if _, err := strconv.Atoi(y); err != nil {
-							return nil
+							log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, id)
+							continue
 						}
 
 						dvbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", id)), options.destCompressFormat), options.destCompressFormat)

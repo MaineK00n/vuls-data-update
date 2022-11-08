@@ -118,13 +118,14 @@ func Build(opts ...Option) error {
 
 		for _, r := range sv.References {
 			if r.Type != "cve" {
-				return nil
+				continue
 			}
 
 			v := filepath.Base(filepath.Dir(filepath.Dir(path)))
 			y := strings.Split(r.ID, "-")[1]
 			if _, err := strconv.Atoi(y); err != nil {
-				return nil
+				log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, r.ID)
+				continue
 			}
 
 			dvbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", r.ID)), options.destCompressFormat), options.destCompressFormat)
