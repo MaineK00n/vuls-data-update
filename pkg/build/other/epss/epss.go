@@ -118,6 +118,11 @@ func Build(opts ...Option) error {
 
 		fillVulnerability(&dv, &sv)
 
+		dbs, err = json.Marshal(dv)
+		if err != nil {
+			return errors.Wrap(err, "marshal json")
+		}
+
 		if err := util.Write(util.BuildFilePath(filepath.Join(options.destDir, y, fmt.Sprintf("%s.json", sv.ID)), options.destCompressFormat), dbs, options.destCompressFormat); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.destDir, y, sv.ID))
 		}
