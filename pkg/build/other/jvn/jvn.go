@@ -119,12 +119,13 @@ func Build(opts ...Option) error {
 
 		for _, r := range sv.Related {
 			if r.Type != "advisory" || r.Name != "Common Vulnerabilities and Exposures (CVE)" {
-				return nil
+				continue
 			}
 
 			y := strings.Split(r.VulinfoID, "-")[1]
 			if _, err := strconv.Atoi(y); err != nil {
-				return nil
+				log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, r.VulinfoID)
+				continue
 			}
 
 			dvbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", r.VulinfoID)), options.destCompressFormat), options.destCompressFormat)

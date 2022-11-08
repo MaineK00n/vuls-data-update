@@ -124,7 +124,8 @@ func Build(opts ...Option) error {
 		for _, cve := range sv.Advisory.CVEs {
 			y := strings.Split(cve.CVEID, "-")[1]
 			if _, err := strconv.Atoi(y); err != nil {
-				return nil
+				log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, cve.CVEID)
+				continue
 			}
 
 			dvbs, err := util.Open(util.BuildFilePath(filepath.Join(options.destVulnDir, y, fmt.Sprintf("%s.json", cve.CVEID)), options.destCompressFormat), options.destCompressFormat)
@@ -192,8 +193,6 @@ func Build(opts ...Option) error {
 		if err := util.Write(util.BuildFilePath(filepath.Join(options.destDetectDir, v, stream, "repository_to_cpe.json"), options.destCompressFormat), bs, options.destCompressFormat); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.destVulnDir, v, stream, "repository_to_cpe.json"))
 		}
-
-		return nil
 	}
 
 	return nil

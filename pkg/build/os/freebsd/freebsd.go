@@ -137,7 +137,8 @@ func Build(opts ...Option) error {
 			if strings.HasPrefix(id, "CVE-") {
 				y = strings.Split(id, "-")[1]
 				if _, err := strconv.Atoi(y); err != nil {
-					return nil
+					log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, id)
+					continue
 				}
 			}
 

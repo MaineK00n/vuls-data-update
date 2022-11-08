@@ -119,6 +119,7 @@ func Build(opts ...Option) error {
 		v := filepath.Base(filepath.Dir(filepath.Dir(path)))
 		y := strings.Split(sv.Candidate, "-")[1]
 		if _, err := strconv.Atoi(y); err != nil {
+			log.Printf(`[WARN] unexpected CVE-ID. accepts: "CVE-yyyy-XXXX", received: "%s"`, sv.Candidate)
 			return nil
 		}
 
