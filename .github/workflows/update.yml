@@ -428,8 +428,8 @@ jobs:
       - name: check .git source output size
         run: du -sh .git source output
 
-      - name: remove output
-        run: rm -rf output
+      - name: remove output/vulnerablity
+        run: rm -rf output/vulnerablity
 
       - name: build mitre
         if: ${{ success() || failure() }}
