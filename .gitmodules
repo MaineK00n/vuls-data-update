@@ -4,7 +4,7 @@
 	branch = main
 [submodule "output"]
 	path = output
-	url = https://github.com/MaineK00n/vuls-data.git
+	url = https://github.com/MaineK00n/vuls-data-output.git
 	branch = main
 [submodule "pkg/fetch/os/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker"]
 	path = pkg/fetch/os/ubuntu/tracker/testdata/fixtures/ubuntu-security-tracker
