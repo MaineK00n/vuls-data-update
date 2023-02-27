@@ -15,7 +15,7 @@ require (
 	github.com/ulikunitz/xz v0.5.10
 	golang.org/x/exp v0.0.0-20220706164943-b4a6d9510983
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	golang.org/x/sync v0.1.0
 	modernc.org/sqlite v1.19.2
 )
 
