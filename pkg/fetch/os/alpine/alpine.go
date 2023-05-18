@@ -3,6 +3,7 @@ package alpine
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -18,10 +19,9 @@ import (
 const baseURL = "https://secdb.alpinelinux.org/"
 
 type options struct {
-	baseURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	baseURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -58,22 +58,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:        baseURL,
-		dir:            filepath.Join(util.SourceDir(), "alpine"),
-		retry:          3,
-		compressFormat: "",
+		baseURL: baseURL,
+		dir:     filepath.Join(util.SourceDir(), "alpine"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -105,13 +94,8 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "mkdir %s", dir)
 		}
 		for filename, adv := range advs {
-			bs, err := json.Marshal(adv)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
-			}
-
-			if err := util.Write(util.BuildFilePath(filepath.Join(dir, filename), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(dir, filename))
+			if err := util.Write(filepath.Join(dir, fmt.Sprintf("%s.gz", filename)), adv); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, fmt.Sprintf("%s.gz", filename)))
 			}
 		}
 	}
@@ -180,22 +164,11 @@ func (opts options) fetchAdvisory(release string, files []string) (map[string]Ad
 			return nil, errors.Wrapf(err, "fetch alpine linux %s %s", release, f)
 		}
 
-		var secdb secdb
-		if err := json.Unmarshal(bs, &secdb); err != nil {
+		var a Advisory
+		if err := json.Unmarshal(bs, &a); err != nil {
 			return nil, errors.Wrapf(err, "unmarshal alpine linux %s %s", release, f)
 		}
-		pkgs := make([]Package, 0, len(secdb.Packages))
-		for _, p := range secdb.Packages {
-			pkgs = append(pkgs, p.Pkg)
-		}
-		advs[f] = Advisory{
-			Apkurl:        secdb.Apkurl,
-			Archs:         secdb.Archs,
-			Reponame:      secdb.Reponame,
-			Urlprefix:     secdb.Urlprefix,
-			Distroversion: secdb.Distroversion,
-			Packages:      pkgs,
-		}
+		advs[f] = a
 	}
 	return advs, nil
 }

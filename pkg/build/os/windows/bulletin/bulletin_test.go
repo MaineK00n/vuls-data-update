@@ -1,1 +1,0 @@
-package bulletin_test

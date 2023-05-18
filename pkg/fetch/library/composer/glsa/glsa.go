@@ -14,10 +14,9 @@ import (
 const defaultRepoURL = "https://gitlab.com/gitlab-org/advisories-community/-/tree/main/packagist"
 
 type options struct {
-	repoURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	repoURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -54,22 +53,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		repoURL:        defaultRepoURL,
-		dir:            filepath.Join(util.SourceDir(), "composer", "glsa"),
-		retry:          3,
-		compressFormat: "",
+		repoURL: defaultRepoURL,
+		dir:     filepath.Join(util.SourceDir(), "composer", "glsa"),
+		retry:   3,
 	}
 
 	for _, o := range opts {

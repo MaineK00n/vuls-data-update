@@ -15,3 +15,6 @@
 [submodule "pkg/fetch/other/exploit/trickest/testdata/fixtures/trickest"]
 	path = pkg/fetch/other/exploit/trickest/testdata/fixtures/trickest
 	url = https://github.com/MaineK00n/trickest.git
+[submodule "pkg/fetch/os/gentoo/testdata/fixtures/glsa"]
+	path = pkg/fetch/os/gentoo/testdata/fixtures/glsa
+	url = https://github.com/MaineK00n/glsa.git

@@ -66,8 +66,9 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
+				dir, d := filepath.Split(filepath.Clean(dir))
 				_, v := filepath.Split(filepath.Clean(dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", v, file))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", v, d, file))
 				if err != nil {
 					return err
 				}

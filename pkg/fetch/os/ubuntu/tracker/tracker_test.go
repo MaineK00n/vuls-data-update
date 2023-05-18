@@ -1,15 +1,14 @@
 package tracker_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/tracker"
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/tracker"
 )
 
 func TestFetch(t *testing.T) {
@@ -45,33 +44,18 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				dir, y := filepath.Split(filepath.Clean(dir))
-				_, v := filepath.Split(filepath.Clean(dir))
-				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", v, y, file))
-				if err != nil {
-					return err
-				}
-				var want tracker.Advisory
-				if err := json.Unmarshal(wantb, &want); err != nil {
-					return err
-				}
-
-				gotb, err := os.ReadFile(path)
+				_, y := filepath.Split(filepath.Clean(dir))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", y, file))
 				if err != nil {
 					return err
 				}
 
-				var got tracker.Advisory
-				if err := json.Unmarshal(gotb, &got); err != nil {
+				got, err := os.ReadFile(path)
+				if err != nil {
 					return err
 				}
 
-				opts := []cmp.Option{
-					cmpopts.SortSlices(func(i, j tracker.Package) bool {
-						return i.Name < j.Name
-					}),
-				}
-				if diff := cmp.Diff(want, got, opts...); diff != "" {
+				if diff := cmp.Diff(want, got); diff != "" {
 					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
 				}
 

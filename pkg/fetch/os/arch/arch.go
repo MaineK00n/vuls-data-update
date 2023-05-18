@@ -16,10 +16,9 @@ import (
 const advisoryURL = "https://security.archlinux.org/json"
 
 type options struct {
-	advisoryURL    string
-	dir            string
-	retry          int
-	compressFormat string
+	advisoryURL string
+	dir         string
+	retry       int
 }
 
 type Option interface {
@@ -56,22 +55,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		advisoryURL:    advisoryURL,
-		dir:            filepath.Join(util.SourceDir(), "arch"),
-		retry:          3,
-		compressFormat: "",
+		advisoryURL: advisoryURL,
+		dir:         filepath.Join(util.SourceDir(), "arch"),
+		retry:       3,
 	}
 
 	for _, o := range opts {
@@ -98,21 +86,8 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(vs))
 	for _, v := range vs {
-		if err := func() error {
-			f, err := os.Create(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.Name)))
-			if err != nil {
-				return errors.Wrapf(err, "create %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.Name)))
-			}
-			defer f.Close()
-
-			enc := json.NewEncoder(f)
-			enc.SetIndent("", "  ")
-			if err := enc.Encode(v); err != nil {
-				return errors.Wrap(err, "encode data")
-			}
-			return nil
-		}(); err != nil {
-			return err
+		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json.gz", v.Name)), v); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json.gz", v.Name)))
 		}
 
 		bar.Increment()

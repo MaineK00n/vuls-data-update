@@ -1,323 +1,1816 @@
 package fetch
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"golang.org/x/exp/slices"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/cargo"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/composer"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/conan"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/erlang"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/golang"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/maven"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/npm"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/nuget"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/pip"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/library/rubygems"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alma"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/alpine"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/arch"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/epel"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/fedora"
+	debianOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/debian/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/gentoo"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/netbsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/oracle"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat"
+	redhatOvalV1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat/ovalv1"
+	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/redhat/ovalv2"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/rocky"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/windows"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/attack"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/capec"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/cwe"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/epss"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/exploit"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/jvn"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/kev"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/mitre"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/msf"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/other/nvd"
+	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/cvrf"
+	suseOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/oval"
+	ubuntuOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/oval"
+	ubuntuCveTracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/tracker"
+	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/windows/bulletin"
+	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/windows/cvrf"
+	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/windows/msuc"
+	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/os/windows/wsusscn2"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
 type options struct {
-	dir            string
-	compressFormat string
+	dir string
 }
 
-var (
-	supportOS      = []string{"alma", "alpine", "amazon", "arch", "debian", "epel", "fedora", "freebsd", "gentoo", "oracle", "redhat", "rocky", "suse", "ubuntu", "windows"}
-	supportLibrary = []string{"cargo", "composer", "conan", "erlang", "golang", "maven", "npm", "nuget", "pip", "rubygems"}
-	supportOther   = []string{"attack", "capec", "cwe", "epss", "exploit", "jvn", "kev", "mitre", "msf", "nvd"}
-)
-
 func NewCmdFetch() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "fetch <data source>",
+		Short: "Fetch data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch debian-security-tracker
+			$ vuls-data-update fetch cargo-db
+			$ vuls-data-update fetch nvd
+		`),
+	}
+
+	cmd.AddCommand(
+		// os
+		newCmdFetchAlma(),
+		newCmdFetchAlpine(),
+		newCmdFetchAmazon(),
+		newCmdFetchArch(),
+		newCmdFetchDebianOval(), newCmdFetchDebianSecurityTracker(),
+		newCmdFetchEPEL(),
+		newCmdFetchFedora(),
+		newCmdFetchFreeBSD(),
+		newCmdFetchGentoo(),
+		newCmdFetchNetBSD(),
+		newCmdFetchOracle(),
+		newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatSecurityAPI(), newCmdFetchRedhatCVRF(),
+		newCmdFetchRocky(),
+		newCmdFetchSUSEOval(), newCmdFetchSUSECVRF(),
+		newCmdFetchUbuntuOVAL(), newCmdFetchUbuntuCVETracker(),
+		newCmdFetchWindowsBulletin(), newCmdFetchWindowsCVRF(), newCmdFetchWindowsMSUC(), newCmdFetchWindowsWSUSSCN2(),
+		// library
+		newCmdFetchCargoDB(), newCmdFetchCargoGHSA(), newCmdFetchCargoOSV(),
+		newCmdFetchComposerDB(), newCmdFetchComposerGHSA(), newCmdFetchComposerGLSA(),
+		newCmdFetchConan(),
+		newCmdFetchDart(),
+		newCmdFetchErlang(),
+		newCmdFetchGolangDB(), newCmdFetchGolangGHSA(), newCmdFetchGolangGLSA(), newCmdFetchGolangVulnDB(), newCmdFetchGolangOSV(),
+		newCmdFetchMavenGHSA(), newCmdFetchMavenGLSA(),
+		newCmdFetchNpmDB(), newCmdFetchNpmGHSA(), newCmdFetchNpmGLSA(), newCmdFetchNpmOSV(),
+		newCmdFetchNugetGHSA(), newCmdFetchNugetGLSA(), newCmdFetchNugetOSV(),
+		newCmdFetchPipDB(), newCmdFetchPipGHSA(), newCmdFetchPipGLSA(), newCmdFetchPipOSV(),
+		newCmdFetchRubygemsDB(), newCmdFetchRubygemsGHSA(), newCmdFetchRubygemsGLSA(), newCmdFetchRubygemsOSV(),
+		// others
+		newCmdFetchAttack(),
+		newCmdFetchCapec(),
+		newCmdFetchCWE(),
+		newCmdFetchEPSS(),
+		newCmdFetchExploitExploitDB(), newCmdFetchExploitGitHub(), newCmdFetchExploitInthewild(), newCmdFetchExploitExploitTrickest(),
+		newCmdFetchJVN(),
+		newCmdFetchKEV(),
+		newCmdFetchMitre(),
+		newCmdFetchMSF(),
+		newCmdFetchNVDAPI(), newCmdFetchNVDFeed(),
+	)
+
+	return cmd
+}
+
+func newCmdFetchAlma() *cobra.Command {
 	options := &options{
 		dir: util.SourceDir(),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fetch <subcommand> <data source>",
-		Short: "Fetch data source",
-		PreRunE: func(_ *cobra.Command, _ []string) error {
-			if !slices.Contains([]string{"", "gzip", "bzip2", "xz"}, options.compressFormat) {
-				return errors.New(`--destination-compress-format flag allows ["", "gzip", "bzip2", "xz"].`)
+		Use:   "alma",
+		Short: "Fetch AlmaLinux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch alma
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := alma.Fetch(alma.WithDir(filepath.Join(options.dir, "alma"))); err != nil {
+				return errors.Wrap(err, "failed to fetch almalinux")
 			}
 			return nil
 		},
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch os debian
-			$ vuls-data-update fetch library cargo
-			$ vuls-data-update fetch other nvd
-		`),
 	}
 
-	cmd.PersistentFlags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
-	cmd.PersistentFlags().StringVarP(&options.compressFormat, "compress-format", "f", "", `compression format. available: ["gzip", "bzip2", "xz"]`)
-
-	cmd.AddCommand(newCmdFetchOS(options))
-	cmd.AddCommand(newCmdFetchLibrary(options))
-	cmd.AddCommand(newCmdFetchOther(options))
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
 
 	return cmd
 }
 
-func newCmdFetchOS(opts *options) *cobra.Command {
+func newCmdFetchAlpine() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
 	cmd := &cobra.Command{
-		Use:       "os ([os name])",
-		Short:     "Fetch OS data source",
-		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
-		ValidArgs: supportOS,
-		RunE: func(_ *cobra.Command, args []string) error {
-			as := args
-			if len(as) == 0 {
-				as = supportOS
-			}
-			return fetchOSRun(as, opts)
-		},
+		Use:   "alpine",
+		Short: "Fetch Alpine Linux data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch os
-			$ vuls-data-update fetch os debian
+			$ vuls-data-update fetch alpine
 		`),
-	}
-	return cmd
-}
-
-func fetchOSRun(names []string, opts *options) error {
-	for _, name := range names {
-		switch name {
-		case "alma":
-			if err := alma.Fetch(alma.WithDir(filepath.Join(opts.dir, "alma")), alma.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch almalinux")
-			}
-		case "alpine":
-			if err := alpine.Fetch(alpine.WithDir(filepath.Join(opts.dir, "alpine")), alpine.WithCompressFormat(opts.compressFormat)); err != nil {
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := alpine.Fetch(alpine.WithDir(filepath.Join(options.dir, "alpine"))); err != nil {
 				return errors.Wrap(err, "failed to fetch alpine linux")
 			}
-		case "amazon":
-			if err := amazon.Fetch(amazon.WithDir(filepath.Join(opts.dir, "amazon")), amazon.WithCompressFormat(opts.compressFormat)); err != nil {
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchAmazon() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "amazon",
+		Short: "Fetch Amazon Linux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch amzon
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := amazon.Fetch(amazon.WithDir(filepath.Join(options.dir, "amazon"))); err != nil {
 				return errors.Wrap(err, "failed to fetch amazon linux")
 			}
-		case "arch":
-			if err := arch.Fetch(arch.WithDir(filepath.Join(opts.dir, "arch")), arch.WithCompressFormat(opts.compressFormat)); err != nil {
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchArch() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "arch",
+		Short: "Fetch Arch Linux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch arch
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := arch.Fetch(arch.WithDir(filepath.Join(options.dir, "arch"))); err != nil {
 				return errors.Wrap(err, "failed to fetch arch linux")
 			}
-		case "debian":
-			if err := debian.Fetch(debian.WithDir(filepath.Join(opts.dir, "debian")), debian.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch debian")
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchDebianOval() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "debian-oval",
+		Short: "Fetch Debian OVAL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch debian-oval
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := debianOval.Fetch(debianOval.WithDir(filepath.Join(options.dir, "debian", "oval"))); err != nil {
+				return errors.Wrap(err, "failed to fetch debian oval")
 			}
-		case "epel":
-			if err := epel.Fetch(epel.WithDir(filepath.Join(opts.dir, "epel")), epel.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch epel")
-			}
-		case "fedora":
-			if err := fedora.Fetch(fedora.WithDir(filepath.Join(opts.dir, "fedora")), fedora.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch fedora")
-			}
-		case "freebsd":
-			if err := freebsd.Fetch(freebsd.WithDir(filepath.Join(opts.dir, "freebsd")), freebsd.WithCompressFormat(opts.compressFormat)); err != nil {
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchDebianSecurityTracker() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "debian-security-tracker",
+		Short: "Fetch Debian Security Tracker data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch debian-security-tracker
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// if err := debianSecurityTracker.Fetch(debianSecurityTracker.WithDir(filepath.Join(options.dir, "debian", "security-tracker"))); err != nil {
+			// 	return errors.Wrap(err, "failed to fetch debian security tracker")
+			// }
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchEPEL() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "epel",
+		Short: "Fetch EPEL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch epel
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := epel.Fetch(epel.WithDir(filepath.Join(options.dir, "epel"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch epel")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchFedora() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "fedora",
+		Short: "Fetch Fedora data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch fedora
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := fedora.Fetch(fedora.WithDir(filepath.Join(options.dir, "fedora"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch fedora")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchFreeBSD() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "freebsd",
+		Short: "Fetch FreeBSD data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch freebsd
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := freebsd.Fetch(freebsd.WithDir(filepath.Join(options.dir, "freebsd"))); err != nil {
 				return errors.Wrap(err, "failed to fetch freebsd")
 			}
-		case "gentoo":
-			if err := gentoo.Fetch(gentoo.WithDir(filepath.Join(opts.dir, "gentoo")), gentoo.WithCompressFormat(opts.compressFormat)); err != nil {
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchGentoo() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "gentoo",
+		Short: "Fetch Gentoo Linux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch gentoo
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := gentoo.Fetch(gentoo.WithDir(filepath.Join(options.dir, "gentoo"))); err != nil {
 				return errors.Wrap(err, "failed to fetch gentoo")
 			}
-		case "oracle":
-			if err := oracle.Fetch(oracle.WithDir(filepath.Join(opts.dir, "oracle")), oracle.WithCompressFormat(opts.compressFormat)); err != nil {
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchNetBSD() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "netbsd",
+		Short: "Fetch NetBSD data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch netbsd
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := netbsd.Fetch(netbsd.WithDir(filepath.Join(options.dir, "netbsd"))); err != nil {
+				return errors.Wrap(err, "failed to fetch netbsd")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchOracle() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "oracle",
+		Short: "Fetch Oracle Linux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch oracle
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := oracle.Fetch(oracle.WithDir(filepath.Join(options.dir, "oracle"))); err != nil {
 				return errors.Wrap(err, "failed to fetch oracle linux")
 			}
-		case "redhat":
-			if err := redhat.Fetch(redhat.WithDir(filepath.Join(opts.dir, "redhat")), redhat.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat")
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchRedhatOvalV1() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-ovalv1",
+		Short: "Fetch RedHat Enterprise Linux OVALv1 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-ovalv1
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatOvalV1.Fetch(redhatOvalV1.WithDir(filepath.Join(options.dir, "redhat", "ovalv1"))); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat ovalv1")
 			}
-		case "rocky":
-			if err := rocky.Fetch(rocky.WithDir(filepath.Join(opts.dir, "rocky")), rocky.WithCompressFormat(opts.compressFormat)); err != nil {
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchRedhatOvalV2() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-ovalv2",
+		Short: "Fetch RedHat Enterprise Linux OVALv2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-ovalv2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatOvalV2.Fetch(redhatOvalV2.WithDir(filepath.Join(options.dir, "redhat", "ovalv2"))); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat ovalv2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchRedhatSecurityAPI() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-security-api",
+		Short: "Fetch RedHat Security API data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-security-api
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// if err := redhatSecurityAPI.Fetch(redhatSecurityAPI.WithDir(filepath.Join(options.dir, "redhat", "security-api"))); err != nil {
+			// 	return errors.Wrap(err, "failed to fetch redhat security api")
+			// }
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchRedhatCVRF() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-cvrf",
+		Short: "Fetch RedHat CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-cvrf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// if err := redhatCVRF.Fetch(redhatCVRF.WithDir(filepath.Join(options.dir, "redhat", "cvrf"))); err != nil {
+			// 	return errors.Wrap(err, "failed to fetch redhat cvrf")
+			// }
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchRocky() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "rocky",
+		Short: "Fetch Rocky Linux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch rocky
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := rocky.Fetch(rocky.WithDir(filepath.Join(options.dir, "rocky"))); err != nil {
 				return errors.Wrap(err, "failed to fetch rocky")
 			}
-		case "suse":
-			if err := suse.Fetch(suse.WithDir(filepath.Join(opts.dir, "suse")), suse.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch suse")
-			}
-		case "ubuntu":
-			if err := ubuntu.Fetch(ubuntu.WithDir(filepath.Join(opts.dir, "ubuntu")), ubuntu.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch ubuntu")
-			}
-		case "windows":
-			if err := windows.Fetch(windows.WithDir(filepath.Join(opts.dir, "windows")), windows.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows")
-			}
-		default:
-			return fmt.Errorf("accepts %q, received %q", supportOS, name)
-		}
-	}
-	return nil
-}
-
-func newCmdFetchLibrary(opts *options) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:       "library ([library name])",
-		Short:     "Fetch Library data source",
-		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
-		ValidArgs: supportLibrary,
-		RunE: func(_ *cobra.Command, args []string) error {
-			as := args
-			if len(as) == 0 {
-				as = supportLibrary
-			}
-			return fetchLibraryRun(as, opts)
+			return nil
 		},
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch library
-			$ vuls-data-update fetch library cargo
-		`),
 	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
 	return cmd
 }
 
-func fetchLibraryRun(names []string, opts *options) error {
-	for _, name := range names {
-		switch name {
-		case "cargo":
-			if err := cargo.Fetch(cargo.WithDir(filepath.Join(opts.dir, "cargo")), cargo.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch cargo")
-			}
-		case "composer":
-			if err := composer.Fetch(composer.WithDir(filepath.Join(opts.dir, "composer")), composer.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch composer")
-			}
-		case "conan":
-			if err := conan.Fetch(conan.WithDir(filepath.Join(opts.dir, "conan")), conan.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch conan")
-			}
-		case "erlang":
-			if err := erlang.Fetch(erlang.WithDir(filepath.Join(opts.dir, "erlang")), erlang.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch erlang")
-			}
-		case "golang":
-			if err := golang.Fetch(golang.WithDir(filepath.Join(opts.dir, "golang")), golang.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch golang")
-			}
-		case "maven":
-			if err := maven.Fetch(maven.WithDir(filepath.Join(opts.dir, "maven")), maven.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch maven")
-			}
-		case "npm":
-			if err := npm.Fetch(npm.WithDir(filepath.Join(opts.dir, "npm")), npm.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch npm")
-			}
-		case "nuget":
-			if err := nuget.Fetch(nuget.WithDir(filepath.Join(opts.dir, "nuget")), nuget.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch nuget")
-			}
-		case "pip":
-			if err := pip.Fetch(pip.WithDir(filepath.Join(opts.dir, "pip")), pip.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch pip")
-			}
-		case "rubygems":
-			if err := rubygems.Fetch(rubygems.WithDir(filepath.Join(opts.dir, "rubygems")), rubygems.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch rubygems")
-			}
-		default:
-			return fmt.Errorf("accepts %q, received %q", supportLibrary, name)
-		}
+func newCmdFetchSUSEOval() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
 	}
-	return nil
-}
 
-func newCmdFetchOther(opts *options) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:       "other ([data name])",
-		Short:     "Fetch Other data source",
-		Args:      cobra.MatchAll(cobra.MinimumNArgs(0), cobra.OnlyValidArgs),
-		ValidArgs: supportOther,
-		RunE: func(_ *cobra.Command, args []string) error {
-			as := args
-			if len(as) == 0 {
-				as = supportOther
-			}
-			return fetchOtherRun(as, opts)
-		},
+		Use:   "suse-oval",
+		Short: "Fetch SUSE OVAL data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch other	
-			$ vuls-data-update fetch other nvd
+			$ vuls-data-update fetch suse-oval
 		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := suseOval.Fetch(suseOval.WithDir(filepath.Join(options.dir, "suse", "oval"))); err != nil {
+				return errors.Wrap(err, "failed to fetch suse oval")
+			}
+			return nil
+		},
 	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
 	return cmd
 }
 
-func fetchOtherRun(names []string, opts *options) error {
-	for _, name := range names {
-		switch name {
-		case "attack":
-			if err := attack.Fetch(attack.WithDir(filepath.Join(opts.dir, "attack")), attack.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch attack")
-			}
-		case "capec":
-			if err := capec.Fetch(capec.WithDir(filepath.Join(opts.dir, "capec")), capec.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch capec")
-			}
-		case "cwe":
-			if err := cwe.Fetch(cwe.WithDir(filepath.Join(opts.dir, "cwe")), cwe.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch cwe")
-			}
-		case "epss":
-			if err := epss.Fetch(epss.WithDir(filepath.Join(opts.dir, "epss")), epss.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch epss")
-			}
-		case "exploit":
-			if err := exploit.Fetch(exploit.WithDir(filepath.Join(opts.dir, "exploit")), exploit.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch exploit")
-			}
-		case "jvn":
-			if err := jvn.Fetch(jvn.WithDir(filepath.Join(opts.dir, "jvn")), jvn.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch jvn")
-			}
-		case "kev":
-			if err := kev.Fetch(kev.WithDir(filepath.Join(opts.dir, "kev")), kev.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch kev")
-			}
-		case "mitre":
-			if err := mitre.Fetch(mitre.WithDir(filepath.Join(opts.dir, "mitre")), mitre.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch mitre")
-			}
-		case "msf":
-			if err := msf.Fetch(msf.WithDir(filepath.Join(opts.dir, "msf")), msf.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch msf")
-			}
-		case "nvd":
-			if err := nvd.Fetch(nvd.WithDir(filepath.Join(opts.dir, "nvd")), nvd.WithCompressFormat(opts.compressFormat)); err != nil {
-				return errors.Wrap(err, "failed to fetch nvd")
-			}
-		default:
-			return fmt.Errorf("accepts %q, received %q", supportOther, name)
-		}
+func newCmdFetchSUSECVRF() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
 	}
-	return nil
+
+	cmd := &cobra.Command{
+		Use:   "suse-cvrf",
+		Short: "Fetch SUSE CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch suse-cvrf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := suseCVRF.Fetch(suseCVRF.WithDir(filepath.Join(options.dir, "suse", "cvrf"))); err != nil {
+				return errors.Wrap(err, "failed to fetch suse cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchUbuntuOVAL() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "ubuntu-oval",
+		Short: "Fetch Ubuntu OVAL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch ubuntu-oval
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := ubuntuOval.Fetch(ubuntuOval.WithDir(filepath.Join(options.dir, "ubuntu", "oval"))); err != nil {
+				return errors.Wrap(err, "failed to fetch ubuntu oval")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchUbuntuCVETracker() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "ubuntu-cve-tracker",
+		Short: "Fetch Ubuntu CVE Tracker data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch ubuntu-cve-tracker
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := ubuntuCveTracker.Fetch(ubuntuCveTracker.WithDir(filepath.Join(options.dir, "ubuntu", "cve-tracker"))); err != nil {
+				return errors.Wrap(err, "failed to fetch ubuntu cve tracker")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchWindowsBulletin() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-bulletin",
+		Short: "Fetch Windows Bulletin data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-bulletin
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsBulletin.Fetch(windowsBulletin.WithDir(filepath.Join(options.dir, "windows", "bulletin"))); err != nil {
+				return errors.Wrap(err, "failed to fetch windows bulletin")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchWindowsCVRF() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-cvrf",
+		Short: "Fetch Windows CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-cvrf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsCVRF.Fetch(windowsCVRF.WithDir(filepath.Join(options.dir, "windows", "cvrf"))); err != nil {
+				return errors.Wrap(err, "failed to fetch windows cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchWindowsMSUC() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-msuc [KBID]",
+		Short: "Fetch Windows Microsoft Software Update Catalog data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-msuc "KB5019311", "KB5017389", "KB5018427", "KB5019509", "KB5018496", "KB5019980", "KB5020044", "KB5021255", "KB5022303", "KB5022360", "KB5022845"
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := windowsMSUC.Fetch(args, windowsMSUC.WithDir(filepath.Join(options.dir, "windows", "msuc"))); err != nil {
+				return errors.Wrap(err, "failed to fetch windows msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchWindowsWSUSSCN2() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-wsusscn2",
+		Short: "Fetch Windows WSUSSCN2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-wsusscn2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsWSUSSCN2.Fetch(windowsWSUSSCN2.WithDir(filepath.Join(options.dir, "windows", "wsusscn2"))); err != nil {
+				return errors.Wrap(err, "failed to fetch windows wsusscn2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchCargoDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cargo-db",
+		Short: "Fetch Cargo DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cargo-db
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := cargoDB.Fetch(cargoDB.WithDir(filepath.Join(options.dir, "cargo", "db"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch cargo db")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchCargoGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cargo-ghsa",
+		Short: "Fetch Cargo GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cargo-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := cargoGHSA.Fetch(cargoGHSA.WithDir(filepath.Join(options.dir, "cargo", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch cargo ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchCargoOSV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cargo-osv",
+		Short: "Fetch Cargo Open Source Vulnerabilities Database data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cargo-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := cargoOSV.Fetch(cargoOSV.WithDir(filepath.Join(options.dir, "cargo", "osv"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch cargo osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchComposerDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "composer-db",
+		Short: "Fetch Composer DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch composer-db
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := composerDB.Fetch(composerDB.WithDir(filepath.Join(options.dir, "composer", "db"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch composer db")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchComposerGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "composer-ghsa",
+		Short: "Fetch Composer GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch composer-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := composerGHSA.Fetch(composerGHSA.WithDir(filepath.Join(options.dir, "composer", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch composer ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchComposerGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "composer-glsa",
+		Short: "Fetch Composer GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch composer-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := composerGLSA.Fetch(composerGLSA.WithDir(filepath.Join(options.dir, "composer", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch composer glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchConan() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "conan",
+		Short: "Fetch Conan GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch conan
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := conan.Fetch(conan.WithDir(filepath.Join(options.dir, "conan"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch conan")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchDart() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "dart",
+		Short: "Fetch Dart GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch dart
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := dart.Fetch(dart.WithDir(filepath.Join(options.dir, "dart"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch dart")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchErlang() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "erlang",
+		Short: "Fetch Erlang GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch erlang
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := erlang.Fetch(erlang.WithDir(filepath.Join(options.dir, "erlang"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch erlang")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchGolangDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "golang-db",
+		Short: "Fetch Golang DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch golang-db
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := golangDB.Fetch(golangDB.WithDir(filepath.Join(options.dir, "golang", "db"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch golang db")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchGolangGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "golang-ghsa",
+		Short: "Fetch Golang GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch golang-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := golangGHSA.Fetch(golangGHSA.WithDir(filepath.Join(options.dir, "golang", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch golang ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchGolangGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "golang-glsa",
+		Short: "Fetch Golang GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch golang-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := golangGLSA.Fetch(golangGLSA.WithDir(filepath.Join(options.dir, "golang", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch golang glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchGolangOSV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "golang-osv",
+		Short: "Fetch Golang OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch golang-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := golangOSV.Fetch(golangOSV.WithDir(filepath.Join(options.dir, "golang", "osv"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch golang osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchGolangVulnDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "golang-vulndb",
+		Short: "Fetch Golang VulnDB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch golang-vulndb
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := golangVulnDB.Fetch(golangVulnDB.WithDir(filepath.Join(options.dir, "golang", "vulndb"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch golang vulndb")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchMavenGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "maven-ghsa",
+		Short: "Fetch Maven GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch maven-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := mavenGHSA.Fetch(mavenGHSA.WithDir(filepath.Join(options.dir, "maven", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch maven ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchMavenGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "maven-glsa",
+		Short: "Fetch GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch maven-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := mavenGLSA.Fetch(mavenGLSA.WithDir(filepath.Join(options.dir, "maven", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch maven glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNpmDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "npm-db",
+		Short: "Fetch NPM DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch npm-db
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := npmDB.Fetch(npmDB.WithDir(filepath.Join(options.dir, "npm", "db"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch npm db")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNpmGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "npm-ghsa",
+		Short: "Fetch NPM GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch npm-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := npmGHSA.Fetch(npmGHSA.WithDir(filepath.Join(options.dir, "npm", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch npm ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNpmGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "npm-glsa",
+		Short: "Fetch NPM GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch npm-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := npmGLSA.Fetch(npmGLSA.WithDir(filepath.Join(options.dir, "npm", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch npm glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNpmOSV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "npm-osv",
+		Short: "Fetch NPM OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch npm-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := npmOSV.Fetch(npmOSV.WithDir(filepath.Join(options.dir, "npm", "osv"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch npm osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNugetGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nuget-ghsa",
+		Short: "Fetch Nuget GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nuget-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := nugetGHSA.Fetch(nugetGHSA.WithDir(filepath.Join(options.dir, "nuget", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch nuget ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchNugetGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nuget-glsa",
+		Short: "Fetch Nuget GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nuget-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := nugetGLSA.Fetch(nugetGLSA.WithDir(filepath.Join(options.dir, "nuget", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch nuget glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchNugetOSV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nuget-osv",
+		Short: "Fetch Nuget OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nuget-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := nugetOSV.Fetch(nugetOSV.WithDir(filepath.Join(options.dir, "nuget", "osv"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch nuget osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchPipDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pip-db",
+		Short: "Fetch Pip DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch pip-db
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := pipDB.Fetch(pipDB.WithDir(filepath.Join(options.dir, "pip", "db"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch pip db")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchPipGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pip-ghsa",
+		Short: "Fetch Pip GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch pip-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := pipGHSA.Fetch(pipGHSA.WithDir(filepath.Join(options.dir, "pip", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch pip ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchPipGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pip-glsa",
+		Short: "Fetch Pip GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch pip-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := pipGLSA.Fetch(pipGLSA.WithDir(filepath.Join(options.dir, "pip", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch pip glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchPipOSV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pip-osv",
+		Short: "Fetch Pip OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch pip-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := pipOSV.Fetch(pipOSV.WithDir(filepath.Join(options.dir, "pip", "osv"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch pip osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdFetchRubygemsDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "rubygems-db",
+		Short: "Fetch Rubygems DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch rubygems-db
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := rubygemsDB.Fetch(rubygemsDB.WithDir(filepath.Join(options.dir, "rubygems", "db"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch rubygems db")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchRubygemsGHSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "rubygems-ghsa",
+		Short: "Fetch Rubygems GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch rubygems-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := rubygemsGHSA.Fetch(rubygemsGHSA.WithDir(filepath.Join(options.dir, "rubygems", "ghsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch rubygems ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchRubygemsGLSA() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "rubygems-glsa",
+		Short: "Fetch Rubygems GitLab Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch rubygems-glsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := rubygemsGLSA.Fetch(rubygemsGLSA.WithDir(filepath.Join(options.dir, "rubygems", "glsa"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch rubygems glsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchRubygemsOSV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "rubygems-osv",
+		Short: "Fetch Rubygems OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch rubygems-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := rubygemsOSV.Fetch(rubygemsOSV.WithDir(filepath.Join(options.dir, "rubygems", "osv"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch rubygems osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchAttack() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "attack",
+		Short: "Fetch MITRE ATT&CK data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch attack
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := attack.Fetch(attack.WithDir(filepath.Join(options.dir, "attack"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch attack")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchCapec() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "capec",
+		Short: "Fetch CAPEC data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch capec
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := capec.Fetch(capec.WithDir(filepath.Join(options.dir, "capec"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch capec")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchCWE() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cwe",
+		Short: "Fetch CWE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cwe
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := cwe.Fetch(cwe.WithDir(filepath.Join(options.dir, "cwe"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch cwe")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchEPSS() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "epss",
+		Short: "Fetch EPSS data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch epss
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := epss.Fetch(epss.WithDir(filepath.Join(options.dir, "epss"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch epss")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchExploitExploitDB() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "exploit-exploitdb",
+		Short: "Fetch Exploit ExploitDB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch exploit-exploitdb
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := exploitExploitDB.Fetch(exploitExploitDB.WithDir(filepath.Join(options.dir, "exploit", "exploitdb"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch exploit exploitdb")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchExploitGitHub() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "exploit-github",
+		Short: "Fetch Exploit GitHub data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch exploit-github
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := exploitGitHub.Fetch(exploitGitHub.WithDir(filepath.Join(options.dir, "exploit", "github"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch exploit github")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchExploitInthewild() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "exploit-inthewild",
+		Short: "Fetch Exploit InTheWild data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch exploit-inthewild
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := exploitInTheWild.Fetch(exploitInTheWild.WithDir(filepath.Join(options.dir, "exploit", "inthewild"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch exploit inthewild")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchExploitExploitTrickest() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "exploit-trickest",
+		Short: "Fetch Exploit Trickest data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch exploit-trickest
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := exploitTrickest.Fetch(exploitTrickest.WithDir(filepath.Join(options.dir, "exploit", "trickest"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch exploit trickest")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchJVN() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "jvn",
+		Short: "Fetch jvn data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch jvn
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := jvn.Fetch(jvn.WithDir(filepath.Join(options.dir, "jvn"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch jvn")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchKEV() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "kev",
+		Short: "Fetch KEV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch kev
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := kev.Fetch(kev.WithDir(filepath.Join(options.dir, "kev"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch kev")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchMitre() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre",
+		Short: "Fetch MITRE CVE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch mitre
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := mitre.Fetch(mitre.WithDir(filepath.Join(options.dir, "mitre"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch mitre")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchMSF() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "msf",
+		Short: "Fetch Metasploit Framework data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch msf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := msf.Fetch(msf.WithDir(filepath.Join(options.dir, "msf"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch msf")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNVDAPI() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-api",
+		Short: "Fetch NVD API data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-api
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := nvdAPI.Fetch(nvdAPI.WithDir(filepath.Join(options.dir, "nvd", "api"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch nvd api")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
+}
+func newCmdFetchNVDFeed() *cobra.Command {
+	options := &options{
+		dir: util.SourceDir(),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed",
+		Short: "Fetch NVD Feed data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-feed
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := nvdFeed.Fetch(nvdFeed.WithDir(filepath.Join(options.dir, "nvd", "feed"))); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch nvd feed")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.SourceDir(), "output fetch results to specified directory")
+
+	return cmd
 }

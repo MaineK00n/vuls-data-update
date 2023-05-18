@@ -1,7 +1,5 @@
 package tracker
 
-import "time"
-
 type advisory struct {
 	Candidate         string
 	Description       []string
@@ -24,27 +22,21 @@ type advisory struct {
 }
 
 type Advisory struct {
-	Candidate         string            `json:"candidate"`
-	Description       string            `json:"description"`
-	UbuntuDescription string            `json:"ubuntu_description,omitempty"`
-	Notes             map[string]string `json:"notes,omitempty"`
-	Priority          string            `json:"priority"`
-	CVSS              map[string]CVSS   `json:"cvss,omitempty"`
-	Mitigation        string            `json:"mitigation,omitempty"`
-	Bugs              []string          `json:"bugs,omitempty"`
-	References        []string          `json:"references"`
-	AssignedTo        string            `json:"assigned_to,omitempty"`
-	DiscoveredBy      string            `json:"discovered_by,omitempty"`
-	PublicDate        *time.Time        `json:"public_date,omitempty"`
-	PublicDateAtUSN   *time.Time        `json:"public_date_at_usn,omitempty"`
-	CRD               *time.Time        `json:"crd,omitempty"`
-	Packages          []Package         `json:"packages"`
-}
-
-type CVSS struct {
-	Vector   string  `json:"vector"`
-	Score    float64 `json:"score,omitempty"`
-	Severity string  `json:"severity,omitempty"`
+	Candidate         string                        `json:"candidate"`
+	Description       string                        `json:"description"`
+	UbuntuDescription string                        `json:"ubuntu_description,omitempty"`
+	Notes             map[string]string             `json:"notes,omitempty"`
+	Priority          string                        `json:"priority"`
+	CVSS              map[string]string             `json:"cvss,omitempty"`
+	Mitigation        string                        `json:"mitigation,omitempty"`
+	Bugs              []string                      `json:"bugs,omitempty"`
+	References        []string                      `json:"references"`
+	AssignedTo        string                        `json:"assigned_to,omitempty"`
+	DiscoveredBy      string                        `json:"discovered_by,omitempty"`
+	PublicDate        string                        `json:"public_date,omitempty"`
+	PublicDateAtUSN   string                        `json:"public_date_at_usn,omitempty"`
+	CRD               string                        `json:"crd,omitempty"`
+	Packages          map[string]map[string]Package `json:"packages"`
 }
 
 type Package struct {

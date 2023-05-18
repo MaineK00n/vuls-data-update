@@ -3,7 +3,7 @@ package util
 import (
 	"compress/gzip"
 	"context"
-	"fmt"
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
@@ -11,10 +11,8 @@ import (
 	"time"
 
 	"github.com/cheggaaa/pb/v3"
-	"github.com/dsnet/compress/bzip2"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
-	"github.com/ulikunitz/xz"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
 )
@@ -139,69 +137,28 @@ func ChunkSlice(length int, chunkSize int) <-chan IndexChunk {
 	return ch
 }
 
-func BuildFilePath(name, compress string) string {
-	switch compress {
-	case "gzip":
-		return fmt.Sprintf("%s.gz", name)
-	case "bzip2":
-		return fmt.Sprintf("%s.bz2", name)
-	case "xz":
-		return fmt.Sprintf("%s.xz", name)
-	default:
-		return name
-	}
-}
-
-func Write(path string, bs []byte, compress string) error {
+func Write(path string, content any) error {
 	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
 	}
 
-	var w io.WriteCloser
-	switch compress {
-	case "":
-		var err error
-		w, err = os.Create(path)
-		if err != nil {
-			return errors.Wrapf(err, "create %s", path)
-		}
-	case "gzip":
-		f, err := os.Create(path)
-		if err != nil {
-			return errors.Wrapf(err, "create %s", path)
-		}
-		defer f.Close()
+	f, err := os.Create(path)
+	if err != nil {
+		return errors.Wrapf(err, "create %s", path)
+	}
+	defer f.Close()
 
-		w = gzip.NewWriter(f)
-	case "bzip2":
-		f, err := os.Create(path)
-		if err != nil {
-			return errors.Wrapf(err, "create %s", path)
-		}
-		defer f.Close()
-
-		w, err = bzip2.NewWriter(f, &bzip2.WriterConfig{Level: bzip2.BestCompression})
-		if err != nil {
-			return errors.Wrap(err, "create writer")
-		}
-	case "xz":
-		f, err := os.Create(path)
-		if err != nil {
-			return errors.Wrapf(err, "create %s", path)
-		}
-		defer f.Close()
-
-		w, err = xz.NewWriter(f)
-		if err != nil {
-			return errors.Wrap(err, "create writer")
-		}
-	default:
-		return errors.Errorf(`unexpected compress format. accepts: ["", "gzip", "bzip2", "xz"], received: "%s"`, compress)
+	w, err := gzip.NewWriterLevel(f, gzip.BestCompression)
+	if err != nil {
+		return errors.Wrap(err, "create gzip writer")
 	}
 	defer w.Close()
 
-	if _, err := w.Write(bs); err != nil {
-		return errors.Wrap(err, "write data")
+	e := json.NewEncoder(w)
+	e.SetEscapeHTML(false)
+	e.SetIndent("", "  ")
+	if err := e.Encode(content); err != nil {
+		return errors.Wrap(err, "encode json")
 	}
 
 	return nil

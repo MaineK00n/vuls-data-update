@@ -2,7 +2,6 @@ package tracker
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
@@ -12,24 +11,21 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/ubuntu/codename"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
 const defaultRepoURL = "git://git.launchpad.net/ubuntu-cve-tracker"
 
 type options struct {
-	repoURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	repoURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -66,22 +62,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		repoURL:        defaultRepoURL,
-		dir:            filepath.Join(util.SourceDir(), "ubuntu", "tracker"),
-		retry:          3,
-		compressFormat: "",
+		repoURL: defaultRepoURL,
+		dir:     filepath.Join(util.SourceDir(), "ubuntu", "tracker"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -101,10 +86,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "git clone --depth 1 %s %s", options.repoURL, cloneDir)
 	}
 
-	advs := map[string][]Advisory{}
-	for release := range codename.CodeToVer {
-		advs[release] = []Advisory{}
-	}
+	advs := []Advisory{}
 	for _, target := range []string{"active", "retired", "ignored"} {
 		if err := filepath.WalkDir(filepath.Join(cloneDir, target), func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
@@ -125,16 +107,11 @@ func Fetch(opts ...Option) error {
 			}
 			defer f.Close()
 
-			as, err := parse(f)
+			a, err := parse(f)
 			if err != nil {
 				return errors.Wrapf(err, "parse %s", path)
 			}
-			for release, adv := range as {
-				if _, ok := advs[release]; !ok {
-					continue
-				}
-				advs[release] = append(advs[release], adv)
-			}
+			advs = append(advs, a)
 
 			return nil
 		}); err != nil {
@@ -142,47 +119,33 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
-	for code, as := range advs {
-		v, ok := codename.CodeToVer[code]
-		if !ok {
-			return errors.Errorf("unexpected codename. accepts %q, received %q", maps.Keys(codename.CodeToVer), code)
-		}
-
-		log.Printf("[INFO] Fetched Ubuntu %s Advisory", v)
-		dir := filepath.Join(options.dir, v)
-		if err := os.RemoveAll(dir); err != nil {
-			return errors.Wrapf(err, "remove %s", dir)
-		}
-
-		bar := pb.StartNew(len(as))
-		for _, adv := range as {
-			y := strings.Split(adv.Candidate, "-")[1]
-			if _, err := strconv.Atoi(y); err != nil {
-				continue
-			}
-
-			bs, err := json.Marshal(adv)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
-			}
-
-			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", adv.Candidate)), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, adv.Candidate))
-			}
-
-			bar.Increment()
-		}
-		bar.Finish()
-	}
-
 	if err := os.RemoveAll(cloneDir); err != nil {
 		return errors.Wrapf(err, "remove %s", cloneDir)
 	}
 
+	if err := os.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
+	bar := pb.StartNew(len(advs))
+	for _, a := range advs {
+		y := strings.Split(a.Candidate, "-")[1]
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
+
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", a.Candidate)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", a.Candidate)))
+		}
+
+		bar.Increment()
+	}
+	bar.Finish()
+
 	return nil
 }
 
-func parse(r io.Reader) (map[string]Advisory, error) {
+func parse(r io.Reader) (Advisory, error) {
 	var (
 		a             advisory
 		mode, pkgname string
@@ -257,18 +220,18 @@ func parse(r io.Reader) (map[string]Advisory, error) {
 		default:
 			lhs, rhs, found := strings.Cut(t, ":")
 			if !found {
-				log.Printf(`[WARN] unexpected package status line. expected: "<release>_<source-package>: <status> (<version/notes>)", actual: "%s"`, t)
+				log.Printf(`[WARN] %s: unexpected package status line. expected: "<release>_<source-package>: <status> (<version/notes>)", actual: "%s"`, a.Candidate, t)
 				break
 			}
 			if !strings.Contains(lhs, "_") {
-				log.Printf(`[WARN] unexpected package part. expected: "<release>_<source-package>", actual: "%s"`, lhs)
+				log.Printf(`[WARN] %s: unexpected package part. expected: "<release>_<source-package>", actual: "%s"`, a.Candidate, lhs)
 				break
 			}
 			if strings.TrimSpace(rhs) == "" {
 				break
 			}
 			if status, _, _ := strings.Cut(strings.TrimSpace(rhs), " "); !slices.Contains([]string{"DNE", "needs-triage", "not-affected", "needed", "active", "ignored", "pending", "deferred", "released"}, status) {
-				log.Printf(`[WARN] unexpected status part. expected: " <status> (<version/notes>)", actual: "%s"`, rhs)
+				log.Printf(`[WARN] %s: unexpected status part. expected: " <status> (<version/notes>)", actual: "%s"`, a.Candidate, rhs)
 				break
 			}
 			a.PkgStatuses = append(a.PkgStatuses, strings.TrimSpace(t))
@@ -277,27 +240,7 @@ func parse(r io.Reader) (map[string]Advisory, error) {
 	return build(a), nil
 }
 
-func build(a advisory) map[string]Advisory {
-	parseDateFn := func(v string) *time.Time {
-		if v == "" || v == "unknown" {
-			return nil
-		}
-		if t, err := time.Parse("2006-01-02", v); err == nil {
-			return &t
-		}
-		if t, err := time.Parse("2006-01-02 15:04:05", v); err == nil {
-			return &t
-		}
-		if t, err := time.Parse("2006-01-02 15:04:05 -0700", v); err == nil {
-			return &t
-		}
-		if t, err := time.Parse("2006-01-02 15:04:05 MST", v); err == nil {
-			return &t
-		}
-		log.Printf(`[WARN] error time.Parse date="%s"`, v)
-		return nil
-	}
-
+func build(a advisory) Advisory {
 	adv := Advisory{
 		Candidate:         a.Candidate,
 		Description:       strings.Join(a.Description, " "),
@@ -308,9 +251,9 @@ func build(a advisory) map[string]Advisory {
 		References:        a.References,
 		AssignedTo:        a.AssignedTo,
 		DiscoveredBy:      a.DiscoveredBy,
-		PublicDate:        parseDateFn(a.PublicDate),
-		PublicDateAtUSN:   parseDateFn(a.PublicDateAtUSN),
-		CRD:               parseDateFn(a.CRD),
+		PublicDate:        a.PublicDate,
+		PublicDateAtUSN:   a.PublicDateAtUSN,
+		CRD:               a.CRD,
 	}
 
 	notes := map[string][]string{}
@@ -321,7 +264,7 @@ func build(a advisory) map[string]Advisory {
 			lhs, rhs, found = strings.Cut(l, "|")
 			if !found {
 				if author == "" {
-					log.Printf("[WARN] do not known which author's note it is. candidate: %s. notes: %q", a.Candidate, a.Notes)
+					log.Printf("[WARN] %s: do not known which author's note it is. notes: %q", a.Candidate, a.Notes)
 					continue
 				}
 				notes[author] = append(notes[author], l)
@@ -342,49 +285,34 @@ func build(a advisory) map[string]Advisory {
 
 	for _, l := range a.CVSS {
 		if adv.CVSS == nil {
-			adv.CVSS = make(map[string]CVSS, len(a.CVSS))
+			adv.CVSS = make(map[string]string, len(a.CVSS))
 		}
 
 		src, s, found := strings.Cut(l, ":")
 		if !found {
-			log.Printf(`[WARN] unexpected CVSS line. expected: "<name>: <CVSS string>", actual: %q`, l)
+			log.Printf(`[WARN] %s: unexpected CVSS line. expected: "<name>: <CVSS string>", actual: %q`, a.Candidate, l)
 			break
 		}
-
-		ss := strings.Fields(s)
-		if len(ss) != 3 {
-			log.Printf(`[WARN] unexpected CVSS part. expected: "<CVSS Vector> [<CVSS Score> <Severity>]", actual: %q`, s)
-			continue
-		}
-		score, err := strconv.ParseFloat(strings.TrimPrefix(ss[1], "["), 64)
-		if err != nil {
-			log.Printf(`[WARN] failed to parse CVSS Score. score string: %s, err: %s`, strings.TrimPrefix(ss[1], "["), err)
-			continue
-		}
-		adv.CVSS[src] = CVSS{
-			Vector:   ss[0],
-			Score:    score,
-			Severity: strings.TrimSuffix(ss[2], "]"),
-		}
+		adv.CVSS[src] = s
 	}
 
-	advpkgs := map[string]map[string]Package{}
+	adv.Packages = map[string]map[string]Package{}
 	for _, l := range a.PkgStatuses {
 		lhs, rhs, found := strings.Cut(l, ":")
 		if !found {
-			log.Printf(`[WARN] unexpected package status line. expected: "<release>_<source-package>: <status> (<version/notes>)", actual: "%s"`, l)
+			log.Printf(`[WARN] %s: unexpected package status line. expected: "<release>_<source-package>: <status> (<version/notes>)", actual: "%s"`, a.Candidate, l)
 			continue
 		}
 		release, pkgname, found := strings.Cut(lhs, "_")
 		if !found {
-			log.Printf(`[WARN] unexpected package part. expected: "<release>_<source-package>", actual: "%s"`, lhs)
+			log.Printf(`[WARN] %s: unexpected package part. expected: "<release>_<source-package>", actual: "%s"`, a.Candidate, lhs)
 			continue
 		}
-		if _, ok := advpkgs[release]; !ok {
-			advpkgs[release] = map[string]Package{}
+		if _, ok := adv.Packages[release]; !ok {
+			adv.Packages[release] = map[string]Package{}
 		}
 		status, note, _ := strings.Cut(strings.TrimSpace(rhs), " ")
-		advpkgs[release][pkgname] = Package{
+		adv.Packages[release][pkgname] = Package{
 			Name:   pkgname,
 			Status: status,
 			Note:   strings.Trim(note, "()"),
@@ -396,14 +324,14 @@ func build(a advisory) map[string]Advisory {
 		for _, l := range ls {
 			source, text, found := strings.Cut(l, ":")
 			if !found {
-				log.Printf(`[WARN] unexpected patch line. expected: "<source>: <text>", actual: "%s"`, l)
+				log.Printf(`[WARN] %s: unexpected patch line. expected: "<source>: <text>", actual: "%s"`, a.Candidate, l)
 				continue
 			}
 			switch source {
 			case "break-fix":
 				introHash, fixHash, found := strings.Cut(strings.TrimSpace(text), " ")
 				if !found {
-					log.Printf(`[WARN] unexpected patch break-fix part. expected: " <introduced by hash> <fixed by hash>", actual: "%s"`, text)
+					log.Printf(`[WARN] %s: unexpected patch break-fix part. expected: " <introduced by hash> <fixed by hash>", actual: "%s"`, a.Candidate, text)
 					continue
 				}
 				patches = append(patches,
@@ -421,85 +349,79 @@ func build(a advisory) map[string]Advisory {
 				})
 			}
 		}
-		for release := range advpkgs {
-			p, ok := advpkgs[release][pkgname]
+		for release := range adv.Packages {
+			p, ok := adv.Packages[release][pkgname]
 			if !ok {
 				continue
 			}
 			p.Patches = patches
-			advpkgs[release][pkgname] = p
+			adv.Packages[release][pkgname] = p
 		}
 	}
 
 	for _, l := range a.PkgTags {
 		lhs, rhs, found := strings.Cut(l, ":")
 		if !found {
-			log.Printf(`[WARN] unexpected tags line. expected: "<source-package>: <text>", actual: "%s"`, l)
+			log.Printf(`[WARN] %s: unexpected tags line. expected: "<source-package>: <text>", actual: "%s"`, a.Candidate, l)
 			continue
 		}
 		tag := strings.TrimSpace(rhs)
 		pkgname, release, found := strings.Cut(lhs, "_")
 		if !found {
-			for r := range advpkgs {
-				p, ok := advpkgs[r][pkgname]
+			for r := range adv.Packages {
+				p, ok := adv.Packages[r][pkgname]
 				if !ok {
 					continue
 				}
 				p.Tags = append(p.Tags, tag)
-				advpkgs[r][pkgname] = p
+				adv.Packages[r][pkgname] = p
 			}
 		} else {
-			if _, ok := advpkgs[release]; !ok {
-				log.Printf(`[WARN] release for tags not found in package status releases. tags release: "%s", package status releases: %q`, release, maps.Keys(advpkgs))
+			if _, ok := adv.Packages[release]; !ok {
+				log.Printf(`[WARN] %s: release for tags not found in package status releases. tags release: "%s", package status releases: %q`, a.Candidate, release, maps.Keys(adv.Packages))
 				continue
 			}
-			p, ok := advpkgs[release][pkgname]
+			p, ok := adv.Packages[release][pkgname]
 			if !ok {
-				log.Printf(`[WARN] package for tags not found in package status packages. tags package: "%s", package status packages: %q`, pkgname, maps.Keys(advpkgs[release]))
+				log.Printf(`[WARN] %s: package for tags not found in package status packages. tags package: "%s", package status packages: %q`, a.Candidate, pkgname, maps.Keys(adv.Packages[release]))
 				continue
 			}
 			p.Tags = append(p.Tags, tag)
-			advpkgs[release][pkgname] = p
+			adv.Packages[release][pkgname] = p
 		}
 	}
 
 	for _, l := range a.PkgPriorities {
 		lhs, rhs, found := strings.Cut(l, ":")
 		if !found {
-			log.Printf(`[WARN] unexpected priority line. expected: "<source-package>: ["negligible", "low", "medium", "high", "critical"]", actual: "%s"`, l)
+			log.Printf(`[WARN] %s: unexpected priority line. expected: "<source-package>: ["negligible", "low", "medium", "high", "critical"]", actual: "%s"`, a.Candidate, l)
 			continue
 		}
 		priority := strings.TrimSpace(rhs)
 		pkgname, release, found := strings.Cut(lhs, "_")
 		if !found {
-			for r := range advpkgs {
-				p, ok := advpkgs[r][pkgname]
+			for r := range adv.Packages {
+				p, ok := adv.Packages[r][pkgname]
 				if !ok {
 					continue
 				}
 				p.Priority = priority
-				advpkgs[r][pkgname] = p
+				adv.Packages[r][pkgname] = p
 			}
 		} else {
-			if _, ok := advpkgs[release]; !ok {
-				log.Printf(`[WARN] release for priority not found in package status releases. priority release: "%s", package status releases: %q`, release, maps.Keys(advpkgs))
+			if _, ok := adv.Packages[release]; !ok {
+				log.Printf(`[WARN] %s: release for priority not found in package status releases. priority release: "%s", package status releases: %q`, a.Candidate, release, maps.Keys(adv.Packages))
 				continue
 			}
-			p, ok := advpkgs[release][pkgname]
+			p, ok := adv.Packages[release][pkgname]
 			if !ok {
-				log.Printf(`[WARN] package for priority not found in package status packages. priority package: "%s", package status packages: %q`, pkgname, maps.Keys(advpkgs[release]))
+				log.Printf(`[WARN] %s: package for priority not found in package status packages. priority package: "%s", package status packages: %q`, a.Candidate, pkgname, maps.Keys(adv.Packages[release]))
 				continue
 			}
 			p.Priority = priority
-			advpkgs[release][pkgname] = p
+			adv.Packages[release][pkgname] = p
 		}
 	}
 
-	advs := map[string]Advisory{}
-	for release, pkgm := range advpkgs {
-		adv.Packages = maps.Values(pkgm)
-		advs[release] = adv
-	}
-
-	return advs
+	return adv
 }

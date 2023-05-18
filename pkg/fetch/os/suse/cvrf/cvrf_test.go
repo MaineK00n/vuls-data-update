@@ -1,7 +1,6 @@
 package cvrf_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -10,8 +9,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/cvrf"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/os/suse/cvrf"
 )
 
 func TestFetch(t *testing.T) {
@@ -66,21 +66,13 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
 				if err != nil {
-					return err
-				}
-				var want cvrf.CVRF
-				if err := json.Unmarshal(wantb, &want); err != nil {
 					return err
 				}
 
-				gotb, err := os.ReadFile(path)
+				got, err := os.ReadFile(path)
 				if err != nil {
-					return err
-				}
-				var got cvrf.CVRF
-				if err := json.Unmarshal(gotb, &got); err != nil {
 					return err
 				}
 

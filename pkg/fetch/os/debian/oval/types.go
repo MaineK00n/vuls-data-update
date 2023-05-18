@@ -1,195 +1,139 @@
 package oval
 
-import (
-	"encoding/xml"
-	"time"
-)
-
 type root struct {
-	Generator   generator   `xml:"generator"`
-	Definitions definitions `xml:"definitions"`
-	Tests       tests       `xml:"tests"`
-	Objects     objects     `xml:"objects"`
-	States      states      `xml:"states"`
-}
-
-type generator struct {
-	ProductName   string `xml:"product_name"`
-	SchemaVersion string `xml:"schema_version"`
-	Timestamp     string `xml:"timestamp"`
-}
-
-type definitions struct {
-	Definitions []definition `xml:"definition"`
-}
-
-type definition struct {
-	ID          string      `xml:"id,attr"`
-	Class       string      `xml:"class,attr"`
-	Title       string      `xml:"metadata>title"`
-	Affected    affected    `xml:"metadata>affected"`
-	References  []reference `xml:"metadata>reference"`
-	Description string      `xml:"metadata>description"`
-	Debian      debianInfo  `xml:"metadata>debian"`
-	Criteria    criteria    `xml:"criteria"`
-}
-
-type criteria struct {
-	Operator   string      `xml:"operator,attr"`
-	Criterias  []criteria  `xml:"criteria"`
-	Criterions []criterion `xml:"criterion"`
-}
-
-type criterion struct {
-	TestRef string `xml:"test_ref,attr"`
-	Comment string `xml:"comment,attr"`
-}
-
-type affected struct {
-	Family   string `xml:"family,attr"`
-	Platform string `xml:"platform"`
-	Product  string `xml:"product"`
-}
-
-type reference struct {
-	Source string `xml:"source,attr"`
-	RefID  string `xml:"ref_id,attr"`
-	RefURL string `xml:"ref_url,attr"`
-}
-
-type debianInfo struct {
-	DSA      string `xml:"dsa"`
-	MoreInfo string `xml:"moreinfo"`
-	Date     string `xml:"date"`
-}
-
-type tests struct {
-	Textfilecontent54Test textfilecontent54Test `xml:"textfilecontent54_test"`
-	UnameTest             unameTest             `xml:"uname_test"`
-	DpkginfoTest          []dpkginfoTest        `xml:"dpkginfo_test"`
-}
-
-type textfilecontent54Test struct {
-	Text           string    `xml:",chardata"`
-	Check          string    `xml:"check,attr"`
-	CheckExistence string    `xml:"check_existence,attr"`
-	Comment        string    `xml:"comment,attr"`
-	ID             string    `xml:"id,attr"`
-	Object         objectRef `xml:"object"`
-	State          stateRef  `xml:"state"`
-}
-
-type unameTest struct {
-	Text           string    `xml:",chardata"`
-	Check          string    `xml:"check,attr"`
-	CheckExistence string    `xml:"check_existence,attr"`
-	Comment        string    `xml:"comment,attr"`
-	ID             string    `xml:"id,attr"`
-	Object         objectRef `xml:"object"`
-}
-
-type dpkginfoTest struct {
-	Text           string    `xml:",chardata"`
-	Check          string    `xml:"check,attr"`
-	CheckExistence string    `xml:"check_existence,attr"`
-	Comment        string    `xml:"comment,attr"`
-	ID             string    `xml:"id,attr"`
-	Object         objectRef `xml:"object"`
-	State          stateRef  `xml:"state"`
-}
-
-type objectRef struct {
-	Text      string `xml:",chardata"`
-	ObjectRef string `xml:"object_ref,attr"`
-}
-
-type stateRef struct {
-	Text     string `xml:",chardata"`
-	StateRef string `xml:"state_ref,attr"`
-}
-
-type objects struct {
-	Textfilecontent54Object textfilecontent54Object `xml:"textfilecontent54_object"`
-	UnameObject             unameObject             `xml:"uname_object"`
-	DpkginfoObject          []dpkginfoObject        `xml:"dpkginfo_object"`
-}
-
-type textfilecontent54Object struct {
-	ID       string `xml:"id,attr"`
-	Path     string `xml:"path"`
-	Filename string `xml:"filename"`
-	Pattern  struct {
-		Text      string `xml:",chardata"`
-		Operation string `xml:"operation,attr"`
-	} `xml:"pattern"`
-	Instance struct {
-		Text     string `xml:",chardata"`
-		Datatype string `xml:"datatype,attr"`
-	} `xml:"instance"`
-}
-
-type unameObject struct {
-	ID string `xml:"id,attr"`
-}
-
-type dpkginfoObject struct {
-	ID   string `xml:"id,attr"`
-	Name string `xml:"name"`
-}
-
-type states struct {
-	XMLName                xml.Name               `xml:"states"`
-	Textfilecontent54State textfilecontent54State `xml:"textfilecontent54_state"`
-	DpkginfoState          []dpkginfoState        `xml:"dpkginfo_state"`
-}
-
-type textfilecontent54State struct {
-	ID            string `xml:"id,attr"`
-	Subexpression struct {
-		Text      string `xml:",chardata"`
-		Operation string `xml:"operation,attr"`
-	} `xml:"subexpression"`
-}
-
-type dpkginfoState struct {
-	ID  string `xml:"id,attr"`
-	Evr struct {
-		Text      string `xml:",chardata"`
-		Datatype  string `xml:"datatype,attr"`
-		Operation string `xml:"operation,attr"`
-	} `xml:"evr"`
+	Definitions struct {
+		Definition []Definition `xml:"definition"`
+	} `xml:"definitions"`
+	Tests   Tests   `xml:"tests"`
+	Objects Objects `xml:"objects"`
+	States  States  `xml:"states"`
 }
 
 type Definition struct {
-	DefinitionID string      `json:"definition_id"`
-	Class        string      `json:"class"`
-	Title        string      `json:"title"`
-	Description  string      `json:"description"`
-	Debian       Debian      `json:"debian"`
-	Affected     Affected    `json:"affected"`
-	Package      Package     `json:"package"`
-	References   []Reference `json:"references"`
+	ID       string `xml:"id,attr" json:"id,omitempty"`
+	Class    string `xml:"class,attr" json:"class,omitempty"`
+	Metadata struct {
+		Title    string `xml:"title" json:"title,omitempty"`
+		Affected struct {
+			Family   string `xml:"family,attr" json:"family,omitempty"`
+			Platform string `xml:"platform" json:"platform,omitempty"`
+			Product  string `xml:"product" json:"product,omitempty"`
+		} `xml:"affected" json:"affected,omitempty"`
+		Reference []struct {
+			Source string `xml:"source,attr" json:"source,omitempty"`
+			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
+			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
+		} `xml:"reference" json:"reference,omitempty"`
+		Description string `xml:"description" json:"description,omitempty"`
+		Debian      struct {
+			Moreinfo string `xml:"moreinfo" json:"moreinfo,omitempty"`
+			Dsa      string `xml:"dsa" json:"dsa,omitempty"`
+			Date     string `xml:"date" json:"date,omitempty"`
+		} `xml:"debian" json:"debian,omitempty"`
+	} `xml:"metadata" json:"metadata,omitempty"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
 }
 
-type Debian struct {
-	DSA      string     `json:"dsa,omitempty"`
-	MoreInfo string     `json:"moreinfo,omitempty"`
-	Date     *time.Time `json:"date,omitempty"`
+type Criteria struct {
+	Operator   string      `xml:"operator,attr" json:"operator,omitempty"`
+	Criterias  []Criteria  `xml:"criteria" json:"criterias,omitempty"`
+	Criterions []Criterion `xml:"criterion" json:"criterions,omitempty"`
 }
 
-type Affected struct {
-	Family   string `json:"family"`
-	Platform string `json:"platform"`
-	Product  string `json:"product"`
+type Criterion struct {
+	TestRef string `xml:"test_ref,attr" json:"test_ref,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
 }
 
-type Package struct {
-	Name         string `json:"name"`
-	FixedVersion string `json:"fixed_version,omitempty"`
+type Tests struct {
+	Textfilecontent54Test struct {
+		ID             string `xml:"id,attr" json:"id,omitempty"`
+		Version        string `xml:"version,attr" json:"version,omitempty"`
+		Check          string `xml:"check,attr" json:"check,omitempty"`
+		CheckExistence string `xml:"check_existence,attr" json:"check_existence,omitempty"`
+		Comment        string `xml:"comment,attr" json:"comment,omitempty"`
+		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Object         struct {
+			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+		} `xml:"object" json:"object,omitempty"`
+		State struct {
+			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+		} `xml:"state" json:"state,omitempty"`
+	} `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitempty"`
+	UnameTest struct {
+		ID             string `xml:"id,attr" json:"id,omitempty"`
+		Version        string `xml:"version,attr" json:"version,omitempty"`
+		Check          string `xml:"check,attr" json:"check,omitempty"`
+		CheckExistence string `xml:"check_existence,attr" json:"check_existence,omitempty"`
+		Comment        string `xml:"comment,attr" json:"comment,omitempty"`
+		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Object         struct {
+			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+		} `xml:"object" json:"object,omitempty"`
+	} `xml:"uname_test" json:"uname_test,omitempty"`
+	DpkginfoTest []struct {
+		ID             string `xml:"id,attr" json:"id,omitempty"`
+		Version        string `xml:"version,attr" json:"version,omitempty"`
+		Check          string `xml:"check,attr" json:"check,omitempty"`
+		CheckExistence string `xml:"check_existence,attr" json:"check_existence,omitempty"`
+		Comment        string `xml:"comment,attr" json:"comment,omitempty"`
+		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Object         struct {
+			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+		} `xml:"object" json:"object,omitempty"`
+		State struct {
+			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+		} `xml:"state" json:"state,omitempty"`
+	} `xml:"dpkginfo_test" json:"dpkginfo_test,omitempty"`
 }
 
-type Reference struct {
-	ID     string `json:"id"`
-	Source string `json:"source"`
-	URL    string `json:"url"`
+type Objects struct {
+	Textfilecontent54Object struct {
+		ID       string `xml:"id,attr" json:"id,omitempty"`
+		Version  string `xml:"version,attr" json:"version,omitempty"`
+		Xmlns    string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Path     string `xml:"path" json:"path,omitempty"`
+		Filename string `xml:"filename" json:"filename,omitempty"`
+		Pattern  struct {
+			Text      string `xml:",chardata" json:"text,omitempty"`
+			Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		} `xml:"pattern" json:"pattern,omitempty"`
+		Instance struct {
+			Text     string `xml:",chardata" json:"text,omitempty"`
+			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
+		} `xml:"instance" json:"instance,omitempty"`
+	} `xml:"textfilecontent54_object" json:"textfilecontent_54_object,omitempty"`
+	UnameObject struct {
+		ID      string `xml:"id,attr" json:"id,omitempty"`
+		Version string `xml:"version,attr" json:"version,omitempty"`
+		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+	} `xml:"uname_object" json:"uname_object,omitempty"`
+	DpkginfoObject []struct {
+		ID      string `xml:"id,attr" json:"id,omitempty"`
+		Version string `xml:"version,attr" json:"version,omitempty"`
+		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Name    string `xml:"name" json:"name,omitempty"`
+	} `xml:"dpkginfo_object" json:"dpkginfo_object,omitempty"`
+}
+
+type States struct {
+	Textfilecontent54State struct {
+		ID            string `xml:"id,attr" json:"id,omitempty"`
+		Version       string `xml:"version,attr" json:"version,omitempty"`
+		Xmlns         string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Subexpression struct {
+			Text      string `xml:",chardata" json:"text,omitempty"`
+			Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		} `xml:"subexpression" json:"subexpression,omitempty"`
+	} `xml:"textfilecontent54_state" json:"textfilecontent_54_state,omitempty"`
+	DpkginfoState []struct {
+		ID      string `xml:"id,attr" json:"id,omitempty"`
+		Version string `xml:"version,attr" json:"version,omitempty"`
+		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+		Evr     struct {
+			Text      string `xml:",chardata" json:"text,omitempty"`
+			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+			Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		} `xml:"evr" json:"evr,omitempty"`
+	} `xml:"dpkginfo_state" json:"dpkginfo_state,omitempty"`
 }

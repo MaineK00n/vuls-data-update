@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/csv"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -23,10 +22,9 @@ import (
 const dataURL = "https://epss.cyentia.com/epss_scores-current.csv.gz"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -63,22 +61,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "epss"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "epss"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -169,13 +156,8 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		bs, err := json.Marshal(e)
-		if err != nil {
-			return errors.Wrap(err, "marshal json")
-		}
-
-		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", e.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, e.ID))
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", e.ID)), e); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", e.ID)))
 		}
 
 		bar.Increment()

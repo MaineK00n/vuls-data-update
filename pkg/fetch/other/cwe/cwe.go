@@ -3,7 +3,6 @@ package cwe
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
@@ -20,10 +19,9 @@ import (
 const dataURL = "https://cwe.mitre.org/data/xml/cwec_latest.xml.zip"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -60,22 +58,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "cwe"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "cwe"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -126,13 +113,8 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(weaknesses))
 	for _, w := range weaknesses {
-		bs, err := json.Marshal(w)
-		if err != nil {
-			return errors.Wrap(err, "marshal json")
-		}
-
-		if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", w.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(dir, w.ID))
+		if err := util.Write(filepath.Join(dir, fmt.Sprintf("%s.json.gz", w.ID)), w); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, fmt.Sprintf("%s.json.gz", w.ID)))
 		}
 
 		bar.Increment()
@@ -152,13 +134,8 @@ func Fetch(opts ...Option) error {
 
 	bar = pb.StartNew(len(categories))
 	for _, c := range categories {
-		bs, err := json.Marshal(c)
-		if err != nil {
-			return errors.Wrap(err, "marshal json")
-		}
-
-		if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", c.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(dir, c.ID))
+		if err := util.Write(filepath.Join(dir, fmt.Sprintf("%s.json.gz", c.ID)), c); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, fmt.Sprintf("%s.json.gz", c.ID)))
 		}
 
 		bar.Increment()
@@ -178,13 +155,8 @@ func Fetch(opts ...Option) error {
 
 	bar = pb.StartNew(len(views))
 	for _, v := range views {
-		bs, err := json.Marshal(v)
-		if err != nil {
-			return errors.Wrap(err, "marshal json")
-		}
-
-		if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", v.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(dir, v.ID))
+		if err := util.Write(filepath.Join(dir, fmt.Sprintf("%s.json.gz", v.ID)), v); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, fmt.Sprintf("%s.json.gz", v.ID)))
 		}
 
 		bar.Increment()

@@ -23,16 +23,16 @@ func TestFetch(t *testing.T) {
 	}{
 		{
 			name:     "happy path",
-			testdata: map[string]string{"jammy": "testdata/fixtures/com.ubuntu.jammy.cve.oval.xml.bz2"},
+			testdata: map[string]string{"jammy/main": "testdata/fixtures/oci.com.ubuntu.jammy.cve.oval.xml.bz2"},
 		},
 		{
 			name:     "invalid xml",
-			testdata: map[string]string{"jammy": "testdata/fixtures/invalid.xml.bz2"},
+			testdata: map[string]string{"jammy/main": "testdata/fixtures/invalid.xml.bz2"},
 			hasError: true,
 		},
 		{
 			name:     "not found",
-			testdata: map[string]string{"jammy": ""},
+			testdata: map[string]string{"jammy/main": ""},
 			hasError: true,
 		},
 	}
@@ -40,13 +40,7 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// com.ubuntu.%s.cve.oval.xml.bz2
-				_, f := filepath.Split(r.URL.Path)
-				datapath, ok := tt.testdata[strings.TrimSuffix(strings.TrimPrefix(f, "com.ubuntu."), ".cve.oval.xml.bz2")]
-				if !ok || datapath == "" {
-					http.NotFound(w, r)
-				}
-				http.ServeFile(w, r, datapath)
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
 			defer ts.Close()
 
@@ -78,8 +72,10 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
+				dir, d := filepath.Split(filepath.Clean(dir))
+				dir, stream := filepath.Split(filepath.Clean(dir))
 				_, v := filepath.Split(filepath.Clean(dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", v, file))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", v, stream, d, file))
 				if err != nil {
 					return err
 				}

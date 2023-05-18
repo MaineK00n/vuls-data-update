@@ -2,7 +2,6 @@ package mitre
 
 import (
 	"bytes"
-	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
@@ -22,10 +21,9 @@ import (
 const dataURL = "https://cve.mitre.org/data/downloads/allitems-cvrf.xml"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -62,22 +60,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "mitre"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "mitre"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -147,13 +134,8 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		bs, err := json.Marshal(v)
-		if err != nil {
-			return errors.Wrap(err, "marshal json")
-		}
-
-		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", v.CVE)), options.compressFormat), bs, options.compressFormat); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, v.CVE))
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", v.CVE)), v); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", v.CVE)))
 		}
 
 		bar.Increment()

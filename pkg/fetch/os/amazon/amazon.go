@@ -13,26 +13,23 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/slices"
-	"golang.org/x/net/html/charset"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
 type options struct {
-	mirrorURLs     map[string]MirrorURL
-	dir            string
-	retry          int
-	compressFormat string
+	mirrorURLs map[string]MirrorURL
+	dir        string
+	retry      int
 }
 
 type MirrorURL struct {
-	Mirror    string
-	Releasemd string
+	Core  string
+	Extra string
+	extra []string
 }
 
 type Option interface {
@@ -69,29 +66,19 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
 		mirrorURLs: map[string]MirrorURL{
-			"1": {Mirror: "http://repo.us-west-2.amazonaws.com/2018.03/updates/x86_64/mirror.list"},
-			"2": {Mirror: "https://cdn.amazonlinux.com/2/core/latest/x86_64/mirror.list"},
-			"2022": {
-				Mirror:    "https://al2022-repos-us-east-1-9761ab97.s3.dualstack.us-east-1.amazonaws.com/core/mirrors/%s/x86_64/mirror.list",
-				Releasemd: "https://al2022-repos-us-west-2-9761ab97.s3.dualstack.us-west-2.amazonaws.com/core/releasemd.xml",
+			"1": {Core: "http://repo.us-west-2.amazonaws.com/2018.03/updates/x86_64/mirror.list"},
+			"2": {
+				Core:  "https://cdn.amazonlinux.com/2/core/latest/x86_64/mirror.list",
+				Extra: "http://amazonlinux.default.amazonaws.com/2/extras-catalog.json",
 			},
+			"2022": {Core: "https://cdn.amazonlinux.com/al2022/core/mirrors/latest/x86_64/mirror.list"},
+			"2023": {Core: "https://cdn.amazonlinux.com/al2023/core/mirrors/latest/x86_64/mirror.list"},
 		},
-		dir:            filepath.Join(util.SourceDir(), "amazon"),
-		retry:          3,
-		compressFormat: "",
+		dir:   filepath.Join(util.SourceDir(), "amazon"),
+		retry: 3,
 	}
 
 	for _, o := range opts {
@@ -101,52 +88,74 @@ func Fetch(opts ...Option) error {
 	for v := range options.mirrorURLs {
 		log.Printf("[INFO] Fetch Amazon Linux %s", v)
 		switch v {
-		case "1", "2":
-		case "2022":
-			u, err := options.fetchAmazonLinux2022Mirror(options.mirrorURLs[v])
+		case "1", "2022", "2023":
+		case "2":
+			bs, err := util.FetchURL(options.mirrorURLs[v].Extra, options.retry)
 			if err != nil {
-				return errors.Wrap(err, "fetch amazon linux 2022 mirror")
+				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
 			}
-			options.mirrorURLs[v] = MirrorURL{Mirror: u}
+
+			var c catalog
+			if err := json.Unmarshal(bs, &c); err != nil {
+				return errors.Wrap(err, "unmarshal json")
+			}
+
+			m := options.mirrorURLs[v]
+			for _, t := range c.Topics {
+				m.extra = append(m.extra, strings.Replace(options.mirrorURLs[v].Core, "/core/", fmt.Sprintf("/extras/%s/", t.N), 1))
+			}
+			options.mirrorURLs[v] = m
 		default:
-			return errors.Errorf("unexpected version. accepts %q, received %q", []string{"1", "2", "2022"}, v)
+			return errors.Errorf("unexpected version. accepts %q, received %q", []string{"1", "2", "2022", "2023"}, v)
 		}
 
-		us, err := options.fetch(v)
+		advs := map[string][]Update{}
+		us, err := options.fetch(options.mirrorURLs[v].Core)
 		if err != nil {
-			return errors.Wrapf(err, "fetch amazon linux %s updateinfo", v)
+			return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
+		}
+
+		advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
+
+		for _, e := range options.mirrorURLs[v].extra {
+			us, err := options.fetch(e)
+			if err != nil {
+				return errors.Wrapf(err, "fetch %s", e)
+			}
+			if us != nil {
+				advs[getPackageRepository(e)] = us
+			}
 		}
 
 		dir := filepath.Join(options.dir, v)
 		if err := os.RemoveAll(dir); err != nil {
 			return errors.Wrapf(err, "remove %s", dir)
 		}
-		bar := pb.StartNew(len(us))
-		for _, u := range us {
-			y := strings.Split(u.ID, "-")[1]
-			if _, err := strconv.Atoi(y); err != nil {
-				continue
-			}
+		for r, us := range advs {
+			log.Printf("[INFO] Fetched Amazon Linux %s %s", v, r)
+			bar := pb.StartNew(len(us))
+			for _, u := range us {
+				ss := strings.Split(u.ID, "-")
+				y := ss[len(ss)-2]
+				if _, err := strconv.Atoi(y); err != nil {
+					continue
+				}
 
-			bs, err := json.Marshal(u)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
-			}
+				if err := util.Write(filepath.Join(dir, r, y, fmt.Sprintf("%s.json.gz", u.ID)), u); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(dir, r, y, fmt.Sprintf("%s.json.gz", u.ID)))
+				}
 
-			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", u.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, u.ID))
+				bar.Increment()
 			}
-
-			bar.Increment()
+			bar.Finish()
 		}
-		bar.Finish()
 	}
 
 	return nil
 }
 
-func (opts options) fetch(version string) ([]Advisory, error) {
-	bs, err := util.FetchURL(opts.mirrorURLs[version].Mirror, opts.retry)
+func (opts options) fetch(mirror string) ([]Update, error) {
+	bs, err := util.FetchURL(mirror, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
 	}
@@ -157,7 +166,7 @@ func (opts options) fetch(version string) ([]Advisory, error) {
 		mirrors = append(mirrors, scanner.Text())
 	}
 
-	var advs []Advisory
+	var updates []Update
 	for _, mirror := range mirrors {
 		u, err := url.JoinPath(mirror, "/repodata/repomd.xml")
 		if err != nil {
@@ -165,6 +174,9 @@ func (opts options) fetch(version string) ([]Advisory, error) {
 		}
 		uinfoPath, err := opts.fetchUpdateInfoPath(u)
 		if err != nil {
+			if strings.Contains(mirror, "/extras/") && errors.Is(err, ErrNoUpdateInfo) {
+				return nil, nil
+			}
 			return nil, errors.Wrap(err, "fetch updateinfo path")
 		}
 
@@ -176,42 +188,12 @@ func (opts options) fetch(version string) ([]Advisory, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch updateinfo")
 		}
-
-		parseDateFn := func(v string) *time.Time {
-			if v == "" {
-				return nil
-			}
-			if t, err := time.Parse("2006-01-02 15:04", v); err == nil {
-				return &t
-			}
-			log.Printf(`[WARN] error time.Parse date="%s"`, v)
-			return nil
-		}
-		for _, u := range us {
-			advs = append(advs, Advisory{
-				ID:          u.ID,
-				Type:        u.Type,
-				Author:      u.Author,
-				From:        u.From,
-				Status:      u.Status,
-				Version:     u.Version,
-				Title:       u.Title,
-				Description: u.Description,
-				Severity:    u.Severity,
-				Pkglist: Pkglist{
-					Short:      u.Pkglist.Short,
-					Name:       u.Pkglist.Name,
-					Repository: "",
-					Package:    u.Pkglist.Package,
-				},
-				References: u.References,
-				Issued:     parseDateFn(u.Issued.Date),
-				Updated:    parseDateFn(u.Updated.Date),
-			})
-		}
+		updates = append(updates, us...)
 	}
-	return advs, nil
+	return updates, nil
 }
+
+var ErrNoUpdateInfo = errors.New("no updateinfo field")
 
 func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 	bs, err := util.FetchURL(repomdURL, opts.retry)
@@ -232,12 +214,12 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 		}
 	}
 	if updateInfoPath == "" {
-		return "", errors.New("no updateinfo field")
+		return "", ErrNoUpdateInfo
 	}
 	return updateInfoPath, nil
 }
 
-func (opts options) fetchUpdateInfo(updateinfoURL string) ([]update, error) {
+func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
 	bs, err := util.FetchURL(updateinfoURL, opts.retry)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")
@@ -256,27 +238,22 @@ func (opts options) fetchUpdateInfo(updateinfoURL string) ([]update, error) {
 	return us.Update, nil
 }
 
-func (opts options) fetchAmazonLinux2022Mirror(mirror MirrorURL) (string, error) {
-	bs, err := util.FetchURL(mirror.Releasemd, opts.retry)
-	if err != nil {
-		return "", errors.Wrap(err, "fetch releasemd")
+func getPackageRepository(mirror string) string {
+	switch {
+	case strings.Contains(mirror, "/updates/"):
+		return "updates"
+	case strings.Contains(mirror, "/core/"):
+		return "core"
+	case strings.Contains(mirror, "/extras/"):
+		_, rhs, _ := strings.Cut(mirror, "/extras/")
+		lhs, _, found := strings.Cut(rhs, "/")
+		if !found {
+			log.Printf("WARN: failed to find repository. mirror: %s", mirror)
+			return "unknown"
+		}
+		return filepath.Join("extras", lhs)
+	default:
+		log.Printf("WARN: failed to find repository. mirror: %s", mirror)
+		return "unknown"
 	}
-
-	var r releasemd
-	decoder := xml.NewDecoder(bytes.NewReader(bs))
-	decoder.CharsetReader = charset.NewReaderLabel
-	if err := decoder.Decode(&r); err != nil {
-		return "", errors.Wrap(err, "decode releasemd")
-	}
-
-	var vs []string
-	for _, r := range r.Releases.Release {
-		vs = append(vs, r.Version)
-	}
-	if len(vs) == 0 {
-		return "", errors.Errorf("version list for amazon linux 2022 is empty")
-	}
-
-	slices.Sort(vs)
-	return fmt.Sprintf(mirror.Mirror, vs[len(vs)-1]), nil
 }

@@ -13,10 +13,9 @@ import (
 const dataURL = "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -53,22 +52,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "attack"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "attack"),
+		retry:   3,
 	}
 
 	for _, o := range opts {

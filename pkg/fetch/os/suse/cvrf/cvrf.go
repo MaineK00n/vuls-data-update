@@ -2,7 +2,6 @@ package cvrf
 
 import (
 	"bytes"
-	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io/fs"
@@ -22,12 +21,11 @@ import (
 const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf-cve/"
 
 type options struct {
-	baseURL        string
-	dir            string
-	retry          int
-	concurrency    int
-	wait           int
-	compressFormat string
+	baseURL     string
+	dir         string
+	retry       int
+	concurrency int
+	wait        int
 }
 
 type Option interface {
@@ -84,24 +82,13 @@ func WithWait(wait int) Option {
 	return waitOption(wait)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:        baseURL,
-		dir:            filepath.Join(util.SourceDir(), "suse", "cvrf"),
-		retry:          3,
-		concurrency:    20,
-		wait:           1,
-		compressFormat: "",
+		baseURL:     baseURL,
+		dir:         filepath.Join(util.SourceDir(), "suse", "cvrf"),
+		retry:       3,
+		concurrency: 20,
+		wait:        1,
 	}
 
 	for _, o := range opts {
@@ -161,13 +148,8 @@ func Fetch(opts ...Option) error {
 				continue
 			}
 
-			bs, err := json.Marshal(adv)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
-			}
-
-			if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Vulnerability.CVE)), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, adv.Vulnerability.CVE))
+			if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", adv.Vulnerability.CVE)), adv); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", adv.Vulnerability.CVE)))
 			}
 
 			delete(oldCVEs, adv.Vulnerability.CVE)

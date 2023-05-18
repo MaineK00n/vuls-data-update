@@ -20,10 +20,9 @@ import (
 const advisoryURL = "https://security-tracker.debian.org/tracker/data/json"
 
 type options struct {
-	advisoryURL    string
-	dir            string
-	retry          int
-	compressFormat string
+	advisoryURL string
+	dir         string
+	retry       int
 }
 
 type Option interface {
@@ -60,22 +59,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		advisoryURL:    advisoryURL,
-		dir:            filepath.Join(util.SourceDir(), "debian", "tracker"),
-		retry:          3,
-		compressFormat: "",
+		advisoryURL: advisoryURL,
+		dir:         filepath.Join(util.SourceDir(), "debian", "tracker"),
+		retry:       3,
 	}
 
 	for _, o := range opts {
@@ -156,13 +144,8 @@ func Fetch(opts ...Option) error {
 				y = strings.Split(a.ID, "-")[0]
 			}
 
-			bs, err := json.Marshal(a)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
-			}
-
-			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, a.ID))
+			if err := util.Write(filepath.Join(dir, y, fmt.Sprintf("%s.json.gz", a.ID)), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, fmt.Sprintf("%s.json.gz", a.ID)))
 			}
 
 			bar.Increment()

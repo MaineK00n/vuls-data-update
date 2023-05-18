@@ -19,10 +19,9 @@ import (
 const dataURL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -59,22 +58,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "kev"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "kev"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -129,13 +117,8 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		bs, err := json.Marshal(v)
-		if err != nil {
-			return errors.Wrap(err, "marshal json")
-		}
-
-		if err := util.Write(util.BuildFilePath(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", v.CveID)), options.compressFormat), bs, options.compressFormat); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, v.CveID))
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", v.CveID)), v); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", v.CveID)))
 		}
 
 		bar.Increment()

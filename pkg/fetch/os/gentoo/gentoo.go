@@ -1,22 +1,28 @@
 package gentoo
 
 import (
+	"encoding/xml"
+	"fmt"
+	"io/fs"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
+	"strings"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
-const defaultRepoURL = "git+ssh://git@git.gentoo.org/data/glsa.git"
+const defaultRepoURL = "https://anongit.gentoo.org/git/data/glsa.git"
 
 type options struct {
-	repoURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	repoURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -53,39 +59,85 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		repoURL:        defaultRepoURL,
-		dir:            filepath.Join(util.SourceDir(), "gentoo"),
-		retry:          3,
-		compressFormat: "",
+		repoURL: defaultRepoURL,
+		dir:     filepath.Join(util.SourceDir(), "gentoo"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	cloneDir := filepath.Join(util.SourceDir(), "clone")
-	if err := os.RemoveAll(cloneDir); err != nil {
-		return errors.Wrapf(err, "remove %s", cloneDir)
-	}
-	if err := os.MkdirAll(cloneDir, os.ModePerm); err != nil {
+	log.Printf("[INFO] Fetch Gentoo Linux")
+
+	cloneDir, err := os.MkdirTemp("", "vuls-data-update")
+	if err != nil {
 		return errors.Wrapf(err, "mkdir %s", cloneDir)
 	}
 
 	if err := exec.Command("git", "clone", "--depth", "1", options.repoURL, cloneDir).Run(); err != nil {
 		return errors.Wrapf(err, "git clone --depth 1 %s %s", options.repoURL, cloneDir)
 	}
+
+	var as []GLSA
+	if err := filepath.WalkDir(cloneDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		if !strings.HasSuffix(path, ".xml") {
+			return nil
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return errors.Wrapf(err, "open %s", path)
+		}
+		defer f.Close()
+
+		var a GLSA
+		if err := xml.NewDecoder(f).Decode(&a); err != nil {
+			return errors.Wrap(err, "decode xml")
+		}
+
+		as = append(as, a)
+
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", cloneDir)
+	}
+
+	if err := os.RemoveAll(cloneDir); err != nil {
+		return errors.Wrapf(err, "remove %s", cloneDir)
+	}
+
+	if err := os.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+	if err := os.MkdirAll(options.dir, os.ModePerm); err != nil {
+		return errors.Wrapf(err, "mkdir %s", options.dir)
+	}
+
+	bar := pb.StartNew(len(as))
+	for _, a := range as {
+		y := a.ID[:4]
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
+
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("glsa-%s.json.gz", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("glsa-%s.json.gz", a.ID)))
+		}
+
+		bar.Increment()
+	}
+	bar.Finish()
 
 	return nil
 }

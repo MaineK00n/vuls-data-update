@@ -1,37 +1,43 @@
 package bulletin
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/tealeg/xlsx"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
-const dataURL = "https://download.microsoft.com/download/6/7/3/673E4349-1CA5-40B9-8879-095C72D5B49D/BulletinSearch.xlsx"
-
-// https://download.microsoft.com/download/6/7/3/673E4349-1CA5-40B9-8879-095C72D5B49D/BulletinSearch2001-2008.xlsx
+var dataURLs = []string{
+	"https://download.microsoft.com/download/6/7/3/673E4349-1CA5-40B9-8879-095C72D5B49D/BulletinSearch.xlsx",
+	"https://download.microsoft.com/download/6/7/3/673E4349-1CA5-40B9-8879-095C72D5B49D/BulletinSearch2001-2008.xlsx",
+}
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURLs []string
+	dir      string
+	retry    int
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type dataURLOption string
+type dataURLsOption []string
 
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
+func (u dataURLsOption) apply(opts *options) {
+	opts.dataURLs = u
 }
 
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
+func WithDataURLs(urls []string) Option {
+	return dataURLsOption(urls)
 }
 
 type dirOption string
@@ -54,22 +60,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "windows", "bulletin"),
-		retry:          3,
-		compressFormat: "",
+		dataURLs: dataURLs,
+		dir:      filepath.Join(util.SourceDir(), "windows", "bulletin"),
+		retry:    3,
 	}
 
 	for _, o := range opts {
@@ -77,10 +72,71 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Windows Bulletin")
-	_, err := util.FetchURL(options.dataURL, options.retry)
-	if err != nil {
-		return errors.Wrap(err, "fetch bulletin data")
+
+	bulletins := map[string][]Bulletin{}
+	for _, u := range options.dataURLs {
+		bs, err := util.FetchURL(u, options.retry)
+		if err != nil {
+			return errors.Wrap(err, "fetch bulletin data")
+		}
+
+		f, err := xlsx.OpenBinary(bs)
+		if err != nil {
+			return errors.Wrap(err, "failed to open xlsx binary")
+		}
+		for _, sheet := range f.Sheets {
+			for i, row := range sheet.Rows {
+				// skip header
+				if i == 0 {
+					continue
+				}
+
+				var line Bulletin
+				if err := row.ReadStruct(&line); err != nil {
+					return errors.Wrap(err, "failed to read xlsx line")
+				}
+
+				if line.DatePosted == "" {
+					continue
+				}
+
+				var y string
+				lhs, rhs, found := strings.Cut(line.DatePosted, "]")
+				if found {
+					t, err := time.Parse("1/2/2006", rhs)
+					if err == nil {
+						y = fmt.Sprint(t.Year())
+					}
+				} else {
+					t, err := time.Parse("01-02-06", lhs)
+					if err == nil {
+						y = fmt.Sprint(t.Year())
+					}
+				}
+
+				bulletins[y] = append(bulletins[y], line)
+			}
+		}
 	}
+
+	bar := pb.StartNew(len(bulletins))
+	for y, bs := range bulletins {
+		log.Printf("[INFO] Fetched Windows Bulletin %s", y)
+
+		dir := filepath.Join(options.dir, y)
+		if err := os.RemoveAll(dir); err != nil {
+			return errors.Wrapf(err, "remove %s", dir)
+		}
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return errors.Wrapf(err, "mkdir %s", dir)
+		}
+
+		if err := util.Write(filepath.Join(dir, "bulletin.json.gz"), bs); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, "bulletin.json.gz"))
+		}
+		bar.Increment()
+	}
+	bar.Finish()
 
 	return nil
 }

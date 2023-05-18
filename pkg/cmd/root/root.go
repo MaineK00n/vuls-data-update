@@ -4,7 +4,6 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 
-	buildCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/build"
 	fetchCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/fetch"
 )
 
@@ -28,7 +27,6 @@ func NewCmdRoot() *cobra.Command {
 	}
 
 	cmd.AddCommand(fetchCmd.NewCmdFetch())
-	cmd.AddCommand(buildCmd.NewCmdBuild())
 
 	return cmd
 }

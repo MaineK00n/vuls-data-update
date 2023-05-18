@@ -2,21 +2,25 @@ package rocky
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
+
+	"github.com/cheggaaa/pb/v3"
+	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
-	"github.com/pkg/errors"
 )
 
-// modular package: https://kojidev.rockylinux.org/kojifiles/packages/httpd/2.4/8030020210413025317.30b713e6/
-
-const dataURL = "https://errata.rockylinux.org/api/advisories"
+const dataURL = "https://errata.build.resf.org/api/v2/advisories?filters.type=TYPE_SECURITY&page=%d&limit=100"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -53,37 +57,66 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "rocky"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "rocky"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
-	bs, err := util.FetchURL(options.dataURL, options.retry)
-	if err != nil {
-		return errors.Wrap(err, "fetch cvrf data")
+	log.Printf("[INFO] Fetch Rocky Linux")
+
+	var as []Advisory
+	for i := 0; ; i++ {
+		bs, err := util.FetchURL(fmt.Sprintf(options.dataURL, i), options.retry)
+		if err != nil {
+			return errors.Wrap(err, "fetch advisory")
+		}
+
+		var a advisories
+		if err := json.Unmarshal(bs, &a); err != nil {
+			return errors.Wrap(err, "unmarshal json")
+		}
+
+		if len(a.Advisories) == 0 {
+			break
+		}
+
+		as = append(as, a.Advisories...)
 	}
 
-	var advisories interface{}
-	if err := json.Unmarshal(bs, &advisories); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := os.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
+	if err := os.MkdirAll(options.dir, os.ModePerm); err != nil {
+		return errors.Wrapf(err, "mkdir %s", options.dir)
+	}
+
+	bar := pb.StartNew(len(as))
+	for _, a := range as {
+		_, rhs, found := strings.Cut(a.Name, "-")
+		if !found {
+			continue
+		}
+		y, _, found := strings.Cut(rhs, ":")
+		if !found {
+			continue
+		}
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
+
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", a.Name)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", a.Name)))
+		}
+
+		bar.Increment()
+	}
+	bar.Finish()
 
 	return nil
 }

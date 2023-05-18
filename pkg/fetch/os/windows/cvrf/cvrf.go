@@ -1,9 +1,18 @@
 package cvrf
 
 import (
+	"bytes"
+	"encoding/json"
+	"encoding/xml"
+	"fmt"
 	"log"
+	"os"
+	"path"
 	"path/filepath"
+	"strconv"
+	"strings"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -12,10 +21,9 @@ import (
 const dataURL = "https://api.msrc.microsoft.com/cvrf/v2.0/updates"
 
 type options struct {
-	dataURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -52,22 +60,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:        dataURL,
-		dir:            filepath.Join(util.SourceDir(), "windows", "cvrf"),
-		retry:          3,
-		compressFormat: "",
+		dataURL: dataURL,
+		dir:     filepath.Join(util.SourceDir(), "windows", "cvrf"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -75,10 +72,48 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Windows CVRF")
-	_, err := util.FetchURL(options.dataURL, options.retry)
+	bs, err := util.FetchURL(options.dataURL, options.retry)
 	if err != nil {
-		return errors.Wrap(err, "fetch cvrf data")
+		return errors.Wrap(err, "fetch updates")
 	}
+
+	var us updates
+	if err := json.NewDecoder(bytes.NewReader(bs)).Decode(&us); err != nil {
+		return errors.Wrap(err, "decode json")
+	}
+
+	var cs []CVRF
+	for _, u := range us.Value {
+		log.Printf("[INFO] Fetch Windows CVRF %s", path.Base(u.CvrfURL))
+		bs, err := util.FetchURL(u.CvrfURL, options.retry)
+		if err != nil {
+			return errors.Wrap(err, "fetch cvrf")
+		}
+
+		var c CVRF
+		if err := xml.NewDecoder(bytes.NewReader(bs)).Decode(&c); err != nil {
+			return errors.Wrap(err, "decode xml")
+		}
+		cs = append(cs, c)
+	}
+
+	if err := os.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
+	bar := pb.StartNew(len(cs))
+	for _, c := range cs {
+		y, _, _ := strings.Cut(c.DocumentTracking.Identification.ID, "-")
+		if _, err := strconv.Atoi(y); err != nil {
+			continue
+		}
+
+		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", c.DocumentTracking.Identification.ID)), c); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json.gz", c.DocumentTracking.Identification.ID)))
+		}
+		bar.Increment()
+	}
+	bar.Finish()
 
 	return nil
 }

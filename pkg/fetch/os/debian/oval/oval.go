@@ -2,7 +2,6 @@ package oval
 
 import (
 	"bytes"
-	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
@@ -10,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/cheggaaa/pb/v3"
@@ -24,10 +22,9 @@ import (
 const baseURL = "https://www.debian.org/security/oval/"
 
 type options struct {
-	baseURL        string
-	dir            string
-	retry          int
-	compressFormat string
+	baseURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -64,22 +61,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:        baseURL,
-		dir:            filepath.Join(util.SourceDir(), "debian", "oval"),
-		retry:          3,
-		compressFormat: "",
+		baseURL: baseURL,
+		dir:     filepath.Join(util.SourceDir(), "debian", "oval"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -100,7 +86,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Debian %s OVAL", v)
-		defs, err := options.fetchOVAL(ovalname)
+		root, err := options.fetch(ovalname)
 		if err != nil {
 			return errors.Wrapf(err, "fetch debian %s oval", v)
 		}
@@ -113,19 +99,29 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "mkdir %s", dir)
 		}
 
-		bar := pb.StartNew(len(defs))
-		for _, def := range defs {
-			bs, err := json.Marshal(def)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
+		bar := pb.StartNew(len(root.Definitions.Definition) + 3)
+		for _, def := range root.Definitions.Definition {
+			if err := util.Write(filepath.Join(dir, "definitions", fmt.Sprintf("%s.json.gz", def.ID)), def); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, "definitions", fmt.Sprintf("%s.json.gz", def.ID)))
 			}
-
-			if err := util.Write(util.BuildFilePath(filepath.Join(dir, fmt.Sprintf("%s.json", def.DefinitionID)), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(dir, def.DefinitionID))
-			}
-
 			bar.Increment()
 		}
+
+		if err := util.Write(filepath.Join(dir, "tests", "tests.json.gz"), root.Tests); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, "tests", "tests.json.gz"))
+		}
+		bar.Increment()
+
+		if err := util.Write(filepath.Join(dir, "objects", "objects.json.gz"), root.Objects); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, "objects", "objects.json.gz"))
+		}
+		bar.Increment()
+
+		if err := util.Write(filepath.Join(dir, "states", "states.json.gz"), root.States); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(dir, "states", "states.json.gz"))
+		}
+		bar.Increment()
+
 		bar.Finish()
 	}
 	return nil
@@ -153,7 +149,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	return ovals, nil
 }
 
-func (opts options) fetchOVAL(ovalname string) ([]Definition, error) {
+func (opts options) fetch(ovalname string) (*root, error) {
 	u, err := url.JoinPath(opts.baseURL, ovalname)
 	if err != nil {
 		return nil, errors.Wrap(err, "join url path")
@@ -161,141 +157,13 @@ func (opts options) fetchOVAL(ovalname string) ([]Definition, error) {
 
 	bs, err := util.FetchURL(u, opts.retry)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %s", ovalname)
+		return nil, errors.Wrapf(err, "fetch %s", u)
 	}
 
-	var root root
-	if err := xml.Unmarshal(bs, &root); err != nil {
-		return nil, errors.Wrapf(err, "unmarshal %s", ovalname)
+	var r root
+	if err := xml.Unmarshal(bs, &r); err != nil {
+		return nil, errors.Wrap(err, "unmarshal xml")
 	}
 
-	tests, err := parseTests(root)
-	if err != nil {
-		return nil, errors.Wrap(err, "parse dpkginfo_test")
-	}
-
-	return parseDefinitions(root.Definitions.Definitions, tests), nil
-}
-
-func parseTests(root root) (map[string]Package, error) {
-	objs := parseObjects(root.Objects)
-	states := parseStates(root.States)
-	tests := map[string]Package{}
-	for _, test := range root.Tests.DpkginfoTest {
-		t, err := followTestRefs(test, objs, states)
-		if err != nil {
-			return nil, errors.Wrap(err, "follow test refs")
-		}
-		tests[test.ID] = t
-	}
-	return tests, nil
-}
-
-func parseObjects(ovalObjs objects) map[string]string {
-	objs := map[string]string{}
-	for _, obj := range ovalObjs.DpkginfoObject {
-		objs[obj.ID] = obj.Name
-	}
-	return objs
-}
-
-func parseStates(objStates states) map[string]dpkginfoState {
-	states := map[string]dpkginfoState{}
-	for _, state := range objStates.DpkginfoState {
-		states[state.ID] = state
-	}
-	return states
-}
-
-func followTestRefs(test dpkginfoTest, objects map[string]string, states map[string]dpkginfoState) (Package, error) {
-	var p Package
-
-	if test.Object.ObjectRef == "" {
-		return Package{}, errors.Errorf(`ObjectRef is empty. dpkginfo_test id="%s"`, test.ID)
-	}
-
-	pkgName, ok := objects[test.Object.ObjectRef]
-	if !ok {
-		return Package{}, errors.Errorf(`dpkginfo_object not found. dpkginfo_test id="%s", dpkginfo_object id="%s"`, test.ID, test.Object.ObjectRef)
-	}
-	p.Name = pkgName
-
-	if test.State.StateRef == "" {
-		return p, nil
-	}
-
-	state, ok := states[test.State.StateRef]
-	if !ok {
-		return Package{}, errors.Errorf(`dpkginfo_state not found. dpkginfo_test id="%s", dpkginfo_state id="%s"`, test.ID, test.State.StateRef)
-	}
-
-	if state.Evr.Datatype == "debian_evr_string" && state.Evr.Operation == "less than" {
-		p.FixedVersion = state.Evr.Text
-	}
-
-	return p, nil
-}
-
-func parseDefinitions(ovalDefs []definition, tests map[string]Package) []Definition {
-	var defs []Definition
-	for _, d := range ovalDefs {
-		var rs []Reference
-		for _, r := range d.References {
-			rs = append(rs, Reference{
-				ID:     r.RefID,
-				Source: r.Source,
-				URL:    r.RefURL,
-			})
-		}
-
-		pkg := walkCriterion(d.Criteria, tests)
-
-		var date *time.Time
-		if d.Debian.Date != "" {
-			t, err := time.Parse("2006-01-02", d.Debian.Date)
-			if err == nil {
-				date = &t
-			} else {
-				log.Printf(`[WARN] error time.Parse definition id="%s", date="%s", err="%s"`, d.ID, d.Debian.Date, err)
-			}
-		}
-
-		defs = append(defs, Definition{
-			DefinitionID: d.ID,
-			Class:        d.Class,
-			Title:        d.Title,
-			Description:  d.Description,
-			Debian: Debian{
-				DSA:      d.Debian.DSA,
-				MoreInfo: d.Debian.MoreInfo,
-				Date:     date,
-			},
-			Affected: Affected{
-				Family:   d.Affected.Family,
-				Platform: d.Affected.Platform,
-				Product:  d.Affected.Product,
-			},
-			Package:    *pkg,
-			References: rs,
-		})
-	}
-	return defs
-}
-
-func walkCriterion(cri criteria, tests map[string]Package) *Package {
-	var pkg *Package
-	for _, c := range cri.Criterions {
-		t, ok := tests[c.TestRef]
-		if ok {
-			pkg = &t
-			return pkg
-		}
-	}
-
-	for _, c := range cri.Criterias {
-		if pkg = walkCriterion(c, tests); pkg != nil {
-			break
-		}
-	}
-	return pkg
+	return &r, nil
 }

@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -21,10 +20,9 @@ const urlFormat = "https://errata.almalinux.org/%s/errata.full.json"
 var versions = []string{"8", "9"}
 
 type options struct {
-	urls           map[string]string
-	dir            string
-	retry          int
-	compressFormat string
+	urls  map[string]string
+	dir   string
+	retry int
 }
 
 type Option interface {
@@ -61,16 +59,6 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type compressFormatOption string
-
-func (c compressFormatOption) apply(opts *options) {
-	opts.compressFormat = string(c)
-}
-
-func WithCompressFormat(compress string) Option {
-	return compressFormatOption(compress)
-}
-
 func Fetch(opts ...Option) error {
 	urls := map[string]string{}
 	for _, v := range versions {
@@ -78,10 +66,9 @@ func Fetch(opts ...Option) error {
 	}
 
 	options := &options{
-		urls:           urls,
-		dir:            filepath.Join(util.SourceDir(), "alma"),
-		retry:          3,
-		compressFormat: "",
+		urls:  urls,
+		dir:   filepath.Join(util.SourceDir(), "alma"),
+		retry: 3,
 	}
 
 	for _, o := range opts {
@@ -95,32 +82,17 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "fetch almalinux %s errata", v)
 		}
 
-		var root Root
+		var root root
 		if err := json.Unmarshal(bs, &root); err != nil {
 			return errors.Wrapf(err, "unmarshal almalinux %s", v)
 		}
 
-		var advs []Advisory
-		calcDateFn := func(v int) *time.Time {
-			t := time.Unix(int64(v), 0).UTC()
-			return &t
-		}
-		for _, e := range root.Data {
-			if e.Type != "security" {
+		var advs []Erratum
+		for _, d := range root.Data {
+			if d.Type != "security" {
 				continue
 			}
-			advs = append(advs, Advisory{
-				ID:          e.ID,
-				Type:        e.Type,
-				Title:       e.Title,
-				Description: e.Description,
-				Severity:    e.Severity,
-				Packages:    e.Packages,
-				Modules:     e.Modules,
-				References:  e.References,
-				IssuedDate:  calcDateFn(e.IssuedDate),
-				UpdatedDate: calcDateFn(e.UpdatedDate),
-			})
+			advs = append(advs, d)
 		}
 
 		dir := filepath.Join(options.dir, v)
@@ -134,13 +106,8 @@ func Fetch(opts ...Option) error {
 				continue
 			}
 
-			bs, err := json.Marshal(a)
-			if err != nil {
-				return errors.Wrap(err, "marshal json")
-			}
-
-			if err := util.Write(util.BuildFilePath(filepath.Join(dir, y, fmt.Sprintf("%s.json", a.ID)), options.compressFormat), bs, options.compressFormat); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, a.ID))
+			if err := util.Write(filepath.Join(dir, y, fmt.Sprintf("%s.json.gz", a.ID)), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(dir, y, fmt.Sprintf("%s.json.gz", a.ID)))
 			}
 
 			bar.Increment()
