@@ -24,7 +24,7 @@ jobs:
         run: git submodule update --remote --recursive source
 
       - name: Set up Go 1.x
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
 
@@ -415,7 +415,7 @@ jobs:
         run: git submodule update --remote --recursive source output
 
       - name: Set up Go 1.x
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
 
