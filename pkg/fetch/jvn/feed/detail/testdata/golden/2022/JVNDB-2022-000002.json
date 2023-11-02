@@ -1,0 +1,120 @@
+{
+  "vulinfoid": "JVNDB-2022-000002",
+  "vulinfodata": {
+    "title": "WordPress 用プラグイン Quiz And Survey Master における複数の脆弱性",
+    "vulinfodescription": {
+      "overview": "ExpressTech が提供する WordPress 用プラグイン Quiz And Survey Master には、次の複数の脆弱性が存在します。 ・クロスサイトリクエストフォージェリ (CWE-352) - CVE-2022-0180 ・反射型クロスサイトスクリプティング (CWE-79) - CVE-2022-0181 ・格納型クロスサイトスクリプティング (CWE-79) - CVE-2022-0182  CVE-2022-0180、CVE-2022-0181 これらの脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。 報告者: 末吉 大輝 氏  CVE-2022-0182 この脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。 報告者: 三井物産セキュアディレクション株式会社 荒牧　努 氏"
+    },
+    "affected": {
+      "affecteditem": [
+        {
+          "name": "ExpressTech",
+          "productname": "Quiz And Survey Master",
+          "cpe": {
+            "text": "cpe:/a:expresstech:quiz_and_survey_master",
+            "version": "2.2"
+          },
+          "versionnumber": [
+            "7.3.7 より前のバージョン"
+          ]
+        }
+      ]
+    },
+    "impact": {
+      "cvss": [
+        {
+          "version": "2.0",
+          "severity": {
+            "text": "Medium",
+            "type": "Base"
+          },
+          "base": "4",
+          "vector": "AV:N/AC:L/Au:S/C:N/I:P/A:N"
+        },
+        {
+          "version": "3.0",
+          "severity": {
+            "text": "Medium",
+            "type": "Base"
+          },
+          "base": "5.4",
+          "vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"
+        }
+      ],
+      "impactitem": {
+        "description": "想定される影響は各脆弱性により異なりますが、次のような影響を受ける可能性があります。 ・当該製品に管理者権限でログインしているユーザが、細工されたページにアクセスした場合、意図しない操作をさせられる - CVE-2022-0180 ・当該製品に管理者権限でログインしているユーザのウェブブラウザ上で、任意のスクリプトを実行される - CVE-2022-0181 ・当該製品を使用しているサイトにアクセスしているユーザのウェブブラウザ上で、任意のスクリプトを実行される - CVE-2022-0182"
+      }
+    },
+    "solution": {
+      "solutionitem": {
+        "description": "[アップデートする] 開発者が提供する情報をもとに、最新版にアップデートしてください。"
+      }
+    },
+    "related": {
+      "relateditem": [
+        {
+          "type": "vendor",
+          "name": "ExpressTech",
+          "vulinfoid": "Powerful quiz and survey for WordPress in few minutes!",
+          "url": "https://quizandsurveymaster.com/"
+        },
+        {
+          "type": "vendor",
+          "name": "ExpressTech",
+          "vulinfoid": "Quiz And Survey Master - Best Quiz, Exam and Survey Plugin for WordPress",
+          "url": "https://ja.wordpress.org/plugins/quiz-master-next/"
+        },
+        {
+          "type": "advisory",
+          "name": "Common Vulnerabilities and Exposures (CVE)",
+          "vulinfoid": "CVE-2022-0180",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2022-0180"
+        },
+        {
+          "type": "advisory",
+          "name": "Common Vulnerabilities and Exposures (CVE)",
+          "vulinfoid": "CVE-2022-0181",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2022-0181"
+        },
+        {
+          "type": "advisory",
+          "name": "Common Vulnerabilities and Exposures (CVE)",
+          "vulinfoid": "CVE-2022-0182",
+          "url": "https://www.cve.org/CVERecord?id=CVE-2022-0182"
+        },
+        {
+          "type": "advisory",
+          "name": "JVN",
+          "vulinfoid": "JVN#72788165",
+          "url": "https://jvn.jp/jp/JVN72788165/index.html"
+        },
+        {
+          "type": "cwe",
+          "name": "JVNDB",
+          "vulinfoid": "CWE-79",
+          "url": "https://jvndb.jvn.jp/ja/cwe/CWE-79.html",
+          "title": "クロスサイトスクリプティング"
+        },
+        {
+          "type": "cwe",
+          "name": "JVNDB",
+          "vulinfoid": "CWE-352",
+          "url": "https://jvndb.jvn.jp/ja/cwe/CWE-352.html",
+          "title": "クロスサイトリクエストフォージェリ"
+        }
+      ]
+    },
+    "history": {
+      "historyitem": [
+        {
+          "historyno": "1",
+          "datetime": "2022-01-12T12:23:37+09:00",
+          "description": "[2022年1月12日]\\n  掲載"
+        }
+      ]
+    },
+    "datefirstpublished": "2022-01-12T12:08:20+09:00",
+    "datelastupdated": "2022-01-12T12:08:20+09:00",
+    "datepublic": "2022-01-12T00:00:00+09:00"
+  }
+}
