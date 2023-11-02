@@ -22,7 +22,7 @@ func TestFetch(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			file: "testdata/fixtures/allitems-cvrf.xml",
+			file: "testdata/fixtures/cvelistV5-main.tar.gz",
 		},
 		{
 			name:     "404 not found",
