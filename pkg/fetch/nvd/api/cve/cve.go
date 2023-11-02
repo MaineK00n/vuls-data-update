@@ -2,7 +2,6 @@ package cve
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,10 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -85,6 +83,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL: baseURL,
+		apiKey:  "",
 		//  TODO(shino): Where to put the default value, cmd/fetch/fetch.go or here?
 		dir:   filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
 		retry: 3,
@@ -94,63 +93,93 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	url, err := url.Parse(options.baseURL)
-	if err != nil {
-		return errors.Wrapf(err, "parse base URL: %s", options.baseURL)
-	}
-	var startIndex int64 = 0
-	//  TODO(shino): prevent infinite loop by any accidents
-	for {
-		result, err := callAPI(options, url, resultsPerPageMax, startIndex)
-		if err != nil {
-			return errors.Wrap(err, "call NVD CVE API")
-		}
-		if result.resultsPerPage != 0 {
-			// Last page reached
-			return nil
-		}
-
-		startIndex += result.resultsPerPage
-		//  TODO(shino): sleep to secure the API rate limit
-	}
-}
-
-type result struct {
-	resultsPerPage int64
-	totalResults   int64
-}
-
-func callAPI(opts *options, url *url.URL, resultsPerPage int64, startIndex int64) (*result, error) {
-
-	log.Printf("[DEBUG] About to call NVD API CVE with startIndex=%d", startIndex)
-	q := url.Query()
-	q.Set(keyStartInedex, strconv.FormatInt(startIndex, 10))
-	// q.Set(keyResultsPerPage, strconv.Itoa(opts.resultsPerPage))
-	q.Set(keyResultsPerPage, strconv.FormatInt(1, 10))
-	url.RawQuery = q.Encode()
+	log.Printf("[INFO] Fetch NVD API CVE base URL: %s", options.baseURL)
 
 	h := http.Header{}
-	if strings.Compare(opts.apiKey, "") != 0 {
-		h.Add("api-key", opts.apiKey)
+	if strings.Compare(options.apiKey, "") != 0 {
+		h.Add("apiKey", options.apiKey)
+	}
+	headerOption := utilhttp.WithRequestHeader(h)
+
+	// Preliminary API call to get totalResults
+	//  TODO(shino): it's waste when no API key (single goroutine case)
+	url, err := fullURL(options.baseURL, 0, 1)
+	if err != nil {
+		return errors.Wrap(err, "Generate full URL")
 	}
 
-	bs, err := utilhttp.Get(url.String(), opts.retry, utilhttp.WithRequestHeader(h))
+	bs, err := utilhttp.Get(url, options.retry, headerOption)
 	if err != nil {
-		return nil, errors.Wrap(err, "read response body")
+		return errors.Wrap(err, "call NVD CVE API")
 	}
-	fmt.Printf("bs: %s\n", bs)
+	var result CVEAPI20
+	if err := json.Unmarshal(bs, &result); err != nil {
+		return errors.Wrapf(err, "unmarshal NVE API CVE, %s", bs)
+	}
+
+	pages := result.TotalResults/resultsPerPageMax + 1
+	log.Printf("[INFO] total results=%d, pages=%d", result.TotalResults, pages)
+
+	urls := make([]string, 0, result.TotalResults/resultsPerPageMax+1)
+	var startIndex int64
+	// result.TotalResults = 5000
+	for startIndex = 0; startIndex < result.TotalResults; startIndex += resultsPerPageMax {
+		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
+		if err != nil {
+			return errors.Wrap(err, "Generate full URL")
+		}
+		urls = append(urls, url)
+	}
+
+	var concurrency int
+	// interval between requests [sec]
+	var interval int
+	if strings.Compare(options.apiKey, "") == 0 {
+		// 5 requests in a rolling 30 second window
+		concurrency = 1
+		interval = 6
+	} else {
+		// 50 requests in a rolling 30 second window.
+		// If 5 sec/req (vey bad case),
+		concurrency = 10
+		interval = 6
+	}
+
+	log.Printf("[INFO] GET concurrency=%d, interval=%d [sec]", concurrency, interval)
+
+	bsList, err := utilhttp.MultiGet(urls, concurrency, interval, options.retry, headerOption)
+	if err != nil {
+		return errors.Wrap(err, "NVD API CVE MultiGet")
+	}
+
+	//  TODO(shino): NIY
+	write(bsList[0])
+	log.Printf("[INFO] Fetch NVD API CVE finished")
+	return nil
+}
+
+func fullURL(baseUrl string, startIndex, resultsPerPage int64) (string, error) {
+	url, err := url.Parse(baseURL)
+	if err != nil {
+		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
+	}
+	q := url.Query()
+	q.Set(keyStartInedex, strconv.FormatInt(startIndex, 10))
+	q.Set(keyResultsPerPage, strconv.FormatInt(resultsPerPageMax, 10))
+	url.RawQuery = q.Encode()
+	return url.String(), nil
+}
+
+func write(bs []byte) error {
+
+	// fmt.Printf("bs: %s\n", bs)
 
 	var cveAPI20 CVEAPI20
 	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
-		return nil, errors.Wrapf(err, "unmarshal NVE API CVE with startIndex=%d", startIndex)
+		return errors.Wrapf(err, "unmarshal NVE API CVE with raw JSON=%s", bs)
 	}
-	fmt.Printf("cveAPI20.Vulnerabilities[0]: %#v\n", cveAPI20.Vulnerabilities[0])
-	fmt.Printf("cveAPI20.Vulnerabilities[0]: %#v\n", cveAPI20.Vulnerabilities[0])
 
-	//  TODO(shino): temporal
+	//  TODO(shino): write
 	cveAPI20.Vulnerabilities = cveAPI20.Vulnerabilities[0:1]
-	fmt.Printf("%#v\n", cveAPI20)
-	return &result{resultsPerPage: cveAPI20.ResultsPerPage,
-			totalResults: cveAPI20.TotalResults},
-		nil
+	return nil
 }
