@@ -2,17 +2,13 @@ package cve
 
 // https://csrc.nist.gov/schema/nvd/api/2.0/cve_api_json_2.0.schema
 type CVEAPI20 struct {
-	ResultsPerPage  int64     `json:"resultsPerPage"`
-	StartIndex      int64     `json:"startIndex"`
-	TotalResults    int64     `json:"totalResults"`
-	Format          string    `json:"format"`
-	Version         string    `json:"version"`
-	Timestamp       string    `json:"timestamp"`
-	Vulnerabilities []CVEItem `json:"vulnerabilities"`
-}
-
-type CVEItem struct {
-	CVE CVE `json:"cve"`
+	ResultsPerPage  int64  `json:"resultsPerPage"`
+	StartIndex      int64  `json:"startIndex"`
+	TotalResults    int64  `json:"totalResults"`
+	Format          string `json:"format"`
+	Version         string `json:"version"`
+	Timestamp       string `json:"timestamp"`
+	Vulnerabilities []CVE  `json:"vulnerabilities"`
 }
 
 type CVE struct {

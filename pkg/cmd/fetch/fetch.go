@@ -41,6 +41,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
+
+	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
@@ -106,7 +108,8 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchKEV(),
 		newCmdFetchMitre(),
 		newCmdFetchMSF(),
-		newCmdFetchNVDAPI(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
+		newCmdFetchNVDAPICVE(),
+		newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
 	)
 
 	return cmd
@@ -2092,29 +2095,33 @@ func newCmdFetchMSF() *cobra.Command {
 
 	return cmd
 }
-func newCmdFetchNVDAPI() *cobra.Command {
+func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
 		dir:   util.CacheDir(),
 		retry: 3,
 	}
+	var apiKey string
 
 	cmd := &cobra.Command{
-		Use:   "nvd-api",
-		Short: "Fetch NVD API data source",
+		Use:   "nvd-api-cve",
+		Short: "Fetch NVD API CVE data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch nvd-api
+			$ vuls-data-update fetch nvd-api-cve
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nvdAPI.Fetch(nvdAPI.WithDir(filepath.Join(options.dir, "nvd", "api"))); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch nvd api")
-			// 	}
+			if err := nvdAPICVE.Fetch(nvdAPICVE.WithDir(filepath.Join(options.dir, "nvd", "api", "cve")),
+				nvdAPICVE.WithRetry(options.retry),
+				nvdAPICVE.WithAPIKey(apiKey)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd feed cve")
+			}
 			return nil
 		},
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVar(&apiKey, "api-key", "", "API Key to increase rate limit")
 
 	return cmd
 }

@@ -8,12 +8,12 @@ import (
 	"net/url"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/pkg/errors"
 
+	"io"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
-	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 	// Should be <= 2,000
 	keyResultsPerPage = "resultsPerPage"
 	// So this implementation uses the max value
-	resultsPerPageMax = 2_000
+	resulstPerPageMax = 2_000
 
 	// 0-origin index of results.
 	// When the request with startIndex=100 and resultsPerPage in the corresponding response is 2000,
@@ -32,10 +32,11 @@ const (
 )
 
 type options struct {
-	baseURL string
-	apiKey  string
-	dir     string
-	retry   int
+	baseURL        string
+	resultsPerPage int
+	apiKey         string
+	dir            string
+	retry          int
 }
 
 type Option interface {
@@ -84,9 +85,10 @@ func WithRetry(retry int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL: baseURL,
+		baseURL:        baseURL,
+		resultsPerPage: resulstPerPageMax,
 		//  TODO(shino): Where to put the default value, cmd/fetch/fetch.go or here?
-		dir:   filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
+		dir:   filepath.Join(util.SourceDir(), "nvd", "api", "cve"),
 		retry: 3,
 	}
 
@@ -98,59 +100,65 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrapf(err, "parse base URL: %s", options.baseURL)
 	}
-	var startIndex int64 = 0
+	startIndex := 0
 	//  TODO(shino): prevent infinite loop by any accidents
 	for {
-		result, err := callAPI(options, url, resultsPerPageMax, startIndex)
+		resultsPerPage, err := callAPI(options, url, startIndex)
 		if err != nil {
 			return errors.Wrap(err, "call NVD CVE API")
 		}
-		if result.resultsPerPage != 0 {
+		if resultsPerPage == 0 {
 			// Last page reached
 			return nil
 		}
 
-		startIndex += result.resultsPerPage
+		startIndex += resultsPerPage
 		//  TODO(shino): sleep to secure the API rate limit
 	}
 }
 
-type result struct {
-	resultsPerPage int64
-	totalResults   int64
-}
-
-func callAPI(opts *options, url *url.URL, resultsPerPage int64, startIndex int64) (*result, error) {
+func callAPI(opts *options, url *url.URL, startIndex int) (int, error) {
 
 	log.Printf("[DEBUG] About to call NVD API CVE with startIndex=%d", startIndex)
 	q := url.Query()
-	q.Set(keyStartInedex, strconv.FormatInt(startIndex, 10))
+	q.Set(keyStartInedex, strconv.Itoa(startIndex))
 	// q.Set(keyResultsPerPage, strconv.Itoa(opts.resultsPerPage))
-	q.Set(keyResultsPerPage, strconv.FormatInt(1, 10))
+	q.Set(keyResultsPerPage, strconv.Itoa(1))
 	url.RawQuery = q.Encode()
 
-	h := http.Header{}
-	if strings.Compare(opts.apiKey, "") != 0 {
-		h.Add("api-key", opts.apiKey)
+	c := &http.Client{}
+	r, err := http.NewRequest(http.MethodGet, url.String(), nil)
+	if err != nil {
+		return 0, errors.Wrapf(err, "new HTTP Request: %s", url.String())
+	}
+	h := r.Header
+	h.Add("api-key", opts.apiKey)
+
+	resp, err := c.Do(r)
+	if err != nil {
+		return 0, errors.Wrapf(err, "Get URL: %s", url.String())
 	}
 
-	bs, err := utilhttp.Get(url.String(), opts.retry, utilhttp.WithRequestHeader(h))
-	if err != nil {
-		return nil, errors.Wrap(err, "read response body")
+	defer resp.Body.Close()
+
+	// fmt.Printf("%+v", resp)
+
+	if resp.StatusCode != http.StatusOK {
+		return 0, errors.Errorf("Error request response with status code %d", resp.StatusCode)
 	}
-	fmt.Printf("bs: %s\n", bs)
+
+	bs, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, errors.Wrap(err, "read response body")
+	}
 
 	var cveAPI20 CVEAPI20
 	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
-		return nil, errors.Wrapf(err, "unmarshal NVE API CVE with startIndex=%d", startIndex)
+		return 0, errors.Wrapf(err, "unmarshal NVE API CVE with startIndex=%d", startIndex)
 	}
-	fmt.Printf("cveAPI20.Vulnerabilities[0]: %#v\n", cveAPI20.Vulnerabilities[0])
-	fmt.Printf("cveAPI20.Vulnerabilities[0]: %#v\n", cveAPI20.Vulnerabilities[0])
 
 	//  TODO(shino): temporal
 	cveAPI20.Vulnerabilities = cveAPI20.Vulnerabilities[0:1]
 	fmt.Printf("%#v\n", cveAPI20)
-	return &result{resultsPerPage: cveAPI20.ResultsPerPage,
-			totalResults: cveAPI20.TotalResults},
-		nil
+	return 0, nil
 }
