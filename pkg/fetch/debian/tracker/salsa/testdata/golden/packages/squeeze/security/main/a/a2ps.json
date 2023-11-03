@@ -1,0 +1,44 @@
+{
+  "Architecture": [
+    "any"
+  ],
+  "Binary": [
+    "a2ps"
+  ],
+  "Build-Depends": [
+    "autotools-dev, bison, bzip2, debhelper (>= 7), docbook-to-man, dpatch, emacs23 | emacsen, file, flex, gperf, ghostscript, groff-base, gv, html2ps, graphicsmagick-imagemagick-compat, libpaper-dev, lpr, psutils, texlive-base-bin, texinfo"
+  ],
+  "Checksums-Sha1": [
+    "3a1f0f57f47b67682d403a3014381d78edfc4eb9 1807 a2ps_4.14-1.1+deb6u1.dsc 365abbbe4b7128bf70dad16d06e23c5701874852 2552507 a2ps_4.14.orig.tar.gz 0db14668fe17c04672a7df818106d8faa3dbdcbc 30454 a2ps_4.14-1.1+deb6u1.diff.gz"
+  ],
+  "Checksums-Sha256": [
+    "7e72e708e7b688d63d5c0b99b93793ad5f10f0ea30fbacd906fb187b09867dbd 1807 a2ps_4.14-1.1+deb6u1.dsc f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4 2552507 a2ps_4.14.orig.tar.gz 9030794fbf3e926ad523929af3a5d13bd71c3aeea1f83c5760d2782130adb1d1 30454 a2ps_4.14-1.1+deb6u1.diff.gz"
+  ],
+  "Directory": [
+    "pool/updates/main/a/a2ps"
+  ],
+  "Files": [
+    "8600d0862387e87074cc8f2738c3a6fe 1807 a2ps_4.14-1.1+deb6u1.dsc 781ac3d9b213fa3e1ed0d79f986dc8c7 2552507 a2ps_4.14.orig.tar.gz 5a06d4d72c9a82b52f51396c4a258fef 30454 a2ps_4.14-1.1+deb6u1.diff.gz"
+  ],
+  "Format": [
+    "1.0"
+  ],
+  "Maintainer": [
+    "Masayuki Hatta (mhatta) <mhatta@debian.org>"
+  ],
+  "Package": [
+    "a2ps"
+  ],
+  "Priority": [
+    "source"
+  ],
+  "Section": [
+    "text"
+  ],
+  "Standards-Version": [
+    "3.8.4"
+  ],
+  "Version": [
+    "1:4.14-1.1+deb6u1"
+  ]
+}

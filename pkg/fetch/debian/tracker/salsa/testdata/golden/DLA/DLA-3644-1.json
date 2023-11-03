@@ -1,0 +1,23 @@
+{
+  "header": {
+    "line": "[02 Nov 2023] DLA-3644-1 phppgadmin - security update",
+    "name": "DLA-3644-1"
+  },
+  "annotations": [
+    {
+      "line": "\t{CVE-2023-40619}",
+      "type": "xref",
+      "bugs": [
+        "CVE-2023-40619"
+      ]
+    },
+    {
+      "line": "\t[buster] - phppgadmin 5.1+ds-4+deb10u1",
+      "type": "package",
+      "release": "buster",
+      "package": "phppgadmin",
+      "kind": "fixed",
+      "version": "5.1+ds-4+deb10u1"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "Architecture": [
+    "any"
+  ],
+  "Binary": [
+    "conky-all"
+  ],
+  "Build-Depends": [
+    "audacious-dev, automake1.11 | automake (>= 1:1.11), autotools-dev, debhelper (>= 9), dpkg-dev (>= 1.15.7), libasound2-dev [linux-any], libcairo2-dev, libcurl4-gnutls-dev | libcurl4-dev, libdevstat-dev [kfreebsd-any], libglib2.0-dev, libimlib2-dev, libiw-dev [linux-any], libkvm-dev [kfreebsd-any], liblua5.1-0-dev, libncurses5-dev, libtolua++5.1-dev, libtool, libx11-dev, libxdamage-dev, libxext-dev, libxft-dev, libxml2-dev, libxmmsclient-dev, libxnvctrl-dev [i386 amd64] | nvidia-settings [i386 amd64], pkg-config (>= 0.19)"
+  ],
+  "Checksums-Sha1": [
+    "d3f78e64ee85389df4e3d45b0b65e17c1dba9729 2022 conky-all_1.9.0-2~bpo60+1.dsc 2069cbdb8e7224fcbf3c6b1ddebf64a51634b4cc 626555 conky-all_1.9.0.orig.tar.bz2 29beb69631bb0d1807f0fdce12f03872b3b2e4da 8366 conky-all_1.9.0-2~bpo60+1.debian.tar.bz2"
+  ],
+  "Checksums-Sha256": [
+    "30a24d9f10e0bf5fc4e2789bb4b4f1cb40c6177aabd15a3a6134a7d807b65aad 2022 conky-all_1.9.0-2~bpo60+1.dsc baf1b550f135fbfb53e5e286a33aadc03a667d63bf6c4d52ba7637366295bb6f 626555 conky-all_1.9.0.orig.tar.bz2 0e3147772e71634957ca01a2cfcabc12ba1eac842412cd7fbbd2557386421990 8366 conky-all_1.9.0-2~bpo60+1.debian.tar.bz2"
+  ],
+  "Directory": [
+    "pool/contrib/c/conky-all"
+  ],
+  "Files": [
+    "6006bc11747e35579489e53d33287f0a 2022 conky-all_1.9.0-2~bpo60+1.dsc d3de615f43aadc98d555e05ad9e902c2 626555 conky-all_1.9.0.orig.tar.bz2 19c3db1d413340186bbaf01900378688 8366 conky-all_1.9.0-2~bpo60+1.debian.tar.bz2"
+  ],
+  "Format": [
+    "3.0 (quilt)"
+  ],
+  "Homepage": [
+    "http://conky.sourceforge.net/"
+  ],
+  "Maintainer": [
+    "Vincent Cheng <Vincentc1208@gmail.com>"
+  ],
+  "Package": [
+    "conky-all"
+  ],
+  "Priority": [
+    "source"
+  ],
+  "Section": [
+    "contrib/utils"
+  ],
+  "Standards-Version": [
+    "3.9.3"
+  ],
+  "Vcs-Browser": [
+    "http://svn.debian.org/wsvn/collab-maint/deb-maint/conky-all/trunk"
+  ],
+  "Vcs-Svn": [
+    "svn://svn.debian.org/svn/collab-maint/deb-maint/conky-all/trunk"
+  ],
+  "Version": [
+    "1.9.0-2~bpo60+1"
+  ]
+}

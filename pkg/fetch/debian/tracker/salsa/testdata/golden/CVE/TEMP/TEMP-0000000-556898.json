@@ -1,0 +1,20 @@
+{
+  "header": {
+    "line": "CVE-2023-XXXX [Other security issues from wordpress 6.3.2]",
+    "name": "TEMP-0000000-556898",
+    "description": "[Other security issues from wordpress 6.3.2]"
+  },
+  "annotations": [
+    {
+      "line": "\t- wordpress <unfixed>",
+      "type": "package",
+      "package": "wordpress",
+      "kind": "unfixed"
+    },
+    {
+      "line": "\tNOTE: https://wordpress.org/documentation/wordpress-version/version-6-3-2/",
+      "type": "NOTE",
+      "description": "https://wordpress.org/documentation/wordpress-version/version-6-3-2/"
+    }
+  ]
+}
