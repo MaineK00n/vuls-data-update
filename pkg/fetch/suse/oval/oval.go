@@ -109,7 +109,7 @@ func Fetch(opts ...Option) error {
 				return errors.Wrap(err, "join url path")
 			}
 
-			bs, err := utilhttp.Get(u, options.retry)
+			bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
 			if err != nil {
 				return errors.Wrap(err, "fetch oval")
 			}
@@ -174,7 +174,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() ([]string, error) {
-	bs, err := utilhttp.Get(opts.baseURL, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}

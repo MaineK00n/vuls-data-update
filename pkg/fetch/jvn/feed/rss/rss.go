@@ -75,7 +75,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch JVNDB RSS")
-	bs, err := utilhttp.Get(options.dataURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
 	}
@@ -110,7 +110,7 @@ func Fetch(opts ...Option) error {
 	advisories := map[string]Item{}
 	for _, c := range filtered {
 		log.Printf("[INFO] Fetch JVNDB RSS Feed %s", c.Filename)
-		bs, err := utilhttp.Get(c.URL, options.retry)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
 		if err != nil {
 			return errors.Wrap(err, "fetch jvndb rss")
 		}

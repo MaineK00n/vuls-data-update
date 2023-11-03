@@ -73,7 +73,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch Common Weakness Enumeration: CWE")
-	bs, err := utilhttp.Get(options.dataURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch cwe data")
 	}

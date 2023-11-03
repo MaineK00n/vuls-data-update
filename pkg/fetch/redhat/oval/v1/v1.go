@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch RedHat OVALv1")
-	bs, err := utilhttp.Get(options.dataURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch archive ovalv1")
 	}

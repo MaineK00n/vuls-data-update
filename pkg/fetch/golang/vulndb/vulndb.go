@@ -65,7 +65,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Golang go-vulndb")
-	_, err := utilhttp.Get(options.dataURL, options.retry)
+	_, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch go-vulndb data")
 	}

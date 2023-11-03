@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 
 	var as []Advisory
 	for i := 0; ; i++ {
-		bs, err := utilhttp.Get(fmt.Sprintf(options.dataURL, i), options.retry)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
 		if err != nil {
 			return errors.Wrap(err, "fetch advisory")
 		}

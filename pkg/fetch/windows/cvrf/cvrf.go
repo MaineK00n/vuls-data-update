@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Windows CVRF")
-	bs, err := utilhttp.Get(options.dataURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch updates")
 	}
@@ -89,7 +89,7 @@ func Fetch(opts ...Option) error {
 	var cs []CVRF
 	for _, u := range us.Value {
 		log.Printf("[INFO] Fetch Windows CVRF %s", path.Base(u.CvrfURL))
-		bs, err := utilhttp.Get(u.CvrfURL, options.retry)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u.CvrfURL)
 		if err != nil {
 			return errors.Wrap(err, "fetch cvrf")
 		}

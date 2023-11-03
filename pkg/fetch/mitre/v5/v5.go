@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch MITRE CVE V5 List")
-	bs, err := utilhttp.Get(options.dataURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch mitre data")
 	}

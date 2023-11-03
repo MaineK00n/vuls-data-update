@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch Exploit Prediction Scoring System: EPSS")
-	bs, err := utilhttp.Get(options.dataURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch epss data")
 	}

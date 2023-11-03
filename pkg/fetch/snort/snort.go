@@ -97,7 +97,7 @@ func Fetch(opts ...Option) error {
 func (opts options) fetch() ([]Rule, error) {
 	var rules []Rule
 
-	bs, err := utilhttp.Get(opts.baseURL, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch file")
 	}

@@ -108,7 +108,7 @@ func (opts options) fetch() ([]CPEDictItem, error) {
 	var cpes []CPEDictItem
 
 	log.Printf(`[INFO] Fetch NVD CPE Dictinoary`)
-	bs, err := utilhttp.Get(opts.url, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.url)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cpe dictionary feed")
 	}
