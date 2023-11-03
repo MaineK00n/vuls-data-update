@@ -38,7 +38,9 @@ import (
 	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/githubrepos"
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/trickest"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn"
+	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
+	jvnFeedProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/product"
+	jvnFeedRSS "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/rss"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
 	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cvrf"
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v4"
@@ -105,7 +107,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchCWE(),
 		newCmdFetchEPSS(),
 		newCmdFetchExploitExploitDB(), newCmdFetchExploitGitHub(), newCmdFetchExploitInthewild(), newCmdFetchExploitExploitTrickest(),
-		newCmdFetchJVN(),
+		newCmdFetchJVNFeedDetail(), newCmdFetchJVNFeedProduct(), newCmdFetchJVNFeedRSS(),
 		newCmdFetchKEV(),
 		newCmdFetchMitreCVRF(), newCmdFetchMitreV4(), newCmdFetchMitreV5(),
 		newCmdFetchMSF(),
@@ -1991,22 +1993,23 @@ func newCmdFetchExploitExploitTrickest() *cobra.Command {
 
 	return cmd
 }
-func newCmdFetchJVN() *cobra.Command {
+
+func newCmdFetchJVNFeedDetail() *cobra.Command {
 	options := &options{
 		dir:   util.CacheDir(),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "jvn",
-		Short: "Fetch jvn data source",
+		Use:   "jvn-feed-detail",
+		Short: "Fetch jvn feed detail data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch jvn
+			$ vuls-data-update fetch jvn-feed-detail
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := jvn.Fetch(jvn.WithDir(filepath.Join(options.dir, "jvn")), jvn.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch jvn")
+			if err := jvnFeedDetail.Fetch(jvnFeedDetail.WithDir(filepath.Join(options.dir, "jvn", "feed", "detail")), jvnFeedDetail.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch jvn feed detail")
 			}
 			return nil
 		},
@@ -2017,6 +2020,61 @@ func newCmdFetchJVN() *cobra.Command {
 
 	return cmd
 }
+
+func newCmdFetchJVNFeedProduct() *cobra.Command {
+	options := &options{
+		dir:   util.CacheDir(),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "jvn-feed-product",
+		Short: "Fetch jvn feed product data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch jvn-feed-product
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := jvnFeedProduct.Fetch(jvnFeedProduct.WithDir(filepath.Join(options.dir, "jvn", "feed", "product")), jvnFeedProduct.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch jvn feed product")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchJVNFeedRSS() *cobra.Command {
+	options := &options{
+		dir:   util.CacheDir(),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "jvn-feed-rss",
+		Short: "Fetch jvn feed rss data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch jvn-feed-rss
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := jvnFeedRSS.Fetch(jvnFeedRSS.WithDir(filepath.Join(options.dir, "jvn", "feed", "rss")), jvnFeedRSS.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch jvn feed rss")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
 func newCmdFetchKEV() *cobra.Command {
 	options := &options{
 		dir:   util.CacheDir(),

@@ -1,0 +1,56 @@
+{
+  "about": "https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-000001.html",
+  "title": "ruby-git における複数のコードインジェクションの脆弱性",
+  "link": "https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-000001.html",
+  "description": "ruby-git は、Git リポジトリの作成、読み取り、および操作に使用できる Ruby ライブラリです。ruby-git には、複数のコードインジェクション (CWE-94) の脆弱性が存在します。\r\n\r\nこの脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。\r\n報告者: 株式会社ディー・エヌ・エー 国分佑樹 氏",
+  "identifier": "JVNDB-2023-000001",
+  "references": [
+    {
+      "text": "https://jvn.jp/jp/JVN16765254/index.html",
+      "source": "JVN",
+      "id": "JVN#16765254"
+    },
+    {
+      "text": "https://www.cve.org/CVERecord?id=CVE-2022-46648",
+      "source": "CVE",
+      "id": "CVE-2022-46648"
+    },
+    {
+      "text": "https://www.cve.org/CVERecord?id=CVE-2022-47318",
+      "source": "CVE",
+      "id": "CVE-2022-47318"
+    },
+    {
+      "text": "https://jvndb.jvn.jp/ja/cwe/CWE-94.html",
+      "id": "CWE-94",
+      "title": "コード・インジェクション(CWE-94)"
+    }
+  ],
+  "cpe": [
+    {
+      "text": "cpe:/a:misc:ruby-git_ruby-git",
+      "version": "2.2",
+      "vendor": "ruby-git",
+      "product": "ruby-git"
+    }
+  ],
+  "cvss": [
+    {
+      "version": "2.0",
+      "score": "6.0",
+      "type": "Base",
+      "severity": "Medium",
+      "vector": "AV:N/AC:M/Au:S/C:P/I:P/A:P"
+    },
+    {
+      "version": "3.0",
+      "score": "5.5",
+      "type": "Base",
+      "severity": "Medium",
+      "vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L"
+    }
+  ],
+  "date": "2023-01-05T12:02+09:00",
+  "issued": "2023-01-05T12:02+09:00",
+  "modified": "2023-11-03T12:02+09:00"
+}

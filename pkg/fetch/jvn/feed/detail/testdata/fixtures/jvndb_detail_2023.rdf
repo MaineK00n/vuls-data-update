@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<VULDEF-Document 
+version="3.2" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://jvn.jp/vuldef/" 
+xmlns:vuldef="http://jvn.jp/vuldef/" 
+xmlns:status="http://jvndb.jvn.jp/myjvn/Status" 
+xmlns:sec="http://jvn.jp/rss/mod_sec/3.0/" 
+xmlns:marking="http://data-marking.mitre.org/Marking-1" 
+xmlns:tlpMarking="http://data-marking.mitre.org/extensions/MarkingStructure#TLP-1" 
+xsi:schemaLocation="http://jvn.jp/vuldef/ https://jvndb.jvn.jp/schema/vuldef_3.2.xsd http://jvn.jp/rss/mod_sec/3.0/ https://jvndb.jvn.jp/schema/mod_sec_3.0.xsd http://data-marking.mitre.org/extensions/MarkingStructure#TLP-1 https://jvndb.jvn.jp/schema/tlp_marking.xsd http://jvndb.jvn.jp/myjvn/Status https://jvndb.jvn.jp/schema/status_3.3.xsd" 
+xml:lang="ja">
+    <Vulinfo>
+      <VulinfoID>JVNDB-2022-017704</VulinfoID>
+      <VulinfoData>
+        <Title>Linux の Linux Kernel における NULL ポインタデリファレンスに関する脆弱性</Title>
+        <VulinfoDescription>
+          <Overview>Linux の Linux Kernel には、NULL ポインタデリファレンスに関する脆弱性が存在します。 </Overview>
+        </VulinfoDescription>
+        <Affected>
+          <AffectedItem>
+            <Name>Linux</Name>
+            <ProductName>Linux Kernel</ProductName>
+            <Cpe version="2.2">cpe:/o:linux:linux_kernel</Cpe>
+            <VersionNumber>5.16.3 未満</VersionNumber>
+          </AffectedItem>
+        </Affected>
+        <Impact>
+          <Cvss version="3.0">
+            <Severity type="Base">Medium</Severity>
+            <Base>5.5</Base>
+            <Vector>CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H</Vector>
+          </Cvss>
+          <ImpactItem>
+            <Description>サービス運用妨害 (DoS) 状態にされる可能性があります。 </Description>
+          </ImpactItem>
+        </Impact>
+        <Solution>
+          <SolutionItem>
+            <Description>ベンダより正式な対策が公開されています。ベンダ情報を参照して適切な対策を実施してください。</Description>
+          </SolutionItem>
+        </Solution>
+        <Related>
+          <RelatedItem type="vendor">
+            <Name>ChangeLog</Name>
+            <VulinfoID>ChangeLog-5.16.3</VulinfoID>
+            <URL>https://cdn.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.16.3</URL>
+          </RelatedItem>
+          <RelatedItem type="vendor">
+            <Name>GitHub</Name>
+            <VulinfoID>scsi: ufs: ufs-mediatek: Fix error checking in ufs_mtk_init_va09_pwr_ctrl()</VulinfoID>
+            <URL>https://github.com/torvalds/linux/commit/3ba880a12df5aa4488c18281701b5b1bc3d4531a</URL>
+          </RelatedItem>
+          <RelatedItem type="vendor">
+            <Name>Linux Kernel</Name>
+            <VulinfoID>Linux Kernel Archives</VulinfoID>
+            <URL>https://www.kernel.org</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>Common Vulnerabilities and Exposures (CVE)</Name>
+            <VulinfoID>CVE-2023-23001</VulinfoID>
+            <URL>https://www.cve.org/CVERecord?id=CVE-2023-23001</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>National Vulnerability Database (NVD)</Name>
+            <VulinfoID>CVE-2023-23001</VulinfoID>
+            <URL>https://nvd.nist.gov/vuln/detail/CVE-2023-23001</URL>
+          </RelatedItem>
+          <RelatedItem type="cwe">
+            <Name>JVNDB</Name>
+            <VulinfoID>CWE-476</VulinfoID>
+            <Title>NULL ポインタデリファレンス</Title>
+            <URL>http://cwe.mitre.org/data/definitions/476.html</URL>
+          </RelatedItem>
+        </Related>
+        <History>
+          <HistoryItem>
+            <HistoryNo>1</HistoryNo>
+            <DateTime>2023-10-16T17:17:41+09:00</DateTime>
+            <Description>[2023年10月16日]\n  掲載</Description>
+          </HistoryItem>
+        </History>
+        <DateFirstPublished>2023-10-16T17:17:41+09:00</DateFirstPublished>
+        <DateLastUpdated>2023-10-16T17:17:41+09:00</DateLastUpdated>
+        <DatePublic>2023-03-01T00:00:00+09:00</DatePublic>
+      </VulinfoData>
+    </Vulinfo>
+    <Vulinfo>
+      <VulinfoID>JVNDB-2023-004315</VulinfoID>
+      <VulinfoData>
+        <Title>oclc の oaicat における SQL インジェクションの脆弱性</Title>
+        <VulinfoDescription>
+          <Overview>oclc の oaicat には、SQL インジェクションの脆弱性が存在します。</Overview>
+        </VulinfoDescription>
+        <Affected>
+          <AffectedItem>
+            <Name>oclc</Name>
+            <ProductName>oaicat</ProductName>
+            <Cpe version="2.2">cpe:/a:oclc:oaicat</Cpe>
+            <VersionNumber>1.5.62 未満</VersionNumber>
+          </AffectedItem>
+        </Affected>
+        <Impact>
+          <Cvss version="3.0">
+            <Severity type="Base">Critical</Severity>
+            <Base>9.8</Base>
+            <Vector>CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</Vector>
+          </Cvss>
+          <ImpactItem>
+            <Description>情報を取得される、情報を改ざんされる、およびサービス運用妨害 (DoS) 状態にされる可能性があります。</Description>
+          </ImpactItem>
+        </Impact>
+        <Solution>
+          <SolutionItem>
+            <Description>ベンダアドバイザリまたはパッチ情報が公開されています。参考情報を参照して適切な対策を実施してください。</Description>
+          </SolutionItem>
+        </Solution>
+        <Related>
+          <RelatedItem type="advisory">
+            <Name>Common Vulnerabilities and Exposures (CVE)</Name>
+            <VulinfoID>CVE-2013-10019</VulinfoID>
+            <URL>https://www.cve.org/CVERecord?id=CVE-2013-10019</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>National Vulnerability Database (NVD)</Name>
+            <VulinfoID>CVE-2013-10019</VulinfoID>
+            <URL>https://nvd.nist.gov/vuln/detail/CVE-2013-10019</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>関連文書</Name>
+            <VulinfoID>code.google.com (issues/7)</VulinfoID>
+            <URL>https://code.google.com/archive/p/oaicat/issues/7</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>関連文書</Name>
+            <VulinfoID>github.com (6cc65501869fa663bcd24a70b63f41f5cfe6b3e1)</VulinfoID>
+            <URL>https://github.com/OCLC-Research/oaicat/commit/6cc65501869fa663bcd24a70b63f41f5cfe6b3e1</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>関連文書</Name>
+            <VulinfoID>oaicat.googlecode.com (oaicat-1.5.62.tar.gz)</VulinfoID>
+            <URL>https://oaicat.googlecode.com/files/oaicat-1.5.62.tar.gz</URL>
+          </RelatedItem>
+          <RelatedItem type="advisory">
+            <Name>関連文書</Name>
+            <VulinfoID>vuldb.com (id.221489)</VulinfoID>
+            <URL>https://vuldb.com/?id.221489</URL>
+          </RelatedItem>
+          <RelatedItem type="cwe">
+            <Name>JVNDB</Name>
+            <VulinfoID>CWE-89</VulinfoID>
+            <Title>SQLインジェクション</Title>
+            <URL>https://jvndb.jvn.jp/ja/cwe/CWE-89.html</URL>
+          </RelatedItem>
+        </Related>
+        <History>
+          <HistoryItem>
+            <HistoryNo>1</HistoryNo>
+            <DateTime>2023-10-27T17:01:04+09:00</DateTime>
+            <Description>[2023年10月27日]   掲載</Description>
+          </HistoryItem>
+        </History>
+        <DateFirstPublished>2023-10-27T17:01:51+09:00</DateFirstPublished>
+        <DateLastUpdated>2023-10-27T17:01:51+09:00</DateLastUpdated>
+        <DatePublic>2023-02-20T00:00:00+09:00</DatePublic>
+      </VulinfoData>
+    </Vulinfo>
+    <sec:handling>
+      <marking:Marking>
+        <marking:Marking_Structure xsi:type="tlpMarking:TLPMarkingStructureType" marking_model_name="TLP" marking_model_ref="http://www.us-cert.gov/tlp/" color="WHITE"/>
+      </marking:Marking>
+    </sec:handling>
+    <status:Status version="3.3" method="getVulnDetailInfo" lang="ja" retCd="0" retMax="" errCd="" errMsg="" totalRes="3423" totalResRet="3423" firstRes="" feed="hnd" lt="1"/>
+  </VULDEF-Document>

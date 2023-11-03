@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<Result 
+version="3.3" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://jvndb.jvn.jp/myjvn/Results" 
+xmlns:mjres="http://jvndb.jvn.jp/myjvn/Results" 
+xmlns:status="http://jvndb.jvn.jp/myjvn/Status" 
+xsi:schemaLocation="http://jvndb.jvn.jp/myjvn/Results https://jvndb.jvn.jp/schema/results_3.3.xsd">
+    <VendorInfo xml:lang="ja">
+      <Vendor vname="サン・マイクロシステムズ" cpe="cpe:/:sun" vid="1">
+        <Product pname="Sun Cobalt RaQ2" cpe="cpe:/h:sun:sun_cobalt_raq_2" pid="16"/>
+        <Product pname="Sun Cobalt RaQ3" cpe="cpe:/h:sun:sun_cobalt_raq_3" pid="17"/>
+        <Product pname="Sun Cobalt RaQ4" cpe="cpe:/h:sun:sun_cobalt_raq_4" pid="18"/>
+        <Product pname="Sun Cobalt RaQ550" cpe="cpe:/h:sun:sun_cobalt_raq_550" pid="19"/>
+        <Product pname="Sun Cobalt RaQXTR" cpe="cpe:/h:sun:sun_cobalt_raq_xtr" pid="20"/>
+        <Product pname="Sun Java System Web Server" cpe="cpe:/a:sun:java_system_web_server" pid="21"/>
+        <Product pname="Sun ONE/iPlanet Web Server" cpe="cpe:/a:sun:one_web_server" pid="22"/>
+        <Product pname="Sun Java System Application Server" cpe="cpe:/a:sun:java_system_application_server" pid="264"/>
+      </Vendor>
+      <Vendor vname="マイクロソフト" cpe="cpe:/:microsoft" vid="2">
+        <Product pname="Microsoft Access" cpe="cpe:/a:microsoft:access" pid="23"/>
+        <Product pname="Microsoft Excel" cpe="cpe:/a:microsoft:excel" pid="24"/>
+        <Product pname="Microsoft Exchange Server" cpe="cpe:/a:microsoft:exchange_server" pid="25"/>
+        <Product pname="Microsoft Internet Security and Acceleration Server" cpe="cpe:/a:microsoft:isa_server" pid="26"/>
+        <Product pname="Microsoft Internet Explorer" cpe="cpe:/a:microsoft:internet_explorer" pid="27"/>
+      </Vendor>
+    </VendorInfo>
+    <status:Status version="3.3" method="getProductList" lang="ja" retCd="0" retMax="" errCd="" errMsg="" totalRes="61449" totalResRet="61449" firstRes="" feed="hnd" lt="1"/>
+  </Result>

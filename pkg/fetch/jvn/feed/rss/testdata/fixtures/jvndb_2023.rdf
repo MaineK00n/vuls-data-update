@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sec="http://jvn.jp/rss/mod_sec/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xsi:schemaLocation="http://purl.org/rss/1.0/ https://jvndb.jvn.jp/schema/jvnrss_2.0.xsd" xml:lang="ja">
+  <channel rdf:about="https://jvndb.jvn.jp/ja/rss/years/jvndb_2023.rdf">
+    <title>JVNDB RSS Feed - 2023 Years Entry</title>
+    <link>https://jvndb.jvn.jp/</link>
+    <description>JVN iPedia 2023年情報</description>
+    <dc:creator></dc:creator>
+    <dc:date>2023-10-29T09:00:01+09:00</dc:date>
+    <dcterms:modified>2023-10-29T09:00:01+09:00</dcterms:modified>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-017708.html"/>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-000001.html"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-017708.html">
+    <title>Linux の Linux Kernel における NULL ポインタデリファレンスに関する脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-017708.html</link>
+    <description>Linux の Linux Kernel には、NULL ポインタデリファレンスに関する脆弱性が存在します。&#13;
+</description>
+    <sec:identifier>JVNDB-2022-017708</sec:identifier>
+    <sec:references source="CVE" id="CVE-2023-23006">https://www.cve.org/CVERecord?id=CVE-2023-23006</sec:references>
+    <sec:references source="NVD" id="CVE-2023-23006">https://nvd.nist.gov/vuln/detail/CVE-2023-23006</sec:references>
+    <sec:references title="NULL ポインタデリファレンス(CWE-476)" id="CWE-476">http://cwe.mitre.org/data/definitions/476.html</sec:references>
+    <sec:cpe version="2.2" vendor="Linux" product="Linux Kernel">cpe:/o:linux:linux_kernel</sec:cpe>
+    <sec:cvss version="3.0" score="5.5" type="Base" severity="Medium" vector="CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"/>
+    <dc:date>2023-10-16T17:18+09:00</dc:date>
+    <dcterms:issued>2023-10-16T17:18+09:00</dcterms:issued>
+    <dcterms:modified>2023-10-16T17:18+09:00</dcterms:modified>
+  </item>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-000001.html">
+    <title>ruby-git における複数のコードインジェクションの脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-000001.html</link>
+    <description>ruby-git は、Git リポジトリの作成、読み取り、および操作に使用できる Ruby ライブラリです。ruby-git には、複数のコードインジェクション (CWE-94) の脆弱性が存在します。&#13;
+&#13;
+この脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。&#13;
+報告者: 株式会社ディー・エヌ・エー 国分佑樹 氏</description>
+    <sec:identifier>JVNDB-2023-000001</sec:identifier>
+    <sec:references source="JVN" id="JVN#16765254">https://jvn.jp/jp/JVN16765254/index.html</sec:references>
+    <sec:references source="CVE" id="CVE-2022-46648">https://www.cve.org/CVERecord?id=CVE-2022-46648</sec:references>
+    <sec:references source="CVE" id="CVE-2022-47318">https://www.cve.org/CVERecord?id=CVE-2022-47318</sec:references>
+    <sec:references title="コード・インジェクション(CWE-94)" id="CWE-94">https://jvndb.jvn.jp/ja/cwe/CWE-94.html</sec:references>
+    <sec:cpe version="2.2" vendor="ruby-git" product="ruby-git">cpe:/a:misc:ruby-git_ruby-git</sec:cpe>
+    <sec:cvss version="2.0" score="6.0" type="Base" severity="Medium" vector="AV:N/AC:M/Au:S/C:P/I:P/A:P"/>
+    <sec:cvss version="3.0" score="5.5" type="Base" severity="Medium" vector="CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L"/>
+    <dc:date>2023-01-05T12:02+09:00</dc:date>
+    <dcterms:issued>2023-01-05T12:02+09:00</dcterms:issued>
+    <dcterms:modified>2023-01-05T12:02+09:00</dcterms:modified>
+  </item>
+</rdf:RDF>
