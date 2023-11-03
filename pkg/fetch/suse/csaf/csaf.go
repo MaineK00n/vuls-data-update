@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -96,6 +94,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
 	log.Println("[INFO] Fetch SUSE CVRF")
 	cves, err := options.walkIndexOf()
 	if err != nil {
@@ -110,30 +112,9 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	oldCVEs := map[string]struct{}{}
-	if err := filepath.WalkDir(options.dir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() {
-			return nil
-		}
-
-		_, f := filepath.Split(path)
-		if !strings.HasPrefix(f, "CVE-") {
-			return nil
-		}
-
-		oldCVEs[strings.TrimSuffix(f, ".json")] = struct{}{}
-
-		return nil
-	}); err != nil {
-		return errors.Wrapf(err, "walk %s", options.dir)
-	}
-
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	for idx := range util.ChunkSlice(len(cveURLs), 1000) {
-		resps, err := utilhttp.MultiGet(cveURLs[idx.From:idx.To], options.concurrency, options.wait, options.retry)
+		resps, err := client.MultiGet(cveURLs[idx.From:idx.To], options.concurrency, options.wait)
 		if err != nil {
 			return errors.Wrap(err, "fetch concurrently")
 		}
@@ -152,14 +133,6 @@ func Fetch(opts ...Option) error {
 			if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
 			}
-
-			delete(oldCVEs, adv.Document.Tracking.ID)
-		}
-	}
-
-	for cve := range oldCVEs {
-		if err := os.Remove(filepath.Join(options.dir, fmt.Sprintf("%s.json", cve))); err != nil {
-			return errors.Wrap(err, "remove old cve")
 		}
 	}
 
@@ -167,7 +140,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() ([]string, error) {
-	bs, err := utilhttp.Get(opts.baseURL, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}

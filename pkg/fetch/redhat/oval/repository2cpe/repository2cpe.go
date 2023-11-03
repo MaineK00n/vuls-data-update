@@ -67,7 +67,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Redhat Repository to CPE")
-	bs, err := utilhttp.Get(options.repositoryToCPEURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repositoryToCPEURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch repository to cpe")
 	}

@@ -68,7 +68,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Perl DB")
-	if _, err := utilhttp.Get(options.repoURL, options.retry); err != nil {
+	if _, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repoURL); err != nil {
 		return errors.Wrap(err, "fetch repository")
 	}
 
