@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sec="http://jvn.jp/rss/mod_sec/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xsi:schemaLocation="http://purl.org/rss/1.0/ https://jvndb.jvn.jp/schema/jvnrss_2.0.xsd" xml:lang="ja">
+  <channel rdf:about="https://jvndb.jvn.jp/ja/rss/jvndb_new.rdf">
+    <title>JVNDB RSS Feed - New Entry</title>
+    <link>https://jvndb.jvn.jp/</link>
+    <description>JVN iPedia 新着情報</description>
+    <dc:creator></dc:creator>
+    <dc:date>2023-11-02T12:00:16+09:00</dc:date>
+    <dcterms:modified>2023-11-02T12:00:16+09:00</dcterms:modified>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html"/>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-020469.html"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html">
+    <title>resumebuilder の WordPress 用 resume builder におけるクロスサイトスクリプティングの脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html</link>
+    <description>resumebuilder の WordPress 用 resume builder には、クロスサイトスクリプティングの脆弱性が存在します。</description>
+    <sec:identifier>JVNDB-2023-004814</sec:identifier>
+    <sec:references source="CVE" id="CVE-2023-0078">https://www.cve.org/CVERecord?id=CVE-2023-0078</sec:references>
+    <sec:references source="NVD" id="CVE-2023-0078">https://nvd.nist.gov/vuln/detail/CVE-2023-0078</sec:references>
+    <sec:references source="関連文書" id="wpscan.com (e667854f-56f8-4dbe-9573-6652a8aacc2c)">https://wpscan.com/vulnerability/e667854f-56f8-4dbe-9573-6652a8aacc2c</sec:references>
+    <sec:references title="クロスサイトスクリプティング(CWE-79)" id="CWE-79">https://jvndb.jvn.jp/ja/cwe/CWE-79.html</sec:references>
+    <sec:cpe version="2.2" vendor="resumebuilder" product="resume builder">cpe:/a:resumebuilder:resume_builder</sec:cpe>
+    <sec:cvss version="3.0" score="5.4" type="Base" severity="Medium" vector="CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"/>
+    <dc:date>2023-11-02T11:57+09:00</dc:date>
+    <dcterms:issued>2023-11-02T11:57+09:00</dcterms:issued>
+    <dcterms:modified>2023-11-02T11:57+09:00</dcterms:modified>
+  </item>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-020469.html">
+    <title>アップルの macOS における脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-020469.html</link>
+    <description>アップルの macOS には、不特定の脆弱性が存在します。&#13;
+</description>
+    <sec:identifier>JVNDB-2022-020469</sec:identifier>
+    <sec:references source="CVE" id="CVE-2022-46723">https://www.cve.org/CVERecord?id=CVE-2022-46723</sec:references>
+    <sec:references source="NVD" id="CVE-2022-46723">https://nvd.nist.gov/vuln/detail/CVE-2022-46723</sec:references>
+    <sec:references title="情報不足(CWE-noinfo)" id="CWE-noinfo">https://www.ipa.go.jp/security/vuln/scap/cwe.html</sec:references>
+    <sec:cpe version="2.2" vendor="アップル" product="macOS">cpe:/o:apple:macos</sec:cpe>
+    <sec:cvss version="3.0" score="9.8" type="Base" severity="Critical" vector="CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"/>
+    <dc:date>2023-11-02T11:30+09:00</dc:date>
+    <dcterms:issued>2023-11-02T11:30+09:00</dcterms:issued>
+    <dcterms:modified>2023-11-02T11:30+09:00</dcterms:modified>
+  </item>
+</rdf:RDF>

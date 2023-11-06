@@ -81,7 +81,7 @@ func Fetch(opts ...Option) error {
 
 	for v, url := range options.urls {
 		log.Printf("[INFO] Fetch AlmaLinux %s", v)
-		bs, err := utilhttp.Get(url, options.retry)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(url)
 		if err != nil {
 			return errors.Wrapf(err, "fetch almalinux %s errata", v)
 		}

@@ -1,0 +1,72 @@
+[
+    {
+        "url": "https://jvndb.jvn.jp/ja/rss/jvndb_new.rdf",
+        "filename": "jvndb_new.rdf",
+        "sha256": "1a1bb84550200b7fdb1e37e78b499a215d9c8a9f6df329276a520f84b3e96b5e",
+        "size": 517125,
+        "lastModified": "2023/11/02 12:00:18"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/rss/jvndb.rdf",
+        "filename": "jvndb.rdf",
+        "sha256": "221af82f4d6758b0d772ee9a867fb1e2ac385d8056997c1961e112d57c4b2ed5",
+        "size": 518621,
+        "lastModified": "2023/11/02 12:00:04"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/rss/years/jvndb_2023.rdf",
+        "filename": "jvndb_2023.rdf",
+        "sha256": "c1c9ddd2e2e1504408ad84c4550db450b2a1e464545bc15272c4bf28d957321d",
+        "size": 6269747,
+        "lastModified": "2023/10/29 09:00:11"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/rss/years/jvndb_2022.rdf",
+        "filename": "jvndb_2022.rdf",
+        "sha256": "298bde6e49a70f68b0ce060c4a7da11902ca1e88c4a5d8c4e79efdb417965caa",
+        "size": 35116529,
+        "lastModified": "2023/10/29 09:01:06"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/feed/detail/jvndb_detail_2023.rdf",
+        "filename": "jvndb_detail_2023.rdf",
+        "sha256": "61aa3296207db6305bc27145c4be4ab486249d124a7eaf56fc0c3b3372327a36",
+        "size": 14591948,
+        "lastModified": "2023/10/29 09:15:09"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/feed/detail/jvndb_detail_2022.rdf",
+        "filename": "jvndb_detail_2022.rdf",
+        "sha256": "e4ec48cb9e634cc62dc38daa80345564177df32eb016bf141189d90625c974da",
+        "size": 72364726,
+        "lastModified": "2023/10/29 09:15:44"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/feed/vendor/myjvn_vendor_202311.rdf",
+        "filename": "myjvn_vendor_202311.rdf",
+        "sha256": "59c66815e8f210e2b452578f6ba89edf74fdba866cb530ed83a2c5746b93f429",
+        "size": 1827376,
+        "lastModified": "2023/11/01 08:10:02"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/feed/vendor/myjvn_vendor_202310.rdf",
+        "filename": "myjvn_vendor_202310.rdf",
+        "sha256": "ebbb45898c8c9ffb64c79bf3fb81e6b55f67b409554d51825d6e2b033537e13c",
+        "size": 1771365,
+        "lastModified": "2023/10/01 08:10:01"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/feed/product/myjvn_product_202311.rdf",
+        "filename": "myjvn_product_202311.rdf",
+        "sha256": "844e32b6712023d13d26bac08dfd717f781763218016a7f89b90fca50e569f54",
+        "size": 8435419,
+        "lastModified": "2023/11/01 08:20:04"
+    },
+    {
+        "url": "https://jvndb.jvn.jp/ja/feed/product/myjvn_product_202310.rdf",
+        "filename": "myjvn_product_202310.rdf",
+        "sha256": "1de8a8ea5e858be94ebec0be8663d410471c65223e899f023da7cd54bbaa6d7d",
+        "size": 8164706,
+        "lastModified": "2023/10/01 08:20:05"
+    }
+]

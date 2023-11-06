@@ -1,15 +1,13 @@
-package jvn
+package detail
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
-	"net/url"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -18,29 +16,26 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const (
-	urlFormat  = "https://jvndb.jvn.jp/ja/feed/detail/jvndb_detail_%d.rdf"
-	oldestYear = 1998
-)
+const dataURL = "https://jvndb.jvn.jp/ja/feed/checksum.txt"
 
 type options struct {
-	urls  []string
-	dir   string
-	retry int
+	dataURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type urlOption []string
+type dataURLOption string
 
-func (u urlOption) apply(opts *options) {
-	opts.urls = u
+func (u dataURLOption) apply(opts *options) {
+	opts.dataURL = string(u)
 }
 
-func WithURLs(urls []string) Option {
-	return urlOption(urls)
+func WithDataURL(url string) Option {
+	return dataURLOption(url)
 }
 
 type dirOption string
@@ -64,15 +59,10 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	var urls []string
-	for y := oldestYear; y <= time.Now().Year(); y++ {
-		urls = append(urls, fmt.Sprintf(urlFormat, y))
-	}
-
 	options := &options{
-		urls:  urls,
-		dir:   filepath.Join(util.CacheDir(), "jvn"),
-		retry: 3,
+		dataURL: dataURL,
+		dir:     filepath.Join(util.CacheDir(), "jvn", "feed", "detail"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -83,20 +73,29 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	for _, u := range options.urls {
-		uu, err := url.Parse(u)
-		if err != nil {
-			return errors.Wrap(err, "parse url")
-		}
-		y := strings.TrimSuffix(strings.TrimPrefix(path.Base(uu.Path), "jvndb_detail_"), ".rdf")
-		if _, err := strconv.Atoi(y); err != nil {
-			continue
-		}
+	log.Println("[INFO] Fetch JVNDB Detail")
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	if err != nil {
+		return errors.Wrap(err, "get checksum")
+	}
 
-		log.Printf("[INFO] Fetch JVNDB Feed %s", y)
-		bs, err := utilhttp.Get(u, options.retry)
+	var cs []checksum
+	if err := json.Unmarshal(bs, &cs); err != nil {
+		return errors.Wrap(err, "unmarshal json")
+	}
+
+	var filtered []checksum
+	for _, c := range cs {
+		if strings.HasPrefix(c.Filename, "jvndb_detail_") {
+			filtered = append(filtered, c)
+		}
+	}
+
+	for _, c := range filtered {
+		log.Printf("[INFO] Fetch JVNDB Detail Feed %s", c.Filename)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
 		if err != nil {
-			return errors.Wrapf(err, "fetch jvndb %s feed", y)
+			return errors.Wrap(err, "fetch jvndb detail")
 		}
 
 		var feed feed
@@ -105,7 +104,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		for _, v := range feed.Vulinfo {
-			for i, item := range v.Affected {
+			for i, item := range v.VulinfoData.Affected.AffectedItem {
 				var vs []string
 				for _, v := range item.VersionNumber {
 					if v == "" {
@@ -113,12 +112,17 @@ func Fetch(opts ...Option) error {
 					}
 					vs = append(vs, v)
 				}
-				v.Affected[i].VersionNumber = vs
+				v.VulinfoData.Affected.AffectedItem[i].VersionNumber = vs
 			}
 		}
 
 		bar := pb.StartNew(len(feed.Vulinfo))
 		for _, a := range feed.Vulinfo {
+			y := strings.Split(a.VulinfoID, "-")[1]
+			if _, err := strconv.Atoi(y); err != nil {
+				continue
+			}
+
 			if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", a.VulinfoID)), a); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", a.VulinfoID)))
 			}
@@ -127,5 +131,6 @@ func Fetch(opts ...Option) error {
 		}
 		bar.Finish()
 	}
+
 	return nil
 }

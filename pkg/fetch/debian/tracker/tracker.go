@@ -75,7 +75,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Debian Security Tracker")
-	bs, err := utilhttp.Get(options.advisoryURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}

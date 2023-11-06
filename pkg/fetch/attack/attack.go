@@ -83,7 +83,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch MITRE ATT&CK Enterprise")
-	bs, err := utilhttp.Get(options.dataURL.Enterprise, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.Enterprise)
 	if err != nil {
 		return errors.Wrap(err, "fetch attack enterprise")
 	}
@@ -103,7 +103,7 @@ func Fetch(opts ...Option) error {
 	bar.Finish()
 
 	log.Printf("[INFO] Fetch MITRE ATT&CK ICS")
-	bs, err = utilhttp.Get(options.dataURL.ICS, options.retry)
+	bs, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.ICS)
 	if err != nil {
 		return errors.Wrap(err, "fetch attack ics")
 	}
@@ -123,7 +123,7 @@ func Fetch(opts ...Option) error {
 	bar.Finish()
 
 	log.Printf("[INFO] Fetch MITRE ATT&CK Mobile")
-	bs, err = utilhttp.Get(options.dataURL.ICS, options.retry)
+	bs, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.Mobile)
 	if err != nil {
 		return errors.Wrap(err, "fetch attack mobile")
 	}

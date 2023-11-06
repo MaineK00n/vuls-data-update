@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sec="http://jvn.jp/rss/mod_sec/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xsi:schemaLocation="http://purl.org/rss/1.0/ https://jvndb.jvn.jp/schema/jvnrss_2.0.xsd" xml:lang="ja">
+  <channel rdf:about="https://jvndb.jvn.jp/ja/rss/years/jvndb_2022.rdf">
+    <title>JVNDB RSS Feed - 2022 Years Entry</title>
+    <link>https://jvndb.jvn.jp/</link>
+    <description>JVN iPedia 2022年情報</description>
+    <dc:creator></dc:creator>
+    <dc:date>2023-10-29T09:00:01+09:00</dc:date>
+    <dcterms:modified>2023-10-29T09:00:01+09:00</dcterms:modified>
+    <items>
+      <rdf:Seq>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2021/JVNDB-2021-018345.html"/>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-000001.html"/>
+        <rdf:li rdf:resource="https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-002068.html"/>
+      </rdf:Seq>
+    </items>
+  </channel>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2021/JVNDB-2021-018345.html">
+    <title>Android における脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2021/JVNDB-2021-018345.html</link>
+    <description>Android には、不特定の脆弱性が存在します。&#13;
+&#13;
+</description>
+    <sec:identifier>JVNDB-2021-018345</sec:identifier>
+    <sec:references source="CVE" id="CVE-2022-22292">https://www.cve.org/CVERecord?id=CVE-2022-22292</sec:references>
+    <sec:references source="NVD" id="CVE-2022-22292">https://nvd.nist.gov/vuln/detail/CVE-2022-22292</sec:references>
+    <sec:references source="関連文書" id="SMR-FEB-2022">https://security.samsungmobile.com/securityUpdate.smsb?year=2022&amp;month=2</sec:references>
+    <sec:references title="情報不足(CWE-noinfo)" id="CWE-noinfo">https://www.ipa.go.jp/security/vuln/scap/cwe.html</sec:references>
+    <sec:cpe version="2.2" vendor="Google" product="Android">cpe:/o:google:android</sec:cpe>
+    <sec:cvss version="2.0" score="4.6" type="Base" severity="Medium" vector="AV:L/AC:L/Au:N/C:P/I:P/A:P"/>
+    <sec:cvss version="3.0" score="7.8" type="Base" severity="High" vector="CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"/>
+    <dc:date>2023-06-01T11:12+09:00</dc:date>
+    <dcterms:issued>2023-06-01T11:12+09:00</dcterms:issued>
+    <dcterms:modified>2023-06-01T11:12+09:00</dcterms:modified>
+  </item>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-000001.html">
+    <title>キヤノン製レーザープリンターおよびスモールオフィス向け複合機におけるクロスサイトスクリプティングの脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-000001.html</link>
+    <description>キヤノン株式会社が提供するレーザープリンターおよびスモールオフィス向け複合機には、格納型クロスサイトスクリプティング (CWE-79) の脆弱性が存在します。&#13;
+&#13;
+この脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。&#13;
+報告者: 株式会社イエラエセキュリティ 村島 正浩 氏</description>
+    <sec:identifier>JVNDB-2022-000001</sec:identifier>
+    <sec:references source="JVN" id="JVN#64806328">https://jvn.jp/jp/JVN64806328/index.html</sec:references>
+    <sec:references source="CVE" id="CVE-2021-20877">https://www.cve.org/CVERecord?id=CVE-2021-20877</sec:references>
+    <sec:references title="クロスサイトスクリプティング(CWE-79)" id="CWE-79">https://jvndb.jvn.jp/ja/cwe/CWE-79.html</sec:references>
+    <sec:cvss version="2.0" score="3.5" type="Base" severity="Low" vector="AV:N/AC:M/Au:S/C:N/I:P/A:N"/>
+    <sec:cvss version="3.0" score="4.8" type="Base" severity="Medium" vector="CVSS:3.0/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N"/>
+    <dc:date>2022-01-19T12:05+09:00</dc:date>
+    <dcterms:issued>2022-01-19T12:05+09:00</dcterms:issued>
+    <dcterms:modified>2022-01-19T12:05+09:00</dcterms:modified>
+  </item>
+  <item rdf:about="https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-002068.html">
+    <title>Rocket TRUfusion Portal におけるパスワード管理機能に関する脆弱性</title>
+    <link>https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-002068.html</link>
+    <description>Rocket TRUfusion Portal には、パスワード管理機能に関する脆弱性が存在します。&#13;
+&#13;
+</description>
+    <sec:identifier>JVNDB-2023-002068</sec:identifier>
+    <sec:references source="CVE" id="CVE-2022-25027">https://www.cve.org/CVERecord?id=CVE-2022-25027</sec:references>
+    <sec:references source="NVD" id="CVE-2022-25027">https://nvd.nist.gov/vuln/detail/CVE-2022-25027</sec:references>
+    <sec:references source="関連文書" id="CVE-2022-25026 &amp; CVE-2022-25027: Vulnerabilities in Rocket TRUfusion Enterprise">https://labs.nettitude.com/blog/cve-2022-25026-cve-2022-25027-vulnerabilities-in-rocket-trufusion-enterprise/</sec:references>
+    <sec:references title="パスワードを忘れた場合の脆弱なパスワードリカバリの仕組み(CWE-640)" id="CWE-640">https://cwe.mitre.org/data/definitions/640.html</sec:references>
+    <sec:cpe version="2.2" vendor="Rocket Software" product="TRUfusion Enterprise">cpe:/a:rocketsoftware:trufusion_enterprise</sec:cpe>
+    <sec:cvss version="3.0" score="7.5" type="Base" severity="High" vector="CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"/>
+    <dc:date>2023-06-08T16:22+09:00</dc:date>
+    <dcterms:issued>2023-06-08T16:22+09:00</dcterms:issued>
+    <dcterms:modified>2023-06-08T16:22+09:00</dcterms:modified>
+  </item>
+</rdf:RDF>

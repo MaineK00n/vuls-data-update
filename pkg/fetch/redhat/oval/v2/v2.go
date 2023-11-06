@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch RedHat OVAL")
-	bs, err := utilhttp.Get(options.feedURL, options.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.feedURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch feed")
 	}
@@ -97,7 +97,7 @@ func Fetch(opts ...Option) error {
 		v := strings.TrimPrefix(path.Base(path.Clean(d)), "RHEL")
 
 		log.Printf("[INFO] Fetch RedHat %s %s OVAL", v, name)
-		bs, err := utilhttp.Get(u, options.retry)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
 		if err != nil {
 			return errors.Wrap(err, "fetch advisory")
 		}

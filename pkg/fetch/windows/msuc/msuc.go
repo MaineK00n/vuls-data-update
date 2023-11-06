@@ -124,7 +124,7 @@ func (opts options) search(query string) ([]string, error) {
 	values := url.Values{}
 	values.Set("q", query)
 
-	bs, err := utilhttp.POST(fmt.Sprintf("%s/Search.aspx", opts.msucURL), opts.retry, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(values.Encode())))
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).POST(fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(values.Encode())))
 	if err != nil {
 		return nil, errors.Wrap(err, "post")
 	}
@@ -154,7 +154,7 @@ func (opts options) search(query string) ([]string, error) {
 func (opts options) view(updateID string) (Update, error) {
 	log.Printf("[INFO] GET %s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID)
 
-	bs, err := utilhttp.Get(fmt.Sprintf("%s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID), opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(fmt.Sprintf("%s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID))
 	if err != nil {
 		return Update{}, errors.Wrap(err, "fetch view")
 	}

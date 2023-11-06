@@ -94,7 +94,7 @@ func Fetch(opts ...Option) error {
 		switch v {
 		case "1", "2022", "2023":
 		case "2":
-			bs, err := utilhttp.Get(options.mirrorURLs[v].Extra, options.retry)
+			bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
 			}
@@ -155,7 +155,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch(mirror string) ([]Update, error) {
-	bs, err := utilhttp.Get(mirror, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(mirror)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
 	}
@@ -199,7 +199,7 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 var ErrNoUpdateInfo = errors.New("no updateinfo field")
 
 func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
-	bs, err := utilhttp.Get(repomdURL, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(repomdURL)
 	if err != nil {
 		return "", errors.Wrap(err, "fetch repomd")
 	}
@@ -223,7 +223,7 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 }
 
 func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
-	bs, err := utilhttp.Get(updateinfoURL, opts.retry)
+	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(updateinfoURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")
 	}

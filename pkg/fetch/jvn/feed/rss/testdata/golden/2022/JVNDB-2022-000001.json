@@ -1,0 +1,43 @@
+{
+  "about": "https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-000001.html",
+  "title": "キヤノン製レーザープリンターおよびスモールオフィス向け複合機におけるクロスサイトスクリプティングの脆弱性",
+  "link": "https://jvndb.jvn.jp/ja/contents/2022/JVNDB-2022-000001.html",
+  "description": "キヤノン株式会社が提供するレーザープリンターおよびスモールオフィス向け複合機には、格納型クロスサイトスクリプティング (CWE-79) の脆弱性が存在します。\r\n\r\nこの脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。\r\n報告者: 株式会社イエラエセキュリティ 村島 正浩 氏",
+  "identifier": "JVNDB-2022-000001",
+  "references": [
+    {
+      "text": "https://jvn.jp/jp/JVN64806328/index.html",
+      "source": "JVN",
+      "id": "JVN#64806328"
+    },
+    {
+      "text": "https://www.cve.org/CVERecord?id=CVE-2021-20877",
+      "source": "CVE",
+      "id": "CVE-2021-20877"
+    },
+    {
+      "text": "https://jvndb.jvn.jp/ja/cwe/CWE-79.html",
+      "id": "CWE-79",
+      "title": "クロスサイトスクリプティング(CWE-79)"
+    }
+  ],
+  "cvss": [
+    {
+      "version": "2.0",
+      "score": "3.5",
+      "type": "Base",
+      "severity": "Low",
+      "vector": "AV:N/AC:M/Au:S/C:N/I:P/A:N"
+    },
+    {
+      "version": "3.0",
+      "score": "4.8",
+      "type": "Base",
+      "severity": "Medium",
+      "vector": "CVSS:3.0/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N"
+    }
+  ],
+  "date": "2022-01-19T12:05+09:00",
+  "issued": "2022-01-19T12:05+09:00",
+  "modified": "2022-01-19T12:05+09:00"
+}

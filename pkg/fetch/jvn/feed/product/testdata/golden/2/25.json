@@ -1,0 +1,8 @@
+{
+  "vid": "2",
+  "vname": "マイクロソフト",
+  "vcpe": "cpe:/:microsoft",
+  "pid": "25",
+  "pname": "Microsoft Exchange Server",
+  "pcpe": "cpe:/a:microsoft:exchange_server"
+}

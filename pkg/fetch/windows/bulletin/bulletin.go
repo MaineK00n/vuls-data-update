@@ -78,7 +78,7 @@ func Fetch(opts ...Option) error {
 
 	bulletins := map[string][]Bulletin{}
 	for _, u := range options.dataURLs {
-		bs, err := utilhttp.Get(u, options.retry)
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
 		if err != nil {
 			return errors.Wrap(err, "fetch bulletin data")
 		}
