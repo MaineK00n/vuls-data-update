@@ -15,7 +15,7 @@ require (
 	github.com/tealeg/xlsx v1.0.5
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 	golang.org/x/net v0.17.0
-	golang.org/x/sync v0.4.0
+	golang.org/x/sync v0.5.0
 	modernc.org/sqlite v1.26.0
 )
 
