@@ -3,6 +3,7 @@ package cve
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -131,8 +132,10 @@ func Fetch(opts ...Option) error {
 			return false, ctx.Err()
 		}
 
-		// NVD JSON API returns 403 in rate limit excesses, should retry
-		if resp.StatusCode == http.StatusForbidden {
+		// NVD JSON API returns 403 in rate limit excesses, should retry.
+		// Also, the API returns 408 infreqently.
+		if resp.StatusCode == http.StatusForbidden ||
+			resp.StatusCode == http.StatusRequestTimeout {
 			log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
 			return true, nil
 		}
@@ -163,7 +166,7 @@ func Fetch(opts ...Option) error {
 
 	urls := make([]string, 0, result.TotalResults/resultsPerPageMax+1)
 	var startIndex int64
-	// result.TotalResults = 5000
+	// result.TotalResults = 3
 	for startIndex = 0; startIndex < result.TotalResults; startIndex += resultsPerPageMax {
 		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
 		if err != nil {
@@ -178,8 +181,13 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "NVD API CVE MultiGet")
 	}
 
-	//  TODO(shino): NIY
-	write(bsList[0])
+	log.Printf("[INFO] API calls finished, about to write")
+
+	for _, bs := range bsList {
+		if err := write(options.dir, bs); err != nil {
+			return err
+		}
+	}
 	log.Printf("[INFO] Fetch NVD API CVE finished")
 	return nil
 }
@@ -196,16 +204,23 @@ func fullURL(baseUrl string, startIndex, resultsPerPage int64) (string, error) {
 	return url.String(), nil
 }
 
-func write(bs []byte) error {
-
-	// fmt.Printf("bs: %s\n", bs)
+func write(dir string, bs []byte) error {
 
 	var cveAPI20 CVEAPI20
 	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE with raw JSON=%s", bs)
 	}
 
-	//  TODO(shino): write
-	cveAPI20.Vulnerabilities = cveAPI20.Vulnerabilities[0:1]
+	for _, v := range cveAPI20.Vulnerabilities {
+		tokens := strings.Split(v.CVE.ID, "-")
+		if len(tokens) < 3 {
+			errors.Errorf("unexpected CVE.ID format: %#v", v)
+		}
+		year := tokens[1]
+		path := filepath.Join(dir, year, fmt.Sprintf("%s.json", v.CVE.ID))
+		if err := util.Write(path, v.CVE); err != nil {
+			return errors.Wrapf(err, "write %s", path)
+		}
+	}
 	return nil
 }
