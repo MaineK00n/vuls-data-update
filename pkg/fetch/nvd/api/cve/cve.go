@@ -133,7 +133,7 @@ func Fetch(opts ...Option) error {
 
 		// NVD JSON API returns 403 in rate limit excesses, should retry
 		if resp.StatusCode == http.StatusForbidden {
-			// log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
+			log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
 			return true, nil
 		}
 
@@ -173,7 +173,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] GET interval=%d [sec], concurrency=%d", options.interval, options.concurrency)
-	bsList, err := c.MultiGet(urls, options.interval, options.concurrency, headerOption)
+	bsList, err := c.MultiGet(urls, options.concurrency, options.interval, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "NVD API CVE MultiGet")
 	}
