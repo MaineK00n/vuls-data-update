@@ -32,10 +32,12 @@ const (
 )
 
 type options struct {
-	baseURL string
-	apiKey  string
-	dir     string
-	retry   int
+	baseURL     string
+	apiKey      string
+	interval    int
+	concurrency int
+	dir         string
+	retry       int
 }
 
 type Option interface {
@@ -60,6 +62,26 @@ func (a apiKeyOption) apply(opts *options) {
 
 func WithAPIKey(apiKey string) Option {
 	return apiKeyOption(apiKey)
+}
+
+type intervalOption int
+
+func (r intervalOption) apply(opts *options) {
+	opts.interval = int(r)
+}
+
+func WithInterval(interval int) Option {
+	return intervalOption(interval)
+}
+
+type concurrencyOption int
+
+func (r concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(r)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
 }
 
 type dirOption string
@@ -150,22 +172,8 @@ func Fetch(opts ...Option) error {
 		urls = append(urls, url)
 	}
 
-	var concurrency int
-	// interval between requests [sec]
-	var interval int
-	if strings.Compare(options.apiKey, "") == 0 {
-		// 5 requests in a rolling 30 second window
-		concurrency = 1
-		interval = 6
-	} else {
-		// 50 requests in a rolling 30 second window.
-		concurrency = 30
-		interval = 6
-	}
-
-	log.Printf("[INFO] GET concurrency=%d, interval=%d [sec]", concurrency, interval)
-
-	bsList, err := c.MultiGet(urls, concurrency, interval, headerOption)
+	log.Printf("[INFO] GET interval=%d [sec], concurrency=%d", options.interval, options.concurrency)
+	bsList, err := c.MultiGet(urls, options.interval, options.concurrency, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "NVD API CVE MultiGet")
 	}

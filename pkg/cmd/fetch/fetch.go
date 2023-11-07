@@ -59,7 +59,7 @@ type options struct {
 	dir   string
 	retry int
 
-	concurrency int // SUSE CVRF, SUSE CSAF, Windows WSUSSCN2
+	concurrency int // SUSE CVRF, SUSE CSAF, Windows WSUSSCN2, NVD CVE/CPE/CPEMatch
 	wait        int // SUSE CVRF, SUSE CSAF
 }
 
@@ -2214,10 +2214,12 @@ func newCmdFetchMSF() *cobra.Command {
 }
 func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
-		retry: 3,
+		dir:         util.CacheDir(),
+		retry:       3,
+		concurrency: 1,
 	}
 	var apiKey string
+	var interval int
 
 	cmd := &cobra.Command{
 		Use:   "nvd-api-cve",
@@ -2229,7 +2231,9 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := nvdAPICVE.Fetch(nvdAPICVE.WithDir(filepath.Join(options.dir, "nvd", "api", "cve")),
 				nvdAPICVE.WithRetry(options.retry),
-				nvdAPICVE.WithAPIKey(apiKey)); err != nil {
+				nvdAPICVE.WithAPIKey(apiKey),
+				nvdAPICVE.WithInterval(interval),
+				nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd feed cve")
 			}
 			return nil
@@ -2239,6 +2243,10 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "API Key to increase rate limit")
+	// Rate limet without API key: 5 requests in a rolling 30 second window, and
+	// with API key: 50 requests in a rolling 30 second window.
+	cmd.Flags().IntVarP(&interval, "interval", "", 6, "sleep interval in seconds between consecutive requests")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 
 	return cmd
 }
