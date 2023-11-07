@@ -1,6 +1,7 @@
 package cve
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 )
 
@@ -101,14 +103,31 @@ func Fetch(opts ...Option) error {
 	}
 	headerOption := utilhttp.WithRequestHeader(h)
 
+	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		// do not retry on context.Canceled or context.DeadlineExceeded
+		if ctx.Err() != nil {
+			return false, ctx.Err()
+		}
+
+		// NVD JSON API returns 403 in rate limit excesses, should retry
+		if resp.StatusCode == http.StatusForbidden {
+			// log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
+			return true, nil
+		}
+
+		return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+	}
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry),
+		utilhttp.WithClientCheckRetry(checkRetry))
+
 	// Preliminary API call to get totalResults
-	//  TODO(shino): it's waste when no API key (single goroutine case)
+	//  TODO(shino): it's waste of time in single goroutine case
 	url, err := fullURL(options.baseURL, 0, 1)
 	if err != nil {
 		return errors.Wrap(err, "Generate full URL")
 	}
 
-	bs, err := utilhttp.Get(url, options.retry, headerOption)
+	bs, err := c.Get(url, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "call NVD CVE API")
 	}
@@ -140,14 +159,13 @@ func Fetch(opts ...Option) error {
 		interval = 6
 	} else {
 		// 50 requests in a rolling 30 second window.
-		// If 5 sec/req (vey bad case),
-		concurrency = 10
+		concurrency = 30
 		interval = 6
 	}
 
 	log.Printf("[INFO] GET concurrency=%d, interval=%d [sec]", concurrency, interval)
 
-	bsList, err := utilhttp.MultiGet(urls, concurrency, interval, options.retry, headerOption)
+	bsList, err := c.MultiGet(urls, concurrency, interval, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "NVD API CVE MultiGet")
 	}
