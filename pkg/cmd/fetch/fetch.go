@@ -2219,7 +2219,6 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 		concurrency: 1,
 	}
 	var apiKey string
-	var interval int
 
 	cmd := &cobra.Command{
 		Use:   "nvd-api-cve",
@@ -2232,7 +2231,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 			if err := nvdAPICVE.Fetch(nvdAPICVE.WithDir(filepath.Join(options.dir, "nvd", "api", "cve")),
 				nvdAPICVE.WithRetry(options.retry),
 				nvdAPICVE.WithAPIKey(apiKey),
-				nvdAPICVE.WithInterval(interval),
+				nvdAPICVE.WithWait(options.wait),
 				nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd feed cve")
 			}
@@ -2245,7 +2244,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "API Key to increase rate limit")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
-	cmd.Flags().IntVarP(&interval, "interval", "", 6, "sleep interval in seconds between consecutive requests")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 
 	return cmd

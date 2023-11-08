@@ -35,7 +35,7 @@ const (
 type options struct {
 	baseURL     string
 	apiKey      string
-	interval    int
+	wait        int
 	concurrency int
 	dir         string
 	retry       int
@@ -65,14 +65,14 @@ func WithAPIKey(apiKey string) Option {
 	return apiKeyOption(apiKey)
 }
 
-type intervalOption int
+type waitOption int
 
-func (r intervalOption) apply(opts *options) {
-	opts.interval = int(r)
+func (r waitOption) apply(opts *options) {
+	opts.wait = int(r)
 }
 
-func WithInterval(interval int) Option {
-	return intervalOption(interval)
+func WithWait(wait int) Option {
+	return waitOption(wait)
 }
 
 type concurrencyOption int
@@ -175,8 +175,8 @@ func Fetch(opts ...Option) error {
 		urls = append(urls, url)
 	}
 
-	log.Printf("[INFO] GET interval=%d [sec], concurrency=%d", options.interval, options.concurrency)
-	bsList, err := c.MultiGet(urls, options.concurrency, options.interval, headerOption)
+	log.Printf("[INFO] GET wait=%d [sec], concurrency=%d", options.wait, options.concurrency)
+	bsList, err := c.MultiGet(urls, options.concurrency, options.wait, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "NVD API CVE MultiGet")
 	}
