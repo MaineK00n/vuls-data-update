@@ -106,6 +106,8 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
+	log.Printf("[INFO] Fetch NVD API CVE start, dir=%s", options.dir)
+
 	options := &options{
 		baseURL: baseURL,
 		apiKey:  "",
@@ -113,7 +115,6 @@ func Fetch(opts ...Option) error {
 		dir:   filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
 		retry: 3,
 	}
-
 	for _, o := range opts {
 		o.apply(options)
 	}
@@ -123,6 +124,8 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch NVD API CVE base URL: %s", options.baseURL)
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry),
+		utilhttp.WithClientCheckRetry(checkRetry))
 
 	h := http.Header{}
 	if strings.Compare(options.apiKey, "") != 0 {
@@ -130,32 +133,12 @@ func Fetch(opts ...Option) error {
 	}
 	headerOption := utilhttp.WithRequestHeader(h)
 
-	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
-		// do not retry on context.Canceled or context.DeadlineExceeded
-		if ctx.Err() != nil {
-			return false, ctx.Err()
-		}
-
-		// NVD JSON API returns 403 in rate limit excesses, should retry.
-		// Also, the API returns 408 infreqently.
-		if resp.StatusCode == http.StatusForbidden ||
-			resp.StatusCode == http.StatusRequestTimeout {
-			log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
-			return true, nil
-		}
-
-		return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
-	}
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry),
-		utilhttp.WithClientCheckRetry(checkRetry))
-
 	// Preliminary API call to get totalResults
-	//  TODO(shino): it's waste of time in single goroutine case
+	// Use 1 as resultsPerPage to save time
 	url, err := fullURL(options.baseURL, 0, 1)
 	if err != nil {
 		return errors.Wrap(err, "Generate full URL")
 	}
-
 	bs, err := c.Get(url, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "call NVD CVE API")
@@ -164,14 +147,12 @@ func Fetch(opts ...Option) error {
 	if err := json.Unmarshal(bs, &result); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE, %s", bs)
 	}
-
 	pages := result.TotalResults/resultsPerPageMax + 1
 	log.Printf("[INFO] total results=%d, pages=%d", result.TotalResults, pages)
 
+	// Actual API calls
 	urls := make([]string, 0, result.TotalResults/resultsPerPageMax+1)
-	var startIndex int64
-	// result.TotalResults = 3
-	for startIndex = 0; startIndex < result.TotalResults; startIndex += resultsPerPageMax {
+	for startIndex := int64(0); startIndex < result.TotalResults; startIndex += resultsPerPageMax {
 		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
 		if err != nil {
 			return errors.Wrap(err, "Generate full URL")
@@ -179,19 +160,19 @@ func Fetch(opts ...Option) error {
 		urls = append(urls, url)
 	}
 
-	log.Printf("[INFO] GET wait=%d [sec], concurrency=%d", options.wait, options.concurrency)
+	log.Printf("[INFO] Call API: wait=%d [sec], concurrency=%d", options.wait, options.concurrency)
 	bsList, err := c.MultiGet(urls, options.concurrency, options.wait, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "NVD API CVE MultiGet")
 	}
 
-	log.Printf("[INFO] API calls finished, about to write")
-
+	log.Printf("[INFO] API calls finished, about to write files")
 	for _, bs := range bsList {
 		if err := write(options.dir, bs); err != nil {
 			return err
 		}
 	}
+
 	log.Printf("[INFO] Fetch NVD API CVE finished")
 	return nil
 }
@@ -206,6 +187,23 @@ func fullURL(baseUrl string, startIndex, resultsPerPage int64) (string, error) {
 	q.Set(keyResultsPerPage, strconv.FormatInt(resultsPerPageMax, 10))
 	url.RawQuery = q.Encode()
 	return url.String(), nil
+}
+
+func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	// do not retry on context.Canceled or context.DeadlineExceeded
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+
+	// NVD JSON API returns 403 in rate limit excesses, should retry.
+	// Also, the API returns 408 infreqently.
+	if resp.StatusCode == http.StatusForbidden ||
+		resp.StatusCode == http.StatusRequestTimeout {
+		log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
+		return true, nil
+	}
+
+	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
 
 func write(dir string, bs []byte) error {
