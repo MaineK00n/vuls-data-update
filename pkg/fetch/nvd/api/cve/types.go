@@ -2,9 +2,9 @@ package cve
 
 // https://csrc.nist.gov/schema/nvd/api/2.0/cve_api_json_2.0.schema
 type CVEAPI20 struct {
-	ResultsPerPage  int64     `json:"resultsPerPage"`
-	StartIndex      int64     `json:"startIndex"`
-	TotalResults    int64     `json:"totalResults"`
+	ResultsPerPage  int       `json:"resultsPerPage"`
+	StartIndex      int       `json:"startIndex"`
+	TotalResults    int       `json:"totalResults"`
 	Format          string    `json:"format"`
 	Version         string    `json:"version"`
 	Timestamp       string    `json:"timestamp"`

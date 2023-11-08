@@ -13,6 +13,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
+	"github.com/cheggaaa/pb/v3"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 )
@@ -106,8 +107,6 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	log.Printf("[INFO] Fetch NVD API CVE start, dir=%s", options.dir)
-
 	options := &options{
 		baseURL: baseURL,
 		apiKey:  "",
@@ -118,6 +117,7 @@ func Fetch(opts ...Option) error {
 	for _, o := range opts {
 		o.apply(options)
 	}
+	log.Printf("[INFO] Fetch NVD API CVE start, dir=%s", options.dir)
 
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
@@ -152,7 +152,7 @@ func Fetch(opts ...Option) error {
 
 	// Actual API calls
 	urls := make([]string, 0, result.TotalResults/resultsPerPageMax+1)
-	for startIndex := int64(0); startIndex < result.TotalResults; startIndex += resultsPerPageMax {
+	for startIndex := 0; startIndex < result.TotalResults; startIndex += resultsPerPageMax {
 		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
 		if err != nil {
 			return errors.Wrap(err, "Generate full URL")
@@ -167,24 +167,27 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] API calls finished, about to write files")
+	bar := pb.StartNew(int(pages))
 	for _, bs := range bsList {
 		if err := write(options.dir, bs); err != nil {
 			return err
 		}
+		bar.Increment()
 	}
+	bar.Finish()
 
 	log.Printf("[INFO] Fetch NVD API CVE finished")
 	return nil
 }
 
-func fullURL(baseUrl string, startIndex, resultsPerPage int64) (string, error) {
+func fullURL(baseUrl string, startIndex, resultsPerPage int) (string, error) {
 	url, err := url.Parse(baseURL)
 	if err != nil {
 		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
 	}
 	q := url.Query()
-	q.Set(keyStartInedex, strconv.FormatInt(startIndex, 10))
-	q.Set(keyResultsPerPage, strconv.FormatInt(resultsPerPageMax, 10))
+	q.Set(keyStartInedex, strconv.Itoa(startIndex))
+	q.Set(keyResultsPerPage, strconv.Itoa(resultsPerPageMax))
 	url.RawQuery = q.Encode()
 	return url.String(), nil
 }
