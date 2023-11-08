@@ -118,6 +118,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
 	log.Printf("[INFO] Fetch NVD API CVE base URL: %s", options.baseURL)
 
 	h := http.Header{}
