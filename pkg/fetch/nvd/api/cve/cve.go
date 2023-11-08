@@ -20,7 +20,7 @@ import (
 
 const (
 	// API reference page: https://nvd.nist.gov/developers/vulnerabilities
-	baseURL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+	apiURL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
 	// Should be <= 2,000
 	keyResultsPerPage = "resultsPerPage"
@@ -108,7 +108,7 @@ func WithRetry(retry int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL: baseURL,
+		baseURL: apiURL,
 		apiKey:  "",
 		//  TODO(shino): Where to put the default value, cmd/fetch/fetch.go or here?
 		dir:   filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
@@ -139,6 +139,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "Generate full URL")
 	}
+	log.Printf("url: %s", url)
 	bs, err := c.Get(url, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "call NVD CVE API")
@@ -147,7 +148,13 @@ func Fetch(opts ...Option) error {
 	if err := json.Unmarshal(bs, &preliminary); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE, %s", bs)
 	}
-	pages := preliminary.TotalResults/resultsPerPageMax + 1
+	preciselyPaged := (preliminary.TotalResults % resultsPerPageMax) == 0
+	var pages int
+	if preciselyPaged {
+		pages = preliminary.TotalResults / resultsPerPageMax
+	} else {
+		pages = preliminary.TotalResults/resultsPerPageMax + 1
+	}
 	log.Printf("[INFO] total results=%d, pages=%d", preliminary.TotalResults, pages)
 
 	// Actual API calls
@@ -167,10 +174,9 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] API calls finished, about to write files")
-	lastStartIndex := resultsPerPageMax * (pages - 1)
 	bar := pb.StartNew(int(pages))
 	for _, bs := range bsList {
-		if err := write(options.dir, bs, resultsPerPageMax, preliminary.TotalResults, lastStartIndex); err != nil {
+		if err := write(options.dir, bs, resultsPerPageMax, preliminary.TotalResults, pages, preciselyPaged); err != nil {
 			return err
 		}
 		bar.Increment()
@@ -181,7 +187,7 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func fullURL(baseUrl string, startIndex, resultsPerPage int) (string, error) {
+func fullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
 	url, err := url.Parse(baseURL)
 	if err != nil {
 		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
@@ -210,7 +216,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
 
-func write(dir string, bs []byte, resultsPerPage, totalResults, lastStartIndex int) error {
+func write(dir string, bs []byte, resultsPerPage, totalResults, pages int, preciselyPaged bool) error {
 
 	var cveAPI20 CVEAPI20
 	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
@@ -218,9 +224,14 @@ func write(dir string, bs []byte, resultsPerPage, totalResults, lastStartIndex i
 	}
 
 	// Sanity check
+	finalStartIndex := resultsPerPageMax * (pages - 1)
 	var expectedResults int
-	if cveAPI20.StartIndex == lastStartIndex {
-		expectedResults = totalResults % resultsPerPage
+	if cveAPI20.StartIndex == finalStartIndex {
+		if preciselyPaged {
+			expectedResults = resultsPerPage
+		} else {
+			expectedResults = totalResults % resultsPerPage
+		}
 	} else {
 		expectedResults = resultsPerPage
 	}
@@ -231,13 +242,14 @@ func write(dir string, bs []byte, resultsPerPage, totalResults, lastStartIndex i
 	}
 
 	for _, v := range cveAPI20.Vulnerabilities {
+		// ID is like "CVE-2023-24479"
 		tokens := strings.Split(v.CVE.ID, "-")
 		if len(tokens) < 3 {
 			errors.Errorf("unexpected CVE.ID format: %#v", v)
 		}
 		year := tokens[1]
 		path := filepath.Join(dir, year, fmt.Sprintf("%s.json", v.CVE.ID))
-		if err := util.Write(path, v.CVE); err != nil {
+		if err := util.Write(path, v); err != nil {
 			return errors.Wrapf(err, "write %s", path)
 		}
 	}
