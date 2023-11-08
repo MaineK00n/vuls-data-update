@@ -143,16 +143,16 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "call NVD CVE API")
 	}
-	var result CVEAPI20
-	if err := json.Unmarshal(bs, &result); err != nil {
+	var preliminary CVEAPI20
+	if err := json.Unmarshal(bs, &preliminary); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE, %s", bs)
 	}
-	pages := result.TotalResults/resultsPerPageMax + 1
-	log.Printf("[INFO] total results=%d, pages=%d", result.TotalResults, pages)
+	pages := preliminary.TotalResults/resultsPerPageMax + 1
+	log.Printf("[INFO] total results=%d, pages=%d", preliminary.TotalResults, pages)
 
 	// Actual API calls
-	urls := make([]string, 0, result.TotalResults/resultsPerPageMax+1)
-	for startIndex := 0; startIndex < result.TotalResults; startIndex += resultsPerPageMax {
+	urls := make([]string, 0, preliminary.TotalResults/resultsPerPageMax+1)
+	for startIndex := 0; startIndex < preliminary.TotalResults; startIndex += resultsPerPageMax {
 		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
 		if err != nil {
 			return errors.Wrap(err, "Generate full URL")
@@ -167,9 +167,10 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] API calls finished, about to write files")
+	lastStartIndex := resultsPerPageMax * (pages - 1)
 	bar := pb.StartNew(int(pages))
 	for _, bs := range bsList {
-		if err := write(options.dir, bs); err != nil {
+		if err := write(options.dir, bs, resultsPerPageMax, preliminary.TotalResults, lastStartIndex); err != nil {
 			return err
 		}
 		bar.Increment()
@@ -209,11 +210,24 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
 
-func write(dir string, bs []byte) error {
+func write(dir string, bs []byte, resultsPerPage, totalResults, lastStartIndex int) error {
 
 	var cveAPI20 CVEAPI20
 	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE with raw JSON=%s", bs)
+	}
+
+	// Sanity check
+	var expectedResults int
+	if cveAPI20.StartIndex == lastStartIndex {
+		expectedResults = totalResults % resultsPerPage
+	} else {
+		expectedResults = resultsPerPage
+	}
+	actualResults := len(cveAPI20.Vulnerabilities)
+	if expectedResults != actualResults {
+		return errors.Errorf("Unexpected result count at startIndex=%d, expected=%d actual=%d",
+			cveAPI20.StartIndex, expectedResults, actualResults)
 	}
 
 	for _, v := range cveAPI20.Vulnerabilities {
