@@ -25,6 +25,7 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name         string
+		apiKey       string
 		totalResults int
 		hasError     bool
 	}{
@@ -55,6 +56,11 @@ func TestFetch(t *testing.T) {
 		{
 			name:         "Many (more than concurrency)",
 			totalResults: 10000,
+		},
+		{
+			name:         "With API Key",
+			apiKey:       "foobar",
+			totalResults: 8888,
 		},
 	}
 
@@ -125,7 +131,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = cve.Fetch(cve.WithBaseURL(u), cve.WithConcurrency(3), cve.WithWait(0), cve.WithDir(dir), cve.WithRetry(0))
+			err = cve.Fetch(cve.WithBaseURL(u), cve.WithConcurrency(3), cve.WithWait(0), cve.WithAPIKey(tt.apiKey), cve.WithDir(dir), cve.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

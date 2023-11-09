@@ -119,8 +119,9 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] Fetch NVD API CVE base URL: %s", options.baseURL)
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 
-	h := http.Header{}
+	h := make(http.Header)
 	if strings.Compare(options.apiKey, "") != 0 {
+		log.Printf("[INFO] API Key specified, use it")
 		h.Add("apiKey", options.apiKey)
 	}
 	headerOption := utilhttp.WithRequestHeader(h)
@@ -151,7 +152,7 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] total results=%d, pages=%d", totalResults, pages)
 
 	// Actual API calls
-	urls := make([]string, 0, totalResults/resultsPerPageMax+1)
+	urls := make([]string, 0, pages)
 	for startIndex := 0; startIndex < totalResults; startIndex += resultsPerPageMax {
 		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
 		if err != nil {
