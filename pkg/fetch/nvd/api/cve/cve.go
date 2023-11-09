@@ -124,8 +124,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch NVD API CVE base URL: %s", options.baseURL)
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry),
-		utilhttp.WithClientCheckRetry(checkRetry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 
 	h := http.Header{}
 	if strings.Compare(options.apiKey, "") != 0 {
