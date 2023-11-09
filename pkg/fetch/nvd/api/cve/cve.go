@@ -22,15 +22,8 @@ const (
 	// API reference page: https://nvd.nist.gov/developers/vulnerabilities
 	apiURL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
-	// Should be <= 2,000
-	keyResultsPerPage = "resultsPerPage"
-	// So this implementation uses the max value
+	// resultsPerPage must be <= 2,000, this implementation almost uses the max value
 	resultsPerPageMax = 2_000
-
-	// 0-origin index of results.
-	// When the request with startIndex=100 and resultsPerPage in the corresponding response is 2000,
-	// the next request should have startIndex=2100.
-	keyStartInedex = "startIndex"
 )
 
 type options struct {
@@ -193,8 +186,8 @@ func fullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
 		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
 	}
 	q := url.Query()
-	q.Set(keyStartInedex, strconv.Itoa(startIndex))
-	q.Set(keyResultsPerPage, strconv.Itoa(resultsPerPageMax))
+	q.Set("startIndex", strconv.Itoa(startIndex))
+	q.Set("resultsPerPage", strconv.Itoa(resultsPerPageMax))
 	url.RawQuery = q.Encode()
 	return url.String(), nil
 }
@@ -207,8 +200,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 	// NVD JSON API returns 403 in rate limit excesses, should retry.
 	// Also, the API returns 408 infreqently.
-	if resp.StatusCode == http.StatusForbidden ||
-		resp.StatusCode == http.StatusRequestTimeout {
+	if resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusRequestTimeout {
 		log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
 		return true, nil
 	}
