@@ -143,22 +143,23 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "call NVD CVE API")
 	}
-	var preliminary CVEAPI20
+	var preliminary API20
 	if err := json.Unmarshal(bs, &preliminary); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE, %s", bs)
 	}
-	preciselyPaged := (preliminary.TotalResults % resultsPerPageMax) == 0
+	totalResults := preliminary.TotalResults
+	preciselyPaged := (totalResults % resultsPerPageMax) == 0
 	var pages int
 	if preciselyPaged {
-		pages = preliminary.TotalResults / resultsPerPageMax
+		pages = totalResults / resultsPerPageMax
 	} else {
-		pages = preliminary.TotalResults/resultsPerPageMax + 1
+		pages = totalResults/resultsPerPageMax + 1
 	}
-	log.Printf("[INFO] total results=%d, pages=%d", preliminary.TotalResults, pages)
+	log.Printf("[INFO] total results=%d, pages=%d", totalResults, pages)
 
 	// Actual API calls
-	urls := make([]string, 0, preliminary.TotalResults/resultsPerPageMax+1)
-	for startIndex := 0; startIndex < preliminary.TotalResults; startIndex += resultsPerPageMax {
+	urls := make([]string, 0, totalResults/resultsPerPageMax+1)
+	for startIndex := 0; startIndex < totalResults; startIndex += resultsPerPageMax {
 		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
 		if err != nil {
 			return errors.Wrap(err, "Generate full URL")
@@ -175,7 +176,7 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] API calls finished, about to write files")
 	bar := pb.StartNew(int(pages))
 	for _, bs := range bsList {
-		if err := write(options.dir, bs, resultsPerPageMax, preliminary.TotalResults, pages, preciselyPaged); err != nil {
+		if err := write(options.dir, bs, resultsPerPageMax, totalResults, pages, preciselyPaged); err != nil {
 			return err
 		}
 		bar.Increment()
@@ -217,7 +218,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 func write(dir string, bs []byte, resultsPerPage, totalResults, pages int, preciselyPaged bool) error {
 
-	var cveAPI20 CVEAPI20
+	var cveAPI20 API20
 	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
 		return errors.Wrapf(err, "unmarshal NVE API CVE with raw JSON=%s", bs)
 	}

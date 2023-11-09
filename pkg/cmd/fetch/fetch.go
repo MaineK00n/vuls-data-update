@@ -59,8 +59,8 @@ type options struct {
 	dir   string
 	retry int
 
-	concurrency int // SUSE CVRF, SUSE CSAF, Windows WSUSSCN2, NVD CVE/CPE/CPEMatch
-	wait        int // SUSE CVRF, SUSE CSAF
+	concurrency int // SUSE CVRF, SUSE CSAF, NVD API CVE/CPE/CPEMatch, Windows WSUSSCN2
+	wait        int // SUSE CVRF, SUSE CSAF, NVD API CVE/CPE/CPEMatch
 }
 
 func NewCmdFetch() *cobra.Command {

@@ -63,19 +63,23 @@ func TestFetch(t *testing.T) {
 	if err != nil {
 		t.Error("Read file failed", err)
 	}
-	var cveItemTemplate cve.CVEItem
+	var cveItemTemplate cve.Vulnerability
 	if err := json.Unmarshal(bs, &cveItemTemplate); err != nil {
 		t.Error("Unmarshal failed", err)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			totalResults := tt.totalResults
-			allVs := make([]cve.CVEItem, 0, totalResults)
-			for i := 0; i < totalResults; i++ {
+			allVs := make([]cve.Vulnerability, 0, totalResults)
+			// Sequence numbers in IDs, which will be used to verify result
+			expectedSeqNums := make([]int, 0, totalResults)
+			for seqNum := 0; seqNum < totalResults; seqNum++ {
 				cveItem := cveItemTemplate
 				y := rand.Intn(20) + 2000
-				cveItem.CVE.ID = fmt.Sprintf("CVE-%d-%d", y, i)
+				cveItem.CVE.ID = fmt.Sprintf("CVE-%d-%d", y, seqNum)
 				allVs = append(allVs, cveItem)
+
+				expectedSeqNums = append(expectedSeqNums, seqNum)
 			}
 
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +101,7 @@ func TestFetch(t *testing.T) {
 				}
 
 				now := time.Now()
-				cveAPI20 := cve.CVEAPI20{
+				cveAPI20 := cve.API20{
 					ResultsPerPage:  len(vs),
 					StartIndex:      startIndex,
 					TotalResults:    totalResults,
@@ -130,7 +134,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			seqNums := make([]int, 0, totalResults)
-			var v cve.CVEItem
+			var v cve.Vulnerability
 
 			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
 				if err != nil {
@@ -163,10 +167,6 @@ func TestFetch(t *testing.T) {
 				t.Error("walk error:", err)
 			}
 
-			expectedSeqNums := make([]int, 0, totalResults)
-			for i := 0; i < totalResults; i++ {
-				expectedSeqNums = append(expectedSeqNums, i)
-			}
 			sort.Ints(seqNums)
 			if !reflect.DeepEqual(expectedSeqNums, seqNums) {
 				t.Errorf("CVEs are NOT exhausted, expected=%#v, actual=%#v", expectedSeqNums, seqNums)
