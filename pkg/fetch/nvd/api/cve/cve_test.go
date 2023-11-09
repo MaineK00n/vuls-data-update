@@ -131,7 +131,11 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = cve.Fetch(cve.WithBaseURL(u), cve.WithConcurrency(3), cve.WithWait(0), cve.WithAPIKey(tt.apiKey), cve.WithDir(dir), cve.WithRetry(0))
+			opts := []cve.Option{
+				cve.WithBaseURL(u), cve.WithDir(dir), cve.WithAPIKey(tt.apiKey),
+				cve.WithConcurrency(3), cve.WithWait(0), cve.WithRetry(0),
+			}
+			err = cve.Fetch(opts...)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

@@ -201,7 +201,8 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 	// NVD JSON API returns 403 in rate limit excesses, should retry.
 	// Also, the API returns 408 infreqently.
-	if resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusRequestTimeout {
+	switch resp.StatusCode {
+	case http.StatusForbidden, http.StatusRequestTimeout:
 		log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
 		return true, nil
 	}
