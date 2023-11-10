@@ -85,3 +85,18 @@ func RemoveAll(root string) error {
 	}
 	return nil
 }
+
+func Split(str string, delimiters ...string) ([]string, error) {
+	splitted := make([]string, 0, len(delimiters)+1)
+	for _, delimiter := range delimiters {
+		lhs, rhs, ok := strings.Cut(str, delimiter)
+		if !ok {
+			return nil, errors.Errorf("delimiter: %q not found in %q", delimiter, str)
+		}
+		str = rhs
+		splitted = append(splitted, lhs)
+	}
+
+	splitted = append(splitted, str)
+	return splitted, nil
+}
