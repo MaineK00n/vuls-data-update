@@ -33,6 +33,9 @@ type options struct {
 	concurrency int
 	dir         string
 	retry       int
+
+	// test purpose only
+	resultsPerPage int
 }
 
 type Option interface {
@@ -99,13 +102,24 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type resultsPerPageOption int
+
+func (r resultsPerPageOption) apply(opts *options) {
+	opts.resultsPerPage = int(r)
+}
+
+func WithResultsPerPage(resultsPerPage int) Option {
+	return resultsPerPageOption(resultsPerPage)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL: apiURL,
 		apiKey:  "",
 		//  TODO(shino): Where to put the default value, cmd/fetch/fetch.go or here?
-		dir:   filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
-		retry: 3,
+		dir:            filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
+		retry:          3,
+		resultsPerPage: resultsPerPageMax,
 	}
 	for _, o := range opts {
 		o.apply(options)
@@ -140,16 +154,16 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "unmarshal")
 	}
 	totalResults := preliminary.TotalResults
-	preciselyPaged := (totalResults % resultsPerPageMax) == 0
-	pages := totalResults / resultsPerPageMax
+	preciselyPaged := (totalResults % options.resultsPerPage) == 0
+	pages := totalResults / options.resultsPerPage
 	if !preciselyPaged {
 		pages++
 	}
 
 	// Actual API calls
 	us := make([]string, 0, pages)
-	for startIndex := 0; startIndex < totalResults; startIndex += resultsPerPageMax {
-		url, err := fullURL(options.baseURL, startIndex, resultsPerPageMax)
+	for startIndex := 0; startIndex < totalResults; startIndex += options.resultsPerPage {
+		url, err := fullURL(options.baseURL, startIndex, options.resultsPerPage)
 		if err != nil {
 			return errors.Wrap(err, "full URL")
 		}
@@ -164,7 +178,7 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] API calls finished, about to write files")
 	bar := pb.StartNew(int(pages))
 	for _, bs := range bsList {
-		if err := write(options.dir, bs, resultsPerPageMax, totalResults, pages, preciselyPaged); err != nil {
+		if err := write(options.dir, bs, options.resultsPerPage, totalResults, pages, preciselyPaged); err != nil {
 			return errors.Wrap(err, "write")
 		}
 		bar.Increment()
@@ -210,7 +224,7 @@ func write(dir string, bs []byte, resultsPerPage, totalResults, pages int, preci
 	}
 
 	// Sanity check
-	finalStartIndex := resultsPerPageMax * (pages - 1)
+	finalStartIndex := resultsPerPage * (pages - 1)
 	expectedResults := resultsPerPage
 	if cveAPI20.StartIndex == finalStartIndex && !preciselyPaged {
 		expectedResults = totalResults % resultsPerPage

@@ -1,0 +1,123 @@
+{
+  "resultsPerPage": 3,
+  "startIndex": 0,
+  "totalResults": 3,
+  "format": "NVD_CVE",
+  "version": "2.0",
+  "timestamp": "2023-11-10T07:40:33.460",
+  "vulnerabilities": [
+    {
+      "cve": {
+        "id": "CVE-2023-47488",
+        "sourceIdentifier": "cve@mitre.org",
+        "published": "2023-11-09T06:15:24.290",
+        "lastModified": "2023-11-09T13:46:10.880",
+        "vulnStatus": "Awaiting Analysis",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "Cross Site Scripting vulnerability in Combodo iTop v.3.1.0-2-11973 allows a local attacker to obtain sensitive information via a crafted script to the attrib_manager_id parameter in the General Information page and the id parameter in the contact page."
+          },
+          {
+            "lang": "es",
+            "value": "Vulnerabilidad de Cross-Site Scripting en Combodo iTop v.3.1.0-2-11973 permite a un atacante local obtener información sensible a través de un script manipulado para el parámetro attrib_manager_id en la página de información general y el parámetro id en la página de contacto."
+          }
+        ],
+        "metrics": {},
+        "references": [
+          {
+            "url": "https://bugplorer.github.io/cve-xss-itop/",
+            "source": "cve@mitre.org"
+          }
+        ]
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2023-47489",
+        "sourceIdentifier": "cve@mitre.org",
+        "published": "2023-11-09T06:15:24.347",
+        "lastModified": "2023-11-09T13:46:10.880",
+        "vulnStatus": "Awaiting Analysis",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "An issue in Combodo iTop v.3.1.0-2-11973 allows a local attacker to execute arbitrary code via a crafted script to the export-v2.php and ajax.render.php components."
+          },
+          {
+            "lang": "es",
+            "value": "Un problema en Combodo iTop v.3.1.0-2-11973 permite a un atacante local ejecutar código arbitrario a través de un script manipulado en los componentes export-v2.php y ajax.render.php."
+          }
+        ],
+        "metrics": {},
+        "references": [
+          {
+            "url": "https://bugplorer.github.io/cve-csv-itop/",
+            "source": "cve@mitre.org"
+          }
+        ]
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2023-47613",
+        "sourceIdentifier": "vulnerability@kaspersky.com",
+        "published": "2023-11-09T07:15:07.310",
+        "lastModified": "2023-11-09T13:46:10.880",
+        "vulnStatus": "Awaiting Analysis",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "A CWE-23: Relative Path Traversal vulnerability exists in Telit Cinterion BGS5, Telit Cinterion EHS5/6/8, Telit Cinterion PDS5/6/8, Telit Cinterion ELS61/81, Telit Cinterion PLS62 that could allow a local, low privileged attacker to escape from virtual directories and get read/write access to protected files on the targeted system."
+          },
+          {
+            "lang": "es",
+            "value": "Existe una vulnerabilidad CWE-23: Relative Path Traversal en Telit Cinterion BGS5, Telit Cinterion EHS5/6/8, Telit Cinterion PDS5/6/8, Telit Cinterion ELS61/81, Telit Cinterion PLS62 que podría permitir a un atacante local con pocos privilegios escape de directorios virtuales y obtenga acceso de lectura/escritura a archivos protegidos en el sistema de destino."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV31": [
+            {
+              "source": "vulnerability@kaspersky.com",
+              "type": "Secondary",
+              "cvssData": {
+                "version": "3.1",
+                "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+                "attackVector": "LOCAL",
+                "attackComplexity": "LOW",
+                "privilegesRequired": "LOW",
+                "userInteraction": "NONE",
+                "scope": "UNCHANGED",
+                "confidentialityImpact": "LOW",
+                "integrityImpact": "LOW",
+                "availabilityImpact": "NONE",
+                "baseScore": 4.4,
+                "baseSeverity": "MEDIUM"
+              },
+              "exploitabilityScore": 1.8,
+              "impactScore": 2.5
+            }
+          ]
+        },
+        "weaknesses": [
+          {
+            "source": "vulnerability@kaspersky.com",
+            "type": "Secondary",
+            "description": [
+              {
+                "lang": "en",
+                "value": "CWE-23"
+              }
+            ]
+          }
+        ],
+        "references": [
+          {
+            "url": "https://ics-cert.kaspersky.com/advisories/2023/11/08/klcert-22-211-telit-cinterion-thales-gemalto-modules-relative-path-traversal/",
+            "source": "vulnerability@kaspersky.com"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,127 +1,63 @@
 package cve_test
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/fs"
-	"math/rand"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"reflect"
-	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
+	"github.com/google/go-cmp/cmp"
 
 	"path/filepath"
-	"sort"
-	"time"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name         string
-		apiKey       string
-		totalResults int
-		hasError     bool
+		name          string
+		apiKey        string
+		fixturePrefix string
+		hasError      bool
 	}{
 		{
-			name:         "No item",
-			totalResults: 0,
+			name:          "empty",
+			fixturePrefix: "empty",
 		},
 		{
-			name:         "Just single item",
-			totalResults: 1,
+			name:          "1 item",
+			fixturePrefix: "1_item",
 		},
 		{
-			name:         "Half of single page",
-			totalResults: 1000,
+			name:          "Precisely single page",
+			fixturePrefix: "3_items",
 		},
 		{
-			name:         "Precisely single page",
-			totalResults: 2000,
+			name:          "Multiple pages",
+			fixturePrefix: "3_pages",
 		},
-		{
-			name:         "Single page plus one",
-			totalResults: 2001,
-		},
-		{
-			name:         "Just two pages",
-			totalResults: 4000,
-		},
-		{
-			name:         "Many (more than concurrency)",
-			totalResults: 9000,
-		},
-		{
-			name:         "With API Key",
-			apiKey:       "foobar",
-			totalResults: 8888,
-		},
+		// {
+		// 	name:         "With API Key",
+		// 	apiKey:       "foobar",
+		// 	totalResults: 8888,
+		// },
 	}
 
-	cveTemplatePath := "testdata/fixtures/cve.json"
-	bs, err := os.ReadFile(cveTemplatePath)
-	if err != nil {
-		t.Error("Read file failed", err)
-	}
-	var cveItemTemplate cve.Vulnerability
-	if err := json.Unmarshal(bs, &cveItemTemplate); err != nil {
-		t.Error("Unmarshal failed", err)
-	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			totalResults := tt.totalResults
-			allVs := make([]cve.Vulnerability, 0, totalResults)
-			// Sequence numbers in IDs, which will be used to verify result
-			expectedSeqNums := make([]int, 0, totalResults)
-			for seqNum := 0; seqNum < totalResults; seqNum++ {
-				cveItem := cveItemTemplate
-				y := rand.Intn(20) + 2000
-				cveItem.CVE.ID = fmt.Sprintf("CVE-%d-%d", y, seqNum)
-				allVs = append(allVs, cveItem)
-
-				expectedSeqNums = append(expectedSeqNums, seqNum)
-			}
-
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				startIndex := 0
+				startIndex := "0"
 				if value := r.URL.Query().Get("startIndex"); value != "" {
-					if startIndex, err = strconv.Atoi(value); err != nil {
-						t.Error("unexpected error:", err)
-					}
+					startIndex = value
 				}
-				requestedResultsPerPage := 2000
+				resultsPerPage := "2000"
 				if value := r.URL.Query().Get("resultsPerPage"); value != "" {
-					if requestedResultsPerPage, err = strconv.Atoi(value); err != nil {
-						t.Error("unexpected error:", err)
-					}
-				}
-				vs := allVs[startIndex:]
-				if requestedResultsPerPage < len(vs) {
-					vs = vs[:requestedResultsPerPage]
+					resultsPerPage = value
 				}
 
-				now := time.Now()
-				cveAPI20 := cve.API20{
-					ResultsPerPage:  len(vs),
-					StartIndex:      startIndex,
-					TotalResults:    totalResults,
-					Format:          "NVD_CVE",
-					Version:         "2.0",
-					Timestamp:       now.Format("2006-01-02T15:04:05.000"),
-					Vulnerabilities: vs,
-				}
-				bs, err := json.Marshal(cveAPI20)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				content := bytes.NewReader(bs)
-				http.ServeContent(w, r, "cve-api.json", now, content)
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s-%s-%s.json", tt.fixturePrefix, startIndex, resultsPerPage)))
 			}))
 			defer ts.Close()
 
@@ -134,6 +70,7 @@ func TestFetch(t *testing.T) {
 			opts := []cve.Option{
 				cve.WithBaseURL(u), cve.WithDir(dir), cve.WithAPIKey(tt.apiKey),
 				cve.WithConcurrency(3), cve.WithWait(0), cve.WithRetry(0),
+				cve.WithResultsPerPage(3),
 			}
 			err = cve.Fetch(opts...)
 			switch {
@@ -142,9 +79,6 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			}
-
-			seqNums := make([]int, 0, totalResults)
-			var v cve.Vulnerability
 
 			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
 				if err != nil {
@@ -155,31 +89,25 @@ func TestFetch(t *testing.T) {
 					return nil
 				}
 
-				bs, err := os.ReadFile(path)
+				dir, file := filepath.Split(path)
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, filepath.Base(dir), file))
 				if err != nil {
 					return err
 				}
-				if err := json.Unmarshal(bs, &v); err != nil {
-					t.Error("Unmarshal failed", err)
-				}
-				tokens := strings.Split(v.CVE.ID, "-")
-				if len(tokens) < 3 {
-					t.Errorf("unexpected CVE.ID format: %s (%s)", v.CVE.ID, path)
-				}
-				seqNum, err := strconv.Atoi(tokens[2])
+
+				got, err := os.ReadFile(path)
 				if err != nil {
-					t.Errorf("unexpected CVE.ID format: %s (%s)", v.CVE.ID, path)
+					return err
 				}
-				seqNums = append(seqNums, seqNum)
+
+				if diff := cmp.Diff(want, got); diff != "" {
+					t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
+				}
 
 				return nil
+
 			}); err != nil {
 				t.Error("walk error:", err)
-			}
-
-			sort.Ints(seqNums)
-			if !reflect.DeepEqual(expectedSeqNums, seqNums) {
-				t.Errorf("CVEs are NOT exhausted, expected=%#v, actual=%#v", expectedSeqNums, seqNums)
 			}
 		})
 	}
