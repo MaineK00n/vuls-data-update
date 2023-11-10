@@ -2233,7 +2233,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 				nvdAPICVE.WithAPIKey(apiKey),
 				nvdAPICVE.WithWait(options.wait),
 				nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
-				return errors.Wrap(err, "failed to fetch nvd feed cve")
+				return errors.Wrap(err, "failed to fetch nvd api cve")
 			}
 			return nil
 		},
