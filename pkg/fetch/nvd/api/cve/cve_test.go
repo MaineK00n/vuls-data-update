@@ -50,12 +50,12 @@ func TestFetch(t *testing.T) {
 			totalResults: 2001,
 		},
 		{
-			name:         "Two pages",
-			totalResults: 2001,
+			name:         "Just two pages",
+			totalResults: 4000,
 		},
 		{
 			name:         "Many (more than concurrency)",
-			totalResults: 10000,
+			totalResults: 9000,
 		},
 		{
 			name:         "With API Key",
