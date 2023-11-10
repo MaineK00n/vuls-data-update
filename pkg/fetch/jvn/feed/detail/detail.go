@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -118,13 +118,18 @@ func Fetch(opts ...Option) error {
 
 		bar := pb.StartNew(len(feed.Vulinfo))
 		for _, a := range feed.Vulinfo {
-			y := strings.Split(a.VulinfoID, "-")[1]
-			if _, err := strconv.Atoi(y); err != nil {
+			splitted, err := util.Split(a.VulinfoID, "-", "-")
+			if err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.VulinfoID)
+				continue
+			}
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.VulinfoID)
 				continue
 			}
 
-			if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", a.VulinfoID)), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", a.VulinfoID)))
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.VulinfoID)), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.VulinfoID)))
 			}
 
 			bar.Increment()

@@ -8,8 +8,7 @@ import (
 	"log"
 	"path"
 	"path/filepath"
-	"strconv"
-	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -103,13 +102,18 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(cs))
 	for _, c := range cs {
-		y, _, _ := strings.Cut(c.DocumentTracking.Identification.ID, "-")
-		if _, err := strconv.Atoi(y); err != nil {
+		splitted, err := util.Split(c.DocumentTracking.Identification.ID, "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyyy-.+", c.DocumentTracking.Identification.ID)
+			continue
+		}
+		if _, err := time.Parse("2006", splitted[0]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyyy-.+", c.DocumentTracking.Identification.ID)
 			continue
 		}
 
-		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", c.DocumentTracking.Identification.ID)), c); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", c.DocumentTracking.Identification.ID)))
+		if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", c.DocumentTracking.Identification.ID)), c); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", c.DocumentTracking.Identification.ID)))
 		}
 		bar.Increment()
 	}
