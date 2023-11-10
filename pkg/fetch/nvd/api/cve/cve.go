@@ -120,7 +120,7 @@ func Fetch(opts ...Option) error {
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 
 	h := make(http.Header)
-	if strings.Compare(options.apiKey, "") != 0 {
+	if options.apiKey != "" {
 		log.Printf("[INFO] API Key specified, use it")
 		h.Add("apiKey", options.apiKey)
 	}
