@@ -3,22 +3,11 @@ package kev
 import "time"
 
 type catalog struct {
-	CatalogVersion  string    `json:"catalogVersion"`
-	Count           int       `json:"count"`
-	DateReleased    time.Time `json:"dateReleased"`
-	Title           string    `json:"title"`
-	Vulnerabilities []struct {
-		CveID                      string `json:"cveID"`
-		DateAdded                  string `json:"dateAdded"`
-		DueDate                    string `json:"dueDate"`
-		Notes                      string `json:"notes"`
-		Product                    string `json:"product"`
-		RequiredAction             string `json:"requiredAction"`
-		ShortDescription           string `json:"shortDescription"`
-		VendorProject              string `json:"vendorProject"`
-		VulnerabilityName          string `json:"vulnerabilityName"`
-		KnownRansomwareCampaignUse string `json:"knownRansomwareCampaignUse"`
-	} `json:"vulnerabilities"`
+	CatalogVersion  string          `json:"catalogVersion"`
+	Count           int             `json:"count"`
+	DateReleased    time.Time       `json:"dateReleased"`
+	Title           string          `json:"title"`
+	Vulnerabilities []Vulnerability `json:"vulnerabilities"`
 }
 
 type Vulnerability struct {
