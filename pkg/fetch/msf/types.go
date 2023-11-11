@@ -51,7 +51,7 @@ type Module struct {
 	Check              bool                `json:"check,omitempty"`
 	PostAuth           bool                `json:"post_auth,omitempty"`
 	DefaultCredential  bool                `json:"default_credential,omitempty"`
-	Notes              map[string][]string `json:"notes,omitempty"`         // map[string]string or map[string][]string
-	SessionTypes       []string            `json:"session_types,omitempty"` // []string or false
-	NeedsCleanup       *bool               `json:"needs_cleanup,omitempty"` // false, true, null
+	Notes              map[string][]string `json:"notes,omitempty"`
+	SessionTypes       []string            `json:"session_types,omitempty"`
+	NeedsCleanup       *bool               `json:"needs_cleanup,omitempty"`
 }

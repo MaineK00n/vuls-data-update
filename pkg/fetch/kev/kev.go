@@ -82,23 +82,8 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "json unmarshal")
 	}
 
-	vs := make([]Vulnerability, 0, len(catalog.Vulnerabilities))
+	bar := pb.StartNew(len(catalog.Vulnerabilities))
 	for _, v := range catalog.Vulnerabilities {
-		vs = append(vs, Vulnerability{
-			CveID:             v.CveID,
-			VendorProject:     v.VendorProject,
-			Product:           v.Product,
-			VulnerabilityName: v.VulnerabilityName,
-			ShortDescription:  v.ShortDescription,
-			RequiredAction:    v.RequiredAction,
-			Notes:             v.Notes,
-			DateAdded:         v.DateAdded,
-			DueDate:           v.DueDate,
-		})
-	}
-
-	bar := pb.StartNew(len(vs))
-	for _, v := range vs {
 		splitted, err := util.Split(v.CveID, "-", "-")
 		if err != nil {
 			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CveID)
