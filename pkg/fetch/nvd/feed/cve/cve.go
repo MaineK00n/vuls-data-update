@@ -114,13 +114,18 @@ func Fetch(opts ...Option) error {
 
 		bar := pb.StartNew(len(cves[feedname]))
 		for _, cve := range cves[feedname] {
-			y := strings.Split(cve.Cve.CVEDataMeta.ID, "-")[1]
-			if _, err := strconv.Atoi(y); err != nil {
+			splitted, err := util.Split(cve.Cve.CVEDataMeta.ID, "-", "-")
+			if err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", cve.Cve.CVEDataMeta.ID)
+				continue
+			}
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", cve.Cve.CVEDataMeta.ID)
 				continue
 			}
 
-			if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID)), cve); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, cve.Cve.CVEDataMeta.ID))
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID)), cve); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], cve.Cve.CVEDataMeta.ID))
 			}
 
 			bar.Increment()

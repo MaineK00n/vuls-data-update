@@ -8,8 +8,9 @@ import (
 	"log"
 	"path"
 	"path/filepath"
-	"strconv"
+	"slices"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -86,7 +87,6 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode json")
 	}
 
-	var cs []CVRF
 	for _, u := range us.Value {
 		log.Printf("[INFO] Fetch Windows CVRF %s", path.Base(u.CvrfURL))
 		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u.CvrfURL)
@@ -98,22 +98,82 @@ func Fetch(opts ...Option) error {
 		if err := xml.NewDecoder(bytes.NewReader(bs)).Decode(&c); err != nil {
 			return errors.Wrap(err, "decode xml")
 		}
-		cs = append(cs, c)
-	}
 
-	bar := pb.StartNew(len(cs))
-	for _, c := range cs {
-		y, _, _ := strings.Cut(c.DocumentTracking.Identification.ID, "-")
-		if _, err := strconv.Atoi(y); err != nil {
-			continue
-		}
+		bar := pb.StartNew(len(c.Vulnerability))
+		for _, v := range c.Vulnerability {
+			vc := CVRF{
+				DocumentTitle:     c.DocumentTitle,
+				DocumentType:      c.DocumentType,
+				DocumentPublisher: c.DocumentPublisher,
+				DocumentTracking: DocumentTracking{
+					Identification: Identification{
+						ID:    v.CVE,
+						Alias: v.CVE,
+					},
+					Status:             c.DocumentTracking.Status,
+					Version:            c.DocumentTracking.Version,
+					RevisionHistory:    c.DocumentTracking.RevisionHistory,
+					InitialReleaseDate: c.DocumentTracking.InitialReleaseDate,
+					CurrentReleaseDate: c.DocumentTracking.CurrentReleaseDate,
+				},
+				DocumentNotes: c.DocumentNotes,
+				ProductTree:   filterProductTree(c.ProductTree, v.ProductStatuses.Status.ProductID),
+				Vulnerability: []Vulnerability{v},
+			}
 
-		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", c.DocumentTracking.Identification.ID)), c); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", c.DocumentTracking.Identification.ID)))
+			d := "others"
+			if strings.HasPrefix(vc.DocumentTracking.Identification.ID, "CVE-") {
+				splitted, err := util.Split(vc.DocumentTracking.Identification.ID, "-", "-")
+				if err != nil {
+					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vc.DocumentTracking.Identification.ID)
+					continue
+				}
+				if _, err := time.Parse("2006", splitted[1]); err != nil {
+					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vc.DocumentTracking.Identification.ID)
+					continue
+				}
+
+				d = splitted[1]
+			}
+
+			if err := util.Write(filepath.Join(options.dir, c.DocumentTracking.Identification.ID, d, fmt.Sprintf("%s.json", vc.DocumentTracking.Identification.ID)), vc); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, c.DocumentTracking.Identification.ID, d, fmt.Sprintf("%s.json", vc.DocumentTracking.Identification.ID)))
+			}
+
+			bar.Increment()
 		}
-		bar.Increment()
+		bar.Finish()
+
 	}
-	bar.Finish()
 
 	return nil
+}
+
+func filterProductTree(ptree ProductTree, productIDs []string) ProductTree {
+	pt := ProductTree{Branch: filterBranch(ptree.Branch, productIDs)}
+	for _, p := range ptree.FullProductName {
+		if slices.Contains(productIDs, p.ProductID) {
+			ptree.FullProductName = append(ptree.FullProductName, p)
+		}
+	}
+	return pt
+}
+
+func filterBranch(branch Branch, productIDs []string) Branch {
+	root := Branch{
+		Type: branch.Type,
+		Name: branch.Name,
+	}
+	for _, p := range branch.FullProductName {
+		if slices.Contains(productIDs, p.ProductID) {
+			root.FullProductName = append(root.FullProductName, p)
+		}
+	}
+	for _, b := range branch.Branch {
+		if filtered := filterBranch(b, productIDs); len(filtered.FullProductName) > 0 {
+			root.Branch = append(root.Branch, filtered)
+		}
+	}
+
+	return root
 }

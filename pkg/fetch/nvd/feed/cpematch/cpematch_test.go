@@ -10,8 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 )
 
 func TestFetch(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/url"
 	"path/filepath"
-	"strconv"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
@@ -98,7 +98,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch SUSE CVRF")
+	log.Println("[INFO] Fetch SUSE CSAF")
 	cves, err := options.walkIndexOf()
 	if err != nil {
 		return errors.Wrap(err, "walk index of")
@@ -125,13 +125,18 @@ func Fetch(opts ...Option) error {
 				return errors.Wrap(err, "json unmarshal")
 			}
 
-			y := strings.Split(adv.Document.Tracking.ID, "-")[1]
-			if _, err := strconv.Atoi(y); err != nil {
+			splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
+			if err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
+				continue
+			}
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
 				continue
 			}
 
-			if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
 			}
 		}
 	}

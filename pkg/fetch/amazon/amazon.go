@@ -10,8 +10,8 @@ import (
 	"log"
 	"net/url"
 	"path/filepath"
-	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -135,14 +135,18 @@ func Fetch(opts ...Option) error {
 			log.Printf("[INFO] Fetched Amazon Linux %s %s", v, r)
 			bar := pb.StartNew(len(us))
 			for _, u := range us {
-				ss := strings.Split(u.ID, "-")
-				y := ss[len(ss)-2]
-				if _, err := strconv.Atoi(y); err != nil {
+				splitted, err := util.Split(u.ID, "-", "-")
+				if err != nil {
+					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+					continue
+				}
+				if _, err := time.Parse("2006", splitted[1]); err != nil {
+					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
 					continue
 				}
 
-				if err := util.Write(filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)), u); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)))
+				if err := util.Write(filepath.Join(options.dir, v, r, splitted[1], fmt.Sprintf("%s.json", u.ID)), u); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, r, splitted[1], fmt.Sprintf("%s.json", u.ID)))
 				}
 
 				bar.Increment()

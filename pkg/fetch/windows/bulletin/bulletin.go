@@ -5,6 +5,7 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -112,10 +113,18 @@ func Fetch(opts ...Option) error {
 	for bid, bs := range bulletins {
 		log.Printf("[INFO] Fetched Windows Bulletin %s", bid)
 
-		y := strings.TrimPrefix(strings.ToLower(strings.Split(bid, "-")[0]), "ms")
+		splitted, err := util.Split(strings.TrimPrefix(strings.ToLower(bid), "ms"), "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
+			continue
+		}
+		if _, err := time.Parse("06", splitted[0]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
+			continue
+		}
 
-		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("%s.json", bid)), bs); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("%s.json", bid)))
+		if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))), bs); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))))
 		}
 		bar.Increment()
 	}

@@ -30,3 +30,53 @@ func TestUnique(t *testing.T) {
 		})
 	}
 }
+
+func TestSplit(t *testing.T) {
+	type args struct {
+		str        string
+		delimiters []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []string
+		wantErr bool
+	}{
+		{
+			name: "",
+			args: args{
+				str:        "a-b-c",
+				delimiters: []string{"-"},
+			},
+			want: []string{"a", "b-c"},
+		},
+		{
+			name: "",
+			args: args{
+				str:        "a-b:c",
+				delimiters: []string{"-", ":"},
+			},
+			want: []string{"a", "b", "c"},
+		},
+		{
+			name: "",
+			args: args{
+				str:        "a-b:c",
+				delimiters: []string{":", "-"},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := util.Split(tt.args.str, tt.args.delimiters...)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Split() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if diff := cmp.Diff(tt.want, got, cmpopts.SortSlices(func(i, j int) bool { return i < j })); diff != "" {
+				t.Errorf("Split(). (-expected +got):\n%s", diff)
+			}
+		})
+	}
+}

@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
@@ -120,13 +120,18 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(as))
 	for _, a := range as {
-		y := a.ID[:4]
-		if _, err := strconv.Atoi(y); err != nil {
+		splitted, err := util.Split(a.ID, "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyymm-\\d{2,}", a.ID)
+			continue
+		}
+		if _, err := time.Parse("200601", splitted[0]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyyymm-\\d{2,}", a.ID)
 			continue
 		}
 
-		if err := util.Write(filepath.Join(options.dir, y, fmt.Sprintf("glsa-%s.json", a.ID)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, y, fmt.Sprintf("glsa-%s.json", a.ID)))
+		if err := util.Write(filepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID)))
 		}
 
 		bar.Increment()
