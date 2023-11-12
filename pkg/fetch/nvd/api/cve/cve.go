@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -235,12 +234,12 @@ func write(dir string, bs []byte, resultsPerPage, totalResults, pages int, preci
 	}
 
 	for _, v := range cveAPI20.Vulnerabilities {
-		// ID is like "CVE-2023-24479"
-		tokens := strings.Split(v.CVE.ID, "-")
-		if len(tokens) < 3 {
-			return errors.Errorf("unexpected CVE.ID format: %q", v.CVE.ID)
+		splitted, err := util.Split(v.CVE.ID, "-", "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
+			continue
 		}
-		year := tokens[1]
+		year := splitted[1]
 		if err := util.Write(filepath.Join(dir, year, fmt.Sprintf("%s.json", v.CVE.ID)), v); err != nil {
 			return errors.Wrapf(err, "write, path: %s", filepath.Join(dir, year, fmt.Sprintf("%s.json", v.CVE.ID)))
 		}
