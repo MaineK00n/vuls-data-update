@@ -2,7 +2,7 @@ package cve
 
 // Top level structure for CVE JSON API 2.0 data
 // https://csrc.nist.gov/schema/nvd/api/2.0/cve_api_json_2.0.schema
-type API20 struct {
+type api20 struct {
 	ResultsPerPage  int             `json:"resultsPerPage"`
 	StartIndex      int             `json:"startIndex"`
 	TotalResults    int             `json:"totalResults"`

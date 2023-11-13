@@ -129,6 +129,23 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch start, dir: %s", options.dir)
 
+	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		// do not retry on context.Canceled or context.DeadlineExceeded
+		if ctx.Err() != nil {
+			return false, ctx.Err()
+		}
+
+		// NVD JSON API returns 403 in rate limit excesses, should retry.
+		// Also, the API returns 408 infreqently.
+		switch resp.StatusCode {
+		case http.StatusForbidden, http.StatusRequestTimeout:
+			log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
+			return true, nil
+		}
+
+		return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+	}
+
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 
 	h := make(http.Header)
@@ -147,7 +164,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "preliminary API call")
 	}
-	var preliminary API20
+	var preliminary api20
 	if err := json.Unmarshal(bs, &preliminary); err != nil {
 		return errors.Wrap(err, "unmarshal")
 	}
@@ -169,23 +186,23 @@ func Fetch(opts ...Option) error {
 	}
 
 	nextTask := func(bs []byte) error {
-		var cveAPI20 API20
-		if err := json.Unmarshal(bs, &cveAPI20); err != nil {
+		var response api20
+		if err := json.Unmarshal(bs, &response); err != nil {
 			return errors.Wrap(err, "unmarshal json")
 		}
 
 		// Sanity check
 		finalStartIndex := options.resultsPerPage * (pages - 1)
 		expectedResults := options.resultsPerPage
-		if cveAPI20.StartIndex == finalStartIndex && !preciselyPaged {
+		if response.StartIndex == finalStartIndex && !preciselyPaged {
 			expectedResults = totalResults % options.resultsPerPage
 		}
-		actualResults := len(cveAPI20.Vulnerabilities)
+		actualResults := len(response.Vulnerabilities)
 		if expectedResults != actualResults {
-			return errors.Errorf("unexpected results at startIndex: %d, expected: %d actual: %d", cveAPI20.StartIndex, expectedResults, actualResults)
+			return errors.Errorf("unexpected results at startIndex: %d, expected: %d actual: %d", response.StartIndex, expectedResults, actualResults)
 		}
 
-		for _, v := range cveAPI20.Vulnerabilities {
+		for _, v := range response.Vulnerabilities {
 			splitted, err := util.Split(v.CVE.ID, "-", "-")
 			if err != nil {
 				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
@@ -214,21 +231,4 @@ func fullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
 	q.Set("resultsPerPage", strconv.Itoa(resultsPerPage))
 	u.RawQuery = q.Encode()
 	return u.String(), nil
-}
-
-func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
-	// do not retry on context.Canceled or context.DeadlineExceeded
-	if ctx.Err() != nil {
-		return false, ctx.Err()
-	}
-
-	// NVD JSON API returns 403 in rate limit excesses, should retry.
-	// Also, the API returns 408 infreqently.
-	switch resp.StatusCode {
-	case http.StatusForbidden, http.StatusRequestTimeout:
-		log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
-		return true, nil
-	}
-
-	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 }
