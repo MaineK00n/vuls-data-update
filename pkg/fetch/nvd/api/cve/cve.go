@@ -10,10 +10,11 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
-	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
+	
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
 const (
