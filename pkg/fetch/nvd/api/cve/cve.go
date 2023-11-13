@@ -210,9 +210,13 @@ func Fetch(opts ...Option) error {
 				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
 				continue
 			}
-			year := splitted[1]
-			if err := util.Write(filepath.Join(options.dir, year, fmt.Sprintf("%s.json", v.CVE.ID)), v); err != nil {
-				return errors.Wrapf(err, "write, path: %s", filepath.Join(options.dir, year, fmt.Sprintf("%s.json", v.CVE.ID)))
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
+				continue
+			}
+
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)), v); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)))
 			}
 		}
 		return nil
