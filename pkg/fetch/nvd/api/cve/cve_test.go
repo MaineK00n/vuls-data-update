@@ -39,6 +39,10 @@ func TestFetch(t *testing.T) {
 			fixturePrefix: "3_pages",
 		},
 		{
+			name:          "Total count increase in the middle of command execution",
+			fixturePrefix: "increase",
+		},
+		{
 			name:          "With API Key",
 			apiKey:        "foobar",
 			fixturePrefix: "3_pages",
