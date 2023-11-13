@@ -2,6 +2,7 @@ package oval
 
 import (
 	"bytes"
+	"compress/bzip2"
 	"encoding/xml"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"golang.org/x/net/html/charset"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -81,7 +83,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	for _, ovalname := range ovals {
-		code := strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml"), "oval-definitions-")
+		code := strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.bz2"), "oval-definitions-")
 
 		log.Printf("[INFO] Fetch Debian %s OVAL", code)
 		root, err := options.fetch(ovalname)
@@ -188,8 +190,11 @@ func (opts options) fetch(ovalname string) (*root, error) {
 	}
 
 	var r root
-	if err := xml.Unmarshal(bs, &r); err != nil {
-		return nil, errors.Wrap(err, "unmarshal xml")
+	d := xml.NewDecoder(bzip2.NewReader(bytes.NewReader(bs)))
+	d.CharsetReader = charset.NewReaderLabel
+
+	if err := d.Decode(&r); err != nil {
+		return nil, errors.Wrap(err, "decode xml")
 	}
 
 	return &r, nil
