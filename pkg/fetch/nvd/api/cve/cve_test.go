@@ -38,11 +38,11 @@ func TestFetch(t *testing.T) {
 			name:          "Multiple pages",
 			fixturePrefix: "3_pages",
 		},
-		// {
-		// 	name:         "With API Key",
-		// 	apiKey:       "foobar",
-		// 	totalResults: 8888,
-		// },
+		{
+			name:          "With API Key",
+			apiKey:        "foobar",
+			fixturePrefix: "3_pages",
+		},
 	}
 
 	for _, tt := range tests {

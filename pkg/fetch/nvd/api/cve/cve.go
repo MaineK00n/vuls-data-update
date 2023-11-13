@@ -112,9 +112,8 @@ func WithResultsPerPage(resultsPerPage int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL: apiURL,
-		apiKey:  "",
-		//  TODO(shino): Where to put the default value, cmd/fetch/fetch.go or here?
+		baseURL:        apiURL,
+		apiKey:         "",
 		dir:            filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
 		retry:          3,
 		resultsPerPage: resultsPerPageMax,
