@@ -12,7 +12,6 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 )
@@ -169,20 +168,39 @@ func Fetch(opts ...Option) error {
 		us = append(us, url)
 	}
 
-	bsList, err := c.MultiGet(us, options.concurrency, options.wait, headerOption)
-	if err != nil {
-		return errors.Wrap(err, "MultiGet")
-	}
-
-	log.Printf("[INFO] API calls finished, about to write files")
-	bar := pb.StartNew(int(pages))
-	for _, bs := range bsList {
-		if err := write(options.dir, bs, options.resultsPerPage, totalResults, pages, preciselyPaged); err != nil {
-			return errors.Wrap(err, "write")
+	nextTask := func(bs []byte) error {
+		var cveAPI20 API20
+		if err := json.Unmarshal(bs, &cveAPI20); err != nil {
+			return errors.Wrap(err, "unmarshal json")
 		}
-		bar.Increment()
+
+		// Sanity check
+		finalStartIndex := options.resultsPerPage * (pages - 1)
+		expectedResults := options.resultsPerPage
+		if cveAPI20.StartIndex == finalStartIndex && !preciselyPaged {
+			expectedResults = totalResults % options.resultsPerPage
+		}
+		actualResults := len(cveAPI20.Vulnerabilities)
+		if expectedResults != actualResults {
+			return errors.Errorf("unexpected results at startIndex: %d, expected: %d actual: %d", cveAPI20.StartIndex, expectedResults, actualResults)
+		}
+
+		for _, v := range cveAPI20.Vulnerabilities {
+			splitted, err := util.Split(v.CVE.ID, "-", "-")
+			if err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
+				continue
+			}
+			year := splitted[1]
+			if err := util.Write(filepath.Join(options.dir, year, fmt.Sprintf("%s.json", v.CVE.ID)), v); err != nil {
+				return errors.Wrapf(err, "write, path: %s", filepath.Join(options.dir, year, fmt.Sprintf("%s.json", v.CVE.ID)))
+			}
+		}
+		return nil
 	}
-	bar.Finish()
+	if err := c.PipelineGet(us, options.concurrency, options.wait, nextTask, headerOption); err != nil {
+		return errors.Wrap(err, "pipeline get")
+	}
 	return nil
 }
 
@@ -213,36 +231,4 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	}
 
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
-}
-
-func write(dir string, bs []byte, resultsPerPage, totalResults, pages int, preciselyPaged bool) error {
-
-	var cveAPI20 API20
-	if err := json.Unmarshal(bs, &cveAPI20); err != nil {
-		return errors.Wrap(err, "unmarshal json")
-	}
-
-	// Sanity check
-	finalStartIndex := resultsPerPage * (pages - 1)
-	expectedResults := resultsPerPage
-	if cveAPI20.StartIndex == finalStartIndex && !preciselyPaged {
-		expectedResults = totalResults % resultsPerPage
-	}
-	actualResults := len(cveAPI20.Vulnerabilities)
-	if expectedResults != actualResults {
-		return errors.Errorf("unexpected results at startIndex: %d, expected: %d actual: %d", cveAPI20.StartIndex, expectedResults, actualResults)
-	}
-
-	for _, v := range cveAPI20.Vulnerabilities {
-		splitted, err := util.Split(v.CVE.ID, "-", "-")
-		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
-			continue
-		}
-		year := splitted[1]
-		if err := util.Write(filepath.Join(dir, year, fmt.Sprintf("%s.json", v.CVE.ID)), v); err != nil {
-			return errors.Wrapf(err, "write, path: %s", filepath.Join(dir, year, fmt.Sprintf("%s.json", v.CVE.ID)))
-		}
-	}
-	return nil
 }
