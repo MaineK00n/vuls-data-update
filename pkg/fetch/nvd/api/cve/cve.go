@@ -154,8 +154,8 @@ func Fetch(opts ...Option) error {
 	}
 	headerOption := utilhttp.WithRequestHeader(h)
 
-	// Preliminary API call to get totalResults
-	// Use 1 as resultsPerPage to save time
+	// Preliminary API call to get totalResults.
+	// Use 1 as resultsPerPage to save time.
 	u, err := fullURL(options.baseURL, 0, 1)
 	if err != nil {
 		return errors.Wrap(err, "full URL")
@@ -191,7 +191,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "unmarshal json")
 		}
 
-		// Sanity check
+		// Sanity check:
+		// NVD's API document does not say response item counts are request's resultsPerPage in non-final pages.
+		// If we don't check the counts, we may have incomplete results.
 		finalStartIndex := options.resultsPerPage * (pages - 1)
 		expectedResults := options.resultsPerPage
 		if response.StartIndex == finalStartIndex && !preciselyPaged {
