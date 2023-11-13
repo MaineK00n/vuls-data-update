@@ -57,7 +57,7 @@ func TestFetch(t *testing.T) {
 					resultsPerPage = value
 				}
 
-				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s-%s-%s.json", tt.fixturePrefix, startIndex, resultsPerPage)))
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 			}))
 			defer ts.Close()
 
