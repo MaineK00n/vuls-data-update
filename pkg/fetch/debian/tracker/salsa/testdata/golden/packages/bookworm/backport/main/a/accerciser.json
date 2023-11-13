@@ -1,0 +1,56 @@
+{
+  "Architecture": [
+    "all"
+  ],
+  "Binary": [
+    "accerciser"
+  ],
+  "Build-Depends": [
+    "debhelper-compat (= 13), dh-sequence-python3, dh-sequence-gnome, appstream-util"
+  ],
+  "Build-Depends-Indep": [
+    "yelp-tools, gsettings-desktop-schemas-dev, intltool, libatspi2.0-dev, libgtk-3-dev, pkg-config, python3, python3-xlib, python-gi-dev, python3-pyatspi"
+  ],
+  "Checksums-Sha256": [
+    "220c771a3000fe8502b856f2b0bffa2d2bfe9e72e0a4467528ffa482b24c5a97 2424 accerciser_3.42.0-1~bpo12+1.dsc d7d37a82996d178b720eb947b7594783c662f74975ebd434f62998418716af88 2977866 accerciser_3.42.0.orig.tar.gz bfac00e60f38ffedc30cd9221d3c33c22ca9917032fab82549b815c3b697f76d 12936 accerciser_3.42.0-1~bpo12+1.debian.tar.xz"
+  ],
+  "Directory": [
+    "pool/main/a/accerciser"
+  ],
+  "Format": [
+    "3.0 (quilt)"
+  ],
+  "Homepage": [
+    "https://wiki.gnome.org/Apps/Accerciser"
+  ],
+  "Maintainer": [
+    "Debian Accessibility Team <pkg-a11y-devel@alioth-lists.debian.net>"
+  ],
+  "Package": [
+    "accerciser"
+  ],
+  "Package-List": [
+    "accerciser deb gnome optional arch=all"
+  ],
+  "Priority": [
+    "optional"
+  ],
+  "Section": [
+    "misc"
+  ],
+  "Standards-Version": [
+    "4.6.1"
+  ],
+  "Uploaders": [
+    "Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>, Samuel Thibault <sthibault@debian.org>, Jeremy Bicha <jbicha@ubuntu.com>, Jordi Mallach <jordi@debian.org>, Michael Biebl <biebl@debian.org>, Sebastian Dröge <slomo@debian.org>"
+  ],
+  "Vcs-Browser": [
+    "https://salsa.debian.org/gnome-team/accerciser"
+  ],
+  "Vcs-Git": [
+    "https://salsa.debian.org/gnome-team/accerciser.git"
+  ],
+  "Version": [
+    "3.42.0-1~bpo12+1"
+  ]
+}

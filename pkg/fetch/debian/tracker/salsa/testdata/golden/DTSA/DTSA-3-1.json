@@ -1,0 +1,32 @@
+{
+  "header": {
+    "line": "[August 28th, 2005] DTSA-3-1 clamav - denial of service and privilege escalation",
+    "name": "DTSA-3-1"
+  },
+  "annotations": [
+    {
+      "line": "\t{CVE-2005-2070 CVE-2005-1923 CVE-2005-2056 CVE-2005-1922 CVE-2005-2450 }",
+      "type": "xref",
+      "bugs": [
+        "CVE-2005-2070",
+        "CVE-2005-1923",
+        "CVE-2005-2056",
+        "CVE-2005-1922",
+        "CVE-2005-2450"
+      ]
+    },
+    {
+      "line": "\t[etch] - clamav 0.86.2-4etch1 (high)",
+      "type": "package",
+      "release": "etch",
+      "package": "clamav",
+      "kind": "fixed",
+      "version": "0.86.2-4etch1",
+      "flags": [
+        {
+          "severity": "high"
+        }
+      ]
+    }
+  ]
+}

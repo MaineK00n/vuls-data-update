@@ -12,9 +12,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/codename"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -84,74 +82,70 @@ func Fetch(opts ...Option) error {
 
 	for _, ovalname := range ovals {
 		code := strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml"), "oval-definitions-")
-		v, ok := codename.CodeToVer[code]
-		if !ok {
-			return errors.Errorf("unexpected codename. accepts %q, received %q", maps.Keys(codename.CodeToVer), code)
-		}
 
-		log.Printf("[INFO] Fetch Debian %s OVAL", v)
+		log.Printf("[INFO] Fetch Debian %s OVAL", code)
 		root, err := options.fetch(ovalname)
 		if err != nil {
-			return errors.Wrapf(err, "fetch debian %s oval", v)
+			return errors.Wrapf(err, "fetch debian %s oval", code)
 		}
 
-		log.Printf("[INFO] Fetch Debian %s Definitions", v)
+		log.Printf("[INFO] Fetch Debian %s Definitions", code)
 		bar := pb.StartNew(len(root.Definitions.Definition))
 		for _, def := range root.Definitions.Definition {
-			if err := util.Write(filepath.Join(options.dir, v, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "definitions", fmt.Sprintf("%s.json", def.ID)))
+			if err := util.Write(filepath.Join(options.dir, code, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "definitions", fmt.Sprintf("%s.json", def.ID)))
 			}
 			bar.Increment()
 		}
 		bar.Finish()
 
-		log.Printf("[INFO] Fetch Debian %s Tests", v)
+		log.Printf("[INFO] Fetch Debian %s Tests", code)
 		bar = pb.StartNew(2 + len(root.Tests.DpkginfoTest))
-		if err := util.Write(filepath.Join(options.dir, v, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", root.Tests.Textfilecontent54Test.ID)), root.Tests.Textfilecontent54Test); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", root.Tests.Textfilecontent54Test.ID)))
+		if err := util.Write(filepath.Join(options.dir, code, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", root.Tests.Textfilecontent54Test.ID)), root.Tests.Textfilecontent54Test); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", root.Tests.Textfilecontent54Test.ID)))
 		}
 		bar.Increment()
-		if err := util.Write(filepath.Join(options.dir, v, "tests", "uname_test", fmt.Sprintf("%s.json", root.Tests.UnameTest.ID)), root.Tests.UnameTest); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "tests", "uname_test", fmt.Sprintf("%s.json", root.Tests.UnameTest.ID)))
+		if err := util.Write(filepath.Join(options.dir, code, "tests", "uname_test", fmt.Sprintf("%s.json", root.Tests.UnameTest.ID)), root.Tests.UnameTest); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "tests", "uname_test", fmt.Sprintf("%s.json", root.Tests.UnameTest.ID)))
 		}
 		bar.Increment()
 		for _, test := range root.Tests.DpkginfoTest {
-			if err := util.Write(filepath.Join(options.dir, v, "tests", "dpkginfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "tests", "dpkginfo_test", fmt.Sprintf("%s.json", test.ID)))
+			if err := util.Write(filepath.Join(options.dir, code, "tests", "dpkginfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "tests", "dpkginfo_test", fmt.Sprintf("%s.json", test.ID)))
 			}
 			bar.Increment()
 		}
 		bar.Finish()
 
-		log.Printf("[INFO] Fetch Debian %s Objects", v)
+		log.Printf("[INFO] Fetch Debian %s Objects", code)
 		bar = pb.StartNew(2 + len(root.Objects.DpkginfoObject))
-		if err := util.Write(filepath.Join(options.dir, v, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", root.Objects.Textfilecontent54Object.ID)), root.Objects.Textfilecontent54Object); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", root.Objects.Textfilecontent54Object.ID)))
+		if err := util.Write(filepath.Join(options.dir, code, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", root.Objects.Textfilecontent54Object.ID)), root.Objects.Textfilecontent54Object); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", root.Objects.Textfilecontent54Object.ID)))
 		}
 		bar.Increment()
-		if err := util.Write(filepath.Join(options.dir, v, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)), root.Objects.UnameObject); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)))
+		if err := util.Write(filepath.Join(options.dir, code, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)), root.Objects.UnameObject); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)))
 		}
 		bar.Increment()
 		for _, object := range root.Objects.DpkginfoObject {
-			if err := util.Write(filepath.Join(options.dir, v, "objects", "dpkginfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "objects", "dpkginfo_object", fmt.Sprintf("%s.json", object.ID)))
+			if err := util.Write(filepath.Join(options.dir, code, "objects", "dpkginfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "objects", "dpkginfo_object", fmt.Sprintf("%s.json", object.ID)))
 			}
 			bar.Increment()
 		}
 		bar.Finish()
 
-		log.Printf("[INFO] Fetch Debian %s States", v)
+		log.Printf("[INFO] Fetch Debian %s States", code)
 		bar = pb.StartNew(1 + len(root.States.DpkginfoState))
 		if root.States.Textfilecontent54State.ID != "" {
-			if err := util.Write(filepath.Join(options.dir, v, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", root.States.Textfilecontent54State.ID)), root.States.Textfilecontent54State); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", root.States.Textfilecontent54State.ID)))
+			if err := util.Write(filepath.Join(options.dir, code, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", root.States.Textfilecontent54State.ID)), root.States.Textfilecontent54State); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", root.States.Textfilecontent54State.ID)))
 			}
 		}
 		bar.Increment()
 		for _, state := range root.States.DpkginfoState {
-			if err := util.Write(filepath.Join(options.dir, v, "states", "dpkginfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, "states", "dpkginfo_state", fmt.Sprintf("%s.json", state.ID)))
+			if err := util.Write(filepath.Join(options.dir, code, "states", "dpkginfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "states", "dpkginfo_state", fmt.Sprintf("%s.json", state.ID)))
 			}
 			bar.Increment()
 		}

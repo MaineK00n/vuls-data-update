@@ -1,0 +1,62 @@
+{
+  "Architecture": [
+    "i386 amd64"
+  ],
+  "Binary": [
+    "nvidia-settings, libxnvctrl0, libxnvctrl-dev"
+  ],
+  "Build-Depends": [
+    "debhelper (>= 8), m4, libgl1-mesa-dev | libgl-dev, libgtk2.0-dev, libxext-dev, libxv-dev, libxxf86vm-dev, pkg-config"
+  ],
+  "Checksums-Sha1": [
+    "0267d3e0a7da2fc87e4ba7632720edaaf33dada0 2033 nvidia-settings_295.49-1~bpo60+1.dsc 0a547f54c1fbd4242c77f2702d9e918b69f16e29 1545838 nvidia-settings_295.49.orig.tar.bz2 bbf4b9c67cf9384edc03c500b0e9c5eea210bed9 13604 nvidia-settings_295.49-1~bpo60+1.debian.tar.gz"
+  ],
+  "Checksums-Sha256": [
+    "78c7e1f575db103cf091eb584e6ce99e6f289a86330aa7408ca420a76fe9c8ba 2033 nvidia-settings_295.49-1~bpo60+1.dsc edb63e6d737909718ed688b63289aa06cb92df4e80271901dd2cd2cc98f1d368 1545838 nvidia-settings_295.49.orig.tar.bz2 62185155dea19f563b25c8d1dd5edaa1ee63120d3002b8cd9a7aff3288851cb9 13604 nvidia-settings_295.49-1~bpo60+1.debian.tar.gz"
+  ],
+  "Directory": [
+    "pool/contrib/n/nvidia-settings"
+  ],
+  "Dm-Upload-Allowed": [
+    "yes"
+  ],
+  "Files": [
+    "20f94e436d334743b114ad7d901252ba 2033 nvidia-settings_295.49-1~bpo60+1.dsc 9d6193a14ead0e9b4dc88559f8a1889e 1545838 nvidia-settings_295.49.orig.tar.bz2 b07c757fb8bff17b23a1ca32cb7e003a 13604 nvidia-settings_295.49-1~bpo60+1.debian.tar.gz"
+  ],
+  "Format": [
+    "3.0 (quilt)"
+  ],
+  "Homepage": [
+    "ftp://download.nvidia.com/XFree86/nvidia-settings/"
+  ],
+  "Maintainer": [
+    "Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>"
+  ],
+  "Package": [
+    "nvidia-settings"
+  ],
+  "Package-List": [
+    "libxnvctrl-dev deb contrib/libdevel optional libxnvctrl0 deb contrib/libs optional nvidia-settings deb contrib/x11 optional"
+  ],
+  "Priority": [
+    "source"
+  ],
+  "Section": [
+    "contrib/x11"
+  ],
+  "Standards-Version": [
+    "3.9.3"
+  ],
+  "Uploaders": [
+    "Fathi Boudra <fabo@debian.org>, Andreas Beckmann <debian@abeckmann.de>, Russ Allbery <rra@debian.org>"
+  ],
+  "Vcs-Browser": [
+    "http://svn.debian.org/wsvn/pkg-nvidia/packages/nvidia-settings/"
+  ],
+  "Vcs-Svn": [
+    "svn://svn.debian.org/pkg-nvidia/packages/nvidia-settings/trunk"
+  ],
+  "Version": [
+    "295.49-1~bpo60+1"
+  ]
+}
