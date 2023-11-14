@@ -135,18 +135,38 @@ func Fetch(opts ...Option) error {
 			log.Printf("[INFO] Fetched Amazon Linux %s %s", v, r)
 			bar := pb.StartNew(len(us))
 			for _, u := range us {
-				splitted, err := util.Split(u.ID, "-", "-")
-				if err != nil {
-					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+				var y string
+				switch len(strings.Split(u.ID, "-")) {
+				case 3:
+					splitted, err := util.Split(u.ID, "-", "-")
+					if err != nil {
+						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+						break
+					}
+					if _, err := time.Parse("2006", splitted[1]); err != nil {
+						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+						break
+					}
+					y = splitted[1]
+				case 4:
+					splitted, err := util.Split(u.ID, "-", "-", "-")
+					if err != nil {
+						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+						break
+					}
+					if _, err := time.Parse("2006", splitted[2]); err != nil {
+						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+						break
+					}
+					y = splitted[2]
+				default:
+					log.Printf("[WARN] unexpected ID format. expected: %q or %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+				}
+				if y == "" {
 					continue
 				}
-				if _, err := time.Parse("2006", splitted[1]); err != nil {
-					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
-					continue
-				}
-
-				if err := util.Write(filepath.Join(options.dir, v, r, splitted[1], fmt.Sprintf("%s.json", u.ID)), u); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, r, splitted[1], fmt.Sprintf("%s.json", u.ID)))
+				if err := util.Write(filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)), u); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)))
 				}
 
 				bar.Increment()

@@ -22,6 +22,7 @@ import (
 	redhatOvalV1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
@@ -114,6 +115,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchMitreCVRF(), newCmdFetchMitreV4(), newCmdFetchMitreV5(),
 		newCmdFetchMSF(),
 		newCmdFetchNVDAPI(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
+		newCmdFetchSnort(),
 	)
 
 	return cmd
@@ -2341,6 +2343,33 @@ func newCmdFetchNVDFeedCPEMatch() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchSnort() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "snort"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "snort",
+		Short: "Fetch Snort Community Rule data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch snort
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := snort.Fetch(snort.WithDir(options.dir), snort.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch snort")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "snort"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd

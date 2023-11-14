@@ -1,0 +1,13 @@
+{
+  "id": "13241",
+  "file": "shellcodes/aix/13241.c",
+  "description": "AIX - execve(/bin/sh) Shellcode (88 bytes)",
+  "date_published": "2004-09-26",
+  "author": "Georgi Guninski",
+  "platform": "aix",
+  "size": "88",
+  "date_added": "2004-09-25",
+  "date_updated": "2018-01-08",
+  "verified": "1",
+  "source_url": "http://shell-storm.org/shellcode/files/shellcode-132.php"
+}

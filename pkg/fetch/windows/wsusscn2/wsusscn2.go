@@ -1,7 +1,6 @@
 package wsusscn2
 
 import (
-	"cmp"
 	"context"
 	"encoding/xml"
 	"fmt"
@@ -136,7 +135,18 @@ func Fetch(opts ...Option) error {
 		cabs = append(cabs, c)
 	}
 	slices.SortFunc(cabs, func(a, b cab) int {
-		return cmp.Compare(b.RANGESTART, a.RANGESTART)
+		ai, aerr := strconv.Atoi(a.RANGESTART)
+		bi, berr := strconv.Atoi(b.RANGESTART)
+		if aerr != nil && berr != nil {
+			return 0
+		}
+		if aerr != nil || ai > bi {
+			return -1
+		}
+		if berr != nil || ai < bi {
+			return +1
+		}
+		return 0
 	})
 
 	log.Printf("[INFO] Fetched %d Updates", len(rIDtoUID))
@@ -284,7 +294,7 @@ func (opts options) extract(tmpDir string) error {
 		return errors.Wrap(err, "remove wsusscn2/package.cab")
 	}
 
-	log.Printf("[INFO] extract %s", filepath.Join(tmpDir, "wsusscn2", "package\\d{1,2}.cab"))
+	log.Printf("[INFO] extract %s - %s", filepath.Join(tmpDir, "wsusscn2", "package2.cab"), filepath.Join(tmpDir, "wsusscn2", fmt.Sprintf("package%d.cab", len(cabIndex.CABLIST.CAB))))
 	bar := pb.StartNew(len(cabIndex.CABLIST.CAB) - 1)
 	eg, _ := errgroup.WithContext(context.Background())
 	eg.SetLimit(opts.concurrency)

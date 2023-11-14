@@ -111,8 +111,6 @@ func Fetch(opts ...Option) error {
 
 	bar := pb.StartNew(len(bulletins))
 	for bid, bs := range bulletins {
-		log.Printf("[INFO] Fetched Windows Bulletin %s", bid)
-
 		splitted, err := util.Split(strings.TrimPrefix(strings.ToLower(bid), "ms"), "-")
 		if err != nil {
 			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
