@@ -22,7 +22,6 @@ import (
 	redhatOvalV1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
@@ -54,6 +53,7 @@ import (
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -91,7 +91,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchGentoo(),
 		newCmdFetchNetBSD(),
 		newCmdFetchOracle(),
-		newCmdFetchRedhatOvalRepositoryToCPE(), newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatSecurityAPI(), newCmdFetchRedhatCVRF(),
+		newCmdFetchRedhatOvalRepositoryToCPE(), newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatSecurityAPI(), newCmdFetchRedhatCSAF(),
 		newCmdFetchRockyErrata(), newCmdFetchRockyOSV(),
 		newCmdFetchSUSEOval(), newCmdFetchSUSECVRF(), newCmdFetchSUSECSAF(),
 		newCmdFetchUbuntuOVAL(), newCmdFetchUbuntuCVETracker(),
@@ -99,9 +99,9 @@ func NewCmdFetch() *cobra.Command {
 
 		newCmdFetchCargoDB(), newCmdFetchCargoGHSA(), newCmdFetchCargoOSV(),
 		newCmdFetchComposerDB(), newCmdFetchComposerGHSA(), newCmdFetchComposerGLSA(),
-		newCmdFetchConan(),
-		newCmdFetchDart(),
-		newCmdFetchErlang(),
+		newCmdFetchConanGLSA(),
+		newCmdFetchDartGHSA(), newCmdFetchDartOSV(),
+		newCmdFetchErlangGHSA(), newCmdFetchErlangOSV(),
 		newCmdFetchGolangDB(), newCmdFetchGolangGHSA(), newCmdFetchGolangGLSA(), newCmdFetchGolangVulnDB(), newCmdFetchGolangOSV(),
 		newCmdFetchMavenGHSA(), newCmdFetchMavenGLSA(),
 		newCmdFetchNpmDB(), newCmdFetchNpmGHSA(), newCmdFetchNpmGLSA(), newCmdFetchNpmOSV(),
@@ -127,7 +127,7 @@ func NewCmdFetch() *cobra.Command {
 
 func newCmdFetchAlmaErrata() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "alma", "errata"),
 		retry: 3,
 	}
 
@@ -139,14 +139,14 @@ func newCmdFetchAlmaErrata() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := almaErrata.Fetch(almaErrata.WithDir(filepath.Join(options.dir, "alma", "errata")), almaErrata.WithRetry(options.retry)); err != nil {
+			if err := almaErrata.Fetch(almaErrata.WithDir(options.dir), almaErrata.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch almalinux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alma", "errata"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -154,7 +154,7 @@ func newCmdFetchAlmaErrata() *cobra.Command {
 
 func newCmdFetchAlmaOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "alma", "osv"),
 		retry: 3,
 	}
 
@@ -166,14 +166,14 @@ func newCmdFetchAlmaOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := almaOSV.Fetch(almaOSV.WithDir(filepath.Join(options.dir, "alma", "osv")), almaOSV.WithRetry(options.retry)); err != nil {
+			// if err := almaOSV.Fetch(almaOSV.WithDir(options.dir), almaOSV.WithRetry(options.retry)); err != nil {
 			// 	return errors.Wrap(err, "failed to fetch almalinux")
 			// }
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alma", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -181,7 +181,7 @@ func newCmdFetchAlmaOSV() *cobra.Command {
 
 func newCmdFetchAlpineSecDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "alpine", "secdb"),
 		retry: 3,
 	}
 
@@ -193,14 +193,14 @@ func newCmdFetchAlpineSecDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := alpineSecDB.Fetch(alpineSecDB.WithDir(filepath.Join(options.dir, "alpine", "secdb")), alpineSecDB.WithRetry(options.retry)); err != nil {
+			if err := alpineSecDB.Fetch(alpineSecDB.WithDir(options.dir), alpineSecDB.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch alpine linux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alpine", "secdb"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -208,7 +208,7 @@ func newCmdFetchAlpineSecDB() *cobra.Command {
 
 func newCmdFetchAlpineOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "alpine", "osv"),
 		retry: 3,
 	}
 
@@ -220,14 +220,14 @@ func newCmdFetchAlpineOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := alpineOSV.Fetch(alpineOSV.WithDir(filepath.Join(options.dir, "alpine", "osv")), alpineOSV.WithRetry(options.retry)); err != nil {
+			// if err := alpineOSV.Fetch(alpineOSV.WithDir(options.dir), alpineOSV.WithRetry(options.retry)); err != nil {
 			// 	return errors.Wrap(err, "failed to fetch alpine linux")
 			// }
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alpine", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -235,7 +235,7 @@ func newCmdFetchAlpineOSV() *cobra.Command {
 
 func newCmdFetchAmazon() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "amazon"),
 		retry: 3,
 	}
 
@@ -247,14 +247,14 @@ func newCmdFetchAmazon() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := amazon.Fetch(amazon.WithDir(filepath.Join(options.dir, "amazon")), amazon.WithRetry(options.retry)); err != nil {
+			if err := amazon.Fetch(amazon.WithDir(options.dir), amazon.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch amazon linux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "amazon"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -262,7 +262,7 @@ func newCmdFetchAmazon() *cobra.Command {
 
 func newCmdFetchArch() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "arch"),
 		retry: 3,
 	}
 
@@ -274,14 +274,14 @@ func newCmdFetchArch() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := arch.Fetch(arch.WithDir(filepath.Join(options.dir, "arch")), arch.WithRetry(options.retry)); err != nil {
+			if err := arch.Fetch(arch.WithDir(options.dir), arch.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch arch linux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "arch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -289,7 +289,7 @@ func newCmdFetchArch() *cobra.Command {
 
 func newCmdFetchDebianOval() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "debian", "oval"),
 		retry: 3,
 	}
 
@@ -301,14 +301,14 @@ func newCmdFetchDebianOval() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := debianOval.Fetch(debianOval.WithDir(filepath.Join(options.dir, "debian", "oval")), debianOval.WithRetry(options.retry)); err != nil {
+			if err := debianOval.Fetch(debianOval.WithDir(options.dir), debianOval.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch debian oval")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -316,7 +316,7 @@ func newCmdFetchDebianOval() *cobra.Command {
 
 func newCmdFetchDebianSecurityTrackerAPI() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "debian", "security-tracker", "api"),
 		retry: 3,
 	}
 
@@ -328,14 +328,14 @@ func newCmdFetchDebianSecurityTrackerAPI() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := debianSecurityTrackerAPI.Fetch(debianSecurityTrackerAPI.WithDir(filepath.Join(options.dir, "debian", "security-tracker", "api")), debianSecurityTrackerAPI.WithRetry(options.retry)); err != nil {
+			if err := debianSecurityTrackerAPI.Fetch(debianSecurityTrackerAPI.WithDir(options.dir), debianSecurityTrackerAPI.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch debian security tracker api")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "security-tracker", "api"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -343,7 +343,7 @@ func newCmdFetchDebianSecurityTrackerAPI() *cobra.Command {
 
 func newCmdFetchDebianSecurityTrackerSalsa() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "debian", "security-tracker", "salsa"),
 		retry: 3,
 	}
 
@@ -355,14 +355,14 @@ func newCmdFetchDebianSecurityTrackerSalsa() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := debianSecurityTrackerSalsa.Fetch(debianSecurityTrackerSalsa.WithDir(filepath.Join(options.dir, "debian", "security-tracker", "salsa")), debianSecurityTrackerSalsa.WithRetry(options.retry)); err != nil {
+			if err := debianSecurityTrackerSalsa.Fetch(debianSecurityTrackerSalsa.WithDir(options.dir), debianSecurityTrackerSalsa.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch debian security tracker salsa repository")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "security-tracker", "salsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -370,7 +370,7 @@ func newCmdFetchDebianSecurityTrackerSalsa() *cobra.Command {
 
 func newCmdFetchDebianOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "debian", "osv"),
 		retry: 3,
 	}
 
@@ -382,14 +382,14 @@ func newCmdFetchDebianOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := debianOSV.Fetch(debianOSV.WithDir(filepath.Join(options.dir, "debian", "osv")), debianOSV.WithRetry(options.retry)); err != nil {
+			// if err := debianOSV.Fetch(debianOSV.WithDir(options.dir), debianOSV.WithRetry(options.retry)); err != nil {
 			// 	return errors.Wrap(err, "failed to fetch debian osv")
 			// }
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -397,7 +397,7 @@ func newCmdFetchDebianOSV() *cobra.Command {
 
 func newCmdFetchEPEL() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "epel"),
 		retry: 3,
 	}
 
@@ -409,14 +409,14 @@ func newCmdFetchEPEL() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := epel.Fetch(epel.WithDir(filepath.Join(options.dir, "epel")), epel.WithRetry(options.retry)); err != nil {
+			// 	if err := epel.Fetch(epel.WithDir(options.dir), epel.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch epel")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "epel"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -424,7 +424,7 @@ func newCmdFetchEPEL() *cobra.Command {
 
 func newCmdFetchFedora() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "fedora"),
 		retry: 3,
 	}
 
@@ -436,14 +436,14 @@ func newCmdFetchFedora() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := fedora.Fetch(fedora.WithDir(filepath.Join(options.dir, "fedora")), fedora.WithRetry(options.retry)); err != nil {
+			// 	if err := fedora.Fetch(fedora.WithDir(options.dir), fedora.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch fedora")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fedora"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -451,7 +451,7 @@ func newCmdFetchFedora() *cobra.Command {
 
 func newCmdFetchFreeBSD() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "freebsd"),
 		retry: 3,
 	}
 
@@ -463,14 +463,14 @@ func newCmdFetchFreeBSD() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := freebsd.Fetch(freebsd.WithDir(filepath.Join(options.dir, "freebsd")), freebsd.WithRetry(options.retry)); err != nil {
+			if err := freebsd.Fetch(freebsd.WithDir(options.dir), freebsd.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch freebsd")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "freebsd"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -478,7 +478,7 @@ func newCmdFetchFreeBSD() *cobra.Command {
 
 func newCmdFetchGentoo() *cobra.Command {
 	options := &options{
-		dir: util.CacheDir(),
+		dir: filepath.Join(util.CacheDir(), "gentoo"),
 	}
 
 	cmd := &cobra.Command{
@@ -489,21 +489,21 @@ func newCmdFetchGentoo() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := gentoo.Fetch(gentoo.WithDir(filepath.Join(options.dir, "gentoo")), gentoo.WithRetry(options.retry)); err != nil {
+			if err := gentoo.Fetch(gentoo.WithDir(options.dir), gentoo.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch gentoo")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "gentoo"), "output fetch results to specified directory")
 
 	return cmd
 }
 
 func newCmdFetchNetBSD() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "netbsd"),
 		retry: 3,
 	}
 
@@ -515,14 +515,14 @@ func newCmdFetchNetBSD() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := netbsd.Fetch(netbsd.WithDir(filepath.Join(options.dir, "netbsd")), netbsd.WithRetry(options.retry)); err != nil {
+			if err := netbsd.Fetch(netbsd.WithDir(options.dir), netbsd.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch netbsd")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "netbsd"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -530,7 +530,7 @@ func newCmdFetchNetBSD() *cobra.Command {
 
 func newCmdFetchOracle() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "oracle"),
 		retry: 3,
 	}
 
@@ -542,14 +542,14 @@ func newCmdFetchOracle() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := oracle.Fetch(oracle.WithDir(filepath.Join(options.dir, "oracle")), oracle.WithRetry(options.retry)); err != nil {
+			if err := oracle.Fetch(oracle.WithDir(options.dir), oracle.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch oracle linux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "oracle"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -557,7 +557,7 @@ func newCmdFetchOracle() *cobra.Command {
 
 func newCmdFetchRedhatOvalRepositoryToCPE() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "repository-to-cpe"),
 		retry: 3,
 	}
 
@@ -565,18 +565,18 @@ func newCmdFetchRedhatOvalRepositoryToCPE() *cobra.Command {
 		Use:   "redhat-oval-repository-to-cpe",
 		Short: "Fetch RedHat Enterprise Linux Repository-to-CPE data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-repository-to-cpe
+			$ vuls-data-update fetch redhat-oval-repository-to-cpe
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOvalRepositoryToCPE.Fetch(redhatOvalRepositoryToCPE.WithDir(filepath.Join(options.dir, "redhat", "oval", "repository-to-cpe")), redhatOvalRepositoryToCPE.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat ovalv1")
+			if err := redhatOvalRepositoryToCPE.Fetch(redhatOvalRepositoryToCPE.WithDir(options.dir), redhatOvalRepositoryToCPE.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat oval repository-to-cpe")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "oval", "repository-to-cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -584,7 +584,7 @@ func newCmdFetchRedhatOvalRepositoryToCPE() *cobra.Command {
 
 func newCmdFetchRedhatOvalV1() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "v1"),
 		retry: 3,
 	}
 
@@ -596,14 +596,14 @@ func newCmdFetchRedhatOvalV1() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOvalV1.Fetch(redhatOvalV1.WithDir(filepath.Join(options.dir, "redhat", "oval", "v1")), redhatOvalV1.WithRetry(options.retry)); err != nil {
+			if err := redhatOvalV1.Fetch(redhatOvalV1.WithDir(options.dir), redhatOvalV1.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat ovalv1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "oval", "v1"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -611,7 +611,7 @@ func newCmdFetchRedhatOvalV1() *cobra.Command {
 
 func newCmdFetchRedhatOvalV2() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "v2"),
 		retry: 3,
 	}
 
@@ -623,14 +623,14 @@ func newCmdFetchRedhatOvalV2() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOvalV2.Fetch(redhatOvalV2.WithDir(filepath.Join(options.dir, "redhat", "oval", "v2")), redhatOvalV2.WithRetry(options.retry)); err != nil {
+			if err := redhatOvalV2.Fetch(redhatOvalV2.WithDir(options.dir), redhatOvalV2.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat ovalv2")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "oval", "v2"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -638,7 +638,7 @@ func newCmdFetchRedhatOvalV2() *cobra.Command {
 
 func newCmdFetchRedhatSecurityAPI() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "redhat", "api"),
 		retry: 3,
 	}
 
@@ -650,22 +650,22 @@ func newCmdFetchRedhatSecurityAPI() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := redhatSecurityAPI.Fetch(redhatSecurityAPI.WithDir(filepath.Join(options.dir, "redhat", "security-api")), redhatSecurityAPI.WithRetry(options.retry)); err != nil {
+			// if err := redhatSecurityAPI.Fetch(redhatSecurityAPI.WithDir(options.dir), redhatSecurityAPI.WithRetry(options.retry)); err != nil {
 			// 	return errors.Wrap(err, "failed to fetch redhat security api")
 			// }
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "api"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRedhatCVRF() *cobra.Command {
+func newCmdFetchRedhatCSAF() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "redhat", "csaf"),
 		retry: 3,
 	}
 
@@ -677,14 +677,14 @@ func newCmdFetchRedhatCVRF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := redhatCSAF.Fetch(redhatCSAF.WithDir(filepath.Join(options.dir, "redhat", "csaf")), redhatCSAF.WithRetry(options.retry)); err != nil {
+			// if err := redhatCSAF.Fetch(redhatCSAF.WithDir(options.dir), redhatCSAF.WithRetry(options.retry)); err != nil {
 			// 	return errors.Wrap(err, "failed to fetch redhat csaf")
 			// }
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "csaf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -692,7 +692,7 @@ func newCmdFetchRedhatCVRF() *cobra.Command {
 
 func newCmdFetchRockyErrata() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "rocky", "errata"),
 		retry: 3,
 	}
 
@@ -704,14 +704,14 @@ func newCmdFetchRockyErrata() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := rockyErrata.Fetch(rockyErrata.WithDir(filepath.Join(options.dir, "rocky", "errata")), rockyErrata.WithRetry(options.retry)); err != nil {
+			if err := rockyErrata.Fetch(rockyErrata.WithDir(options.dir), rockyErrata.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch rocky")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rocky", "errata"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -719,7 +719,7 @@ func newCmdFetchRockyErrata() *cobra.Command {
 
 func newCmdFetchRockyOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "rocky", "osv"),
 		retry: 3,
 	}
 
@@ -731,14 +731,14 @@ func newCmdFetchRockyOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := rockyOSV.Fetch(rockyOSV.WithDir(filepath.Join(options.dir, "rocky", "osv")), rockyOSV.WithRetry(options.retry)); err != nil {
+			// if err := rockyOSV.Fetch(rockyOSV.WithDir(options.dir), rockyOSV.WithRetry(options.retry)); err != nil {
 			// 	return errors.Wrap(err, "failed to fetch rocky")
 			// }
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rocky", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -746,7 +746,7 @@ func newCmdFetchRockyOSV() *cobra.Command {
 
 func newCmdFetchSUSEOval() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "suse", "oval"),
 		retry: 3,
 	}
 
@@ -758,14 +758,14 @@ func newCmdFetchSUSEOval() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseOval.Fetch(suseOval.WithDir(filepath.Join(options.dir, "suse", "oval")), suseOval.WithRetry(options.retry)); err != nil {
+			if err := suseOval.Fetch(suseOval.WithDir(options.dir), suseOval.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse oval")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -773,7 +773,7 @@ func newCmdFetchSUSEOval() *cobra.Command {
 
 func newCmdFetchSUSECVRF() *cobra.Command {
 	options := &options{
-		dir:         util.CacheDir(),
+		dir:         filepath.Join(util.CacheDir(), "suse", "cvrf"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -787,14 +787,14 @@ func newCmdFetchSUSECVRF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseCVRF.Fetch(suseCVRF.WithDir(filepath.Join(options.dir, "suse", "cvrf")), suseCVRF.WithRetry(options.retry), suseCVRF.WithConcurrency(options.concurrency), suseCVRF.WithWait(options.wait)); err != nil {
+			if err := suseCVRF.Fetch(suseCVRF.WithDir(options.dir), suseCVRF.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse cvrf")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -804,7 +804,7 @@ func newCmdFetchSUSECVRF() *cobra.Command {
 
 func newCmdFetchSUSECSAF() *cobra.Command {
 	options := &options{
-		dir:         util.CacheDir(),
+		dir:         filepath.Join(util.CacheDir(), "suse", "csaf"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -818,14 +818,14 @@ func newCmdFetchSUSECSAF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseCSAF.Fetch(suseCSAF.WithDir(filepath.Join(options.dir, "suse", "csaf")), suseCSAF.WithRetry(options.retry), suseCSAF.WithConcurrency(options.concurrency), suseCSAF.WithWait(options.wait)); err != nil {
+			if err := suseCSAF.Fetch(suseCSAF.WithDir(options.dir), suseCSAF.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse csaf")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "csaf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -835,7 +835,7 @@ func newCmdFetchSUSECSAF() *cobra.Command {
 
 func newCmdFetchUbuntuOVAL() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "ubuntu", "oval"),
 		retry: 3,
 	}
 
@@ -847,14 +847,14 @@ func newCmdFetchUbuntuOVAL() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := ubuntuOval.Fetch(ubuntuOval.WithDir(filepath.Join(options.dir, "ubuntu", "oval")), ubuntuOval.WithRetry(options.retry)); err != nil {
+			if err := ubuntuOval.Fetch(ubuntuOval.WithDir(options.dir), ubuntuOval.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu oval")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "ubuntu", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -862,7 +862,7 @@ func newCmdFetchUbuntuOVAL() *cobra.Command {
 
 func newCmdFetchUbuntuCVETracker() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "ubuntu", "ubuntu-cve-tracker"),
 		retry: 3,
 	}
 
@@ -874,21 +874,21 @@ func newCmdFetchUbuntuCVETracker() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := ubuntuCveTracker.Fetch(ubuntuCveTracker.WithDir(filepath.Join(options.dir, "ubuntu", "ubuntu-cve-tracker")), ubuntuCveTracker.WithRetry(options.retry)); err != nil {
+			if err := ubuntuCveTracker.Fetch(ubuntuCveTracker.WithDir(options.dir), ubuntuCveTracker.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu cve tracker")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "ubuntu", "ubuntu-cve-tracker"), "output fetch results to specified directory")
 
 	return cmd
 }
 
 func newCmdFetchWindowsBulletin() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "windows", "bulletin"),
 		retry: 3,
 	}
 
@@ -900,14 +900,14 @@ func newCmdFetchWindowsBulletin() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsBulletin.Fetch(windowsBulletin.WithDir(filepath.Join(options.dir, "windows", "bulletin")), windowsBulletin.WithRetry(options.retry)); err != nil {
+			if err := windowsBulletin.Fetch(windowsBulletin.WithDir(options.dir), windowsBulletin.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows bulletin")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "bulletin"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -915,7 +915,7 @@ func newCmdFetchWindowsBulletin() *cobra.Command {
 
 func newCmdFetchWindowsCVRF() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "windows", "cvrf"),
 		retry: 3,
 	}
 
@@ -927,14 +927,14 @@ func newCmdFetchWindowsCVRF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsCVRF.Fetch(windowsCVRF.WithDir(filepath.Join(options.dir, "windows", "cvrf")), windowsCVRF.WithRetry(options.retry)); err != nil {
+			if err := windowsCVRF.Fetch(windowsCVRF.WithDir(options.dir), windowsCVRF.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows cvrf")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -942,7 +942,7 @@ func newCmdFetchWindowsCVRF() *cobra.Command {
 
 func newCmdFetchWindowsMSUC() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "windows", "msuc"),
 		retry: 3,
 	}
 
@@ -954,14 +954,14 @@ func newCmdFetchWindowsMSUC() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsMSUC.Fetch(args, windowsMSUC.WithDir(filepath.Join(options.dir, "windows", "msuc")), windowsMSUC.WithRetry(options.retry)); err != nil {
+			if err := windowsMSUC.Fetch(args, windowsMSUC.WithDir(options.dir), windowsMSUC.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows msuc")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "msuc"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -969,7 +969,7 @@ func newCmdFetchWindowsMSUC() *cobra.Command {
 
 func newCmdFetchWindowsWSUSSCN2() *cobra.Command {
 	options := &options{
-		dir:         util.CacheDir(),
+		dir:         filepath.Join(util.CacheDir(), "windows", "wsusscn2"),
 		retry:       3,
 		concurrency: 2,
 	}
@@ -982,14 +982,14 @@ func newCmdFetchWindowsWSUSSCN2() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsWSUSSCN2.Fetch(windowsWSUSSCN2.WithDir(filepath.Join(options.dir, "windows", "wsusscn2")), windowsWSUSSCN2.WithRetry(options.retry)); err != nil {
+			if err := windowsWSUSSCN2.Fetch(windowsWSUSSCN2.WithDir(options.dir), windowsWSUSSCN2.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows wsusscn2")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "wsusscn2"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 2, "number of concurrency cabextract")
 
@@ -998,7 +998,7 @@ func newCmdFetchWindowsWSUSSCN2() *cobra.Command {
 
 func newCmdFetchCargoDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "cargo", "db"),
 		retry: 3,
 	}
 
@@ -1010,14 +1010,14 @@ func newCmdFetchCargoDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := cargoDB.Fetch(cargoDB.WithDir(filepath.Join(options.dir, "cargo", "db")), cargoDB.WithRetry(options.retry)); err != nil {
+			// 	if err := cargoDB.Fetch(cargoDB.WithDir(options.dir), cargoDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch cargo db")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cargo", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1025,7 +1025,7 @@ func newCmdFetchCargoDB() *cobra.Command {
 
 func newCmdFetchCargoGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "cargo", "ghsa"),
 		retry: 3,
 	}
 
@@ -1037,14 +1037,14 @@ func newCmdFetchCargoGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := cargoGHSA.Fetch(cargoGHSA.WithDir(filepath.Join(options.dir, "cargo", "ghsa")), cargoGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := cargoGHSA.Fetch(cargoGHSA.WithDir(options.dir), cargoGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch cargo ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cargo", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1052,7 +1052,7 @@ func newCmdFetchCargoGHSA() *cobra.Command {
 
 func newCmdFetchCargoOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "cargo", "osv"),
 		retry: 3,
 	}
 
@@ -1064,14 +1064,14 @@ func newCmdFetchCargoOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := cargoOSV.Fetch(cargoOSV.WithDir(filepath.Join(options.dir, "cargo", "osv")), cargoOSV.WithRetry(options.retry)); err != nil {
+			// 	if err := cargoOSV.Fetch(cargoOSV.WithDir(options.dir), cargoOSV.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch cargo osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cargo", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1079,7 +1079,7 @@ func newCmdFetchCargoOSV() *cobra.Command {
 
 func newCmdFetchComposerDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "composer", "db"),
 		retry: 3,
 	}
 
@@ -1091,14 +1091,14 @@ func newCmdFetchComposerDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := composerDB.Fetch(composerDB.WithDir(filepath.Join(options.dir, "composer", "db")), composerDB.WithRetry(options.retry)); err != nil {
+			// 	if err := composerDB.Fetch(composerDB.WithDir(options.dir), composerDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch composer db")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1106,7 +1106,7 @@ func newCmdFetchComposerDB() *cobra.Command {
 
 func newCmdFetchComposerGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "composer", "ghsa"),
 		retry: 3,
 	}
 
@@ -1118,14 +1118,14 @@ func newCmdFetchComposerGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := composerGHSA.Fetch(composerGHSA.WithDir(filepath.Join(options.dir, "composer", "ghsa")), composerGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := composerGHSA.Fetch(composerGHSA.WithDir(options.dir), composerGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch composer ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1133,7 +1133,7 @@ func newCmdFetchComposerGHSA() *cobra.Command {
 
 func newCmdFetchComposerGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "composer", "glsa"),
 		retry: 3,
 	}
 
@@ -1145,95 +1145,149 @@ func newCmdFetchComposerGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := composerGLSA.Fetch(composerGLSA.WithDir(filepath.Join(options.dir, "composer", "glsa")), composerGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := composerGLSA.Fetch(composerGLSA.WithDir(options.dir), composerGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch composer glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchConan() *cobra.Command {
+func newCmdFetchConanGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "conan", "glsa"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "conan",
+		Use:   "conan-glsa",
 		Short: "Fetch Conan GitLab Security Advisory data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch conan
+			$ vuls-data-update fetch conan-glsa
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := conan.Fetch(conan.WithDir(filepath.Join(options.dir, "conan")), conan.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch conan")
+			// 	if err := conanGLSA.Fetch(conanGLSA.WithDir(options.dir), conanGLSA.WithRetry(options.retry)); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch conan glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "conan", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchDart() *cobra.Command {
+func newCmdFetchDartGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "dart", "ghsa"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "dart",
+		Use:   "dart-ghsa",
 		Short: "Fetch Dart GitHub Security Advisory data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch dart
+			$ vuls-data-update fetch dart-ghsa
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := dart.Fetch(dart.WithDir(filepath.Join(options.dir, "dart")), dart.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch dart")
+			// 	if err := dartGHSA.Fetch(dartGHSA.WithDir(options.dir), dartGHSA.WithRetry(options.retry)); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch dart ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "dart", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchErlang() *cobra.Command {
+func newCmdFetchDartOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "dart", "osv"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "erlang",
-		Short: "Fetch Erlang GitHub Security Advisory data source",
+		Use:   "dart-osv",
+		Short: "Fetch Dart Open Source Vulnerabilities Database data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch erlang
+			$ vuls-data-update fetch dart-osv
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := erlang.Fetch(erlang.WithDir(filepath.Join(options.dir, "erlang")), erlang.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch erlang")
+			// 	if err := dartOSV.Fetch(dartOSV.WithDir(options.dir), dartOSV.WithRetry(options.retry)); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch dart osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "dart", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchErlangGHSA() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "erlang", "ghsa"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "erlang-ghsa",
+		Short: "Fetch Erlang GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch erlang-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := erlangGHSA.Fetch(erlangGHSA.WithDir(options.dir), erlangGHSA.WithRetry(options.retry)); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch erlang-ghsa")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "erlang", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchErlangOSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "erlang", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "erlang-osv",
+		Short: "Fetch Erlang Open Source Vulnerabilities Database data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch erlang-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := erlangOSV.Fetch(erlangOSV.WithDir(options.dir), erlangOSV.WithRetry(options.retry)); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch erlang osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "erlang", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1241,7 +1295,7 @@ func newCmdFetchErlang() *cobra.Command {
 
 func newCmdFetchGolangDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "golang", "db"),
 		retry: 3,
 	}
 
@@ -1253,14 +1307,14 @@ func newCmdFetchGolangDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangDB.Fetch(golangDB.WithDir(filepath.Join(options.dir, "golang", "db")), golangDB.WithRetry(options.retry)); err != nil {
+			// 	if err := golangDB.Fetch(golangDB.WithDir(options.dir), golangDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch golang db")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1268,7 +1322,7 @@ func newCmdFetchGolangDB() *cobra.Command {
 
 func newCmdFetchGolangGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "golang", "ghsa"),
 		retry: 3,
 	}
 
@@ -1280,14 +1334,14 @@ func newCmdFetchGolangGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangGHSA.Fetch(golangGHSA.WithDir(filepath.Join(options.dir, "golang", "ghsa")), golangGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := golangGHSA.Fetch(golangGHSA.WithDir(options.dir), golangGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch golang ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1295,7 +1349,7 @@ func newCmdFetchGolangGHSA() *cobra.Command {
 
 func newCmdFetchGolangGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "golang", "glsa"),
 		retry: 3,
 	}
 
@@ -1307,14 +1361,14 @@ func newCmdFetchGolangGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangGLSA.Fetch(golangGLSA.WithDir(filepath.Join(options.dir, "golang", "glsa")), golangGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := golangGLSA.Fetch(golangGLSA.WithDir(options.dir), golangGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch golang glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1322,7 +1376,7 @@ func newCmdFetchGolangGLSA() *cobra.Command {
 
 func newCmdFetchGolangOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "golang", "osv"),
 		retry: 3,
 	}
 
@@ -1334,14 +1388,14 @@ func newCmdFetchGolangOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangOSV.Fetch(golangOSV.WithDir(filepath.Join(options.dir, "golang", "osv")), golangOSV.WithRetry(options.retry)); err != nil {
+			// 	if err := golangOSV.Fetch(golangOSV.WithDir(options.dir), golangOSV.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch golang osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1349,7 +1403,7 @@ func newCmdFetchGolangOSV() *cobra.Command {
 
 func newCmdFetchGolangVulnDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "golang", "vulndb"),
 		retry: 3,
 	}
 
@@ -1361,14 +1415,14 @@ func newCmdFetchGolangVulnDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangVulnDB.Fetch(golangVulnDB.WithDir(filepath.Join(options.dir, "golang", "vulndb")), golangVulnDB.WithRetry(options.retry)); err != nil {
+			// 	if err := golangVulnDB.Fetch(golangVulnDB.WithDir(options.dir), golangVulnDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch golang vulndb")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "vulndb"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1376,7 +1430,7 @@ func newCmdFetchGolangVulnDB() *cobra.Command {
 
 func newCmdFetchMavenGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "maven", "ghsa"),
 		retry: 3,
 	}
 
@@ -1388,21 +1442,21 @@ func newCmdFetchMavenGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := mavenGHSA.Fetch(mavenGHSA.WithDir(filepath.Join(options.dir, "maven", "ghsa")), mavenGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := mavenGHSA.Fetch(mavenGHSA.WithDir(options.dir), mavenGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch maven ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchMavenGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "maven", "glsa"),
 		retry: 3,
 	}
 
@@ -1414,21 +1468,21 @@ func newCmdFetchMavenGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := mavenGLSA.Fetch(mavenGLSA.WithDir(filepath.Join(options.dir, "maven", "glsa")), mavenGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := mavenGLSA.Fetch(mavenGLSA.WithDir(options.dir), mavenGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch maven glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchNpmDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "npm", "db"),
 		retry: 3,
 	}
 
@@ -1440,21 +1494,21 @@ func newCmdFetchNpmDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmDB.Fetch(npmDB.WithDir(filepath.Join(options.dir, "npm", "db")), npmDB.WithRetry(options.retry)); err != nil {
+			// 	if err := npmDB.Fetch(npmDB.WithDir(options.dir), npmDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch npm db")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchNpmGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "npm", "ghsa"),
 		retry: 3,
 	}
 
@@ -1466,21 +1520,21 @@ func newCmdFetchNpmGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmGHSA.Fetch(npmGHSA.WithDir(filepath.Join(options.dir, "npm", "ghsa")), npmGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := npmGHSA.Fetch(npmGHSA.WithDir(options.dir), npmGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch npm ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchNpmGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "npm", "glsa"),
 		retry: 3,
 	}
 
@@ -1492,21 +1546,21 @@ func newCmdFetchNpmGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmGLSA.Fetch(npmGLSA.WithDir(filepath.Join(options.dir, "npm", "glsa")),npmGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := npmGLSA.Fetch(npmGLSA.WithDir(options.dir),npmGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch npm glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchNpmOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "npm", "osv"),
 		retry: 3,
 	}
 
@@ -1518,21 +1572,21 @@ func newCmdFetchNpmOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmOSV.Fetch(npmOSV.WithDir(filepath.Join(options.dir, "npm", "osv")), npmOSV.WithRetry(options.retry)); err != nil {
+			// 	if err := npmOSV.Fetch(npmOSV.WithDir(options.dir), npmOSV.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch npm osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchNugetGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "nuget", "ghsa"),
 		retry: 3,
 	}
 
@@ -1544,14 +1598,14 @@ func newCmdFetchNugetGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nugetGHSA.Fetch(nugetGHSA.WithDir(filepath.Join(options.dir, "nuget", "ghsa")), nugetGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := nugetGHSA.Fetch(nugetGHSA.WithDir(options.dir), nugetGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch nuget ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nuget", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1559,7 +1613,7 @@ func newCmdFetchNugetGHSA() *cobra.Command {
 
 func newCmdFetchNugetGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "nuget", "glsa"),
 		retry: 3,
 	}
 
@@ -1571,14 +1625,14 @@ func newCmdFetchNugetGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nugetGLSA.Fetch(nugetGLSA.WithDir(filepath.Join(options.dir, "nuget", "glsa")), nugetGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := nugetGLSA.Fetch(nugetGLSA.WithDir(options.dir), nugetGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch nuget glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nuget", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1586,7 +1640,7 @@ func newCmdFetchNugetGLSA() *cobra.Command {
 
 func newCmdFetchNugetOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "nuget", "osv"),
 		retry: 3,
 	}
 
@@ -1598,14 +1652,14 @@ func newCmdFetchNugetOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nugetOSV.Fetch(nugetOSV.WithDir(filepath.Join(options.dir, "nuget", "osv")), nugetOSV.WithRetry(options.retry)); err != nil {
+			// 	if err := nugetOSV.Fetch(nugetOSV.WithDir(options.dir), nugetOSV.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch nuget osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nuget", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1613,7 +1667,7 @@ func newCmdFetchNugetOSV() *cobra.Command {
 
 func newCmdFetchPipDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "pip", "db"),
 		retry: 3,
 	}
 
@@ -1625,21 +1679,21 @@ func newCmdFetchPipDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipDB.Fetch(pipDB.WithDir(filepath.Join(options.dir, "pip", "db")), pipDB.WithRetry(options.retry)); err != nil {
+			// 	if err := pipDB.Fetch(pipDB.WithDir(options.dir), pipDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch pip db")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchPipGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "pip", "ghsa"),
 		retry: 3,
 	}
 
@@ -1651,21 +1705,21 @@ func newCmdFetchPipGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipGHSA.Fetch(pipGHSA.WithDir(filepath.Join(options.dir, "pip", "ghsa")), pipGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := pipGHSA.Fetch(pipGHSA.WithDir(options.dir), pipGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch pip ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchPipGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "pip", "glsa"),
 		retry: 3,
 	}
 
@@ -1677,21 +1731,21 @@ func newCmdFetchPipGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipGLSA.Fetch(pipGLSA.WithDir(filepath.Join(options.dir, "pip", "glsa")), pipGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := pipGLSA.Fetch(pipGLSA.WithDir(options.dir), pipGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch pip glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchPipOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "pip", "osv"),
 		retry: 3,
 	}
 
@@ -1703,14 +1757,14 @@ func newCmdFetchPipOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipOSV.Fetch(pipOSV.WithDir(filepath.Join(options.dir, "pip", "osv")), pipOSV.WithRetry(options.retry)); err != nil {
+			// 	if err := pipOSV.Fetch(pipOSV.WithDir(options.dir), pipOSV.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch pip osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1718,7 +1772,7 @@ func newCmdFetchPipOSV() *cobra.Command {
 
 func newCmdFetchRubygemsDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "rubygems", "db"),
 		retry: 3,
 	}
 
@@ -1730,21 +1784,21 @@ func newCmdFetchRubygemsDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsDB.Fetch(rubygemsDB.WithDir(filepath.Join(options.dir, "rubygems", "db")), rubygemsDB.WithRetry(options.retry)); err != nil {
+			// 	if err := rubygemsDB.Fetch(rubygemsDB.WithDir(options.dir), rubygemsDB.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch rubygems db")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchRubygemsGHSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "rubygems", "ghsa"),
 		retry: 3,
 	}
 
@@ -1756,21 +1810,21 @@ func newCmdFetchRubygemsGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsGHSA.Fetch(rubygemsGHSA.WithDir(filepath.Join(options.dir, "rubygems", "ghsa")), rubygemsGHSA.WithRetry(options.retry)); err != nil {
+			// 	if err := rubygemsGHSA.Fetch(rubygemsGHSA.WithDir(options.dir), rubygemsGHSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch rubygems ghsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchRubygemsGLSA() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "rubygems", "glsa"),
 		retry: 3,
 	}
 
@@ -1782,21 +1836,21 @@ func newCmdFetchRubygemsGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsGLSA.Fetch(rubygemsGLSA.WithDir(filepath.Join(options.dir, "rubygems", "glsa")), rubygemsGLSA.WithRetry(options.retry)); err != nil {
+			// 	if err := rubygemsGLSA.Fetch(rubygemsGLSA.WithDir(options.dir), rubygemsGLSA.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch rubygems glsa")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchRubygemsOSV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "rubygems", "osv"),
 		retry: 3,
 	}
 
@@ -1808,21 +1862,21 @@ func newCmdFetchRubygemsOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsOSV.Fetch(rubygemsOSV.WithDir(filepath.Join(options.dir, "rubygems", "osv")), rubygemsOSV.WithRetry(options.retry)); err != nil {
+			// 	if err := rubygemsOSV.Fetch(rubygemsOSV.WithDir(options.dir), rubygemsOSV.WithRetry(options.retry)); err != nil {
 			// 		return errors.Wrap(err, "failed to fetch rubygems osv")
 			// 	}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchAttack() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "attack"),
 		retry: 3,
 	}
 
@@ -1834,21 +1888,21 @@ func newCmdFetchAttack() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := attack.Fetch(attack.WithDir(filepath.Join(options.dir, "attack")), attack.WithRetry(options.retry)); err != nil {
+			if err := attack.Fetch(attack.WithDir(options.dir), attack.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch attack")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "attack"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchCapec() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "capec"),
 		retry: 3,
 	}
 
@@ -1860,21 +1914,21 @@ func newCmdFetchCapec() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := capec.Fetch(capec.WithDir(filepath.Join(options.dir, "capec")), capec.WithRetry(options.retry)); err != nil {
+			if err := capec.Fetch(capec.WithDir(options.dir), capec.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch capec")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "capec"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchCWE() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "cwe"),
 		retry: 3,
 	}
 
@@ -1886,21 +1940,21 @@ func newCmdFetchCWE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := cwe.Fetch(cwe.WithDir(filepath.Join(options.dir, "cwe")), cwe.WithRetry(options.retry)); err != nil {
+			if err := cwe.Fetch(cwe.WithDir(options.dir), cwe.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch cwe")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cwe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchEPSS() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "epss"),
 		retry: 3,
 	}
 
@@ -1912,21 +1966,21 @@ func newCmdFetchEPSS() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := epss.Fetch(epss.WithDir(filepath.Join(options.dir, "epss")), epss.WithRetry(options.retry)); err != nil {
+			if err := epss.Fetch(epss.WithDir(options.dir), epss.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch epss")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "epss"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchExploitExploitDB() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "exploit", "exploitdb"),
 		retry: 3,
 	}
 
@@ -1938,21 +1992,21 @@ func newCmdFetchExploitExploitDB() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := exploitExploitDB.Fetch(exploitExploitDB.WithDir(filepath.Join(options.dir, "exploit", "exploitdb")), exploitExploitDB.WithRetry(options.retry)); err != nil {
+			if err := exploitExploitDB.Fetch(exploitExploitDB.WithDir(options.dir), exploitExploitDB.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch exploit exploitdb")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "exploitdb"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchExploitGitHub() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "exploit", "github"),
 		retry: 3,
 	}
 
@@ -1964,21 +2018,21 @@ func newCmdFetchExploitGitHub() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := exploitGitHub.Fetch(exploitGitHub.WithDir(filepath.Join(options.dir, "exploit", "github")), exploitGitHub.WithRetry(options.retry)); err != nil {
+			if err := exploitGitHub.Fetch(exploitGitHub.WithDir(options.dir), exploitGitHub.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch exploit github")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "github"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchExploitInthewild() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "exploit", "inthewild"),
 		retry: 3,
 	}
 
@@ -1990,21 +2044,21 @@ func newCmdFetchExploitInthewild() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := exploitInTheWild.Fetch(exploitInTheWild.WithDir(filepath.Join(options.dir, "exploit", "inthewild")), exploitInTheWild.WithRetry(options.retry)); err != nil {
+			if err := exploitInTheWild.Fetch(exploitInTheWild.WithDir(options.dir), exploitInTheWild.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch exploit inthewild")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "inthewild"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchExploitExploitTrickest() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "exploit", "trickest"),
 		retry: 3,
 	}
 
@@ -2016,14 +2070,14 @@ func newCmdFetchExploitExploitTrickest() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := exploitTrickest.Fetch(exploitTrickest.WithDir(filepath.Join(options.dir, "exploit", "trickest")), exploitTrickest.WithRetry(options.retry)); err != nil {
+			if err := exploitTrickest.Fetch(exploitTrickest.WithDir(options.dir), exploitTrickest.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch exploit trickest")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "trickest"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2031,7 +2085,7 @@ func newCmdFetchExploitExploitTrickest() *cobra.Command {
 
 func newCmdFetchJVNFeedDetail() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "jvn", "feed", "detail"),
 		retry: 3,
 	}
 
@@ -2043,14 +2097,14 @@ func newCmdFetchJVNFeedDetail() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := jvnFeedDetail.Fetch(jvnFeedDetail.WithDir(filepath.Join(options.dir, "jvn", "feed", "detail")), jvnFeedDetail.WithRetry(options.retry)); err != nil {
+			if err := jvnFeedDetail.Fetch(jvnFeedDetail.WithDir(options.dir), jvnFeedDetail.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch jvn feed detail")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "jvn", "feed", "detail"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2058,7 +2112,7 @@ func newCmdFetchJVNFeedDetail() *cobra.Command {
 
 func newCmdFetchJVNFeedProduct() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "jvn", "feed", "product"),
 		retry: 3,
 	}
 
@@ -2070,14 +2124,14 @@ func newCmdFetchJVNFeedProduct() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := jvnFeedProduct.Fetch(jvnFeedProduct.WithDir(filepath.Join(options.dir, "jvn", "feed", "product")), jvnFeedProduct.WithRetry(options.retry)); err != nil {
+			if err := jvnFeedProduct.Fetch(jvnFeedProduct.WithDir(options.dir), jvnFeedProduct.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch jvn feed product")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "jvn", "feed", "product"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2085,7 +2139,7 @@ func newCmdFetchJVNFeedProduct() *cobra.Command {
 
 func newCmdFetchJVNFeedRSS() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "jvn", "feed", "rss"),
 		retry: 3,
 	}
 
@@ -2097,14 +2151,14 @@ func newCmdFetchJVNFeedRSS() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := jvnFeedRSS.Fetch(jvnFeedRSS.WithDir(filepath.Join(options.dir, "jvn", "feed", "rss")), jvnFeedRSS.WithRetry(options.retry)); err != nil {
+			if err := jvnFeedRSS.Fetch(jvnFeedRSS.WithDir(options.dir), jvnFeedRSS.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch jvn feed rss")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "jvn", "feed", "rss"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2112,7 +2166,7 @@ func newCmdFetchJVNFeedRSS() *cobra.Command {
 
 func newCmdFetchKEV() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "kev"),
 		retry: 3,
 	}
 
@@ -2124,14 +2178,14 @@ func newCmdFetchKEV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := kev.Fetch(kev.WithDir(filepath.Join(options.dir, "kev")), kev.WithRetry(options.retry)); err != nil {
+			if err := kev.Fetch(kev.WithDir(options.dir), kev.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch kev")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "kev"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2139,7 +2193,7 @@ func newCmdFetchKEV() *cobra.Command {
 
 func newCmdFetchMitreCVRF() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "mitre", "cvrf"),
 		retry: 3,
 	}
 
@@ -2151,14 +2205,14 @@ func newCmdFetchMitreCVRF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := mitreCVRF.Fetch(mitreCVRF.WithDir(filepath.Join(options.dir, "mitre", "cvrf")), mitreCVRF.WithRetry(options.retry)); err != nil {
+			if err := mitreCVRF.Fetch(mitreCVRF.WithDir(options.dir), mitreCVRF.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch mitre cvrf")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "mitre", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2166,7 +2220,7 @@ func newCmdFetchMitreCVRF() *cobra.Command {
 
 func newCmdFetchMitreV4() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "mitre", "v4"),
 		retry: 3,
 	}
 
@@ -2178,14 +2232,14 @@ func newCmdFetchMitreV4() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := mitreV4.Fetch(mitreV4.WithDir(filepath.Join(options.dir, "mitre", "v4")), mitreV4.WithRetry(options.retry)); err != nil {
+			if err := mitreV4.Fetch(mitreV4.WithDir(options.dir), mitreV4.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch mitre v4")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "mitre", "v4"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2193,7 +2247,7 @@ func newCmdFetchMitreV4() *cobra.Command {
 
 func newCmdFetchMitreV5() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "mitre", "v5"),
 		retry: 3,
 	}
 
@@ -2205,14 +2259,14 @@ func newCmdFetchMitreV5() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := mitreV5.Fetch(mitreV5.WithDir(filepath.Join(options.dir, "mitre", "v5")), mitreV5.WithRetry(options.retry)); err != nil {
+			if err := mitreV5.Fetch(mitreV5.WithDir(options.dir), mitreV5.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch mitre v5")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "mitre", "v5"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2220,7 +2274,7 @@ func newCmdFetchMitreV5() *cobra.Command {
 
 func newCmdFetchMSF() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "msf"),
 		retry: 3,
 	}
 
@@ -2232,21 +2286,21 @@ func newCmdFetchMSF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := msf.Fetch(msf.WithDir(filepath.Join(options.dir, "msf")), msf.WithRetry(options.retry)); err != nil {
+			if err := msf.Fetch(msf.WithDir(options.dir), msf.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch msf")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "msf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
-		dir:         util.CacheDir(),
+		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
 		retry:       3,
 		concurrency: 1,
 	}
@@ -2259,31 +2313,33 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdAPICVE.Fetch(nvdAPICVE.WithDir(filepath.Join(options.dir, "nvd", "api", "cve")),
+			if err := nvdAPICVE.Fetch(
+				nvdAPICVE.WithDir(options.dir),
 				nvdAPICVE.WithRetry(options.retry),
-				nvdAPICVE.WithAPIKey(options.apiKey),
+				nvdAPICVE.WithConcurrency(options.concurrency),
 				nvdAPICVE.WithWait(options.wait),
-				nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
+				nvdAPICVE.WithAPIKey(options.apiKey),
+			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cve")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
+	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
 
 	return cmd
 }
 
 func newCmdFetchNVDFeedCVE() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cve"),
 		retry: 3,
 	}
 
@@ -2295,14 +2351,14 @@ func newCmdFetchNVDFeedCVE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdFeedCVE.Fetch(nvdFeedCVE.WithDir(filepath.Join(options.dir, "nvd", "feed", "cve")), nvdFeedCVE.WithRetry(options.retry)); err != nil {
+			if err := nvdFeedCVE.Fetch(nvdFeedCVE.WithDir(options.dir), nvdFeedCVE.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd feed cve")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "feed", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2310,7 +2366,7 @@ func newCmdFetchNVDFeedCVE() *cobra.Command {
 
 func newCmdFetchNVDFeedCPE() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cpe"),
 		retry: 3,
 	}
 
@@ -2322,14 +2378,14 @@ func newCmdFetchNVDFeedCPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdFeedCPE.Fetch(nvdFeedCPE.WithDir(filepath.Join(options.dir, "nvd", "feed", "cpe")), nvdFeedCPE.WithRetry(options.retry)); err != nil {
+			if err := nvdFeedCPE.Fetch(nvdFeedCPE.WithDir(options.dir), nvdFeedCPE.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd feed cpe")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "feed", "cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2337,7 +2393,7 @@ func newCmdFetchNVDFeedCPE() *cobra.Command {
 
 func newCmdFetchNVDFeedCPEMatch() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
+		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cpematch"),
 		retry: 3,
 	}
 
@@ -2349,14 +2405,14 @@ func newCmdFetchNVDFeedCPEMatch() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdFeedCPEMatch.Fetch(nvdFeedCPEMatch.WithDir(filepath.Join(options.dir, "nvd", "feed", "cpematch")), nvdFeedCPEMatch.WithRetry(options.retry)); err != nil {
+			if err := nvdFeedCPEMatch.Fetch(nvdFeedCPEMatch.WithDir(options.dir), nvdFeedCPEMatch.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd feed cpe")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "feed", "cpematch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
