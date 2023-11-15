@@ -112,33 +112,29 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
-	for idx := range util.ChunkSlice(len(cveURLs), 1000) {
-		resps, err := client.MultiGet(cveURLs[idx.From:idx.To], options.concurrency, options.wait)
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(cveURLs, options.concurrency, options.wait, func(bs []byte) error {
+		var adv CSAF
+		if err := json.Unmarshal(bs, &adv); err != nil {
+			return errors.Wrap(err, "json unmarshal")
+		}
+
+		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
 		if err != nil {
-			return errors.Wrap(err, "fetch concurrently")
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
+			return nil
+		}
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
+			return nil
 		}
 
-		for _, resp := range resps {
-			var adv CSAF
-			if err := json.Unmarshal(resp, &adv); err != nil {
-				return errors.Wrap(err, "json unmarshal")
-			}
-
-			splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
-			if err != nil {
-				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
-				continue
-			}
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
-				continue
-			}
-
-			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
-			}
+		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
 		}
+
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "pipeline get")
 	}
 
 	return nil
