@@ -12,6 +12,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	debianOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
+	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
+	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/gentoo"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/netbsd"
@@ -20,6 +22,7 @@ import (
 	redhatOvalV1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
@@ -35,7 +38,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 	exploitExploitDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/exploitdb"
-	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/githubrepos"
+	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/github"
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/trickest"
 	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
@@ -81,7 +84,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchAlpineSecDB(), newCmdFetchAlpineOSV(),
 		newCmdFetchAmazon(),
 		newCmdFetchArch(),
-		newCmdFetchDebianOval(), newCmdFetchDebianSecurityTracker(), newCmdFetchDebianOSV(),
+		newCmdFetchDebianOval(), newCmdFetchDebianSecurityTrackerAPI(), newCmdFetchDebianSecurityTrackerSalsa(), newCmdFetchDebianOSV(),
 		newCmdFetchEPEL(),
 		newCmdFetchFedora(),
 		newCmdFetchFreeBSD(),
@@ -117,6 +120,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchMSF(),
 		newCmdFetchNVDAPICVE(),
 		newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
+		newCmdFetchSnort(),
 	)
 
 	return cmd
@@ -311,23 +315,50 @@ func newCmdFetchDebianOval() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchDebianSecurityTracker() *cobra.Command {
+func newCmdFetchDebianSecurityTrackerAPI() *cobra.Command {
 	options := &options{
 		dir:   util.CacheDir(),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "debian-security-tracker",
-		Short: "Fetch Debian Security Tracker data source",
+		Use:   "debian-security-tracker-api",
+		Short: "Fetch Debian Security Tracker API data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch debian-security-tracker
+			$ vuls-data-update fetch debian-security-tracker-api
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := debianSecurityTracker.Fetch(debianSecurityTracker.WithDir(filepath.Join(options.dir, "debian", "security-tracker")), debianSecurityTracker.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch debian security tracker")
-			// }
+			if err := debianSecurityTrackerAPI.Fetch(debianSecurityTrackerAPI.WithDir(filepath.Join(options.dir, "debian", "security-tracker", "api")), debianSecurityTrackerAPI.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch debian security tracker api")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchDebianSecurityTrackerSalsa() *cobra.Command {
+	options := &options{
+		dir:   util.CacheDir(),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "debian-security-tracker-salsa",
+		Short: "Fetch Debian Security Tracker Salsa repository data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch debian-security-tracker-salsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := debianSecurityTrackerSalsa.Fetch(debianSecurityTrackerSalsa.WithDir(filepath.Join(options.dir, "debian", "security-tracker", "salsa")), debianSecurityTrackerSalsa.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch debian security tracker salsa repository")
+			}
 			return nil
 		},
 	}
@@ -844,7 +875,7 @@ func newCmdFetchUbuntuCVETracker() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := ubuntuCveTracker.Fetch(ubuntuCveTracker.WithDir(filepath.Join(options.dir, "ubuntu", "cve-tracker")), ubuntuCveTracker.WithRetry(options.retry)); err != nil {
+			if err := ubuntuCveTracker.Fetch(ubuntuCveTracker.WithDir(filepath.Join(options.dir, "ubuntu", "ubuntu-cve-tracker")), ubuntuCveTracker.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu cve tracker")
 			}
 			return nil
@@ -2327,6 +2358,33 @@ func newCmdFetchNVDFeedCPEMatch() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchSnort() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "snort"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "snort",
+		Short: "Fetch Snort Community Rule data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch snort
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := snort.Fetch(snort.WithDir(options.dir), snort.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch snort")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "snort"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd

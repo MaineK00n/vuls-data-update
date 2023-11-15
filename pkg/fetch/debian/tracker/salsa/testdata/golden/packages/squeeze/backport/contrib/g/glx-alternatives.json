@@ -1,0 +1,56 @@
+{
+  "Architecture": [
+    "i386 amd64"
+  ],
+  "Binary": [
+    "glx-diversions, glx-alternative-mesa, glx-alternative-nvidia, glx-alternative-fglrx"
+  ],
+  "Build-Depends": [
+    "debhelper (>= 8)"
+  ],
+  "Checksums-Sha1": [
+    "6cb7fb4e59fd7b07d209821e95aeaf5823d18e14 1443 glx-alternatives_0.2.0~bpo60+1.dsc 9aaa2aa31e8de511d3f267b1409a5e5ec0796cf4 10412 glx-alternatives_0.2.0~bpo60+1.tar.gz"
+  ],
+  "Checksums-Sha256": [
+    "83b4cda52c0315b6b967f98c21f3f79c4a9e9b211cfc87e161ab904cc07cd83a 1443 glx-alternatives_0.2.0~bpo60+1.dsc a62d0f780fa4125cb293a28309b0633c961848a43975943032eb67256ea70d31 10412 glx-alternatives_0.2.0~bpo60+1.tar.gz"
+  ],
+  "Directory": [
+    "pool/contrib/g/glx-alternatives"
+  ],
+  "Dm-Upload-Allowed": [
+    "yes"
+  ],
+  "Files": [
+    "d322825cb800b3cfd6eeaaf8e22d5f5e 1443 glx-alternatives_0.2.0~bpo60+1.dsc 2c1539afd7dd86e62391afdcf3434d96 10412 glx-alternatives_0.2.0~bpo60+1.tar.gz"
+  ],
+  "Format": [
+    "3.0 (native)"
+  ],
+  "Maintainer": [
+    "Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>"
+  ],
+  "Package": [
+    "glx-alternatives"
+  ],
+  "Priority": [
+    "source"
+  ],
+  "Section": [
+    "contrib/libs"
+  ],
+  "Standards-Version": [
+    "3.9.2"
+  ],
+  "Uploaders": [
+    "Russ Allbery <rra@debian.org>, Andreas Beckmann <debian@abeckmann.de>,"
+  ],
+  "Vcs-Browser": [
+    "http://svn.debian.org/wsvn/pkg-nvidia/packages/glx-alternatives/"
+  ],
+  "Vcs-Svn": [
+    "svn://svn.debian.org/svn/pkg-nvidia/packages/glx-alternatives/trunk"
+  ],
+  "Version": [
+    "0.2.0~bpo60+1"
+  ]
+}

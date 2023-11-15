@@ -244,6 +244,9 @@ func convert(cve cve) Vulnerability {
 		v.Containers.Cna.Workarounds = append(v.Containers.Cna.Workarounds, Workaround(w))
 	}
 
+	if len(cve.Containers.Cna.XConverterErrors) > 0 {
+		v.Containers.Cna.XConverterErrors = make(map[string]XConverterError, len(cve.Containers.Cna.XConverterErrors))
+	}
 	for k, e := range cve.Containers.Cna.XConverterErrors {
 		v.Containers.Cna.XConverterErrors[k] = e
 	}

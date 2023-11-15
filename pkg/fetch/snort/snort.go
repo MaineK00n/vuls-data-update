@@ -118,39 +118,46 @@ func (opts options) fetch() ([]Rule, error) {
 			return nil, errors.Wrap(err, "next tar reader")
 		}
 
-		switch hdr.Name {
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
+
+		switch filepath.Base(hdr.Name) {
 		case "snort3-community.rules":
-			re := regexp.MustCompile(`(.+) \((.+)\)`)
+			re := regexp.MustCompile(`(?P<header>.+) \((?P<option>.+)\)`)
 			sid := 1000000
 
 			s := bufio.NewScanner(tr)
 			for s.Scan() {
-				for _, match := range re.FindAllStringSubmatch(s.Text(), -1) {
-					r := Rule{
-						GID:    "1",
-						Rev:    "1",
-						Header: match[1],
-						Option: strings.TrimSpace(match[2]),
-					}
-					for _, op := range strings.Split(r.Option, ";") {
-						lhs, rhs, _ := strings.Cut(strings.TrimSpace(op), ":")
-						switch lhs {
-						case "gid":
-							r.GID = strings.TrimSpace(rhs)
-						case "sid":
-							r.SID = strings.TrimSpace(rhs)
-						case "rev":
-							r.Rev = strings.TrimSpace(rhs)
-						default:
-						}
-					}
-					if r.SID == "" {
-						r.SID = fmt.Sprintf("%d", sid)
-						sid++
-					}
-
-					rules = append(rules, r)
+				match := re.FindStringSubmatch(s.Text())
+				if len(match) == 0 {
+					continue
 				}
+
+				r := Rule{
+					GID:    "1",
+					Rev:    "1",
+					Header: match[re.SubexpIndex("header")],
+					Option: strings.TrimSpace(match[re.SubexpIndex("option")]),
+				}
+				for _, op := range strings.Split(r.Option, ";") {
+					lhs, rhs, _ := strings.Cut(strings.TrimSpace(op), ":")
+					switch lhs {
+					case "gid":
+						r.GID = strings.TrimSpace(rhs)
+					case "sid":
+						r.SID = strings.TrimSpace(rhs)
+					case "rev":
+						r.Rev = strings.TrimSpace(rhs)
+					default:
+					}
+				}
+				if r.SID == "" {
+					r.SID = fmt.Sprintf("%d", sid)
+					sid++
+				}
+
+				rules = append(rules, r)
 			}
 			if err := s.Err(); err != nil {
 				return nil, errors.Wrap(err, "scanner encounter error")

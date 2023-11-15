@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"log"
 	"net/http"
 	"time"
 
@@ -15,12 +14,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var (
-	defaultRetryWaitMin = 1 * time.Second
-	defaultRetryWaitMax = 30 * time.Second
-	defaultRetryMax     = 4
-	defaultClient       = NewClient()
-)
+var defaultClient = NewClient()
 
 type Client retryablehttp.Client
 
@@ -58,7 +52,7 @@ func (l clientLoggerOption) apply(opts *clientOptions) {
 	opts.logger = l.Log
 }
 
-func WithClientLogger(log *log.Logger) ClientOption {
+func WithClientLogger(log interface{}) ClientOption {
 	return clientLoggerOption{Log: log}
 }
 
@@ -120,9 +114,9 @@ func NewClient(opts ...ClientOption) *Client {
 	options := &clientOptions{
 		httpClient:   cleanhttp.DefaultPooledClient(),
 		logger:       nil,
-		retryWaitMin: defaultRetryWaitMin,
-		retryWaitMax: defaultRetryWaitMax,
-		retryMax:     defaultRetryMax,
+		retryWaitMin: 1 * time.Second,
+		retryWaitMax: 30 * time.Second,
+		retryMax:     4,
 		checkRetry:   retryablehttp.DefaultRetryPolicy,
 		backoff:      retryablehttp.DefaultBackoff,
 	}
@@ -277,7 +271,8 @@ func (c *Client) Do(method, url string, opts ...RequestOption) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("Error request response with status code %d", resp.StatusCode)
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
 	bs, err := io.ReadAll(resp.Body)

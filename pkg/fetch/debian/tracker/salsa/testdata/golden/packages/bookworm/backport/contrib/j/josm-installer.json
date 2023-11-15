@@ -1,0 +1,53 @@
+{
+  "Architecture": [
+    "all"
+  ],
+  "Binary": [
+    "josm-installer"
+  ],
+  "Build-Depends": [
+    "debhelper-compat (= 12), python3, python3-flake8, shellcheck, docbook2x, docbook-xsl, docbook-xml, xsltproc"
+  ],
+  "Checksums-Sha256": [
+    "7b18b5e3ddf7ad1c4073e9324d28cd22351cf9cb3257fc79497eafa53a6edb8a 1874 josm-installer_0.0.2+svn18699~bpo12+1.dsc 03ba9f1f69007c390c1fea097a9f18c8f17c0dcbd0e3eebaf89a67881959fdbf 662536 josm-installer_0.0.2+svn18699~bpo12+1.tar.xz"
+  ],
+  "Directory": [
+    "pool/contrib/j/josm-installer"
+  ],
+  "Format": [
+    "3.0 (native)"
+  ],
+  "Homepage": [
+    "https://josm.openstreetmap.de"
+  ],
+  "Maintainer": [
+    "Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>"
+  ],
+  "Package": [
+    "josm-installer"
+  ],
+  "Package-List": [
+    "josm-installer deb contrib/utils optional arch=all"
+  ],
+  "Priority": [
+    "optional"
+  ],
+  "Section": [
+    "contrib/misc"
+  ],
+  "Standards-Version": [
+    "4.6.2"
+  ],
+  "Uploaders": [
+    "Bas Couwenberg <sebastic@debian.org>"
+  ],
+  "Vcs-Browser": [
+    "https://salsa.debian.org/debian-gis-team/josm-installer"
+  ],
+  "Vcs-Git": [
+    "https://salsa.debian.org/debian-gis-team/josm-installer.git -b bookworm-backports"
+  ],
+  "Version": [
+    "0.0.2+svn18699~bpo12+1"
+  ]
+}

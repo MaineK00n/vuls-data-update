@@ -1,0 +1,31 @@
+{
+  "header": {
+    "line": "[August 28th, 2005] DTSA-2-1 centericq - multiple vulnerabilities",
+    "name": "DTSA-2-1"
+  },
+  "annotations": [
+    {
+      "line": "\t{CVE-2005-2448 CVE-2005-2370 CVE-2005-2369 CVE-2005-1914 }",
+      "type": "xref",
+      "bugs": [
+        "CVE-2005-2448",
+        "CVE-2005-2370",
+        "CVE-2005-2369",
+        "CVE-2005-1914"
+      ]
+    },
+    {
+      "line": "\t[etch] - centericq 4.20.0-8etch1 (medium)",
+      "type": "package",
+      "release": "etch",
+      "package": "centericq",
+      "kind": "fixed",
+      "version": "4.20.0-8etch1",
+      "flags": [
+        {
+          "severity": "medium"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "Architecture": [
+    "all"
+  ],
+  "Autobuild": [
+    "yes"
+  ],
+  "Binary": [
+    "znuny, otrs2"
+  ],
+  "Build-Depends": [
+    "debhelper-compat (= 13)"
+  ],
+  "Checksums-Sha256": [
+    "81c284a45b24d810392167940ee9f4cf7242d27cc1ed2d9a2fc68d616288ef22 1851 znuny_6.5.4-1~bpo12+1.dsc 9d30cb6b97aca3e27a4725fb29dcaefa00639d2b22d881d73fdf582fb3f73786 45944934 znuny_6.5.4.orig.tar.gz 4a66dc998e2156807d258eb434de9a5b44500783f8c245f8d74e5b01606eb457 56100 znuny_6.5.4-1~bpo12+1.debian.tar.xz"
+  ],
+  "Directory": [
+    "pool/non-free/z/znuny"
+  ],
+  "Format": [
+    "3.0 (quilt)"
+  ],
+  "Homepage": [
+    "https://github.com/znuny/Znuny"
+  ],
+  "Maintainer": [
+    "Patrick Matthäi <pmatthaei@debian.org>"
+  ],
+  "Package": [
+    "znuny"
+  ],
+  "Package-List": [
+    "otrs2 deb non-free/web optional arch=all znuny deb non-free/web optional arch=all"
+  ],
+  "Priority": [
+    "optional"
+  ],
+  "Section": [
+    "non-free/misc"
+  ],
+  "Standards-Version": [
+    "4.6.2"
+  ],
+  "Uploaders": [
+    "Thomas Mueller <thomas@chaschperli.ch>"
+  ],
+  "Version": [
+    "6.5.4-1~bpo12+1"
+  ]
+}

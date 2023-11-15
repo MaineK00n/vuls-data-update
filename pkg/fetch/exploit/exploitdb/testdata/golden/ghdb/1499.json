@@ -1,0 +1,12 @@
+{
+  "id": "1499",
+  "link": "https://www.exploit-db.com/ghdb/1499",
+  "category": "Advisories and Vulnerabilities",
+  "short_description": "\" ActiveKB v1.5 Copyright Â©\"",
+  "textual_description": "ActiveKB 1.5 Insecure Cookie Handling/Arbitrary Admin Access - CVE: 2008-2338: https://www.exploit-db.com/exploits/5616/",
+  "query": "\" ActiveKB v1.5 Copyright Â©\"",
+  "querystring": "https://www.google.com/search?q=%22+ActiveKB+v1.5+Copyright+%C3%82%C2%A9%22",
+  "edb": "https://www.exploit-db.com/exploits/5616",
+  "date": "2010-11-15",
+  "author": "anonymous"
+}

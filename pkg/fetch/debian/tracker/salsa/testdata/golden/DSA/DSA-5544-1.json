@@ -1,0 +1,31 @@
+{
+  "header": {
+    "line": "[31 Oct 2023] DSA-5544-1 zookeeper - security update",
+    "name": "DSA-5544-1"
+  },
+  "annotations": [
+    {
+      "line": "\t{CVE-2023-44981}",
+      "type": "xref",
+      "bugs": [
+        "CVE-2023-44981"
+      ]
+    },
+    {
+      "line": "\t[bullseye] - zookeeper 3.4.13-6+deb11u1",
+      "type": "package",
+      "release": "bullseye",
+      "package": "zookeeper",
+      "kind": "fixed",
+      "version": "3.4.13-6+deb11u1"
+    },
+    {
+      "line": "\t[bookworm] - zookeeper 3.8.0-11+deb12u1",
+      "type": "package",
+      "release": "bookworm",
+      "package": "zookeeper",
+      "kind": "fixed",
+      "version": "3.8.0-11+deb12u1"
+    }
+  ]
+}

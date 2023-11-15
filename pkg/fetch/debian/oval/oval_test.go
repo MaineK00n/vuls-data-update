@@ -38,7 +38,7 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if strings.HasSuffix(r.URL.Path, "/") {
 					http.ServeFile(w, r, tt.indexof)
-				} else if strings.HasSuffix(r.URL.Path, ".xml") {
+				} else if strings.HasSuffix(r.URL.Path, ".xml.bz2") {
 					_, f := path.Split(r.URL.Path)
 					http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/%s", f))
 				} else {
