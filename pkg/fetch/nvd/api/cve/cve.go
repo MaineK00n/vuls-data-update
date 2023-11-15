@@ -135,7 +135,9 @@ func Fetch(opts ...Option) error {
 		if ctx.Err() != nil {
 			return false, ctx.Err()
 		}
-
+		if err != nil {
+			return false, errors.Wrap(err, "http client Do")
+		}
 		// NVD JSON API returns 403 in rate limit excesses, should retry.
 		// Also, the API returns 408 infreqently.
 		switch resp.StatusCode {
@@ -193,16 +195,23 @@ func Fetch(opts ...Option) error {
 		}
 
 		// Sanity check:
-		// NVD's API document does not say response item counts are request's resultsPerPage in non-final pages.
+		// NVD's API document does not say that response item counts are equal to
+		// request's resultsPerPage (in non-final pages).
 		// If we don't check the counts, we may have incomplete results.
-		finalStartIndex := options.resultsPerPage * (pages - 1)
-		expectedResults := options.resultsPerPage
-		if response.StartIndex == finalStartIndex && !preciselyPaged {
-			expectedResults = totalResults % options.resultsPerPage
-		}
 		actualResults := len(response.Vulnerabilities)
-		if expectedResults != actualResults {
-			return errors.Errorf("unexpected results at startIndex: %d, expected: %d actual: %d", response.StartIndex, expectedResults, actualResults)
+		finalStartIndex := options.resultsPerPage * (pages - 1)
+		if response.StartIndex == finalStartIndex && !preciselyPaged {
+			// Allow the last page have more than expected results,
+			// because item may be added in the middle of command execution.
+			expectedResults := totalResults % options.resultsPerPage
+			if actualResults < expectedResults {
+				return errors.Errorf("unexpected results at last page, startIndex: %d, expected: %d actual: %d", response.StartIndex, expectedResults, actualResults)
+			}
+		} else {
+			// Non-final page or fully-populated final page, should have max count.
+			if actualResults != options.resultsPerPage {
+				return errors.Errorf("unexpected results at startIndex: %d, expected: %d actual: %d", response.StartIndex, options.resultsPerPage, actualResults)
+			}
 		}
 
 		for _, v := range response.Vulnerabilities {

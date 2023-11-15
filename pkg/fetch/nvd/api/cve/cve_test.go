@@ -20,32 +20,39 @@ func TestFetch(t *testing.T) {
 		name          string
 		apiKey        string
 		fixturePrefix string
+		expectedCount int
 		hasError      bool
 	}{
 		{
 			name:          "empty",
 			fixturePrefix: "empty",
+			expectedCount: 0,
 		},
 		{
 			name:          "1 item",
 			fixturePrefix: "1_item",
+			expectedCount: 1,
 		},
 		{
 			name:          "Precisely single page",
 			fixturePrefix: "3_items",
+			expectedCount: 3,
 		},
 		{
 			name:          "Multiple pages",
 			fixturePrefix: "3_pages",
+			expectedCount: 8,
 		},
 		{
 			name:          "Total count increase in the middle of command execution",
 			fixturePrefix: "increase",
+			expectedCount: 8,
 		},
 		{
 			name:          "With API Key",
 			apiKey:        "foobar",
 			fixturePrefix: "3_pages",
+			expectedCount: 8,
 		},
 	}
 
@@ -84,6 +91,7 @@ func TestFetch(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
+			actualCount := 0
 			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
 				if err != nil {
 					return err
@@ -108,10 +116,16 @@ func TestFetch(t *testing.T) {
 					t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
 				}
 
+				actualCount++
 				return nil
 
 			}); err != nil {
 				t.Error("walk error:", err)
+			}
+
+			if actualCount != tt.expectedCount {
+				t.Errorf("unexpected #files, expected: %d, actual: %d", actualCount, tt.expectedCount)
+
 			}
 		})
 	}
