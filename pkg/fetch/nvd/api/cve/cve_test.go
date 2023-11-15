@@ -44,6 +44,7 @@ func TestFetch(t *testing.T) {
 			expectedCount: 8,
 		},
 		{
+			// The totalResults is 7 initially, but increases to 8 after 2nd page.
 			name:          "Total count increase in the middle of command execution",
 			fixturePrefix: "increase",
 			expectedCount: 8,
