@@ -86,6 +86,8 @@ func RemoveAll(root string) error {
 	return nil
 }
 
+// Split divides the input string by delimiters in order from the front.
+// The return value has n+1 elements exactly, where n is len(delimiters).
 func Split(str string, delimiters ...string) ([]string, error) {
 	splitted := make([]string, 0, len(delimiters)+1)
 	for _, delimiter := range delimiters {

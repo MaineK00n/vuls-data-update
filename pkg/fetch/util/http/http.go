@@ -178,6 +178,20 @@ func MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([][]
 }
 
 func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([][]byte, error) {
+	bss := make([][]byte, 0, len(urls))
+
+	respChan := make(chan []byte, len(urls))
+	if err := c.PipelineGet(urls, concurrency, wait, func(bs []byte) error { respChan <- bs; return nil }, opts...); err != nil {
+		return nil, errors.Wrap(err, "pipelite get")
+	}
+	close(respChan)
+	for r := range respChan {
+		bss = append(bss, r)
+	}
+	return bss, nil
+}
+
+func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func([]byte) error, opts ...RequestOption) error {
 	urlChan := make(chan string)
 	go func() {
 		defer close(urlChan)
@@ -187,7 +201,6 @@ func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestO
 	}()
 
 	bar := pb.Full.Start(len(urls))
-	respChan := make(chan []byte, len(urls))
 	g, ctx := errgroup.WithContext(context.Background())
 	g.SetLimit(concurrency)
 	for u := range urlChan {
@@ -197,27 +210,24 @@ func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestO
 			if err != nil {
 				return errors.Wrapf(err, "get %s", u)
 			}
+			if err := cont(bs); err != nil {
+				return errors.Wrapf(err, "continuation %s", u)
+			}
 			select {
-			case respChan <- bs:
-				bar.Increment()
 			case <-ctx.Done():
 				return ctx.Err()
+			default:
+				bar.Increment()
+				time.Sleep(time.Duration(wait) * time.Second)
 			}
-			time.Sleep(time.Duration(wait) * time.Second)
 			return nil
 		})
 	}
 	if err := g.Wait(); err != nil {
-		return nil, errors.Wrap(err, "err in goroutine")
+		return errors.Wrap(err, "err in goroutine")
 	}
-	close(respChan)
 	bar.Finish()
-
-	bss := make([][]byte, 0, len(urls))
-	for r := range respChan {
-		bss = append(bss, r)
-	}
-	return bss, nil
+	return nil
 }
 
 func POST(url string, opts ...RequestOption) ([]byte, error) {

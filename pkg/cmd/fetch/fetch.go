@@ -49,6 +49,8 @@ import (
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v4"
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
+
+	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
@@ -60,8 +62,10 @@ type options struct {
 	dir   string
 	retry int
 
-	concurrency int // SUSE CVRF, SUSE CSAF, Windows WSUSSCN2
-	wait        int // SUSE CVRF, SUSE CSAF
+	concurrency int // SUSE CVRF, SUSE CSAF, NVD API CVE/CPE/CPEMatch, Windows WSUSSCN2
+	wait        int // SUSE CVRF, SUSE CSAF, NVD API CVE/CPE/CPEMatch
+
+	apiKey string // CVE/CPE/CPEMatch
 }
 
 func NewCmdFetch() *cobra.Command {
@@ -114,7 +118,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchKEV(),
 		newCmdFetchMitreCVRF(), newCmdFetchMitreV4(), newCmdFetchMitreV5(),
 		newCmdFetchMSF(),
-		newCmdFetchNVDAPI(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
+		newCmdFetchNVDAPICVE(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
 		newCmdFetchSnort(),
 	)
 
@@ -2240,29 +2244,39 @@ func newCmdFetchMSF() *cobra.Command {
 
 	return cmd
 }
-func newCmdFetchNVDAPI() *cobra.Command {
+func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
-		dir:   util.CacheDir(),
-		retry: 3,
+		dir:         util.CacheDir(),
+		retry:       3,
+		concurrency: 1,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-api",
-		Short: "Fetch NVD API data source",
+		Use:   "nvd-api-cve",
+		Short: "Fetch NVD API CVE data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch nvd-api
+			$ vuls-data-update fetch nvd-api-cve
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nvdAPI.Fetch(nvdAPI.WithDir(filepath.Join(options.dir, "nvd", "api"))); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch nvd api")
-			// 	}
+			if err := nvdAPICVE.Fetch(nvdAPICVE.WithDir(filepath.Join(options.dir, "nvd", "api", "cve")),
+				nvdAPICVE.WithRetry(options.retry),
+				nvdAPICVE.WithAPIKey(options.apiKey),
+				nvdAPICVE.WithWait(options.wait),
+				nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd api cve")
+			}
 			return nil
 		},
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
+	// Rate limet without API key: 5 requests in a rolling 30 second window, and
+	// with API key: 50 requests in a rolling 30 second window.
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 
 	return cmd
 }

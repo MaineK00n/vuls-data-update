@@ -1,0 +1,66 @@
+{
+  "resultsPerPage": 2,
+  "startIndex": 6,
+  "totalResults": 8,
+  "format": "NVD_CVE",
+  "version": "2.0",
+  "timestamp": "2023-11-10T07:39:23.140",
+  "vulnerabilities": [
+    {
+      "cve": {
+        "id": "CVE-2023-47246",
+        "sourceIdentifier": "cve@mitre.org",
+        "published": "2023-11-10T06:15:30.510",
+        "lastModified": "2023-11-10T06:15:30.510",
+        "vulnStatus": "Received",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "In SysAid On-Premise before 23.3.36, a path traversal vulnerability leads to code execution after an attacker writes a file to the Tomcat webroot, as exploited in the wild in November 2023."
+          }
+        ],
+        "metrics": {},
+        "references": [
+          {
+            "url": "https://documentation.sysaid.com/docs/latest-version-installation-files",
+            "source": "cve@mitre.org"
+          },
+          {
+            "url": "https://documentation.sysaid.com/docs/on-premise-security-enhancements-2023",
+            "source": "cve@mitre.org"
+          },
+          {
+            "url": "https://www.sysaid.com/blog/service-desk/on-premise-software-security-vulnerability-notification",
+            "source": "cve@mitre.org"
+          }
+        ]
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2023-47800",
+        "sourceIdentifier": "cve@mitre.org",
+        "published": "2023-11-10T07:15:07.910",
+        "lastModified": "2023-11-10T07:15:07.910",
+        "vulnStatus": "Received",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "Natus NeuroWorks and SleepWorks before 8.4 GMA3 utilize a default password of xltek for the Microsoft SQL Server service sa account, allowing a threat actor to perform remote code execution, data exfiltration, or other nefarious actions such as tampering with data or destroying/disrupting MSSQL services."
+          }
+        ],
+        "metrics": {},
+        "references": [
+          {
+            "url": "https://partner.natus.com/m/7cd3bcca88e446d4/original/NeuroWorks-SleepWorks-Product-Security-Bulletin.pdf",
+            "source": "cve@mitre.org"
+          },
+          {
+            "url": "https://www.trustwave.com/hubfs/Web/Library/Advisories_txt/TWSL2023-006.txt",
+            "source": "cve@mitre.org"
+          }
+        ]
+      }
+    }
+  ]
+}
