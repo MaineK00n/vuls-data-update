@@ -1,0 +1,99 @@
+{
+  "resultsPerPage": 3,
+  "startIndex": 0,
+  "totalResults": 3,
+  "format": "NVD_CPE",
+  "version": "2.0",
+  "timestamp": "2023-11-16T01:03:41.660",
+  "products": [
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:bank_locker_management_system:1.0:*:*:*:*:*:*:*",
+        "cpeNameId": "4B5C21D1-36FE-4216-AD06-18762A2E3359",
+        "lastModified": "2023-11-14T22:28:16.360",
+        "created": "2023-11-14T22:28:16.360",
+        "titles": [
+          {
+            "title": "PHPGurukul Bank Locker Management System 1.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://products.phpgurukul.com/product/bank-locker-management-system-project-report/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:bank_locker_management_system_project:bank_locker_management_system:1.0:*:*:*:*:*:*:*",
+            "cpeNameId": "11DD66EB-FD18-4348-AB06-E803F6446594"
+          }
+        ]
+      }
+    },
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:beauty_parlour_management_system:1.0:*:*:*:*:*:*:*",
+        "cpeNameId": "01840CB5-042F-46E6-9DCB-2C20222FF0BA",
+        "lastModified": "2023-11-14T22:32:16.867",
+        "created": "2023-11-14T22:32:16.867",
+        "titles": [
+          {
+            "title": "PHPGurukul Beauty Parlour Management System 1.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://phpgurukul.com/beauty-parlour-management-system-using-php-and-mysql/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:phpgurukul_beauty_parlour_management_system_project:phpgurukul_beauty_parlour_management_system:1.0:*:*:*:*:*:*:*",
+            "cpeNameId": "E3E9F349-1464-4CA4-8B51-AE71F71F6027"
+          }
+        ]
+      }
+    },
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:car_rental_portal:1.0:*:*:*:*:*:*:*",
+        "cpeNameId": "027F4FCF-F68A-4C0C-AAAF-35026D6EA79B",
+        "lastModified": "2023-11-14T22:38:25.430",
+        "created": "2023-11-14T22:38:25.430",
+        "titles": [
+          {
+            "title": "PHPGurukul Car Rental Portal 1.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://phpgurukul.com/car-rental-project-php-mysql-free-download/",
+            "type": "Product"
+          },
+          {
+            "ref": "https://packetstormsecurity.com/files/155925/Car-Rental-Project-1.0-Remote-Code-Execution.html",
+            "type": "Advisory"
+          },
+          {
+            "ref": "https://products.phpgurukul.com/product/car-rental-portal-project-report/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:phpgurukul_car_rental_project:phpgurukul_car_rental:1.0:*:*:*:*:*:*:*",
+            "cpeNameId": "E2538CCB-31BB-4A0B-9B2F-5FF6E1A3C015"
+          }
+        ]
+      }
+    }
+  ]
+}

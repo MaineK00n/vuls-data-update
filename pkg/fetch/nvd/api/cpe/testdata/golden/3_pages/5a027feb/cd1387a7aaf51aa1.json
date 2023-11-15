@@ -1,0 +1,25 @@
+{
+  "deprecated": false,
+  "cpeName": "cpe:2.3:a:phpgurukul:student_record_system:4.0:*:*:*:*:*:*:*",
+  "cpeNameId": "E0C469A9-36D0-42CC-B720-2C23EEEF629B",
+  "created": "2023-11-14T21:36:21.653",
+  "lastModified": "2023-11-14T21:36:21.653",
+  "titles": [
+    {
+      "title": "PHPGurukul Student Record System 4.0",
+      "lang": "en"
+    }
+  ],
+  "refs": [
+    {
+      "ref": "https://products.phpgurukul.com/product/student-record-system-project-report/",
+      "type": "Product"
+    }
+  ],
+  "deprecates": [
+    {
+      "cpeName": "cpe:2.3:a:student_record_system_project:student_record_system:4.0:*:*:*:*:*:*:*",
+      "cpeNameId": "877E62C1-0BE3-46BD-8600-93500BFEDC34"
+    }
+  ]
+}

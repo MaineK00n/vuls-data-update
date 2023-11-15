@@ -1,0 +1,23 @@
+{
+  "deprecated": false,
+  "cpeName": "cpe:2.3:a:shortpixel:shortpixel_adaptive_images:3.6.1:*:*:*:*:wordpress:*:*",
+  "cpeNameId": "5BC9B078-A41E-4C3E-A89E-D397FE4F451B",
+  "created": "2023-11-14T21:34:29.590",
+  "lastModified": "2023-11-14T21:34:29.590",
+  "titles": [
+    {
+      "title": "Shortpixel Adaptive Images 3.6.1 for WordPress",
+      "lang": "en"
+    }
+  ],
+  "refs": [
+    {
+      "ref": "https://wordpress.org/plugins/shortpixel-adaptive-images/#developers",
+      "type": "Change Log"
+    },
+    {
+      "ref": "https://patchstack.com/database/vulnerability/shortpixel-adaptive-images/wordpress-shortpixel-adaptive-images-webp-avif-cdn-image-optimization-plugin-3-7-1-cross-site-request-forgery-csrf-vulnerability?_s_id=cve",
+      "type": "Advisory"
+    }
+  ]
+}

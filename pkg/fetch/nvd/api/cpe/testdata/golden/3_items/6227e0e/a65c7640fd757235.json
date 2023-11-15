@@ -1,0 +1,33 @@
+{
+  "deprecated": false,
+  "cpeName": "cpe:2.3:a:phpgurukul:car_rental_portal:1.0:*:*:*:*:*:*:*",
+  "cpeNameId": "027F4FCF-F68A-4C0C-AAAF-35026D6EA79B",
+  "created": "2023-11-14T22:38:25.430",
+  "lastModified": "2023-11-14T22:38:25.430",
+  "titles": [
+    {
+      "title": "PHPGurukul Car Rental Portal 1.0",
+      "lang": "en"
+    }
+  ],
+  "refs": [
+    {
+      "ref": "https://phpgurukul.com/car-rental-project-php-mysql-free-download/",
+      "type": "Product"
+    },
+    {
+      "ref": "https://packetstormsecurity.com/files/155925/Car-Rental-Project-1.0-Remote-Code-Execution.html",
+      "type": "Advisory"
+    },
+    {
+      "ref": "https://products.phpgurukul.com/product/car-rental-portal-project-report/",
+      "type": "Product"
+    }
+  ],
+  "deprecates": [
+    {
+      "cpeName": "cpe:2.3:a:phpgurukul_car_rental_project:phpgurukul_car_rental:1.0:*:*:*:*:*:*:*",
+      "cpeNameId": "E2538CCB-31BB-4A0B-9B2F-5FF6E1A3C015"
+    }
+  ]
+}
