@@ -38,7 +38,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 	exploitExploitDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/exploitdb"
-	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/githubrepos"
+	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/github"
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/trickest"
 	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
