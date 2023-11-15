@@ -7,12 +7,12 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
 	"github.com/google/go-cmp/cmp"
 
-	"path/filepath"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
 )
 
 func TestFetch(t *testing.T) {
