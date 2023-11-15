@@ -118,8 +118,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchKEV(),
 		newCmdFetchMitreCVRF(), newCmdFetchMitreV4(), newCmdFetchMitreV5(),
 		newCmdFetchMSF(),
-		newCmdFetchNVDAPICVE(),
-		newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
+		newCmdFetchNVDAPICVE(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
 		newCmdFetchSnort(),
 	)
 

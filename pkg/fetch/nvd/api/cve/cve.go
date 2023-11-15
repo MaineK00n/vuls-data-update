@@ -28,11 +28,11 @@ const (
 
 type options struct {
 	baseURL     string
-	apiKey      string
-	wait        int
-	concurrency int
 	dir         string
 	retry       int
+	concurrency int
+	wait        int
+	apiKey      string
 
 	// test purpose only
 	resultsPerPage int
@@ -50,36 +50,6 @@ func (u baseURLOption) apply(opts *options) {
 
 func WithBaseURL(url string) Option {
 	return baseURLOption(url)
-}
-
-type apiKeyOption string
-
-func (a apiKeyOption) apply(opts *options) {
-	opts.apiKey = string(a)
-}
-
-func WithAPIKey(apiKey string) Option {
-	return apiKeyOption(apiKey)
-}
-
-type waitOption int
-
-func (r waitOption) apply(opts *options) {
-	opts.wait = int(r)
-}
-
-func WithWait(wait int) Option {
-	return waitOption(wait)
-}
-
-type concurrencyOption int
-
-func (r concurrencyOption) apply(opts *options) {
-	opts.concurrency = int(r)
-}
-
-func WithConcurrency(concurrency int) Option {
-	return concurrencyOption(concurrency)
 }
 
 type dirOption string
@@ -100,6 +70,36 @@ func (r retryOption) apply(opts *options) {
 
 func WithRetry(retry int) Option {
 	return retryOption(retry)
+}
+
+type concurrencyOption int
+
+func (r concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(r)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
+}
+
+type waitOption int
+
+func (r waitOption) apply(opts *options) {
+	opts.wait = int(r)
+}
+
+func WithWait(wait int) Option {
+	return waitOption(wait)
+}
+
+type apiKeyOption string
+
+func (a apiKeyOption) apply(opts *options) {
+	opts.apiKey = string(a)
+}
+
+func WithAPIKey(apiKey string) Option {
+	return apiKeyOption(apiKey)
 }
 
 type resultsPerPageOption int
@@ -128,7 +128,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch start, dir: %s", options.dir)
+	log.Printf("[INFO] Fetch NVD CVE API. dir: %s", options.dir)
 
 	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
 		// do not retry on context.Canceled or context.DeadlineExceeded
@@ -169,7 +169,7 @@ func Fetch(opts ...Option) error {
 	}
 	var preliminary api20
 	if err := json.Unmarshal(bs, &preliminary); err != nil {
-		return errors.Wrap(err, "unmarshal")
+		return errors.Wrap(err, "unmarshal json")
 	}
 	totalResults := preliminary.TotalResults
 	preciselyPaged := (totalResults % options.resultsPerPage) == 0

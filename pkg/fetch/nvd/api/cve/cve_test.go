@@ -79,12 +79,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			opts := []cve.Option{
-				cve.WithBaseURL(u), cve.WithDir(dir), cve.WithAPIKey(tt.apiKey),
-				cve.WithConcurrency(3), cve.WithWait(0), cve.WithRetry(0),
-				cve.WithResultsPerPage(3),
-			}
-			err = cve.Fetch(opts...)
+			err = cve.Fetch(cve.WithBaseURL(u), cve.WithDir(dir), cve.WithRetry(0), cve.WithConcurrency(3), cve.WithWait(0), cve.WithAPIKey(tt.apiKey), cve.WithResultsPerPage(3))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -119,7 +114,6 @@ func TestFetch(t *testing.T) {
 
 				actualCount++
 				return nil
-
 			}); err != nil {
 				t.Error("walk error:", err)
 			}
