@@ -1,49 +1,64 @@
-package oval_test
+package csaf_vex_test
 
 import (
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
 )
 
 func TestFetch(t *testing.T) {
+	type args struct {
+		years   []string
+		indexof string
+	}
 	tests := []struct {
 		name     string
-		indexof  string
+		args     args
 		hasError bool
 	}{
 		{
-			name:    "happy path",
-			indexof: "testdata/fixtures/indexof_valid.html",
+			name: "happy path",
+			args: args{
+				years:   []string{"1999", "2023"},
+				indexof: "testdata/fixtures/indexof.html",
+			},
+		},
+		{
+			name: "404 not found",
+			args: args{
+				years:   []string{"0000"},
+				indexof: "testdata/fixtures/invalid_href.html",
+			},
+			hasError: true,
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if strings.HasSuffix(r.URL.Path, "/") {
-					http.ServeFile(w, r, tt.indexof)
-				} else if strings.HasSuffix(r.URL.Path, ".xml.gz") {
-					_, f := path.Split(r.URL.Path)
-					http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/%s", f))
-				} else {
-					http.NotFound(w, r)
+				if r.URL.Path == "/" {
+					http.ServeFile(w, r, tt.args.indexof)
+					return
 				}
+				_, f := path.Split(r.URL.Path)
+				f = filepath.Join(filepath.Dir(tt.args.indexof), f)
+				if _, err := os.Stat(f); err != nil {
+					http.NotFound(w, r)
+					return
+				}
+				http.ServeFile(w, r, f)
 			}))
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := oval.Fetch(oval.WithBaseURL(ts.URL), oval.WithDir(dir), oval.WithRetry(0), oval.WithConcurrency(1), oval.WithWait(0))
+			err := csaf_vex.Fetch(tt.args.years, csaf_vex.WithBaseURL(ts.URL), csaf_vex.WithDir(dir), csaf_vex.WithRetry(0), csaf_vex.WithConcurrency(2), csaf_vex.WithWait(1))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -61,19 +76,11 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				dir, d := filepath.Split(filepath.Clean(dir))
-				if d != "definitions" {
-					var pd string
-					dir, pd = filepath.Split(filepath.Clean(dir))
-					d = filepath.Join(pd, d)
-				}
-				dir, v := filepath.Split(filepath.Clean(dir))
-				osname := filepath.Base(dir)
-
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", osname, v, d, file))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
 				if err != nil {
 					return err
 				}
+
 				got, err := os.ReadFile(path)
 				if err != nil {
 					return err
