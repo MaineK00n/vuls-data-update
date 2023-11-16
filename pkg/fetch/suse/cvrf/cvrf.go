@@ -112,9 +112,9 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(cveURLs, options.concurrency, options.wait, func(bs []byte) error {
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(cveURLs, options.concurrency, options.wait, func(resp utilhttp.Response) error {
 		var adv CVRF
-		if err := xml.Unmarshal(bs, &adv); err != nil {
+		if err := xml.Unmarshal(resp.Body, &adv); err != nil {
 			return errors.Wrap(err, "xml unmarshal")
 		}
 
