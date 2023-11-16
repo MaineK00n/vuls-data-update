@@ -1,12 +1,13 @@
-package cvrf
+package csaf_vex
 
 import (
 	"bytes"
-	"encoding/xml"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -17,7 +18,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf/"
+const baseURL = "https://ftp.suse.com/pub/projects/security/csaf-vex/"
 
 type options struct {
 	baseURL     string
@@ -81,10 +82,10 @@ func WithWait(wait int) Option {
 	return waitOption(wait)
 }
 
-func Fetch(opts ...Option) error {
+func Fetch(years []string, opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "suse", "cvrf"),
+		dir:         filepath.Join(util.CacheDir(), "suse", "csaf-vex"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -98,14 +99,14 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch SUSE CVRF")
-	cvrfs, err := options.walkIndexOf()
+	log.Println("[INFO] Fetch SUSE CSAF VEX")
+	cves, err := options.walkIndexOf(years)
 	if err != nil {
 		return errors.Wrap(err, "walk index of")
 	}
-	us := make([]string, 0, len(cvrfs))
-	for _, cvrf := range cvrfs {
-		u, err := url.JoinPath(options.baseURL, cvrf)
+	us := make([]string, 0, len(cves))
+	for _, cve := range cves {
+		u, err := url.JoinPath(options.baseURL, cve)
 		if err != nil {
 			return errors.Wrap(err, "join url path")
 		}
@@ -113,29 +114,23 @@ func Fetch(opts ...Option) error {
 	}
 
 	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp utilhttp.Response) error {
-		var adv CVRF
-		if err := xml.Unmarshal(resp.Body, &adv); err != nil {
-			return errors.Wrap(err, "xml unmarshal")
+		var adv CSAF
+		if err := json.Unmarshal(resp.Body, &adv); err != nil {
+			return errors.Wrap(err, "json unmarshal")
 		}
 
-		id := adv.DocumentTracking.Identification.ID
-		if adv.DocumentType == "SUSE Image" {
-			id = adv.DocumentTitle
-		}
-
-		splitted, err := util.Split(id, "-", "-", "-")
+		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-SU-yyyy:\\d+-1", id)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
+			return nil
+		}
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
 			return nil
 		}
 
-		if _, err := time.Parse("2006", strings.Split(splitted[2], ":")[0]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-SU-yyyy:\\d+-1", id)
-			return nil
-		}
-
-		if err := util.Write(filepath.Join(options.dir, strings.Split(id, "-")[0], strings.Split(splitted[2], ":")[0], fmt.Sprintf("%s.json", id)), adv); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.Split(id, "-")[0], strings.Split(splitted[2], ":")[0], fmt.Sprintf("%s.json", id)))
+		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
 		}
 
 		return nil
@@ -146,7 +141,7 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) walkIndexOf() ([]string, error) {
+func (opts options) walkIndexOf(years []string) ([]string, error) {
 	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
@@ -157,13 +152,20 @@ func (opts options) walkIndexOf() ([]string, error) {
 		return nil, errors.Wrap(err, "parse as html")
 	}
 
-	var cs []string
+	var cves []string
 	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
-		if !strings.HasPrefix(txt, "cvrf-") {
+		if !strings.HasPrefix(txt, "cve-") {
 			return
 		}
-		cs = append(cs, txt)
+		splitted, err := util.Split(txt, "-", "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "cve-yyyy-\\d{4,}.json", txt)
+			return
+		}
+		if slices.Contains(years, splitted[1]) {
+			cves = append(cves, txt)
+		}
 	})
-	return cs, nil
+	return cves, nil
 }

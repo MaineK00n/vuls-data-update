@@ -1,7 +1,9 @@
 package fetch
 
 import (
+	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
@@ -23,7 +25,9 @@ import (
 	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
+	suseCSAFVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
+	suseCVRFCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf_cve"
 	suseOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
 	ubuntuOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/oval"
 	ubuntuCveTracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
@@ -62,10 +66,10 @@ type options struct {
 	dir   string
 	retry int
 
-	concurrency int // SUSE CVRF, SUSE CSAF, NVD API CVE/CPE/CPEMatch, Windows WSUSSCN2
-	wait        int // SUSE CVRF, SUSE CSAF, NVD API CVE/CPE/CPEMatch
+	concurrency int // SUSE CVRF/CVRF CVE/CSAF/CSAF VEX, NVD API CVE/CPE/CPEMatch, Windows WSUSSCN2
+	wait        int // SUSE CVRF/CVRF CVE/CSAF/CSAF VEX, NVD API CVE/CPE/CPEMatch
 
-	apiKey string // CVE/CPE/CPEMatch
+	apiKey string // NVD API CVE/CPE/CPEMatch
 }
 
 func NewCmdFetch() *cobra.Command {
@@ -93,7 +97,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchOracle(),
 		newCmdFetchRedhatOvalRepositoryToCPE(), newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatSecurityAPI(), newCmdFetchRedhatCSAF(),
 		newCmdFetchRockyErrata(), newCmdFetchRockyOSV(),
-		newCmdFetchSUSEOval(), newCmdFetchSUSECVRF(), newCmdFetchSUSECSAF(),
+		newCmdFetchSUSEOval(), newCmdFetchSUSECVRF(), newCmdFetchSUSECVRFCVE(), newCmdFetchSUSECSAF(), newCmdFetchSUSECSAFVEX(),
 		newCmdFetchUbuntuOVAL(), newCmdFetchUbuntuCVETracker(),
 		newCmdFetchWindowsBulletin(), newCmdFetchWindowsCVRF(), newCmdFetchWindowsMSUC(), newCmdFetchWindowsWSUSSCN2(),
 
@@ -746,8 +750,10 @@ func newCmdFetchRockyOSV() *cobra.Command {
 
 func newCmdFetchSUSEOval() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "suse", "oval"),
-		retry: 3,
+		dir:         filepath.Join(util.CacheDir(), "suse", "oval"),
+		retry:       3,
+		concurrency: 3,
+		wait:        1,
 	}
 
 	cmd := &cobra.Command{
@@ -767,6 +773,8 @@ func newCmdFetchSUSEOval() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 3, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }
@@ -802,6 +810,44 @@ func newCmdFetchSUSECVRF() *cobra.Command {
 	return cmd
 }
 
+func newCmdFetchSUSECVRFCVE() *cobra.Command {
+	options := &options{
+		dir:         filepath.Join(util.CacheDir(), "suse", "cvrf-cve"),
+		retry:       3,
+		concurrency: 20,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "suse-cvrf-cve",
+		Short: "Fetch SUSE CVRF CVE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch suse-cvrf-cve
+		`),
+		ValidArgs: func() []string {
+			var ys []string
+			for y := 1999; y <= time.Now().Year(); y++ {
+				ys = append(ys, fmt.Sprintf("%d", y))
+			}
+			return ys
+		}(),
+		Args: cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := suseCVRFCVE.Fetch(args, suseCVRFCVE.WithDir(options.dir), suseCVRFCVE.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch suse cvrf cve")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "cvrf-cve"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
 func newCmdFetchSUSECSAF() *cobra.Command {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "suse", "csaf"),
@@ -826,6 +872,44 @@ func newCmdFetchSUSECSAF() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "csaf"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdFetchSUSECSAFVEX() *cobra.Command {
+	options := &options{
+		dir:         filepath.Join(util.CacheDir(), "suse", "csaf-vex"),
+		retry:       3,
+		concurrency: 20,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "suse-csaf-vex",
+		Short: "Fetch SUSE CSAF VEX data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch suse-csaf-vex
+		`),
+		ValidArgs: func() []string {
+			var ys []string
+			for y := 1999; y <= time.Now().Year(); y++ {
+				ys = append(ys, fmt.Sprintf("%d", y))
+			}
+			return ys
+		}(),
+		Args: cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := suseCSAFVEX.Fetch(args, suseCSAFVEX.WithDir(options.dir), suseCSAFVEX.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch suse csaf vex")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "csaf-vex"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")

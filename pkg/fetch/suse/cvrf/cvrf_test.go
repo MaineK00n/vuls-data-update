@@ -24,11 +24,6 @@ func TestFetch(t *testing.T) {
 			name:    "happy path",
 			indexof: "testdata/fixtures/indexof.html",
 		},
-		{
-			name:     "404 not found",
-			indexof:  "testdata/fixtures/invalid_href.html",
-			hasError: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,7 +61,8 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
+				dir, d := filepath.Split(filepath.Clean(dir))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), d, file))
 				if err != nil {
 					return err
 				}

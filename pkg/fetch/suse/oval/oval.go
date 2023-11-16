@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -21,9 +21,11 @@ import (
 const baseURL = "https://ftp.suse.com/pub/projects/security/oval/"
 
 type options struct {
-	baseURL string
-	dir     string
-	retry   int
+	baseURL     string
+	dir         string
+	retry       int
+	concurrency int
+	wait        int
 }
 
 type Option interface {
@@ -60,11 +62,33 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type concurrencyOption int
+
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
+}
+
+type waitOption int
+
+func (w waitOption) apply(opts *options) {
+	opts.wait = int(w)
+}
+
+func WithWait(wait int) Option {
+	return waitOption(wait)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL: baseURL,
-		dir:     filepath.Join(util.CacheDir(), "suse", "oval"),
-		retry:   3,
+		baseURL:     baseURL,
+		dir:         filepath.Join(util.CacheDir(), "suse", "oval"),
+		retry:       3,
+		concurrency: 3,
+		wait:        1,
 	}
 
 	for _, o := range opts {
@@ -81,95 +105,89 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "walk index of")
 	}
 
-	for _, ovalname := range ovals {
+	us := make([]string, 0, len(ovals))
+	for _, oval := range ovals {
+		u, err := url.JoinPath(options.baseURL, oval)
+		if err != nil {
+			return errors.Wrap(err, "join url path")
+		}
+		us = append(us, u)
+	}
+
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp utilhttp.Response) error {
+		oval := path.Base(resp.URL)
+
 		var osname, version string
-		if strings.HasPrefix(ovalname, "suse.linux.enterprise.desktop") {
+		switch {
+		case strings.HasPrefix(oval, "suse.linux.enterprise.desktop"):
 			osname = "suse.linux.enterprise.desktop"
-			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "suse.linux.enterprise.desktop.")
-		} else if strings.HasPrefix(ovalname, "suse.linux.enterprise.server") {
+			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.desktop.")
+		case strings.HasPrefix(oval, "suse.linux.enterprise.server"):
 			osname = "suse.linux.enterprise.server"
-			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "suse.linux.enterprise.server.")
-		} else if strings.HasPrefix(ovalname, "opensuse.tumbleweed") {
+			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.server.")
+		case strings.HasPrefix(oval, "opensuse.tumbleweed"):
 			osname = "opensuse"
 			version = "tumbleweed"
-		} else if strings.HasPrefix(ovalname, "opensuse.leap") {
+		case strings.HasPrefix(oval, "opensuse.leap"):
 			osname = "opensuse.leap"
-			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "opensuse.leap.")
-		} else if strings.HasPrefix(ovalname, "opensuse") {
+			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "opensuse.leap.")
+		case strings.HasPrefix(oval, "opensuse"):
 			osname = "opensuse"
-			version = strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.gz"), "opensuse.")
-		} else {
-			return errors.Wrapf(err, `unexpected ovalname. accepts: "<osname>.<version>.xml.gz", received: "%s"`, ovalname)
+			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "opensuse.")
+		default:
+			return errors.Wrapf(err, `unexpected ovalname. accepts: "<osname>.<version>.xml.gz", received: "%s"`, oval)
 		}
 
-		log.Printf("[INFO] Fetch %s", fmt.Sprintf("%s %s", osname, version))
-		if err := func() error {
-			u, err := url.JoinPath(options.baseURL, ovalname)
-			if err != nil {
-				return errors.Wrap(err, "join url path")
-			}
-
-			bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
-			if err != nil {
-				return errors.Wrap(err, "fetch oval")
-			}
-
-			r, err := gzip.NewReader(bytes.NewReader(bs))
-			if err != nil {
-				return errors.Wrap(err, "open oval as gzip")
-			}
-			defer r.Close()
-
-			var root root
-			if err := xml.NewDecoder(r).Decode(&root); err != nil {
-				return errors.Wrap(err, "decode oval")
-			}
-
-			log.Printf("[INFO] Fetch %s %s Definitions", osname, version)
-			bar := pb.StartNew(len(root.Definitions.Definition))
-			for _, def := range root.Definitions.Definition {
-				if err := util.Write(filepath.Join(options.dir, osname, version, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "definitions", fmt.Sprintf("%s.json", def.ID)))
-				}
-				bar.Increment()
-			}
-			bar.Finish()
-
-			log.Printf("[INFO] Fetch %s %s Tests", osname, version)
-			bar = pb.StartNew(len(root.Tests.RpminfoTest))
-			for _, test := range root.Tests.RpminfoTest {
-				if err := util.Write(filepath.Join(options.dir, osname, version, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
-				}
-				bar.Increment()
-			}
-			bar.Finish()
-
-			log.Printf("[INFO] Fetch %s %s Objects", osname, version)
-			bar = pb.StartNew(len(root.Objects.RpminfoObject))
-			for _, object := range root.Objects.RpminfoObject {
-				if err := util.Write(filepath.Join(options.dir, osname, version, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
-				}
-				bar.Increment()
-			}
-			bar.Finish()
-
-			log.Printf("[INFO] Fetch %s %s States", osname, version)
-			bar = pb.StartNew(len(root.States.RpminfoState))
-			for _, state := range root.States.RpminfoState {
-				if err := util.Write(filepath.Join(options.dir, osname, version, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
-				}
-				bar.Increment()
-			}
-			bar.Finish()
-
-			return nil
-		}(); err != nil {
-			return errors.WithStack(err)
+		u, err := url.JoinPath(options.baseURL, oval)
+		if err != nil {
+			return errors.Wrap(err, "join url path")
 		}
+
+		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+		if err != nil {
+			return errors.Wrap(err, "fetch oval")
+		}
+
+		r, err := gzip.NewReader(bytes.NewReader(bs))
+		if err != nil {
+			return errors.Wrap(err, "open oval as gzip")
+		}
+		defer r.Close()
+
+		var root root
+		if err := xml.NewDecoder(r).Decode(&root); err != nil {
+			return errors.Wrap(err, "decode oval")
+		}
+
+		for _, def := range root.Definitions.Definition {
+			if err := util.Write(filepath.Join(options.dir, osname, version, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "definitions", fmt.Sprintf("%s.json", def.ID)))
+			}
+		}
+
+		for _, test := range root.Tests.RpminfoTest {
+			if err := util.Write(filepath.Join(options.dir, osname, version, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
+			}
+		}
+
+		for _, object := range root.Objects.RpminfoObject {
+			if err := util.Write(filepath.Join(options.dir, osname, version, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
+			}
+		}
+
+		for _, state := range root.States.RpminfoState {
+			if err := util.Write(filepath.Join(options.dir, osname, version, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "pipeline get")
 	}
+
 	return nil
 }
 
