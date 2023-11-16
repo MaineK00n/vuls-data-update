@@ -181,8 +181,8 @@ func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestO
 	bss := make([][]byte, 0, len(urls))
 
 	respChan := make(chan []byte, len(urls))
-	if err := c.PipelineGet(urls, concurrency, wait, func(bs []byte) error { respChan <- bs; return nil }, opts...); err != nil {
-		return nil, errors.Wrap(err, "pipelite get")
+	if err := c.PipelineGet(urls, concurrency, wait, func(resp Response) error { respChan <- resp.Body; return nil }, opts...); err != nil {
+		return nil, errors.Wrap(err, "pipeline get")
 	}
 	close(respChan)
 	for r := range respChan {
@@ -191,7 +191,12 @@ func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestO
 	return bss, nil
 }
 
-func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func([]byte) error, opts ...RequestOption) error {
+type Response struct {
+	URL  string
+	Body []byte
+}
+
+func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func(resp Response) error, opts ...RequestOption) error {
 	urlChan := make(chan string)
 	go func() {
 		defer close(urlChan)
@@ -210,7 +215,7 @@ func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func([]b
 			if err != nil {
 				return errors.Wrapf(err, "get %s", u)
 			}
-			if err := cont(bs); err != nil {
+			if err := cont(Response{URL: u, Body: bs}); err != nil {
 				return errors.Wrapf(err, "continuation %s", u)
 			}
 			select {

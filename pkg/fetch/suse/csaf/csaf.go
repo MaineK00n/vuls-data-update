@@ -112,9 +112,9 @@ func Fetch(opts ...Option) error {
 		cveURLs = append(cveURLs, u)
 	}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(cveURLs, options.concurrency, options.wait, func(bs []byte) error {
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(cveURLs, options.concurrency, options.wait, func(resp utilhttp.Response) error {
 		var adv CSAF
-		if err := json.Unmarshal(bs, &adv); err != nil {
+		if err := json.Unmarshal(resp.Body, &adv); err != nil {
 			return errors.Wrap(err, "json unmarshal")
 		}
 
