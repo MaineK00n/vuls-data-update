@@ -190,9 +190,9 @@ func Fetch(opts ...Option) error {
 		us = append(us, url)
 	}
 
-	nextTask := func(bs []byte) error {
+	nextTask := func(resp utilhttp.Response) error {
 		var response api20
-		if err := json.Unmarshal(bs, &response); err != nil {
+		if err := json.Unmarshal(resp.Body, &response); err != nil {
 			return errors.Wrap(err, "unmarshal json")
 		}
 

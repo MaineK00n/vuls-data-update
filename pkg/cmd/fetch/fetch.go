@@ -54,6 +54,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
 
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpe"
+	nvdAPICPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
@@ -123,7 +124,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchKEV(),
 		newCmdFetchMitreCVRF(), newCmdFetchMitreV4(), newCmdFetchMitreV5(),
 		newCmdFetchMSF(),
-		newCmdFetchNVDAPICVE(), newCmdFetchNVDAPICPE(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
+		newCmdFetchNVDAPICVE(), newCmdFetchNVDAPICPE(), newCmdFetchNVDAPICPEMatch(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
 		newCmdFetchSnort(),
 	)
 
@@ -2436,12 +2437,40 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdAPICPE.Fetch(nvdAPICPE.WithDir(filepath.Join(options.dir, "nvd", "api", "cpe")),
-				nvdAPICPE.WithRetry(options.retry),
-				nvdAPICPE.WithAPIKey(options.apiKey),
-				nvdAPICPE.WithWait(options.wait),
-				nvdAPICPE.WithConcurrency(options.concurrency)); err != nil {
+			if err := nvdAPICPE.Fetch(nvdAPICPE.WithDir(filepath.Join(options.dir, "nvd", "api", "cpe")), nvdAPICPE.WithRetry(options.retry), nvdAPICPE.WithAPIKey(options.apiKey), nvdAPICPE.WithWait(options.wait), nvdAPICPE.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpe")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", util.CacheDir(), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
+	// Rate limet without API key: 5 requests in a rolling 30 second window, and
+	// with API key: 50 requests in a rolling 30 second window.
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
+
+	return cmd
+}
+func newCmdFetchNVDAPICPEMatch() *cobra.Command {
+	options := &options{
+		dir:         util.CacheDir(),
+		retry:       3,
+		concurrency: 1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-api-cpematch",
+		Short: "Fetch NVD API CPE Match data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-api-cpematch
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nvdAPICPEMatch.Fetch(nvdAPICPEMatch.WithDir(filepath.Join(options.dir, "nvd", "api", "cpematch")), nvdAPICPEMatch.WithRetry(options.retry), nvdAPICPEMatch.WithAPIKey(options.apiKey), nvdAPICPEMatch.WithWait(options.wait), nvdAPICPEMatch.WithConcurrency(options.concurrency)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd api cpematch")
 			}
 			return nil
 		},

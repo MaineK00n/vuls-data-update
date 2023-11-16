@@ -1,0 +1,9 @@
+{
+  "criteria": "cpe:2.3:a:jeanbaptisteaudras:reusable_blocks_extended:*:*:*:*:*:wordpress:*:*",
+  "matchCriteriaId": "765DB0D2-94A4-4EF8-85A8-29A5DBCD1F1E",
+  "versionEndIncluding": "0.9",
+  "created": "2023-11-15T23:24:38.440",
+  "lastModified": "2023-11-15T23:24:38.440",
+  "cpeLastModified": "2023-11-15T23:24:38.440",
+  "status": "Active"
+}

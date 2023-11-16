@@ -3,20 +3,18 @@ package cpe
 // Top level structure for CVE JSON API 2.0 data
 // https://csrc.nist.gov/schema/nvd/api/2.0/cpe_api_json_2.0.schema
 type api20 struct {
-	StartIndex     int       `json:"startIndex"`
-	ResultsPerPage int       `json:"resultsPerPage"`
-	TotalResults   int       `json:"totalResults"`
-	Format         string    `json:"format"`
-	Version        string    `json:"version"`
-	Timestamp      string    `json:"timestamp"`
-	Products       []Product `json:"products"`
+	StartIndex     int    `json:"startIndex"`
+	ResultsPerPage int    `json:"resultsPerPage"`
+	TotalResults   int    `json:"totalResults"`
+	Format         string `json:"format"`
+	Version        string `json:"version"`
+	Timestamp      string `json:"timestamp"`
+	Products       []struct {
+		CPE CPE `json:"cpe"`
+	} `json:"products"`
 }
 
 // Top level structure that fetch command stores CPE json files
-type Product struct {
-	CPE CPE `json:"cpe"`
-}
-
 type CPE struct {
 	Deprecated   bool           `json:"deprecated"`
 	Name         string         `json:"cpeName"`

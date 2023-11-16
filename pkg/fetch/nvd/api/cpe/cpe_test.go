@@ -73,7 +73,7 @@ func TestFetch(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "/rest/json/cves/2.0")
+			u, err := url.JoinPath(ts.URL, "/rest/json/cpes/2.0")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
