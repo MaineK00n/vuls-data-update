@@ -1,0 +1,95 @@
+{
+  "resultsPerPage": 1,
+  "startIndex": 0,
+  "totalResults": 7,
+  "format": "NVD_CPE",
+  "version": "2.0",
+  "timestamp": "2023-11-16T01:11:17.027",
+  "products": [
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:blood_donor_management_system:1.0:*:*:*:*:*:*:*",
+        "cpeNameId": "BE277135-6B64-49D1-A85F-27239835EC82",
+        "lastModified": "2023-11-14T21:53:51.533",
+        "created": "2023-11-14T21:53:51.533",
+        "titles": [
+          {
+            "title": "PHPGurukul Blood Donor Management System 1.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://products.phpgurukul.com/product/blood-donor-management-system-using-ci-project-report/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:blood_donor_management_system_project:blood_donor_management_system:1.0:*:*:*:*:*:*:*",
+            "cpeNameId": "683A8714-7A49-49EA-A417-818ADC3E0AE8"
+          }
+        ]
+      }
+    },
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:bp_monitoring_management_system:1.0:*:*:*:*:*:*:*",
+        "cpeNameId": "90ED66F0-9961-4595-89F7-0355B62951C0",
+        "lastModified": "2023-11-14T21:58:07.537",
+        "created": "2023-11-14T21:58:07.537",
+        "titles": [
+          {
+            "title": "PHPGurukul BP Monitoring Management System 1.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://github.com/CVEProject/cvelist/blob/master/2023/27xxx/CVE-2023-27074.json",
+            "type": "Advisory"
+          },
+          {
+            "ref": "https://products.phpgurukul.com/product/bp-monitoring-management-system-project-report-php/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:bp_monitoring_management_system_project:bp_monitoring_management_system:1.0:*:*:*:*:*:*:*",
+            "cpeNameId": "FBB1E007-6748-409B-A5B6-96A61422D03D"
+          }
+        ]
+      }
+    },
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:maid_hiring_management_system:1.0:*:*:*:*:*:*:*",
+        "cpeNameId": "8EAD7266-095A-4C22-A284-7C79AAF605FC",
+        "lastModified": "2023-11-14T22:04:43.107",
+        "created": "2023-11-14T22:04:43.107",
+        "titles": [
+          {
+            "title": "PHPGurukul Maid Hiring Management System 1.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://products.phpgurukul.com/product/maid-hiring-management-system-project-report-php/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:anujkumar:maid_hiring_management_system:1.0:*:*:*:*:*:*:*",
+            "cpeNameId": "6185C01E-C4C4-4893-8674-675E80A00488"
+          }
+        ]
+      }
+    }
+  ]
+}

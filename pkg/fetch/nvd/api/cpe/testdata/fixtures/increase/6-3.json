@@ -1,0 +1,62 @@
+{
+  "resultsPerPage": 2,
+  "startIndex": 6,
+  "totalResults": 8,
+  "format": "NVD_CPE",
+  "version": "2.0",
+  "timestamp": "2023-11-16T01:16:19.830",
+  "products": [
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:shortpixel:shortpixel_adaptive_images:3.8.0:*:*:*:*:wordpress:*:*",
+        "cpeNameId": "1CC5879D-43B9-4B65-B3B6-55809ACA4274",
+        "lastModified": "2023-11-14T21:34:29.590",
+        "created": "2023-11-14T21:34:29.590",
+        "titles": [
+          {
+            "title": "Shortpixel Adaptive Images 3.8.0 for WordPress",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://wordpress.org/plugins/shortpixel-adaptive-images/#developers",
+            "type": "Change Log"
+          },
+          {
+            "ref": "https://patchstack.com/database/vulnerability/shortpixel-adaptive-images/wordpress-shortpixel-adaptive-images-webp-avif-cdn-image-optimization-plugin-3-7-1-cross-site-request-forgery-csrf-vulnerability?_s_id=cve",
+            "type": "Advisory"
+          }
+        ]
+      }
+    },
+    {
+      "cpe": {
+        "deprecated": false,
+        "cpeName": "cpe:2.3:a:phpgurukul:student_record_system:4.0:*:*:*:*:*:*:*",
+        "cpeNameId": "E0C469A9-36D0-42CC-B720-2C23EEEF629B",
+        "lastModified": "2023-11-14T21:36:21.653",
+        "created": "2023-11-14T21:36:21.653",
+        "titles": [
+          {
+            "title": "PHPGurukul Student Record System 4.0",
+            "lang": "en"
+          }
+        ],
+        "refs": [
+          {
+            "ref": "https://products.phpgurukul.com/product/student-record-system-project-report/",
+            "type": "Product"
+          }
+        ],
+        "deprecates": [
+          {
+            "cpeName": "cpe:2.3:a:student_record_system_project:student_record_system:4.0:*:*:*:*:*:*:*",
+            "cpeNameId": "877E62C1-0BE3-46BD-8600-93500BFEDC34"
+          }
+        ]
+      }
+    }
+  ]
+}
