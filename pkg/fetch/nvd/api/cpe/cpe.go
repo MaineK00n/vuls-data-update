@@ -226,8 +226,8 @@ func Fetch(opts ...Option) error {
 				d = hash32([]byte(fmt.Sprintf("%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct))))
 			}
 
-			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%x.json", hash64([]byte(p.CPE.Name)))), p.CPE); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%x.json", hash64([]byte(p.CPE.Name)))))
+			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", p.CPE.NameID)), p.CPE); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", p.CPE.NameID)))
 			}
 		}
 		return nil
