@@ -3,20 +3,18 @@ package cve
 // Top level structure for CVE JSON API 2.0 data
 // https://csrc.nist.gov/schema/nvd/api/2.0/cve_api_json_2.0.schema
 type api20 struct {
-	ResultsPerPage  int             `json:"resultsPerPage"`
-	StartIndex      int             `json:"startIndex"`
-	TotalResults    int             `json:"totalResults"`
-	Format          string          `json:"format"`
-	Version         string          `json:"version"`
-	Timestamp       string          `json:"timestamp"`
-	Vulnerabilities []Vulnerability `json:"vulnerabilities"`
+	ResultsPerPage  int    `json:"resultsPerPage"`
+	StartIndex      int    `json:"startIndex"`
+	TotalResults    int    `json:"totalResults"`
+	Format          string `json:"format"`
+	Version         string `json:"version"`
+	Timestamp       string `json:"timestamp"`
+	Vulnerabilities []struct {
+		CVE CVE `json:"cve"`
+	} `json:"vulnerabilities"`
 }
 
 // Top level structure that fetch command stores CVE json files
-type Vulnerability struct {
-	CVE CVE `json:"cve"`
-}
-
 type CVE struct {
 	ID                    string          `json:"id"`
 	SourceIdentifier      string          `json:"sourceIdentifier,omitempty"`

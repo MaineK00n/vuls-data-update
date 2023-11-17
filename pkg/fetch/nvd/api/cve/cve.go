@@ -225,7 +225,7 @@ func Fetch(opts ...Option) error {
 				continue
 			}
 
-			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)), v); err != nil {
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)), v.CVE); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)))
 			}
 		}
