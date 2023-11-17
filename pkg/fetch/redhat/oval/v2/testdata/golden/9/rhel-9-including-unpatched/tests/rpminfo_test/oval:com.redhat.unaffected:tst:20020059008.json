@@ -1,11 +1,11 @@
 {
-  "check": "at least one",
-  "comment": "zlib-devel is not installed",
-  "id": "oval:com.redhat.unaffected:tst:20020059008",
-  "version": "635",
-  "check_existence": "none_exist",
-  "object": {
-    "object_ref": "oval:com.redhat.cve:obj:202237434001"
-  },
-  "state": {}
+	"check": "at least one",
+	"comment": "zlib-devel is not installed",
+	"id": "oval:com.redhat.unaffected:tst:20020059008",
+	"version": "635",
+	"check_existence": "none_exist",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:202237434001"
+	},
+	"state": {}
 }

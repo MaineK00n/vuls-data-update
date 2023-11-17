@@ -1,5 +1,5 @@
 {
-  "line": "abc2ps;cpe:/a:abc2ps:abc2ps",
-  "package": "abc2ps",
-  "cpe": "cpe:/a:abc2ps:abc2ps"
+	"line": "abc2ps;cpe:/a:abc2ps:abc2ps",
+	"package": "abc2ps",
+	"cpe": "cpe:/a:abc2ps:abc2ps"
 }

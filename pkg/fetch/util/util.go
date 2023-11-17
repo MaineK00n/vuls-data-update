@@ -62,7 +62,7 @@ func Write(path string, content any) error {
 
 	e := json.NewEncoder(f)
 	e.SetEscapeHTML(false)
-	e.SetIndent("", "  ")
+	e.SetIndent("", "\t")
 	if err := e.Encode(content); err != nil {
 		return errors.Wrap(err, "encode json")
 	}

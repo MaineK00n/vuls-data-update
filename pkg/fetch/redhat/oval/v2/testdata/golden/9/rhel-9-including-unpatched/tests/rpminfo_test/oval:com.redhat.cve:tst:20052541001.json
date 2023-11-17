@@ -1,10 +1,10 @@
 {
-  "check": "at least one",
-  "comment": "tar is installed",
-  "id": "oval:com.redhat.cve:tst:20052541001",
-  "version": "636",
-  "object": {
-    "object_ref": "oval:com.redhat.cve:obj:20052541001"
-  },
-  "state": {}
+	"check": "at least one",
+	"comment": "tar is installed",
+	"id": "oval:com.redhat.cve:tst:20052541001",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:20052541001"
+	},
+	"state": {}
 }

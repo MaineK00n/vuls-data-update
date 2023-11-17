@@ -1,19 +1,19 @@
 {
-  "advisories": [
-    "ASA-201707-17"
-  ],
-  "affected": "4.0.8-1",
-  "fixed": "4.0.8-2",
-  "issues": [
-    "CVE-2016-10095",
-    "CVE-2015-7554"
-  ],
-  "name": "AVG-5",
-  "packages": [
-    "libtiff"
-  ],
-  "severity": "Critical",
-  "status": "Fixed",
-  "ticket": "54842",
-  "type": "arbitrary code execution"
+	"advisories": [
+		"ASA-201707-17"
+	],
+	"affected": "4.0.8-1",
+	"fixed": "4.0.8-2",
+	"issues": [
+		"CVE-2016-10095",
+		"CVE-2015-7554"
+	],
+	"name": "AVG-5",
+	"packages": [
+		"libtiff"
+	],
+	"severity": "Critical",
+	"status": "Fixed",
+	"ticket": "54842",
+	"type": "arbitrary code execution"
 }

@@ -1,5 +1,5 @@
 {
-  "id": "oval:com.redhat.cve:obj:20188014001",
-  "version": "636",
-  "Name": "jws5-tomcat"
+	"id": "oval:com.redhat.cve:obj:20188014001",
+	"version": "636",
+	"Name": "jws5-tomcat"
 }

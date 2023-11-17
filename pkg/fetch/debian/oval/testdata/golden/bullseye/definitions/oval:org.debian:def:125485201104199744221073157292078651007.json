@@ -1,53 +1,53 @@
 {
-  "id": "oval:org.debian:def:125485201104199744221073157292078651007",
-  "class": "vulnerability",
-  "metadata": {
-    "title": "CVE-2022-31625 php7.4",
-    "affected": {
-      "family": "unix",
-      "platform": "Debian GNU/Linux 11",
-      "product": "php7.4"
-    },
-    "reference": [
-      {
-        "source": "CVE",
-        "ref_id": "CVE-2022-31625",
-        "ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-31625"
-      }
-    ],
-    "description": "security update",
-    "debian": {
-      "moreinfo": "Charles Fol discovered two security issues in PHP, a widely-used open source general purpose scripting language which could result an denial of service or potentially the execution of arbitrary code:",
-      "dsa": "DSA-5179"
-    }
-  },
-  "criteria": {
-    "operator": "AND",
-    "criterias": [
-      {
-        "operator": "OR",
-        "criterias": [
-          {
-            "operator": "AND",
-            "criterions": [
-              {
-                "test_ref": "oval:org.debian.oval:tst:2",
-                "comment": "all architecture"
-              },
-              {
-                "test_ref": "oval:org.debian.oval:tst:24163",
-                "comment": "php7.4 DPKG is earlier than 7.4.30-1+deb11u1"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:org.debian.oval:tst:1",
-        "comment": "Debian 11 is installed"
-      }
-    ]
-  }
+	"id": "oval:org.debian:def:125485201104199744221073157292078651007",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "CVE-2022-31625 php7.4",
+		"affected": {
+			"family": "unix",
+			"platform": "Debian GNU/Linux 11",
+			"product": "php7.4"
+		},
+		"reference": [
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2022-31625",
+				"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-31625"
+			}
+		],
+		"description": "security update",
+		"debian": {
+			"moreinfo": "Charles Fol discovered two security issues in PHP, a widely-used open source general purpose scripting language which could result an denial of service or potentially the execution of arbitrary code:",
+			"dsa": "DSA-5179"
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterias": [
+					{
+						"operator": "AND",
+						"criterions": [
+							{
+								"test_ref": "oval:org.debian.oval:tst:2",
+								"comment": "all architecture"
+							},
+							{
+								"test_ref": "oval:org.debian.oval:tst:24163",
+								"comment": "php7.4 DPKG is earlier than 7.4.30-1+deb11u1"
+							}
+						]
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.debian.oval:tst:1",
+				"comment": "Debian 11 is installed"
+			}
+		]
+	}
 }

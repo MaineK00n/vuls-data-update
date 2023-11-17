@@ -1,6 +1,6 @@
 {
-  "id": "oval:org.opensuse.security:obj:2009051714",
-  "version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "Name": "SLE_HPC-release"
+	"id": "oval:org.opensuse.security:obj:2009051714",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"Name": "SLE_HPC-release"
 }

@@ -1,49 +1,49 @@
 {
-  "about": "https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html",
-  "title": "resumebuilder の WordPress 用 resume builder におけるクロスサイトスクリプティングの脆弱性",
-  "link": "https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html",
-  "description": "resumebuilder の WordPress 用 resume builder には、クロスサイトスクリプティングの脆弱性が存在します。",
-  "identifier": "JVNDB-2023-004814",
-  "references": [
-    {
-      "text": "https://www.cve.org/CVERecord?id=CVE-2023-0078",
-      "source": "CVE",
-      "id": "CVE-2023-0078"
-    },
-    {
-      "text": "https://nvd.nist.gov/vuln/detail/CVE-2023-0078",
-      "source": "NVD",
-      "id": "CVE-2023-0078"
-    },
-    {
-      "text": "https://wpscan.com/vulnerability/e667854f-56f8-4dbe-9573-6652a8aacc2c",
-      "source": "関連文書",
-      "id": "wpscan.com (e667854f-56f8-4dbe-9573-6652a8aacc2c)"
-    },
-    {
-      "text": "https://jvndb.jvn.jp/ja/cwe/CWE-79.html",
-      "id": "CWE-79",
-      "title": "クロスサイトスクリプティング(CWE-79)"
-    }
-  ],
-  "cpe": [
-    {
-      "text": "cpe:/a:resumebuilder:resume_builder",
-      "version": "2.2",
-      "vendor": "resumebuilder",
-      "product": "resume builder"
-    }
-  ],
-  "cvss": [
-    {
-      "version": "3.0",
-      "score": "5.4",
-      "type": "Base",
-      "severity": "Medium",
-      "vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"
-    }
-  ],
-  "date": "2023-11-02T11:57+09:00",
-  "issued": "2023-11-02T11:57+09:00",
-  "modified": "2023-11-02T11:57+09:00"
+	"about": "https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html",
+	"title": "resumebuilder の WordPress 用 resume builder におけるクロスサイトスクリプティングの脆弱性",
+	"link": "https://jvndb.jvn.jp/ja/contents/2023/JVNDB-2023-004814.html",
+	"description": "resumebuilder の WordPress 用 resume builder には、クロスサイトスクリプティングの脆弱性が存在します。",
+	"identifier": "JVNDB-2023-004814",
+	"references": [
+		{
+			"text": "https://www.cve.org/CVERecord?id=CVE-2023-0078",
+			"source": "CVE",
+			"id": "CVE-2023-0078"
+		},
+		{
+			"text": "https://nvd.nist.gov/vuln/detail/CVE-2023-0078",
+			"source": "NVD",
+			"id": "CVE-2023-0078"
+		},
+		{
+			"text": "https://wpscan.com/vulnerability/e667854f-56f8-4dbe-9573-6652a8aacc2c",
+			"source": "関連文書",
+			"id": "wpscan.com (e667854f-56f8-4dbe-9573-6652a8aacc2c)"
+		},
+		{
+			"text": "https://jvndb.jvn.jp/ja/cwe/CWE-79.html",
+			"id": "CWE-79",
+			"title": "クロスサイトスクリプティング(CWE-79)"
+		}
+	],
+	"cpe": [
+		{
+			"text": "cpe:/a:resumebuilder:resume_builder",
+			"version": "2.2",
+			"vendor": "resumebuilder",
+			"product": "resume builder"
+		}
+	],
+	"cvss": [
+		{
+			"version": "3.0",
+			"score": "5.4",
+			"type": "Base",
+			"severity": "Medium",
+			"vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"
+		}
+	],
+	"date": "2023-11-02T11:57+09:00",
+	"issued": "2023-11-02T11:57+09:00",
+	"modified": "2023-11-02T11:57+09:00"
 }

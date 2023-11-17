@@ -1,53 +1,53 @@
 {
-  "Architecture": [
-    "all"
-  ],
-  "Binary": [
-    "album"
-  ],
-  "Build-Depends": [
-    "debhelper (>= 10)"
-  ],
-  "Checksums-Sha256": [
-    "d0f2dfc88cf86742904a9ed7e6d2edd53812d3f6b49f281254207132bcd10864 1792 album_4.15-1.dsc dcfae77cd60610ee16b461af1e2cb056fb80868e384d5a963544f6de4b4ed923 651380 album_4.15.orig.tar.gz 8606ecc1165e29e89323b42d91887ad7e0bed1cfcfdae45a4b50585aa3b6cca1 5152 album_4.15-1.debian.tar.xz"
-  ],
-  "Directory": [
-    "pool/non-free/a/album"
-  ],
-  "Files": [
-    "991b0e198092888c7b4c21ff4f89c576 1792 album_4.15-1.dsc 7cff37ff78d5b2fe81010ceb70f130d7 651380 album_4.15.orig.tar.gz d58a96cd3401e18f1a01bad1fd3bcee0 5152 album_4.15-1.debian.tar.xz"
-  ],
-  "Format": [
-    "3.0 (quilt)"
-  ],
-  "Homepage": [
-    "http://marginalhacks.com/Hacks/album"
-  ],
-  "Maintainer": [
-    "Salvo 'LtWorf' Tomaselli <tiposchi@tiscali.it>"
-  ],
-  "Package": [
-    "album"
-  ],
-  "Package-List": [
-    "album deb non-free/web extra arch=all"
-  ],
-  "Priority": [
-    "source"
-  ],
-  "Section": [
-    "non-free/web"
-  ],
-  "Standards-Version": [
-    "3.9.8"
-  ],
-  "Vcs-Browser": [
-    "https://anonscm.debian.org/cgit/collab-maint/album.git"
-  ],
-  "Vcs-Git": [
-    "https://anonscm.debian.org/git/collab-maint/album.git"
-  ],
-  "Version": [
-    "4.15-1"
-  ]
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"album"
+	],
+	"Build-Depends": [
+		"debhelper (>= 10)"
+	],
+	"Checksums-Sha256": [
+		"d0f2dfc88cf86742904a9ed7e6d2edd53812d3f6b49f281254207132bcd10864 1792 album_4.15-1.dsc dcfae77cd60610ee16b461af1e2cb056fb80868e384d5a963544f6de4b4ed923 651380 album_4.15.orig.tar.gz 8606ecc1165e29e89323b42d91887ad7e0bed1cfcfdae45a4b50585aa3b6cca1 5152 album_4.15-1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/non-free/a/album"
+	],
+	"Files": [
+		"991b0e198092888c7b4c21ff4f89c576 1792 album_4.15-1.dsc 7cff37ff78d5b2fe81010ceb70f130d7 651380 album_4.15.orig.tar.gz d58a96cd3401e18f1a01bad1fd3bcee0 5152 album_4.15-1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://marginalhacks.com/Hacks/album"
+	],
+	"Maintainer": [
+		"Salvo 'LtWorf' Tomaselli <tiposchi@tiscali.it>"
+	],
+	"Package": [
+		"album"
+	],
+	"Package-List": [
+		"album deb non-free/web extra arch=all"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"non-free/web"
+	],
+	"Standards-Version": [
+		"3.9.8"
+	],
+	"Vcs-Browser": [
+		"https://anonscm.debian.org/cgit/collab-maint/album.git"
+	],
+	"Vcs-Git": [
+		"https://anonscm.debian.org/git/collab-maint/album.git"
+	],
+	"Version": [
+		"4.15-1"
+	]
 }

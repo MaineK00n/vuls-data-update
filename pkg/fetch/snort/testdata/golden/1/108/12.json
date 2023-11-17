@@ -1,7 +1,7 @@
 {
-  "GID": "1",
-  "SID": "108",
-  "Rev": "12",
-  "Header": "alert tcp $EXTERNAL_NET any -> $HOME_NET 7597",
-  "Option": "msg:\"MALWARE-BACKDOOR QAZ Worm Client Login access\"; flow:to_server,established; content:\"qazwsx.hsq\"; metadata:ruleset community; classtype:misc-activity; sid:108; rev:12;"
+	"GID": "1",
+	"SID": "108",
+	"Rev": "12",
+	"Header": "alert tcp $EXTERNAL_NET any -> $HOME_NET 7597",
+	"Option": "msg:\"MALWARE-BACKDOOR QAZ Worm Client Login access\"; flow:to_server,established; content:\"qazwsx.hsq\"; metadata:ruleset community; classtype:misc-activity; sid:108; rev:12;"
 }

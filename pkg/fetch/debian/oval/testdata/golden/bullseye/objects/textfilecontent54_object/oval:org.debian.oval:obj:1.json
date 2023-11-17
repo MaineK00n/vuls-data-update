@@ -1,15 +1,15 @@
 {
-  "id": "oval:org.debian.oval:obj:1",
-  "version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent",
-  "path": "/etc",
-  "filename": "debian_version",
-  "pattern": {
-    "text": "(\\d+)\\.\\d",
-    "operation": "pattern match"
-  },
-  "instance": {
-    "text": "1",
-    "datatype": "int"
-  }
+	"id": "oval:org.debian.oval:obj:1",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent",
+	"path": "/etc",
+	"filename": "debian_version",
+	"pattern": {
+		"text": "(\\d+)\\.\\d",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
 }

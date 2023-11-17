@@ -1,8 +1,8 @@
 {
-  "vid": "2",
-  "vname": "マイクロソフト",
-  "vcpe": "cpe:/:microsoft",
-  "pid": "24",
-  "pname": "Microsoft Excel",
-  "pcpe": "cpe:/a:microsoft:excel"
+	"vid": "2",
+	"vname": "マイクロソフト",
+	"vcpe": "cpe:/:microsoft",
+	"pid": "24",
+	"pname": "Microsoft Excel",
+	"pcpe": "cpe:/a:microsoft:excel"
 }

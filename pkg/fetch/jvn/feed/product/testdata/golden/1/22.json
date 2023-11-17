@@ -1,8 +1,8 @@
 {
-  "vid": "1",
-  "vname": "サン・マイクロシステムズ",
-  "vcpe": "cpe:/:sun",
-  "pid": "22",
-  "pname": "Sun ONE/iPlanet Web Server",
-  "pcpe": "cpe:/a:sun:one_web_server"
+	"vid": "1",
+	"vname": "サン・マイクロシステムズ",
+	"vcpe": "cpe:/:sun",
+	"pid": "22",
+	"pname": "Sun ONE/iPlanet Web Server",
+	"pcpe": "cpe:/a:sun:one_web_server"
 }

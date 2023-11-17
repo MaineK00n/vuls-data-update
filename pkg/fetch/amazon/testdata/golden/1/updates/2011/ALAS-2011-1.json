@@ -1,49 +1,49 @@
 {
-  "ID": "ALAS-2011-1",
-  "Author": "linux-security@amazon.com",
-  "From": "linux-security@amazon.com",
-  "Status": "final",
-  "Type": "security",
-  "Version": "1.4",
-  "Title": "Amazon Linux AMI 2011.09 - ALAS-2011-1: medium priority package update for httpd",
-  "Issued": {
-    "Date": "2011-09-27 22:46"
-  },
-  "Updated": {
-    "Date": "2014-09-14 14:25"
-  },
-  "Severity": "medium",
-  "Description": "Package updates are available for Amazon Linux AMI that fix the following vulnerabilities:\nCVE-2011-3192:\n\tThe byterange filter in the Apache HTTP Server 1.3.x, 2.0.x through 2.0.64, and 2.2.x through 2.2.19 allows remote attackers to cause a denial of service (memory and CPU consumption) via a Range header that expresses multiple overlapping ranges, as exploited in the wild in August 2011, a different vulnerability than CVE-2007-0086.\nA flaw was found in the way the Apache HTTP Server handled Range HTTP headers. A remote attacker could use this flaw to cause httpd to use an excessive amount of memory and CPU time via HTTP requests with a specially-crafted Range header.\n",
-  "References": {
-    "Reference": [
-      {
-        "Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192",
-        "ID": "CVE-2011-3192",
-        "Title": "",
-        "Type": "cve"
-      },
-      {
-        "Href": "https://rhn.redhat.com/errata/RHSA-2011:1245.html",
-        "ID": "RHSA-2011:1245",
-        "Title": "",
-        "Type": "redhat"
-      }
-    ]
-  },
-  "Pkglist": {
-    "Collection": {
-      "Short": "amazon-linux-ami",
-      "Name": "Amazon Linux AMI",
-      "Package": [
-        {
-          "Arch": "i686",
-          "Epoch": "0",
-          "Name": "httpd-devel",
-          "Release": "1.18.amzn1",
-          "Version": "2.2.21",
-          "Filename": "Packages/httpd-devel-2.2.21-1.18.amzn1.i686.rpm"
-        }
-      ]
-    }
-  }
+	"ID": "ALAS-2011-1",
+	"Author": "linux-security@amazon.com",
+	"From": "linux-security@amazon.com",
+	"Status": "final",
+	"Type": "security",
+	"Version": "1.4",
+	"Title": "Amazon Linux AMI 2011.09 - ALAS-2011-1: medium priority package update for httpd",
+	"Issued": {
+		"Date": "2011-09-27 22:46"
+	},
+	"Updated": {
+		"Date": "2014-09-14 14:25"
+	},
+	"Severity": "medium",
+	"Description": "Package updates are available for Amazon Linux AMI that fix the following vulnerabilities:\nCVE-2011-3192:\n\tThe byterange filter in the Apache HTTP Server 1.3.x, 2.0.x through 2.0.64, and 2.2.x through 2.2.19 allows remote attackers to cause a denial of service (memory and CPU consumption) via a Range header that expresses multiple overlapping ranges, as exploited in the wild in August 2011, a different vulnerability than CVE-2007-0086.\nA flaw was found in the way the Apache HTTP Server handled Range HTTP headers. A remote attacker could use this flaw to cause httpd to use an excessive amount of memory and CPU time via HTTP requests with a specially-crafted Range header.\n",
+	"References": {
+		"Reference": [
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192",
+				"ID": "CVE-2011-3192",
+				"Title": "",
+				"Type": "cve"
+			},
+			{
+				"Href": "https://rhn.redhat.com/errata/RHSA-2011:1245.html",
+				"ID": "RHSA-2011:1245",
+				"Title": "",
+				"Type": "redhat"
+			}
+		]
+	},
+	"Pkglist": {
+		"Collection": {
+			"Short": "amazon-linux-ami",
+			"Name": "Amazon Linux AMI",
+			"Package": [
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "httpd-devel",
+					"Release": "1.18.amzn1",
+					"Version": "2.2.21",
+					"Filename": "Packages/httpd-devel-2.2.21-1.18.amzn1.i686.rpm"
+				}
+			]
+		}
+	}
 }

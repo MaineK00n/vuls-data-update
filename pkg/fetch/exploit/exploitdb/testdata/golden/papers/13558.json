@@ -1,11 +1,11 @@
 {
-  "id": "13558",
-  "file": "papers/albanian/13558-[albanian]-shell-over-lfi.txt",
-  "description": "[Albanian] Shell Over LFI",
-  "date_published": "2009-12-12",
-  "author": "bi0",
-  "platform": "multiple",
-  "language": "albanian",
-  "date_added": "2009-12-11",
-  "verified": "1"
+	"id": "13558",
+	"file": "papers/albanian/13558-[albanian]-shell-over-lfi.txt",
+	"description": "[Albanian] Shell Over LFI",
+	"date_published": "2009-12-12",
+	"author": "bi0",
+	"platform": "multiple",
+	"language": "albanian",
+	"date_added": "2009-12-11",
+	"verified": "1"
 }

@@ -1,6 +1,6 @@
 {
-  "id": "oval:org.debian.oval:obj:1098",
-  "version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "name": "389-ds-base"
+	"id": "oval:org.debian.oval:obj:1098",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"name": "389-ds-base"
 }

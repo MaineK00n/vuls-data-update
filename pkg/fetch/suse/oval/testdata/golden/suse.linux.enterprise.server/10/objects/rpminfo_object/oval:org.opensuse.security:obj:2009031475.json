@@ -1,6 +1,6 @@
 {
-  "id": "oval:org.opensuse.security:obj:2009031475",
-  "version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "Name": "krb5-64bit"
+	"id": "oval:org.opensuse.security:obj:2009031475",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"Name": "krb5-64bit"
 }

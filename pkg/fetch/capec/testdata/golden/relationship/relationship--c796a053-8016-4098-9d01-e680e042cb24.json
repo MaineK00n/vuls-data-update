@@ -1,15 +1,15 @@
 {
-  "type": "relationship",
-  "id": "relationship--c796a053-8016-4098-9d01-e680e042cb24",
-  "created": "2014-06-23T00:00:00Z",
-  "created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
-  "modified": "2022-09-29T00:00:00Z",
-  "object_marking_refs": [
-    "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
-  ],
-  "relationship_type": "mitigates",
-  "source_ref": "course-of-action--0d8de0b8-e9fd-44b2-8f1f-f8aae79949be",
-  "spec_version": "2.1",
-  "target_ref": "attack-pattern--92cdcd3d-d734-4442-afc3-4599f261498b",
-  "x_capec_version": "3.9"
+	"type": "relationship",
+	"id": "relationship--c796a053-8016-4098-9d01-e680e042cb24",
+	"created": "2014-06-23T00:00:00Z",
+	"created_by_ref": "identity--e50ab59c-5c4f-4d40-bf6a-d58418d89bcd",
+	"modified": "2022-09-29T00:00:00Z",
+	"object_marking_refs": [
+		"marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d"
+	],
+	"relationship_type": "mitigates",
+	"source_ref": "course-of-action--0d8de0b8-e9fd-44b2-8f1f-f8aae79949be",
+	"spec_version": "2.1",
+	"target_ref": "attack-pattern--92cdcd3d-d734-4442-afc3-4599f261498b",
+	"x_capec_version": "3.9"
 }

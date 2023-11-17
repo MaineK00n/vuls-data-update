@@ -1,12 +1,12 @@
 {
-  "check": "at least one",
-  "comment": "luci is earlier than 0:0.9.2-6.el5",
-  "id": "oval:com.redhat.rhba:tst:20070331001",
-  "version": "635",
-  "object": {
-    "object_ref": "oval:com.redhat.rhba:obj:20070331001"
-  },
-  "state": {
-    "state_ref": "oval:com.redhat.rhba:ste:20070331001"
-  }
+	"check": "at least one",
+	"comment": "luci is earlier than 0:0.9.2-6.el5",
+	"id": "oval:com.redhat.rhba:tst:20070331001",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20070331001"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20070331001"
+	}
 }

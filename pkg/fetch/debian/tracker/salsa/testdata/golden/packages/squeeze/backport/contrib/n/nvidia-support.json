@@ -1,56 +1,56 @@
 {
-  "Architecture": [
-    "amd64 i386"
-  ],
-  "Binary": [
-    "nvidia-support, nvidia-installer-cleanup, nvidia-kernel-common"
-  ],
-  "Build-Depends": [
-    "debhelper (>= 8.1.0~), po-debconf"
-  ],
-  "Checksums-Sha1": [
-    "9cb5a1524cc1a8d3907359f49b8486a126a2e9bd 1441 nvidia-support_20111111+1~bpo60+1.dsc 7f69b0ca5402fc5883fc1374fa54a1464af932fb 27707 nvidia-support_20111111+1~bpo60+1.tar.gz"
-  ],
-  "Checksums-Sha256": [
-    "b64de28d9aac602a988a911cc885395d2253944cc2b6a2a59dea211308ff524c 1441 nvidia-support_20111111+1~bpo60+1.dsc 244928feb40a2eb50da6f252f6a039dffeb4d24b0874ea143be63df6372c2684 27707 nvidia-support_20111111+1~bpo60+1.tar.gz"
-  ],
-  "Directory": [
-    "pool/contrib/n/nvidia-support"
-  ],
-  "Dm-Upload-Allowed": [
-    "yes"
-  ],
-  "Files": [
-    "c5d7f1e3a45acee94e7b2a3c98633a1a 1441 nvidia-support_20111111+1~bpo60+1.dsc d0c8b8e2952ce3428e37c7cb87d699e3 27707 nvidia-support_20111111+1~bpo60+1.tar.gz"
-  ],
-  "Format": [
-    "3.0 (native)"
-  ],
-  "Maintainer": [
-    "Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>"
-  ],
-  "Package": [
-    "nvidia-support"
-  ],
-  "Priority": [
-    "source"
-  ],
-  "Section": [
-    "contrib/misc"
-  ],
-  "Standards-Version": [
-    "3.9.2"
-  ],
-  "Uploaders": [
-    "Russ Allbery <rra@debian.org>, Andreas Beckmann <debian@abeckmann.de>"
-  ],
-  "Vcs-Browser": [
-    "http://svn.debian.org/wsvn/pkg-nvidia/packages/nvidia-support/"
-  ],
-  "Vcs-Svn": [
-    "svn://svn.debian.org/pkg-nvidia/packages/nvidia-support/trunk"
-  ],
-  "Version": [
-    "20111111+1~bpo60+1"
-  ]
+	"Architecture": [
+		"amd64 i386"
+	],
+	"Binary": [
+		"nvidia-support, nvidia-installer-cleanup, nvidia-kernel-common"
+	],
+	"Build-Depends": [
+		"debhelper (>= 8.1.0~), po-debconf"
+	],
+	"Checksums-Sha1": [
+		"9cb5a1524cc1a8d3907359f49b8486a126a2e9bd 1441 nvidia-support_20111111+1~bpo60+1.dsc 7f69b0ca5402fc5883fc1374fa54a1464af932fb 27707 nvidia-support_20111111+1~bpo60+1.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"b64de28d9aac602a988a911cc885395d2253944cc2b6a2a59dea211308ff524c 1441 nvidia-support_20111111+1~bpo60+1.dsc 244928feb40a2eb50da6f252f6a039dffeb4d24b0874ea143be63df6372c2684 27707 nvidia-support_20111111+1~bpo60+1.tar.gz"
+	],
+	"Directory": [
+		"pool/contrib/n/nvidia-support"
+	],
+	"Dm-Upload-Allowed": [
+		"yes"
+	],
+	"Files": [
+		"c5d7f1e3a45acee94e7b2a3c98633a1a 1441 nvidia-support_20111111+1~bpo60+1.dsc d0c8b8e2952ce3428e37c7cb87d699e3 27707 nvidia-support_20111111+1~bpo60+1.tar.gz"
+	],
+	"Format": [
+		"3.0 (native)"
+	],
+	"Maintainer": [
+		"Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>"
+	],
+	"Package": [
+		"nvidia-support"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"contrib/misc"
+	],
+	"Standards-Version": [
+		"3.9.2"
+	],
+	"Uploaders": [
+		"Russ Allbery <rra@debian.org>, Andreas Beckmann <debian@abeckmann.de>"
+	],
+	"Vcs-Browser": [
+		"http://svn.debian.org/wsvn/pkg-nvidia/packages/nvidia-support/"
+	],
+	"Vcs-Svn": [
+		"svn://svn.debian.org/pkg-nvidia/packages/nvidia-support/trunk"
+	],
+	"Version": [
+		"20111111+1~bpo60+1"
+	]
 }

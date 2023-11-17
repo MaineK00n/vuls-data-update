@@ -1,31 +1,31 @@
 {
-  "defaultpropertieslanguage": "en",
-  "msrcseverity": "Important",
-  "isbeta": "false",
-  "installationbehavior": {},
-  "supporturl": {
-    "text": "https://aka.ms/vs/admin/feedback"
-  },
-  "securitybulletinid": {},
-  "kbarticleid": {
-    "text": "5007364"
-  },
-  "uninstallationbehavior": {},
-  "cveid": [
-    {
-      "text": "CVE-2023-28260"
-    },
-    {
-      "text": "CVE-2023-28296"
-    },
-    {
-      "text": "CVE-2023-28299"
-    },
-    {
-      "text": "CVE-2023-28262"
-    },
-    {
-      "text": "CVE-2023-28263"
-    }
-  ]
+	"defaultpropertieslanguage": "en",
+	"msrcseverity": "Important",
+	"isbeta": "false",
+	"installationbehavior": {},
+	"supporturl": {
+		"text": "https://aka.ms/vs/admin/feedback"
+	},
+	"securitybulletinid": {},
+	"kbarticleid": {
+		"text": "5007364"
+	},
+	"uninstallationbehavior": {},
+	"cveid": [
+		{
+			"text": "CVE-2023-28260"
+		},
+		{
+			"text": "CVE-2023-28296"
+		},
+		{
+			"text": "CVE-2023-28299"
+		},
+		{
+			"text": "CVE-2023-28262"
+		},
+		{
+			"text": "CVE-2023-28263"
+		}
+	]
 }

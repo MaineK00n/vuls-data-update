@@ -1,16 +1,16 @@
 {
-  "defaultpropertieslanguage": "en",
-  "msrcseverity": "Important",
-  "isbeta": "false",
-  "installationbehavior": {},
-  "supporturl": {
-    "text": "http://support.microsoft.com"
-  },
-  "securitybulletinid": {
-    "text": "MS00-000"
-  },
-  "kbarticleid": {
-    "text": "765432"
-  },
-  "uninstallationbehavior": {}
+	"defaultpropertieslanguage": "en",
+	"msrcseverity": "Important",
+	"isbeta": "false",
+	"installationbehavior": {},
+	"supporturl": {
+		"text": "http://support.microsoft.com"
+	},
+	"securitybulletinid": {
+		"text": "MS00-000"
+	},
+	"kbarticleid": {
+		"text": "765432"
+	},
+	"uninstallationbehavior": {}
 }

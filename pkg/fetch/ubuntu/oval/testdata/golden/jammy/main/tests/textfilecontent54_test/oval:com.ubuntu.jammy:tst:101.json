@@ -1,13 +1,13 @@
 {
-  "id": "oval:com.ubuntu.jammy:tst:101",
-  "version": "1",
-  "check_existence": "at_least_one_exists",
-  "check": "at least one",
-  "comment": "Is the host running Ubuntu jammy?",
-  "object": {
-    "object_ref": "oval:com.ubuntu.jammy:obj:101"
-  },
-  "state": {
-    "state_ref": "oval:com.ubuntu.jammy:ste:101"
-  }
+	"id": "oval:com.ubuntu.jammy:tst:101",
+	"version": "1",
+	"check_existence": "at_least_one_exists",
+	"check": "at least one",
+	"comment": "Is the host running Ubuntu jammy?",
+	"object": {
+		"object_ref": "oval:com.ubuntu.jammy:obj:101"
+	},
+	"state": {
+		"state_ref": "oval:com.ubuntu.jammy:ste:101"
+	}
 }

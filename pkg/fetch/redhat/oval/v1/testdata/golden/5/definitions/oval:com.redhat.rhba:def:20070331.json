@@ -1,127 +1,127 @@
 {
-  "class": "patch",
-  "id": "oval:com.redhat.rhba:def:20070331",
-  "version": "635",
-  "metadata": {
-    "title": "RHBA-2007:0331: conga bug fix update (Low)",
-    "affected": {
-      "family": "unix",
-      "platform": [
-        "Red Hat Enterprise Linux 5"
-      ]
-    },
-    "reference": [
-      {
-        "ref_id": "RHBA-2007:0331",
-        "ref_url": "https://access.redhat.com/errata/RHBA-2007:0331",
-        "source": "RHSA"
-      },
-      {
-        "ref_id": "CVE-2007-0240",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2007-0240",
-        "source": "CVE"
-      },
-      {
-        "ref_id": "CVE-2007-1462",
-        "ref_url": "https://access.redhat.com/security/cve/CVE-2007-1462",
-        "source": "CVE"
-      }
-    ],
-    "description": "The Conga package is a web-based administration tool for remote cluster and\nstorage management.\n\nThis erratum applies the following bug fixes:\n\n- The borrowed Zope packages used by Conga have been patched to eliminate\na possibility of XSS attack.\n- Passwords are no longer sent back from the server in cleartext for use as\ninput values.\n- A form error was fixed so that Conga no longer allows for cluster\nnames of over 15 characters.\n- An error wherein clusters and systems could not be deleted from the\nmanage systems interface has been addressed.\n- Entering an incorrect password for a system no longer generates an\nUnbound Local Reference exception.\n- Luci failover domain forms are no longer empty\n- The fence_xvm string in cluster.conf for virtual cluster fencing has been\ncorrected.\n- The advanced options parameters section has been fixed.\n- A bug where virtual services were unable for configuration has been\naddressed.\n- kmod-gfs-xen is now installed when necessary.\n- The 'enable shared storage support' checkbox is now cleared when a\nconfiguration error is encountered.\n- When configuring an outer physical cluster, it is no longer necessary to\nadd the fence_xvmd tag manually.\n\nUsers of Conga are advised to upgrade to these updated packages, which\napply these fixes.",
-    "advisory": {
-      "from": "secalert@redhat.com",
-      "severity": "Low",
-      "rights": "Copyright 2007 Red Hat, Inc.",
-      "issued": {
-        "date": "2006-07-20"
-      },
-      "updated": {
-        "date": "2007-05-18"
-      },
-      "cve": [
-        {
-          "text": "CVE-2007-0240",
-          "href": "https://access.redhat.com/security/cve/CVE-2007-0240",
-          "impact": "low",
-          "public": "20070320"
-        },
-        {
-          "text": "CVE-2007-1462",
-          "href": "https://access.redhat.com/security/cve/CVE-2007-1462",
-          "impact": "low",
-          "public": "20070213"
-        }
-      ],
-      "bugzilla": [
-        {
-          "text": "CVE-2007-0240 security flaw",
-          "href": "https://bugzilla.redhat.com/1618268",
-          "id": "1618268"
-        },
-        {
-          "text": "CVE-2007-1462 security flaw",
-          "href": "https://bugzilla.redhat.com/1618300",
-          "id": "1618300"
-        }
-      ],
-      "affected_cpe_list": {
-        "cpe": [
-          "cpe:/a:redhat:rhel_cluster:5"
-        ]
-      }
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterias": [
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20070331001",
-                    "comment": "luci is earlier than 0:0.9.2-6.el5"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20070331002",
-                    "comment": "luci is signed with Red Hat redhatrelease key"
-                  }
-                ]
-              },
-              {
-                "operator": "AND",
-                "criterions": [
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20070331003",
-                    "comment": "ricci is earlier than 0:0.9.2-6.el5"
-                  },
-                  {
-                    "test_ref": "oval:com.redhat.rhba:tst:20070331004",
-                    "comment": "ricci is signed with Red Hat redhatrelease key"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:com.redhat.rhba:tst:20070331005",
-            "comment": "Red Hat Enterprise Linux 5 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:com.redhat.rhba:tst:20070331006",
-        "comment": "Red Hat Enterprise Linux must be installed"
-      }
-    ]
-  }
+	"class": "patch",
+	"id": "oval:com.redhat.rhba:def:20070331",
+	"version": "635",
+	"metadata": {
+		"title": "RHBA-2007:0331: conga bug fix update (Low)",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 5"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "RHBA-2007:0331",
+				"ref_url": "https://access.redhat.com/errata/RHBA-2007:0331",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2007-0240",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2007-0240",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2007-1462",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2007-1462",
+				"source": "CVE"
+			}
+		],
+		"description": "The Conga package is a web-based administration tool for remote cluster and\nstorage management.\n\nThis erratum applies the following bug fixes:\n\n- The borrowed Zope packages used by Conga have been patched to eliminate\na possibility of XSS attack.\n- Passwords are no longer sent back from the server in cleartext for use as\ninput values.\n- A form error was fixed so that Conga no longer allows for cluster\nnames of over 15 characters.\n- An error wherein clusters and systems could not be deleted from the\nmanage systems interface has been addressed.\n- Entering an incorrect password for a system no longer generates an\nUnbound Local Reference exception.\n- Luci failover domain forms are no longer empty\n- The fence_xvm string in cluster.conf for virtual cluster fencing has been\ncorrected.\n- The advanced options parameters section has been fixed.\n- A bug where virtual services were unable for configuration has been\naddressed.\n- kmod-gfs-xen is now installed when necessary.\n- The 'enable shared storage support' checkbox is now cleared when a\nconfiguration error is encountered.\n- When configuring an outer physical cluster, it is no longer necessary to\nadd the fence_xvmd tag manually.\n\nUsers of Conga are advised to upgrade to these updated packages, which\napply these fixes.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Low",
+			"rights": "Copyright 2007 Red Hat, Inc.",
+			"issued": {
+				"date": "2006-07-20"
+			},
+			"updated": {
+				"date": "2007-05-18"
+			},
+			"cve": [
+				{
+					"text": "CVE-2007-0240",
+					"href": "https://access.redhat.com/security/cve/CVE-2007-0240",
+					"impact": "low",
+					"public": "20070320"
+				},
+				{
+					"text": "CVE-2007-1462",
+					"href": "https://access.redhat.com/security/cve/CVE-2007-1462",
+					"impact": "low",
+					"public": "20070213"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "CVE-2007-0240 security flaw",
+					"href": "https://bugzilla.redhat.com/1618268",
+					"id": "1618268"
+				},
+				{
+					"text": "CVE-2007-1462 security flaw",
+					"href": "https://bugzilla.redhat.com/1618300",
+					"id": "1618300"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:rhel_cluster:5"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20070331001",
+										"comment": "luci is earlier than 0:0.9.2-6.el5"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20070331002",
+										"comment": "luci is signed with Red Hat redhatrelease key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20070331003",
+										"comment": "ricci is earlier than 0:0.9.2-6.el5"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhba:tst:20070331004",
+										"comment": "ricci is signed with Red Hat redhatrelease key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20070331005",
+						"comment": "Red Hat Enterprise Linux 5 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20070331006",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
 }

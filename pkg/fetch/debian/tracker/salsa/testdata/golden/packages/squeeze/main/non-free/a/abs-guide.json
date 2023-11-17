@@ -1,53 +1,53 @@
 {
-  "Architecture": [
-    "all"
-  ],
-  "Binary": [
-    "abs-guide"
-  ],
-  "Build-Depends": [
-    "debhelper (>= 7.0.50)"
-  ],
-  "Checksums-Sha1": [
-    "3715caa879ae8904d0ab843b761aabde5cacf580 1113 abs-guide_6.2-1.dsc ae3dc5ff8848bc53abfb8554cde180ba7a7da229 1432746 abs-guide_6.2.orig.tar.gz 9d96bf7ccb5181c7de4e00fe597037d3bfda5cfc 6747 abs-guide_6.2-1.diff.gz"
-  ],
-  "Checksums-Sha256": [
-    "daf3a8dc5e0cf6e47f5fcc0a36ed4b7662f02f4ddd8b92783ef05812472a992b 1113 abs-guide_6.2-1.dsc bf8ed75fff6cf885396c5a7de0e9ab73b0568b5da12816c030c17a4be17d7004 1432746 abs-guide_6.2.orig.tar.gz 89eeddcc7d6de354a4a576615f29d0ff6419f71012140f8731de0cb23aebbf77 6747 abs-guide_6.2-1.diff.gz"
-  ],
-  "Directory": [
-    "pool/non-free/a/abs-guide"
-  ],
-  "Files": [
-    "855743a19ff8906b12aa1a530e565f53 1113 abs-guide_6.2-1.dsc 5d8f7d9ec671d7d2252ef1f6ab79f045 1432746 abs-guide_6.2.orig.tar.gz d6aa7a80752335d8c54e216b61bf18c0 6747 abs-guide_6.2-1.diff.gz"
-  ],
-  "Format": [
-    "1.0"
-  ],
-  "Homepage": [
-    "http://www.tldp.org/LDP/abs/html/"
-  ],
-  "Maintainer": [
-    "Sandro Tosi <morph@debian.org>"
-  ],
-  "Package": [
-    "abs-guide"
-  ],
-  "Priority": [
-    "optional"
-  ],
-  "Section": [
-    "non-free/doc"
-  ],
-  "Standards-Version": [
-    "3.8.4"
-  ],
-  "Vcs-Browser": [
-    "http://git.debian.org/?p=users/morph/abs-guide.git"
-  ],
-  "Vcs-Git": [
-    "git://git.debian.org/users/morph/abs-guide.git"
-  ],
-  "Version": [
-    "6.2-1"
-  ]
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"abs-guide"
+	],
+	"Build-Depends": [
+		"debhelper (>= 7.0.50)"
+	],
+	"Checksums-Sha1": [
+		"3715caa879ae8904d0ab843b761aabde5cacf580 1113 abs-guide_6.2-1.dsc ae3dc5ff8848bc53abfb8554cde180ba7a7da229 1432746 abs-guide_6.2.orig.tar.gz 9d96bf7ccb5181c7de4e00fe597037d3bfda5cfc 6747 abs-guide_6.2-1.diff.gz"
+	],
+	"Checksums-Sha256": [
+		"daf3a8dc5e0cf6e47f5fcc0a36ed4b7662f02f4ddd8b92783ef05812472a992b 1113 abs-guide_6.2-1.dsc bf8ed75fff6cf885396c5a7de0e9ab73b0568b5da12816c030c17a4be17d7004 1432746 abs-guide_6.2.orig.tar.gz 89eeddcc7d6de354a4a576615f29d0ff6419f71012140f8731de0cb23aebbf77 6747 abs-guide_6.2-1.diff.gz"
+	],
+	"Directory": [
+		"pool/non-free/a/abs-guide"
+	],
+	"Files": [
+		"855743a19ff8906b12aa1a530e565f53 1113 abs-guide_6.2-1.dsc 5d8f7d9ec671d7d2252ef1f6ab79f045 1432746 abs-guide_6.2.orig.tar.gz d6aa7a80752335d8c54e216b61bf18c0 6747 abs-guide_6.2-1.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Homepage": [
+		"http://www.tldp.org/LDP/abs/html/"
+	],
+	"Maintainer": [
+		"Sandro Tosi <morph@debian.org>"
+	],
+	"Package": [
+		"abs-guide"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"non-free/doc"
+	],
+	"Standards-Version": [
+		"3.8.4"
+	],
+	"Vcs-Browser": [
+		"http://git.debian.org/?p=users/morph/abs-guide.git"
+	],
+	"Vcs-Git": [
+		"git://git.debian.org/users/morph/abs-guide.git"
+	],
+	"Version": [
+		"6.2-1"
+	]
 }
