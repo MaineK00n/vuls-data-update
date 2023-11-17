@@ -219,7 +219,6 @@ func Fetch(opts ...Option) error {
 		dv := hash32([]byte("vendor:product"))
 
 		for _, p := range response.Products {
-
 			d := dv
 
 			wfn, err := naming.UnbindFS(p.CPE.Name)
