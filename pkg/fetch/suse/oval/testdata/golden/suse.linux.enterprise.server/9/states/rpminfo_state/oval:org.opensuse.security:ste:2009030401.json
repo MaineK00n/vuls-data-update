@@ -1,13 +1,13 @@
 {
-  "id": "oval:org.opensuse.security:ste:2009030401",
-  "attr_version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "version": {},
-  "evr": {
-    "text": "0:1.13.25-325.10",
-    "datatype": "evr_string",
-    "operation": "less than"
-  },
-  "signature_keyid": {},
-  "arch": {}
+	"id": "oval:org.opensuse.security:ste:2009030401",
+	"attr_version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"version": {},
+	"evr": {
+		"text": "0:1.13.25-325.10",
+		"datatype": "evr_string",
+		"operation": "less than"
+	},
+	"signature_keyid": {},
+	"arch": {}
 }

@@ -1,25 +1,25 @@
 {
-  "deprecated": false,
-  "cpeName": "cpe:2.3:a:phpgurukul:beauty_parlour_management_system:1.0:*:*:*:*:*:*:*",
-  "cpeNameId": "01840CB5-042F-46E6-9DCB-2C20222FF0BA",
-  "created": "2023-11-14T22:32:16.867",
-  "lastModified": "2023-11-14T22:32:16.867",
-  "titles": [
-    {
-      "title": "PHPGurukul Beauty Parlour Management System 1.0",
-      "lang": "en"
-    }
-  ],
-  "refs": [
-    {
-      "ref": "https://phpgurukul.com/beauty-parlour-management-system-using-php-and-mysql/",
-      "type": "Product"
-    }
-  ],
-  "deprecates": [
-    {
-      "cpeName": "cpe:2.3:a:phpgurukul_beauty_parlour_management_system_project:phpgurukul_beauty_parlour_management_system:1.0:*:*:*:*:*:*:*",
-      "cpeNameId": "E3E9F349-1464-4CA4-8B51-AE71F71F6027"
-    }
-  ]
+	"deprecated": false,
+	"cpeName": "cpe:2.3:a:phpgurukul:beauty_parlour_management_system:1.0:*:*:*:*:*:*:*",
+	"cpeNameId": "01840CB5-042F-46E6-9DCB-2C20222FF0BA",
+	"created": "2023-11-14T22:32:16.867",
+	"lastModified": "2023-11-14T22:32:16.867",
+	"titles": [
+		{
+			"title": "PHPGurukul Beauty Parlour Management System 1.0",
+			"lang": "en"
+		}
+	],
+	"refs": [
+		{
+			"ref": "https://phpgurukul.com/beauty-parlour-management-system-using-php-and-mysql/",
+			"type": "Product"
+		}
+	],
+	"deprecates": [
+		{
+			"cpeName": "cpe:2.3:a:phpgurukul_beauty_parlour_management_system_project:phpgurukul_beauty_parlour_management_system:1.0:*:*:*:*:*:*:*",
+			"cpeNameId": "E3E9F349-1464-4CA4-8B51-AE71F71F6027"
+		}
+	]
 }

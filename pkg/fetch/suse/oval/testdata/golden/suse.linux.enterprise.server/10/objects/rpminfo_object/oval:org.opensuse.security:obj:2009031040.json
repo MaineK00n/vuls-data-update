@@ -1,6 +1,6 @@
 {
-  "id": "oval:org.opensuse.security:obj:2009031040",
-  "version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "Name": "krb5-apps-servers"
+	"id": "oval:org.opensuse.security:obj:2009031040",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"Name": "krb5-apps-servers"
 }

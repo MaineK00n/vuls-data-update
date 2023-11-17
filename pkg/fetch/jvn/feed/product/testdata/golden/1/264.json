@@ -1,8 +1,8 @@
 {
-  "vid": "1",
-  "vname": "サン・マイクロシステムズ",
-  "vcpe": "cpe:/:sun",
-  "pid": "264",
-  "pname": "Sun Java System Application Server",
-  "pcpe": "cpe:/a:sun:java_system_application_server"
+	"vid": "1",
+	"vname": "サン・マイクロシステムズ",
+	"vcpe": "cpe:/:sun",
+	"pid": "264",
+	"pname": "Sun Java System Application Server",
+	"pcpe": "cpe:/a:sun:java_system_application_server"
 }

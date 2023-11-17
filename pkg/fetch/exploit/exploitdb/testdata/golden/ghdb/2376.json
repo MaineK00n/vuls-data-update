@@ -1,12 +1,12 @@
 {
-  "id": "2376",
-  "link": "https://www.exploit-db.com/ghdb/2376",
-  "category": "Advisories and Vulnerabilities",
-  "short_description": "\" created by creato.biz \"",
-  "textual_description": "Creato Script SQL Injection Vulnerability: https://www.exploit-db.com/exploits/12807",
-  "query": "\" created by creato.biz \"",
-  "querystring": "https://www.google.com/search?q=%22+created+by+creato.biz+%22",
-  "edb": "https://www.exploit-db.com/exploits/12807",
-  "date": "2010-11-15",
-  "author": "anonymous"
+	"id": "2376",
+	"link": "https://www.exploit-db.com/ghdb/2376",
+	"category": "Advisories and Vulnerabilities",
+	"short_description": "\" created by creato.biz \"",
+	"textual_description": "Creato Script SQL Injection Vulnerability: https://www.exploit-db.com/exploits/12807",
+	"query": "\" created by creato.biz \"",
+	"querystring": "https://www.google.com/search?q=%22+created+by+creato.biz+%22",
+	"edb": "https://www.exploit-db.com/exploits/12807",
+	"date": "2010-11-15",
+	"author": "anonymous"
 }

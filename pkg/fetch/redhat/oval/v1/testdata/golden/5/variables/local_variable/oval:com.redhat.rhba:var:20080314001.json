@@ -1,17 +1,17 @@
 {
-  "comment": "Get saved_entry in /boot/grub2/grubenv",
-  "datatype": "int",
-  "id": "oval:com.redhat.rhba:var:20080314001",
-  "version": "641",
-  "arithmetic": {
-    "arithmetic_operation": "add",
-    "literal_component": {
-      "text": "1",
-      "datatype": "int"
-    },
-    "object_component": {
-      "item_field": "text",
-      "object_ref": "oval:com.redhat.rhba:obj:20080314014"
-    }
-  }
+	"comment": "Get saved_entry in /boot/grub2/grubenv",
+	"datatype": "int",
+	"id": "oval:com.redhat.rhba:var:20080314001",
+	"version": "641",
+	"arithmetic": {
+		"arithmetic_operation": "add",
+		"literal_component": {
+			"text": "1",
+			"datatype": "int"
+		},
+		"object_component": {
+			"item_field": "text",
+			"object_ref": "oval:com.redhat.rhba:obj:20080314014"
+		}
+	}
 }

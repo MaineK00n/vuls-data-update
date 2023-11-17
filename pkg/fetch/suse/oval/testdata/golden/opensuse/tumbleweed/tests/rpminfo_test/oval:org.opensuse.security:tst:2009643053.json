@@ -1,13 +1,13 @@
 {
-  "id": "oval:org.opensuse.security:tst:2009643053",
-  "version": "1",
-  "comment": "tar-rmt is <1.34-2.2",
-  "check": "at least one",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "object": {
-    "object_ref": "oval:org.opensuse.security:obj:2009042566"
-  },
-  "state": {
-    "state_ref": "oval:org.opensuse.security:ste:2009150918"
-  }
+	"id": "oval:org.opensuse.security:tst:2009643053",
+	"version": "1",
+	"comment": "tar-rmt is <1.34-2.2",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009042566"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009150918"
+	}
 }

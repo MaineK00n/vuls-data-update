@@ -1,10 +1,10 @@
 {
-  "type": "marking-definition",
-  "id": "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d",
-  "created": "2023-01-30T20:40:28.791035Z",
-  "definition": {
-    "statement": "CAPEC is sponsored by US-CERT in the office of Cybersecurity and Communications at the U.S. Department of Homeland Security. Copyright © 2007 - 2023, The MITRE Corporation. CAPEC and the CAPEC logo are trademarks of The MITRE Corporation."
-  },
-  "definition_type": "statement",
-  "spec_version": "2.1"
+	"type": "marking-definition",
+	"id": "marking-definition--17d82bb2-eeeb-4898-bda5-3ddbcd2b799d",
+	"created": "2023-01-30T20:40:28.791035Z",
+	"definition": {
+		"statement": "CAPEC is sponsored by US-CERT in the office of Cybersecurity and Communications at the U.S. Department of Homeland Security. Copyright © 2007 - 2023, The MITRE Corporation. CAPEC and the CAPEC logo are trademarks of The MITRE Corporation."
+	},
+	"definition_type": "statement",
+	"spec_version": "2.1"
 }

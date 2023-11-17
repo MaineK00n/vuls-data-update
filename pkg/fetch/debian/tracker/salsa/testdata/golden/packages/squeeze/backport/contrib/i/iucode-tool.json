@@ -1,50 +1,50 @@
 {
-  "Architecture": [
-    "i386 amd64"
-  ],
-  "Binary": [
-    "iucode-tool"
-  ],
-  "Build-Depends": [
-    "debhelper (>= 7), autotools-dev, automake (>= 1:1.10), autoconf (>= 2.61)"
-  ],
-  "Checksums-Sha1": [
-    "0a5c245599ccc3697863f23f0449af1cb0f43d37 1870 iucode-tool_0.8.3-2~bpo60+1.dsc 6db0f13c5c04521d76f85edf549ebd2c181df810 121441 iucode-tool_0.8.3.orig.tar.bz2 4355a4dc688280a8a7d4d1be59c292e48457d5c1 6776 iucode-tool_0.8.3-2~bpo60+1.debian.tar.gz"
-  ],
-  "Checksums-Sha256": [
-    "5c2f2d7ef40cce663d3ac889a8c7eb0b0ef14a3a2fd67bcc1c2b095fd9aa33d6 1870 iucode-tool_0.8.3-2~bpo60+1.dsc 9328f8b9b260aee3ce37ac59a6961677d8d476c6f7216db53871d6261b37d733 121441 iucode-tool_0.8.3.orig.tar.bz2 9ae94daa19967fd033dacd98b9481084a1365fa237d9611085e05bfbb03cd456 6776 iucode-tool_0.8.3-2~bpo60+1.debian.tar.gz"
-  ],
-  "Directory": [
-    "pool/contrib/i/iucode-tool"
-  ],
-  "Files": [
-    "552b58a80ff54d0e17de0f827d9d6d5b 1870 iucode-tool_0.8.3-2~bpo60+1.dsc 34a56ad19ccdbf7db8cb4f427dec8074 121441 iucode-tool_0.8.3.orig.tar.bz2 a678ecde819e0c4ba74a2587c3e54259 6776 iucode-tool_0.8.3-2~bpo60+1.debian.tar.gz"
-  ],
-  "Format": [
-    "3.0 (quilt)"
-  ],
-  "Maintainer": [
-    "Henrique de Moraes Holschuh <hmh@debian.org>"
-  ],
-  "Package": [
-    "iucode-tool"
-  ],
-  "Priority": [
-    "source"
-  ],
-  "Section": [
-    "contrib/utils"
-  ],
-  "Standards-Version": [
-    "3.9.3"
-  ],
-  "Vcs-Browser": [
-    "http://git.debian.org/?p=users/hmh/iucode-tool.git"
-  ],
-  "Vcs-Git": [
-    "git://git.debian.org/users/hmh/iucode-tool.git"
-  ],
-  "Version": [
-    "0.8.3-2~bpo60+1"
-  ]
+	"Architecture": [
+		"i386 amd64"
+	],
+	"Binary": [
+		"iucode-tool"
+	],
+	"Build-Depends": [
+		"debhelper (>= 7), autotools-dev, automake (>= 1:1.10), autoconf (>= 2.61)"
+	],
+	"Checksums-Sha1": [
+		"0a5c245599ccc3697863f23f0449af1cb0f43d37 1870 iucode-tool_0.8.3-2~bpo60+1.dsc 6db0f13c5c04521d76f85edf549ebd2c181df810 121441 iucode-tool_0.8.3.orig.tar.bz2 4355a4dc688280a8a7d4d1be59c292e48457d5c1 6776 iucode-tool_0.8.3-2~bpo60+1.debian.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"5c2f2d7ef40cce663d3ac889a8c7eb0b0ef14a3a2fd67bcc1c2b095fd9aa33d6 1870 iucode-tool_0.8.3-2~bpo60+1.dsc 9328f8b9b260aee3ce37ac59a6961677d8d476c6f7216db53871d6261b37d733 121441 iucode-tool_0.8.3.orig.tar.bz2 9ae94daa19967fd033dacd98b9481084a1365fa237d9611085e05bfbb03cd456 6776 iucode-tool_0.8.3-2~bpo60+1.debian.tar.gz"
+	],
+	"Directory": [
+		"pool/contrib/i/iucode-tool"
+	],
+	"Files": [
+		"552b58a80ff54d0e17de0f827d9d6d5b 1870 iucode-tool_0.8.3-2~bpo60+1.dsc 34a56ad19ccdbf7db8cb4f427dec8074 121441 iucode-tool_0.8.3.orig.tar.bz2 a678ecde819e0c4ba74a2587c3e54259 6776 iucode-tool_0.8.3-2~bpo60+1.debian.tar.gz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Maintainer": [
+		"Henrique de Moraes Holschuh <hmh@debian.org>"
+	],
+	"Package": [
+		"iucode-tool"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"contrib/utils"
+	],
+	"Standards-Version": [
+		"3.9.3"
+	],
+	"Vcs-Browser": [
+		"http://git.debian.org/?p=users/hmh/iucode-tool.git"
+	],
+	"Vcs-Git": [
+		"git://git.debian.org/users/hmh/iucode-tool.git"
+	],
+	"Version": [
+		"0.8.3-2~bpo60+1"
+	]
 }

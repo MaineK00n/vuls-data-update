@@ -1,56 +1,56 @@
 {
-  "Architecture": [
-    "all"
-  ],
-  "Binary": [
-    "xul-ext-adblock-plus"
-  ],
-  "Build-Depends": [
-    "debhelper (>= 8), mercurial, mozilla-devscripts (>= 0.19~), python, python-jinja2"
-  ],
-  "Checksums-Sha1": [
-    "dbd17c4c095b13f0c27f409a82dcf895bb95b010 2144 adblock-plus_2.1-1~bpo60+1.dsc 059dbb184969be3a1c55ceb5855f9abd80fbe351 590821 adblock-plus_2.1.orig.tar.gz ed778cfb7877540fe16ec88dd5ec5ffdf156e6a1 16138 adblock-plus_2.1-1~bpo60+1.debian.tar.gz"
-  ],
-  "Checksums-Sha256": [
-    "d1da474d736ac564fbf725ec1248f850614d62174b581647e624fab78c069054 2144 adblock-plus_2.1-1~bpo60+1.dsc 05406b3b4335d6282b94d80b6b8914d2fdd1b9c3bff62c90f0a8aee5adebac26 590821 adblock-plus_2.1.orig.tar.gz 55fc0b78e401b34271e4a7c1a25b5df87aa6c7651b6c8f89cd1f491b6be4aed5 16138 adblock-plus_2.1-1~bpo60+1.debian.tar.gz"
-  ],
-  "Directory": [
-    "pool/main/a/adblock-plus"
-  ],
-  "Files": [
-    "7a0e2a2fd9372a39807c7570214420c7 2144 adblock-plus_2.1-1~bpo60+1.dsc 75244944454064f699d5d31404b250fe 590821 adblock-plus_2.1.orig.tar.gz ec699611745b59da8bc6f5943fc1f822 16138 adblock-plus_2.1-1~bpo60+1.debian.tar.gz"
-  ],
-  "Format": [
-    "3.0 (quilt)"
-  ],
-  "Homepage": [
-    "http://adblockplus.org/"
-  ],
-  "Maintainer": [
-    "Dmitry E. Oboukhov <unera@debian.org>"
-  ],
-  "Package": [
-    "adblock-plus"
-  ],
-  "Priority": [
-    "source"
-  ],
-  "Section": [
-    "web"
-  ],
-  "Standards-Version": [
-    "3.9.3"
-  ],
-  "Uploaders": [
-    "Debian Mozilla Extension Maintainers <pkg-mozext-maintainers@lists.alioth.debian.org>,           Benjamin Drung <bdrung@debian.org>,           Fabrizio Regalli <fabreg@fabreg.it>,           Andrea Veri <and@debian.org>"
-  ],
-  "Vcs-Browser": [
-    "http://git.debian.org/?p=pkg-mozext/adblock-plus.git;a=summary"
-  ],
-  "Vcs-Git": [
-    "git://git.debian.org/pkg-mozext/adblock-plus.git"
-  ],
-  "Version": [
-    "2.1-1~bpo60+1"
-  ]
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"xul-ext-adblock-plus"
+	],
+	"Build-Depends": [
+		"debhelper (>= 8), mercurial, mozilla-devscripts (>= 0.19~), python, python-jinja2"
+	],
+	"Checksums-Sha1": [
+		"dbd17c4c095b13f0c27f409a82dcf895bb95b010 2144 adblock-plus_2.1-1~bpo60+1.dsc 059dbb184969be3a1c55ceb5855f9abd80fbe351 590821 adblock-plus_2.1.orig.tar.gz ed778cfb7877540fe16ec88dd5ec5ffdf156e6a1 16138 adblock-plus_2.1-1~bpo60+1.debian.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"d1da474d736ac564fbf725ec1248f850614d62174b581647e624fab78c069054 2144 adblock-plus_2.1-1~bpo60+1.dsc 05406b3b4335d6282b94d80b6b8914d2fdd1b9c3bff62c90f0a8aee5adebac26 590821 adblock-plus_2.1.orig.tar.gz 55fc0b78e401b34271e4a7c1a25b5df87aa6c7651b6c8f89cd1f491b6be4aed5 16138 adblock-plus_2.1-1~bpo60+1.debian.tar.gz"
+	],
+	"Directory": [
+		"pool/main/a/adblock-plus"
+	],
+	"Files": [
+		"7a0e2a2fd9372a39807c7570214420c7 2144 adblock-plus_2.1-1~bpo60+1.dsc 75244944454064f699d5d31404b250fe 590821 adblock-plus_2.1.orig.tar.gz ec699611745b59da8bc6f5943fc1f822 16138 adblock-plus_2.1-1~bpo60+1.debian.tar.gz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://adblockplus.org/"
+	],
+	"Maintainer": [
+		"Dmitry E. Oboukhov <unera@debian.org>"
+	],
+	"Package": [
+		"adblock-plus"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"web"
+	],
+	"Standards-Version": [
+		"3.9.3"
+	],
+	"Uploaders": [
+		"Debian Mozilla Extension Maintainers <pkg-mozext-maintainers@lists.alioth.debian.org>,           Benjamin Drung <bdrung@debian.org>,           Fabrizio Regalli <fabreg@fabreg.it>,           Andrea Veri <and@debian.org>"
+	],
+	"Vcs-Browser": [
+		"http://git.debian.org/?p=pkg-mozext/adblock-plus.git;a=summary"
+	],
+	"Vcs-Git": [
+		"git://git.debian.org/pkg-mozext/adblock-plus.git"
+	],
+	"Version": [
+		"2.1-1~bpo60+1"
+	]
 }

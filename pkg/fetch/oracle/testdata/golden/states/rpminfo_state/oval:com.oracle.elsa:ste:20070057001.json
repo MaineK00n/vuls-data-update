@@ -1,9 +1,9 @@
 {
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "id": "oval:com.oracle.elsa:ste:20070057001",
-  "attr_version": "501",
-  "signature_keyid": {
-    "text": "66ced3de1e5e0159",
-    "operation": "equals"
-  }
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:com.oracle.elsa:ste:20070057001",
+	"attr_version": "501",
+	"signature_keyid": {
+		"text": "66ced3de1e5e0159",
+		"operation": "equals"
+	}
 }

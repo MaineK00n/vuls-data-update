@@ -1,13 +1,13 @@
 {
-  "id": "43480",
-  "file": "shellcodes/alpha/43480.c",
-  "description": "Alpha - /bin/sh Shellcode (80 bytes)",
-  "date_published": "2009-01-01",
-  "author": "Lamont Granquist",
-  "platform": "alpha",
-  "size": "80",
-  "date_added": "2018-01-10",
-  "date_updated": "2018-01-10",
-  "verified": "0",
-  "source_url": "http://shell-storm.org/shellcode/files/shellcode-134.php"
+	"id": "43480",
+	"file": "shellcodes/alpha/43480.c",
+	"description": "Alpha - /bin/sh Shellcode (80 bytes)",
+	"date_published": "2009-01-01",
+	"author": "Lamont Granquist",
+	"platform": "alpha",
+	"size": "80",
+	"date_added": "2018-01-10",
+	"date_updated": "2018-01-10",
+	"verified": "0",
+	"source_url": "http://shell-storm.org/shellcode/files/shellcode-134.php"
 }

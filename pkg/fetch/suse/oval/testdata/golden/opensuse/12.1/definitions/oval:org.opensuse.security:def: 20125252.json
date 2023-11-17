@@ -1,70 +1,70 @@
 {
-  "id": "oval:org.opensuse.security:def: 20125252",
-  "version": "1",
-  "class": "vulnerability",
-  "metadata": {
-    "Title": " CVE-2012-5252",
-    "affected": {
-      "family": "unix",
-      "Platform": [
-        "openSUSE 12.1",
-        "openSUSE 12.1 Update"
-      ]
-    },
-    "reference": [
-      {
-        "ref_id": " CVE-2012-5252",
-        "ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name= CVE-2012-5252",
-        "source": "CVE"
-      }
-    ],
-    "Description": "\n    Unknown.\n    ",
-    "advisory": {
-      "Severity": "",
-      "cve": {},
-      "issued": {},
-      "updated": {},
-      "affected_cpe_list": {
-        "Cpe": null
-      }
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "OR",
-        "criterions": [
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089345",
-            "comment": "flash-player-11.2.202.243-30.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089345",
-            "comment": "flash-player-11.2.202.243-30.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089346",
-            "comment": "flash-player-gnome-11.2.202.243-30.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089347",
-            "comment": "flash-player-kde4-11.2.202.243-30.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089345",
-            "comment": "flash-player-11.2.202.243-30.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089346",
-            "comment": "flash-player-gnome-11.2.202.243-30.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009089347",
-            "comment": "flash-player-kde4-11.2.202.243-30.1 is installed"
-          }
-        ]
-      }
-    ]
-  }
+	"id": "oval:org.opensuse.security:def: 20125252",
+	"version": "1",
+	"class": "vulnerability",
+	"metadata": {
+		"Title": " CVE-2012-5252",
+		"affected": {
+			"family": "unix",
+			"Platform": [
+				"openSUSE 12.1",
+				"openSUSE 12.1 Update"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": " CVE-2012-5252",
+				"ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name= CVE-2012-5252",
+				"source": "CVE"
+			}
+		],
+		"Description": "\n    Unknown.\n    ",
+		"advisory": {
+			"Severity": "",
+			"cve": {},
+			"issued": {},
+			"updated": {},
+			"affected_cpe_list": {
+				"Cpe": null
+			}
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089345",
+						"comment": "flash-player-11.2.202.243-30.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089345",
+						"comment": "flash-player-11.2.202.243-30.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089346",
+						"comment": "flash-player-gnome-11.2.202.243-30.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089347",
+						"comment": "flash-player-kde4-11.2.202.243-30.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089345",
+						"comment": "flash-player-11.2.202.243-30.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089346",
+						"comment": "flash-player-gnome-11.2.202.243-30.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009089347",
+						"comment": "flash-player-kde4-11.2.202.243-30.1 is installed"
+					}
+				]
+			}
+		]
+	}
 }

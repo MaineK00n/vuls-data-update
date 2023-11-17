@@ -1,12 +1,12 @@
 {
-  "check": "none satisfy",
-  "comment": "Red Hat Enterprise Linux must be installed",
-  "id": "oval:com.redhat.cve:tst:20188014004",
-  "version": "636",
-  "object": {
-    "object_ref": "oval:com.redhat.cve:obj:20188014002"
-  },
-  "state": {
-    "state_ref": "oval:com.redhat.cve:ste:20188014003"
-  }
+	"check": "none satisfy",
+	"comment": "Red Hat Enterprise Linux must be installed",
+	"id": "oval:com.redhat.cve:tst:20188014004",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:20188014002"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.cve:ste:20188014003"
+	}
 }

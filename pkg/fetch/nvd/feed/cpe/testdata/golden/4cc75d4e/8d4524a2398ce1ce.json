@@ -1,31 +1,31 @@
 {
-  "name": "cpe:/a:adobe:acrobat:17.011.30070::~~classic~~~",
-  "deprecated": true,
-  "deprecation_date": "2019-08-21T16:19:02.113Z",
-  "title": [
-    {
-      "text": "Adobe Acrobat 17.011.30070 Classic Edition",
-      "lang": "en-US"
-    }
-  ],
-  "references": [
-    {
-      "text": "Change Log",
-      "href": "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotes/index.html"
-    },
-    {
-      "text": "Product",
-      "href": "https://acrobat.adobe.com/us/en/acrobat.html"
-    }
-  ],
-  "cpe_23_item": {
-    "name": "cpe:2.3:a:adobe:acrobat:17.011.30070:*:*:*:classic:*:*:*",
-    "deprecation": {
-      "date": "2019-08-21T12:19:02.113-04:00",
-      "deprecated_by": {
-        "name": "cpe:2.3:a:adobe:acrobat_dc:17.011.30070:*:*:*:classic:*:*:*",
-        "type": "NAME_CORRECTION"
-      }
-    }
-  }
+	"name": "cpe:/a:adobe:acrobat:17.011.30070::~~classic~~~",
+	"deprecated": true,
+	"deprecation_date": "2019-08-21T16:19:02.113Z",
+	"title": [
+		{
+			"text": "Adobe Acrobat 17.011.30070 Classic Edition",
+			"lang": "en-US"
+		}
+	],
+	"references": [
+		{
+			"text": "Change Log",
+			"href": "https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotes/index.html"
+		},
+		{
+			"text": "Product",
+			"href": "https://acrobat.adobe.com/us/en/acrobat.html"
+		}
+	],
+	"cpe_23_item": {
+		"name": "cpe:2.3:a:adobe:acrobat:17.011.30070:*:*:*:classic:*:*:*",
+		"deprecation": {
+			"date": "2019-08-21T12:19:02.113-04:00",
+			"deprecated_by": {
+				"name": "cpe:2.3:a:adobe:acrobat_dc:17.011.30070:*:*:*:classic:*:*:*",
+				"type": "NAME_CORRECTION"
+			}
+		}
+	}
 }

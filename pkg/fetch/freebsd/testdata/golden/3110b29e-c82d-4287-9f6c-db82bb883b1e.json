@@ -1,29 +1,29 @@
 {
-  "vid": "3110b29e-c82d-4287-9f6c-db82bb883b1e",
-  "topic": "zeek -- potential DoS vulnerabilities",
-  "affects": [
-    {
-      "name": [
-        "zeek"
-      ],
-      "range": [
-        {
-          "lt": "5.0.1"
-        }
-      ]
-    }
-  ],
-  "description": {
-    "xmlns": "http://www.w3.org/1999/xhtml",
-    "text": "\n\t<p>Tim Wojtulewicz of Corelight reports:</p>\n\t<blockquote cite=\"https://github.com/zeek/zeek/releases/tag/v5.0.1\">\n\t<p> Fix a possible overflow and crash in the ARP analyzer\n\twhen receiving a specially crafted packet. Due to the\n\tpossibility of this happening with packets received from\n\tthe network, this is a potential DoS vulnerability. </p>\n\t<p> Fix a possible overflow and crash in the Modbus analyzer\n\twhen receiving a specially crafted packet. Due to the\n\tpossibility of this happening with packets received from\n\tthe network, this is a potential DoS vulnerability. </p>\n\t<p> Fix two possible crashes when converting IP headers for\n\toutput via the raw_packet event. Due to the possibility of\n\tthis happening with packets received from the network, this\n\tis a potential DoS vulnerability. Note that the raw_packet\n\tevent is not enabled by default so these are likely\n\tlow-severity issues. </p>\n\t<p> Fix an abort related to an error related to the ordering\n\tof record fields when processing DNS EDNS headers via events.\n\tDue to the possibility of this happening with packets\n\treceived from the network, this is a potential DoS\n\tvulnerability.  Note that the dns_EDNS events are not\n\timplemented by default so this is likely a low-severity\n\tissue. </p>\n\t</blockquote>\n      "
-  },
-  "references": {
-    "url": [
-      "https://github.com/zeek/zeek/releases/tag/v5.0.1"
-    ]
-  },
-  "dates": {
-    "discovery": "2022-08-23",
-    "entry": "2022-08-26"
-  }
+	"vid": "3110b29e-c82d-4287-9f6c-db82bb883b1e",
+	"topic": "zeek -- potential DoS vulnerabilities",
+	"affects": [
+		{
+			"name": [
+				"zeek"
+			],
+			"range": [
+				{
+					"lt": "5.0.1"
+				}
+			]
+		}
+	],
+	"description": {
+		"xmlns": "http://www.w3.org/1999/xhtml",
+		"text": "\n\t<p>Tim Wojtulewicz of Corelight reports:</p>\n\t<blockquote cite=\"https://github.com/zeek/zeek/releases/tag/v5.0.1\">\n\t<p> Fix a possible overflow and crash in the ARP analyzer\n\twhen receiving a specially crafted packet. Due to the\n\tpossibility of this happening with packets received from\n\tthe network, this is a potential DoS vulnerability. </p>\n\t<p> Fix a possible overflow and crash in the Modbus analyzer\n\twhen receiving a specially crafted packet. Due to the\n\tpossibility of this happening with packets received from\n\tthe network, this is a potential DoS vulnerability. </p>\n\t<p> Fix two possible crashes when converting IP headers for\n\toutput via the raw_packet event. Due to the possibility of\n\tthis happening with packets received from the network, this\n\tis a potential DoS vulnerability. Note that the raw_packet\n\tevent is not enabled by default so these are likely\n\tlow-severity issues. </p>\n\t<p> Fix an abort related to an error related to the ordering\n\tof record fields when processing DNS EDNS headers via events.\n\tDue to the possibility of this happening with packets\n\treceived from the network, this is a potential DoS\n\tvulnerability.  Note that the dns_EDNS events are not\n\timplemented by default so this is likely a low-severity\n\tissue. </p>\n\t</blockquote>\n      "
+	},
+	"references": {
+		"url": [
+			"https://github.com/zeek/zeek/releases/tag/v5.0.1"
+		]
+	},
+	"dates": {
+		"discovery": "2022-08-23",
+		"entry": "2022-08-26"
+	}
 }

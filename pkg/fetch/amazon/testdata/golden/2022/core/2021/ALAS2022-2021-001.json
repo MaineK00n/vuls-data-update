@@ -1,69 +1,69 @@
 {
-  "ID": "ALAS2022-2021-001",
-  "Author": "linux-security@amazon.com",
-  "From": "linux-security@amazon.com",
-  "Status": "final",
-  "Type": "security",
-  "Version": "1.4",
-  "Title": "Amazon Linux 2022 - ALAS2022-2021-001: medium priority package update for vim",
-  "Issued": {
-    "Date": "2021-10-26 02:25"
-  },
-  "Updated": {
-    "Date": "2021-10-27 00:24"
-  },
-  "Severity": "medium",
-  "Description": "Package updates are available for Amazon Linux 2022 that fix the following vulnerabilities:\nCVE-2021-3875:\n\tThere's an out-of-bounds read flaw in Vim's ex_docmd.c. An attacker who is capable of tricking a user into opening a specially crafted file could trigger an out-of-bounds read on a memmove operation, potentially causing an impact to application availability.\n2014661: CVE-2021-3875 vim: heap-based buffer overflow\n\nCVE-2021-3872:\n\tAn out-of-bounds write flaw was found in vim's drawscreen.c win_redr_status() function. This flaw allows an attacker to trick a user to open a crafted file with specific arguments in vim, triggering an out-of-bounds write. The highest threat from this vulnerability is to confidentiality, integrity, and system availability.\n2016056: CVE-2021-3872 vim: heap-based buffer overflow in win_redr_status() drawscreen.c\n\nCVE-2021-3796:\n\tA use-after-free vulnerability in vim could allow an attacker to input a specially crafted file leading to memory corruption and a potentially exploitable crash or code execution. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.\n2004728: CVE-2021-3796 vim: use-after-free in nv_replace() in normal.c\n\nCVE-2021-3778:\n\tA flaw was found in vim. A possible heap-based buffer overflow could allow an attacker to input a specially crafted file leading to a crash or code execution. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.\n2004621: CVE-2021-3778 vim: heap-based buffer overflow in utf_ptr2char() in mbyte.c\n",
-  "References": {
-    "Reference": [
-      {
-        "Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778",
-        "ID": "CVE-2021-3778",
-        "Title": "",
-        "Type": "cve"
-      },
-      {
-        "Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796",
-        "ID": "CVE-2021-3796",
-        "Title": "",
-        "Type": "cve"
-      },
-      {
-        "Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872",
-        "ID": "CVE-2021-3872",
-        "Title": "",
-        "Type": "cve"
-      },
-      {
-        "Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875",
-        "ID": "CVE-2021-3875",
-        "Title": "",
-        "Type": "cve"
-      }
-    ]
-  },
-  "Pkglist": {
-    "Collection": {
-      "Short": "amazon-linux-2022",
-      "Name": "Amazon Linux 2022",
-      "Package": [
-        {
-          "Arch": "x86_64",
-          "Epoch": "2",
-          "Name": "vim-X11-debuginfo",
-          "Release": "1.amzn2022",
-          "Version": "8.2.3512",
-          "Filename": "Packages/vim-X11-debuginfo-8.2.3512-1.amzn2022.x86_64.rpm"
-        },
-        {
-          "Arch": "x86_64",
-          "Epoch": "2",
-          "Name": "vim-common-debuginfo",
-          "Release": "1.amzn2022",
-          "Version": "8.2.3512",
-          "Filename": "Packages/vim-common-debuginfo-8.2.3512-1.amzn2022.x86_64.rpm"
-        }
-      ]
-    }
-  }
+	"ID": "ALAS2022-2021-001",
+	"Author": "linux-security@amazon.com",
+	"From": "linux-security@amazon.com",
+	"Status": "final",
+	"Type": "security",
+	"Version": "1.4",
+	"Title": "Amazon Linux 2022 - ALAS2022-2021-001: medium priority package update for vim",
+	"Issued": {
+		"Date": "2021-10-26 02:25"
+	},
+	"Updated": {
+		"Date": "2021-10-27 00:24"
+	},
+	"Severity": "medium",
+	"Description": "Package updates are available for Amazon Linux 2022 that fix the following vulnerabilities:\nCVE-2021-3875:\n\tThere's an out-of-bounds read flaw in Vim's ex_docmd.c. An attacker who is capable of tricking a user into opening a specially crafted file could trigger an out-of-bounds read on a memmove operation, potentially causing an impact to application availability.\n2014661: CVE-2021-3875 vim: heap-based buffer overflow\n\nCVE-2021-3872:\n\tAn out-of-bounds write flaw was found in vim's drawscreen.c win_redr_status() function. This flaw allows an attacker to trick a user to open a crafted file with specific arguments in vim, triggering an out-of-bounds write. The highest threat from this vulnerability is to confidentiality, integrity, and system availability.\n2016056: CVE-2021-3872 vim: heap-based buffer overflow in win_redr_status() drawscreen.c\n\nCVE-2021-3796:\n\tA use-after-free vulnerability in vim could allow an attacker to input a specially crafted file leading to memory corruption and a potentially exploitable crash or code execution. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.\n2004728: CVE-2021-3796 vim: use-after-free in nv_replace() in normal.c\n\nCVE-2021-3778:\n\tA flaw was found in vim. A possible heap-based buffer overflow could allow an attacker to input a specially crafted file leading to a crash or code execution. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.\n2004621: CVE-2021-3778 vim: heap-based buffer overflow in utf_ptr2char() in mbyte.c\n",
+	"References": {
+		"Reference": [
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778",
+				"ID": "CVE-2021-3778",
+				"Title": "",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796",
+				"ID": "CVE-2021-3796",
+				"Title": "",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872",
+				"ID": "CVE-2021-3872",
+				"Title": "",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875",
+				"ID": "CVE-2021-3875",
+				"Title": "",
+				"Type": "cve"
+			}
+		]
+	},
+	"Pkglist": {
+		"Collection": {
+			"Short": "amazon-linux-2022",
+			"Name": "Amazon Linux 2022",
+			"Package": [
+				{
+					"Arch": "x86_64",
+					"Epoch": "2",
+					"Name": "vim-X11-debuginfo",
+					"Release": "1.amzn2022",
+					"Version": "8.2.3512",
+					"Filename": "Packages/vim-X11-debuginfo-8.2.3512-1.amzn2022.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "2",
+					"Name": "vim-common-debuginfo",
+					"Release": "1.amzn2022",
+					"Version": "8.2.3512",
+					"Filename": "Packages/vim-common-debuginfo-8.2.3512-1.amzn2022.x86_64.rpm"
+				}
+			]
+		}
+	}
 }

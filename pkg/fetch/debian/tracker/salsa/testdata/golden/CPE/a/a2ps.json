@@ -1,5 +1,5 @@
 {
-  "line": "a2ps;cpe:/a:gnu:a2ps",
-  "package": "a2ps",
-  "cpe": "cpe:/a:gnu:a2ps"
+	"line": "a2ps;cpe:/a:gnu:a2ps",
+	"package": "a2ps",
+	"cpe": "cpe:/a:gnu:a2ps"
 }

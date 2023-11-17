@@ -1,63 +1,63 @@
 {
-  "id": "oval:org.opensuse.security:def:20022443",
-  "version": "1",
-  "class": "vulnerability",
-  "metadata": {
-    "Title": "CVE-2002-2443",
-    "affected": {
-      "family": "unix",
-      "Platform": [
-        "openSUSE 13.2"
-      ]
-    },
-    "reference": [
-      {
-        "ref_id": "CVE-2002-2443",
-        "ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-2443",
-        "source": "CVE"
-      }
-    ],
-    "Description": "\n    schpw.c in the kpasswd service in kadmind in MIT Kerberos 5 (aka krb5) before 1.11.3 does not properly validate UDP packets before sending responses, which allows remote attackers to cause a denial of service (CPU and bandwidth consumption) via a forged packet that triggers a communication loop, as demonstrated by krb_pingpong.nasl, a related issue to CVE-1999-0103.\n    ",
-    "advisory": {
-      "Severity": "",
-      "cve": {},
-      "issued": {},
-      "updated": {},
-      "affected_cpe_list": {
-        "Cpe": null
-      }
-    }
-  },
-  "criteria": {
-    "operator": "AND",
-    "criterias": [
-      {
-        "operator": "OR",
-        "criterions": [
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009137331",
-            "comment": "krb5-1.12.2-3.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009137332",
-            "comment": "krb5-32bit-1.12.2-3.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009137333",
-            "comment": "krb5-client-1.12.2-3.1 is installed"
-          },
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009137334",
-            "comment": "krb5-devel-1.12.2-3.1 is installed"
-          }
-        ]
-      }
-    ],
-    "criterions": [
-      {
-        "test_ref": "oval:org.opensuse.security:tst:2009117729",
-        "comment": "openSUSE 13.2 is installed"
-      }
-    ]
-  }
+	"id": "oval:org.opensuse.security:def:20022443",
+	"version": "1",
+	"class": "vulnerability",
+	"metadata": {
+		"Title": "CVE-2002-2443",
+		"affected": {
+			"family": "unix",
+			"Platform": [
+				"openSUSE 13.2"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "CVE-2002-2443",
+				"ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-2443",
+				"source": "CVE"
+			}
+		],
+		"Description": "\n    schpw.c in the kpasswd service in kadmind in MIT Kerberos 5 (aka krb5) before 1.11.3 does not properly validate UDP packets before sending responses, which allows remote attackers to cause a denial of service (CPU and bandwidth consumption) via a forged packet that triggers a communication loop, as demonstrated by krb_pingpong.nasl, a related issue to CVE-1999-0103.\n    ",
+		"advisory": {
+			"Severity": "",
+			"cve": {},
+			"issued": {},
+			"updated": {},
+			"affected_cpe_list": {
+				"Cpe": null
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009137331",
+						"comment": "krb5-1.12.2-3.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009137332",
+						"comment": "krb5-32bit-1.12.2-3.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009137333",
+						"comment": "krb5-client-1.12.2-3.1 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009137334",
+						"comment": "krb5-devel-1.12.2-3.1 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.opensuse.security:tst:2009117729",
+				"comment": "openSUSE 13.2 is installed"
+			}
+		]
+	}
 }

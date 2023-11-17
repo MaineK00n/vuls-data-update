@@ -1,13 +1,13 @@
 {
-  "id": "oval:com.oracle.elsa:tst:20070057016",
-  "version": "501",
-  "comment": "bind-utils is signed with the Oracle Linux 5 key",
-  "check": "at least one",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "object": {
-    "object_ref": "oval:com.oracle.elsa:obj:20070057008"
-  },
-  "state": {
-    "state_ref": "oval:com.oracle.elsa:ste:20070057001"
-  }
+	"id": "oval:com.oracle.elsa:tst:20070057016",
+	"version": "501",
+	"comment": "bind-utils is signed with the Oracle Linux 5 key",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20070057008"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20070057001"
+	}
 }

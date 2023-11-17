@@ -1,32 +1,32 @@
 {
-  "id": "oval:com.redhat.cve:obj:20188014002",
-  "attr_version": "636",
-  "behaviors": {
-    "noconfigfiles": "true",
-    "noghostfiles": "true",
-    "nogroup": "true",
-    "nolinkto": "true",
-    "nomd5": "true",
-    "nomode": "true",
-    "nomtime": "true",
-    "nordev": "true",
-    "nosize": "true",
-    "nouser": "true"
-  },
-  "name": {
-    "operation": "pattern match"
-  },
-  "epoch": {
-    "operation": "pattern match"
-  },
-  "version": {
-    "operation": "pattern match"
-  },
-  "release": {
-    "operation": "pattern match"
-  },
-  "arch": {
-    "operation": "pattern match"
-  },
-  "Filepath": "/etc/redhat-release"
+	"id": "oval:com.redhat.cve:obj:20188014002",
+	"attr_version": "636",
+	"behaviors": {
+		"noconfigfiles": "true",
+		"noghostfiles": "true",
+		"nogroup": "true",
+		"nolinkto": "true",
+		"nomd5": "true",
+		"nomode": "true",
+		"nomtime": "true",
+		"nordev": "true",
+		"nosize": "true",
+		"nouser": "true"
+	},
+	"name": {
+		"operation": "pattern match"
+	},
+	"epoch": {
+		"operation": "pattern match"
+	},
+	"version": {
+		"operation": "pattern match"
+	},
+	"release": {
+		"operation": "pattern match"
+	},
+	"arch": {
+		"operation": "pattern match"
+	},
+	"Filepath": "/etc/redhat-release"
 }

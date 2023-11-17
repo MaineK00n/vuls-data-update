@@ -1,25 +1,25 @@
 {
-  "deprecated": false,
-  "cpeName": "cpe:2.3:a:phpgurukul:bank_locker_management_system:1.0:*:*:*:*:*:*:*",
-  "cpeNameId": "4B5C21D1-36FE-4216-AD06-18762A2E3359",
-  "created": "2023-11-14T22:28:16.360",
-  "lastModified": "2023-11-14T22:28:16.360",
-  "titles": [
-    {
-      "title": "PHPGurukul Bank Locker Management System 1.0",
-      "lang": "en"
-    }
-  ],
-  "refs": [
-    {
-      "ref": "https://products.phpgurukul.com/product/bank-locker-management-system-project-report/",
-      "type": "Product"
-    }
-  ],
-  "deprecates": [
-    {
-      "cpeName": "cpe:2.3:a:bank_locker_management_system_project:bank_locker_management_system:1.0:*:*:*:*:*:*:*",
-      "cpeNameId": "11DD66EB-FD18-4348-AB06-E803F6446594"
-    }
-  ]
+	"deprecated": false,
+	"cpeName": "cpe:2.3:a:phpgurukul:bank_locker_management_system:1.0:*:*:*:*:*:*:*",
+	"cpeNameId": "4B5C21D1-36FE-4216-AD06-18762A2E3359",
+	"created": "2023-11-14T22:28:16.360",
+	"lastModified": "2023-11-14T22:28:16.360",
+	"titles": [
+		{
+			"title": "PHPGurukul Bank Locker Management System 1.0",
+			"lang": "en"
+		}
+	],
+	"refs": [
+		{
+			"ref": "https://products.phpgurukul.com/product/bank-locker-management-system-project-report/",
+			"type": "Product"
+		}
+	],
+	"deprecates": [
+		{
+			"cpeName": "cpe:2.3:a:bank_locker_management_system_project:bank_locker_management_system:1.0:*:*:*:*:*:*:*",
+			"cpeNameId": "11DD66EB-FD18-4348-AB06-E803F6446594"
+		}
+	]
 }

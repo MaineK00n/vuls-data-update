@@ -1,12 +1,12 @@
 {
-  "check": "at least one",
-  "comment": "ricci is signed with Red Hat redhatrelease key",
-  "id": "oval:com.redhat.rhba:tst:20070331004",
-  "version": "635",
-  "object": {
-    "object_ref": "oval:com.redhat.rhba:obj:20070331002"
-  },
-  "state": {
-    "state_ref": "oval:com.redhat.rhba:ste:20070331002"
-  }
+	"check": "at least one",
+	"comment": "ricci is signed with Red Hat redhatrelease key",
+	"id": "oval:com.redhat.rhba:tst:20070331004",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20070331002"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20070331002"
+	}
 }

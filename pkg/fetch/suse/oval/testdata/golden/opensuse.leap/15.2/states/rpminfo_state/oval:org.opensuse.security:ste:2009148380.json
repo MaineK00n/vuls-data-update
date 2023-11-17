@@ -1,17 +1,17 @@
 {
-  "id": "oval:org.opensuse.security:ste:2009148380",
-  "attr_version": "1",
-  "xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-  "version": {},
-  "evr": {
-    "text": "0:0.98-lp152.4.3.1",
-    "datatype": "evr_string",
-    "operation": "less than"
-  },
-  "signature_keyid": {},
-  "arch": {
-    "text": "(i586|x86_64)",
-    "datatype": "string",
-    "operation": "pattern match"
-  }
+	"id": "oval:org.opensuse.security:ste:2009148380",
+	"attr_version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"version": {},
+	"evr": {
+		"text": "0:0.98-lp152.4.3.1",
+		"datatype": "evr_string",
+		"operation": "less than"
+	},
+	"signature_keyid": {},
+	"arch": {
+		"text": "(i586|x86_64)",
+		"datatype": "string",
+		"operation": "pattern match"
+	}
 }

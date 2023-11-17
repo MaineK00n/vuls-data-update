@@ -1,13 +1,13 @@
 {
-  "id": "oval:com.ubuntu.jammy:var:202219200000000",
-  "version": "1",
-  "datatype": "string",
-  "comment": "'gst-plugins-good1.0' package binaries",
-  "Value": [
-    "gstreamer1.0-gtk3",
-    "gstreamer1.0-plugins-good",
-    "gstreamer1.0-pulseaudio",
-    "gstreamer1.0-qt5",
-    "libgstreamer-plugins-good1.0-0"
-  ]
+	"id": "oval:com.ubuntu.jammy:var:202219200000000",
+	"version": "1",
+	"datatype": "string",
+	"comment": "'gst-plugins-good1.0' package binaries",
+	"Value": [
+		"gstreamer1.0-gtk3",
+		"gstreamer1.0-plugins-good",
+		"gstreamer1.0-pulseaudio",
+		"gstreamer1.0-qt5",
+		"libgstreamer-plugins-good1.0-0"
+	]
 }

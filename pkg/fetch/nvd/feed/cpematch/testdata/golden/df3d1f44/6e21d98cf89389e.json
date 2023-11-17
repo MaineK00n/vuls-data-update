@@ -1,28 +1,28 @@
 [
-  {
-    "cpe23Uri": "cpe:2.3:a:google:chrome:*:*:*:*:*:*:*:*",
-    "cpe_name": [
-      {
-        "cpe23Uri": "cpe:2.3:a:google:chrome:-:*:*:*:*:*:*:*"
-      },
-      {
-        "cpe23Uri": "cpe:2.3:a:google:chrome:0.1.38.1:*:*:*:*:*:*:*"
-      }
-    ],
-    "versionEndExcluding": "91.0.4472.164"
-  },
-  {
-    "cpe23Uri": "cpe:2.3:a:google:chrome:*:*:*:*:*:*:*:*",
-    "cpe_name": [
-      {
-        "cpe23Uri": "cpe:2.3:a:google:chrome:-:*:*:*:*:*:*:*"
-      },
-      {
-        "cpe23Uri": "cpe:2.3:a:google:chrome:0.1.38.1:*:*:*:*:*:*:*"
-      },
-      {
-        "cpe23Uri": "cpe:2.3:a:google:chrome:0.1.38.2:*:*:*:*:*:*:*"
-      }
-    ]
-  }
+	{
+		"cpe23Uri": "cpe:2.3:a:google:chrome:*:*:*:*:*:*:*:*",
+		"cpe_name": [
+			{
+				"cpe23Uri": "cpe:2.3:a:google:chrome:-:*:*:*:*:*:*:*"
+			},
+			{
+				"cpe23Uri": "cpe:2.3:a:google:chrome:0.1.38.1:*:*:*:*:*:*:*"
+			}
+		],
+		"versionEndExcluding": "91.0.4472.164"
+	},
+	{
+		"cpe23Uri": "cpe:2.3:a:google:chrome:*:*:*:*:*:*:*:*",
+		"cpe_name": [
+			{
+				"cpe23Uri": "cpe:2.3:a:google:chrome:-:*:*:*:*:*:*:*"
+			},
+			{
+				"cpe23Uri": "cpe:2.3:a:google:chrome:0.1.38.1:*:*:*:*:*:*:*"
+			},
+			{
+				"cpe23Uri": "cpe:2.3:a:google:chrome:0.1.38.2:*:*:*:*:*:*:*"
+			}
+		]
+	}
 ]

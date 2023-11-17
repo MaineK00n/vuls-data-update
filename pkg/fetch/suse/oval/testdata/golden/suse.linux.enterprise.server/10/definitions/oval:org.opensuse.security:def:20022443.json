@@ -1,134 +1,134 @@
 {
-  "id": "oval:org.opensuse.security:def:20022443",
-  "version": "1",
-  "class": "vulnerability",
-  "metadata": {
-    "Title": "CVE-2002-2443",
-    "affected": {
-      "family": "unix",
-      "Platform": [
-        "SLE SDK 10 SP4 for IBM iSeries and IBM pSeries",
-        "SLE SDK 10 SP4 for IBM zSeries",
-        "SLE SDK 10 SP4 for IPF",
-        "SLE SDK 10 SP4 for X86-64",
-        "SLE SDK 10 SP4 for x86",
-        "SUSE Linux Enterprise Server 10 SP4 for AMD64 and Intel EM64T",
-        "SUSE Linux Enterprise Server 10 SP4 for IBM POWER",
-        "SUSE Linux Enterprise Server 10 SP4 for IBM zSeries 64bit",
-        "SUSE Linux Enterprise Server 10 SP4 for IPF",
-        "SUSE Linux Enterprise Server 10 SP4 for x86",
-        "SUSE Linux Enterprise Teradata 10 SP3 for AMD64 and Intel EM64T"
-      ]
-    },
-    "reference": [
-      {
-        "ref_id": "CVE-2002-2443",
-        "ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-2443",
-        "source": "CVE"
-      }
-    ],
-    "Description": "\n\tschpw.c in the kpasswd service in kadmind in MIT Kerberos 5 (aka krb5) before 1.11.3 does not properly validate UDP packets before sending responses, which allows remote attackers to cause a denial of service (CPU and bandwidth consumption) via a forged packet that triggers a communication loop, as demonstrated by krb_pingpong.nasl, a related issue to CVE-1999-0103.\n\t",
-    "advisory": {
-      "Severity": "",
-      "cve": {},
-      "issued": {},
-      "updated": {},
-      "affected_cpe_list": {
-        "Cpe": null
-      }
-    }
-  },
-  "criteria": {
-    "operator": "OR",
-    "criterias": [
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterions": [
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077611",
-                "comment": "krb5-32bit less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077619",
-                "comment": "krb5-64bit less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077620",
-                "comment": "krb5-apps-clients less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077621",
-                "comment": "krb5-apps-servers less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077612",
-                "comment": "krb5-client less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077613",
-                "comment": "krb5-devel-32bit less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077622",
-                "comment": "krb5-devel-64bit less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077614",
-                "comment": "krb5-devel less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077623",
-                "comment": "krb5-server less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077624",
-                "comment": "krb5-x86 less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077615",
-                "comment": "krb5 less than 1.4.3-19.49.53.1"
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009036679",
-            "comment": "sles10-sp4 is installed"
-          }
-        ]
-      },
-      {
-        "operator": "AND",
-        "criterias": [
-          {
-            "operator": "OR",
-            "criterions": [
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077620",
-                "comment": "krb5-apps-clients less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077621",
-                "comment": "krb5-apps-servers less than 1.4.3-19.49.53.1"
-              },
-              {
-                "test_ref": "oval:org.opensuse.security:tst:2009077623",
-                "comment": "krb5-server less than 1.4.3-19.49.53.1"
-              }
-            ]
-          }
-        ],
-        "criterions": [
-          {
-            "test_ref": "oval:org.opensuse.security:tst:2009036679",
-            "comment": "sles10-sp4-sdk is installed"
-          }
-        ]
-      }
-    ]
-  }
+	"id": "oval:org.opensuse.security:def:20022443",
+	"version": "1",
+	"class": "vulnerability",
+	"metadata": {
+		"Title": "CVE-2002-2443",
+		"affected": {
+			"family": "unix",
+			"Platform": [
+				"SLE SDK 10 SP4 for IBM iSeries and IBM pSeries",
+				"SLE SDK 10 SP4 for IBM zSeries",
+				"SLE SDK 10 SP4 for IPF",
+				"SLE SDK 10 SP4 for X86-64",
+				"SLE SDK 10 SP4 for x86",
+				"SUSE Linux Enterprise Server 10 SP4 for AMD64 and Intel EM64T",
+				"SUSE Linux Enterprise Server 10 SP4 for IBM POWER",
+				"SUSE Linux Enterprise Server 10 SP4 for IBM zSeries 64bit",
+				"SUSE Linux Enterprise Server 10 SP4 for IPF",
+				"SUSE Linux Enterprise Server 10 SP4 for x86",
+				"SUSE Linux Enterprise Teradata 10 SP3 for AMD64 and Intel EM64T"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "CVE-2002-2443",
+				"ref_url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-2443",
+				"source": "CVE"
+			}
+		],
+		"Description": "\n\tschpw.c in the kpasswd service in kadmind in MIT Kerberos 5 (aka krb5) before 1.11.3 does not properly validate UDP packets before sending responses, which allows remote attackers to cause a denial of service (CPU and bandwidth consumption) via a forged packet that triggers a communication loop, as demonstrated by krb_pingpong.nasl, a related issue to CVE-1999-0103.\n\t",
+		"advisory": {
+			"Severity": "",
+			"cve": {},
+			"issued": {},
+			"updated": {},
+			"affected_cpe_list": {
+				"Cpe": null
+			}
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077611",
+								"comment": "krb5-32bit less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077619",
+								"comment": "krb5-64bit less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077620",
+								"comment": "krb5-apps-clients less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077621",
+								"comment": "krb5-apps-servers less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077612",
+								"comment": "krb5-client less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077613",
+								"comment": "krb5-devel-32bit less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077622",
+								"comment": "krb5-devel-64bit less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077614",
+								"comment": "krb5-devel less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077623",
+								"comment": "krb5-server less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077624",
+								"comment": "krb5-x86 less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077615",
+								"comment": "krb5 less than 1.4.3-19.49.53.1"
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009036679",
+						"comment": "sles10-sp4 is installed"
+					}
+				]
+			},
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077620",
+								"comment": "krb5-apps-clients less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077621",
+								"comment": "krb5-apps-servers less than 1.4.3-19.49.53.1"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009077623",
+								"comment": "krb5-server less than 1.4.3-19.49.53.1"
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009036679",
+						"comment": "sles10-sp4-sdk is installed"
+					}
+				]
+			}
+		]
+	}
 }
