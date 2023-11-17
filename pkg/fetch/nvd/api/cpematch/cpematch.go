@@ -219,7 +219,6 @@ func Fetch(opts ...Option) error {
 		dv := hash32([]byte("vendor:product"))
 
 		for _, m := range response.MatchData {
-
 			d := dv
 
 			wfn, err := naming.UnbindFS(m.MatchCriteria.Criteria)
