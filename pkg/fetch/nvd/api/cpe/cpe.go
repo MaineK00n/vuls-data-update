@@ -255,9 +255,3 @@ func hash32(message []byte) uint32 {
 	h.Write(message)
 	return h.Sum32()
 }
-
-func hash64(message []byte) uint64 {
-	h := fnv.New64()
-	h.Write(message)
-	return h.Sum64()
-}
