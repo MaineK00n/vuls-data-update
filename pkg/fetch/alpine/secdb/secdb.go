@@ -1,9 +1,10 @@
 package secdb
 
 import (
-	"bytes"
 	"encoding/json"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
@@ -84,14 +85,37 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "walk alpine linux %s", r)
 		}
 
-		advs, err := options.fetchAdvisory(r, files)
-		if err != nil {
-			return errors.Wrapf(err, "fetch alpine linux %s advisory %q", r, files)
-		}
+		for _, f := range files {
+			u, err := url.JoinPath(options.baseURL, r, f)
+			if err != nil {
+				return errors.Wrap(err, "join url path")
+			}
 
-		for filename, adv := range advs {
-			if err := util.Write(filepath.Join(options.dir, strings.TrimPrefix(r, "v"), filename), adv); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.TrimPrefix(r, "v"), filename))
+			a, err := func() (*Advisory, error) {
+				resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+				if err != nil {
+					return nil, errors.Wrapf(err, "fetch alpine linux %s %s", r, f)
+				}
+				defer resp.Body.Close()
+
+				if resp.StatusCode != http.StatusOK {
+					_, _ = io.Copy(io.Discard, resp.Body)
+					return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+				}
+
+				var a Advisory
+				if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
+					return nil, errors.Wrap(err, "decode json")
+				}
+
+				return &a, nil
+			}()
+			if err != nil {
+				return errors.Wrapf(err, "fetch alpine linux %s %s", r, f)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, strings.TrimPrefix(r, "v"), f), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.TrimPrefix(r, "v"), f))
 			}
 		}
 	}
@@ -99,12 +123,18 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() ([]string, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
+	defer resp.Body.Close()
 
-	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse as html")
 	}
@@ -126,12 +156,18 @@ func (opts options) walkDistroVersion(release string) ([]string, error) {
 		return nil, errors.Wrap(err, "join url path")
 	}
 
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch alpine linux %s index of", release)
 	}
+	defer resp.Body.Close()
 
-	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse as html")
 	}
@@ -145,26 +181,4 @@ func (opts options) walkDistroVersion(release string) ([]string, error) {
 		files = append(files, txt)
 	})
 	return files, nil
-}
-
-func (opts options) fetchAdvisory(release string, files []string) (map[string]Advisory, error) {
-	advs := make(map[string]Advisory, 2)
-	for _, f := range files {
-		u, err := url.JoinPath(opts.baseURL, release, f)
-		if err != nil {
-			return nil, errors.Wrap(err, "join url path")
-		}
-
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
-		if err != nil {
-			return nil, errors.Wrapf(err, "fetch alpine linux %s %s", release, f)
-		}
-
-		var a Advisory
-		if err := json.Unmarshal(bs, &a); err != nil {
-			return nil, errors.Wrapf(err, "unmarshal alpine linux %s %s", release, f)
-		}
-		advs[f] = a
-	}
-	return advs, nil
 }

@@ -1,6 +1,8 @@
 package epel
 
 import (
+	"io"
+	"net/http"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -65,9 +67,15 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
-	_, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch updateinfo data")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
 	return nil

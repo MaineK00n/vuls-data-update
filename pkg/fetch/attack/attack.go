@@ -3,7 +3,9 @@ package attack
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -83,14 +85,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch MITRE ATT&CK Enterprise")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.Enterprise)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.Enterprise)
 	if err != nil {
 		return errors.Wrap(err, "fetch attack enterprise")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var enterprise enterprise
-	if err := json.Unmarshal(bs, &enterprise); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&enterprise); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	bar := pb.StartNew(len(enterprise.Objects))
@@ -103,14 +111,20 @@ func Fetch(opts ...Option) error {
 	bar.Finish()
 
 	log.Printf("[INFO] Fetch MITRE ATT&CK ICS")
-	bs, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.ICS)
+	resp, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.ICS)
 	if err != nil {
 		return errors.Wrap(err, "fetch attack ics")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var ics ics
-	if err := json.Unmarshal(bs, &ics); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&ics); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	bar = pb.StartNew(len(ics.Objects))
@@ -123,14 +137,20 @@ func Fetch(opts ...Option) error {
 	bar.Finish()
 
 	log.Printf("[INFO] Fetch MITRE ATT&CK Mobile")
-	bs, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.Mobile)
+	resp, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL.Mobile)
 	if err != nil {
 		return errors.Wrap(err, "fetch attack mobile")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var mobile mobile
-	if err := json.Unmarshal(bs, &ics); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&mobile); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	bar = pb.StartNew(len(mobile.Objects))

@@ -3,7 +3,9 @@ package errata
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"time"
 
@@ -80,22 +82,35 @@ func Fetch(opts ...Option) error {
 
 	for v, url := range options.urls {
 		log.Printf("[INFO] Fetch AlmaLinux %s", v)
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(url)
-		if err != nil {
-			return errors.Wrapf(err, "fetch almalinux %s errata", v)
-		}
-
-		var root root
-		if err := json.Unmarshal(bs, &root); err != nil {
-			return errors.Wrapf(err, "unmarshal almalinux %s", v)
-		}
-
-		var advs []Erratum
-		for _, d := range root.Data {
-			if d.Type != "security" {
-				continue
+		advs, err := func() ([]Erratum, error) {
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(url)
+			if err != nil {
+				return nil, errors.Wrapf(err, "fetch almalinux %s errata", v)
 			}
-			advs = append(advs, d)
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			var root root
+			if err := json.NewDecoder(resp.Body).Decode(&root); err != nil {
+				return nil, errors.Wrapf(err, "decode almalinux %s", v)
+			}
+
+			var advs []Erratum
+			for _, d := range root.Data {
+				if d.Type != "security" {
+					continue
+				}
+				advs = append(advs, d)
+			}
+
+			return advs, nil
+		}()
+		if err != nil {
+			return errors.Wrapf(err, "fetch almalinux %s", v)
 		}
 
 		bar := pb.StartNew(len(advs))

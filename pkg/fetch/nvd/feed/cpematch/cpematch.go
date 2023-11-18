@@ -1,12 +1,13 @@
 package cpematch
 
 import (
-	"bytes"
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -106,12 +107,18 @@ func (opts options) fetch() (map[string][]CpeMatchItem, error) {
 	cpes := map[string][]CpeMatchItem{}
 
 	log.Printf(`[INFO] Fetch NVD CPE Match`)
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cpe match feed")
 	}
+	defer resp.Body.Close()
 
-	r, err := gzip.NewReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	r, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "open cpe match as gzip")
 	}

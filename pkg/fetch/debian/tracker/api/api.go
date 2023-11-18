@@ -3,7 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -74,14 +76,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Debian Security Tracker API")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var as advisories
-	if err := json.Unmarshal(bs, &as); err != nil {
-		return errors.Wrap(err, "unmarshal advisory")
+	if err := json.NewDecoder(resp.Body).Decode(&as); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	m := map[string]map[string]Advisory{}

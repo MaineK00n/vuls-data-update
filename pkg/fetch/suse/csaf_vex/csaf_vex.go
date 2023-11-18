@@ -1,10 +1,11 @@
 package csaf_vex
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"slices"
@@ -113,10 +114,17 @@ func Fetch(years []string, opts ...Option) error {
 		us = append(us, u)
 	}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp utilhttp.Response) error {
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		}
+
 		var adv CSAF
-		if err := json.Unmarshal(resp.Body, &adv); err != nil {
-			return errors.Wrap(err, "json unmarshal")
+		if err := json.NewDecoder(resp.Body).Decode(&adv); err != nil {
+			return errors.Wrap(err, "decode json")
 		}
 
 		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
@@ -142,12 +150,18 @@ func Fetch(years []string, opts ...Option) error {
 }
 
 func (opts options) walkIndexOf(years []string) ([]string, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
+	defer resp.Body.Close()
 
-	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse as html")
 	}

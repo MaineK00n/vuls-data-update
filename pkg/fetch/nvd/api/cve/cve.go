@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -163,14 +164,23 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "full URL")
 	}
-	bs, err := c.Get(u, headerOption)
+
+	resp, err := c.Get(u, headerOption)
 	if err != nil {
 		return errors.Wrap(err, "preliminary API call")
 	}
-	var preliminary api20
-	if err := json.Unmarshal(bs, &preliminary); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
+
+	var preliminary api20
+	if err := json.NewDecoder(resp.Body).Decode(&preliminary); err != nil {
+		return errors.Wrap(err, "decode json")
+	}
+
 	totalResults := preliminary.TotalResults
 	preciselyPaged := (totalResults % options.resultsPerPage) == 0
 	pages := totalResults / options.resultsPerPage
@@ -188,10 +198,17 @@ func Fetch(opts ...Option) error {
 		us = append(us, url)
 	}
 
-	nextTask := func(resp utilhttp.Response) error {
+	if err := c.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		}
+
 		var response api20
-		if err := json.Unmarshal(resp.Body, &response); err != nil {
-			return errors.Wrap(err, "unmarshal json")
+		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+			return errors.Wrap(err, "decode json")
 		}
 
 		// Sanity check:
@@ -230,8 +247,7 @@ func Fetch(opts ...Option) error {
 			}
 		}
 		return nil
-	}
-	if err := c.PipelineGet(us, options.concurrency, options.wait, nextTask, headerOption); err != nil {
+	}, headerOption); err != nil {
 		return errors.Wrap(err, "pipeline get")
 	}
 	return nil

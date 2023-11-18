@@ -2,7 +2,9 @@ package repository2cpe
 
 import (
 	"encoding/json"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -67,14 +69,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Redhat Repository to CPE")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repositoryToCPEURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repositoryToCPEURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch repository to cpe")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var repo2cpe RepositoryToCPE
-	if err := json.Unmarshal(bs, &repo2cpe); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&repo2cpe); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "repository-to-cpe.json"), repo2cpe); err != nil {

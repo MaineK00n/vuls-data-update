@@ -1,11 +1,12 @@
 package oval
 
 import (
-	"bytes"
 	"compress/gzip"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path"
 	"path/filepath"
@@ -114,8 +115,15 @@ func Fetch(opts ...Option) error {
 		us = append(us, u)
 	}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp utilhttp.Response) error {
-		oval := path.Base(resp.URL)
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		}
+
+		oval := path.Base(resp.Request.URL.Path)
 
 		var osname, version string
 		switch {
@@ -138,17 +146,7 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, `unexpected ovalname. accepts: "<osname>.<version>.xml.gz", received: "%s"`, oval)
 		}
 
-		u, err := url.JoinPath(options.baseURL, oval)
-		if err != nil {
-			return errors.Wrap(err, "join url path")
-		}
-
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
-		if err != nil {
-			return errors.Wrap(err, "fetch oval")
-		}
-
-		r, err := gzip.NewReader(bytes.NewReader(bs))
+		r, err := gzip.NewReader(resp.Body)
 		if err != nil {
 			return errors.Wrap(err, "open oval as gzip")
 		}
@@ -192,12 +190,18 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() ([]string, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
+	defer resp.Body.Close()
 
-	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse as html")
 	}

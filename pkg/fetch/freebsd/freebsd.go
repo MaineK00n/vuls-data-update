@@ -1,11 +1,12 @@
 package freebsd
 
 import (
-	"bytes"
 	"compress/bzip2"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -73,14 +74,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch FreeBSD")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var vuxml vuxml
-	if err := xml.NewDecoder(bzip2.NewReader(bytes.NewReader(bs))).Decode(&vuxml); err != nil {
-		return errors.Wrap(err, "decode advisory")
+	if err := xml.NewDecoder(bzip2.NewReader(resp.Body)).Decode(&vuxml); err != nil {
+		return errors.Wrap(err, "decode xml")
 	}
 
 	bar := pb.StartNew(len(vuxml.Vuln))
