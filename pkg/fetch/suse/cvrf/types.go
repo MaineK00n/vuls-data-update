@@ -33,7 +33,8 @@ type CVRF struct {
 		Title string `xml:"Title,attr" json:"title,omitempty"`
 		Type  string `xml:"Type,attr" json:"type,omitempty"`
 	} `xml:"DocumentNotes>Note" json:"document_notes,omitempty"`
-	DocumentReferences []struct {
+	DocumentDistribution string `xml:"DocumentDistribution" json:"documentdistribution,omitempty"`
+	DocumentReferences   []struct {
 		Type        string `xml:"Type,attr" json:"type,omitempty"`
 		URL         string `xml:"URL" json:"url,omitempty"`
 		Description string `xml:"Description" json:"description,omitempty"`
@@ -86,6 +87,22 @@ type CVRF struct {
 				BaseScoreV3 string `xml:"BaseScoreV3" json:"base_score_v_3,omitempty"`
 				VectorV3    string `xml:"VectorV3" json:"vector_v_3,omitempty"`
 			} `xml:"ScoreSetV3" json:"score_set_v_3,omitempty"`
+			ScoreSet struct {
+				BaseScore string `xml:"BaseScore" json:"basescore,omitempty"`
+				Vector    string `xml:"Vector" json:"vector,omitempty"`
+			} `xml:"ScoreSet" json:"scoreset,omitempty"`
 		} `xml:"CVSSScoreSets" json:"cvss_score_sets,omitempty"`
+		Remediations []struct {
+			Type        string `xml:"Type,attr" json:"type,omitempty"`
+			Description struct {
+				Text string `xml:",chardata" json:"text,omitempty"`
+				Lang string `xml:"lang,attr" json:"lang,omitempty"`
+			} `xml:"Description" json:"description,omitempty"`
+			URL string `xml:"URL" json:"url,omitempty"`
+		} `xml:"Remediations>Remediation" json:"remediations,omitempty"`
+		References []struct {
+			URL         string `xml:"URL" json:"url,omitempty"`
+			Description string `xml:"Description" json:"description,omitempty"`
+		} `xml:"References>Reference" json:"references,omitempty"`
 	} `xml:"Vulnerability" json:"vulnerability,omitempty"`
 }

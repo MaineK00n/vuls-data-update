@@ -43,6 +43,7 @@
 			"type": "Legal Disclaimer"
 		}
 	],
+	"documentdistribution": "Copyright SUSE LLC under the Creative Commons License 4.0 with Attribution (CC-BY-4.0)",
 	"document_references": [
 		{
 			"type": "Self",
@@ -313,9 +314,33 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "4",
+					"vector_v_2": "AV:L/AC:L/Au:M/C:P/I:P/A:P"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "Please Install the update.",
+						"lang": "en"
+					},
+					"url": "https://lists.opensuse.org/opensuse-updates/2015-02/msg00028.html"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2015-0236.html",
+					"description": "CVE-2015-0236"
+				},
+				{
+					"url": "https://bugzilla.suse.com/914693",
+					"description": "SUSE Bug 914693"
+				}
+			]
 		}
 	]
 }

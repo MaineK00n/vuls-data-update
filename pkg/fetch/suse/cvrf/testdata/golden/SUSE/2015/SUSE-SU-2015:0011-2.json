@@ -48,6 +48,7 @@
 			"type": "Details"
 		}
 	],
+	"documentdistribution": "Copyright SUSE LLC under the Creative Commons License 4.0 with Attribution (CC-BY-4.0)",
 	"document_references": [
 		{
 			"type": "Self",
@@ -171,7 +172,8 @@
 						"name": "SUSE Linux Enterprise Server 11 SP2",
 						"full_product_name": {
 							"text": "SUSE Linux Enterprise Server 11 SP2",
-							"product_id": "SUSE Linux Enterprise Server 11 SP2"
+							"product_id": "SUSE Linux Enterprise Server 11 SP2",
+							"cpe": "cpe:/o:suse:suse_sles:11:sp2"
 						}
 					}
 				],
@@ -186,7 +188,8 @@
 						"name": "SUSE Linux Enterprise Server 11 SP2-LTSS",
 						"full_product_name": {
 							"text": "SUSE Linux Enterprise Server 11 SP2-LTSS",
-							"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+							"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+							"cpe": "cpe:/o:suse:suse_sles_ltss:11:sp2"
 						}
 					}
 				],
@@ -440,13 +443,41 @@
 			"threats": [
 				{
 					"type": "Impact",
-					"description": "moderate"
+					"description": "important"
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "8.5",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-1667.html",
+					"description": "CVE-2012-1667"
+				},
+				{
+					"url": "https://bugzilla.suse.com/765315",
+					"description": "SUSE Bug 765315"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
 		},
 		{
 			"notes": [
@@ -491,13 +522,41 @@
 			"threats": [
 				{
 					"type": "Impact",
-					"description": "moderate"
+					"description": "important"
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-3817.html",
+					"description": "CVE-2012-3817"
+				},
+				{
+					"url": "https://bugzilla.suse.com/772945",
+					"description": "SUSE Bug 772945"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
 		},
 		{
 			"notes": [
@@ -542,13 +601,41 @@
 			"threats": [
 				{
 					"type": "Impact",
-					"description": "moderate"
+					"description": "important"
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-4244.html",
+					"description": "CVE-2012-4244"
+				},
+				{
+					"url": "https://bugzilla.suse.com/780157",
+					"description": "SUSE Bug 780157"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
 		},
 		{
 			"notes": [
@@ -593,13 +680,41 @@
 			"threats": [
 				{
 					"type": "Impact",
-					"description": "moderate"
+					"description": "important"
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-5166.html",
+					"description": "CVE-2012-5166"
+				},
+				{
+					"url": "https://bugzilla.suse.com/784602",
+					"description": "SUSE Bug 784602"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
 		},
 		{
 			"notes": [
@@ -644,13 +759,37 @@
 			"threats": [
 				{
 					"type": "Impact",
-					"description": "moderate"
+					"description": "low"
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2013-4854.html",
+					"description": "CVE-2013-4854"
+				},
+				{
+					"url": "https://bugzilla.suse.com/831899",
+					"description": "SUSE Bug 831899"
+				}
+			]
 		},
 		{
 			"notes": [
@@ -699,9 +838,33 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "2.6",
+					"vector_v_2": "AV:N/AC:H/Au:N/C:N/I:N/A:P"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2014-0591.html",
+					"description": "CVE-2014-0591"
+				},
+				{
+					"url": "https://bugzilla.suse.com/858639",
+					"description": "SUSE Bug 858639"
+				}
+			]
 		},
 		{
 			"notes": [
@@ -746,13 +909,37 @@
 			"threats": [
 				{
 					"type": "Impact",
-					"description": "moderate"
+					"description": "important"
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {}
-			}
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2014-8500.html",
+					"description": "CVE-2014-8500"
+				},
+				{
+					"url": "https://bugzilla.suse.com/908994",
+					"description": "SUSE Bug 908994"
+				}
+			]
 		}
 	]
 }
