@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+<cvrfdoc xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cpe="http://cpe.mitre.org/language/2.0" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvssv2="http://scap.nist.gov/schema/cvss-v2/1.0" xmlns:cvssv3="https://www.first.org/cvss/cvss-v3.0.xsd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns0="http://purl.org/dc/elements/1.1/" xmlns:prod="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/prod" xmlns:scap-core="http://scap.nist.gov/schema/scap-core/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:vuln="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
   <DocumentTitle xml:lang="en">Security update for libvirt</DocumentTitle>
   <DocumentType>SUSE Patch</DocumentType>
   <DocumentPublisher Type="Vendor">
@@ -50,7 +50,7 @@
       <Description>SUSE Security Ratings</Description>
     </Reference>
   </DocumentReferences>
-  <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
+  <ProductTree xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/prod">
     <Branch Type="Product Version" Name="libvirt-1.1.2-2.48.1">
       <FullProductName ProductID="libvirt-1.1.2-2.48.1">libvirt-1.1.2-2.48.1</FullProductName>
     </Branch>
@@ -139,7 +139,7 @@
       <FullProductName ProductID="libvirt-python-1.1.2-2.48.1">libvirt-python-1.1.2-2.48.1</FullProductName>
     </Branch>
   </ProductTree>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">libvirt before 1.2.12 allow remote authenticated users to obtain the VNC password by using the VIR_DOMAIN_XML_SECURE flag with a crafted (1) snapshot to the virDomainSnapshotGetXMLDesc interface or (2) image to the virDomainSaveImageGetXMLDesc interface.</Note>
     </Notes>
@@ -153,10 +153,10 @@
       </Threat>
     </Threats>
     <CVSSScoreSets>
-      <ScoreSet>
-        <BaseScore>4</BaseScore>
-        <Vector>AV:L/AC:L/Au:M/C:P/I:P/A:P</Vector>
-      </ScoreSet>
+      <ScoreSetV2>
+        <BaseScoreV2>4</BaseScoreV2>
+        <VectorV2>AV:L/AC:L/Au:M/C:P/I:P/A:P</VectorV2>
+      </ScoreSetV2>
     </CVSSScoreSets>
     <Remediations>
       <Remediation Type="Vendor Fix">
@@ -174,5 +174,5 @@
         <Description>SUSE Bug 914693</Description>
       </Reference>
     </References>
-  </Vulnerability>
+  </vuln:Vulnerability>
 </cvrfdoc>

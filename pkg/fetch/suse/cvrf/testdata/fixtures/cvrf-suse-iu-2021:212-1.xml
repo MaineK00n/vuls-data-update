@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+<cvrfdoc xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cpe="http://cpe.mitre.org/language/2.0" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvssv2="http://scap.nist.gov/schema/cvss-v2/1.0" xmlns:cvssv3="https://www.first.org/cvss/cvss-v3.0.xsd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns0="http://purl.org/dc/elements/1.1/" xmlns:prod="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/prod" xmlns:scap-core="http://scap.nist.gov/schema/scap-core/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:vuln="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
   <DocumentTitle xml:lang="en">SUSE-IU-2021:212-1</DocumentTitle>
   <DocumentType>SUSE Image</DocumentType>
   <DocumentPublisher Type="Vendor">
@@ -15,7 +15,7 @@
     <RevisionHistory>
       <Revision>
         <Number>1</Number>
-        <Date>2022-09-13T06:57:58Z</Date>
+        <Date>2022-09-13T06:57:59Z</Date>
         <Description>current</Description>
       </Revision>
     </RevisionHistory>
@@ -421,7 +421,7 @@ Package screen was updated:
       <Description>SUSE Security Ratings</Description>
     </Reference>
   </DocumentReferences>
-  <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
+  <ProductTree xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/prod">
     <Branch Type="Product Family" Name="Public Cloud Image google/sles-12-sp3-byos-v20210303">
       <Branch Type="Product Name" Name="Public Cloud Image google/sles-12-sp3-byos-v20210303">
         <FullProductName ProductID="Public Cloud Image google/sles-12-sp3-byos-v20210303">Public Cloud Image google/sles-12-sp3-byos-v20210303</FullProductName>
@@ -3494,7 +3494,7 @@ Package screen was updated:
       <FullProductName ProductID="Public Cloud Image google/sles-12-sp3-byos-v20210303:zypper-migration-plugin-0.1-12.4">zypper-migration-plugin-0.1-12.4 as a component of Public Cloud Image google/sles-12-sp3-byos-v20210303</FullProductName>
     </Relationship>
   </ProductTree>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">It was found that the raw midi kernel driver does not protect against concurrent access which leads to a double realloc (double free) in snd_rawmidi_input_params() and snd_rawmidi_output_status() which are part of snd_rawmidi_ioctl() handler in rawmidi.c file. A malicious local attacker could possibly use this for privilege escalation.</Note>
     </Notes>
@@ -3506,7 +3506,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -3515,8 +3515,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:P/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">The pip package before 19.2 for Python allows Directory Traversal when a URL is given in an install command, because a Content-Disposition header can have ../ in a filename, as demonstrated by overwriting the /root/.ssh/authorized_keys file. This occurs in _download_http_url in _internal/download.py.</Note>
     </Notes>
@@ -3540,8 +3540,8 @@ Package screen was updated:
         <Vector>AV:N/AC:L/Au:N/C:N/I:P/A:N</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">An issue was discovered in the Linux kernel before 5.2.6. On NUMA systems, the Linux fair scheduler has a use-after-free in show_numa_stats() because NUMA fault statistics are inappropriately freed, aka CID-16d51a590a8c.</Note>
     </Notes>
@@ -3562,8 +3562,8 @@ Package screen was updated:
         <Vector>AV:L/AC:M/Au:N/C:P/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">In audit_free_lsm_field of auditfilter.c, there is a possible bad kfree due to a logic error in audit_data_to_entry. This could lead to local escalation of privilege with no additional execution privileges needed. User interaction is not needed for exploitation.Product: AndroidVersions: Android kernelAndroid ID: A-150693166References: Upstream kernel</Note>
     </Notes>
@@ -3584,8 +3584,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">In various methods of hid-multitouch.c, there is a possible out of bounds write due to a missing bounds check. This could lead to local escalation of privilege with no additional execution privileges needed. User interaction is not needed for exploitation.Product: AndroidVersions: Android kernelAndroid ID: A-162844689References: Upstream kernel</Note>
     </Notes>
@@ -3606,8 +3606,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">In do_epoll_ctl and ep_loop_check_proc of eventpoll.c, there is a possible use after free due to a logic error. This could lead to local escalation of privilege with no additional execution privileges needed. User interaction is not needed for exploitation.Product: AndroidVersions: Android kernelAndroid ID: A-147802478References: Upstream kernel</Note>
     </Notes>
@@ -3628,8 +3628,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">In the Linux kernel before 5.6.1, drivers/media/usb/gspca/xirlink_cit.c (aka the Xirlink camera USB driver) mishandles invalid descriptors, aka CID-a246b4d54770.</Note>
     </Notes>
@@ -3650,8 +3650,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:N/I:P/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">Use-after-free vulnerability in fs/block_dev.c in the Linux kernel before 5.8 allows local users to gain privileges or cause a denial of service by leveraging improper access to a certain error field.</Note>
     </Notes>
@@ -3672,8 +3672,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">The Linux kernel before version 5.8 is vulnerable to a NULL pointer dereference in drivers/tty/serial/8250/8250_core.c:serial8250_isa_init_ports() that allows local users to cause a denial of service by using the p-&gt;serial_in pointer which uninitialized.</Note>
     </Notes>
@@ -3694,8 +3694,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:N/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">In the Linux kernel through 5.8.7, local attackers able to inject conntrack netlink configuration could overflow a local buffer, causing crashes or triggering use of incorrect protocol numbers in ctnetlink_parse_tuple_filter in net/netfilter/nf_conntrack_netlink.c, aka CID-1cc5ef91d2ff.</Note>
     </Notes>
@@ -3716,8 +3716,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:N/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A race condition between hugetlb sysctl handlers in mm/hugetlb.c in the Linux kernel before 5.8.8 could be used by local attackers to corrupt memory, cause a NULL pointer dereference, or possibly have unspecified other impact, aka CID-17743798d812.</Note>
     </Notes>
@@ -3738,8 +3738,8 @@ Package screen was updated:
         <Vector>AV:L/AC:M/Au:N/C:P/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in grub2 in versions prior to 2.06. The rmmod implementation allows the unloading of a module used as a dependency without checking if any other dependent module is still loaded leading to a use-after-free scenario. This could allow arbitrary code to be executed or a bypass of Secure Boot protections. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.</Note>
     </Notes>
@@ -3752,7 +3752,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -3761,8 +3761,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in grub2 in versions prior to 2.06. During USB device initialization, descriptors are read with very little bounds checking and assumes the USB device is providing sane values. If properly exploited, an attacker could trigger memory corruption leading to arbitrary code execution allowing a bypass of the Secure Boot mechanism. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.</Note>
     </Notes>
@@ -3775,7 +3775,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -3784,8 +3784,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A vulnerability was found in the Linux Kernel where the function sunkbd_reinit having been scheduled by sunkbd_interrupt before sunkbd being freed. Though the dangling pointer is set to NULL in sunkbd_disconnect, there is still an alias in sunkbd_reinit causing Use After Free.</Note>
     </Notes>
@@ -3806,8 +3806,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">Product: AndroidVersions: Android kernelAndroid ID: A-127973231References: Upstream kernel</Note>
     </Notes>
@@ -3828,8 +3828,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:P/I:N/A:N</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">An issue was discovered in the Linux kernel through 5.9.1, as used with Xen through 4.14.x. Guest OS users can cause a denial of service (host OS hang) via a high rate of events to dom0, aka CID-e99502f76271.</Note>
     </Notes>
@@ -3850,8 +3850,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:N/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">An issue was discovered in the Linux kernel through 5.9.1, as used with Xen through 4.14.x. drivers/xen/events/events_base.c allows event-channel removal during the event-handling loop (a race condition). This can cause a use-after-free or NULL pointer dereference, as demonstrated by a dom0 crash via events for an in-reconfiguration paravirtualized device, aka CID-073d0552ead5.</Note>
     </Notes>
@@ -3872,8 +3872,8 @@ Package screen was updated:
         <Vector>AV:L/AC:M/Au:N/C:N/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in grub2 in versions prior to 2.06. Variable names present are expanded in the supplied command line into their corresponding variable contents, using a 1kB stack buffer for temporary storage, without sufficient bounds checking. If the function is called with a command line that references a variable with a sufficiently large payload, it is possible to overflow the stack buffer, corrupt the stack frame and control execution which could also circumvent Secure Boot protections. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.</Note>
     </Notes>
@@ -3886,7 +3886,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -3895,8 +3895,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in the way RTAS handled memory accesses in userspace to kernel communication. On a locked down (usually due to Secure Boot) guest system running on top of PowerVM or KVM hypervisors (pseries platform) a root like local user could use this flaw to further increase their privileges to that of a running kernel.</Note>
     </Notes>
@@ -3917,8 +3917,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in grub2 in versions prior to 2.06. The cutmem command does not honor secure boot locking allowing an privileged attacker to remove address ranges from memory creating an opportunity to circumvent SecureBoot protections after proper triage about grub's memory layout. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.</Note>
     </Notes>
@@ -3931,7 +3931,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -3940,8 +3940,8 @@ Package screen was updated:
         <Vector>AV:L/AC:M/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in the Linux kernel’s implementation of MIDI, where an attacker with a local account and the permissions to issue ioctl commands to midi devices could trigger a use-after-free issue. A write to this specific memory while freed and before use causes the flow of execution to change and possibly allow for memory corruption or privilege escalation. The highest threat from this vulnerability is to confidentiality, integrity, as well as system availability.</Note>
     </Notes>
@@ -3962,8 +3962,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A use-after-free flaw was found in kernel/trace/ring_buffer.c in Linux kernel (before 5.10-rc1). There was a race problem in trace_open and resize of cpu buffer running parallely on different cpus, may cause a denial of service problem (DOS). This flaw could even allow a local attacker with special user privilege to a kernel information leak threat.</Note>
     </Notes>
@@ -3984,8 +3984,8 @@ Package screen was updated:
         <Vector>AV:L/AC:M/Au:N/C:P/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A use after free in the Linux kernel infiniband hfi1 driver in versions prior to 5.10-rc6 was found in the way user calls Ioctl after open dev file and fork. A local user could use this flaw to crash the system.</Note>
     </Notes>
@@ -4006,8 +4006,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:N/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A buffer over-read (at the framebuffer layer) in the fbcon code in the Linux kernel before 5.8.15 could be used by local attackers to read kernel memory, aka CID-6735b4632def.</Note>
     </Notes>
@@ -4028,8 +4028,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:P/I:P/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A slab-out-of-bounds read in fbcon in the Linux kernel before 5.9.7 could be used by local attackers to read privileged information or potentially crash the kernel, aka CID-3c4e0dff2095. This occurs because KD_FONT_OP_COPY in drivers/tty/vt/vt.c can be used for manipulations such as font height.</Note>
     </Notes>
@@ -4050,8 +4050,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:P/I:P/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">An issue was discovered in Xen through 4.14.x. Some OSes (such as Linux, FreeBSD, and NetBSD) are processing watch events using a single thread. If the events are received faster than the thread is able to handle, they will get queued. As the queue is unbounded, a guest may be able to trigger an OOM in the backend. All systems with a FreeBSD, Linux, or NetBSD (any version) dom0 are vulnerable.</Note>
     </Notes>
@@ -4072,8 +4072,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:N/I:N/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">An issue was discovered in the Linux kernel through 5.10.1, as used with Xen through 4.14.x. The Linux kernel PV block backend expects the kernel thread handler to reset ring-&gt;xenblkd to NULL when stopped. However, the handler may not have time to run if the frontend quickly toggles between the states connect and disconnect. As a consequence, the block backend may re-use a pointer after it was freed. A misbehaving guest can trigger a dom0 crash by continuously connecting / disconnecting a block frontend. Privilege escalation and information leaks cannot be ruled out. This only affects systems with a Linux blkback.</Note>
     </Notes>
@@ -4085,7 +4085,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4094,8 +4094,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A locking inconsistency issue was discovered in the tty subsystem of the Linux kernel through 5.9.13. drivers/tty/tty_io.c and drivers/tty/tty_jobctrl.c may allow a read-after-free attack against TIOCGSID, aka CID-c8bcd9c5be24.</Note>
     </Notes>
@@ -4116,8 +4116,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:P/I:N/A:N</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A locking issue was discovered in the tty subsystem of the Linux kernel through 5.9.13. drivers/tty/tty_jobctrl.c allows a use-after-free attack against TIOCSPGRP, aka CID-54ffccbf053b.</Note>
     </Notes>
@@ -4138,8 +4138,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">mwifiex_cmd_802_11_ad_hoc_start in drivers/net/wireless/marvell/mwifiex/join.c in the Linux kernel through 5.10.4 might allow remote attackers to execute arbitrary code via a long SSID value, aka CID-5c455c5ab332.</Note>
     </Notes>
@@ -4160,8 +4160,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">IBM Power9 (AIX 7.1, 7.2, and VIOS 3.1) processors could allow a local user to obtain sensitive information from the data in the L1 cache under extenuating circumstances. IBM X-Force ID: 189296.</Note>
     </Notes>
@@ -4182,8 +4182,8 @@ Package screen was updated:
         <Vector>AV:L/AC:M/Au:N/C:P/I:N/A:N</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">BIND servers are vulnerable if they are running an affected version and are configured to use GSS-TSIG features. In a configuration which uses BIND's default settings the vulnerable code path is not exposed, but a server can be rendered vulnerable by explicitly setting valid values for the tkey-gssapi-keytab or tkey-gssapi-credentialconfiguration options. Although the default configuration is not vulnerable, GSS-TSIG is frequently used in networks where BIND is integrated with Samba, as well as in mixed-server environments that combine BIND servers with Active Directory domain controllers. The most likely outcome of a successful exploitation of the vulnerability is a crash of the named process. However, remote code execution, while unproven, is theoretically possible. Affects: BIND 9.5.0 -&gt; 9.11.27, 9.12.0 -&gt; 9.16.11, and versions BIND 9.11.3-S1 -&gt; 9.11.27-S1 and 9.16.8-S1 -&gt; 9.16.11-S1 of BIND Supported Preview Edition. Also release versions 9.17.0 -&gt; 9.17.1 of the BIND 9.17 development branch</Note>
     </Notes>
@@ -4196,7 +4196,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4205,8 +4205,8 @@ Package screen was updated:
         <Vector>AV:N/AC:M/Au:N/C:P/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in grub2 in versions prior to 2.06. The option parser allows an attacker to write past the end of a heap-allocated buffer by calling certain commands with a large number of specific short forms of options. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.</Note>
     </Notes>
@@ -4219,7 +4219,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4228,8 +4228,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">A flaw was found in grub2 in versions prior to 2.06. Setparam_prefix() in the menu rendering code performs a length calculation on the assumption that expressing a quoted single quote will require 3 characters, while it actually requires 4 characters which allows an attacker to corrupt memory by one byte for each quote in the input. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.</Note>
     </Notes>
@@ -4242,7 +4242,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4251,8 +4251,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">avahi-daemon-check-dns.sh in the Debian avahi package through 0.8-4 is executed as root via /etc/network/if-up.d/avahi-daemon, and allows a local attacker to cause a denial of service or create arbitrary empty files via a symlink attack on files under /run/avahi-daemon. NOTE: this only affects the packaging for Debian GNU/Linux (used indirectly by SUSE), not the upstream Avahi product.</Note>
     </Notes>
@@ -4265,7 +4265,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4274,8 +4274,8 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:P/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">encoding.c in GNU Screen through 4.8.0 allows remote attackers to cause a denial of service (invalid write access and application crash) or possibly have unspecified other impact via a crafted UTF-8 character sequence.</Note>
     </Notes>
@@ -4287,7 +4287,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4296,8 +4296,8 @@ Package screen was updated:
         <Vector>AV:N/AC:L/Au:N/C:P/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">Python 3.x through 3.9.1 has a buffer overflow in PyCArg_repr in _ctypes/callproc.c, which may lead to remote code execution in certain Python applications that accept floating-point numbers as untrusted input, as demonstrated by a 1e300 argument to c_double.from_param. This occurs because sprintf is used unsafely.</Note>
     </Notes>
@@ -4321,8 +4321,8 @@ Package screen was updated:
         <Vector>AV:N/AC:L/Au:N/C:P/I:P/A:P</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
+  </vuln:Vulnerability>
+  <vuln:Vulnerability xmlns="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/vuln" Ordinal="1">
     <Notes>
       <Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">An issue was discovered in the Linux kernel through 5.10.11. PI futexes have a kernel stack use-after-free during fault handling, allowing local users to execute code in the kernel, aka CID-34b1a1ce1458.</Note>
     </Notes>
@@ -4334,7 +4334,7 @@ Package screen was updated:
     </ProductStatuses>
     <Threats>
       <Threat Type="Impact">
-        <Description>moderate</Description>
+        <Description>important</Description>
       </Threat>
     </Threats>
     <CVSSScoreSets>
@@ -4343,5 +4343,5 @@ Package screen was updated:
         <Vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</Vector>
       </ScoreSet>
     </CVSSScoreSets>
-  </Vulnerability>
+  </vuln:Vulnerability>
 </cvrfdoc>
