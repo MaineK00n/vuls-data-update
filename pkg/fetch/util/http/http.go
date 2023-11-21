@@ -165,67 +165,7 @@ func WithRequestBody(body []byte) RequestOption {
 	return requestBodyOption(body)
 }
 
-func Get(url string, opts ...RequestOption) (*http.Response, error) {
-	return defaultClient.Get(url, opts...)
-}
-
-func (c *Client) Get(url string, opts ...RequestOption) (*http.Response, error) {
-	return c.Do(http.MethodGet, url, opts...)
-}
-
-func MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
-	return defaultClient.MultiGet(urls, concurrency, wait, opts...)
-}
-
-func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
-	resps := make([]*http.Response, 0, len(urls))
-
-	respChan := make(chan *http.Response, len(urls))
-	if err := c.PipelineGet(urls, concurrency, wait, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
-		return nil, errors.Wrap(err, "pipeline get")
-	}
-	close(respChan)
-	for r := range respChan {
-		resps = append(resps, r)
-	}
-	return resps, nil
-}
-
-func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
-	return c.PipelineDo(http.MethodGet, urls, concurrency, wait, cont, opts...)
-}
-
-func POST(url string, opts ...RequestOption) (*http.Response, error) {
-	return defaultClient.POST(url, opts...)
-}
-
-func (c *Client) POST(url string, opts ...RequestOption) (*http.Response, error) {
-	return c.Do(http.MethodPost, url, opts...)
-}
-
-func MultiPost(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
-	return defaultClient.MultiPost(urls, concurrency, wait, opts...)
-}
-
-func (c *Client) MultiPost(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
-	resps := make([]*http.Response, 0, len(urls))
-
-	respChan := make(chan *http.Response, len(urls))
-	if err := c.PipelinePost(urls, concurrency, wait, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
-		return nil, errors.Wrap(err, "pipeline post")
-	}
-	close(respChan)
-	for r := range respChan {
-		resps = append(resps, r)
-	}
-	return resps, nil
-}
-
-func (c *Client) PipelinePost(urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
-	return c.PipelineDo(http.MethodPost, urls, concurrency, wait, cont, opts...)
-}
-
-func (c *Client) Do(method, url string, opts ...RequestOption) (*http.Response, error) {
+func NewRequest(method, url string, opts ...RequestOption) (*retryablehttp.Request, error) {
 	options := &requestOptions{
 		header: nil,
 		body:   nil,
@@ -251,35 +191,93 @@ func (c *Client) Do(method, url string, opts ...RequestOption) (*http.Response, 
 		return nil, errors.Wrap(err, "from request")
 	}
 
-	resp, err := (*retryablehttp.Client)(c).Do(rr)
+	return rr, nil
+}
+
+func Get(url string, opts ...RequestOption) (*http.Response, error) {
+	return defaultClient.Get(url, opts...)
+}
+
+func (c *Client) Get(url string, opts ...RequestOption) (*http.Response, error) {
+	req, err := NewRequest(http.MethodGet, url, opts...)
 	if err != nil {
-		return nil, errors.Wrapf(err, "http request, url: %s", url)
+		return nil, errors.Wrap(err, "new request")
+	}
+	return c.Do(req)
+}
+
+func MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+	return defaultClient.MultiGet(urls, concurrency, wait, opts...)
+}
+
+func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+	resps := make([]*http.Response, 0, len(urls))
+
+	respChan := make(chan *http.Response, len(urls))
+	if err := c.PipelineGet(urls, concurrency, wait, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
+		return nil, errors.Wrap(err, "pipeline get")
+	}
+	close(respChan)
+	for r := range respChan {
+		resps = append(resps, r)
+	}
+	return resps, nil
+}
+
+func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
+	reqs := make([]*retryablehttp.Request, 0, len(urls))
+	for _, u := range urls {
+		req, err := NewRequest(http.MethodGet, u, opts...)
+		if err != nil {
+			return errors.Wrap(err, "new request")
+		}
+		reqs = append(reqs, req)
+	}
+	return c.PipelineDo(reqs, concurrency, wait, cont)
+}
+
+func POST(url string, opts ...RequestOption) (*http.Response, error) {
+	return defaultClient.POST(url, opts...)
+}
+
+func (c *Client) POST(url string, opts ...RequestOption) (*http.Response, error) {
+	req, err := NewRequest(http.MethodPost, url, opts...)
+	if err != nil {
+		return nil, errors.Wrap(err, "new request")
+	}
+	return c.Do(req)
+}
+
+func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
+	resp, err := (*retryablehttp.Client)(c).Do(req)
+	if err != nil {
+		return nil, errors.Wrapf(err, "http request, url: %s", req.URL.String())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) PipelineDo(method string, urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
-	urlChan := make(chan string)
+func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency, wait int, cont func(resp *http.Response) error) error {
+	reqChan := make(chan *retryablehttp.Request)
 	go func() {
-		defer close(urlChan)
-		for _, u := range urls {
-			urlChan <- u
+		defer close(reqChan)
+		for _, req := range reqs {
+			reqChan <- req
 		}
 	}()
 
-	bar := pb.Full.Start(len(urls))
+	bar := pb.Full.Start(len(reqs))
 	g, ctx := errgroup.WithContext(context.Background())
 	g.SetLimit(concurrency)
-	for u := range urlChan {
-		u := u
+	for req := range reqChan {
+		req := req
 		g.Go(func() error {
-			resp, err := c.Do(method, u, opts...)
+			resp, err := c.Do(req)
 			if err != nil {
-				return errors.Wrapf(err, "do %s", u)
+				return errors.Wrapf(err, "do %#v", req)
 			}
 			if err := cont(resp); err != nil {
-				return errors.Wrapf(err, "continuation %s", u)
+				return errors.Wrapf(err, "continuation %#v", resp)
 			}
 			select {
 			case <-ctx.Done():

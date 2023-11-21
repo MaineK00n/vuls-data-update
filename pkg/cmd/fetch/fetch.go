@@ -1028,8 +1028,10 @@ func newCmdFetchWindowsCVRF() *cobra.Command {
 
 func newCmdFetchWindowsMSUC() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "windows", "msuc"),
-		retry: 3,
+		dir:         filepath.Join(util.CacheDir(), "windows", "msuc"),
+		retry:       3,
+		concurrency: 5,
+		wait:        1,
 	}
 
 	cmd := &cobra.Command{
@@ -1040,7 +1042,7 @@ func newCmdFetchWindowsMSUC() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsMSUC.Fetch(args, windowsMSUC.WithDir(options.dir), windowsMSUC.WithRetry(options.retry)); err != nil {
+			if err := windowsMSUC.Fetch(args, windowsMSUC.WithDir(options.dir), windowsMSUC.WithRetry(options.retry), windowsMSUC.WithConcurrency(options.concurrency), windowsMSUC.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows msuc")
 			}
 			return nil
@@ -1049,6 +1051,8 @@ func newCmdFetchWindowsMSUC() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "msuc"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }
@@ -2389,6 +2393,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
 		retry:       3,
 		concurrency: 1,
+		wait:        6,
 	}
 
 	cmd := &cobra.Command{
@@ -2427,6 +2432,7 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cpe"),
 		retry:       3,
 		concurrency: 1,
+		wait:        6,
 	}
 
 	cmd := &cobra.Command{
@@ -2459,6 +2465,7 @@ func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"),
 		retry:       3,
 		concurrency: 1,
+		wait:        6,
 	}
 
 	cmd := &cobra.Command{
