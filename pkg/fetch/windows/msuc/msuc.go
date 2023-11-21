@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -19,9 +20,11 @@ import (
 const msucURL = "https://www.catalog.update.microsoft.com"
 
 type options struct {
-	msucURL string
-	dir     string
-	retry   int
+	msucURL     string
+	dir         string
+	retry       int
+	concurrency int
+	wait        int
 }
 
 type Option interface {
@@ -58,128 +61,183 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type concurrencyOption int
+
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
+}
+
+type waitOption int
+
+func (w waitOption) apply(opts *options) {
+	opts.wait = int(w)
+}
+
+func WithWait(wait int) Option {
+	return waitOption(wait)
+}
+
 func Fetch(queries []string, opts ...Option) error {
 	options := &options{
-		msucURL: msucURL,
-		dir:     filepath.Join(util.CacheDir(), "windows", "msuc"),
-		retry:   3,
+		msucURL:     msucURL,
+		dir:         filepath.Join(util.CacheDir(), "windows", "msuc"),
+		retry:       3,
+		concurrency: 5,
+		wait:        1,
 	}
 
 	for _, o := range opts {
 		o.apply(options)
 	}
 
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
 	log.Println("[INFO] Fetch Windows Microsoft Software Update Catalog")
+
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	uids, err := options.search(client, util.Unique(queries))
+	if err != nil {
+		return errors.Wrap(err, "search")
+	}
+
 	uidmap := map[string]struct{}{}
-	for _, q := range queries {
-		uids, err := options.search(q)
-		if err != nil {
-			log.Printf("[WARN] failed to search %s. err: %s", q, err)
-			continue
+	for {
+		if len(uids) == 0 {
+			break
 		}
 
-		qs := uids
-		for {
-			if len(qs) == 0 {
-				break
+		log.Printf("[INFO] Search %d Update IDs", len(uids))
+
+		var us []string
+		for _, uid := range uids {
+			uidmap[uid] = struct{}{}
+			us = append(us, fmt.Sprintf("%s/ScopedViewInline.aspx?updateid=%s", options.msucURL, uid))
+		}
+
+		uidChan := make(chan []string, len(us))
+		if err := client.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			v, err := parseView(resp.Body, resp.Request.URL.Query().Get("updateid"))
+			if err != nil {
+				return errors.Wrap(err, "parse view")
+			}
+
+			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)), v); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)))
 			}
 
 			var next []string
-			for _, uid := range qs {
+			for _, s := range v.Supersededby {
+				next = append(next, s.UpdateID)
+			}
+			uidChan <- next
+
+			return nil
+		}); err != nil {
+			return errors.Wrap(err, "pipeline get")
+		}
+		close(uidChan)
+
+		uids = []string{}
+		for us := range uidChan {
+			for _, uid := range us {
 				if _, ok := uidmap[uid]; ok {
 					continue
 				}
-
-				v, err := options.view(uid)
-				if err != nil {
-					log.Printf("[WARN] failed to view %s. err: %s", uid, err)
-					continue
-				}
-
-				if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)), v); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)))
-				}
-
-				uidmap[v.UpdateID] = struct{}{}
-				for _, s := range v.Supersededby {
-					if _, ok := uidmap[s.UpdateID]; !ok {
-						next = append(next, s.UpdateID)
-					}
-				}
+				uids = append(uids, uid)
 			}
-			qs = next
 		}
+		uids = util.Unique(uids)
 	}
 
 	return nil
 }
 
-func (opts options) search(query string) ([]string, error) {
-	log.Printf("[INFO] Search %s/Search.aspx?q=%s", opts.msucURL, query)
+func (opts options) search(client *utilhttp.Client, queries []string) ([]string, error) {
+	log.Printf("[INFO] Search %d queries", len(queries))
 
-	header := http.Header{}
+	header := make(http.Header)
 	header.Add("Content-Type", "application/x-www-form-urlencoded")
 	header.Add("Content-Length", "0")
 
-	values := url.Values{}
-	values.Set("q", query)
+	values := make(url.Values)
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).POST(fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(values.Encode())))
-	if err != nil {
-		return nil, errors.Wrap(err, "post")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "create new document from reader")
-	}
-
-	var ids []string
-	doc.Find("div#tableContainer > table").Find("tr").Each(func(_ int, s *goquery.Selection) {
-		val, exists := s.Attr("id")
-		if !exists || val == "headerRow" {
-			return
+	reqs := make([]*retryablehttp.Request, 0, len(queries))
+	for _, query := range queries {
+		values.Set("q", query)
+		req, err := utilhttp.NewRequest(http.MethodPost, fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(values.Encode())))
+		if err != nil {
+			return nil, errors.Wrap(err, "new request")
 		}
-		id, _, ok := strings.Cut(val, "_")
-		if !ok {
-			log.Printf(`[WARN] unexpected id. id="%s"`, val)
-			return
-		}
-		ids = append(ids, id)
-	})
+		reqs = append(reqs, req)
+	}
 
-	return ids, nil
+	uidChan := make(chan []string, len(reqs))
+	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, func(resp *http.Response) error {
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		}
+
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, "create new document from reader")
+		}
+
+		var us []string
+		doc.Find("div#tableContainer > table").Find("tr").Each(func(_ int, s *goquery.Selection) {
+			val, exists := s.Attr("id")
+			if !exists || val == "headerRow" {
+				return
+			}
+			id, _, ok := strings.Cut(val, "_")
+			if !ok {
+				log.Printf(`[WARN] unexpected id. id="%s"`, val)
+				return
+			}
+			us = append(us, id)
+		})
+
+		uidChan <- us
+
+		return nil
+	}); err != nil {
+		return nil, errors.Wrap(err, "pipeline do")
+	}
+	close(uidChan)
+
+	var uids []string
+	for u := range uidChan {
+		uids = append(uids, u...)
+	}
+
+	return util.Unique(uids), nil
 }
 
-func (opts options) view(updateID string) (Update, error) {
-	log.Printf("[INFO] GET %s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID)
-
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(fmt.Sprintf("%s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID))
+func parseView(rd io.Reader, updateID string) (*Update, error) {
+	doc, err := goquery.NewDocumentFromReader(rd)
 	if err != nil {
-		return Update{}, errors.Wrap(err, "fetch view")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return Update{}, errors.Errorf("error request response with status code %d", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return Update{}, errors.Wrap(err, "create new document from reader")
+		return nil, errors.Wrap(err, "create new document from reader")
 	}
 
 	u := Update{UpdateID: updateID}
 
 	if doc.Find("body").HasClass("mainBody thanks") {
-		return u, nil
+		return &u, nil
 	}
 
 	r := strings.NewReplacer(" ", "", "\n", "")
@@ -253,5 +311,5 @@ func (opts options) view(updateID string) (Update, error) {
 		log.Printf(`[WARN] unexpected div#uninstallStepsDiv format. expected: "...:<uninstallSteps>", actual: "%s"`, r.Replace(doc.Find("div#uninstallStepsDiv").Text()))
 	}
 
-	return u, nil
+	return &u, nil
 }
