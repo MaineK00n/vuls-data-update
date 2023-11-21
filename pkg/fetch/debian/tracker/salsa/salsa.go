@@ -790,30 +790,17 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
 
 	log.Printf("Fetch Debian %s main", codename)
-	if resp, err := client.Get(fmt.Sprintf("%s/dists/%s/Release", mainURL, codename)); err != nil {
-		log.Printf("[WARN] get %s error: %s", fmt.Sprintf("%s/dists/%s/Release", mainURL, codename), err)
-	} else {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-		}
-
-		sections, err := parseRelease(resp.Body)
+	sections, err := fetchRelease(client, fmt.Sprintf("%s/dists/%s/Release", mainURL, codename))
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch release")
+	}
+	for _, section := range sections {
+		sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s/%s/source/Sources", mainURL, codename, section))
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse %s", fmt.Sprintf("%s/dists/%s/Release", mainURL, codename))
+			return nil, errors.Wrap(err, "fetch source")
 		}
 
-		for _, section := range sections {
-			sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s/%s/source/Sources", mainURL, codename, section))
-			if err != nil {
-				log.Printf("[WARN] get source error: %s", err)
-				continue
-			}
-
-			m["main"][section] = sources
-		}
+		m["main"][section] = sources
 	}
 
 	if codename == "sid" {
@@ -826,30 +813,17 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 		securityDistURL = fmt.Sprintf("%s/dists/%s-security", securityURL, codename)
 	}
 
-	if resp, err := client.Get(fmt.Sprintf("%s/Release", securityDistURL)); err != nil {
-		log.Printf("[WARN] get %s error: %s", fmt.Sprintf("%s/Release", securityDistURL), err)
-	} else {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-		}
-
-		sections, err := parseRelease(resp.Body)
+	sections, err = fetchRelease(client, fmt.Sprintf("%s/Release", securityDistURL))
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch release")
+	}
+	for _, section := range sections {
+		sources, err := fetchSource(client, fmt.Sprintf("%s/%s/source/Sources", securityDistURL, filepath.Base(section)))
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse %s", fmt.Sprintf("%s/Release", securityDistURL))
+			return nil, errors.Wrap(err, "fetch source")
 		}
 
-		for _, section := range sections {
-			sources, err := fetchSource(client, fmt.Sprintf("%s/%s/source/Sources", securityDistURL, filepath.Base(section)))
-			if err != nil {
-				log.Printf("[WARN] get source error: %s", err)
-				continue
-			}
-
-			m["security"][filepath.Base(section)] = sources
-		}
+		m["security"][filepath.Base(section)] = sources
 	}
 
 	log.Printf("Fetch Debian %s backport", codename)
@@ -857,33 +831,41 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 		backportURL = mainURL
 	}
 
-	if resp, err := client.Get(fmt.Sprintf("%s/dists/%s-backports/Release", backportURL, codename)); err != nil {
-		log.Printf("[WARN] get %s error: %s", fmt.Sprintf("%s/dists/%s-backports/Release", backportURL, codename), err)
-	} else {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-		}
-
-		sections, err := parseRelease(resp.Body)
+	sections, err = fetchRelease(client, fmt.Sprintf("%s/dists/%s-backports/Release", backportURL, codename))
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch release")
+	}
+	for _, section := range sections {
+		sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s-backports/%s/source/Sources", backportURL, codename, section))
 		if err != nil {
-			return nil, errors.Wrapf(err, "parse %s", fmt.Sprintf("%s/dists/%s-backports/Release", backportURL, codename))
+			return nil, errors.Wrap(err, "fetch source")
 		}
 
-		for _, section := range sections {
-			sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s-backports/%s/source/Sources", backportURL, codename, section))
-			if err != nil {
-				log.Printf("[WARN] get source error: %s", err)
-				continue
-			}
-
-			m["backport"][section] = sources
-		}
+		m["backport"][section] = sources
 	}
 
 	return m, nil
+}
+
+func fetchRelease(c *utilhttp.Client, releaseURL string) ([]string, error) {
+	resp, err := c.Get(releaseURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "get %s", releaseURL)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("[WARN] fetch %s error: %s", releaseURL, errors.Errorf("error request response with status code %d", resp.StatusCode))
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, nil
+	}
+
+	sections, err := parseRelease(resp.Body)
+	if err != nil {
+		return nil, errors.Wrapf(err, "parse %s", releaseURL)
+	}
+
+	return sections, nil
 }
 
 func parseRelease(rd io.Reader) ([]string, error) {
@@ -901,65 +883,53 @@ func parseRelease(rd io.Reader) ([]string, error) {
 }
 
 func fetchSource(c *utilhttp.Client, sourceURL string) (map[string]textproto.MIMEHeader, error) {
-	if resp, err := c.Get(fmt.Sprintf("%s.gz", sourceURL)); err == nil {
-		defer resp.Body.Close()
+	for _, compress := range []string{"gz", "xz", "bz2"} {
+		resp, err := c.Get(fmt.Sprintf("%s.%s", sourceURL, compress))
+		if err == nil {
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				continue
+			}
 
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			switch compress {
+			case "gz":
+				r, err := gzip.NewReader(resp.Body)
+				if err != nil {
+					return nil, errors.Wrap(err, "create gzip reader")
+				}
+				defer r.Close()
+
+				sources, err := parseSource(r)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse %s.gz", sourceURL)
+				}
+
+				return sources, nil
+			case "xz":
+				r, err := xz.NewReader(resp.Body)
+				if err != nil {
+					return nil, errors.Wrap(err, "create gzip reader")
+				}
+
+				sources, err := parseSource(r)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse %s.xz", sourceURL)
+				}
+
+				return sources, nil
+			case "bz2":
+				r := bzip2.NewReader(resp.Body)
+
+				sources, err := parseSource(r)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse %s.bz2", sourceURL)
+				}
+
+				return sources, nil
+			default:
+				return nil, errors.Errorf("unexpected compress format. expected: %q, actual: %s", []string{"gz", "xz", "bz2"}, compress)
+			}
 		}
-
-		r, err := gzip.NewReader(resp.Body)
-		if err != nil {
-			return nil, errors.Wrap(err, "create gzip reader")
-		}
-		defer r.Close()
-
-		sources, err := parseSource(r)
-		if err != nil {
-			return nil, errors.Wrapf(err, "parse %s.gz", sourceURL)
-		}
-
-		return sources, nil
-	}
-
-	if resp, err := c.Get(fmt.Sprintf("%s.xz", sourceURL)); err == nil {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-		}
-
-		r, err := xz.NewReader(resp.Body)
-		if err != nil {
-			return nil, errors.Wrap(err, "create gzip reader")
-		}
-
-		sources, err := parseSource(r)
-		if err != nil {
-			return nil, errors.Wrapf(err, "parse %s.xz", sourceURL)
-		}
-
-		return sources, nil
-	}
-
-	if resp, err := c.Get(fmt.Sprintf("%s.bz2", sourceURL)); err == nil {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-		}
-
-		r := bzip2.NewReader(resp.Body)
-
-		sources, err := parseSource(r)
-		if err != nil {
-			return nil, errors.Wrapf(err, "parse %s.bz2", sourceURL)
-		}
-
-		return sources, nil
 	}
 
 	return nil, errors.Errorf("%s.(gz|xz|bz2) not found", sourceURL)
