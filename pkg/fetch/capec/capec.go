@@ -3,7 +3,9 @@ package capec
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -67,14 +69,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch Common Attack Pattern Enumerations and Classifications: CAPEC")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch capec data")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var capec capec
-	if err := json.Unmarshal(bs, &capec); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&capec); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	bar := pb.StartNew(len(capec.Objects))

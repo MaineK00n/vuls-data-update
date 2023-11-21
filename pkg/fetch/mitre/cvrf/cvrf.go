@@ -1,10 +1,11 @@
 package cvrf
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"time"
 
@@ -74,13 +75,19 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch MITRE CVE CVRF List")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch mitre data")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var doc cvrfdoc
-	d := xml.NewDecoder(bytes.NewReader(bs))
+	d := xml.NewDecoder(resp.Body)
 	d.CharsetReader = charset.NewReaderLabel
 	if err := d.Decode(&doc); err != nil {
 		return errors.Wrap(err, "decode xml")

@@ -2,7 +2,9 @@ package bulletin
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -79,33 +81,50 @@ func Fetch(opts ...Option) error {
 
 	bulletins := map[string][]Bulletin{}
 	for _, u := range options.dataURLs {
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
-		if err != nil {
-			return errors.Wrap(err, "fetch bulletin data")
-		}
-
-		f, err := xlsx.OpenBinary(bs)
-		if err != nil {
-			return errors.Wrap(err, "failed to open xlsx binary")
-		}
-		for _, sheet := range f.Sheets {
-			for i, row := range sheet.Rows {
-				// skip header
-				if i == 0 {
-					continue
-				}
-
-				var line Bulletin
-				if err := row.ReadStruct(&line); err != nil {
-					return errors.Wrap(err, "failed to read xlsx line")
-				}
-
-				if line.DatePosted == "" {
-					continue
-				}
-
-				bulletins[line.BulletinID] = append(bulletins[line.BulletinID], line)
+		if err := func() error {
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+			if err != nil {
+				return errors.Wrap(err, "fetch bulletin data")
 			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			bs, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return errors.Wrap(err, "read all response body")
+			}
+
+			f, err := xlsx.OpenBinary(bs)
+			if err != nil {
+				return errors.Wrap(err, "failed to open xlsx binary")
+			}
+			for _, sheet := range f.Sheets {
+				for i, row := range sheet.Rows {
+					// skip header
+					if i == 0 {
+						continue
+					}
+
+					var line Bulletin
+					if err := row.ReadStruct(&line); err != nil {
+						return errors.Wrap(err, "failed to read xlsx line")
+					}
+
+					if line.DatePosted == "" {
+						continue
+					}
+
+					bulletins[line.BulletinID] = append(bulletins[line.BulletinID], line)
+				}
+			}
+
+			return nil
+		}(); err != nil {
+			return errors.Wrap(err, "fetch")
 		}
 	}
 

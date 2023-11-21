@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -74,14 +76,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch JVNDB Detail")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var cs []checksum
-	if err := json.Unmarshal(bs, &cs); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&cs); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	var filtered []checksum
@@ -93,31 +101,44 @@ func Fetch(opts ...Option) error {
 
 	for _, c := range filtered {
 		log.Printf("[INFO] Fetch JVNDB Detail Feed %s", c.Filename)
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
-		if err != nil {
-			return errors.Wrap(err, "fetch jvndb detail")
-		}
-
-		var feed feed
-		if err := xml.Unmarshal(bs, &feed); err != nil {
-			return errors.Wrap(err, "unmarshal xml")
-		}
-
-		for _, v := range feed.Vulinfo {
-			for i, item := range v.VulinfoData.Affected.AffectedItem {
-				var vs []string
-				for _, v := range item.VersionNumber {
-					if v == "" {
-						continue
-					}
-					vs = append(vs, v)
-				}
-				v.VulinfoData.Affected.AffectedItem[i].VersionNumber = vs
+		vs, err := func() ([]Vulinfo, error) {
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
+			if err != nil {
+				return nil, errors.Wrap(err, "fetch jvndb detail")
 			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			var feed feed
+			if err := xml.NewDecoder(resp.Body).Decode(&feed); err != nil {
+				return nil, errors.Wrap(err, "decode xml")
+			}
+
+			for _, v := range feed.Vulinfo {
+				for i, item := range v.VulinfoData.Affected.AffectedItem {
+					var vs []string
+					for _, v := range item.VersionNumber {
+						if v == "" {
+							continue
+						}
+						vs = append(vs, v)
+					}
+					v.VulinfoData.Affected.AffectedItem[i].VersionNumber = vs
+				}
+			}
+
+			return feed.Vulinfo, nil
+		}()
+		if err != nil {
+			return errors.Wrap(err, "fetch")
 		}
 
-		bar := pb.StartNew(len(feed.Vulinfo))
-		for _, a := range feed.Vulinfo {
+		bar := pb.StartNew(len(vs))
+		for _, a := range vs {
 			splitted, err := util.Split(a.VulinfoID, "-", "-")
 			if err != nil {
 				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.VulinfoID)

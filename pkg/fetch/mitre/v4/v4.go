@@ -1,10 +1,10 @@
 package v4
 
 import (
-	"bytes"
 	"compress/gzip"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -78,14 +78,20 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] Fetch MITRE CVE V4 List")
 	h := make(http.Header)
 	h.Set("Accept-Encoding", "gzip")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL, utilhttp.WithRequestHeader(h))
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL, utilhttp.WithRequestHeader(h))
 	if err != nil {
 		return errors.Wrap(err, "fetch mitre data")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
 	var root root
 
-	gr, err := gzip.NewReader(bytes.NewReader(bs))
+	gr, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "create gzip reader")
 	}

@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -75,14 +77,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch JVNDB Product")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var cs []checksum
-	if err := json.Unmarshal(bs, &cs); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&cs); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	var filtered []checksum
@@ -108,14 +116,20 @@ func Fetch(opts ...Option) error {
 	})
 
 	log.Printf("[INFO] Fetch JVNDB Product Feed %s", filtered[len(filtered)-1].Filename)
-	bs, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(filtered[len(filtered)-1].URL)
+	resp, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(filtered[len(filtered)-1].URL)
 	if err != nil {
 		return errors.Wrap(err, "fetch jvndb product")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var feed feed
-	if err := xml.Unmarshal(bs, &feed); err != nil {
-		return errors.Wrap(err, "unmarshal xml")
+	if err := xml.NewDecoder(resp.Body).Decode(&feed); err != nil {
+		return errors.Wrap(err, "decode xml")
 	}
 
 	var ps []Product

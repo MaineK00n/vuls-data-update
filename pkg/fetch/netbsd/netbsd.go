@@ -2,8 +2,9 @@ package netbsd
 
 import (
 	"bufio"
-	"bytes"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strings"
 
@@ -70,14 +71,20 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch updateinfo data")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
 	var vs []Vulnerability
 
-	s := bufio.NewScanner(bytes.NewReader(bs))
+	s := bufio.NewScanner(resp.Body)
 	for s.Scan() {
 		t := s.Text()
 		if strings.HasPrefix(t, "#") {

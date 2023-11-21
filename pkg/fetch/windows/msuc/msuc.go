@@ -1,8 +1,8 @@
 package msuc
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -124,12 +124,18 @@ func (opts options) search(query string) ([]string, error) {
 	values := url.Values{}
 	values.Set("q", query)
 
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).POST(fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(values.Encode())))
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).POST(fmt.Sprintf("%s/Search.aspx", opts.msucURL), utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(values.Encode())))
 	if err != nil {
 		return nil, errors.Wrap(err, "post")
 	}
+	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "create new document from reader")
 	}
@@ -154,12 +160,18 @@ func (opts options) search(query string) ([]string, error) {
 func (opts options) view(updateID string) (Update, error) {
 	log.Printf("[INFO] GET %s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID)
 
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(fmt.Sprintf("%s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID))
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(fmt.Sprintf("%s/ScopedViewInline.aspx?updateid=%s", opts.msucURL, updateID))
 	if err != nil {
 		return Update{}, errors.Wrap(err, "fetch view")
 	}
+	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return Update{}, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return Update{}, errors.Wrap(err, "create new document from reader")
 	}

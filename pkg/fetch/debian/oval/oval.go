@@ -1,11 +1,12 @@
 package oval
 
 import (
-	"bytes"
 	"compress/bzip2"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
@@ -157,12 +158,18 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() ([]string, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
+	defer resp.Body.Close()
 
-	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse as html")
 	}
@@ -184,13 +191,19 @@ func (opts options) fetch(ovalname string) (*root, error) {
 		return nil, errors.Wrap(err, "join url path")
 	}
 
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(u)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", u)
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var r root
-	d := xml.NewDecoder(bzip2.NewReader(bytes.NewReader(bs)))
+	d := xml.NewDecoder(bzip2.NewReader(resp.Body))
 	d.CharsetReader = charset.NewReaderLabel
 
 	if err := d.Decode(&r); err != nil {

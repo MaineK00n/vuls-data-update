@@ -1,12 +1,13 @@
 package cve
 
 import (
-	"bytes"
 	"cmp"
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path"
 	"path/filepath"
@@ -138,12 +139,18 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch(feedURL string, cves map[string]map[string]CVEItem) error {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(feedURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(feedURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch nvd cve feed")
 	}
+	defer resp.Body.Close()
 
-	r, err := gzip.NewReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	r, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "open cve as gzip")
 	}

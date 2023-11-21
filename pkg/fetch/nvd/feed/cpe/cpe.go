@@ -1,13 +1,13 @@
 package cpe
 
 import (
-	"bytes"
 	"compress/gzip"
 	"encoding/xml"
 	"fmt"
 	"hash/fnv"
 	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strconv"
 
@@ -108,12 +108,18 @@ func (opts options) fetch() ([]CPEDictItem, error) {
 	var cpes []CPEDictItem
 
 	log.Printf(`[INFO] Fetch NVD CPE Dictinoary`)
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.url)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.url)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cpe dictionary feed")
 	}
+	defer resp.Body.Close()
 
-	r, err := gzip.NewReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	r, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "open cpe dictionary as gzip")
 	}

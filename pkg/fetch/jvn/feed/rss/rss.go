@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -75,14 +77,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch JVNDB RSS")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var cs []checksum
-	if err := json.Unmarshal(bs, &cs); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&cs); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	var filtered []checksum
@@ -110,17 +118,31 @@ func Fetch(opts ...Option) error {
 	advisories := map[string]Item{}
 	for _, c := range filtered {
 		log.Printf("[INFO] Fetch JVNDB RSS Feed %s", c.Filename)
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
+
+		items, err := func() ([]Item, error) {
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(c.URL)
+			if err != nil {
+				return nil, errors.Wrap(err, "fetch jvndb rss")
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			var root root
+			if err := xml.NewDecoder(resp.Body).Decode(&root); err != nil {
+				return nil, errors.Wrap(err, "decode xml")
+			}
+
+			return root.Item, nil
+		}()
 		if err != nil {
-			return errors.Wrap(err, "fetch jvndb rss")
+			return errors.Wrap(err, "fetch")
 		}
 
-		var root root
-		if err := xml.Unmarshal(bs, &root); err != nil {
-			return errors.Wrap(err, "unmarshal xml")
-		}
-
-		for _, i := range root.Item {
+		for _, i := range items {
 			if ii, ok := advisories[i.Identifier]; ok {
 				a, _ := time.Parse("2006-01-02T15:04-07:00", ii.Modified)
 				b, _ := time.Parse("2006-01-02T15:04-07:00", i.Modified)

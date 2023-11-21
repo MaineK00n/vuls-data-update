@@ -2,12 +2,13 @@ package amazon
 
 import (
 	"bufio"
-	"bytes"
 	"compress/gzip"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"strings"
@@ -94,14 +95,20 @@ func Fetch(opts ...Option) error {
 		switch v {
 		case "1", "2022", "2023":
 		case "2":
-			bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
 			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
 
 			var c catalog
-			if err := json.Unmarshal(bs, &c); err != nil {
-				return errors.Wrap(err, "unmarshal json")
+			if err := json.NewDecoder(resp.Body).Decode(&c); err != nil {
+				return errors.Wrap(err, "decode json")
 			}
 
 			m := options.mirrorURLs[v]
@@ -179,13 +186,19 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch(mirror string) ([]Update, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(mirror)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(mirror)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var mirrors []string
-	scanner := bufio.NewScanner(bytes.NewReader(bs))
+	scanner := bufio.NewScanner(resp.Body)
 	for scanner.Scan() {
 		mirrors = append(mirrors, scanner.Text())
 	}
@@ -223,14 +236,20 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 var ErrNoUpdateInfo = errors.New("no updateinfo field")
 
 func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(repomdURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(repomdURL)
 	if err != nil {
 		return "", errors.Wrap(err, "fetch repomd")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return "", errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var repomd repomd
-	if err := xml.Unmarshal(bs, &repomd); err != nil {
-		return "", errors.Wrap(err, "unmarshal repomd.xml")
+	if err := xml.NewDecoder(resp.Body).Decode(&repomd); err != nil {
+		return "", errors.Wrap(err, "decode repomd.xml")
 	}
 
 	var updateInfoPath string
@@ -247,12 +266,18 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 }
 
 func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(updateinfoURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(updateinfoURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")
 	}
+	defer resp.Body.Close()
 
-	gr, err := gzip.NewReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	gr, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "open updateinfo as gzip")
 	}

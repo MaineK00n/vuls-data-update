@@ -3,7 +3,9 @@ package arch
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -71,14 +73,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Arch Linux")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var vs vulnerabilityGroups
-	if err := json.Unmarshal(bs, &vs); err != nil {
-		return errors.Wrap(err, "unmarshal advisory")
+	if err := json.NewDecoder(resp.Body).Decode(&vs); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	bar := pb.StartNew(len(vs))

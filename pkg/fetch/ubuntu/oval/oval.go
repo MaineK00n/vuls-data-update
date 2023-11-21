@@ -1,11 +1,12 @@
 package oval
 
 import (
-	"bytes"
 	"compress/bzip2"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"path/filepath"
 	"slices"
@@ -91,24 +92,37 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Ubuntu %s/%s", release, service)
-		u, err := url.JoinPath(options.baseURL, href)
-		if err != nil {
-			return errors.Wrap(err, "join url path")
-		}
+		r, err := func() (*root, error) {
+			u, err := url.JoinPath(options.baseURL, href)
+			if err != nil {
+				return nil, errors.Wrap(err, "join url path")
+			}
 
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
-		if err != nil {
-			return errors.Wrap(err, "fetch oval")
-		}
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
+			if err != nil {
+				return nil, errors.Wrap(err, "fetch oval")
+			}
+			defer resp.Body.Close()
 
-		var root root
-		if err := xml.NewDecoder(bzip2.NewReader(bytes.NewReader(bs))).Decode(&root); err != nil {
-			return errors.Wrap(err, "decode oval")
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			var root root
+			if err := xml.NewDecoder(bzip2.NewReader(resp.Body)).Decode(&root); err != nil {
+				return nil, errors.Wrap(err, "decode oval")
+			}
+
+			return &root, nil
+		}()
+		if err != nil {
+			return errors.Wrap(err, "fetch")
 		}
 
 		log.Printf("[INFO] Fetch Ubuntu %s/%s Definitions", release, service)
-		bar := pb.StartNew(len(root.Definitions.Definition))
-		for _, def := range root.Definitions.Definition {
+		bar := pb.StartNew(len(r.Definitions.Definition))
+		for _, def := range r.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, release, service, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, service, "definitions", fmt.Sprintf("%s.json", def.ID)))
 			}
@@ -117,8 +131,8 @@ func Fetch(opts ...Option) error {
 		bar.Finish()
 
 		log.Printf("[INFO] Fetch Ubuntu %s/%s Tests", release, service)
-		bar = pb.StartNew(len(root.Tests.Textfilecontent54Test))
-		for _, test := range root.Tests.Textfilecontent54Test {
+		bar = pb.StartNew(len(r.Tests.Textfilecontent54Test))
+		for _, test := range r.Tests.Textfilecontent54Test {
 			if err := util.Write(filepath.Join(options.dir, release, service, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, service, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
 			}
@@ -127,8 +141,8 @@ func Fetch(opts ...Option) error {
 		bar.Finish()
 
 		log.Printf("[INFO] Fetch Ubuntu %s/%s Objects", release, service)
-		bar = pb.StartNew(len(root.Objects.Textfilecontent54Object))
-		for _, object := range root.Objects.Textfilecontent54Object {
+		bar = pb.StartNew(len(r.Objects.Textfilecontent54Object))
+		for _, object := range r.Objects.Textfilecontent54Object {
 			if err := util.Write(filepath.Join(options.dir, release, service, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, service, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
 			}
@@ -137,8 +151,8 @@ func Fetch(opts ...Option) error {
 		bar.Finish()
 
 		log.Printf("[INFO] Fetch Ubuntu %s/%s States", release, service)
-		bar = pb.StartNew(len(root.States.Textfilecontent54State))
-		for _, state := range root.States.Textfilecontent54State {
+		bar = pb.StartNew(len(r.States.Textfilecontent54State))
+		for _, state := range r.States.Textfilecontent54State {
 			if err := util.Write(filepath.Join(options.dir, release, service, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, service, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
 			}
@@ -147,8 +161,8 @@ func Fetch(opts ...Option) error {
 		bar.Finish()
 
 		log.Printf("[INFO] Fetch Ubuntu %s/%s Variables", release, service)
-		bar = pb.StartNew(len(root.Variables.ConstantVariable))
-		for _, variable := range root.Variables.ConstantVariable {
+		bar = pb.StartNew(len(r.Variables.ConstantVariable))
+		for _, variable := range r.Variables.ConstantVariable {
 			if err := util.Write(filepath.Join(options.dir, release, service, "variables", "constant_variable", fmt.Sprintf("%s.json", variable.ID)), variable); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, service, "variables", "constant_variable", fmt.Sprintf("%s.json", variable.ID)))
 			}
@@ -161,12 +175,18 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) walkIndexOf() (map[string]string, error) {
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
+	defer resp.Body.Close()
 
-	d, err := goquery.NewDocumentFromReader(bytes.NewReader(bs))
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "parse as html")
 	}

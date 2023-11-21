@@ -3,7 +3,9 @@ package errata
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"time"
 
@@ -75,21 +77,34 @@ func Fetch(opts ...Option) error {
 
 	var as []Advisory
 	for i := 0; ; i++ {
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
+		a, err := func() ([]Advisory, error) {
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
+			if err != nil {
+				return nil, errors.Wrap(err, "fetch advisory")
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			var a advisories
+			if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
+				return nil, errors.Wrap(err, "decode json")
+			}
+
+			return a.Advisories, nil
+		}()
 		if err != nil {
-			return errors.Wrap(err, "fetch advisory")
+			return errors.Wrap(err, "fetch")
 		}
 
-		var a advisories
-		if err := json.Unmarshal(bs, &a); err != nil {
-			return errors.Wrap(err, "unmarshal json")
-		}
-
-		if len(a.Advisories) == 0 {
+		if len(as) == 0 {
 			break
 		}
 
-		as = append(as, a.Advisories...)
+		as = append(as, a...)
 	}
 
 	bar := pb.StartNew(len(as))

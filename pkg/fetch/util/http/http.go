@@ -165,85 +165,67 @@ func WithRequestBody(body []byte) RequestOption {
 	return requestBodyOption(body)
 }
 
-func Get(url string, opts ...RequestOption) ([]byte, error) {
+func Get(url string, opts ...RequestOption) (*http.Response, error) {
 	return defaultClient.Get(url, opts...)
 }
 
-func (c *Client) Get(url string, opts ...RequestOption) ([]byte, error) {
+func (c *Client) Get(url string, opts ...RequestOption) (*http.Response, error) {
 	return c.Do(http.MethodGet, url, opts...)
 }
 
-func MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([][]byte, error) {
+func MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
 	return defaultClient.MultiGet(urls, concurrency, wait, opts...)
 }
 
-func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([][]byte, error) {
-	bss := make([][]byte, 0, len(urls))
+func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+	resps := make([]*http.Response, 0, len(urls))
 
-	respChan := make(chan []byte, len(urls))
-	if err := c.PipelineGet(urls, concurrency, wait, func(resp Response) error { respChan <- resp.Body; return nil }, opts...); err != nil {
+	respChan := make(chan *http.Response, len(urls))
+	if err := c.PipelineGet(urls, concurrency, wait, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
 		return nil, errors.Wrap(err, "pipeline get")
 	}
 	close(respChan)
 	for r := range respChan {
-		bss = append(bss, r)
+		resps = append(resps, r)
 	}
-	return bss, nil
+	return resps, nil
 }
 
-type Response struct {
-	URL  string
-	Body []byte
+func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
+	return c.PipelineDo(http.MethodGet, urls, concurrency, wait, cont, opts...)
 }
 
-func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func(resp Response) error, opts ...RequestOption) error {
-	urlChan := make(chan string)
-	go func() {
-		defer close(urlChan)
-		for _, u := range urls {
-			urlChan <- u
-		}
-	}()
-
-	bar := pb.Full.Start(len(urls))
-	g, ctx := errgroup.WithContext(context.Background())
-	g.SetLimit(concurrency)
-	for u := range urlChan {
-		u := u
-		g.Go(func() error {
-			bs, err := c.Get(u, opts...)
-			if err != nil {
-				return errors.Wrapf(err, "get %s", u)
-			}
-			if err := cont(Response{URL: u, Body: bs}); err != nil {
-				return errors.Wrapf(err, "continuation %s", u)
-			}
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			default:
-				bar.Increment()
-				time.Sleep(time.Duration(wait) * time.Second)
-			}
-			return nil
-		})
-	}
-	if err := g.Wait(); err != nil {
-		return errors.Wrap(err, "err in goroutine")
-	}
-	bar.Finish()
-	return nil
-}
-
-func POST(url string, opts ...RequestOption) ([]byte, error) {
+func POST(url string, opts ...RequestOption) (*http.Response, error) {
 	return defaultClient.POST(url, opts...)
 }
 
-func (c *Client) POST(url string, opts ...RequestOption) ([]byte, error) {
+func (c *Client) POST(url string, opts ...RequestOption) (*http.Response, error) {
 	return c.Do(http.MethodPost, url, opts...)
 }
 
-func (c *Client) Do(method, url string, opts ...RequestOption) ([]byte, error) {
+func MultiPost(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+	return defaultClient.MultiPost(urls, concurrency, wait, opts...)
+}
+
+func (c *Client) MultiPost(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+	resps := make([]*http.Response, 0, len(urls))
+
+	respChan := make(chan *http.Response, len(urls))
+	if err := c.PipelinePost(urls, concurrency, wait, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
+		return nil, errors.Wrap(err, "pipeline post")
+	}
+	close(respChan)
+	for r := range respChan {
+		resps = append(resps, r)
+	}
+	return resps, nil
+}
+
+func (c *Client) PipelinePost(urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
+	return c.PipelineDo(http.MethodPost, urls, concurrency, wait, cont, opts...)
+}
+
+func (c *Client) Do(method, url string, opts ...RequestOption) (*http.Response, error) {
 	options := &requestOptions{
 		header: nil,
 		body:   nil,
@@ -273,17 +255,45 @@ func (c *Client) Do(method, url string, opts ...RequestOption) ([]byte, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "http request, url: %s", url)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	return resp, nil
+}
+
+func (c *Client) PipelineDo(method string, urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
+	urlChan := make(chan string)
+	go func() {
+		defer close(urlChan)
+		for _, u := range urls {
+			urlChan <- u
+		}
+	}()
+
+	bar := pb.Full.Start(len(urls))
+	g, ctx := errgroup.WithContext(context.Background())
+	g.SetLimit(concurrency)
+	for u := range urlChan {
+		u := u
+		g.Go(func() error {
+			resp, err := c.Do(method, u, opts...)
+			if err != nil {
+				return errors.Wrapf(err, "do %s", u)
+			}
+			if err := cont(resp); err != nil {
+				return errors.Wrapf(err, "continuation %s", u)
+			}
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				bar.Increment()
+				time.Sleep(time.Duration(wait) * time.Second)
+			}
+			return nil
+		})
 	}
-
-	bs, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "read response body")
+	if err := g.Wait(); err != nil {
+		return errors.Wrap(err, "err in goroutine")
 	}
-
-	return bs, nil
+	bar.Finish()
+	return nil
 }

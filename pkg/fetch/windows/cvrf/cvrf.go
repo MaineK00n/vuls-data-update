@@ -1,11 +1,12 @@
 package cvrf
 
 import (
-	"bytes"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path"
 	"path/filepath"
 	"slices"
@@ -77,26 +78,45 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Windows CVRF")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch updates")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var us updates
-	if err := json.NewDecoder(bytes.NewReader(bs)).Decode(&us); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&us); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 
 	for _, u := range us.Value {
 		log.Printf("[INFO] Fetch Windows CVRF %s", path.Base(u.CvrfURL))
-		bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u.CvrfURL)
-		if err != nil {
-			return errors.Wrap(err, "fetch cvrf")
-		}
+		c, err := func() (*CVRF, error) {
+			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u.CvrfURL)
+			if err != nil {
+				return nil, errors.Wrap(err, "fetch cvrf")
+			}
+			defer resp.Body.Close()
 
-		var c CVRF
-		if err := xml.NewDecoder(bytes.NewReader(bs)).Decode(&c); err != nil {
-			return errors.Wrap(err, "decode xml")
+			if resp.StatusCode != http.StatusOK {
+				_, _ = io.Copy(io.Discard, resp.Body)
+				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+			}
+
+			var c CVRF
+			if err := xml.NewDecoder(resp.Body).Decode(&c); err != nil {
+				return nil, errors.Wrap(err, "decode xml")
+			}
+
+			return &c, nil
+		}()
+		if err != nil {
+			return errors.Wrap(err, "fetch")
 		}
 
 		bar := pb.StartNew(len(c.Vulnerability))

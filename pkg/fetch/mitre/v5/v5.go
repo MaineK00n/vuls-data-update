@@ -2,12 +2,12 @@ package v5
 
 import (
 	"archive/tar"
-	"bytes"
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -77,14 +77,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch MITRE CVE V5 List")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch mitre data")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
 	var vs []Vulnerability
 
-	gr, err := gzip.NewReader(bytes.NewReader(bs))
+	gr, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "create gzip reader")
 	}

@@ -3,7 +3,9 @@ package msf
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"strconv"
 
@@ -72,14 +74,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch Metasploit Framework")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch msf data")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	ms := map[string]module{}
-	if err := json.Unmarshal(bs, &ms); err != nil {
-		return errors.Wrap(err, "unmarshal json")
+	if err := json.NewDecoder(resp.Body).Decode(&ms); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	modules := make([]Module, 0, len(ms))

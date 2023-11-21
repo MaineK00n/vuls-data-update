@@ -1,11 +1,12 @@
 package oracle
 
 import (
-	"bytes"
 	"compress/bzip2"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -73,14 +74,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch Oracle Linux")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var root root
-	if err := xml.NewDecoder(bzip2.NewReader(bytes.NewReader(bs))).Decode(&root); err != nil {
-		return errors.Wrap(err, "unmarshal advisory")
+	if err := xml.NewDecoder(bzip2.NewReader(resp.Body)).Decode(&root); err != nil {
+		return errors.Wrap(err, "decode xml")
 	}
 
 	log.Printf("[INFO] Fetch Oracle Linux Definitions")

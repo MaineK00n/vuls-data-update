@@ -3,7 +3,9 @@ package kev
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"time"
 
@@ -72,14 +74,20 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch Known Exploited Vulnerabilities Catalog")
-	bs, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch kev data")
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
 
 	var catalog catalog
-	if err := json.Unmarshal(bs, &catalog); err != nil {
-		return errors.Wrap(err, "json unmarshal")
+	if err := json.NewDecoder(resp.Body).Decode(&catalog); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
 	bar := pb.StartNew(len(catalog.Vulnerabilities))
