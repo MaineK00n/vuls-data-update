@@ -17,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf/"
+const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf1.2/"
 
 type options struct {
 	baseURL     string
