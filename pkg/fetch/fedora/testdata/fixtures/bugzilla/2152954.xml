@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2152954</bug_id>
+          
+          <creation_ts>2022-12-13 15:12:55 +0000</creation_ts>
+          <short_desc>rubygem-rails-html-sanitizer-1.6.0 is available</short_desc>
+          <delta_ts>2023-11-23 12:33:39 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>rubygem-rails-html-sanitizer</component>
+          <version>rawhide</version>
+          <rep_platform>Unspecified</rep_platform>
+          <op_sys>Unspecified</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>FutureFeature, Triaged</keywords>
+          <priority>unspecified</priority>
+          <bug_severity>unspecified</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Upstream Release Monitoring">upstream-release-monitoring</reporter>
+          <assigned_to name="Vít Ondruch">vondruch</assigned_to>
+          <cc>jaruga</cc>
+    
+    
+    <cc>pvalena</cc>
+    
+    
+    <cc>ruby-packagers-sig</cc>
+    
+    
+    <cc>strzibny</cc>
+    
+    
+    <cc>vondruch</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in>rubygem-rails-html-sanitizer-1.6.0-1.fc40</cf_fixed_in>
+          <cf_doc_type>---</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-11-23 12:33:39</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16871747</commentid>
+    <comment_count>0</comment_count>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2022-12-13 15:12:55 +0000</bug_when>
+    <thetext>Releases retrieved: 1.4.4
+Upstream release that is considered latest: 1.4.4
+Current version/release in rawhide: 1.4.3-2.fc38
+URL: http://rubygems.org/gems/rails-html-sanitizer
+
+Please consult the package updates policy before you issue an update to a stable branch: https://docs.fedoraproject.org/en-US/fesco/Updates_Policy/
+
+
+More information about the service that created this bug can be found at: https://docs.fedoraproject.org/en-US/package-maintainers/Upstream_Release_Monitoring
+
+
+Please keep in mind that with any upstream change, there may also be packaging changes that need to be made. Specifically, please remember that it is your responsibility to review the new version to ensure that the licensing is still correct and that no non-free or legally problematic items have been added upstream.
+
+
+Based on the information from Anitya: https://release-monitoring.org/project/6898/
+
+
+To change the monitoring settings for the project, please visit:
+https://src.fedoraproject.org/rpms/rubygem-rails-html-sanitizer</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16871749</commentid>
+    <comment_count>1</comment_count>
+      <attachid>1932385</attachid>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2022-12-13 15:13:00 +0000</bug_when>
+    <thetext>Created attachment 1932385
+Update to 1.4.4 (#2152954)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16871876</commentid>
+    <comment_count>2</comment_count>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2022-12-13 15:16:58 +0000</bug_when>
+    <thetext>the-new-hotness/release-monitoring.org's scratch build of rubygem-rails-html-sanitizer-1.4.4-1.fc36.src.rpm for rawhide failed http://koji.fedoraproject.org/koji/taskinfo?taskID=95314883</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16985345</commentid>
+    <comment_count>3</comment_count>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2023-01-20 19:33:07 +0000</bug_when>
+    <thetext>Releases retrieved: 1.5.0
+Upstream release that is considered latest: 1.5.0
+Current version/release in rawhide: 1.4.3-2.fc38
+URL: http://rubygems.org/gems/rails-html-sanitizer
+
+Please consult the package updates policy before you issue an update to a stable branch: https://docs.fedoraproject.org/en-US/fesco/Updates_Policy/
+
+
+More information about the service that created this bug can be found at: https://docs.fedoraproject.org/en-US/package-maintainers/Upstream_Release_Monitoring
+
+
+Please keep in mind that with any upstream change, there may also be packaging changes that need to be made. Specifically, please remember that it is your responsibility to review the new version to ensure that the licensing is still correct and that no non-free or legally problematic items have been added upstream.
+
+
+Based on the information from Anitya: https://release-monitoring.org/project/6898/
+
+
+To change the monitoring settings for the project, please visit:
+https://src.fedoraproject.org/rpms/rubygem-rails-html-sanitizer</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16985346</commentid>
+    <comment_count>4</comment_count>
+      <attachid>1939495</attachid>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2023-01-20 19:33:11 +0000</bug_when>
+    <thetext>Created attachment 1939495
+Update to 1.5.0 (#2152954)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16985351</commentid>
+    <comment_count>5</comment_count>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2023-01-20 19:38:56 +0000</bug_when>
+    <thetext>the-new-hotness/release-monitoring.org's scratch build of rubygem-rails-html-sanitizer-1.5.0-1.fc36.src.rpm for rawhide failed http://koji.fedoraproject.org/koji/taskinfo?taskID=96438425</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17323727</commentid>
+    <comment_count>6</comment_count>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2023-05-26 13:25:06 +0000</bug_when>
+    <thetext>Releases retrieved: 1.6.0
+Upstream release that is considered latest: 1.6.0
+Current version/release in rawhide: 1.4.3-3.fc38
+URL: http://rubygems.org/gems/rails-html-sanitizer
+
+Please consult the package updates policy before you issue an update to a stable branch: https://docs.fedoraproject.org/en-US/fesco/Updates_Policy/
+
+
+More information about the service that created this bug can be found at: https://docs.fedoraproject.org/en-US/package-maintainers/Upstream_Release_Monitoring
+
+
+Please keep in mind that with any upstream change, there may also be packaging changes that need to be made. Specifically, please remember that it is your responsibility to review the new version to ensure that the licensing is still correct and that no non-free or legally problematic items have been added upstream.
+
+
+Based on the information from Anitya: https://release-monitoring.org/project/6898/
+
+
+To change the monitoring settings for the project, please visit:
+https://src.fedoraproject.org/rpms/rubygem-rails-html-sanitizer</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17323729</commentid>
+    <comment_count>7</comment_count>
+      <attachid>1967109</attachid>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2023-05-26 13:25:10 +0000</bug_when>
+    <thetext>Created attachment 1967109
+Update to 1.6.0 (#2152954)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17323746</commentid>
+    <comment_count>8</comment_count>
+    <who name="Upstream Release Monitoring">upstream-release-monitoring</who>
+    <bug_when>2023-05-26 13:29:33 +0000</bug_when>
+    <thetext>the-new-hotness/release-monitoring.org's scratch build of rubygem-rails-html-sanitizer-1.6.0-1.fc38.src.rpm for rawhide failed http://koji.fedoraproject.org/koji/taskinfo?taskID=101552309</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776858</commentid>
+    <comment_count>9</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 12:31:26 +0000</bug_when>
+    <thetext>FEDORA-2023-91e69ea326 has been submitted as an update to Fedora 40. https://bodhi.fedoraproject.org/updates/FEDORA-2023-91e69ea326</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776864</commentid>
+    <comment_count>10</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 12:33:39 +0000</bug_when>
+    <thetext>FEDORA-2023-91e69ea326 has been pushed to the Fedora 40 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc>
+      
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1932385</attachid>
+            <date>2022-12-13 15:13:00 +0000</date>
+            <delta_ts>2022-12-13 15:13:00 +0000</delta_ts>
+            <desc>Update to 1.4.4 (#2152954)</desc>
+            <filename>0001-Update-to-1.4.4-2152954.patch</filename>
+            <type>text/plain</type>
+            <size>1165</size>
+            <attacher name="Upstream Release Monitoring">upstream-release-monitoring</attacher>
+            
+              <data encoding="base64">RnJvbSAwMjkxNWIzNjg0ZGRkYjc3MTcyNDAyOWFiMDc0YTExMzJiNDdhMWMwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBGZWRvcmEgUmVsZWFzZSBNb25pdG9yaW5nIDxyZWxlYXNlLW1v
+bml0b3JpbmdAZmVkb3JhcHJvamVjdC5vcmc+CkRhdGU6IFR1ZSwgMTMgRGVjIDIwMjIgMTU6MTI6
+NTkgKzAwMDAKU3ViamVjdDogW1BBVENIXSBVcGRhdGUgdG8gMS40LjQgKCMyMTUyOTU0KQoKLS0t
+CiBydWJ5Z2VtLXJhaWxzLWh0bWwtc2FuaXRpemVyLnNwZWMgfCA3ICsrKysrLS0KIDEgZmlsZSBj
+aGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvcnVi
+eWdlbS1yYWlscy1odG1sLXNhbml0aXplci5zcGVjIGIvcnVieWdlbS1yYWlscy1odG1sLXNhbml0
+aXplci5zcGVjCmluZGV4IGM4MDQ1NmIuLjY3ZWZiZGYgMTAwNjQ0Ci0tLSBhL3J1YnlnZW0tcmFp
+bHMtaHRtbC1zYW5pdGl6ZXIuc3BlYworKysgYi9ydWJ5Z2VtLXJhaWxzLWh0bWwtc2FuaXRpemVy
+LnNwZWMKQEAgLTIsOCArMiw4IEBACiAlZ2xvYmFsIGdlbV9uYW1lIHJhaWxzLWh0bWwtc2FuaXRp
+emVyCiAKIE5hbWU6IHJ1YnlnZW0tJXtnZW1fbmFtZX0KLVZlcnNpb246IDEuNC4zCi1SZWxlYXNl
+OiAyJXs/ZGlzdH0KK1ZlcnNpb246IDEuNC40CitSZWxlYXNlOiAxJXs/ZGlzdH0KIFN1bW1hcnk6
+IFRoaXMgZ2VtIGlzIHJlc3BvbnNpYmxlIHRvIHNhbml0aXplIEhUTUwgZnJhZ21lbnRzIGluIFJh
+aWxzIGFwcGxpY2F0aW9ucwogTGljZW5zZTogTUlUCiBVUkw6IGh0dHBzOi8vZ2l0aHViLmNvbS9y
+YWlscy9yYWlscy1odG1sLXNhbml0aXplcgpAQCAtNjQsNiArNjQsOSBAQCBwb3BkCiAle2dlbV9p
+bnN0ZGlyfS90ZXN0CiAKICVjaGFuZ2Vsb2cKKyogVHVlIERlYyAxMyAyMDIyIEZlZG9yYSBSZWxl
+YXNlIE1vbml0b3JpbmcgPHJlbGVhc2UtbW9uaXRvcmluZ0BmZWRvcmFwcm9qZWN0Lm9yZz4gLSAx
+LjQuNC0xCistIFVwZGF0ZSB0byAxLjQuNCAoIzIxNTI5NTQpCisKICogU2F0IE5vdiAyNiAyMDIy
+IE1hbW9ydSBUQVNBS0EgPG10YXNha2FAZmVkb3JhcHJvamVjdC5vcmc+IC0gMS40LjMtMgogLSBC
+YWNrcG9ydCB1cHN0cmVhbSBwYXRjaCBmb3IgdGVzdHMgd3J0IGxpYnhtbDIgY29tbWVudCBwYXJz
+aW5nIGNoYW5nZQogCi0tIAoyLjM3LjMKCg==
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1939495</attachid>
+            <date>2023-01-20 19:33:11 +0000</date>
+            <delta_ts>2023-01-20 19:33:11 +0000</delta_ts>
+            <desc>Update to 1.5.0 (#2152954)</desc>
+            <filename>0001-Update-to-1.5.0-2152954.patch</filename>
+            <type>text/plain</type>
+            <size>1165</size>
+            <attacher name="Upstream Release Monitoring">upstream-release-monitoring</attacher>
+            
+              <data encoding="base64">RnJvbSBlZTM0NzNkMTBkYmU5MjQ1NDM3ZGJlZTAwZjE5NThmYjkxNTAxNjY3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBGZWRvcmEgUmVsZWFzZSBNb25pdG9yaW5nIDxyZWxlYXNlLW1v
+bml0b3JpbmdAZmVkb3JhcHJvamVjdC5vcmc+CkRhdGU6IEZyaSwgMjAgSmFuIDIwMjMgMTk6MzM6
+MTAgKzAwMDAKU3ViamVjdDogW1BBVENIXSBVcGRhdGUgdG8gMS41LjAgKCMyMTUyOTU0KQoKLS0t
+CiBydWJ5Z2VtLXJhaWxzLWh0bWwtc2FuaXRpemVyLnNwZWMgfCA3ICsrKysrLS0KIDEgZmlsZSBj
+aGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvcnVi
+eWdlbS1yYWlscy1odG1sLXNhbml0aXplci5zcGVjIGIvcnVieWdlbS1yYWlscy1odG1sLXNhbml0
+aXplci5zcGVjCmluZGV4IGM4MDQ1NmIuLjRlMDk4ZmIgMTAwNjQ0Ci0tLSBhL3J1YnlnZW0tcmFp
+bHMtaHRtbC1zYW5pdGl6ZXIuc3BlYworKysgYi9ydWJ5Z2VtLXJhaWxzLWh0bWwtc2FuaXRpemVy
+LnNwZWMKQEAgLTIsOCArMiw4IEBACiAlZ2xvYmFsIGdlbV9uYW1lIHJhaWxzLWh0bWwtc2FuaXRp
+emVyCiAKIE5hbWU6IHJ1YnlnZW0tJXtnZW1fbmFtZX0KLVZlcnNpb246IDEuNC4zCi1SZWxlYXNl
+OiAyJXs/ZGlzdH0KK1ZlcnNpb246IDEuNS4wCitSZWxlYXNlOiAxJXs/ZGlzdH0KIFN1bW1hcnk6
+IFRoaXMgZ2VtIGlzIHJlc3BvbnNpYmxlIHRvIHNhbml0aXplIEhUTUwgZnJhZ21lbnRzIGluIFJh
+aWxzIGFwcGxpY2F0aW9ucwogTGljZW5zZTogTUlUCiBVUkw6IGh0dHBzOi8vZ2l0aHViLmNvbS9y
+YWlscy9yYWlscy1odG1sLXNhbml0aXplcgpAQCAtNjQsNiArNjQsOSBAQCBwb3BkCiAle2dlbV9p
+bnN0ZGlyfS90ZXN0CiAKICVjaGFuZ2Vsb2cKKyogRnJpIEphbiAyMCAyMDIzIEZlZG9yYSBSZWxl
+YXNlIE1vbml0b3JpbmcgPHJlbGVhc2UtbW9uaXRvcmluZ0BmZWRvcmFwcm9qZWN0Lm9yZz4gLSAx
+LjUuMC0xCistIFVwZGF0ZSB0byAxLjUuMCAoIzIxNTI5NTQpCisKICogU2F0IE5vdiAyNiAyMDIy
+IE1hbW9ydSBUQVNBS0EgPG10YXNha2FAZmVkb3JhcHJvamVjdC5vcmc+IC0gMS40LjMtMgogLSBC
+YWNrcG9ydCB1cHN0cmVhbSBwYXRjaCBmb3IgdGVzdHMgd3J0IGxpYnhtbDIgY29tbWVudCBwYXJz
+aW5nIGNoYW5nZQogCi0tIAoyLjM3LjMKCg==
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1967109</attachid>
+            <date>2023-05-26 13:25:10 +0000</date>
+            <delta_ts>2023-05-26 13:25:10 +0000</delta_ts>
+            <desc>Update to 1.6.0 (#2152954)</desc>
+            <filename>0001-Update-to-1.6.0-2152954.patch</filename>
+            <type>text/plain</type>
+            <size>1174</size>
+            <attacher name="Upstream Release Monitoring">upstream-release-monitoring</attacher>
+            
+              <data encoding="base64">RnJvbSBmOTBhZDM5YjliNWJmYWMxMWZjYTExNzkzNGY2NGI3Y2E0NjA3NmQ4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBGZWRvcmEgUmVsZWFzZSBNb25pdG9yaW5nIDxyZWxlYXNlLW1v
+bml0b3JpbmdAZmVkb3JhcHJvamVjdC5vcmc+CkRhdGU6IEZyaSwgMjYgTWF5IDIwMjMgMTM6MjU6
+MDggKzAwMDAKU3ViamVjdDogW1BBVENIXSBVcGRhdGUgdG8gMS42LjAgKCMyMTUyOTU0KQoKLS0t
+CiBydWJ5Z2VtLXJhaWxzLWh0bWwtc2FuaXRpemVyLnNwZWMgfCA3ICsrKysrLS0KIDEgZmlsZSBj
+aGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvcnVi
+eWdlbS1yYWlscy1odG1sLXNhbml0aXplci5zcGVjIGIvcnVieWdlbS1yYWlscy1odG1sLXNhbml0
+aXplci5zcGVjCmluZGV4IGQ5M2M5Y2EuLjFmZWI0NDggMTAwNjQ0Ci0tLSBhL3J1YnlnZW0tcmFp
+bHMtaHRtbC1zYW5pdGl6ZXIuc3BlYworKysgYi9ydWJ5Z2VtLXJhaWxzLWh0bWwtc2FuaXRpemVy
+LnNwZWMKQEAgLTIsOCArMiw4IEBACiAlZ2xvYmFsIGdlbV9uYW1lIHJhaWxzLWh0bWwtc2FuaXRp
+emVyCiAKIE5hbWU6IHJ1YnlnZW0tJXtnZW1fbmFtZX0KLVZlcnNpb246IDEuNC4zCi1SZWxlYXNl
+OiAzJXs/ZGlzdH0KK1ZlcnNpb246IDEuNi4wCitSZWxlYXNlOiAxJXs/ZGlzdH0KIFN1bW1hcnk6
+IFRoaXMgZ2VtIGlzIHJlc3BvbnNpYmxlIHRvIHNhbml0aXplIEhUTUwgZnJhZ21lbnRzIGluIFJh
+aWxzIGFwcGxpY2F0aW9ucwogTGljZW5zZTogTUlUCiBVUkw6IGh0dHBzOi8vZ2l0aHViLmNvbS9y
+YWlscy9yYWlscy1odG1sLXNhbml0aXplcgpAQCAtNjQsNiArNjQsOSBAQCBwb3BkCiAle2dlbV9p
+bnN0ZGlyfS90ZXN0CiAKICVjaGFuZ2Vsb2cKKyogRnJpIE1heSAyNiAyMDIzIEZlZG9yYSBSZWxl
+YXNlIE1vbml0b3JpbmcgPHJlbGVhc2UtbW9uaXRvcmluZ0BmZWRvcmFwcm9qZWN0Lm9yZz4gLSAx
+LjYuMC0xCistIFVwZGF0ZSB0byAxLjYuMCAoIzIxNTI5NTQpCisKICogRnJpIEphbiAyMCAyMDIz
+IEZlZG9yYSBSZWxlYXNlIEVuZ2luZWVyaW5nIDxyZWxlbmdAZmVkb3JhcHJvamVjdC5vcmc+IC0g
+MS40LjMtMwogLSBSZWJ1aWx0IGZvciBodHRwczovL2ZlZG9yYXByb2plY3Qub3JnL3dpa2kvRmVk
+b3JhXzM4X01hc3NfUmVidWlsZAogCi0tIAoyLjQwLjEKCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2142868</bug_id>
+          <alias>CVE-2022-21608</alias>
+          <creation_ts>2022-11-15 11:28:48 +0000</creation_ts>
+          <short_desc>CVE-2022-21608 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)</short_desc>
+          <delta_ts>2023-09-22 09:15:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Other</classification>
+          <product>Security Response</product>
+          <component>vulnerability</component>
+          <version>unspecified</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2142969</dependson>
+    
+    
+    <dependson>2142970</dependson>
+    
+    
+    <dependson>2142971</dependson>
+    
+    
+    <dependson>2142972</dependson>
+    
+    
+    <dependson>2142973</dependson>
+    
+    
+    <dependson>2177732</dependson>
+    
+    
+    <dependson>2177734</dependson>
+          <blocked>2142882</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mauro Matteo Cascella">mcascell</reporter>
+          <assigned_to name="Red Hat Product Security">security-response-team</assigned_to>
+          <cc>databases-maint</cc>
+    
+    
+    <cc>dciabrin</cc>
+    
+    
+    <cc>eglynn</cc>
+    
+    
+    <cc>hhorak</cc>
+    
+    
+    <cc>jjoyce</cc>
+    
+    
+    <cc>jorton</cc>
+    
+    
+    <cc>lhh</cc>
+    
+    
+    <cc>ljavorsk</cc>
+    
+    
+    <cc>mbayer</cc>
+    
+    
+    <cc>mburns</cc>
+    
+    
+    <cc>mgarciac</cc>
+    
+    
+    <cc>mmuzila</cc>
+    
+    
+    <cc>mschorm</cc>
+    
+    
+    <cc>spower</cc>
+          
+          
+          
+          <cf_fixed_in>mysql 5.7.40, mysql 8.0.31</cf_fixed_in>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-03-07 13:27:54</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          <external_bugs name="Red Hat Product Errata">RHBA-2023:2687</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:1102</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:2621</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:3087</external_bugs>
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16790819</commentid>
+    <comment_count>0</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2022-11-15 11:28:48 +0000</bug_when>
+    <thetext>Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 5.7.39 and prior and 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.
+
+External References:
+
+https://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16792049</commentid>
+    <comment_count>1</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2022-11-15 16:39:01 +0000</bug_when>
+    <thetext>Created community-mysql tracking bugs for this issue:
+
+Affects: fedora-all [bug 2142972]
+
+
+Created mysql:8.0/community-mysql tracking bugs for this issue:
+
+Affects: fedora-all [bug 2142973]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17097429</commentid>
+    <comment_count>3</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-03-07 09:42:49 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Software Collections for Red Hat Enterprise Linux 7
+
+Via RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17098071</commentid>
+    <comment_count>4</comment_count>
+    <who name="Product Security DevOps Team">prodsec-dev</who>
+    <bug_when>2023-03-07 13:27:52 +0000</bug_when>
+    <thetext>This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):
+
+https://access.redhat.com/security/cve/cve-2022-21608</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17259919</commentid>
+    <comment_count>5</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-05-09 11:03:07 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 9
+
+Via RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17290087</commentid>
+    <comment_count>6</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-05-16 09:59:48 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 8
+
+Via RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2209113</bug_id>
+          <alias>CVE-2023-2603</alias>
+          <creation_ts>2023-05-22 16:54:28 +0000</creation_ts>
+          <short_desc>CVE-2023-2603 libcap: Integer Overflow in _libcap_strdup()</short_desc>
+          <delta_ts>2023-11-21 11:41:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Other</classification>
+          <product>Security Response</product>
+          <component>vulnerability</component>
+          <version>unspecified</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          <resolution/>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2210634</dependson>
+    
+    
+    <dependson>2210635</dependson>
+    
+    
+    <dependson>2210639</dependson>
+    
+    
+    <dependson>2210636</dependson>
+    
+    
+    <dependson>2210637</dependson>
+    
+    
+    <dependson>2210638</dependson>
+    
+    
+    <dependson>2235776</dependson>
+          <blocked>2207492</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter>juneau</reporter>
+          <assigned_to name="Nobody">nobody</assigned_to>
+          <cc>ansasaki</cc>
+    
+    
+    <cc>bdettelb</cc>
+    
+    
+    <cc>jmitchel</cc>
+    
+    
+    <cc>jtanner</cc>
+    
+    
+    <cc>kshier</cc>
+    
+    
+    <cc>lgriffin</cc>
+    
+    
+    <cc>rsroka</cc>
+          
+          
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes>A vulnerability was found in libcap. This issue occurs in the _libcap_strdup() function and can lead to an integer overflow if the input string is close to 4GiB.</cf_release_notes>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          <external_bugs name="Red Hat Product Errata">RHSA-2023:4524</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:5071</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:7400</external_bugs>
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>17308508</commentid>
+    <comment_count>0</comment_count>
+    <who name="">juneau</who>
+    <bug_when>2023-05-22 16:54:28 +0000</bug_when>
+    <thetext>Original Report:
+
+Source: libcap2
+Version: 1:2.66-3
+Severity: important
+Tags: security upstream
+X-Debbugs-Cc: carnil@debian.org, Debian Security Team &lt;team@security.debian.org&gt;
+
+The following vulnerabilities were published for libcap2.
+
+CVE-2023-2603[1]:
+| LCAP-CR-23-02 (Large strings can confuse libcap's internal strdup code)
+
+[1] https://security-tracker.debian.org/tracker/CVE-2023-2603
+    https://www.cve.org/CVERecord?id=CVE-2023-2603
+
+fixed in 1:2.66-4</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17331204</commentid>
+    <comment_count>2</comment_count>
+    <who name="Sandipan Roy">saroy</who>
+    <bug_when>2023-05-29 04:15:24 +0000</bug_when>
+    <thetext>Created libcap tracking bugs for this issue:
+
+Affects: fedora-37 [bug 2210634]
+Affects: fedora-38 [bug 2210635]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17518873</commentid>
+    <comment_count>7</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-08-08 08:19:56 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 8
+
+Via RHSA-2023:4524 https://access.redhat.com/errata/RHSA-2023:4524</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17604045</commentid>
+    <comment_count>9</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-09-12 10:13:04 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 9
+
+Via RHSA-2023:5071 https://access.redhat.com/errata/RHSA-2023:5071</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17769430</commentid>
+    <comment_count>10</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-11-21 11:41:34 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 8.6 Extended Update Support
+
+Via RHSA-2023:7400 https://access.redhat.com/errata/RHSA-2023:7400</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

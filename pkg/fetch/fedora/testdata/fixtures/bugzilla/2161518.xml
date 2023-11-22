@@ -1,0 +1,1230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2161518</bug_id>
+          
+          <creation_ts>2023-01-17 07:50:49 +0000</creation_ts>
+          <short_desc>Review Request: python-y-py - Python bindings for the Y-CRDT built from yrs (Rust)</short_desc>
+          <delta_ts>2023-01-28 10:50:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>Package Review</component>
+          <version>rawhide</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>RAWHIDE</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords/>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2153703</dependson>
+          <blocked>2161519</blocked>
+    
+    
+    <blocked>2161520</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lumír Balhar">lbalhar</reporter>
+          <assigned_to name="Miro Hrončok">mhroncok</assigned_to>
+          <cc>decathorpe</cc>
+    
+    
+    <cc>mhroncok</cc>
+    
+    
+    <cc>package-review</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in>python-y-py-0.5.5-1.fc38</cf_fixed_in>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-01-28 10:50:34</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      <flag name="fedora-review" id="5771078" type_id="65" status="+" setter="mhroncok"/>
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16973111</commentid>
+    <comment_count>0</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-17 07:50:49 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm
+Description: Ypy is a Python binding for Y-CRDT. 
+It provides distributed data types that
+enable real-time collaboration between devices.
+Fedora Account System Username: lbalhar
+
+I'm testing this package together with many more in COPR designed to package Jupyterlab and the latest Python notebook into Fedora: https://copr.fedorainfracloud.org/coprs/lbalhar/notebook/builds/
+This package is very uncommon and uses bundled libs but everything is explained in the specfile.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16973145</commentid>
+    <comment_count>1</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-17 08:02:54 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5239291
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05239291-python-y-py/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16973740</commentid>
+    <comment_count>2</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-17 11:12:43 +0000</bug_when>
+    <thetext>1) I worry about the bundling. Apparently you MUST package the rust deps in versions that work. You can also package pyo3-0.16.5 compact package.
+
+https://docs.fedoraproject.org/en-US/packaging-guidelines/Rust/#_bundled_dependencies
+
+"""For Rust, this means that packages MUST NOT use dependencies from a "vendor tarball" (e.g. created by running cargo vendor), but package all library dependencies separately."""
+
+Apparently, "the thing is not compatible with the latest versions" is not an approved reason to bundle Rust crates. If you want to bundle I guess you'll need an exception from FPC or Rust SIG, I cannot grant it myself.
+
+
+
+
+2) "# This archive can be generated by update-vendored-tarball.sh"
+
+Could you please include this script as a source? In the spirit of https://docs.fedoraproject.org/en-US/packaging-guidelines/SourceURL/#when-upstream-uses-prohibited-code
+
+(This is moot if bundling is removed.)
+
+
+
+3) Source:         y_py-%{version}-vendor.tar.gz
+
+You don't enumerate sources yet you use %{SOURCE1} in the spec. I find that a bit confusing, WDYT?
+
+
+4) The License tag MUST use SPDX expressions, i.e. capital "AND": https://docs.fedoraproject.org/en-US/legal/license-field/#_conjunctive_and_licensing
+
+
+5) The License tag is surprisingly simple and the license comment only mentions direct dependencies. This bundles 51 crates and all of their licenses need to be listed and reflected in the license tag. Unfortunately, this is true also if you don't bundle, as Rust builds everything statically anyway: https://docs.fedoraproject.org/en-US/legal/license-field/#_rust_packages
+
+
+6) url = https://github.com/y-crdt/ypy
+
+Tip: Use url = %{url}.
+
+
+7) .cargo/config
+
+I don't understand this file. Maybe add a comment that it is inspired by %%cargo_prep from RHEL?</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16974558</commentid>
+    <comment_count>3</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-17 15:27:55 +0000</bug_when>
+    <thetext>&gt; Apparently, "the thing is not compatible with the latest versions" is not an approved reason to bundle Rust crates.
+
+Of course it's not :) It's pretty easy to do compat packages for Rust crates (we already have hundreds of them), so there's no reason to bundle old (or in this case, new) versions.
+
+I've been busy with $LIFE and haven't had much time for Fedora packaging in the last few months, but I'll be working through the backlog of things that are needed for y-py in the near future (unless some other Rust SIG member appears from thin air).</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16975935</commentid>
+    <comment_count>4</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-17 21:46:47 +0000</bug_when>
+    <thetext>All right, I've changed the version of lib0 and yrs in review requests to the older versions which work with y-py and I'll help you update and package compatible packages for pyo3.
+
+This now transitively or directly depends on:
+
+lib0: https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=2153697
+atomic_refcel: https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=2153699
+yrs: https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=2153703</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16976464</commentid>
+    <comment_count>5</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-18 00:52:18 +0000</bug_when>
+    <thetext>Thanks!
+
+I have prepared the pyo3 0.16 update in COPR:
+https://copr.fedorainfracloud.org/coprs/decathorpe/pyo3-0.16/monitor/
+Actual builds are blocked by needing human review for the dist-git repo requests.
+
+I'll take a look at reviewing the other packages tomorrow.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16977844</commentid>
+    <comment_count>6</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-18 12:03:38 +0000</bug_when>
+    <thetext>So I've built all the pyo3 packages in version 0.16 once again in my COPR repo lbalhar/notebook and then this package on top of them without bundled dependencies and it seems it works fine. Spec and SRPM reuploaded. I'm gonna try to do the review of rust-pyo3-ffi as soon as possible.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16999529</commentid>
+    <comment_count>7</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 09:37:29 +0000</bug_when>
+    <thetext>Let me see if the Copr bot thing reads comments by others:
+
+Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16999901</commentid>
+    <comment_count>8</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 13:18:49 +0000</bug_when>
+    <thetext>Apparently not.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000019</commentid>
+    <comment_count>9</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-26 14:16:18 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000048</commentid>
+    <comment_count>10</comment_count>
+      <attachid>1940578</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 14:25:30 +0000</bug_when>
+    <thetext>Created attachment 1940578
+The .spec file difference from Copr build 5239291 to 5308776</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000049</commentid>
+    <comment_count>11</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 14:25:32 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5308776
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05308776-python-y-py/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000168</commentid>
+    <comment_count>12</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 15:08:38 +0000</bug_when>
+    <thetext>Spec sanity
+===========
+
+&gt; %global debug_package %{nil}
+
+I would add a comment saying this is because of Rust. For an average Python packager it might not be obvious.
+
+Note that python-cryptography does not have this.
+
+
+&gt; ExclusiveArch:  %{rust_arches}
+
+This is no longer required or mentioned in the Rust packaging guidelines.
+
+
+&gt; url = https://github.com/y-crdt/ypy
+
+Suggestion: url = %{url}
+
+
+&gt; setup_requires = setuptools-rust
+&gt; python_requires = &gt;=3.6
+
+Is either of these actually required to build the package?
+
+
+
+
+
+Package Review
+==============
+
+Legend:
+[x] = Pass, [!] = Fail, [-] = Not applicable, [?] = Not evaluated
+
+
+
+TODO: What about "unstripped-binary-or-object" rpmlint warning? I don't get it from e.g. python3-cryptography.
+
+
+
+
+===== MUST items =====
+
+C/C++:
+[-]: Development (unversioned) .so files in -devel subpackage, if present.
+     Note: Unversioned so-files is Python extension module.
+
+Generic:
+[x]: Package successfully compiles and builds into binary rpms on at least
+     one supported primary architecture.
+[x]: Package is licensed with an open-source compatible license and meets
+     other legal requirements as defined in the legal section of Packaging
+     Guidelines.
+[x]: License field in the package spec file matches the actual license.
+     Note: Checking patched sources after %prep for licenses. Licenses
+     found: "Unknown or generated", "MIT License".
+[x]: %build honors applicable compiler flags or justifies otherwise.
+[x]: Package contains no bundled libraries without FPC exception.
+[x]: Changelog in prescribed format.
+[x]: Sources contain only permissible code or content.
+[-]: Package contains desktop file if it is a GUI application.
+[-]: Development files must be in a -devel package
+[x]: Package uses nothing in %doc for runtime.
+[x]: Package consistently uses macros (instead of hard-coded directory
+     names).
+[x]: Package is named according to the Package Naming Guidelines.
+[x]: Package does not generate any conflict.
+[x]: Package obeys FHS, except libexecdir and /usr/target.
+[-]: If the package is a rename of another package, proper Obsoletes and
+     Provides are present.
+[x]: Requires correct, justified where necessary.
+[x]: Spec file is legible and written in American English.
+[-]: Package contains systemd file(s) if in need.
+[-]: Useful -debuginfo package or justification otherwise.
+[!]: Package is not known to require an ExcludeArch tag.
+[-]: Large documentation must go in a -doc subpackage. Large could be size
+     (~1MB) or number of files.
+     Note: Documentation size is 10240 bytes in 1 files.
+[x]: Package complies to the Packaging Guidelines
+[x]: Package installs properly.
+[x]: Rpmlint is run on all rpms the build produces.
+     Note: There are rpmlint messages (see attachment).
+[x]: If (and only if) the source package includes the text of the
+     license(s) in its own file, then that file, containing the text of the
+     license(s) for the package is included in %license.
+[x]: Package requires other packages for directories it uses.
+[x]: Package must own all directories that it creates.
+[x]: Package does not own files or directories owned by other packages.
+[x]: Package uses either %{buildroot} or $RPM_BUILD_ROOT
+[x]: Package does not run rm -rf %{buildroot} (or $RPM_BUILD_ROOT) at the
+     beginning of %install.
+[x]: Macros in Summary, %description expandable at SRPM build time.
+[x]: Dist tag is present.
+[x]: Package does not contain duplicates in %files.
+[x]: Permissions on files are set properly.
+[x]: Package must not depend on deprecated() packages.
+[x]: Package use %makeinstall only when make install DESTDIR=... doesn't
+     work.
+[x]: Package is named using only allowed ASCII characters.
+[x]: Package does not use a name that already exists.
+[x]: Package is not relocatable.
+[x]: Sources used to build the package match the upstream source, as
+     provided in the spec URL.
+[x]: Spec file name must match the spec package %{name}, in the format
+     %{name}.spec.
+[x]: File names are valid UTF-8.
+[x]: Packages must not store files under /srv, /opt or /usr/local
+
+Python:
+[x]: Python eggs must not download any dependencies during the build
+     process.
+[x]: A package which is used by another package via an egg interface should
+     provide egg info.
+[x]: Package meets the Packaging Guidelines::Python
+[x]: Package contains BR: python2-devel or python3-devel
+[x]: Packages MUST NOT have dependencies (either build-time or runtime) on
+     packages named with the unversioned python- prefix unless no properly
+     versioned package exists. Dependencies on Python packages instead MUST
+     use names beginning with python2- or python3- as appropriate.
+[x]: Python packages must not contain %{pythonX_site(lib|arch)}/* in %files
+[x]: Binary eggs must be removed in %prep
+
+===== SHOULD items =====
+
+Generic:
+[x]: Reviewer should test that the package builds in mock.
+[-]: If the source package does not include license text(s) as a separate
+     file from upstream, the packager SHOULD query upstream to include it.
+[x]: Final provides and requires are sane (see attachments).
+[?]: Package functions as described.
+[?]: Latest version is packaged.
+[x]: Package does not include license text files separate from upstream.
+[-]: Sources are verified with gpgverify first in %prep if upstream
+     publishes signatures.
+     Note: gpgverify is not used.
+[?]: Package should compile and build into binary rpms on all supported
+     architectures.
+[x]: %check is present and all tests pass.
+[?]: Packages should try to preserve timestamps of original installed
+     files.
+[x]: Buildroot is not present
+[x]: Package has no %clean section with rm -rf %{buildroot} (or
+     $RPM_BUILD_ROOT)
+[x]: No file requires outside of /etc, /bin, /sbin, /usr/bin, /usr/sbin.
+[x]: Packager, Vendor, PreReq, Copyright tags should not be in spec file
+[x]: Sources can be downloaded from URI in Source: tag
+[x]: SourceX is a working URL.
+[x]: Spec use %global instead of %define unless justified.
+
+===== EXTRA items =====
+
+Generic:
+[x]: Rpmlint is run on all installed packages.
+     Note: There are rpmlint messages (see attachment).
+[-]: Large data in /usr/share should live in a noarch subpackage if package
+     is arched.
+
+
+Rpmlint
+-------
+Checking: python3-y-py-0.5.5-1.fc38.x86_64.rpm
+          python-y-py-0.5.5-1.fc38.src.rpm
+============================ rpmlint session starts ============================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+rpmlintrc: [PosixPath('/tmp/tmpx96x_s3s')]
+checks: 31, packages: 2
+
+python3-y-py.x86_64: W: unstripped-binary-or-object /usr/lib64/python3.11/site-packages/y_py.cpython-311-x86_64-linux-gnu.so
+ 2 packages and 0 specfiles checked; 0 errors, 1 warnings, 0 badness; has taken 0.2 s 
+
+
+unstripped-binary-or-object is weird. is it normal for Rust?
+
+
+Rpmlint (installed packages)
+----------------------------
+============================ rpmlint session starts ============================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+checks: 31, packages: 1
+
+python3-y-py.x86_64: W: unstripped-binary-or-object /usr/lib64/python3.11/site-packages/y_py.cpython-311-x86_64-linux-gnu.so
+ 1 packages and 0 specfiles checked; 0 errors, 1 warnings, 0 badness; has taken 0.1 s 
+
+
+Same.
+
+
+Source checksums
+----------------
+https://files.pythonhosted.org/packages/source/y/y_py/y_py-0.5.5.tar.gz :
+  CHECKSUM(SHA256) this package     : f222bab71d8d3df9a40b2e5ab3a767d734c6ce11998e9a30a02fb83ab3e090b3
+  CHECKSUM(SHA256) upstream package : f222bab71d8d3df9a40b2e5ab3a767d734c6ce11998e9a30a02fb83ab3e090b3
+
+
+Requires
+--------
+python3-y-py (rpmlib, GLIBC filtered):
+    ld-linux-x86-64.so.2()(64bit)
+    libc.so.6()(64bit)
+    libgcc_s.so.1()(64bit)
+    libgcc_s.so.1(GCC_3.0)(64bit)
+    libgcc_s.so.1(GCC_3.3)(64bit)
+    libgcc_s.so.1(GCC_4.2.0)(64bit)
+    libm.so.6()(64bit)
+    python(abi) = 3.11
+    rtld(GNU_HASH)
+
+
+BuildRequires
+-------------
+    (crate(lib0/default) &gt;= 0.12.2 with crate(lib0/default) &lt; 0.13.0~)
+    (crate(pyo3/default) &gt;= 0.16.5 with crate(pyo3/default) &lt; 0.17.0~)
+    (crate(pyo3/extension-module) &gt;= 0.16.5 with crate(pyo3/extension-module) &lt; 0.17.0~)
+    (crate(yrs/default) &gt;= 0.12.2 with crate(yrs/default) &lt; 0.13.0~)
+    (python3dist(toml) if python3-devel &lt; 3.11)
+    pyproject-rpm-macros
+    python3-devel
+    python3-pytest
+    python3dist(packaging)
+    python3dist(pip) &gt;= 19
+    python3dist(setuptools)
+    python3dist(setuptools) &gt;= 40.8
+    python3dist(setuptools-rust)
+    python3dist(wheel)
+    rust-packaging
+
+
+
+Provides
+--------
+python3-y-py:
+    python-y-py = 0.5.5-1.fc38
+    python3-y-py = 0.5.5-1.fc38
+    python3-y-py(x86-64) = 0.5.5-1.fc38
+    python3.11-y-py = 0.5.5-1.fc38
+    python3.11dist(y-py) = 0.5.5
+    python3dist(y-py) = 0.5.5</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000403</commentid>
+    <comment_count>13</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 16:43:11 +0000</bug_when>
+    <thetext>(In reply to Miro Hrončok from comment #12)
+
+Sorry for the drive-by comment - I wanted to spend more time on helping to package this, but university stuff got in the way.
+
+&gt; Spec sanity
+&gt; ===========
+&gt; 
+&gt; &gt; %global debug_package %{nil}
+&gt; 
+&gt; I would add a comment saying this is because of Rust. For an average Python
+&gt; packager it might not be obvious.
+&gt; 
+&gt; Note that python-cryptography does not have this.
+
+This looks fishy. Rust binaries should have valid debug symbols - (i.e. the .so file in this package).
+If removing this line breaks build of the package, then something is going wrong with setting Rust compiler flags.
+This might happen if you don't call `%cargo_prep` correctly, or if upstream Cargo.toml specifies to build without debuginfo - but this is not the case for this project.
+
+&gt; &gt; ExclusiveArch:  %{rust_arches}
+&gt; 
+&gt; This is no longer required or mentioned in the Rust packaging guidelines.
+
+Correct. Since all Fedora architectures now need support for Rust by definition (because the GPG backend for RPM itself is now Rust based), the ExclusiveArch is now basically a noop.
+
+c.f. https://pagure.io/packaging-committee/pull-request/1222
+
+&gt; &gt; url = https://github.com/y-crdt/ypy
+&gt; 
+&gt; Suggestion: url = %{url}
+&gt; 
+&gt; 
+&gt; &gt; setup_requires = setuptools-rust
+&gt; &gt; python_requires = &gt;=3.6
+&gt; 
+&gt; Is either of these actually required to build the package?
+
+I assume so. `setup.py` imports setuptools_rust, doesn't it?</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000411</commentid>
+    <comment_count>14</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 16:46:00 +0000</bug_when>
+    <thetext>setup.py indeed imports setuptools_rust but it is guaranteed to be installed as it is part of pyproject.toml [build-system] requires.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000492</commentid>
+    <comment_count>15</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-26 17:46:10 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm
+
+I have applied all the suggestions and it doesn't build now - the problem is with the debuginfo package:
+
+Provides: python-y-py = 0.5.5-1.fc38 python3-y-py = 0.5.5-1.fc38 python3-y-py(x86-64) = 0.5.5-1.fc38 python3.11-y-py = 0.5.5-1.fc38 python3.11dist(y-py) = 0.5.5 python3dist(y-py) = 0.5.5
+Requires(rpmlib): rpmlib(CompressedFileNames) &lt;= 3.0.4-1 rpmlib(FileDigests) &lt;= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1
+Requires: ld-linux-x86-64.so.2()(64bit) ld-linux-x86-64.so.2(GLIBC_2.3)(64bit) libc.so.6()(64bit) libc.so.6(GLIBC_2.14)(64bit) libc.so.6(GLIBC_2.17)(64bit) libc.so.6(GLIBC_2.18)(64bit) libc.so.6(GLIBC_2.2.5)(64bit) libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.28)(64bit) libc.so.6(GLIBC_2.3)(64bit) libc.so.6(GLIBC_2.3.2)(64bit) libc.so.6(GLIBC_2.3.4)(64bit) libc.so.6(GLIBC_2.33)(64bit) libc.so.6(GLIBC_2.34)(64bit) libgcc_s.so.1()(64bit) libgcc_s.so.1(GCC_3.0)(64bit) libgcc_s.so.1(GCC_3.3)(64bit) libgcc_s.so.1(GCC_4.2.0)(64bit) libm.so.6()(64bit) libm.so.6(GLIBC_2.2.5)(64bit) python(abi) = 3.11 rtld(GNU_HASH)
+Processing files: python-y-py-debugsource-0.5.5-1.fc38.x86_64
+error: Empty %files file /builddir/build/BUILD/y_py-0.5.5/debugsourcefiles.list
+
+RPM build errors:
+    Empty %files file /builddir/build/BUILD/y_py-0.5.5/debugsourcefiles.list
+Finish: rpmbuild python-y-py-0.5.5-1.fc38.src.rpm
+Finish: build phase for python-y-py-0.5.5-1.fc38.src.rpm
+
+The last build can be found here: https://copr.fedorainfracloud.org/coprs/lbalhar/notebook/build/5310880/
+
+I cannot remember why I added the %global definition there so I looked at the other rust packages and it seems that a lot of them have it as well, I've found 1780 of them. The reason might be that rust2rpm has it in the template: https://pagure.io/fedora-rust/rust2rpm/blob/main/f/rust2rpm/templates/main.spec#_6
+Although I'm not sure what the condition around that macro in the template means.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000497</commentid>
+    <comment_count>16</comment_count>
+      <attachid>1940623</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 17:50:53 +0000</bug_when>
+    <thetext>Created attachment 1940623
+The .spec file difference from Copr build 5308776 to 5310899</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000498</commentid>
+    <comment_count>17</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 17:50:55 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5310899
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05310899-python-y-py/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000505</commentid>
+    <comment_count>18</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 17:56:32 +0000</bug_when>
+    <thetext>(In reply to Lumír Balhar from comment #15)
+&gt; Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+&gt; SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm
+&gt; 
+&gt; I have applied all the suggestions and it doesn't build now - the problem is
+&gt; with the debuginfo package:
+&gt; 
+&gt; Provides: python-y-py = 0.5.5-1.fc38 python3-y-py = 0.5.5-1.fc38
+&gt; python3-y-py(x86-64) = 0.5.5-1.fc38 python3.11-y-py = 0.5.5-1.fc38
+&gt; python3.11dist(y-py) = 0.5.5 python3dist(y-py) = 0.5.5
+&gt; Requires(rpmlib): rpmlib(CompressedFileNames) &lt;= 3.0.4-1 rpmlib(FileDigests)
+&gt; &lt;= 4.6.0-1 rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1
+&gt; Requires: ld-linux-x86-64.so.2()(64bit)
+&gt; ld-linux-x86-64.so.2(GLIBC_2.3)(64bit) libc.so.6()(64bit)
+&gt; libc.so.6(GLIBC_2.14)(64bit) libc.so.6(GLIBC_2.17)(64bit)
+&gt; libc.so.6(GLIBC_2.18)(64bit) libc.so.6(GLIBC_2.2.5)(64bit)
+&gt; libc.so.6(GLIBC_2.25)(64bit) libc.so.6(GLIBC_2.28)(64bit)
+&gt; libc.so.6(GLIBC_2.3)(64bit) libc.so.6(GLIBC_2.3.2)(64bit)
+&gt; libc.so.6(GLIBC_2.3.4)(64bit) libc.so.6(GLIBC_2.33)(64bit)
+&gt; libc.so.6(GLIBC_2.34)(64bit) libgcc_s.so.1()(64bit)
+&gt; libgcc_s.so.1(GCC_3.0)(64bit) libgcc_s.so.1(GCC_3.3)(64bit)
+&gt; libgcc_s.so.1(GCC_4.2.0)(64bit) libm.so.6()(64bit)
+&gt; libm.so.6(GLIBC_2.2.5)(64bit) python(abi) = 3.11 rtld(GNU_HASH)
+&gt; Processing files: python-y-py-debugsource-0.5.5-1.fc38.x86_64
+&gt; error: Empty %files file
+&gt; /builddir/build/BUILD/y_py-0.5.5/debugsourcefiles.list
+&gt; 
+&gt; RPM build errors:
+&gt;     Empty %files file /builddir/build/BUILD/y_py-0.5.5/debugsourcefiles.list
+&gt; Finish: rpmbuild python-y-py-0.5.5-1.fc38.src.rpm
+&gt; Finish: build phase for python-y-py-0.5.5-1.fc38.src.rpm
+
+This looks like debuginfo is indeed not valid / not present.
+Looking at the build log, the package doesn't use default Rust compiler flags, either (i.e. all `%build_rustflags` are absent from rustc calls in the log). Maybe there's an issue with how you ported the package from maturin to setuptools_rust that makes it ignore the flags set in ".cargo/config"?
+
+&gt; The last build can be found here:
+&gt; https://copr.fedorainfracloud.org/coprs/lbalhar/notebook/build/5310880/
+&gt; 
+&gt; I cannot remember why I added the %global definition there so I looked at
+&gt; the other rust packages and it seems that a lot of them have it as well,
+&gt; I've found 1780 of them. The reason might be that rust2rpm has it in the
+&gt; template:
+&gt; https://pagure.io/fedora-rust/rust2rpm/blob/main/f/rust2rpm/templates/main.
+&gt; spec#_6
+&gt; Although I'm not sure what the condition around that macro in the template
+&gt; means.
+
+It means that source-only packages don't get debuginfo. All packages that ship binaries *do* get debuginfo.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000536</commentid>
+    <comment_count>19</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-26 18:13:34 +0000</bug_when>
+    <thetext>Thank you for your help! It seems that there is a way how to set the flags for rustc directly via RustExtension class from setuptools_rust. I did that and it works now. The way I did it is not pretty:
+
+setup(
+    rust_extensions=[RustExtension("y_py", args=["--offline"], rustc_flags="%build_rustflags".split())],
+)
+
+But it works now. I'll try to find a better way.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000548</commentid>
+    <comment_count>20</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 18:18:02 +0000</bug_when>
+    <thetext>Maybe we need to adjust %set_build_flagsd and/or Python build macros to set some environment variables with Rust flags?</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000552</commentid>
+    <comment_count>21</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-26 18:20:23 +0000</bug_when>
+    <thetext>A better way is to use env variable RUSTFLAGS. It works as well and makes it possible to move the source files out of the spec eventually.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000554</commentid>
+    <comment_count>22</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 18:22:08 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5311511
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05311511-python-y-py/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000569</commentid>
+    <comment_count>23</comment_count>
+      <attachid>1940626</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 18:30:29 +0000</bug_when>
+    <thetext>Created attachment 1940626
+The .spec file difference from Copr build 5311511 to 5311523</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000570</commentid>
+    <comment_count>24</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-26 18:30:31 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5311523
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05311523-python-y-py/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000610</commentid>
+    <comment_count>25</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 18:49:11 +0000</bug_when>
+    <thetext>Does setuptools_rust set the RUSTFLAGS environment variable to an empty string by any chance?
+I have encountered a similar problem with maturin before, so it's possible that setuptools_rust has a similar bug.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000724</commentid>
+    <comment_count>26</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-26 20:04:03 +0000</bug_when>
+    <thetext>It seems that setuptools_rust combines the RUSTFLAGS env variable with rustflags argument, see https://github.com/PyO3/setuptools-rust/pull/103 So it should not matter which one you use.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000748</commentid>
+    <comment_count>27</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 20:24:33 +0000</bug_when>
+    <thetext>I see the problem. If RUSTFLAGS is not set yet, it sets it to an empty string, which seems to override the .cargo/config file generated by %cargo_prep. I wonder why this isn't a problem for python-cryptography ...</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000770</commentid>
+    <comment_count>28</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 20:35:12 +0000</bug_when>
+    <thetext>Meh, I feel stupid now. I forgot that we no longer use .cargo/config for setting RUSTFLAGS, but set them in the %cargo_build / %cargo_test macro.
+
+You should be able to achieve the same thing by doing
+export RUSTFLAGS="%build_rustflags"
+in %build (and whereever else required).
+
+That should also fix the missing debuginfo problem.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000779</commentid>
+    <comment_count>29</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-26 20:38:17 +0000</bug_when>
+    <thetext>I already figured it out, see comment 21 here. And thank you!</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000809</commentid>
+    <comment_count>30</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 21:02:14 +0000</bug_when>
+    <thetext>Argh. Sorry for the confusion. I'm not at my best today :(
+
+Turns out it still was a good idea to look into this, because python-cryptography is also broken right now ... and I submitted a PR with the RUSTFLAGS fix: https://src.fedoraproject.org/rpms/python-cryptography/pull-request/20</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000882</commentid>
+    <comment_count>31</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 21:53:53 +0000</bug_when>
+    <thetext>Fabio, should we add RUSTFLAGS="%build_rustflags" to %py3_build and %pyproject_wheel? Should we add it to %set_build_flags? (Not a blocker for this review.)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000886</commentid>
+    <comment_count>32</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 21:55:25 +0000</bug_when>
+    <thetext>Package APPROVED.
+
+============================ rpmlint session starts ============================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+checks: 31, packages: 2
+
+ 2 packages and 0 specfiles checked; 0 errors, 0 warnings, 0 badness; has taken 0.1 s</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000895</commentid>
+    <comment_count>33</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-26 22:04:39 +0000</bug_when>
+    <thetext>(In reply to Miro Hrončok from comment #31)
+&gt; Fabio, should we add RUSTFLAGS="%build_rustflags" to %py3_build and
+&gt; %pyproject_wheel? Should we add it to %set_build_flags? (Not a blocker for
+&gt; this review.)
+
+Probably to %set_build_flags ... more and more non-Rust projects are starting to include Rust code, so that's likely the best place for it.
+That would mean the definition would need to move from rust-packaging to redhat-rpm-config?
+
+Side note:
+You'll probably want to fix the License tag of the python3-y-py subpackage, as well. It contains a statically linked Rust binary, with components under many different licenses. Most dependencies are either MIT or "MIT OR Apache-2.0", but notably pyo3 itself is Apache-2.0 only, so just having python3-y-py subpackage inherit "MIT" is wrong. (And there's likely components under other licenses involved, as well.)
+
+You should be able to use the %cargo_license macro to generate a list of statically linked components and their licenses (or %cargo_license_summary prints only the license summary, which is more useful for determining the License tag).
+
+See https://src.fedoraproject.org/rpms/rust-rpm-sequoia/blob/rawhide/f/rust-rpm-sequoia.spec#_64 for example usage in a Rust package that will be installed on every Fedora 38 system. :)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000908</commentid>
+    <comment_count>34</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 22:10:00 +0000</bug_when>
+    <thetext>&gt; That would mean the definition would need to move from rust-packaging to redhat-rpm-config?
+
+Not necessarily. It can be included as %{?build_rustflags:RUSTFLAGS="%build_rustflags"}.
+
+----------------
+
+
+&gt; You'll probably want to fix the License tag of the python3-y-py subpackage, as well. It contains a statically linked Rust binary, with components under many different licenses.
+
+Oh my, I completely missed this. Sorry. I withdraw my approval for now, this needs to be fixed.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17000933</commentid>
+    <comment_count>35</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-26 22:12:55 +0000</bug_when>
+    <thetext>The relevant guidelines are:
+
+ https://docs.fedoraproject.org/en-US/packaging-guidelines/Rust/#_license_for_binary_packages -&gt; https://docs.fedoraproject.org/en-US/legal/license-field/#_rust_packages</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17001464</commentid>
+    <comment_count>36</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-27 08:00:25 +0000</bug_when>
+    <thetext>Thanks Fabio. The macros really make that job easier. Do you think that they should be mentioned somewhere in the docs?
+
+Now, the specfile contains the correct License tag with a comment describing where it comes from and the RPM contains the generated file.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17001476</commentid>
+    <comment_count>37</comment_count>
+      <attachid>1940707</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 08:09:23 +0000</bug_when>
+    <thetext>Created attachment 1940707
+The .spec file difference from Copr build 5311523 to 5322079</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17001477</commentid>
+    <comment_count>38</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 08:09:25 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5322079
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05322079-python-y-py/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17001791</commentid>
+    <comment_count>39</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-27 10:30:45 +0000</bug_when>
+    <thetext>The comment above the License tag does not explicitly mention under what license is this very Python project. I find that a bit confusing for the reader, as the License tga now looks like a sum of the Rust licenses only.
+
+---
+
+Just to verify. A naïve sum of the licenses is:
+
+ MIT AND (MIT OR Apache-2.0) AND Apache-2.0
+
+If I always choose MIT int he OR situation, the sum is:
+
+ MIT AND MIT AND Apache-2.0 -&gt; MIT AND Apache-2.0
+
+If I always choose Apache-2.0:
+
+ MIT AND Apache-2.0 AND Apache-2.0 -&gt; MIT AND Apache-2.0
+
+If I choose arbitrary combination:
+
+ MIT (AND MIT)* (AND Apache-2.0)* AND Apache-2.0 -&gt; MIT AND Apache-2.0
+
+So the combined tag is technically correct. However:
+
+
+
+
+"""
+The license expression must reflect the disjunctive license choice even if one or both of the license identifiers in the OR expression also appear separately in the composite license expression.
+
+...
+
+ License: (GPL-3.0-or-later OR MPL-1.1) AND GPL-3.0-or-later AND MIT
+
+Here we repeat GPL-3.0-or-later because for one binary component it appears as part of an OR subexpression. That is, OR expressions must be treated as though they were a single distinct license.
+
+"""
+
+https://docs.fedoraproject.org/en-US/legal/license-field/#_combined_disjunctive_and_conjunctive_license_expressions
+
+
+Hence, I believe the License tag MUST be:
+
+ License: MIT AND (MIT OR Apache-2.0) AND Apache-2.0</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17002266</commentid>
+    <comment_count>40</comment_count>
+    <who name="Fabio Valentini">decathorpe</who>
+    <bug_when>2023-01-27 14:27:09 +0000</bug_when>
+    <thetext>(In reply to Lumír Balhar from comment #36)
+&gt; Thanks Fabio. The macros really make that job easier. Do you think that they
+&gt; should be mentioned somewhere in the docs?
+
+The implementation of these macros is pretty new, it was only added with the most recent version of rust2rpm (i.e. v23). I wanted to wait for a bit of real-world usage to iron out any kinks before documenting them (and their limitations), but at this point I think they're OK. I'll put documenting them in the Rust Packaging Guidelines on my TODO list.
+
+&gt; Hence, I believe the License tag MUST be:
+&gt; License: MIT AND (MIT OR Apache-2.0) AND Apache-2.0
+
+According to my understanding of the new Legal Guidelines, yes.
+It doesn't make a ton of sense to list them like that (because, as you pointed out, any combination of these will just result in "MIT AND Apache-2.0"), but IANAL.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17002993</commentid>
+    <comment_count>41</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-27 19:33:42 +0000</bug_when>
+    <thetext>(In reply to Miro Hrončok from comment #39)
+&gt; Hence, I believe the License tag MUST be:
+&gt; 
+&gt;  License: MIT AND (MIT OR Apache-2.0) AND Apache-2.0
+
+Done.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-y-py.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-y-py-0.5.5-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003004</commentid>
+    <comment_count>42</comment_count>
+      <attachid>1940798</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 19:44:05 +0000</bug_when>
+    <thetext>Created attachment 1940798
+The .spec file difference from Copr build 5322079 to 5333586</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003005</commentid>
+    <comment_count>43</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 19:44:08 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5333586
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161518-python-y-py/fedora-rawhide-x86_64/05333586-python-y-py/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003006</commentid>
+    <comment_count>44</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-27 19:45:19 +0000</bug_when>
+    <thetext>Could you please add this to the beginning of the License comment?
+
+# python-y-py code is MIT
+
+
+Thanks.
+
+
+Anyway, the package is APPROVED.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003057</commentid>
+    <comment_count>45</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-01-27 20:21:51 +0000</bug_when>
+    <thetext>The Pagure repository was created at https://src.fedoraproject.org/rpms/python-y-py</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003893</commentid>
+    <comment_count>46</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-28 10:50:34 +0000</bug_when>
+    <thetext>$ koji wait-repo f38-build --build python-y-py-0.5.5-1.fc38
+Successfully waited 0:00 for python-y-py-0.5.5-1.fc38 to appear in the f38-build repo</thetext>
+  </long_desc>
+      
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940578</attachid>
+            <date>2023-01-26 14:25:30 +0000</date>
+            <delta_ts>2023-01-26 14:25:30 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5239291 to 5308776</desc>
+            <filename>spec-from-5239291-to-5308776.diff</filename>
+            <type>text/plain</type>
+            <size>5330</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MjM5Mjkx
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMwODc3
+NgpAQCAtMSw5MyArMSwxOCBAQAorJWdsb2JhbCBkZWJ1Z19wYWNrYWdlICV7bmlsfQorCiBOYW1l
+OiAgICAgICAgICAgcHl0aG9uLXktcHkKIFZlcnNpb246ICAgICAgICAwLjUuNQogUmVsZWFzZTog
+ICAgICAgIDElez9kaXN0fQogU3VtbWFyeTogICAgICAgIFB5dGhvbiBiaW5kaW5ncyBmb3IgdGhl
+IFktQ1JEVCBidWlsdCBmcm9tIHlycyAoUnVzdCkKLSMgeS1weSBhbmQgYnVuZGxlZCB5cnMgYW5k
+IGxpYjAgYXJlIE1JVCwgcHlvMyBpcyBBcGFjaGUtMi4wCi1MaWNlbnNlOiAgICAgICAgTUlUIGFu
+ZCBBcGFjaGUtMi4wCi1VUkw6ICAgICAgICAgICAgaHR0cHM6Ly9weXBpLm9yZy9wcm9qZWN0L3kt
+cHkvCitMaWNlbnNlOiAgICAgICAgTUlUCitVUkw6ICAgICAgICAgICAgaHR0cHM6Ly9naXRodWIu
+Y29tL3ktY3JkdC95cHkKIFNvdXJjZTogICAgICAgICAle3B5cGlfc291cmNlIHlfcHl9Ci0KLSMg
+QnVuZGxlZCBkZXBlbmRlbmNpZXMKLSMgVGhlIHBhY2thZ2UgbmVlZHMgbGliMCwgeXJzIGFuZCBw
+eW8zOgotIyBsaWIwIGlzIHJlYWR5IGZvciByZXZpZXcsIGJ1dCB0aGUgdmVyc2lvbiBpcyB0b28g
+bmV3Ci0jICAgZm9yIHRoaXMgcGFja2FnZTogaHR0cHM6Ly9idWd6aWxsYS5yZWRoYXQuY29tL2J1
+Z3ppbGxhL3Nob3dfYnVnLmNnaT9pZD0yMTUzNjk3Ci0jICAgdmVyc2lvbiBuZWVkZWQ6IDAuMTIu
+MiwgbGF0ZXN0IHZlcnNpb246IDAuMTQuMQotIyAgIHVwc3RyZWFtIGlzc3VlOiBodHRwczovL2dp
+dGh1Yi5jb20veS1jcmR0L3lweS9pc3N1ZXMvMTA2Ci0jIHlycyBpcyB0aGUgc2FtZSBhcyBsaWIw
+LCB0aGV5IGFyZSBmcm9tIHRoZSBzYW1lIHByb2plY3QKLSMgICByZXZpZXcgcmVxdWVzdDogaHR0
+cHM6Ly9idWd6aWxsYS5yZWRoYXQuY29tL2J1Z3ppbGxhL3Nob3dfYnVnLmNnaT9pZD0yMTUzNzAz
+Ci0jICAgdmVyc2lvbiBuZWVkZWQ6IDAuMTIuMiwgbGF0ZXN0IHZlcnNpb246IDAuMTQuMQotIyBw
+eW8zIGlzIG1vcmUgY29tcGxpY2F0ZWQgYmVjYXVzZSBpdCdzIGFscmVhZHkgaW4gRmVkb3JhCi0j
+ICAgYW5kIHNvbWUgaW1wb3J0YW50IHBhY2thZ2VzIGRlcGVuZCBvbiBpdC4KLSMgICB1cGRhdGUg
+YnVnemlsbGE6IGh0dHBzOi8vYnVnemlsbGEucmVkaGF0LmNvbS9zaG93X2J1Zy5jZ2k/aWQ9MjA2
+MTEwMQotIyAgIHZlcnNpb24gbmVlZGVkOiAwLjE2LjUsIHZlcnNpb24gaW4gRmVkb3JhOiAwLjE1
+LjIsIGxhdGVzdCB2ZXJzaW9uOiAwLjE3LjMKLSMKLSMgVGhpcyBhcmNoaXZlIGNhbiBiZSBnZW5l
+cmF0ZWQgYnkgdXBkYXRlLXZlbmRvcmVkLXRhcmJhbGwuc2gKLSMgYWZ0ZXIgYSB2ZXJzaW9uIGJ1
+bXAgaGVyZS4gRGVwZW5kZW5jaWVzIGZvciB3aW5kb3dzIGFyZSByZW1vdmVkLgotU291cmNlOiAg
+ICAgICAgIHlfcHktJXt2ZXJzaW9ufS12ZW5kb3IudGFyLmd6CiAKIEV4Y2x1c2l2ZUFyY2g6ICAl
+e3J1c3RfYXJjaGVzfQogCiBCdWlsZFJlcXVpcmVzOiAgcHl0aG9uMy1kZXZlbAogQnVpbGRSZXF1
+aXJlczogIHB5dGhvbjMtcHl0ZXN0Ci0KLSMgUHJvdmlkZXMgZm9yIGJ1bmRsZWQgZGVwZW5kZW5j
+aWVzCi0jIGdlbmVyYXRlZCBieSB0aGlzIGNvbW1hbmQgaW4gdW5wYWNrZWQgc291cmNlczoKLSMg
+Y2FyZ28gbWV0YWRhdGEgLS1sb2NrZWQgLS1mb3JtYXQtdmVyc2lvbiAxIHwgQ1JBVEVfTkFNRT0i
+eS1weSIgLi4vYnVuZGxlZC1wcm92aWRlcy5qcQotIwotIyBBbmQgeWVzLCB0aGVyZSBhcmUgc29t
+ZSB3aW5kb3dzIGRlcGVuZGVuY2llcyBidXQgaXQnZCBiZSB2ZXJ5IGhhcmQKLSMgdG8gcGF0Y2gg
+dGhlbSBvdXQgYW5kIHRoZSBidWlsZCBkb2Vzbid0IHdvcmsgd2l0aG91dCB0aGVtLgotIyBUaGUg
+ZGVwZW5kZW5jeSB0cmVlIGlzIHB5bzMgw6LChsKSIHBhcmtpbmdfbG90IMOiwobCkiBwYXJraW5n
+X2xvdF9jb3JlIMOiwobCkiB3aW5kb3dzLXN5cwotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUoYXV0
+b2NmZykpID0gMS4xLjAKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKGJpdGZsYWdzKSkgPSAxLjMu
+MgotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUoYnVtcGFsbykpID0gMy4xMS4xCi1Qcm92aWRlczog
+YnVuZGxlZChjcmF0ZShjZmctaWYpKSA9IDEuMC4wCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShn
+ZXRyYW5kb20pKSA9IDAuMS4xNgotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUoaW5kb2MpKSA9IDEu
+MC43Ci1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShqcy1zeXMpKSA9IDAuMy42MAotUHJvdmlkZXM6
+IGJ1bmRsZWQoY3JhdGUobGliMCkpID0gMC4xMi4yCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShs
+aWJjKSkgPSAwLjIuMTM4Ci1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShsb2NrX2FwaSkpID0gMC40
+LjkKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKGxvZykpID0gMC40LjE3Ci1Qcm92aWRlczogYnVu
+ZGxlZChjcmF0ZShvbmNlX2NlbGwpKSA9IDEuMTYuMAotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUo
+cGFya2luZ19sb3QpKSA9IDAuMTIuMQotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUocGFya2luZ19s
+b3RfY29yZSkpID0gMC45LjUKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHBwdi1saXRlODYpKSA9
+IDAuMi4xNwotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUocHJvYy1tYWNybzIpKSA9IDEuMC40Nwot
+UHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUocHlvMykpID0gMC4xNi42Ci1Qcm92aWRlczogYnVuZGxl
+ZChjcmF0ZShweW8zLWJ1aWxkLWNvbmZpZykpID0gMC4xNi42Ci1Qcm92aWRlczogYnVuZGxlZChj
+cmF0ZShweW8zLWZmaSkpID0gMC4xNi42Ci1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShweW8zLW1h
+Y3JvcykpID0gMC4xNi42Ci1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShweW8zLW1hY3Jvcy1iYWNr
+ZW5kKSkgPSAwLjE2LjYKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHF1b3RlKSkgPSAxLjAuMjEK
+LVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHJhbmQpKSA9IDAuNy4zCi1Qcm92aWRlczogYnVuZGxl
+ZChjcmF0ZShyYW5kX2NoYWNoYSkpID0gMC4yLjIKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHJh
+bmRfY29yZSkpID0gMC41LjEKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHJhbmRfaGMpKSA9IDAu
+Mi4wCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZShyZWRveF9zeXNjYWxsKSkgPSAwLjIuMTYKLVBy
+b3ZpZGVzOiBidW5kbGVkKGNyYXRlKHNjb3BlZ3VhcmQpKSA9IDEuMS4wCi1Qcm92aWRlczogYnVu
+ZGxlZChjcmF0ZShzbWFsbHN0cikpID0gMC4yLjAKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHNt
+YWxsdmVjKSkgPSAxLjEwLjAKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHN5bikpID0gMS4wLjEw
+NQotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUodGFyZ2V0LWxleGljb24pKSA9IDAuMTIuNQotUHJv
+dmlkZXM6IGJ1bmRsZWQoY3JhdGUodGhpc2Vycm9yKSkgPSAxLjAuMzcKLVByb3ZpZGVzOiBidW5k
+bGVkKGNyYXRlKHRoaXNlcnJvci1pbXBsKSkgPSAxLjAuMzcKLVByb3ZpZGVzOiBidW5kbGVkKGNy
+YXRlKHVuaWNvZGUtaWRlbnQpKSA9IDEuMC41Ci1Qcm92aWRlczogYnVuZGxlZChjcmF0ZSh1bmlu
+ZGVudCkpID0gMC4xLjEwCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZSh3YXNpKSkgPSAwLjkuMCt3
+YXNpX3NuYXBzaG90X3ByZXZpZXcxCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZSh3YXNtLWJpbmRn
+ZW4pKSA9IDAuMi44MwotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2FzbS1iaW5kZ2VuLWJhY2tl
+bmQpKSA9IDAuMi44MwotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2FzbS1iaW5kZ2VuLW1hY3Jv
+KSkgPSAwLjIuODMKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHdhc20tYmluZGdlbi1tYWNyby1z
+dXBwb3J0KSkgPSAwLjIuODMKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHdhc20tYmluZGdlbi1z
+aGFyZWQpKSA9IDAuMi44MwotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2luZG93cy1zeXMpKSA9
+IDAuNDIuMAotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2luZG93c19hYXJjaDY0X2dudWxsdm0p
+KSA9IDAuNDIuMAotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2luZG93c19hYXJjaDY0X21zdmMp
+KSA9IDAuNDIuMAotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2luZG93c19pNjg2X2dudSkpID0g
+MC40Mi4wCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZSh3aW5kb3dzX2k2ODZfbXN2YykpID0gMC40
+Mi4wCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZSh3aW5kb3dzX3g4Nl82NF9nbnUpKSA9IDAuNDIu
+MAotUHJvdmlkZXM6IGJ1bmRsZWQoY3JhdGUod2luZG93c194ODZfNjRfZ251bGx2bSkpID0gMC40
+Mi4wCi1Qcm92aWRlczogYnVuZGxlZChjcmF0ZSh3aW5kb3dzX3g4Nl82NF9tc3ZjKSkgPSAwLjQy
+LjAKLVByb3ZpZGVzOiBidW5kbGVkKGNyYXRlKHlycykpID0gMC4xMi4yCitCdWlsZFJlcXVpcmVz
+OiAgcnVzdC1wYWNrYWdpbmcKIAogJWdsb2JhbCBfZGVzY3JpcHRpb24gJXtleHBhbmQ6CiBZcHkg
+aXMgYSBQeXRob24gYmluZGluZyBmb3IgWS1DUkRULiAKQEAgLTEwNSw2ICszMCw3IEBACiAKICVw
+cmVwCiAlYXV0b3NldHVwIC1wMSAtbiB5X3B5LSV7dmVyc2lvbn0KKyVjYXJnb19wcmVwCiAjIFBv
+cnRpbmcgZnJvbSBtYXR1cmluIHRvIHNldHVwdG9vbHNfcnVzdAogIyBUaGlzIGlzIGZhciBmcm9t
+IHBlcmZlY3QgYnV0IGJlY2F1c2UgbWF0dXJpbiAoYSBwb3B1bGFyCiAjIGJ1aWxkIGJhY2tlbmQg
+Zm9yIFJ1c3QgcGFja2FnZXMpIGlzIG5vdCB5ZXQgYXZhaWxhYmxlCkBAIC0xNDgsMzAgKzc0LDgg
+QEAKICkKIEVPRgogCi0jIEhhbmRsaW5nIG9mIGJ1bmRsZWQgZGVwZW5kZW5jaWVzCi10YXIgeHZm
+ICV7U09VUkNFMX0KLW1rZGlyIC1wIC5jYXJnbwotCi1jYXQgPi5jYXJnby9jb25maWcgPDwgRU9G
+Ci1bYnVpbGRdCi1ydXN0YyA9ICIle19fcnVzdGN9IgotcnVzdGRvYyA9ICIle19fcnVzdGRvY30i
+Ci1ydXN0ZmxhZ3MgPSAle19fZ2xvYmFsX3J1c3RmbGFnc190b21sfQotCi1baW5zdGFsbF0KLXJv
+b3QgPSAiJXtidWlsZHJvb3R9JXtfcHJlZml4fSIKLQotW3Rlcm1dCi12ZXJib3NlID0gdHJ1ZQot
+Ci1bc291cmNlLmNyYXRlcy1pb10KLXJlcGxhY2Utd2l0aCA9ICJ2ZW5kb3JlZC1zb3VyY2VzIgot
+Ci1bc291cmNlLnZlbmRvcmVkLXNvdXJjZXNdCi1kaXJlY3RvcnkgPSAidmVuZG9yIgotRU9GCi0K
+ICVnZW5lcmF0ZV9idWlsZHJlcXVpcmVzCislY2FyZ29fZ2VuZXJhdGVfYnVpbGRyZXF1aXJlcwog
+JXB5cHJvamVjdF9idWlsZHJlcXVpcmVzCiAKIAo=
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940623</attachid>
+            <date>2023-01-26 17:50:53 +0000</date>
+            <delta_ts>2023-01-26 17:50:53 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5308776 to 5310899</desc>
+            <filename>spec-from-5308776-to-5310899.diff</filename>
+            <type>text/plain</type>
+            <size>793</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MzA4Nzc2
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMxMDg5
+OQpAQCAtMSw1ICsxLDMgQEAKLSVnbG9iYWwgZGVidWdfcGFja2FnZSAle25pbH0KLQogTmFtZTog
+ICAgICAgICAgIHB5dGhvbi15LXB5CiBWZXJzaW9uOiAgICAgICAgMC41LjUKIFJlbGVhc2U6ICAg
+ICAgICAxJXs/ZGlzdH0KQEAgLTcsOCArNSw2IEBACiBMaWNlbnNlOiAgICAgICAgTUlUCiBVUkw6
+ICAgICAgICAgICAgaHR0cHM6Ly9naXRodWIuY29tL3ktY3JkdC95cHkKIFNvdXJjZTogICAgICAg
+ICAle3B5cGlfc291cmNlIHlfcHl9Ci0KLUV4Y2x1c2l2ZUFyY2g6ICAle3J1c3RfYXJjaGVzfQog
+CiBCdWlsZFJlcXVpcmVzOiAgcHl0aG9uMy1kZXZlbAogQnVpbGRSZXF1aXJlczogIHB5dGhvbjMt
+cHl0ZXN0CkBAIC01MiwxNCArNDgsMTIgQEAKIG5hbWUgPSB5LXB5CiB2ZXJzaW9uID0gJXt2ZXJz
+aW9ufQogbGljZW5zZSA9IE1JVAotdXJsID0gaHR0cHM6Ly9naXRodWIuY29tL3ktY3JkdC95cHkK
+K3VybCA9ICV7dXJsfQogbG9uZ19kZXNjcmlwdGlvbiA9IGZpbGU6IFJFQURNRS5tZAogbG9uZ19k
+ZXNjcmlwdGlvbl9jb250ZW50X3R5cGUgPSB0ZXh0L21hcmtkb3duCiAKIFtvcHRpb25zXQogemlw
+X3NhZmUgPSBGYWxzZQotc2V0dXBfcmVxdWlyZXMgPSBzZXR1cHRvb2xzLXJ1c3QKLXB5dGhvbl9y
+ZXF1aXJlcyA9ID49My42CiBpbmNsdWRlX3BhY2thZ2VfZGF0YSA9IFRydWUKIEVPRgogCg==
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940626</attachid>
+            <date>2023-01-26 18:30:29 +0000</date>
+            <delta_ts>2023-01-26 18:30:29 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5311511 to 5311523</desc>
+            <filename>spec-from-5311511-to-5311523.diff</filename>
+            <type>text/plain</type>
+            <size>458</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MzExNTEx
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMxMTUy
+MwpAQCAtNjQsNyArNjQsNyBAQAogZnJvbSBzZXR1cHRvb2xzX3J1c3QgaW1wb3J0IFJ1c3RFeHRl
+bnNpb24KIAogc2V0dXAoCi0gICAgcnVzdF9leHRlbnNpb25zPVtSdXN0RXh0ZW5zaW9uKCJ5X3B5
+IiwgYXJncz1bIi0tb2ZmbGluZSJdLCBydXN0Y19mbGFncz0iJWJ1aWxkX3J1c3RmbGFncyIuc3Bs
+aXQoKSldLAorICAgIHJ1c3RfZXh0ZW5zaW9ucz1bUnVzdEV4dGVuc2lvbigieV9weSIsIGFyZ3M9
+WyItLW9mZmxpbmUiXSldLAogKQogRU9GCiAKQEAgLTc0LDYgKzc0LDcgQEAKIAogCiAlYnVpbGQK
+K2V4cG9ydCBSVVNURkxBR1M9IiVidWlsZF9ydXN0ZmxhZ3MiCiAlcHlwcm9qZWN0X3doZWVsCiAK
+IAo=
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940707</attachid>
+            <date>2023-01-27 08:09:23 +0000</date>
+            <delta_ts>2023-01-27 08:09:23 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5311523 to 5322079</desc>
+            <filename>spec-from-5311523-to-5322079.diff</filename>
+            <type>text/plain</type>
+            <size>1388</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MzExNTIz
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMyMjA3
+OQpAQCAtMjAsNiArMjAsMzAgQEAKIAogJXBhY2thZ2UgLW4gICAgIHB5dGhvbjMteS1weQogU3Vt
+bWFyeTogICAgICAgICV7c3VtbWFyeX0KKyMgU3RhdGljYWxseSBsaW5rZWQgZGVwcyBhbmQgdGhl
+aXIgbGljZW5zZXMuCisjIFdoZW4gdXBkYXRpbmcsIGNoZWNrIHRoZSBnZW5lcmF0ZWQgTElDRU5T
+RS5kZXBlbmRlbmNpZXMgZmlsZS4KKyMKKyMgQXBhY2hlLTIuMDogcHlvMyB2MC4xNi42CisjIEFw
+YWNoZS0yLjA6IHB5bzMtZmZpIHYwLjE2LjYKKyMgTUlUIE9SIEFwYWNoZS0yLjA6IGNmZy1pZiB2
+MC4xLjEwCisjIE1JVCBPUiBBcGFjaGUtMi4wOiBjZmctaWYgdjEuMC4wCisjIE1JVCBPUiBBcGFj
+aGUtMi4wOiBnZXRyYW5kb20gdjAuMS4xNQorIyBNSVQgT1IgQXBhY2hlLTIuMDogbGliYyB2MC4y
+LjEzOQorIyBNSVQgT1IgQXBhY2hlLTIuMDogbG9ja19hcGkgdjAuNC45CisjIE1JVCBPUiBBcGFj
+aGUtMi4wOiBwYXJraW5nX2xvdCB2MC4xMi4xCisjIE1JVCBPUiBBcGFjaGUtMi4wOiBwYXJraW5n
+X2xvdF9jb3JlIHYwLjkuNQorIyBNSVQgT1IgQXBhY2hlLTIuMDogcHB2LWxpdGU4NiB2MC4yLjE3
+CisjIE1JVCBPUiBBcGFjaGUtMi4wOiByYW5kIHYwLjcuMworIyBNSVQgT1IgQXBhY2hlLTIuMDog
+cmFuZF9jaGFjaGEgdjAuMi4yCisjIE1JVCBPUiBBcGFjaGUtMi4wOiByYW5kX2NvcmUgdjAuNS4x
+CisjIE1JVCBPUiBBcGFjaGUtMi4wOiBzY29wZWd1YXJkIHYxLjEuMAorIyBNSVQgT1IgQXBhY2hl
+LTIuMDogc21hbGxzdHIgdjAuMi4wCisjIE1JVCBPUiBBcGFjaGUtMi4wOiBzbWFsbHZlYyB2MS4x
+MC4wCisjIE1JVCBPUiBBcGFjaGUtMi4wOiB0aGlzZXJyb3IgdjEuMC4zNworIyBNSVQgT1IgQXBh
+Y2hlLTIuMDogdW5pbmRlbnQgdjAuMS4xMQorIyBNSVQ6IGxpYjAgdjAuMTIuMgorIyBNSVQ6IHly
+cyB2MC4xMi4yCitMaWNlbnNlOiBNSVQgQU5EIEFwYWNoZS0yLjAKIAogJWRlc2NyaXB0aW9uIC1u
+IHB5dGhvbjMteS1weSAlX2Rlc2NyaXB0aW9uCiAKQEAgLTc2LDYgKzEwMCw3IEBACiAlYnVpbGQK
+IGV4cG9ydCBSVVNURkxBR1M9IiVidWlsZF9ydXN0ZmxhZ3MiCiAlcHlwcm9qZWN0X3doZWVsCisl
+e2NhcmdvX2xpY2Vuc2V9ID4gTElDRU5TRS5kZXBlbmRlbmNpZXMKIAogCiAlaW5zdGFsbApAQCAt
+ODksNiArMTE0LDcgQEAKIAogJWZpbGVzIC1uIHB5dGhvbjMteS1weSAtZiAle3B5cHJvamVjdF9m
+aWxlc30KICVkb2MgUkVBRE1FLm1kCislbGljZW5zZSBMSUNFTlNFIExJQ0VOU0UuZGVwZW5kZW5j
+aWVzCiAKIAogJWNoYW5nZWxvZwo=
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940798</attachid>
+            <date>2023-01-27 19:44:05 +0000</date>
+            <delta_ts>2023-01-27 19:44:05 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5322079 to 5333586</desc>
+            <filename>spec-from-5322079-to-5333586.diff</filename>
+            <type>text/plain</type>
+            <size>344</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MzIyMDc5
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMzMzU4
+NgpAQCAtNDMsNyArNDMsNyBAQAogIyBNSVQgT1IgQXBhY2hlLTIuMDogdW5pbmRlbnQgdjAuMS4x
+MQogIyBNSVQ6IGxpYjAgdjAuMTIuMgogIyBNSVQ6IHlycyB2MC4xMi4yCi1MaWNlbnNlOiBNSVQg
+QU5EIEFwYWNoZS0yLjAKK0xpY2Vuc2U6IE1JVCBBTkQgKE1JVCBPUiBBcGFjaGUtMi4wKSBBTkQg
+QXBhY2hlLTIuMAogCiAlZGVzY3JpcHRpb24gLW4gcHl0aG9uMy15LXB5ICVfZGVzY3JpcHRpb24K
+IAo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

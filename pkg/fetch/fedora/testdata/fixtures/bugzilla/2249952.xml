@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2249952</bug_id>
+          
+          <creation_ts>2023-11-16 01:31:35 +0000</creation_ts>
+          <short_desc>Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm</short_desc>
+          <delta_ts>2023-11-27 01:34:38 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>kernel</component>
+          <version>39</version>
+          <rep_platform>x86_64</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc>https://community.frame.work/t/responded-high-gpu-power-draw-on-amd-ryzen-7-7840u/39713/17?u=matt_hartley</bug_file_loc>
+          <status_whiteboard/>
+          <keywords>Patch</keywords>
+          <priority>unspecified</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="mattwork">mrh</reporter>
+          <assigned_to name="Kernel Maintainer List">kernel-maint</assigned_to>
+          <cc>acaringi</cc>
+    
+    
+    <cc>adscvr</cc>
+    
+    
+    <cc>airlied</cc>
+    
+    
+    <cc>alciregi</cc>
+    
+    
+    <cc>awilliam</cc>
+    
+    
+    <cc>bskeggs</cc>
+    
+    
+    <cc>hdegoede</cc>
+    
+    
+    <cc>hpa</cc>
+    
+    
+    <cc>jarod</cc>
+    
+    
+    <cc>josef</cc>
+    
+    
+    <cc>kernel-maint</cc>
+    
+    
+    <cc>lgoncalv</cc>
+    
+    
+    <cc>linville</cc>
+    
+    
+    <cc>masami256</cc>
+    
+    
+    <cc>mchehab</cc>
+    
+    
+    <cc>ptalbert</cc>
+    
+    
+    <cc>steved</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in>kernel-6.5.12-300.fc39 kernel-6.5.12-100.fc37 kernel-6.5.12-200.fc38</cf_fixed_in>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-11-22 01:23:18</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>17762037</commentid>
+    <comment_count>0</comment_count>
+    <who name="mattwork">mrh</who>
+    <bug_when>2023-11-16 01:31:35 +0000</bug_when>
+    <thetext>1. Please describe the problem:
+As it stands now, Framework Laptop 13 (AMD Ryzen™ 7040 Series) requires this parameter to not wake after 5 minutes. 
+
+2. What is the Version-Release number of the kernel:
+6.5.11-300
+
+3. Did it work previously in Fedora? If so, what kernel version did the issue
+   *first* appear?  Old kernels are available for download at
+   https://koji.fedoraproject.org/koji/packageinfo?packageID=8 :
+Since day one of laptop release.
+
+
+4. Can you reproduce this issue? If so, please provide the steps to reproduce
+   the issue below: Running this script as sudo:
+https://gitlab.freedesktop.org/drm/amd/-/blob/master/scripts/amd_s2idle.py
+ Choose a time greater than 5 minutes, say 10 minutes. It will wake after 5 minutes unless the rtc_cmos.use_acpi_alarm=1 parameter is used in GRUB. To replicate, you can either use systemctl suspend or lid close or suspend from the power menu.
+
+
+5. Does this problem occur with the latest Rawhide kernel? To install the
+   Rawhide kernel, run ``sudo dnf install fedora-repos-rawhide`` followed by
+   ``sudo dnf update --enablerepo=rawhide kernel``:
+Yes.
+
+
+6. Are you running any modules that not shipped with directly Fedora's kernel?:
+No.
+
+7. Please attach the kernel logs. You can get the complete kernel log
+   for a boot with ``journalctl --no-hostname -k &gt; dmesg.txt``. If the
+   issue occurred on a previous boot, use the journalctl ``-b`` flag.
+
+Requesting this patch be applied with the kernel:
+https://patchwork-proxy.ozlabs.org/project/rtc-linux/patch/20231106162310.85711-1-mario.limonciello@amd.com/ per @mario.limonciello@amd.com who requested I ask to get this applied.
+
+Reproducible: Always</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17762038</commentid>
+    <comment_count>1</comment_count>
+    <who name="mattwork">mrh</who>
+    <bug_when>2023-11-16 01:49:27 +0000</bug_when>
+    <thetext>Blocks: https://bugzilla.redhat.com/show_bug.cgi?id=2240811</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17762052</commentid>
+    <comment_count>2</comment_count>
+    <who name="Adam Williamson">awilliam</who>
+    <bug_when>2023-11-16 02:09:24 +0000</bug_when>
+    <thetext>i've pinged jforbes to ask him to take a look at this.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17763364</commentid>
+    <comment_count>3</comment_count>
+    <who name="mattwork">mrh</who>
+    <bug_when>2023-11-16 17:28:34 +0000</bug_when>
+    <thetext>Thanks Adam, much appreciated.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17768707</commentid>
+    <comment_count>4</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-21 03:40:21 +0000</bug_when>
+    <thetext>FEDORA-2023-75dbe9e998 has been submitted as an update to Fedora 37. https://bodhi.fedoraproject.org/updates/FEDORA-2023-75dbe9e998</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17768708</commentid>
+    <comment_count>5</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-21 03:40:22 +0000</bug_when>
+    <thetext>FEDORA-2023-e4dfbf59b1 has been submitted as an update to Fedora 38. https://bodhi.fedoraproject.org/updates/FEDORA-2023-e4dfbf59b1</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17768709</commentid>
+    <comment_count>6</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-21 03:42:48 +0000</bug_when>
+    <thetext>FEDORA-2023-03b11e7dcf has been submitted as an update to Fedora 39. https://bodhi.fedoraproject.org/updates/FEDORA-2023-03b11e7dcf</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17770617</commentid>
+    <comment_count>7</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-22 01:23:18 +0000</bug_when>
+    <thetext>FEDORA-2023-03b11e7dcf has been pushed to the Fedora 39 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17770729</commentid>
+    <comment_count>8</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-22 02:56:04 +0000</bug_when>
+    <thetext>FEDORA-2023-75dbe9e998 has been pushed to the Fedora 37 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-75dbe9e998`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-75dbe9e998
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17770741</commentid>
+    <comment_count>9</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-22 03:04:07 +0000</bug_when>
+    <thetext>FEDORA-2023-e4dfbf59b1 has been pushed to the Fedora 38 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-e4dfbf59b1`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-e4dfbf59b1
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17770782</commentid>
+    <comment_count>10</comment_count>
+    <who name="mattwork">mrh</who>
+    <bug_when>2023-11-22 03:36:56 +0000</bug_when>
+    <thetext>Early tests indicate this is working. Other users are chiming in it's working for them as well. I think we this is resolved.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17774615</commentid>
+    <comment_count>11</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 01:11:29 +0000</bug_when>
+    <thetext>FEDORA-2023-75dbe9e998 has been pushed to the Fedora 37 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776275</commentid>
+    <comment_count>12</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 03:07:38 +0000</bug_when>
+    <thetext>FEDORA-2023-e4dfbf59b1 has been pushed to the Fedora 38 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777000</commentid>
+    <comment_count>13</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 14:11:22 +0000</bug_when>
+    <thetext>FEDORA-2023-9d54a271e2 has been submitted as an update to Fedora 39. https://bodhi.fedoraproject.org/updates/FEDORA-2023-9d54a271e2</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777003</commentid>
+    <comment_count>14</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 14:11:35 +0000</bug_when>
+    <thetext>FEDORA-2023-bd14c83780 has been submitted as an update to Fedora 38. https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777617</commentid>
+    <comment_count>15</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-24 01:44:00 +0000</bug_when>
+    <thetext>FEDORA-2023-9d54a271e2 has been pushed to the Fedora 39 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-9d54a271e2`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-9d54a271e2
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777631</commentid>
+    <comment_count>16</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-24 02:19:00 +0000</bug_when>
+    <thetext>FEDORA-2023-bd14c83780 has been pushed to the Fedora 38 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-bd14c83780`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17780348</commentid>
+    <comment_count>17</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-27 01:16:30 +0000</bug_when>
+    <thetext>FEDORA-2023-9d54a271e2 has been pushed to the Fedora 39 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-9d54a271e2`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-9d54a271e2
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17780357</commentid>
+    <comment_count>18</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-27 01:34:38 +0000</bug_when>
+    <thetext>FEDORA-2023-bd14c83780 has been pushed to the Fedora 38 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-bd14c83780`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>
