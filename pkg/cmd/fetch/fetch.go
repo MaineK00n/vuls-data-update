@@ -20,9 +20,13 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/gentoo"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/netbsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
+	redhatCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/csaf"
+	redhatCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cve"
+	redhatCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cvrf"
 	redhatOvalRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/repository2cpe"
 	redhatOvalV1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
+	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
 	suseCSAFVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
@@ -97,7 +101,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchGentoo(),
 		newCmdFetchNetBSD(),
 		newCmdFetchOracle(),
-		newCmdFetchRedhatOvalRepositoryToCPE(), newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatSecurityAPI(), newCmdFetchRedhatCSAF(),
+		newCmdFetchRedhatOvalRepositoryToCPE(), newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatCVE(), newCmdFetchRedhatCVRF(), newCmdFetchRedhatCSAF(), newCmdFetchRedhatVEX(),
 		newCmdFetchRockyErrata(), newCmdFetchRockyOSV(),
 		newCmdFetchSUSEOval(), newCmdFetchSUSECVRF(), newCmdFetchSUSECVRFCVE(), newCmdFetchSUSECSAF(), newCmdFetchSUSECSAFVEX(),
 		newCmdFetchUbuntuOVAL(), newCmdFetchUbuntuCVETracker(),
@@ -561,6 +565,95 @@ func newCmdFetchOracle() *cobra.Command {
 	return cmd
 }
 
+func newCmdFetchRedhatCVE() *cobra.Command {
+	options := &options{
+		dir:         filepath.Join(util.CacheDir(), "redhat", "cve"),
+		retry:       20,
+		concurrency: 10,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-cve",
+		Short: "Fetch RedHat Enterprise Linux CVE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-cve
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatCVE.Fetch(redhatCVE.WithDir(options.dir), redhatCVE.WithRetry(options.retry), redhatCVE.WithConcurrency(options.concurrency), redhatCVE.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat cve")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "cve"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdFetchRedhatCSAF() *cobra.Command {
+	options := &options{
+		dir:         filepath.Join(util.CacheDir(), "redhat", "csaf"),
+		retry:       3,
+		concurrency: 10,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-csaf",
+		Short: "Fetch RedHat Enterprise Linux CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatCSAF.Fetch(redhatCSAF.WithDir(options.dir), redhatCSAF.WithRetry(options.retry), redhatCSAF.WithConcurrency(options.concurrency), redhatCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "csaf"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdFetchRedhatCVRF() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "redhat", "cvrf"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-cvrf",
+		Short: "Fetch RedHat Enterprise Linux CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-cvrf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatCVRF.Fetch(redhatCVRF.WithDir(options.dir), redhatCVRF.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "cvrf"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
 func newCmdFetchRedhatOvalRepositoryToCPE() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "repository-to-cpe"),
@@ -642,56 +735,33 @@ func newCmdFetchRedhatOvalV2() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchRedhatSecurityAPI() *cobra.Command {
+func newCmdFetchRedhatVEX() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "redhat", "api"),
-		retry: 3,
+		dir:         filepath.Join(util.CacheDir(), "redhat", "vex"),
+		retry:       3,
+		concurrency: 10,
+		wait:        1,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-security-api",
-		Short: "Fetch RedHat Security API data source",
+		Use:   "redhat-vex",
+		Short: "Fetch RedHat Enterprise Linux CSAF VEX data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-security-api
+			$ vuls-data-update fetch redhat-vex
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := redhatSecurityAPI.Fetch(redhatSecurityAPI.WithDir(options.dir), redhatSecurityAPI.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch redhat security api")
-			// }
+			if err := redhatVEX.Fetch(redhatVEX.WithDir(options.dir), redhatVEX.WithRetry(options.retry), redhatVEX.WithConcurrency(options.concurrency), redhatVEX.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat vex")
+			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "api"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "vex"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdFetchRedhatCSAF() *cobra.Command {
-	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "redhat", "csaf"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "redhat-csaf",
-		Short: "Fetch RedHat CSAF data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-csaf
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := redhatCSAF.Fetch(redhatCSAF.WithDir(options.dir), redhatCSAF.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch redhat csaf")
-			// }
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "csaf"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }

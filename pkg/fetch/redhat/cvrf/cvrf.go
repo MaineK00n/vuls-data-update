@@ -1,28 +1,26 @@
-package github
+package cvrf
 
 import (
 	"archive/tar"
 	"compress/gzip"
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const defaultRepoURL = "https://github.com/nomi-sec/PoC-in-GitHub/archive/refs/heads/master.tar.gz"
+const dataURL = "https://access.redhat.com/security/data/archive/cvrf_20231016.tar.gz"
 
 type options struct {
-	repoURL string
+	dataURL string
 	dir     string
 	retry   int
 }
@@ -31,14 +29,14 @@ type Option interface {
 	apply(*options)
 }
 
-type repoURLOption string
+type dataURLOption string
 
-func (u repoURLOption) apply(opts *options) {
-	opts.repoURL = string(u)
+func (u dataURLOption) apply(opts *options) {
+	opts.dataURL = string(u)
 }
 
-func WithRepoURL(repoURL string) Option {
-	return repoURLOption(repoURL)
+func WithDataURL(url string) Option {
+	return dataURLOption(url)
 }
 
 type dirOption string
@@ -63,8 +61,8 @@ func WithRetry(retry int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		repoURL: defaultRepoURL,
-		dir:     filepath.Join(util.CacheDir(), "exploit", "github"),
+		dataURL: dataURL,
+		dir:     filepath.Join(util.CacheDir(), "redhat", "cvrf"),
 		retry:   3,
 	}
 
@@ -76,12 +74,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Poc-in-GitHub")
-	var es []Exploit
-
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repoURL)
+	log.Println("[INFO] Fetch RedHat CVRF")
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
-		return errors.Wrap(err, "fetch repository")
+		return errors.Wrap(err, "fetch archive cvrf")
 	}
 	defer resp.Body.Close()
 
@@ -92,7 +88,7 @@ func Fetch(opts ...Option) error {
 
 	gr, err := gzip.NewReader(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "create gzip reader")
+		return errors.Wrap(err, "open archive as gzip")
 	}
 	defer gr.Close()
 
@@ -110,37 +106,30 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		file := filepath.Base(hdr.Name)
-		if !strings.HasPrefix(file, "CVE-") {
+		if filepath.Base(hdr.Name) == "index.txt" {
 			continue
 		}
 
-		var rs []Repository
-		if err := json.NewDecoder(tr).Decode(&rs); err != nil {
-			return errors.Wrap(err, "decode json")
+		var cvrf CVRF
+		if err := xml.NewDecoder(tr).Decode(&cvrf); err != nil {
+			return errors.Wrap(err, "decode xml")
 		}
-		es = append(es, Exploit{ID: strings.TrimSuffix(file, ".json"), Repositories: rs})
-	}
 
-	bar := pb.StartNew(len(es))
-	for _, e := range es {
-		splitted, err := util.Split(e.ID, "-", "-")
+		splitted, err := util.Split(cvrf.DocumentTracking.Identification.ID, "-", ":")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", e.ID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "RHSA-yyyy:\\d{4,}", cvrf.DocumentTracking.Identification.ID)
 			continue
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", e.ID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "RHSA-yyyy:\\d{4,}", cvrf.DocumentTracking.Identification.ID)
 			continue
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", e.ID)), e); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", e.ID)))
+		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID)), cvrf); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cvrf.DocumentTracking.Identification.ID)))
 		}
 
-		bar.Increment()
 	}
-	bar.Finish()
 
 	return nil
 }

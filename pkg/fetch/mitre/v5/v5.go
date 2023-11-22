@@ -106,6 +106,10 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "next tar reader")
 		}
 
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
+
 		if !strings.HasPrefix(filepath.Base(hdr.Name), "CVE-") || filepath.Ext(hdr.Name) != ".json" {
 			continue
 		}

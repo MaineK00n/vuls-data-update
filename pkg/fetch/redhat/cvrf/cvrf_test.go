@@ -1,4 +1,4 @@
-package csaf_test
+package cvrf_test
 
 import (
 	"io/fs"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/csaf"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cvrf"
 )
 
 func TestFetch(t *testing.T) {
@@ -23,7 +23,7 @@ func TestFetch(t *testing.T) {
 	}{
 		{
 			name:     "happy",
-			testdata: "testdata/fixtures/",
+			testdata: "testdata/fixtures/cvrf_20231016.tar.gz",
 		},
 	}
 	for _, tt := range tests {
@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = csaf.Fetch(csaf.WithDataURL(u), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(1), csaf.WithWait(0))
+			err = cvrf.Fetch(cvrf.WithDataURL(u), cvrf.WithDir(dir), cvrf.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
