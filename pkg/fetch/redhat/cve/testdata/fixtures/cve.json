@@ -1,0 +1,78 @@
+[
+    {
+      "CVE": "CVE-2023-48161",
+      "severity": "moderate",
+      "public_date": "2023-11-22T00:00:00Z",
+      "advisories": [],
+      "bugzilla": "2251025",
+      "bugzilla_description": "giflib: Heap-Buffer Overflow during Image Saving in DumpScreen2RGB Function",
+      "cvss_score": null,
+      "cvss_scoring_vector": null,
+      "CWE": "CWE-119",
+      "affected_packages": [],
+      "resource_url": "https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2023-48161.json",
+      "cvss3_scoring_vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N",
+      "cvss3_score": "5.5"
+    },
+    {
+      "CVE": "CVE-2023-6204",
+      "severity": "important",
+      "public_date": "2023-11-21T00:00:00Z",
+      "advisories": [],
+      "bugzilla": "2250896",
+      "bugzilla_description": "Mozilla: Out-of-bound memory access in WebGL2 blitFramebuffer",
+      "cvss_score": null,
+      "cvss_scoring_vector": null,
+      "CWE": "CWE-125",
+      "affected_packages": [],
+      "resource_url": "https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2023-6204.json",
+      "cvss3_scoring_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H",
+      "cvss3_score": "7.5"
+    },
+    {
+      "CVE": "CVE-2023-6205",
+      "severity": "important",
+      "public_date": "2023-11-21T00:00:00Z",
+      "advisories": [],
+      "bugzilla": "2250897",
+      "bugzilla_description": "Mozilla: Use-after-free in MessagePort::Entangled",
+      "cvss_score": null,
+      "cvss_scoring_vector": null,
+      "CWE": "CWE-416",
+      "affected_packages": [],
+      "resource_url": "https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2023-6205.json",
+      "cvss3_scoring_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H",
+      "cvss3_score": "7.5"
+    },
+    {
+      "CVE": "CVE-2023-6206",
+      "severity": "important",
+      "public_date": "2023-11-21T00:00:00Z",
+      "advisories": [],
+      "bugzilla": "2250898",
+      "bugzilla_description": "Mozilla: Clickjacking permission prompts using the fullscreen transition",
+      "cvss_score": null,
+      "cvss_scoring_vector": null,
+      "CWE": "CWE-1021",
+      "affected_packages": [],
+      "resource_url": "https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2023-6206.json",
+      "cvss3_scoring_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H",
+      "cvss3_score": "7.5"
+    },
+    {
+      "CVE": "CVE-2023-6207",
+      "severity": "important",
+      "public_date": "2023-11-21T00:00:00Z",
+      "advisories": [],
+      "bugzilla": "2250899",
+      "bugzilla_description": "Mozilla: Use-after-free in ReadableByteStreamQueueEntry::Buffer",
+      "cvss_score": null,
+      "cvss_scoring_vector": null,
+      "CWE": "CWE-416",
+      "affected_packages": [],
+      "resource_url": "https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2023-6207.json",
+      "cvss3_scoring_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H",
+      "cvss3_score": "7.5"
+    }
+  ]
+  

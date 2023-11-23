@@ -1,4 +1,4 @@
-package csaf
+package vex
 
 import (
 	"bufio"
@@ -17,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://access.redhat.com/security/data/csaf/v2/advisories/"
+const dataURL = "https://access.redhat.com/security/data/csaf/beta/vex/"
 
 type options struct {
 	dataURL     string
@@ -84,7 +84,7 @@ func WithWait(wait int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL:     dataURL,
-		dir:         filepath.Join(util.CacheDir(), "redhat", "csaf"),
+		dir:         filepath.Join(util.CacheDir(), "redhat", "vex"),
 		retry:       3,
 		concurrency: 10,
 		wait:        1,
@@ -98,7 +98,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch RedHat CSAF")
+	log.Println("[INFO] Fetch RedHat CSAF VEX")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	u, err := url.JoinPath(options.dataURL, "index.txt")
 	if err != nil {
@@ -139,23 +139,23 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("error request response with status code %d", resp.StatusCode)
 		}
 
-		var csaf CSAF
-		if err := json.NewDecoder(resp.Body).Decode(&csaf); err != nil {
+		var vex VEX
+		if err := json.NewDecoder(resp.Body).Decode(&vex); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
-		splitted, err := util.Split(csaf.Document.Tracking.ID, "-", ":")
+		splitted, err := util.Split(vex.Document.Tracking.ID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "RHSA-yyyy:\\d{4,}", csaf.Document.Tracking.ID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
 			return nil
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "RHSA-yyyy:\\d{4,}", csaf.Document.Tracking.ID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
 			return nil
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
 		}
 
 		return nil

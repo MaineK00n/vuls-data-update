@@ -1,6 +1,6 @@
-package csaf
+package vex
 
-type CSAF struct {
+type VEX struct {
 	Document struct {
 		AggregateSeverity struct {
 			Namespace string `json:"namespace"`
@@ -69,7 +69,8 @@ type CSAF struct {
 					Name                        string `json:"name"`
 					ProductID                   string `json:"product_id"`
 					ProductIdentificationHelper *struct {
-						Cpe string `json:"cpe"`
+						Cpe  *string `json:"cpe,omitempty"`
+						Purl *string `json:"purl,omitempty"`
 					} `json:"product_identification_helper,omitempty"`
 				} `json:"product,omitempty"`
 			} `json:"branches"`
@@ -88,7 +89,7 @@ type CSAF struct {
 	} `json:"product_tree"`
 	Vulnerabilities []struct {
 		Acknowledgments []struct {
-			Names        []string `json:"names,omitempty"`
+			Names        []string `json:"names"`
 			Organization *string  `json:"organization,omitempty"`
 			Summary      *string  `json:"summary,omitempty"`
 		} `json:"acknowledgments,omitempty"`
@@ -97,7 +98,7 @@ type CSAF struct {
 			ID   string `json:"id"`
 			Name string `json:"name"`
 		} `json:"cwe,omitempty"`
-		DiscoveryDate string `json:"discovery_date"`
+		DiscoveryDate *string `json:"discovery_date,omitempty"`
 		Flags         []struct {
 			Label      string   `json:"label"`
 			ProductIds []string `json:"product_ids"`
@@ -112,8 +113,10 @@ type CSAF struct {
 			Title    string `json:"title"`
 		} `json:"notes"`
 		ProductStatus struct {
-			Fixed            []string `json:"fixed"`
-			KnownNotAffected []string `json:"known_not_affected,omitempty"`
+			Fixed              []string `json:"fixed,omitempty"`
+			KnownAffected      []string `json:"known_affected,omitempty"`
+			KnownNotAffected   []string `json:"known_not_affected,omitempty"`
+			UnderInvestigation []string `json:"under_investigation,omitempty"`
 		} `json:"product_status"`
 		References []struct {
 			Category string `json:"category"`
@@ -122,14 +125,11 @@ type CSAF struct {
 		} `json:"references"`
 		ReleaseDate  string `json:"release_date"`
 		Remediations []struct {
-			Category        string   `json:"category"`
-			Details         string   `json:"details"`
-			ProductIds      []string `json:"product_ids"`
-			RestartRequired *struct {
-				Category string `json:"category"`
-			} `json:"restart_required,omitempty"`
-			URL *string `json:"url,omitempty"`
-		} `json:"remediations"`
+			Category   string   `json:"category"`
+			Details    string   `json:"details"`
+			ProductIds []string `json:"product_ids"`
+			URL        *string  `json:"url,omitempty"`
+		} `json:"remediations,omitempty"`
 		Scores []struct {
 			CvssV2 *struct {
 				AccessComplexity      string  `json:"accessComplexity"`
@@ -159,10 +159,11 @@ type CSAF struct {
 			Products []string `json:"products"`
 		} `json:"scores,omitempty"`
 		Threats []struct {
-			Category string  `json:"category"`
-			Date     *string `json:"date,omitempty"`
-			Details  string  `json:"details"`
+			Category   string   `json:"category"`
+			Date       *string  `json:"date,omitempty"`
+			Details    string   `json:"details"`
+			ProductIds []string `json:"product_ids,omitempty"`
 		} `json:"threats,omitempty"`
 		Title string `json:"title"`
-	} `json:"vulnerabilities,omitempty"`
+	} `json:"vulnerabilities"`
 }
