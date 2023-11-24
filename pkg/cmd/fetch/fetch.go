@@ -56,7 +56,6 @@ import (
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v4"
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
-
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpe"
 	nvdAPICPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
@@ -2461,7 +2460,7 @@ func newCmdFetchMSF() *cobra.Command {
 func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
-		retry:       3,
+		retry:       20,
 		concurrency: 1,
 		wait:        6,
 	}
@@ -2488,7 +2487,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cve"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
@@ -2500,7 +2499,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 func newCmdFetchNVDAPICPE() *cobra.Command {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cpe"),
-		retry:       3,
+		retry:       20,
 		concurrency: 1,
 		wait:        6,
 	}
@@ -2521,7 +2520,7 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cpe"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
@@ -2533,7 +2532,7 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"),
-		retry:       3,
+		retry:       20,
 		concurrency: 1,
 		wait:        6,
 	}
@@ -2554,7 +2553,7 @@ func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
