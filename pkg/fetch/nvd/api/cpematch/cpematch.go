@@ -134,22 +134,18 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] Fetch NVD CPE match API. dir: %s", options.dir)
 
 	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
-		// do not retry on context.Canceled or context.DeadlineExceeded
-		if ctx.Err() != nil {
-			return false, ctx.Err()
+		if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
+			return shouldRetry, err
 		}
-		if err != nil {
-			return false, errors.Wrap(err, "http client Do")
-		}
+
 		// NVD JSON API returns 403 in rate limit excesses, should retry.
 		// Also, the API returns 408 infreqently.
 		switch resp.StatusCode {
 		case http.StatusForbidden, http.StatusRequestTimeout:
-			log.Printf("[INFO] HTTP %d happened, may retry", resp.StatusCode)
-			return true, nil
+			return true, fmt.Errorf("unexpected HTTP status %s", resp.Status)
+		default:
+			return false, nil
 		}
-
-		return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 	}
 
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))

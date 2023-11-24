@@ -117,7 +117,7 @@ func NewClient(opts ...ClientOption) *Client {
 		retryWaitMin: 1 * time.Second,
 		retryWaitMax: 30 * time.Second,
 		retryMax:     4,
-		checkRetry:   retryablehttp.DefaultRetryPolicy,
+		checkRetry:   retryablehttp.ErrorPropagatedRetryPolicy,
 		backoff:      retryablehttp.DefaultBackoff,
 	}
 
