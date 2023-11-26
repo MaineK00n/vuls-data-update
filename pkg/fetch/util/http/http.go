@@ -285,8 +285,8 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency, wait int
 			default:
 				bar.Increment()
 				time.Sleep(time.Duration(wait) * time.Second)
+				return nil
 			}
-			return nil
 		})
 	}
 	if err := g.Wait(); err != nil {

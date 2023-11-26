@@ -68,8 +68,10 @@ import (
 )
 
 type options struct {
-	dir   string
-	retry int
+	dir          string
+	retry        int
+	retryWaitMin int
+	retryWaitMax int
 
 	concurrency int // SUSE CVRF/CVRF CVE/CSAF/CSAF VEX, NVD API CVE/CPE/CPEMatch, Windows WSUSSCN2
 	wait        int // SUSE CVRF/CVRF CVE/CSAF/CSAF VEX, NVD API CVE/CPE/CPEMatch
@@ -2459,10 +2461,12 @@ func newCmdFetchMSF() *cobra.Command {
 }
 func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
-		retry:       20,
-		concurrency: 1,
-		wait:        6,
+		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
+		retry:        20,
+		retryWaitMin: 6,
+		retryWaitMax: 30,
+		concurrency:  1,
+		wait:         6,
 	}
 
 	cmd := &cobra.Command{
@@ -2475,9 +2479,8 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := nvdAPICVE.Fetch(
 				nvdAPICVE.WithDir(options.dir),
-				nvdAPICVE.WithRetry(options.retry),
-				nvdAPICVE.WithConcurrency(options.concurrency),
-				nvdAPICVE.WithWait(options.wait),
+				nvdAPICVE.WithRetry(options.retry), nvdAPICVE.WithRetryWaitMin(options.retryWaitMin), nvdAPICVE.WithRetryWaitMax(options.retryWaitMax),
+				nvdAPICVE.WithConcurrency(options.concurrency), nvdAPICVE.WithWait(options.wait),
 				nvdAPICVE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cve")
@@ -2488,6 +2491,8 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
+	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
+	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
@@ -2498,10 +2503,12 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 }
 func newCmdFetchNVDAPICPE() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cpe"),
-		retry:       20,
-		concurrency: 1,
-		wait:        6,
+		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cpe"),
+		retry:        20,
+		retryWaitMin: 6,
+		retryWaitMax: 30,
+		concurrency:  1,
+		wait:         6,
 	}
 
 	cmd := &cobra.Command{
@@ -2512,7 +2519,12 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdAPICPE.Fetch(nvdAPICPE.WithDir(options.dir), nvdAPICPE.WithRetry(options.retry), nvdAPICPE.WithAPIKey(options.apiKey), nvdAPICPE.WithWait(options.wait), nvdAPICPE.WithConcurrency(options.concurrency)); err != nil {
+			if err := nvdAPICPE.Fetch(
+				nvdAPICPE.WithDir(options.dir),
+				nvdAPICPE.WithRetry(options.retry), nvdAPICPE.WithRetryWaitMin(options.retryWaitMin), nvdAPICPE.WithRetryWaitMax(options.retryWaitMax),
+				nvdAPICPE.WithConcurrency(options.concurrency), nvdAPICPE.WithWait(options.wait),
+				nvdAPICPE.WithAPIKey(options.apiKey),
+			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpe")
 			}
 			return nil
@@ -2521,6 +2533,8 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
+	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
+	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
@@ -2531,10 +2545,12 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 }
 func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"),
-		retry:       20,
-		concurrency: 1,
-		wait:        6,
+		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"),
+		retry:        20,
+		retryWaitMin: 6,
+		retryWaitMax: 30,
+		concurrency:  1,
+		wait:         6,
 	}
 
 	cmd := &cobra.Command{
@@ -2545,7 +2561,12 @@ func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdAPICPEMatch.Fetch(nvdAPICPEMatch.WithDir(options.dir), nvdAPICPEMatch.WithRetry(options.retry), nvdAPICPEMatch.WithAPIKey(options.apiKey), nvdAPICPEMatch.WithWait(options.wait), nvdAPICPEMatch.WithConcurrency(options.concurrency)); err != nil {
+			if err := nvdAPICPEMatch.Fetch(
+				nvdAPICPEMatch.WithDir(options.dir),
+				nvdAPICPEMatch.WithRetry(options.retry), nvdAPICPEMatch.WithRetryWaitMin(options.retryWaitMin), nvdAPICPEMatch.WithRetryWaitMax(options.retryWaitMax),
+				nvdAPICPEMatch.WithConcurrency(options.concurrency), nvdAPICPEMatch.WithWait(options.wait),
+				nvdAPICPEMatch.WithAPIKey(options.apiKey),
+			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpematch")
 			}
 			return nil
@@ -2554,6 +2575,8 @@ func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
+	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
+	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.

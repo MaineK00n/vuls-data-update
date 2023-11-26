@@ -28,12 +28,14 @@ const (
 )
 
 type options struct {
-	baseURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        int
-	apiKey      string
+	baseURL      string
+	dir          string
+	retry        int
+	retryWaitMin int
+	retryWaitMax int
+	concurrency  int
+	wait         int
+	apiKey       string
 
 	// test purpose only
 	resultsPerPage int
@@ -71,6 +73,26 @@ func (r retryOption) apply(opts *options) {
 
 func WithRetry(retry int) Option {
 	return retryOption(retry)
+}
+
+type retryWaitMinOption int
+
+func (r retryWaitMinOption) apply(opts *options) {
+	opts.retryWaitMin = int(r)
+}
+
+func WithRetryWaitMin(wait int) Option {
+	return retryWaitMinOption(wait)
+}
+
+type retryWaitMaxOption int
+
+func (r retryWaitMaxOption) apply(opts *options) {
+	opts.retryWaitMax = int(r)
+}
+
+func WithRetryWaitMax(wait int) Option {
+	return retryWaitMaxOption(wait)
 }
 
 type concurrencyOption int
@@ -146,7 +168,7 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(checkRetry))
 
 	h := make(http.Header)
 	if options.apiKey != "" {
