@@ -1,23 +1,20 @@
 package cpematch
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
-	"strconv"
 	"time"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
+	utilapi "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -156,22 +153,7 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch NVD CPE match API. dir: %s", options.dir)
 
-	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
-		if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
-			return shouldRetry, err
-		}
-
-		// NVD JSON API returns 403 in rate limit excesses, should retry.
-		// Also, the API returns 408 infreqently.
-		switch resp.StatusCode {
-		case http.StatusForbidden, http.StatusRequestTimeout:
-			return true, fmt.Errorf("unexpected HTTP status %s", resp.Status)
-		default:
-			return false, nil
-		}
-	}
-
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(checkRetry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(utilapi.CheckRetry))
 
 	h := make(http.Header)
 	if options.apiKey != "" {
@@ -181,7 +163,7 @@ func Fetch(opts ...Option) error {
 
 	// Preliminary API call to get totalResults.
 	// Use 1 as resultsPerPage to save time.
-	u, err := fullURL(options.baseURL, 0, 1)
+	u, err := utilapi.FullURL(options.baseURL, 0, 1)
 	if err != nil {
 		return errors.Wrap(err, "full URL")
 	}
@@ -212,7 +194,7 @@ func Fetch(opts ...Option) error {
 	// Actual API calls
 	us := make([]string, 0, pages)
 	for startIndex := 0; startIndex < totalResults; startIndex += options.resultsPerPage {
-		url, err := fullURL(options.baseURL, startIndex, options.resultsPerPage)
+		url, err := utilapi.FullURL(options.baseURL, startIndex, options.resultsPerPage)
 		if err != nil {
 			return errors.Wrap(err, "full URL")
 		}
@@ -271,18 +253,6 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "pipeline get")
 	}
 	return nil
-}
-
-func fullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
-	}
-	q := u.Query()
-	q.Set("startIndex", strconv.Itoa(startIndex))
-	q.Set("resultsPerPage", strconv.Itoa(resultsPerPage))
-	u.RawQuery = q.Encode()
-	return u.String(), nil
 }
 
 func hash32(message []byte) uint32 {

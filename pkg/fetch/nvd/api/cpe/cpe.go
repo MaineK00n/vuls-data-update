@@ -8,9 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
@@ -18,6 +16,7 @@ import (
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
+	utilapi "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -181,7 +180,7 @@ func Fetch(opts ...Option) error {
 
 	// Preliminary API call to get totalResults.
 	// Use 1 as resultsPerPage to save time.
-	u, err := fullURL(options.baseURL, 0, 1)
+	u, err := utilapi.FullURL(options.baseURL, 0, 1)
 	if err != nil {
 		return errors.Wrap(err, "full URL")
 	}
@@ -212,7 +211,7 @@ func Fetch(opts ...Option) error {
 	// Actual API calls
 	us := make([]string, 0, pages)
 	for startIndex := 0; startIndex < totalResults; startIndex += options.resultsPerPage {
-		url, err := fullURL(options.baseURL, startIndex, options.resultsPerPage)
+		url, err := utilapi.FullURL(options.baseURL, startIndex, options.resultsPerPage)
 		if err != nil {
 			return errors.Wrap(err, "full URL")
 		}
@@ -271,18 +270,6 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "pipeline get")
 	}
 	return nil
-}
-
-func fullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
-	}
-	q := u.Query()
-	q.Set("startIndex", strconv.Itoa(startIndex))
-	q.Set("resultsPerPage", strconv.Itoa(resultsPerPage))
-	u.RawQuery = q.Encode()
-	return u.String(), nil
 }
 
 func hash32(message []byte) uint32 {
