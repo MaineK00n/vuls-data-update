@@ -13,9 +13,6 @@ import (
 )
 
 func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
-	originalBody := resp.Body
-	defer originalBody.Close()
-
 	if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
 		return shouldRetry, errors.Wrap(err, "retry policy")
 	}
@@ -30,16 +27,21 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	// NVD API rarely fails to send whole response body and results in unexpected EOF.
 	// Read whole body in advance, to let retryablehttp retry in case of errors.
 	// TODO(shino): This is just a kludge, not optimal way, better/cleaner way is welcome.
-	body, err := io.ReadAll(originalBody)
-	resp.Body = io.NopCloser(bytes.NewBuffer(body))
+	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
+		// Error occured. resp.Body was already consumed (partially) but it is left as it is.
+
 		if errors.Is(err, io.ErrUnexpectedEOF) {
 			return true, errors.Wrap(err, "read all response body")
 		}
 		return false, errors.Wrap(err, "read all response body")
 	}
 
+	// Body is already read to the end, so don't check error here.
+	resp.Body.Close()
+
+	resp.Body = io.NopCloser(bytes.NewBuffer(body))
 	return false, nil
 }
 
