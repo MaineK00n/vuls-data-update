@@ -37,9 +37,8 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	if err != nil {
 		if errors.Is(err, io.ErrUnexpectedEOF) {
 			return true, errors.Wrap(err, "read all response body")
-		} else {
-			return false, errors.Wrap(err, "read all response body")
 		}
+		return false, errors.Wrap(err, "read all response body")
 	}
 
 	return false, nil
