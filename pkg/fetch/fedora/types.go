@@ -349,6 +349,19 @@ type Build struct {
 	Package   map[string][]Package `json:"package,omitempty"`
 }
 
+type Package struct {
+	Name    string `json:"name,omitempty" xmlrpc:"name"`
+	Epoch   *int   `json:"epoch,omitempty" xmlrpc:"epoch"`
+	Version string `json:"version,omitempty" xmlrpc:"version"`
+	Release string `json:"release,omitempty" xmlrpc:"release"`
+	Arch    string `json:"arch,omitempty" xmlrpc:"arch"`
+}
+
+type archive struct {
+	ID       int    `xmlrpc:"id"`
+	Filename string `xmlrpc:"filename"`
+}
+
 type bugzilla struct {
 	Bug struct {
 		BugID        string   `xml:"bug_id"`
@@ -381,14 +394,6 @@ type bugzilla struct {
 			Thetext string `xml:"thetext"`
 		} `xml:"long_desc"`
 	} `xml:"bug"`
-}
-
-type Package struct {
-	Name    string `json:"name,omitempty" xmlrpc:"name"`
-	Epoch   *int   `json:"epoch,omitempty" xmlrpc:"epoch"`
-	Version string `json:"version,omitempty" xmlrpc:"version"`
-	Release string `json:"release,omitempty" xmlrpc:"release"`
-	Arch    string `json:"arch,omitempty" xmlrpc:"arch"`
 }
 
 type Bugzilla struct {
