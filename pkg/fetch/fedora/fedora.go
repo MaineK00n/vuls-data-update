@@ -1,7 +1,6 @@
 package fedora
 
 import (
-	"cmp"
 	"context"
 	"encoding/json"
 	"encoding/xml"
@@ -441,34 +440,20 @@ func (opts options) packages(client *utilhttp.Client, build Build) (map[string][
 			return nil, errors.Wrap(err, "findBuildID")
 		}
 
-		imageIDs, err := listArchives(client, opts.dataURL.Package, buildID)
+		as, err := listArchives(client, opts.dataURL.Package, buildID)
 		if err != nil {
 			return nil, errors.Wrap(err, "listArchives")
 		}
 
-		m := map[Package]struct{}{}
-		for _, imageID := range imageIDs {
-			ps, err := listRPMs(client, opts.dataURL.Package, nil, &imageID)
+		m := map[string][]Package{}
+		for _, a := range as {
+			ps, err := listRPMs(client, opts.dataURL.Package, nil, &a.ID)
 			if err != nil {
 				return nil, errors.Wrap(err, "listRPMs")
 			}
-			for _, p := range ps {
-				m[p] = struct{}{}
-			}
+			m[a.Filename] = ps
 		}
-
-		mm := map[string][]Package{}
-		for p := range m {
-			mm[p.Arch] = append(mm[p.Arch], p)
-		}
-		// sort to avoid diffs
-		for i := range mm {
-			slices.SortFunc(mm[i], func(a, b Package) int {
-				return cmp.Compare(a.Name, b.Name)
-			})
-		}
-
-		return mm, nil
+		return m, nil
 	case "flatpak", "container":
 		return nil, nil
 	default:
@@ -514,7 +499,7 @@ func findBuildID(client *utilhttp.Client, url, nvr string) (int, error) {
 	return id, nil
 }
 
-func listArchives(client *utilhttp.Client, url string, buildID int) ([]int, error) {
+func listArchives(client *utilhttp.Client, url string, buildID int) ([]archive, error) {
 	bs, err := xmlrpc.Marshal("listArchives", buildID)
 	if err != nil {
 		return nil, errors.Wrap(err, "marshal xmlrpc body")
@@ -544,19 +529,12 @@ func listArchives(client *utilhttp.Client, url string, buildID int) ([]int, erro
 		return nil, errors.Wrap(err, "read all response body")
 	}
 
-	var as []struct {
-		ID int `xmlrpc:"id"`
-	}
+	var as []archive
 	if err := xmlrpc.Unmarshal(bs, &as); err != nil {
 		return nil, errors.Wrap(err, "unmarshal xmlrpc")
 	}
 
-	ids := make([]int, 0, len(as))
-	for _, a := range as {
-		ids = append(ids, a.ID)
-	}
-
-	return ids, nil
+	return as, nil
 }
 
 func listRPMs(client *utilhttp.Client, url string, buildID, imageID *int) ([]Package, error) {

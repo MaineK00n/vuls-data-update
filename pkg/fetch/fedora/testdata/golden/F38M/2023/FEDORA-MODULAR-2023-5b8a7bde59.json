@@ -1978,335 +1978,1153 @@
 			"signed": true,
 			"type": "module",
 			"package": {
-				"aarch64": [
+				"modulemd.aarch64.txt": [
 					{
 						"name": "community-mysql",
 						"version": "8.0.34",
 						"release": "2.module_f38+17431+1f3fdb0a",
 						"arch": "aarch64"
 					},
-					{
-						"name": "community-mysql-common",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-debugsource",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-devel",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-devel-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-errmsg",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-libs",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-libs-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-server",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-server-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-test",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					},
-					{
-						"name": "community-mysql-test-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "aarch64"
-					}
-				],
-				"i686": [
-					{
-						"name": "community-mysql",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-common",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-debugsource",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-devel",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-devel-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-errmsg",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-libs",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-libs-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-server",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-server-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-test",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					},
-					{
-						"name": "community-mysql-test-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "i686"
-					}
-				],
-				"ppc64le": [
-					{
-						"name": "community-mysql",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-common",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-debugsource",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-devel",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-devel-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-errmsg",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-libs",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-libs-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-server",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-server-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-test",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					},
-					{
-						"name": "community-mysql-test-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "ppc64le"
-					}
-				],
-				"s390x": [
-					{
-						"name": "community-mysql",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-common",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-debugsource",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-devel",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-devel-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-errmsg",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-libs",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-libs-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-server",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-server-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-test",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					},
-					{
-						"name": "community-mysql-test-debuginfo",
-						"version": "8.0.34",
-						"release": "2.module_f38+17431+1f3fdb0a",
-						"arch": "s390x"
-					}
-				],
-				"src": [
 					{
 						"name": "community-mysql",
 						"version": "8.0.34",
 						"release": "2.module_f38+17431+1f3fdb0a",
 						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
 					}
 				],
-				"x86_64": [
+				"modulemd.i686.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					}
+				],
+				"modulemd.ppc64le.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					}
+				],
+				"modulemd.s390x.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					}
+				],
+				"modulemd.src.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					}
+				],
+				"modulemd.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					}
+				],
+				"modulemd.x86_64.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
 					{
 						"name": "community-mysql",
 						"version": "8.0.34",
