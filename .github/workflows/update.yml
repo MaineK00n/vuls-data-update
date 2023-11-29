@@ -390,7 +390,7 @@ jobs:
         id: fetch
         run: |
           curl --parallel --parallel-immediate  --parallel-max 3 --retry 10 -o "#1.json" "https://bodhi.fedoraproject.org/releases/?page=[1-$(curl -s --retry 10 "https://bodhi.fedoraproject.org/releases/?page=1&rows_per_page=10" | jq .pages)]&rows_per_page=10"
-          echo "release=$(cat *.json | jq -r '.releases[].name' | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          echo "release=$(cat *.json | jq -r '.releases[] | select(.state!="archived") | .name' | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   fetch-fedora:
     name: fetch vuls-data-raw-fedora ${{ matrix.release }}
