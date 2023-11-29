@@ -14,7 +14,7 @@ import (
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
-	utilapi "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
+	nvdutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -153,7 +153,7 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch NVD CPE match API. dir: %s", options.dir)
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(utilapi.CheckRetry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry))
 
 	h := make(http.Header)
 	if options.apiKey != "" {
@@ -163,7 +163,7 @@ func Fetch(opts ...Option) error {
 
 	// Preliminary API call to get totalResults.
 	// Use 1 as resultsPerPage to save time.
-	u, err := utilapi.FullURL(options.baseURL, 0, 1)
+	u, err := nvdutil.FullURL(options.baseURL, 0, 1)
 	if err != nil {
 		return errors.Wrap(err, "full URL")
 	}
@@ -194,7 +194,7 @@ func Fetch(opts ...Option) error {
 	// Actual API calls
 	us := make([]string, 0, pages)
 	for startIndex := 0; startIndex < totalResults; startIndex += options.resultsPerPage {
-		url, err := utilapi.FullURL(options.baseURL, startIndex, options.resultsPerPage)
+		url, err := nvdutil.FullURL(options.baseURL, startIndex, options.resultsPerPage)
 		if err != nil {
 			return errors.Wrap(err, "full URL")
 		}
