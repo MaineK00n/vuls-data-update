@@ -25,7 +25,7 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	// Also, the API returns 408 infreqently.
 	switch resp.StatusCode {
 	case http.StatusForbidden, http.StatusRequestTimeout:
-		return true, fmt.Errorf("unexpected HTTP status %s", resp.Status)
+		return true, errors.Errorf("unexpected HTTP status %s", resp.Status)
 	}
 
 	// NVD API rarely fails to send whole response body and results in unexpected EOF.
