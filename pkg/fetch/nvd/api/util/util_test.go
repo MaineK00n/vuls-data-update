@@ -13,112 +13,137 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-type errorIOReader struct {
+type errorReader struct {
 	readError error
 }
 
-func (f *errorIOReader) Read([]byte) (int, error) {
+func (f *errorReader) Read([]byte) (int, error) {
 	return 0, f.readError
 }
 
-func newFakeRoundTripper(errorCount int, readError error, reqCount *int) http.RoundTripper {
-	return fakeRoundTripper{
-		internal:   http.DefaultTransport,
-		errorCount: errorCount,
-		readError:  readError,
-		reqCount:   reqCount,
-	}
+type roundTripper struct {
+	reqCount     int
+	errRespCount int
+	errResponse  *http.Response
 }
 
-type fakeRoundTripper struct {
-	internal   http.RoundTripper
-	errorCount int
-	readError  error
-	reqCount   *int
+// When HTTP request is issued, this RoundTripper returns errResponse as many times as errRespCount.
+func (rt *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+	rt.reqCount++
+	if rt.errRespCount > 0 {
+		rt.errRespCount--
+		return rt.errResponse, nil
+	}
+	return http.DefaultTransport.RoundTrip(req)
 }
 
-// When HTTP request is issued, this RoundTripper returns errorneous response until #{errorCount} calls.
-// It returns normal rosponse after #{errorCount}.
-func (f fakeRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	(*f.reqCount)++
-	resp, err := f.internal.RoundTrip(req)
-	if *f.reqCount <= f.errorCount {
-		resp.Body.Close()
-		resp.Body = io.NopCloser(&errorIOReader{readError: f.readError})
-	}
-	return resp, err
-}
+var errShouldNotRetry = errors.New("should not retry")
 
 func TestCheckRetry(t *testing.T) {
 	tests := []struct {
-		name             string
-		expectedReqCount int
-		errorCount       int
-		readError        error
-		hasError         bool
+		name         string
+		retry        int
+		errRespCount int
+		errResponse  *http.Response
+		wantReqCount int
+		wantError    error
 	}{
 		{
-			name:             "No error",
-			expectedReqCount: 1,
-			errorCount:       0,
-			readError:        nil,
-			hasError:         false,
+			name:         "No error",
+			retry:        0,
+			wantReqCount: 1,
 		},
 		{
-			name:             "unexpected EOF",
-			expectedReqCount: 3,
-			errorCount:       3,
-			readError:        io.ErrUnexpectedEOF,
-			hasError:         true,
+			name:         "1st, 2nd: 200 OK, but Read() return unexpected EOF",
+			retry:        1,
+			errRespCount: 2,
+			errResponse: &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(&errorReader{readError: io.ErrUnexpectedEOF}),
+			},
+			wantReqCount: 2,
+			wantError:    io.ErrUnexpectedEOF,
 		},
 		{
-			name:             "unexpected EOF but retry OK",
-			expectedReqCount: 2,
-			errorCount:       1,
-			readError:        io.ErrUnexpectedEOF,
-			hasError:         false,
+			name:         "1st: 200 OK, but Read() return unexpected EOF, 2nd: 200 OK, No error",
+			retry:        1,
+			errRespCount: 1,
+			errResponse: &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(&errorReader{readError: io.ErrUnexpectedEOF}),
+			},
+			wantReqCount: 2,
 		},
 		{
-			name:             "other error",
-			expectedReqCount: 1,
-			errorCount:       1,
-			readError:        errors.New("Dummy error, should not retry"),
-			hasError:         true,
+			name:         "1st: 200 OK, but Read() return not unexpected EOF",
+			retry:        1,
+			errRespCount: 1,
+			errResponse: &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(&errorReader{readError: errShouldNotRetry}),
+			},
+			wantReqCount: 1,
+			wantError:    errShouldNotRetry,
+		},
+		{
+			name:         "1st: 403 Forbidden, 2nd: 200 OK",
+			retry:        1,
+			errRespCount: 1,
+			errResponse: &http.Response{
+				StatusCode: http.StatusForbidden,
+				Body:       http.NoBody,
+			},
+			wantReqCount: 2,
+		},
+		{
+			name:         "1st: 408 Request Timeout, 2nd: 200 OK",
+			retry:        1,
+			errRespCount: 1,
+			errResponse: &http.Response{
+				StatusCode: http.StatusRequestTimeout,
+				Body:       http.NoBody,
+			},
+			wantReqCount: 2,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
-			reqCount := 0
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeContent(w, r, "test.txt", time.Now(), bytes.NewReader([]byte("12345")))
 			}))
 			defer ts.Close()
 
-			httpClient := &http.Client{Transport: newFakeRoundTripper(tt.errorCount, tt.readError, &reqCount)}
-			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(httpClient))
+			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
+			resp, err := c.Get(ts.URL)
+			if err != nil {
+				if tt.wantError == nil {
+					t.Fatalf("unexpected error: %s", err)
+				}
+				if !errors.Is(err, tt.wantError) {
+					t.Errorf("err is not expected error, got: %+v, want: %+v", err, tt.wantError)
+				}
+			} else {
+				defer resp.Body.Close()
 
-			_, err := c.Get(ts.URL)
-
-			if !tt.hasError {
+				if tt.wantError != nil {
+					t.Fatal("expected error has not occurred")
+				}
+				bs, err := io.ReadAll(resp.Body)
 				if err != nil {
-					t.Errorf("error in c.Get, got: %d, want: no error", err)
-				} else {
-					return
+					t.Fatalf("unexpected error: %s", err)
+				}
+				if !bytes.Equal(bs, []byte("12345")) {
+					t.Errorf("invalid response body. got: %v, want: %v", bs, []byte("12345"))
 				}
 			}
 
-			// tt.hasError == true, from here
-			if err == nil {
-				t.Error("No error in c.Get, but wanted")
+			rt, ok := c.HTTPClient.Transport.(*roundTripper)
+			if !ok {
+				t.Fatal("set unexpected round tripper")
 			}
-
-			if !errors.Is(err, tt.readError) {
-				t.Errorf("wrong error, got: %+v, want: %+v", err, tt.readError)
-			}
-			if reqCount != tt.expectedReqCount {
-				t.Errorf("request count, got: %d, want: %d", reqCount, tt.expectedReqCount)
+			if rt.reqCount != tt.wantReqCount {
+				t.Errorf("request count, got: %d, want: %d", rt.reqCount, tt.wantReqCount)
 			}
 		})
 	}
