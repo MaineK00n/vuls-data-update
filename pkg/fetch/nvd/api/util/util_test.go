@@ -96,8 +96,8 @@ func TestCheckRetry(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			netHTTPClient := &http.Client{Transport: newFakeRoundTripper(tt.errorCount, tt.readError, &reqCount)}
-			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(netHTTPClient))
+			httpClient := &http.Client{Transport: newFakeRoundTripper(tt.errorCount, tt.readError, &reqCount)}
+			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(httpClient))
 
 			_, err := c.Get(ts.URL)
 
