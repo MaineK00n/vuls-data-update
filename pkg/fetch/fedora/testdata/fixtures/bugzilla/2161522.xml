@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2161522</bug_id>
+          
+          <creation_ts>2023-01-17 08:01:40 +0000</creation_ts>
+          <short_desc>Review Request: python-jupyter-server-ydoc - A Jupyter Server Extension Providing Y Documents</short_desc>
+          <delta_ts>2023-01-30 14:43:57 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>Package Review</component>
+          <version>rawhide</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>RAWHIDE</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords/>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2161519</dependson>
+    
+    
+    <dependson>2161520</dependson>
+          <blocked>2161525</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lumír Balhar">lbalhar</reporter>
+          <assigned_to name="Karolina Surma">ksurma</assigned_to>
+          <cc>ksurma</cc>
+    
+    
+    <cc>package-review</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-01-30 14:43:57</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      <flag name="fedora-review" id="5773619" type_id="65" status="+" setter="ksurma"/>
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16973140</commentid>
+    <comment_count>0</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-17 08:01:40 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/python-jupyter-server-ydoc.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyter-server-ydoc-0.6.1-1.fc37.src.rpm
+Description: Jupyter Server YDoc is a Jupyter Server Extension providing support
+for Y documents.
+Fedora Account System Username: lbalhar
+
+I'm testing this package together with many more in COPR designed to package Jupyterlab and the latest Python notebook into Fedora: https://copr.fedorainfracloud.org/coprs/lbalhar/notebook/builds/</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16973152</commentid>
+    <comment_count>1</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-17 08:05:08 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5239299
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161522-python-jupyter-server-ydoc/fedora-rawhide-x86_64/05239299-python-jupyter-server-ydoc/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17002442</commentid>
+    <comment_count>2</comment_count>
+    <who name="Karolina Surma">ksurma</who>
+    <bug_when>2023-01-27 15:33:36 +0000</bug_when>
+    <thetext>Version 0.7.0 was released in the meantime.
+
+With the first glance - package should require python-jupyter-filesystem.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003047</commentid>
+    <comment_count>3</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-27 20:17:35 +0000</bug_when>
+    <thetext>(In reply to Karolina Surma from comment #2)
+&gt; Version 0.7.0 was released in the meantime.
+
+Updated.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyter-server-ydoc.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyter-server-ydoc-0.7.0-1.fc37.src.rpm
+
+&gt; With the first glance - package should require python-jupyter-filesystem.
+
+Fixed.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003060</commentid>
+    <comment_count>4</comment_count>
+      <attachid>1940801</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 20:24:16 +0000</bug_when>
+    <thetext>Created attachment 1940801
+The .spec file difference from Copr build 5239299 to 5334330</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003061</commentid>
+    <comment_count>5</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 20:24:18 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5334330
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161522-python-jupyter-server-ydoc/fedora-rawhide-x86_64/05334330-python-jupyter-server-ydoc/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17006434</commentid>
+    <comment_count>6</comment_count>
+    <who name="Karolina Surma">ksurma</who>
+    <bug_when>2023-01-30 10:40:27 +0000</bug_when>
+    <thetext>I grabbed the python-jupyter-ydoc from another BZ ticket to build and review this package.
+
+Please update the changelog to reflect the actual package version.
+Package APPROVED.
+
+
+
+Package Review
+==============
+
+
+===== MUST items =====
+
+Generic:
+[x]: Package is licensed with an open-source compatible license and meets
+     other legal requirements as defined in the legal section of Packaging
+     Guidelines.
+[x]: License field in the package spec file matches the actual license.
+     Note: Checking patched sources after %prep for licenses. Licenses
+     found: "Unknown or generated", "BSD 3-Clause License". 27 files have
+     unknown license. Detailed output of licensecheck in
+     /home/ksurma/tmp/2161522-python-jupyter-server-ydoc/licensecheck.txt
+[x]: Package contains no bundled libraries without FPC exception.
+[x]: Changelog in prescribed format.
+[x]: Sources contain only permissible code or content.
+[-]: Package contains desktop file if it is a GUI application.
+[-]: Development files must be in a -devel package
+[x]: Package uses nothing in %doc for runtime.
+[x]: Package consistently uses macros (instead of hard-coded directory
+     names).
+[x]: Package is named according to the Package Naming Guidelines.
+[x]: Package does not generate any conflict.
+[x]: Package obeys FHS, except libexecdir and /usr/target.
+[-]: If the package is a rename of another package, proper Obsoletes and
+     Provides are present.
+[x]: Requires correct, justified where necessary.
+[x]: Spec file is legible and written in American English.
+[-]: Package contains systemd file(s) if in need.
+[x]: Package is not known to require an ExcludeArch tag.
+[-]: Large documentation must go in a -doc subpackage. Large could be size
+     (~1MB) or number of files.
+     Note: Documentation size is 10240 bytes in 1 files.
+[x]: Package complies to the Packaging Guidelines
+[x]: Package successfully compiles and builds into binary rpms on at least
+     one supported primary architecture.
+[x]: Rpmlint is run on all rpms the build produces.
+     Note: No rpmlint messages.
+[x]: If (and only if) the source package includes the text of the
+     license(s) in its own file, then that file, containing the text of the
+     license(s) for the package is included in %license.
+[x]: Package requires other packages for directories it uses.
+[x]: Package must own all directories that it creates.
+[x]: Package does not own files or directories owned by other packages.
+[x]: Package uses either %{buildroot} or $RPM_BUILD_ROOT
+[x]: Package does not run rm -rf %{buildroot} (or $RPM_BUILD_ROOT) at the
+     beginning of %install.
+[x]: %config files are marked noreplace or the reason is justified.
+[x]: Macros in Summary, %description expandable at SRPM build time.
+[x]: Dist tag is present.
+[x]: Package does not contain duplicates in %files.
+[x]: Permissions on files are set properly.
+[x]: Package must not depend on deprecated() packages.
+[x]: Package use %makeinstall only when make install DESTDIR=... doesn't
+     work.
+[x]: Package is named using only allowed ASCII characters.
+[x]: No %config files under /usr.
+[x]: Package does not use a name that already exists.
+[x]: Package is not relocatable.
+[x]: Sources used to build the package match the upstream source, as
+     provided in the spec URL.
+[x]: Spec file name must match the spec package %{name}, in the format
+     %{name}.spec.
+[x]: File names are valid UTF-8.
+[x]: Packages must not store files under /srv, /opt or /usr/local
+
+Python:
+[-]: Python eggs must not download any dependencies during the build
+     process.
+[-]: A package which is used by another package via an egg interface should
+     provide egg info.
+[x]: Package meets the Packaging Guidelines::Python
+[x]: Package contains BR: python2-devel or python3-devel
+[x]: Packages MUST NOT have dependencies (either build-time or runtime) on
+     packages named with the unversioned python- prefix unless no properly
+     versioned package exists. Dependencies on Python packages instead MUST
+     use names beginning with python2- or python3- as appropriate.
+[x]: Python packages must not contain %{pythonX_site(lib|arch)}/* in %files
+[x]: Binary eggs must be removed in %prep
+
+===== SHOULD items =====
+
+Generic:
+[-]: If the source package does not include license text(s) as a separate
+     file from upstream, the packager SHOULD query upstream to include it.
+[x]: Final provides and requires are sane (see attachments).
+[x]: Package functions as described.
+[x]: Latest version is packaged.
+[x]: Package does not include license text files separate from upstream.
+[-]: Sources are verified with gpgverify first in %prep if upstream
+     publishes signatures.
+     Note: gpgverify is not used.
+[x]: Package should compile and build into binary rpms on all supported
+     architectures.
+[x]: %check is present and all tests pass.
+[x]: Packages should try to preserve timestamps of original installed
+     files.
+[x]: Reviewer should test that the package builds in mock.
+[x]: Buildroot is not present
+[x]: Package has no %clean section with rm -rf %{buildroot} (or
+     $RPM_BUILD_ROOT)
+[x]: No file requires outside of /etc, /bin, /sbin, /usr/bin, /usr/sbin.
+[x]: Packager, Vendor, PreReq, Copyright tags should not be in spec file
+[x]: Sources can be downloaded from URI in Source: tag
+[x]: SourceX is a working URL.
+[x]: Spec use %global instead of %define unless justified.
+
+===== EXTRA items =====
+
+Generic:
+[x]: Rpmlint is run on all installed packages.
+[x]: Spec file according to URL is the same as in SRPM.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17006999</commentid>
+    <comment_count>7</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-01-30 14:10:17 +0000</bug_when>
+    <thetext>The Pagure repository was created at https://src.fedoraproject.org/rpms/python-jupyter-server-ydoc</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17007165</commentid>
+    <comment_count>8</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-30 14:43:57 +0000</bug_when>
+    <thetext>https://bodhi.fedoraproject.org/updates/FEDORA-2023-038f61d1eb</thetext>
+  </long_desc>
+      
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940801</attachid>
+            <date>2023-01-27 20:24:16 +0000</date>
+            <delta_ts>2023-01-27 20:24:16 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5239299 to 5334330</desc>
+            <filename>spec-from-5239299-to-5334330.diff</filename>
+            <type>text/plain</type>
+            <size>810</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MjM5Mjk5
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMzNDMz
+MApAQCAtMSw1ICsxLDUgQEAKIE5hbWU6ICAgICAgICAgICBweXRob24tanVweXRlci1zZXJ2ZXIt
+eWRvYwotVmVyc2lvbjogICAgICAgIDAuNi4xCitWZXJzaW9uOiAgICAgICAgMC43LjAKIFJlbGVh
+c2U6ICAgICAgICAxJXs/ZGlzdH0KIFN1bW1hcnk6ICAgICAgICBBIEp1cHl0ZXIgU2VydmVyIEV4
+dGVuc2lvbiBQcm92aWRpbmcgWSBEb2N1bWVudHMKIExpY2Vuc2U6ICAgICAgICBCU0QtMy1DbGF1
+c2UKQEAgLTE4LDYgKzE4LDcgQEAKIAogJXBhY2thZ2UgLW4gICAgIHB5dGhvbjMtanVweXRlci1z
+ZXJ2ZXIteWRvYwogU3VtbWFyeTogICAgICAgICV7c3VtbWFyeX0KK1JlcXVpcmVzOiAgICAgICBw
+eXRob24tanVweXRlci1maWxlc3lzdGVtCiAKICVkZXNjcmlwdGlvbiAtbiBweXRob24zLWp1cHl0
+ZXItc2VydmVyLXlkb2MgJV9kZXNjcmlwdGlvbgogCkBAIC0yNyw2ICsyOCw3IEBACiAKICMgcHl0
+ZXN0LXRvcm5hc3luYyB3aWxsIG5ldmVyIGJlIGF2YWlsYWJsZSBpbiBGZWRvcmEKICMgYW5kIHVw
+c3RyZWFtIHdpbGwgc3dpdGNoIHRvIHB5dGVzdC1qdXB5dGVyIHNvb24KKyMgaHR0cHM6Ly9naXRo
+dWIuY29tL2p1cHl0ZXJsYWIvanVweXRlcmxhYi9pc3N1ZXMvMTM3OTQKIHNlZCAtaSAiL3B5dGVz
+dF90b3JuYXN5bmMvZCIgcHlwcm9qZWN0LnRvbWwKIAogc2VkIC1pICIvY292ZXJhZ2UvZCIgcHlw
+cm9qZWN0LnRvbWwK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

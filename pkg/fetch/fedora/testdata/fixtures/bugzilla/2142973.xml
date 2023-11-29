@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2142973</bug_id>
+          
+          <creation_ts>2022-11-15 16:38:40 +0000</creation_ts>
+          <short_desc>CVE-2022-21594 CVE-2022-21599 CVE-2022-21604 CVE-2022-21608 CVE-2022-21611 CVE-2022-21617 CVE-2022-21625 CVE-2022-21632 CVE-2022-21633 CVE-2022-21637 CVE-2022-21640 CVE-2022-39400 CVE-2022-39408 ... mysql:8.0/community-mysql: various flaws [fedora-all]</short_desc>
+          <delta_ts>2023-09-16 00:28:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>community-mysql</component>
+          <version>37</version>
+          <rep_platform>Unspecified</rep_platform>
+          <op_sys>Unspecified</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security, SecurityTracking</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>2142861</blocked>
+    
+    
+    <blocked>2142863</blocked>
+    
+    
+    <blocked>2142865</blocked>
+    
+    
+    <blocked>2142868</blocked>
+    
+    
+    <blocked>2142869</blocked>
+    
+    
+    <blocked>2142870</blocked>
+    
+    
+    <blocked>2142871</blocked>
+    
+    
+    <blocked>2142872</blocked>
+    
+    
+    <blocked>2142873</blocked>
+    
+    
+    <blocked>2142875</blocked>
+    
+    
+    <blocked>2142877</blocked>
+    
+    
+    <blocked>2142879</blocked>
+    
+    
+    <blocked>2142880</blocked>
+    
+    
+    <blocked>2142881</blocked>
+    
+    
+    <blocked>2162271</blocked>
+    
+    
+    <blocked>2162272</blocked>
+    
+    
+    <blocked>2162281</blocked>
+    
+    
+    <blocked>2188110</blocked>
+    
+    
+    <blocked>2188112</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mauro Matteo Cascella">mcascell</reporter>
+          <assigned_to name="Michal Schorm">mschorm</assigned_to>
+          <cc>hhorak</cc>
+    
+    
+    <cc>ljavorsk</cc>
+    
+    
+    <cc>mmuzila</cc>
+    
+    
+    <cc>mschorm</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>No Doc Update</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-09-16 00:19:53</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16792043</commentid>
+    <comment_count>0</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2022-11-15 16:38:40 +0000</bug_when>
+    <thetext>
+More information about these security flaws is available in the following bugs:
+
+http://bugzilla.redhat.com/show_bug.cgi?id=2142871
+http://bugzilla.redhat.com/show_bug.cgi?id=2142865
+http://bugzilla.redhat.com/show_bug.cgi?id=2142875
+http://bugzilla.redhat.com/show_bug.cgi?id=2142861
+http://bugzilla.redhat.com/show_bug.cgi?id=2142873
+http://bugzilla.redhat.com/show_bug.cgi?id=2142870
+http://bugzilla.redhat.com/show_bug.cgi?id=2142872
+http://bugzilla.redhat.com/show_bug.cgi?id=2142879
+http://bugzilla.redhat.com/show_bug.cgi?id=2142880
+http://bugzilla.redhat.com/show_bug.cgi?id=2142881
+http://bugzilla.redhat.com/show_bug.cgi?id=2142869
+http://bugzilla.redhat.com/show_bug.cgi?id=2142877
+http://bugzilla.redhat.com/show_bug.cgi?id=2142863
+http://bugzilla.redhat.com/show_bug.cgi?id=2142868
+
+Disclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16792044</commentid>
+    <comment_count>1</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2022-11-15 16:38:43 +0000</bug_when>
+    <thetext>Use the following template to for the 'fedpkg update' request to submit an
+update for this issue as it contains the top-level parent bug(s) as well as
+this tracking bug.  This will ensure that all associated bugs get updated
+when new packages are pushed to stable.
+
+=====
+
+# bugfix, security, enhancement, newpackage (required)
+type=security
+
+# low, medium, high, urgent (required)
+severity=medium
+
+# testing, stable
+request=testing
+
+# Bug numbers: 1234,9876
+bugs=2142861,2142863,2142865,2142868,2142869,2142870,2142871,2142872,2142873,2142875,2142877,2142879,2142880,2142881,2142973
+
+# Description of your update
+notes=Security fix for [PUT CVEs HERE]
+
+# Enable request automation based on the stable/unstable karma thresholds
+autokarma=True
+stable_karma=3
+unstable_karma=-3
+
+# Automatically close bugs when this marked as stable
+close_bugs=True
+
+# Suggest that users restart after update
+suggest_reboot=False
+
+======
+
+Additionally, you may opt to use the bodhi web interface to submit updates:
+
+https://bodhi.fedoraproject.org/updates/new</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16792081</commentid>
+    <comment_count>2</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2022-11-15 16:44:50 +0000</bug_when>
+    <thetext>Fixed upstream in version 8.0.31.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16981350</commentid>
+    <comment_count>3</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2023-01-19 13:38:06 +0000</bug_when>
+    <thetext>Adding CVE-2023-21864, CVE-2023-21865 and CVE-2023-21874 - these CVEs were covered in Jan 2023 CPU [1] and listed as fixed in 8.0.31.
+
+[1] https://www.oracle.com/security-alerts/cpujan2023.html#AppendixMSQL</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17212272</commentid>
+    <comment_count>4</comment_count>
+    <who name="Mauro Matteo Cascella">mcascell</who>
+    <bug_when>2023-04-24 20:35:32 +0000</bug_when>
+    <thetext>Adding CVE-2023-21912 and CVE-2023-21917 - these CVEs were covered in Apr 2023 CPU [1] and listed as fixed in 8.0.31.
+
+[1] https://www.oracle.com/security-alerts/cpuapr2023.html#AppendixMSQL</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17594546</commentid>
+    <comment_count>5</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-09-07 10:08:42 +0000</bug_when>
+    <thetext>FEDORA-MODULAR-2023-8110bc5325 has been submitted as an update to Fedora 37 Modular. https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-8110bc5325</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17594547</commentid>
+    <comment_count>6</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-09-07 10:08:43 +0000</bug_when>
+    <thetext>FEDORA-MODULAR-2023-5b8a7bde59 has been submitted as an update to Fedora 38 Modular. https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-5b8a7bde59</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17596202</commentid>
+    <comment_count>7</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-09-08 01:35:11 +0000</bug_when>
+    <thetext>FEDORA-MODULAR-2023-8110bc5325 has been pushed to the Fedora 37 Modular testing repository.
+
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-8110bc5325
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17596264</commentid>
+    <comment_count>8</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-09-08 01:39:21 +0000</bug_when>
+    <thetext>FEDORA-MODULAR-2023-5b8a7bde59 has been pushed to the Fedora 38 Modular testing repository.
+
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-5b8a7bde59
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17638127</commentid>
+    <comment_count>9</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-09-16 00:19:53 +0000</bug_when>
+    <thetext>FEDORA-MODULAR-2023-8110bc5325 has been pushed to the Fedora 37 Modular stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17638131</commentid>
+    <comment_count>10</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-09-16 00:28:34 +0000</bug_when>
+    <thetext>FEDORA-MODULAR-2023-5b8a7bde59 has been pushed to the Fedora 38 Modular stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

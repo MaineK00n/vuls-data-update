@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2153744</bug_id>
+          <alias>CVE-2022-23519</alias>
+          <creation_ts>2022-12-15 10:42:55 +0000</creation_ts>
+          <short_desc>CVE-2022-23519 rubygem-rails-html-sanitizer: Cross site scripting vulnerability with certain configurations</short_desc>
+          <delta_ts>2023-05-03 23:13:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Other</classification>
+          <product>Security Response</product>
+          <component>vulnerability</component>
+          <version>unspecified</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2153747</dependson>
+    
+    
+    <dependson>2153724</dependson>
+    
+    
+    <dependson>2153725</dependson>
+    
+    
+    <dependson>2153746</dependson>
+    
+    
+    <dependson>2153748</dependson>
+    
+    
+    <dependson>2153749</dependson>
+          <blocked>2153085</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter>ybuenos</reporter>
+          <assigned_to name="Red Hat Product Security">security-response-team</assigned_to>
+          <cc>amackenz</cc>
+    
+    
+    <cc>amasferr</cc>
+    
+    
+    <cc>bbuckingham</cc>
+    
+    
+    <cc>bcourt</cc>
+    
+    
+    <cc>btotty</cc>
+    
+    
+    <cc>chazlett</cc>
+    
+    
+    <cc>ehelms</cc>
+    
+    
+    <cc>jsherril</cc>
+    
+    
+    <cc>lzap</cc>
+    
+    
+    <cc>mhulan</cc>
+    
+    
+    <cc>mkudlej</cc>
+    
+    
+    <cc>nmoumoul</cc>
+    
+    
+    <cc>orabin</cc>
+    
+    
+    <cc>pcreech</cc>
+    
+    
+    <cc>rchan</cc>
+    
+    
+    <cc>tjochec</cc>
+          
+          
+          
+          <cf_fixed_in>rubygem-rails-html-sanitizer 1.4.4</cf_fixed_in>
+          <cf_doc_type>---</cf_doc_type>
+          <cf_release_notes>A Cross-site scripting vulnerability was found in rails-html-sanitizer. Certain configurations of rails-html-sanitizer may allow an attacker to inject content if the application developer has overridden the sanitizer's allowed tags.</cf_release_notes>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-05-03 23:13:17</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          <external_bugs name="Red Hat Product Errata">RHSA-2023:2097</external_bugs>
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16884025</commentid>
+    <comment_count>0</comment_count>
+    <who name="">ybuenos</who>
+    <bug_when>2022-12-15 10:42:55 +0000</bug_when>
+    <thetext>Prior to version 1.4.4, a possible XSS vulnerability with certain configurations of Rails::Html::Sanitizer may allow an attacker to inject content if the application developer has overridden the sanitizer's allowed tags in either of the following ways: allow both "math" and "style" elements, or allow both "svg" and "style" elements. Code is only impacted if allowed tags are being overridden. . This issue is fixed in version 1.4.4. All users overriding the allowed tags to include "math" or "svg" and "style" should either upgrade or use the following workaround immediately: Remove "style" from the overridden allowed tags, or remove "math" and "svg" from the overridden allowed tags.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16884034</commentid>
+    <comment_count>1</comment_count>
+    <who name="">ybuenos</who>
+    <bug_when>2022-12-15 10:44:26 +0000</bug_when>
+    <thetext>Created rubygem-rails-html-sanitizer tracking bugs for this issue:
+
+Affects: fedora-36 [bug 2153746]
+Affects: fedora-37 [bug 2153747]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17238780</commentid>
+    <comment_count>5</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-05-03 13:20:20 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Satellite 6.13 for RHEL 8
+
+Via RHSA-2023:2097 https://access.redhat.com/errata/RHSA-2023:2097</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17240270</commentid>
+    <comment_count>6</comment_count>
+    <who name="Product Security DevOps Team">prodsec-dev</who>
+    <bug_when>2023-05-03 23:13:14 +0000</bug_when>
+    <thetext>This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):
+
+https://access.redhat.com/security/cve/cve-2022-23519</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

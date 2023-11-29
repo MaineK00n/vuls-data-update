@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2153753</bug_id>
+          
+          <creation_ts>2022-12-15 10:53:38 +0000</creation_ts>
+          <short_desc>CVE-2022-23520 rubygem-rails-html-sanitizer: Cross site scripting vulnerability with certain configurations [fedora-37]</short_desc>
+          <delta_ts>2023-11-23 12:39:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>rubygem-rails-html-sanitizer</component>
+          <version>39</version>
+          <rep_platform>Unspecified</rep_platform>
+          <op_sys>Unspecified</op_sys>
+          <bug_status>NEW</bug_status>
+          <resolution/>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Reopened, Security, SecurityTracking</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>2153751</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter>ybuenos</reporter>
+          <assigned_to name="Vít Ondruch">vondruch</assigned_to>
+          <cc>jaruga</cc>
+    
+    
+    <cc>pvalena</cc>
+    
+    
+    <cc>ruby-packagers-sig</cc>
+    
+    
+    <cc>strzibny</cc>
+    
+    
+    <cc>vondruch</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in>rubygem-rails-html-sanitizer-1.6.0-1.fc40</cf_fixed_in>
+          <cf_doc_type>No Doc Update</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-11-23 12:33:56</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16884065</commentid>
+    <comment_count>0</comment_count>
+    <who name="">ybuenos</who>
+    <bug_when>2022-12-15 10:53:38 +0000</bug_when>
+    <thetext>
+More information about this security flaw is available in the following bug:
+
+http://bugzilla.redhat.com/show_bug.cgi?id=2153751
+
+Disclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16884067</commentid>
+    <comment_count>1</comment_count>
+    <who name="">ybuenos</who>
+    <bug_when>2022-12-15 10:53:40 +0000</bug_when>
+    <thetext>Use the following template to for the 'fedpkg update' request to submit an
+update for this issue as it contains the top-level parent bug(s) as well as
+this tracking bug.  This will ensure that all associated bugs get updated
+when new packages are pushed to stable.
+
+=====
+
+# bugfix, security, enhancement, newpackage (required)
+type=security
+
+# low, medium, high, urgent (required)
+severity=medium
+
+# testing, stable
+request=testing
+
+# Bug numbers: 1234,9876
+bugs=2153751,2153753
+
+# Description of your update
+notes=Security fix for [PUT CVEs HERE]
+
+# Enable request automation based on the stable/unstable karma thresholds
+autokarma=True
+stable_karma=3
+unstable_karma=-3
+
+# Automatically close bugs when this marked as stable
+close_bugs=True
+
+# Suggest that users restart after update
+suggest_reboot=False
+
+======
+
+Additionally, you may opt to use the bodhi web interface to submit updates:
+
+https://bodhi.fedoraproject.org/updates/new</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17773680</commentid>
+    <comment_count>2</comment_count>
+    <who name="Aoife Moloney">amoloney</who>
+    <bug_when>2023-11-23 00:46:29 +0000</bug_when>
+    <thetext>This message is a reminder that Fedora Linux 37 is nearing its end of life.
+Fedora will stop maintaining and issuing updates for Fedora Linux 37 on 2023-12-05.
+It is Fedora's policy to close all bug reports from releases that are no longer
+maintained. At that time this bug will be closed as EOL if it remains open with a
+'version' of '37'.
+
+Package Maintainer: If you wish for this bug to remain open because you
+plan to fix it in a currently maintained version, change the 'version' 
+to a later Fedora Linux version. Note that the version field may be hidden.
+Click the "Show advanced fields" button if you do not see it.
+
+Thank you for reporting this issue and we are sorry that we were not 
+able to fix it before Fedora Linux 37 is end of life. If you would still like 
+to see this bug fixed and are able to reproduce it against a later version 
+of Fedora Linux, you are encouraged to change the 'version' to a later version
+prior to this bug being closed.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776862</commentid>
+    <comment_count>3</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 12:31:40 +0000</bug_when>
+    <thetext>FEDORA-2023-91e69ea326 has been submitted as an update to Fedora 40. https://bodhi.fedoraproject.org/updates/FEDORA-2023-91e69ea326</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776868</commentid>
+    <comment_count>4</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 12:33:56 +0000</bug_when>
+    <thetext>FEDORA-2023-91e69ea326 has been pushed to the Fedora 40 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776876</commentid>
+    <comment_count>5</comment_count>
+    <who name="Vít Ondruch">vondruch</who>
+    <bug_when>2023-11-23 12:39:21 +0000</bug_when>
+    <thetext>Fixed in F40+</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

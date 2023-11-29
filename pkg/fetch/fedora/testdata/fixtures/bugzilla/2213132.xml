@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2213132</bug_id>
+          <alias>CVE-2023-31083</alias>
+          <creation_ts>2023-06-07 08:13:27 +0000</creation_ts>
+          <short_desc>CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl</short_desc>
+          <delta_ts>2023-10-29 11:27:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Other</classification>
+          <product>Security Response</product>
+          <component>vulnerability</component>
+          <version>unspecified</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          <resolution/>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2213133</dependson>
+    
+    
+    <dependson>2213134</dependson>
+    
+    
+    <dependson>2213135</dependson>
+    
+    
+    <dependson>2213136</dependson>
+    
+    
+    <dependson>2213137</dependson>
+          <blocked>2189448</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Alex">allarkin</reporter>
+          <assigned_to name="Nobody">nobody</assigned_to>
+          <cc>acaringi</cc>
+    
+    
+    <cc>allarkin</cc>
+    
+    
+    <cc>bhu</cc>
+    
+    
+    <cc>chwhite</cc>
+    
+    
+    <cc>crwood</cc>
+    
+    
+    <cc>dbohanno</cc>
+    
+    
+    <cc>ddepaula</cc>
+    
+    
+    <cc>debarbos</cc>
+    
+    
+    <cc>dfreiber</cc>
+    
+    
+    <cc>dvlasenk</cc>
+    
+    
+    <cc>ezulian</cc>
+    
+    
+    <cc>hkrzesin</cc>
+    
+    
+    <cc>jarod</cc>
+    
+    
+    <cc>jburrell</cc>
+    
+    
+    <cc>jdenham</cc>
+    
+    
+    <cc>jfaracco</cc>
+    
+    
+    <cc>jferlan</cc>
+    
+    
+    <cc>jforbes</cc>
+    
+    
+    <cc>jlelli</cc>
+    
+    
+    <cc>joe.lawrence</cc>
+    
+    
+    <cc>jshortt</cc>
+    
+    
+    <cc>jstancek</cc>
+    
+    
+    <cc>jwyatt</cc>
+    
+    
+    <cc>kcarcia</cc>
+    
+    
+    <cc>kernel-mgr</cc>
+    
+    
+    <cc>ldoskova</cc>
+    
+    
+    <cc>lgoncalv</cc>
+    
+    
+    <cc>lleshchi</cc>
+    
+    
+    <cc>lzampier</cc>
+    
+    
+    <cc>nmurray</cc>
+    
+    
+    <cc>ptalbert</cc>
+    
+    
+    <cc>qzhao</cc>
+    
+    
+    <cc>rogbas</cc>
+    
+    
+    <cc>rrobaina</cc>
+    
+    
+    <cc>rvrbovsk</cc>
+    
+    
+    <cc>rysulliv</cc>
+    
+    
+    <cc>scweaver</cc>
+    
+    
+    <cc>steve.beattie</cc>
+    
+    
+    <cc>tyberry</cc>
+    
+    
+    <cc>vkumar</cc>
+    
+    
+    <cc>walters</cc>
+    
+    
+    <cc>wcosta</cc>
+    
+    
+    <cc>williams</cc>
+    
+    
+    <cc>wmealing</cc>
+    
+    
+    <cc>ycote</cc>
+          
+          
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes>A NULL pointer dereference flaw was found in the Linux kernel’s Bluetooth HCI UART driver. This flaw allows a local user to crash the system.</cf_release_notes>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>17371137</commentid>
+    <comment_count>0</comment_count>
+    <who name="Alex">allarkin</who>
+    <bug_when>2023-06-07 08:13:27 +0000</bug_when>
+    <thetext>A flaw in the Linux Kernel found in drivers/bluetooth/hci_ldisc.c. There is a race condition between HCIUARTSETPROTO and HCIUARTGETPROTO. HCI_UART_PROTO_SET is set before hu-&gt;proto is set. A NULL pointer dereference may occur.
+
+Reference:
+https://lore.kernel.org/all/CA+UBctC3p49aTgzbVgkSZ2+TQcqq4fPDO7yZitFT5uBPDeCO2g@mail.gmail.com/</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17371141</commentid>
+    <comment_count>1</comment_count>
+    <who name="Alex">allarkin</who>
+    <bug_when>2023-06-07 08:13:52 +0000</bug_when>
+    <thetext>Created kernel tracking bugs for this issue:
+
+Affects: fedora-all [bug 2213133]</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

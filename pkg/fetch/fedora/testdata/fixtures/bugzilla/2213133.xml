@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2213133</bug_id>
+          
+          <creation_ts>2023-06-07 08:13:39 +0000</creation_ts>
+          <short_desc>CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]</short_desc>
+          <delta_ts>2023-11-27 01:34:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>kernel</component>
+          <version>38</version>
+          <rep_platform>Unspecified</rep_platform>
+          <op_sys>Unspecified</op_sys>
+          <bug_status>ON_QA</bug_status>
+          <resolution/>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security, SecurityTracking</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>2213132</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Alex">allarkin</reporter>
+          <assigned_to name="Kernel Maintainer List">kernel-maint</assigned_to>
+          <cc>acaringi</cc>
+    
+    
+    <cc>adscvr</cc>
+    
+    
+    <cc>airlied</cc>
+    
+    
+    <cc>alciregi</cc>
+    
+    
+    <cc>bskeggs</cc>
+    
+    
+    <cc>hdegoede</cc>
+    
+    
+    <cc>hpa</cc>
+    
+    
+    <cc>jarodwilson</cc>
+    
+    
+    <cc>jforbes</cc>
+    
+    
+    <cc>josef</cc>
+    
+    
+    <cc>jwboyer</cc>
+    
+    
+    <cc>kernel-maint</cc>
+    
+    
+    <cc>lgoncalv</cc>
+    
+    
+    <cc>linville</cc>
+    
+    
+    <cc>masami256</cc>
+    
+    
+    <cc>mchehab</cc>
+    
+    
+    <cc>ptalbert</cc>
+    
+    
+    <cc>steved</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>No Doc Update</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>17371138</commentid>
+    <comment_count>0</comment_count>
+    <who name="Alex">allarkin</who>
+    <bug_when>2023-06-07 08:13:39 +0000</bug_when>
+    <thetext>
+More information about this security flaw is available in the following bug:
+
+http://bugzilla.redhat.com/show_bug.cgi?id=2213132
+
+Disclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process.
+
+Reproducers, if any, will remain confidential and never be made public, unless done so by the security team.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17371139</commentid>
+    <comment_count>1</comment_count>
+    <who name="Alex">allarkin</who>
+    <bug_when>2023-06-07 08:13:41 +0000</bug_when>
+    <thetext>Use the following template to for the 'fedpkg update' request to submit an
+update for this issue as it contains the top-level parent bug(s) as well as
+this tracking bug.  This will ensure that all associated bugs get updated
+when new packages are pushed to stable.
+
+=====
+
+# bugfix, security, enhancement, newpackage (required)
+type=security
+
+# low, medium, high, urgent (required)
+severity=medium
+
+# testing, stable
+request=testing
+
+# Bug numbers: 1234,9876
+bugs=2213132,2213133
+
+# Description of your update
+notes=Security fix for [PUT CVEs HERE]
+
+# Enable request automation based on the stable/unstable karma thresholds
+autokarma=True
+stable_karma=3
+unstable_karma=-3
+
+# Automatically close bugs when this marked as stable
+close_bugs=True
+
+# Suggest that users restart after update
+suggest_reboot=False
+
+======
+
+Additionally, you may opt to use the bodhi web interface to submit updates:
+
+https://bodhi.fedoraproject.org/updates/new</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776999</commentid>
+    <comment_count>2</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 14:11:18 +0000</bug_when>
+    <thetext>FEDORA-2023-9d54a271e2 has been submitted as an update to Fedora 39. https://bodhi.fedoraproject.org/updates/FEDORA-2023-9d54a271e2</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777002</commentid>
+    <comment_count>3</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 14:11:31 +0000</bug_when>
+    <thetext>FEDORA-2023-bd14c83780 has been submitted as an update to Fedora 38. https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777616</commentid>
+    <comment_count>4</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-24 01:43:56 +0000</bug_when>
+    <thetext>FEDORA-2023-9d54a271e2 has been pushed to the Fedora 39 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-9d54a271e2`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-9d54a271e2
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777630</commentid>
+    <comment_count>5</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-24 02:18:57 +0000</bug_when>
+    <thetext>FEDORA-2023-bd14c83780 has been pushed to the Fedora 38 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-bd14c83780`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17780347</commentid>
+    <comment_count>6</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-27 01:16:27 +0000</bug_when>
+    <thetext>FEDORA-2023-9d54a271e2 has been pushed to the Fedora 39 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-9d54a271e2`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-9d54a271e2
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17780356</commentid>
+    <comment_count>7</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-27 01:34:35 +0000</bug_when>
+    <thetext>FEDORA-2023-bd14c83780 has been pushed to the Fedora 38 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-bd14c83780`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2161519</bug_id>
+          
+          <creation_ts>2023-01-17 07:52:41 +0000</creation_ts>
+          <short_desc>Review Request: python-ypy-websocket - WebSocket connector for Ypy</short_desc>
+          <delta_ts>2023-01-30 11:11:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>Package Review</component>
+          <version>rawhide</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>RAWHIDE</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords/>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2161518</dependson>
+          <blocked>2161520</blocked>
+    
+    
+    <blocked>2161522</blocked>
+    
+    
+    <blocked>2161525</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lumír Balhar">lbalhar</reporter>
+          <assigned_to name="Miro Hrončok">mhroncok</assigned_to>
+          <cc>mhroncok</cc>
+    
+    
+    <cc>package-review</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-01-30 11:11:10</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      <flag name="fedora-review" id="5772634" type_id="65" status="+" setter="mhroncok"/>
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16973113</commentid>
+    <comment_count>0</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-17 07:52:41 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/python-ypy-websocket.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-ypy-websocket-0.8.2-1.fc37.src.rpm
+Description: ypy-websocket is an async WebSocket connector for Ypy.
+Fedora Account System Username: lbalhar
+
+I'm testing this package together with many more in COPR designed to package Jupyterlab and the latest Python notebook into Fedora: https://copr.fedorainfracloud.org/coprs/lbalhar/notebook/builds/</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16973119</commentid>
+    <comment_count>1</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-17 07:56:26 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5239295
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161519-python-ypy-websocket/fedora-rawhide-x86_64/05239295-python-ypy-websocket/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003913</commentid>
+    <comment_count>2</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-28 11:17:43 +0000</bug_when>
+    <thetext>Spec sanity
+===========
+
+I've tried adding this:
+
+  BuildRequires:  /usr/bin/node
+  ...
+  %prep
+  ...
+  # Problem with tests reported
+  # https://github.com/y-crdt/ypy-websocket/issues/62
+  # Workaround:
+  sed -i '0,/@pytest.fixture/{s/@pytest.fixture/import pytest_asyncio\n@pytest_asyncio.fixture/}' tests/conftest.py
+
+
+But the tests still fail with:
+
+  node:internal/modules/cjs/loader:1042
+    throw err;
+    ^
+  
+  Error: Cannot find module 'yjs'
+  Require stack:
+  - /builddir/build/BUILD/ypy_websocket-0.8.2/tests/yjs_client_1.js
+      at Module._resolveFilename (node:internal/modules/cjs/loader:1039:15)
+      at Module._load (node:internal/modules/cjs/loader:885:27)
+      at Module.require (node:internal/modules/cjs/loader:1105:19)
+      at require (node:internal/modules/cjs/helpers:103:18)
+      at Object.&lt;anonymous&gt; (/builddir/build/BUILD/ypy_websocket-0.8.2/tests/yjs_client_1.js:1:11)
+      at Module._compile (node:internal/modules/cjs/loader:1218:14)
+      at Module._extensions..js (node:internal/modules/cjs/loader:1272:10)
+      at Module.load (node:internal/modules/cjs/loader:1081:32)
+      at Module._load (node:internal/modules/cjs/loader:922:12)
+      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12) {
+    code: 'MODULE_NOT_FOUND',
+    requireStack: [ '/builddir/build/BUILD/ypy_websocket-0.8.2/tests/yjs_client_1.js' ]
+  }
+
+
+This makes me think the comment in %check should be:
+
+  %check
+  # test_ypy_yjs.py requires https://www.npmjs.com/package/yjs
+  %pytest --ignore=tests/test_ypy_yjs.py
+
+
+And the @pytest_asyncio.fixture problem is moot.
+
+----
+
+&gt; BuildRequires:  python3-pytest
+&gt; BuildRequires:  python3-pytest-asyncio
+&gt; BuildRequires:  python3-websockets
+
+There is a [test] extra, but it also has mypy and pre-commit. I suggest working with upstream to split mypy and pre-commit to a lint extra and autogenerate the tests dependencies. If not worth your time (which frankly probably isn't), let's add a comment above those BRs so others know why they are manual instead, please.
+
+----
+
+The spec is sane.
+
+
+Package Review
+==============
+
+Legend:
+[x] = Pass, [!] = Fail, [-] = Not applicable, [?] = Not evaluated
+
+
+
+===== MUST items =====
+
+Generic:
+[x]: Package is licensed with an open-source compatible license and meets
+     other legal requirements as defined in the legal section of Packaging
+     Guidelines.
+[x]: License field in the package spec file matches the actual license.
+     Note: Checking patched sources after %prep for licenses. Licenses
+     found: "MIT License", "Unknown or generated". 15 files have unknown
+     license. Detailed output of licensecheck in
+     /home/churchyard/rpmbuild/FedoraReview/2161519-python-ypy-
+     websocket/licensecheck.txt
+[x]: Package contains no bundled libraries without FPC exception.
+[x]: Changelog in prescribed format.
+[x]: Sources contain only permissible code or content.
+[-]: Package contains desktop file if it is a GUI application.
+[-]: Development files must be in a -devel package
+[x]: Package uses nothing in %doc for runtime.
+[x]: Package consistently uses macros (instead of hard-coded directory
+     names).
+[x]: Package is named according to the Package Naming Guidelines.
+[x]: Package does not generate any conflict.
+[x]: Package obeys FHS, except libexecdir and /usr/target.
+[-]: If the package is a rename of another package, proper Obsoletes and
+     Provides are present.
+[x]: Requires correct, justified where necessary.
+[x]: Spec file is legible and written in American English.
+[-]: Package contains systemd file(s) if in need.
+[x]: Package is not known to require an ExcludeArch tag.
+[-]: Large documentation must go in a -doc subpackage. Large could be size
+     (~1MB) or number of files.
+     Note: Documentation size is 10240 bytes in 1 files.
+[x]: Package complies to the Packaging Guidelines
+[x]: Package successfully compiles and builds into binary rpms on at least
+     one supported primary architecture.
+[x]: Package installs properly.
+[x]: Rpmlint is run on all rpms the build produces.
+     Note: No rpmlint messages.
+[x]: If (and only if) the source package includes the text of the
+     license(s) in its own file, then that file, containing the text of the
+     license(s) for the package is included in %license.
+[x]: Package requires other packages for directories it uses.
+[x]: Package must own all directories that it creates.
+[x]: Package does not own files or directories owned by other packages.
+[x]: Package uses either %{buildroot} or $RPM_BUILD_ROOT
+[x]: Package does not run rm -rf %{buildroot} (or $RPM_BUILD_ROOT) at the
+     beginning of %install.
+[x]: Macros in Summary, %description expandable at SRPM build time.
+[x]: Dist tag is present.
+[x]: Package does not contain duplicates in %files.
+[x]: Permissions on files are set properly.
+[x]: Package must not depend on deprecated() packages.
+[x]: Package use %makeinstall only when make install DESTDIR=... doesn't
+     work.
+[x]: Package is named using only allowed ASCII characters.
+[x]: Package does not use a name that already exists.
+[x]: Package is not relocatable.
+[x]: Sources used to build the package match the upstream source, as
+     provided in the spec URL.
+[x]: Spec file name must match the spec package %{name}, in the format
+     %{name}.spec.
+[x]: File names are valid UTF-8.
+[x]: Packages must not store files under /srv, /opt or /usr/local
+
+Python:
+[x]: Python eggs must not download any dependencies during the build
+     process.
+[x]: A package which is used by another package via an egg interface should
+     provide egg info.
+[x]: Package meets the Packaging Guidelines::Python
+[x]: Package contains BR: python2-devel or python3-devel
+[x]: Packages MUST NOT have dependencies (either build-time or runtime) on
+     packages named with the unversioned python- prefix unless no properly
+     versioned package exists. Dependencies on Python packages instead MUST
+     use names beginning with python2- or python3- as appropriate.
+[x]: Python packages must not contain %{pythonX_site(lib|arch)}/* in %files
+[x]: Binary eggs must be removed in %prep
+
+===== SHOULD items =====
+
+Generic:
+[-]: If the source package does not include license text(s) as a separate
+     file from upstream, the packager SHOULD query upstream to include it.
+[x]: Final provides and requires are sane (see attachments).
+[?]: Package functions as described.
+[?]: Latest version is packaged.
+[x]: Package does not include license text files separate from upstream.
+[-]: Sources are verified with gpgverify first in %prep if upstream
+     publishes signatures.
+     Note: gpgverify is not used.
+[?]: Package should compile and build into binary rpms on all supported
+     architectures.
+[x]: %check is present and all tests pass.
+[?]: Packages should try to preserve timestamps of original installed
+     files.
+[x]: Reviewer should test that the package builds in mock.
+[x]: Buildroot is not present
+[x]: Package has no %clean section with rm -rf %{buildroot} (or
+     $RPM_BUILD_ROOT)
+[x]: No file requires outside of /etc, /bin, /sbin, /usr/bin, /usr/sbin.
+[x]: Packager, Vendor, PreReq, Copyright tags should not be in spec file
+[x]: Sources can be downloaded from URI in Source: tag
+[x]: SourceX is a working URL.
+[x]: Spec use %global instead of %define unless justified.
+
+===== EXTRA items =====
+
+Generic:
+[x]: Rpmlint is run on all installed packages.
+     Note: No rpmlint messages.
+[x]: Spec file according to URL is the same as in SRPM.
+
+
+Rpmlint
+-------
+Checking: python3-ypy-websocket-0.8.2-1.fc38.noarch.rpm
+          python-ypy-websocket-0.8.2-1.fc38.src.rpm
+============================================= rpmlint session starts ============================================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+rpmlintrc: [PosixPath('/tmp/tmpqeslbglq')]
+checks: 31, packages: 2
+
+============== 2 packages and 0 specfiles checked; 0 errors, 0 warnings, 0 badness; has taken 0.6 s =============
+
+
+
+
+Rpmlint (installed packages)
+----------------------------
+============================ rpmlint session starts ============================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+checks: 31, packages: 1
+
+ 1 packages and 0 specfiles checked; 0 errors, 0 warnings, 0 badness; has taken 0.0 s 
+
+
+
+Source checksums
+----------------
+https://files.pythonhosted.org/packages/source/y/ypy_websocket/ypy_websocket-0.8.2.tar.gz :
+  CHECKSUM(SHA256) this package     : 491b2cc4271df4dde9be83017c15f4532b597dc43148472eb20c5aeb838a5b46
+  CHECKSUM(SHA256) upstream package : 491b2cc4271df4dde9be83017c15f4532b597dc43148472eb20c5aeb838a5b46
+
+
+Requires
+--------
+python3-ypy-websocket (rpmlib, GLIBC filtered):
+    (python3.11dist(aiofiles) &lt; 23~~ with python3.11dist(aiofiles) &gt;= 22.1)
+    (python3.11dist(aiosqlite) &lt; 1~~ with python3.11dist(aiosqlite) &gt;= 0.17)
+    (python3.11dist(y-py) &lt; 0.6~~ with python3.11dist(y-py) &gt;= 0.5.3)
+    python(abi) = 3.11
+
+BuildRequires
+-------------
+    (python3dist(aiofiles) &lt; 23~~ with python3dist(aiofiles) &gt;= 22.1)
+    (python3dist(aiosqlite) &lt; 1~~ with python3dist(aiosqlite) &gt;= 0.17)
+    (python3dist(toml) if python3-devel &lt; 3.11)
+    (python3dist(y-py) &lt; 0.6~~ with python3dist(y-py) &gt;= 0.5.3)
+    pyproject-rpm-macros
+    python3-devel
+    python3-pytest
+    python3-pytest-asyncio
+    python3-websockets
+    python3dist(hatchling)
+    python3dist(packaging)
+    python3dist(pip) &gt;= 19
+
+
+Provides
+--------
+python3-ypy-websocket:
+    python-ypy-websocket = 0.8.2-1.fc38
+    python3-ypy-websocket = 0.8.2-1.fc38
+    python3.11-ypy-websocket = 0.8.2-1.fc38
+    python3.11dist(ypy-websocket) = 0.8.2
+    python3dist(ypy-websocket) = 0.8.2
+
+
+Generated by fedora-review 0.7.0 (fed5495) last change: 2019-03-17
+Command line :try-fedora-review -b 2161519 -m fedora-rawhide-x86_64 -o=--enablerepo=local
+Buildroot used: fedora-rawhide-x86_64
+Active plugins: Shell-api, Generic, Python
+Disabled plugins: Haskell, fonts, Java, Ocaml, PHP, R, C/C++, Perl, SugarActivity, Ruby
+Disabled flags: EPEL6, EPEL7, DISTTAG, BATCH, EXARCH
+
+-----------------------------
+
+Package APPRVOED. Please change the comment in %check and add a comment to the manual BuildRequires explaining why the [test] extra is not used.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17004194</commentid>
+    <comment_count>3</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-01-28 19:46:57 +0000</bug_when>
+    <thetext>The Pagure repository was created at https://src.fedoraproject.org/rpms/python-ypy-websocket</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17006513</commentid>
+    <comment_count>4</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-30 11:11:10 +0000</bug_when>
+    <thetext>https://bodhi.fedoraproject.org/updates/FEDORA-2023-ee3bd1b2c6</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

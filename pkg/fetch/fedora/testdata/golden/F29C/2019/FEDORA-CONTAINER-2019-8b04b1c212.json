@@ -1,0 +1,398 @@
+{
+	"alias": "FEDORA-CONTAINER-2019-8b04b1c212",
+	"autokarma": true,
+	"bugs": [
+		{
+			"bug_id": 1657563,
+			"feedback": [
+				{
+					"bug_id": 1657563,
+					"comment": {
+						"id": 882476,
+						"karma": 1,
+						"timestamp": "2019-01-08 16:04:51",
+						"update_id": 129310,
+						"user": {
+							"avatar": "https://seccdn.libravatar.org/avatar/8622052dd0a739c68c98003950a86157dffde07400a7787aeb0471943c0a5fea?s=24&d=retro",
+							"email": "bazanluis20@gmail.com",
+							"groups": [
+								{
+									"name": "packager"
+								},
+								{
+									"name": "bodhiadmin"
+								},
+								{
+									"name": "fedora-mx"
+								},
+								{
+									"name": "signed_fpca"
+								},
+								{
+									"name": "gitfas"
+								},
+								{
+									"name": "campusambassadors"
+								},
+								{
+									"name": "fedora-ar"
+								},
+								{
+									"name": "l10n"
+								},
+								{
+									"name": "icaroproject"
+								},
+								{
+									"name": "ambassadors"
+								},
+								{
+									"name": "fedora-contributor"
+								},
+								{
+									"name": "fedorabugs"
+								},
+								{
+									"name": "neuro-sig"
+								},
+								{
+									"name": "fedora-cl"
+								},
+								{
+									"name": "fedora-pa"
+								},
+								{
+									"name": "fedora-py"
+								},
+								{
+									"name": "cvsl10n"
+								},
+								{
+									"name": "triagers"
+								},
+								{
+									"name": "bzrpython-fedora"
+								},
+								{
+									"name": "fudcon"
+								},
+								{
+									"name": "ipausers"
+								},
+								{
+									"name": "fedora-ec"
+								},
+								{
+									"name": "advocates"
+								}
+							],
+							"id": 341,
+							"name": "lbazan",
+							"openid": "lbazan.id.fedoraproject.org"
+						},
+						"user_id": 341
+					},
+					"comment_id": 882476
+				}
+			],
+			"parent": true,
+			"security": true,
+			"title": "CVE-2018-16873 golang: \"go get\" command vulnerable to RCE via import of malicious package",
+			"bugzilla": {
+				"bug_id": "1657563",
+				"alias": "CVE-2018-16873",
+				"creation_ts": "2018-12-10 00:58:31 +0000",
+				"short_desc": "CVE-2018-16873 golang: \"go get\" command vulnerable to RCE via import of malicious package",
+				"delta_ts": "2022-03-13 16:25:03 +0000",
+				"bug_status": "CLOSED",
+				"resolution": "ERRATA",
+				"keywords": "Security",
+				"priority": "medium",
+				"bug_severity": "medium",
+				"depends_on": [
+					"1659288",
+					"1659392",
+					"1659393",
+					"1659913",
+					"1660654",
+					"1660655",
+					"1663381",
+					"1663386",
+					"1664332",
+					"1732081",
+					"1732082",
+					"1732083",
+					"1732084"
+				],
+				"blocked": [
+					{
+						"bug_id": "1657559",
+						"error": "NotPermitted"
+					}
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "12286774",
+						"comment_count": "0",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2018-12-10 00:58:31 +0000",
+						"thetext": "Go before versions 1.10.6 and 1.11.3 is vulnerable to remote code execution."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12286782",
+						"comment_count": "1",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2018-12-10 01:04:13 +0000",
+						"thetext": "Pre-announcement:\n\nhttps://groups.google.com/forum/#!msg/golang-announce/D4sE5tGvhe8/2_RCSJ3yBQAJ"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12290440",
+						"comment_count": "2",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2018-12-11 00:45:01 +0000",
+						"thetext": "In Go before 1.10.6 and 1.11.x before 1.11.3, the \"go get\" command is vulnerable to remote code execution when executed with the -u flag and the import path of a malicious Go package, or a package that imports it directly or indirectly. Specifically, it is only vulnerable in GOPATH mode, but not in module mode (the distinction is documented at https://golang.org/cmd/go/#hdr-Module_aware_go_get). Using custom domains, it’s possible to arrange things so that a Git repository is cloned to a folder named \".git\" by using a vanity import path that ends with  \"/.git\". If the Git repository root contains a \"HEAD\" file, a \"config\" file, an \"objects\" directory, a \"refs\" directory, with some work to ensure the proper ordering of operations, \"go get -u\" can be tricked into considering the parent directory as a repository root, and running Git commands on it. That will use the \"config\" file in the original Git repository root for its configuration, and if that config file contains malicious commands, they will execute on the system running \"go get -u\"."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12302830",
+						"comment_count": "3",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2018-12-14 01:56:26 +0000",
+						"thetext": "External Reference:\n\nhttps://groups.google.com/forum/?pli=1#!topic/golang-announce/Kw31K8G7Fi0\n\n\nUpstream Issue:\n\nhttps://github.com/golang/go/issues/29230"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12302831",
+						"comment_count": "4",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2018-12-14 01:56:29 +0000",
+						"thetext": "Acknowledgments:\n\nName: Dmitri Shuralyov (the Go team)"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12302835",
+						"comment_count": "5",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2018-12-14 01:56:46 +0000",
+						"thetext": "Created golang tracking bugs for this issue:\n\nAffects: fedora-all [bug 1659288]"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12338415",
+						"comment_count": "15",
+						"who": {
+							"text": "sfowler",
+							"name": "Sam Fowler"
+						},
+						"bug_when": "2019-01-04 06:48:01 +0000",
+						"thetext": "Created golang:1.1/golang tracking bugs for this issue:\n\nAffects: fedora-29 [bug 1663381]"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12346364",
+						"comment_count": "18",
+						"who": {
+							"text": "thoger",
+							"name": "Tomas Hoger"
+						},
+						"bug_when": "2019-01-08 13:38:25 +0000",
+						"thetext": "Created golang tracking bugs for this issue:\n\nAffects: epel-all [bug 1664332]"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "12659039",
+						"comment_count": "20",
+						"who": {
+							"text": "huzaifas",
+							"name": "Huzaifa S. Sidhpurwala"
+						},
+						"bug_when": "2019-04-23 09:49:54 +0000",
+						"thetext": "Statement:\n\nThis issue affects the version of golang package in Red Hat Enterprise Linux 7. The golang package, previously available in the Optional channel, will no longer receive updates in Red Hat Enterprise Linux 7. Developers are encouraged to use the Go Toolset instead, which is available through the Red Hat Developer program. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/7.6_release_notes/chap-red_hat_enterprise_linux-7.6_release_notes-deprecated_functionality_in_rhel7#idm139716309923696"
+					}
+				]
+			}
+		}
+	],
+	"builds": [
+		{
+			"nvr": "golang-1.11-6.fc29",
+			"release_id": 25,
+			"signed": true,
+			"type": "container"
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 887168,
+			"text": "This update has been submitted for testing by jcajka. ",
+			"timestamp": "2019-01-22 15:15:49",
+			"update_id": 130329,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 887413,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2019-01-23 02:34:03",
+			"update_id": 130329,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 889616,
+			"text": "This update has reached 7 days in testing and can be pushed to stable now if the maintainer wishes",
+			"timestamp": "2019-01-30 06:00:33",
+			"update_id": 130329,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 889648,
+			"text": "This update has been submitted for batched by jcajka. ",
+			"timestamp": "2019-01-30 07:46:04",
+			"update_id": 130329,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 889855,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2019-01-30 23:45:40",
+			"update_id": 130329,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 889886,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2019-01-31 00:04:36",
+			"update_id": 130329,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "container",
+	"date_pushed": "2019-01-31 00:04:17",
+	"date_stable": "2019-01-31 00:04:17",
+	"date_submitted": "2019-01-22 15:15:49",
+	"date_testing": "2019-01-23 02:33:51",
+	"meets_testing_requirements": true,
+	"notes": "* Rebase to go1.11.4\n* Security fix for CVE-2018-16875, CVE-2018-16874 and CVE-2018-16873",
+	"pushed": true,
+	"release": {
+		"branch": "f29",
+		"candidate_tag": "f29-container-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f29-container",
+		"id_prefix": "FEDORA-CONTAINER",
+		"long_name": "Fedora 29 Containers",
+		"mail_template": "fedora_errata_template",
+		"name": "F29C",
+		"override_tag": "f29-container-override",
+		"package_manager": "unspecified",
+		"pending_stable_tag": "f29-container-updates-pending",
+		"pending_testing_tag": "f29-container-updates-testing-pending",
+		"stable_tag": "f29-container-updates",
+		"state": "archived",
+		"testing_tag": "f29-container-updates-testing",
+		"version": "29"
+	},
+	"requirements": "",
+	"severity": "medium",
+	"stable_karma": 3,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_gating_status": "ignored",
+	"title": "golang-1.11-6.fc29",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-CONTAINER-2019-8b04b1c212",
+	"unstable_karma": -3,
+	"updateid": "FEDORA-CONTAINER-2019-8b04b1c212",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/d258ab8adb25c645f6e0a47dcb366cf7b69cdafab467240207068d6cc5a3563b?s=24&d=retro",
+		"email": "jcajka@cajka.dev",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			},
+			{
+				"name": "sysadmin"
+			},
+			{
+				"name": "sysadmin-osbs"
+			},
+			{
+				"name": "go-sig"
+			}
+		],
+		"id": 605,
+		"name": "jcajka",
+		"openid": "jcajka.id.fedoraproject.org"
+	},
+	"version_hash": "e346537652583169056a25661727470323b0f91f"
+}

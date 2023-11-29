@@ -1,0 +1,6536 @@
+[
+	{
+		"alias": "FEDORA-2023-bb021a4854",
+		"autokarma": true,
+		"autotime": true,
+		"bugs": [],
+		"builds": [
+			{
+				"epoch": 0,
+				"nvr": "thunderbird-115.5.0-1.fc38",
+				"release_id": 66,
+				"signed": true,
+				"type": "rpm"
+			}
+		],
+		"close_bugs": true,
+		"comments": [
+			{
+				"bug_feedback": [],
+				"id": 3292082,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been submitted for testing by erack. ",
+				"timestamp": "2023-11-24 17:15:39",
+				"update_id": 566369,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3292083,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update's test gating status has been changed to 'ignored'.",
+				"timestamp": "2023-11-24 17:15:39",
+				"update_id": 566369,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3292084,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "erack edited this update.",
+				"timestamp": "2023-11-24 17:16:14",
+				"update_id": 566369,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3292293,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been pushed to testing.",
+				"timestamp": "2023-11-25 01:49:11",
+				"update_id": 566369,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			}
+		],
+		"compose": null,
+		"content_type": "rpm",
+		"critpath": false,
+		"critpath_groups": "",
+		"date_approved": null,
+		"date_modified": "2023-11-24 17:16:14",
+		"date_pushed": "2023-11-25 01:48:48",
+		"date_stable": null,
+		"date_submitted": "2023-11-24 17:15:38",
+		"date_testing": "2023-11-25 01:48:48",
+		"display_name": "",
+		"from_tag": null,
+		"karma": 0,
+		"locked": false,
+		"meets_testing_requirements": false,
+		"notes": "Update to 115.5.0\n\n* https://www.mozilla.org/en-US/security/advisories/mfsa2023-52/\n* https://www.thunderbird.net/en-US/thunderbird/115.5.0/releasenotes/\n",
+		"pushed": true,
+		"release": {
+			"branch": "f38",
+			"candidate_tag": "f38-updates-candidate",
+			"composed_by_bodhi": true,
+			"create_automatic_updates": false,
+			"dist_tag": "f38",
+			"eol": "2024-05-14",
+			"id_prefix": "FEDORA",
+			"long_name": "Fedora 38",
+			"mail_template": "fedora_errata_template",
+			"name": "F38",
+			"override_tag": "f38-override",
+			"package_manager": "dnf",
+			"pending_signing_tag": "f38-signing-pending",
+			"pending_stable_tag": "f38-updates-pending",
+			"pending_testing_tag": "f38-updates-testing-pending",
+			"stable_tag": "f38-updates",
+			"state": "current",
+			"testing_repository": "updates-testing",
+			"testing_tag": "f38-updates-testing",
+			"version": "38"
+		},
+		"request": null,
+		"require_bugs": true,
+		"require_testcases": true,
+		"requirements": null,
+		"severity": "high",
+		"stable_days": 7,
+		"stable_karma": 2,
+		"status": "testing",
+		"suggest": "unspecified",
+		"test_cases": [],
+		"test_gating_status": "ignored",
+		"title": "thunderbird-115.5.0-1.fc38",
+		"type": "security",
+		"unstable_karma": -3,
+		"updateid": "FEDORA-2023-bb021a4854",
+		"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2023-bb021a4854",
+		"user": {
+			"avatar": "https://seccdn.libravatar.org/avatar/c290611a929d4afc815d5a82af111d39e35eda71c2683d82e36e0c95c52d6d68?s=24&d=retro",
+			"email": "erack@redhat.com",
+			"groups": [
+				{
+					"name": "packager"
+				},
+				{
+					"name": "ipausers"
+				},
+				{
+					"name": "fedora-contributor"
+				},
+				{
+					"name": "signed_fpca"
+				},
+				{
+					"name": "fedorabugs"
+				}
+			],
+			"id": 1120,
+			"name": "erack",
+			"openid": "erack.id.fedoraproject.org"
+		},
+		"version_hash": "9b7831c65835dd6aeca0f1011524f74a4095b2e0"
+	},
+	{
+		"alias": "FEDORA-2023-5911638116",
+		"autokarma": true,
+		"autotime": true,
+		"bugs": [
+			{
+				"bug_id": 2210635,
+				"feedback": [],
+				"parent": false,
+				"security": true,
+				"title": "CVE-2023-2603 libcap: Integer Overflow in _libcap_strdup() [fedora-38]"
+			},
+			{
+				"bug_id": 2210643,
+				"feedback": [],
+				"parent": false,
+				"security": true,
+				"title": "CVE-2023-2602 libcap: Memory Leak on pthread_create() Error [fedora-38]"
+			}
+		],
+		"builds": [
+			{
+				"epoch": 0,
+				"nvr": "libcap-2.48-7.fc38",
+				"release_id": 66,
+				"signed": true,
+				"type": "rpm"
+			}
+		],
+		"close_bugs": true,
+		"comments": [
+			{
+				"bug_feedback": [],
+				"id": 3291220,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been submitted for testing by carlosrodrifernandez. ",
+				"timestamp": "2023-11-23 18:58:51",
+				"update_id": 566203,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291221,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update's test gating status has been changed to 'waiting'.",
+				"timestamp": "2023-11-23 18:58:53",
+				"update_id": 566203,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291310,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update's test gating status has been changed to 'failed'.",
+				"timestamp": "2023-11-23 21:04:33",
+				"update_id": 566203,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291565,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been pushed to testing.",
+				"timestamp": "2023-11-24 02:19:10",
+				"update_id": 566203,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291576,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update's test gating status has been changed to 'passed'.",
+				"timestamp": "2023-11-24 02:25:15",
+				"update_id": 566203,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			}
+		],
+		"compose": null,
+		"content_type": "rpm",
+		"critpath": true,
+		"critpath_groups": "core critical-path-anaconda critical-path-apps critical-path-base critical-path-build critical-path-compose critical-path-deepin-desktop critical-path-gnome critical-path-kde critical-path-lxde critical-path-lxqt critical-path-server critical-path-standard critical-path-xfce",
+		"date_approved": null,
+		"date_modified": null,
+		"date_pushed": "2023-11-24 02:18:33",
+		"date_stable": null,
+		"date_submitted": "2023-11-23 18:58:51",
+		"date_testing": "2023-11-24 02:18:33",
+		"display_name": "",
+		"from_tag": null,
+		"karma": 0,
+		"locked": false,
+		"meets_testing_requirements": false,
+		"notes": "Backport fix for CVE-2023-2602 and CVE-2023-2603 ",
+		"pushed": true,
+		"release": {
+			"branch": "f38",
+			"candidate_tag": "f38-updates-candidate",
+			"composed_by_bodhi": true,
+			"create_automatic_updates": false,
+			"dist_tag": "f38",
+			"eol": "2024-05-14",
+			"id_prefix": "FEDORA",
+			"long_name": "Fedora 38",
+			"mail_template": "fedora_errata_template",
+			"name": "F38",
+			"override_tag": "f38-override",
+			"package_manager": "dnf",
+			"pending_signing_tag": "f38-signing-pending",
+			"pending_stable_tag": "f38-updates-pending",
+			"pending_testing_tag": "f38-updates-testing-pending",
+			"stable_tag": "f38-updates",
+			"state": "current",
+			"testing_repository": "updates-testing",
+			"testing_tag": "f38-updates-testing",
+			"version": "38"
+		},
+		"request": null,
+		"require_bugs": false,
+		"require_testcases": true,
+		"requirements": "",
+		"severity": "high",
+		"stable_days": 14,
+		"stable_karma": 3,
+		"status": "testing",
+		"suggest": "unspecified",
+		"test_cases": [],
+		"test_gating_status": "passed",
+		"title": "libcap-2.48-7.fc38",
+		"type": "security",
+		"unstable_karma": -3,
+		"updateid": "FEDORA-2023-5911638116",
+		"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2023-5911638116",
+		"user": {
+			"avatar": "https://seccdn.libravatar.org/avatar/c7a9de16abc59e1de7cccd5a708e16bc51a2001b73686d9200e4e9d3f3fa8ce6?s=24&d=retro",
+			"email": "carlosrodrifernandez@gmail.com",
+			"groups": [
+				{
+					"name": "packager"
+				},
+				{
+					"name": "ipausers"
+				},
+				{
+					"name": "fedora-contributor"
+				},
+				{
+					"name": "signed_fpca"
+				},
+				{
+					"name": "fedorabugs"
+				},
+				{
+					"name": "centosproject-email-aliases"
+				},
+				{
+					"name": "sig-integration"
+				}
+			],
+			"id": 7962,
+			"name": "carlosrodrifernandez",
+			"openid": "carlosrodrifernandez.id.fedoraproject.org"
+		},
+		"version_hash": "0127c67139c0097ce7efe3f246486fd4a94459d9"
+	},
+	{
+		"alias": "FEDORA-2023-bd14c83780",
+		"autokarma": false,
+		"autotime": false,
+		"bugs": [
+			{
+				"bug_id": 2213132,
+				"feedback": [
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291799,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291799,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "i7-9700K(UHD Graphics 630): kernel regression test passed. Works fine for daily use.",
+							"timestamp": "2023-11-24 10:35:02",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/d7c3abfa40c4dab1bd2aa752c939a0807d47f83deaae077c0963f00f840d1188?s=24&d=retro",
+								"email": "masami256@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 200,
+								"name": "masami",
+								"openid": "masami.id.fedoraproject.org"
+							},
+							"user_id": 200
+						},
+						"comment_id": 3291799,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291322,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291322,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seems to work fine on bare-metal HP Z440, AMD RX570 with UEFI. No issues to report so far and kernel regression tests both PASS.",
+							"timestamp": "2023-11-23 21:16:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/c635c6d9baca693996f7fa7efbffc35745c73e2982a9056d4f9eed637f3d560a?s=24&d=retro",
+								"email": "mj.oppliger@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5886,
+								"name": "tharadash",
+								"openid": "tharadash.id.fedoraproject.org"
+							},
+							"user_id": 5886
+						},
+						"comment_id": 3291322,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291254,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291254,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works for me... I have been running 6.6.x since the test week with no issues.   \n\nThe enabled Default and Performance tests pass OK.\nWork Station > Asus Prime mobo, Ryzen5 5600g/AMDGPU 400 Series Chipset, (UEFI + Secure Boot) SSD's > RAID1 (ext4) running Plasma DE.",
+							"timestamp": "2023-11-23 19:25:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/88829acfa2e62e9a39447ed1f4c01514a2b456f981d16c8621513903951a3687?s=24&d=retro",
+								"email": "colin.thomson@g6avk.co.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 449,
+								"name": "g6avk",
+								"openid": "g6avk.id.fedoraproject.org"
+							},
+							"user_id": 449
+						},
+						"comment_id": 3291254,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291272,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291272,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:59:17",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291272,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3290993,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3290993,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 15:34:53",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3290993,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291271,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291271,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:58:25",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291273,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291273,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "The kernel and kernel-headers packages update normally, however kernel-tools and kernel-tools-libs have a conflict with the gnome-applets and gnome-flashback packages as shown below:\n\nProblem 1: problem with installed package gnome-applets-3.50.0-2.fc39.x86_64\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - cannot install the best update candidate for package kernel-tools-libs-6.5.4-300.fc39.x86_64\n Problem 2: problem with installed package gnome-flashback-3.50.0-2.fc39.x86_64\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from @System requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from fedora requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires libcpupower.so.1()(64bit), but none of the providers can be installed\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires kernel-tools-libs = 6.6.2-200.fc39, but none of the providers can be installed\n  - cannot install the best update candidate for package kernel-tools-6.5.4-300.fc39.x86_64\n",
+							"timestamp": "2023-11-23 20:00:48",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3291273,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291300,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291300,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default test passed (AMD 4500U using iGPU) Thank you for the update!",
+							"timestamp": "2023-11-23 20:44:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/be7a7768c5f347a9d33ebb3486a83f6bb5b1b531234f68f3373f08e9cc3a837c?s=24&d=retro",
+								"email": "kioshi242@proton.me",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7765,
+								"name": "boxjellyfish",
+								"openid": "boxjellyfish.id.fedoraproject.org"
+							},
+							"user_id": 7765
+						},
+						"comment_id": 3291300,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291865,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291865,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:58",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291865,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3292165,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292165,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "No regressions noted; Framework laptop AMD 7840U",
+							"timestamp": "2023-11-24 20:34:46",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/e6e5c9cafd454eb7370601644154482a69b2edb027bfa6936db4a99317df1b51?s=24&d=retro",
+								"email": "dimitris@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 840,
+								"name": "dimitrisk",
+								"openid": "dimitrisk.id.fedoraproject.org"
+							},
+							"user_id": 840
+						},
+						"comment_id": 3292165,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3292215,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292215,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 23:50:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/24a04ba286a757b4b6f972eb806b9bfcd157686bd946a131fef8b85cfed949d5?s=24&d=retro",
+								"email": "js314592@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7481,
+								"name": "js314592",
+								"openid": "js314592.id.fedoraproject.org"
+							},
+							"user_id": 7481
+						},
+						"comment_id": 3292215,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291288,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291288,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 20:32:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/22af1d551c0653e5d468576a79748c25405a018d8dc3dff3d8dad9c6fe5933a2?s=24&d=retro",
+								"email": "itrymybest80@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5222,
+								"name": "itrymybest80",
+								"openid": "itrymybest80.id.fedoraproject.org"
+							},
+							"user_id": 5222
+						},
+						"comment_id": 3291288,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291419,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291419,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works great for me, finally includes fixed preferred cores placement logic on Ryzen.",
+							"timestamp": "2023-11-23 23:58:04",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/93027731630e51c4a38473a5f5977bb6dceff144859a8be61a38c06af9a4ba9c?s=24&d=retro",
+								"email": "agurenko@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3175,
+								"name": "agurenko",
+								"openid": "agurenko.id.fedoraproject.org"
+							},
+							"user_id": 3175
+						},
+						"comment_id": 3291419,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291469,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291469,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 01:42:39",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/8364563f7a3e319a0f7ddf27dbe9945f8351d415cc7ae99cd3275291defec2b0?s=24&d=retro",
+								"email": "eugenemah@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-hams"
+									}
+								],
+								"id": 2935,
+								"name": "imabug",
+								"openid": "imabug.id.fedoraproject.org"
+							},
+							"user_id": 2935
+						},
+						"comment_id": 3291469,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291807,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291807,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "LGTM, Lenovo Yoga Slim 7 Pro 14ACH5, CPU AMD Ryzen 9 5900hx, GPU AMD Renoir, Wifi Mediatek mt7921e\n\n",
+							"timestamp": "2023-11-24 10:37:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/4ed42beaf63545d253254b9204c57986b8d58d88202671b73712dfd59ec57a0b?s=24&d=retro",
+								"email": "lmouillart@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 2343,
+								"name": "lmouillart",
+								"openid": "lmouillart.id.fedoraproject.org"
+							},
+							"user_id": 2343
+						},
+						"comment_id": 3291807,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291861,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291861,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "**Working fine**\n\nAcer Aspire Intel® Core™ i7-3632QM CPU @ 2.20GHz Graphics Processor: Mesa DRI Intel® HD Graphics 4000.    \ndriver: i915 v: kernel arch: Gen-7 wi-fi: Qualcomm Atheros AR9485 Wireless Network Adapter vendor: Lite-On     \ndriver: ath9k v: kernel.    \n\n*Default fedora btrfs filesystem.    \nSuspension working    \nPassed kernel regression tests*\n",
+							"timestamp": "2023-11-24 12:57:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/5545678c86b7a87ee5d907a87573978f63c78b2d498edda166dac72f81003f73?s=24&d=retro",
+								"email": "geraldo.simiao.kutz@gmail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-br"
+									},
+									{
+										"name": "advocates"
+									},
+									{
+										"name": "respins-sig"
+									}
+								],
+								"id": 5881,
+								"name": "geraldosimiao",
+								"openid": "geraldosimiao.id.fedoraproject.org"
+							},
+							"user_id": 5881
+						},
+						"comment_id": 3291861,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291864,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291864,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291864,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291901,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291901,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works on a whole lot of aarch64 devices including various Jetson (nane, Xaveir AGX, Xavier NX), Raspberry Pi (02W, RPi3, RPi4), Pine64, Rock960, macbin. Also tested on Intel Atom (Up2, Fitlet2).",
+							"timestamp": "2023-11-24 13:21:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291901,
+						"karma": 1
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3292092,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292092,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on AMD Ryzen 9 5950X, 128GB ECC RAM. ",
+							"timestamp": "2023-11-24 18:16:59",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a21deb83aceb4fc6a8473e24cc6ff4a5846d7dbfb5aba218d35b143c85b863ba?s=24&d=retro",
+								"email": "moneta.mace@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 1962,
+								"name": "macemoneta",
+								"openid": "macemoneta.id.fedoraproject.org"
+							},
+							"user_id": 1962
+						},
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3292201,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292201,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seem OK here.  Ryzen 3700x, Rog Strix B550-F, Nvidia 2070 from rpmfusion, Intel SSD.  Secure boot disabled.",
+							"timestamp": "2023-11-24 22:39:02",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/f54d156796b8b1eb2f53ceb145575f95b4f9ee0bda93bc7e64ba1dd077641bd3?s=24&d=retro",
+								"email": "johnhoward2@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7557,
+								"name": "johnh99",
+								"openid": "johnh99.id.fedoraproject.org"
+							},
+							"user_id": 7557
+						},
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3292208,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292208,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "kernel-tools-libs appears to have changed the libcpupower.so.0 to .so.1, however the underlying .so.0.0.1 is the same version as in the previous kernel-tools version.\n\nThis looks like some sort of typo has crept in.",
+							"timestamp": "2023-11-24 23:08:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3292208,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3292228,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292228,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "So far 6.6.2-201.fc39.x86_64 works fine on AMD Ryzen 7 PRO 6850U. F38 KDE Spin, up to date as of now with stable updates plus the 6.6.2-201.fc39.x86_64 kernel packages. tainted = 0. Maybe I can add a regression test for my hardware in the next days.",
+							"timestamp": "2023-11-25 00:51:55",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/537b0583eeebcf9497086ecb30fa033bde83bca72e86aca48570916b05526be4?s=24&d=retro",
+								"email": "py0xc3@posteo.net",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "docs"
+									},
+									{
+										"name": "ask-fedora"
+									}
+								],
+								"id": 7249,
+								"name": "py0xc3",
+								"openid": "py0xc3.id.fedoraproject.org"
+							},
+							"user_id": 7249
+						},
+						"comment_id": 3292228,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291877,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291877,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works fin on Ryzen 7840/780m",
+							"timestamp": "2023-11-24 13:05:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3291877,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213132,
+						"comment": {
+							"id": 3291902,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291902,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on RPi4",
+							"timestamp": "2023-11-24 13:21:30",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291902,
+						"karma": 0
+					}
+				],
+				"parent": true,
+				"security": true,
+				"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
+			},
+			{
+				"bug_id": 2213133,
+				"feedback": [
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291799,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291799,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "i7-9700K(UHD Graphics 630): kernel regression test passed. Works fine for daily use.",
+							"timestamp": "2023-11-24 10:35:02",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/d7c3abfa40c4dab1bd2aa752c939a0807d47f83deaae077c0963f00f840d1188?s=24&d=retro",
+								"email": "masami256@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 200,
+								"name": "masami",
+								"openid": "masami.id.fedoraproject.org"
+							},
+							"user_id": 200
+						},
+						"comment_id": 3291799,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291322,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291322,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seems to work fine on bare-metal HP Z440, AMD RX570 with UEFI. No issues to report so far and kernel regression tests both PASS.",
+							"timestamp": "2023-11-23 21:16:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/c635c6d9baca693996f7fa7efbffc35745c73e2982a9056d4f9eed637f3d560a?s=24&d=retro",
+								"email": "mj.oppliger@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5886,
+								"name": "tharadash",
+								"openid": "tharadash.id.fedoraproject.org"
+							},
+							"user_id": 5886
+						},
+						"comment_id": 3291322,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291254,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291254,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works for me... I have been running 6.6.x since the test week with no issues.   \n\nThe enabled Default and Performance tests pass OK.\nWork Station > Asus Prime mobo, Ryzen5 5600g/AMDGPU 400 Series Chipset, (UEFI + Secure Boot) SSD's > RAID1 (ext4) running Plasma DE.",
+							"timestamp": "2023-11-23 19:25:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/88829acfa2e62e9a39447ed1f4c01514a2b456f981d16c8621513903951a3687?s=24&d=retro",
+								"email": "colin.thomson@g6avk.co.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 449,
+								"name": "g6avk",
+								"openid": "g6avk.id.fedoraproject.org"
+							},
+							"user_id": 449
+						},
+						"comment_id": 3291254,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291272,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291272,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:59:17",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291272,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3290993,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3290993,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 15:34:53",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3290993,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291271,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291271,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:58:25",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291273,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291273,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "The kernel and kernel-headers packages update normally, however kernel-tools and kernel-tools-libs have a conflict with the gnome-applets and gnome-flashback packages as shown below:\n\nProblem 1: problem with installed package gnome-applets-3.50.0-2.fc39.x86_64\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - cannot install the best update candidate for package kernel-tools-libs-6.5.4-300.fc39.x86_64\n Problem 2: problem with installed package gnome-flashback-3.50.0-2.fc39.x86_64\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from @System requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from fedora requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires libcpupower.so.1()(64bit), but none of the providers can be installed\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires kernel-tools-libs = 6.6.2-200.fc39, but none of the providers can be installed\n  - cannot install the best update candidate for package kernel-tools-6.5.4-300.fc39.x86_64\n",
+							"timestamp": "2023-11-23 20:00:48",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3291273,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291300,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291300,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default test passed (AMD 4500U using iGPU) Thank you for the update!",
+							"timestamp": "2023-11-23 20:44:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/be7a7768c5f347a9d33ebb3486a83f6bb5b1b531234f68f3373f08e9cc3a837c?s=24&d=retro",
+								"email": "kioshi242@proton.me",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7765,
+								"name": "boxjellyfish",
+								"openid": "boxjellyfish.id.fedoraproject.org"
+							},
+							"user_id": 7765
+						},
+						"comment_id": 3291300,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291865,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291865,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:58",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291865,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3292165,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292165,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "No regressions noted; Framework laptop AMD 7840U",
+							"timestamp": "2023-11-24 20:34:46",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/e6e5c9cafd454eb7370601644154482a69b2edb027bfa6936db4a99317df1b51?s=24&d=retro",
+								"email": "dimitris@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 840,
+								"name": "dimitrisk",
+								"openid": "dimitrisk.id.fedoraproject.org"
+							},
+							"user_id": 840
+						},
+						"comment_id": 3292165,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3292215,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292215,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 23:50:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/24a04ba286a757b4b6f972eb806b9bfcd157686bd946a131fef8b85cfed949d5?s=24&d=retro",
+								"email": "js314592@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7481,
+								"name": "js314592",
+								"openid": "js314592.id.fedoraproject.org"
+							},
+							"user_id": 7481
+						},
+						"comment_id": 3292215,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291288,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291288,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 20:32:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/22af1d551c0653e5d468576a79748c25405a018d8dc3dff3d8dad9c6fe5933a2?s=24&d=retro",
+								"email": "itrymybest80@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5222,
+								"name": "itrymybest80",
+								"openid": "itrymybest80.id.fedoraproject.org"
+							},
+							"user_id": 5222
+						},
+						"comment_id": 3291288,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291419,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291419,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works great for me, finally includes fixed preferred cores placement logic on Ryzen.",
+							"timestamp": "2023-11-23 23:58:04",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/93027731630e51c4a38473a5f5977bb6dceff144859a8be61a38c06af9a4ba9c?s=24&d=retro",
+								"email": "agurenko@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3175,
+								"name": "agurenko",
+								"openid": "agurenko.id.fedoraproject.org"
+							},
+							"user_id": 3175
+						},
+						"comment_id": 3291419,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291469,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291469,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 01:42:39",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/8364563f7a3e319a0f7ddf27dbe9945f8351d415cc7ae99cd3275291defec2b0?s=24&d=retro",
+								"email": "eugenemah@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-hams"
+									}
+								],
+								"id": 2935,
+								"name": "imabug",
+								"openid": "imabug.id.fedoraproject.org"
+							},
+							"user_id": 2935
+						},
+						"comment_id": 3291469,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291807,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291807,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "LGTM, Lenovo Yoga Slim 7 Pro 14ACH5, CPU AMD Ryzen 9 5900hx, GPU AMD Renoir, Wifi Mediatek mt7921e\n\n",
+							"timestamp": "2023-11-24 10:37:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/4ed42beaf63545d253254b9204c57986b8d58d88202671b73712dfd59ec57a0b?s=24&d=retro",
+								"email": "lmouillart@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 2343,
+								"name": "lmouillart",
+								"openid": "lmouillart.id.fedoraproject.org"
+							},
+							"user_id": 2343
+						},
+						"comment_id": 3291807,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291861,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291861,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "**Working fine**\n\nAcer Aspire Intel® Core™ i7-3632QM CPU @ 2.20GHz Graphics Processor: Mesa DRI Intel® HD Graphics 4000.    \ndriver: i915 v: kernel arch: Gen-7 wi-fi: Qualcomm Atheros AR9485 Wireless Network Adapter vendor: Lite-On     \ndriver: ath9k v: kernel.    \n\n*Default fedora btrfs filesystem.    \nSuspension working    \nPassed kernel regression tests*\n",
+							"timestamp": "2023-11-24 12:57:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/5545678c86b7a87ee5d907a87573978f63c78b2d498edda166dac72f81003f73?s=24&d=retro",
+								"email": "geraldo.simiao.kutz@gmail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-br"
+									},
+									{
+										"name": "advocates"
+									},
+									{
+										"name": "respins-sig"
+									}
+								],
+								"id": 5881,
+								"name": "geraldosimiao",
+								"openid": "geraldosimiao.id.fedoraproject.org"
+							},
+							"user_id": 5881
+						},
+						"comment_id": 3291861,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291864,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291864,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291864,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291901,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291901,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works on a whole lot of aarch64 devices including various Jetson (nane, Xaveir AGX, Xavier NX), Raspberry Pi (02W, RPi3, RPi4), Pine64, Rock960, macbin. Also tested on Intel Atom (Up2, Fitlet2).",
+							"timestamp": "2023-11-24 13:21:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291901,
+						"karma": 1
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3292092,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292092,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on AMD Ryzen 9 5950X, 128GB ECC RAM. ",
+							"timestamp": "2023-11-24 18:16:59",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a21deb83aceb4fc6a8473e24cc6ff4a5846d7dbfb5aba218d35b143c85b863ba?s=24&d=retro",
+								"email": "moneta.mace@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 1962,
+								"name": "macemoneta",
+								"openid": "macemoneta.id.fedoraproject.org"
+							},
+							"user_id": 1962
+						},
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3292201,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292201,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seem OK here.  Ryzen 3700x, Rog Strix B550-F, Nvidia 2070 from rpmfusion, Intel SSD.  Secure boot disabled.",
+							"timestamp": "2023-11-24 22:39:02",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/f54d156796b8b1eb2f53ceb145575f95b4f9ee0bda93bc7e64ba1dd077641bd3?s=24&d=retro",
+								"email": "johnhoward2@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7557,
+								"name": "johnh99",
+								"openid": "johnh99.id.fedoraproject.org"
+							},
+							"user_id": 7557
+						},
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3292208,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292208,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "kernel-tools-libs appears to have changed the libcpupower.so.0 to .so.1, however the underlying .so.0.0.1 is the same version as in the previous kernel-tools version.\n\nThis looks like some sort of typo has crept in.",
+							"timestamp": "2023-11-24 23:08:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3292208,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3292228,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292228,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "So far 6.6.2-201.fc39.x86_64 works fine on AMD Ryzen 7 PRO 6850U. F38 KDE Spin, up to date as of now with stable updates plus the 6.6.2-201.fc39.x86_64 kernel packages. tainted = 0. Maybe I can add a regression test for my hardware in the next days.",
+							"timestamp": "2023-11-25 00:51:55",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/537b0583eeebcf9497086ecb30fa033bde83bca72e86aca48570916b05526be4?s=24&d=retro",
+								"email": "py0xc3@posteo.net",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "docs"
+									},
+									{
+										"name": "ask-fedora"
+									}
+								],
+								"id": 7249,
+								"name": "py0xc3",
+								"openid": "py0xc3.id.fedoraproject.org"
+							},
+							"user_id": 7249
+						},
+						"comment_id": 3292228,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291877,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291877,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works fin on Ryzen 7840/780m",
+							"timestamp": "2023-11-24 13:05:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3291877,
+						"karma": 0
+					},
+					{
+						"bug_id": 2213133,
+						"comment": {
+							"id": 3291902,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291902,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on RPi4",
+							"timestamp": "2023-11-24 13:21:30",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291902,
+						"karma": 0
+					}
+				],
+				"parent": false,
+				"security": true,
+				"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
+			},
+			{
+				"bug_id": 2249952,
+				"feedback": [
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288751,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288751,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works on baremetal (non UEFI mode) AMD Ryzen5 3600, Mainboard MSI B450M Mortar Max with prop. nvidia driver (535.113.1) from rpmfusion.org (GTX980 card). Works with Gnome-Desktop (Xorg).",
+							"timestamp": "2023-11-21 16:55:28",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/0d018dea092216ddc83efb41a8ea175a99d0a7c66802809417ea698391819a83?s=24&d=retro",
+								"email": "m-teuber@gmx.de",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3953,
+								"name": "ibims",
+								"openid": "ibims.id.fedoraproject.org"
+							},
+							"user_id": 3953
+						},
+						"comment_id": 3288751,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288902,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288902,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "So far 6.5.12-300.fc39.x86_64 works fine on AMD Ryzen 7 PRO 6850U. F38 KDE Spin, up to date as of now with stable updates plus the 6.5.12-300.fc39.x86_64 kernel packages from koji. tainted = 0. I cannot do regression testing atm. BZ#2249952 does not apply to my hardware.",
+							"timestamp": "2023-11-21 19:47:02",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/537b0583eeebcf9497086ecb30fa033bde83bca72e86aca48570916b05526be4?s=24&d=retro",
+								"email": "py0xc3@posteo.net",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "docs"
+									},
+									{
+										"name": "ask-fedora"
+									}
+								],
+								"id": 7249,
+								"name": "py0xc3",
+								"openid": "py0xc3.id.fedoraproject.org"
+							},
+							"user_id": 7249
+						},
+						"comment_id": 3288902,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288918,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288918,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Working for me in a VirtualBox VM.",
+							"timestamp": "2023-11-21 19:54:49",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/83681a21ba31459f7d90616fc9043ed5465c66f4cf45969012311110125f969c?s=24&d=retro",
+								"email": "nixuser@mail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 4756,
+								"name": "nixuser",
+								"openid": "nixuser.id.fedoraproject.org"
+							},
+							"user_id": 4756
+						},
+						"comment_id": 3288918,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3289997,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3289997,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Booted this up on my Desktop (Ryzen 9 3900x with radeon rx 5700xt gpu), and everything is completely broken. Network Manager won't start and GNOME is having its fair share of problems too. On my laptop there is no problem at all (Ryzen 7 5800H).",
+							"timestamp": "2023-11-22 15:44:06",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/7a4886f7009d7af329f1368fdefb95fc004b4cdea0b31419e5e412f158c2b873?s=24&d=retro",
+								"email": "murmeldyret@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7963,
+								"name": "outgrow8756",
+								"openid": "outgrow8756.id.fedoraproject.org"
+							},
+							"user_id": 7963
+						},
+						"comment_id": 3289997,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291799,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291799,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "i7-9700K(UHD Graphics 630): kernel regression test passed. Works fine for daily use.",
+							"timestamp": "2023-11-24 10:35:02",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/d7c3abfa40c4dab1bd2aa752c939a0807d47f83deaae077c0963f00f840d1188?s=24&d=retro",
+								"email": "masami256@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 200,
+								"name": "masami",
+								"openid": "masami.id.fedoraproject.org"
+							},
+							"user_id": 200
+						},
+						"comment_id": 3291799,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288916,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288916,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Working for me in a VirtualBox VM.",
+							"timestamp": "2023-11-21 19:54:16",
+							"update_id": 565570,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/83681a21ba31459f7d90616fc9043ed5465c66f4cf45969012311110125f969c?s=24&d=retro",
+								"email": "nixuser@mail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 4756,
+								"name": "nixuser",
+								"openid": "nixuser.id.fedoraproject.org"
+							},
+							"user_id": 4756
+						},
+						"comment_id": 3288916,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3289817,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3289817,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works good for me.  Ryzen 3700x, Rog Strix B550-F, nvidia 2070 from rpmfusion, Intel SSD.",
+							"timestamp": "2023-11-22 11:08:01",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/f54d156796b8b1eb2f53ceb145575f95b4f9ee0bda93bc7e64ba1dd077641bd3?s=24&d=retro",
+								"email": "johnhoward2@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7557,
+								"name": "johnh99",
+								"openid": "johnh99.id.fedoraproject.org"
+							},
+							"user_id": 7557
+						},
+						"comment_id": 3289817,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3290323,
+							"karma": -1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3290323,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Booted ok, but no ethernet, no wifi, and weird slowness issues.\n\nReverting to 6.5.11 and all is fine.\n\n",
+							"timestamp": "2023-11-23 01:05:13",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/08bdbb24a4a97e7b9f147c3360122275ed53dbdc00814480290b4ce52fd64bd1?s=24&d=retro",
+								"email": "netwiz@crc.id.au",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 1164,
+								"name": "crcinau",
+								"openid": "crcinau.id.fedoraproject.org"
+							},
+							"user_id": 1164
+						},
+						"comment_id": 3290323,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291322,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291322,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seems to work fine on bare-metal HP Z440, AMD RX570 with UEFI. No issues to report so far and kernel regression tests both PASS.",
+							"timestamp": "2023-11-23 21:16:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/c635c6d9baca693996f7fa7efbffc35745c73e2982a9056d4f9eed637f3d560a?s=24&d=retro",
+								"email": "mj.oppliger@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5886,
+								"name": "tharadash",
+								"openid": "tharadash.id.fedoraproject.org"
+							},
+							"user_id": 5886
+						},
+						"comment_id": 3291322,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288383,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288383,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-21 10:59:05",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3288383,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288920,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288920,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Working for me in a VirtualBox VM.  Native systems already all on 6.6.1.",
+							"timestamp": "2023-11-21 19:55:55",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/83681a21ba31459f7d90616fc9043ed5465c66f4cf45969012311110125f969c?s=24&d=retro",
+								"email": "nixuser@mail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 4756,
+								"name": "nixuser",
+								"openid": "nixuser.id.fedoraproject.org"
+							},
+							"user_id": 4756
+						},
+						"comment_id": 3288920,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288359,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288359,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-21 10:41:43",
+							"update_id": 565570,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3288359,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288360,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288360,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-21 10:42:01",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3288360,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288366,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288366,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-21 10:49:58",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3288366,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288495,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288495,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-21 13:36:55",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/8364563f7a3e319a0f7ddf27dbe9945f8351d415cc7ae99cd3275291defec2b0?s=24&d=retro",
+								"email": "eugenemah@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-hams"
+									}
+								],
+								"id": 2935,
+								"name": "imabug",
+								"openid": "imabug.id.fedoraproject.org"
+							},
+							"user_id": 2935
+						},
+						"comment_id": 3288495,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288921,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288921,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "*sigh* forgot karma.",
+							"timestamp": "2023-11-21 19:57:04",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/83681a21ba31459f7d90616fc9043ed5465c66f4cf45969012311110125f969c?s=24&d=retro",
+								"email": "nixuser@mail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 4756,
+								"name": "nixuser",
+								"openid": "nixuser.id.fedoraproject.org"
+							},
+							"user_id": 4756
+						},
+						"comment_id": 3288921,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288922,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288922,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-21 20:02:52",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/24a04ba286a757b4b6f972eb806b9bfcd157686bd946a131fef8b85cfed949d5?s=24&d=retro",
+								"email": "js314592@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7481,
+								"name": "js314592",
+								"openid": "js314592.id.fedoraproject.org"
+							},
+							"user_id": 7481
+						},
+						"comment_id": 3288922,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3289194,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3289194,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works for me: using the Mate Desktop Environment.\n\nlaptop 32GB AMD Ryzen 7 5700U with Radeon 5500 Graphics (SSD only)\n(from lscpu: max MHz 4370,   min MHz 1400,  BogoMIPS 3593)\nreal:17m18.838s  user:7m9.456s  sys:7m40.429s\n",
+							"timestamp": "2023-11-22 01:40:30",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/fbcbe620e0c011b9ae35447160342d5b0ef376a892f9dc67d2e4bd0e987a3759?s=24&d=retro",
+								"email": "gavinflower@archidevsys.co.nz",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3140,
+								"name": "nivag",
+								"openid": "nivag.id.fedoraproject.org"
+							},
+							"user_id": 3140
+						},
+						"comment_id": 3289194,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3289504,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3289504,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "KVM",
+							"timestamp": "2023-11-22 03:29:23",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/5545678c86b7a87ee5d907a87573978f63c78b2d498edda166dac72f81003f73?s=24&d=retro",
+								"email": "geraldo.simiao.kutz@gmail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-br"
+									},
+									{
+										"name": "advocates"
+									},
+									{
+										"name": "respins-sig"
+									}
+								],
+								"id": 5881,
+								"name": "geraldosimiao",
+								"openid": "geraldosimiao.id.fedoraproject.org"
+							},
+							"user_id": 5881
+						},
+						"comment_id": 3289504,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3289505,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3289505,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "kvm",
+							"timestamp": "2023-11-22 03:29:51",
+							"update_id": 565570,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/5545678c86b7a87ee5d907a87573978f63c78b2d498edda166dac72f81003f73?s=24&d=retro",
+								"email": "geraldo.simiao.kutz@gmail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-br"
+									},
+									{
+										"name": "advocates"
+									},
+									{
+										"name": "respins-sig"
+									}
+								],
+								"id": 5881,
+								"name": "geraldosimiao",
+								"openid": "geraldosimiao.id.fedoraproject.org"
+							},
+							"user_id": 5881
+						},
+						"comment_id": 3289505,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3289682,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3289682,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Thanks for this, is 6.6.2 going to be submitted as well?",
+							"timestamp": "2023-11-22 09:00:22",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3289682,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291254,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291254,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works for me... I have been running 6.6.x since the test week with no issues.   \n\nThe enabled Default and Performance tests pass OK.\nWork Station > Asus Prime mobo, Ryzen5 5600g/AMDGPU 400 Series Chipset, (UEFI + Secure Boot) SSD's > RAID1 (ext4) running Plasma DE.",
+							"timestamp": "2023-11-23 19:25:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/88829acfa2e62e9a39447ed1f4c01514a2b456f981d16c8621513903951a3687?s=24&d=retro",
+								"email": "colin.thomson@g6avk.co.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 449,
+								"name": "g6avk",
+								"openid": "g6avk.id.fedoraproject.org"
+							},
+							"user_id": 449
+						},
+						"comment_id": 3291254,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291272,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291272,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:59:17",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291272,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3288808,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3288808,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Booted without issues, default test passed (AMD 4500U using iGPU) Thank you for the update!",
+							"timestamp": "2023-11-21 18:17:16",
+							"update_id": 565572,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/be7a7768c5f347a9d33ebb3486a83f6bb5b1b531234f68f3373f08e9cc3a837c?s=24&d=retro",
+								"email": "kioshi242@proton.me",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7765,
+								"name": "boxjellyfish",
+								"openid": "boxjellyfish.id.fedoraproject.org"
+							},
+							"user_id": 7765
+						},
+						"comment_id": 3288808,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3290993,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3290993,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 15:34:53",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3290993,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291271,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291271,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:58:25",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291273,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291273,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "The kernel and kernel-headers packages update normally, however kernel-tools and kernel-tools-libs have a conflict with the gnome-applets and gnome-flashback packages as shown below:\n\nProblem 1: problem with installed package gnome-applets-3.50.0-2.fc39.x86_64\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - cannot install the best update candidate for package kernel-tools-libs-6.5.4-300.fc39.x86_64\n Problem 2: problem with installed package gnome-flashback-3.50.0-2.fc39.x86_64\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from @System requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from fedora requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires libcpupower.so.1()(64bit), but none of the providers can be installed\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires kernel-tools-libs = 6.6.2-200.fc39, but none of the providers can be installed\n  - cannot install the best update candidate for package kernel-tools-6.5.4-300.fc39.x86_64\n",
+							"timestamp": "2023-11-23 20:00:48",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3291273,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291300,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291300,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default test passed (AMD 4500U using iGPU) Thank you for the update!",
+							"timestamp": "2023-11-23 20:44:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/be7a7768c5f347a9d33ebb3486a83f6bb5b1b531234f68f3373f08e9cc3a837c?s=24&d=retro",
+								"email": "kioshi242@proton.me",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7765,
+								"name": "boxjellyfish",
+								"openid": "boxjellyfish.id.fedoraproject.org"
+							},
+							"user_id": 7765
+						},
+						"comment_id": 3291300,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291865,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291865,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:58",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291865,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292165,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292165,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "No regressions noted; Framework laptop AMD 7840U",
+							"timestamp": "2023-11-24 20:34:46",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/e6e5c9cafd454eb7370601644154482a69b2edb027bfa6936db4a99317df1b51?s=24&d=retro",
+								"email": "dimitris@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 840,
+								"name": "dimitrisk",
+								"openid": "dimitrisk.id.fedoraproject.org"
+							},
+							"user_id": 840
+						},
+						"comment_id": 3292165,
+						"karma": 1
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292215,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292215,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 23:50:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/24a04ba286a757b4b6f972eb806b9bfcd157686bd946a131fef8b85cfed949d5?s=24&d=retro",
+								"email": "js314592@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7481,
+								"name": "js314592",
+								"openid": "js314592.id.fedoraproject.org"
+							},
+							"user_id": 7481
+						},
+						"comment_id": 3292215,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291288,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291288,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 20:32:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/22af1d551c0653e5d468576a79748c25405a018d8dc3dff3d8dad9c6fe5933a2?s=24&d=retro",
+								"email": "itrymybest80@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5222,
+								"name": "itrymybest80",
+								"openid": "itrymybest80.id.fedoraproject.org"
+							},
+							"user_id": 5222
+						},
+						"comment_id": 3291288,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291419,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291419,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works great for me, finally includes fixed preferred cores placement logic on Ryzen.",
+							"timestamp": "2023-11-23 23:58:04",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/93027731630e51c4a38473a5f5977bb6dceff144859a8be61a38c06af9a4ba9c?s=24&d=retro",
+								"email": "agurenko@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3175,
+								"name": "agurenko",
+								"openid": "agurenko.id.fedoraproject.org"
+							},
+							"user_id": 3175
+						},
+						"comment_id": 3291419,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291469,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291469,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 01:42:39",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/8364563f7a3e319a0f7ddf27dbe9945f8351d415cc7ae99cd3275291defec2b0?s=24&d=retro",
+								"email": "eugenemah@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-hams"
+									}
+								],
+								"id": 2935,
+								"name": "imabug",
+								"openid": "imabug.id.fedoraproject.org"
+							},
+							"user_id": 2935
+						},
+						"comment_id": 3291469,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291807,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291807,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "LGTM, Lenovo Yoga Slim 7 Pro 14ACH5, CPU AMD Ryzen 9 5900hx, GPU AMD Renoir, Wifi Mediatek mt7921e\n\n",
+							"timestamp": "2023-11-24 10:37:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/4ed42beaf63545d253254b9204c57986b8d58d88202671b73712dfd59ec57a0b?s=24&d=retro",
+								"email": "lmouillart@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 2343,
+								"name": "lmouillart",
+								"openid": "lmouillart.id.fedoraproject.org"
+							},
+							"user_id": 2343
+						},
+						"comment_id": 3291807,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291861,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291861,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "**Working fine**\n\nAcer Aspire Intel® Core™ i7-3632QM CPU @ 2.20GHz Graphics Processor: Mesa DRI Intel® HD Graphics 4000.    \ndriver: i915 v: kernel arch: Gen-7 wi-fi: Qualcomm Atheros AR9485 Wireless Network Adapter vendor: Lite-On     \ndriver: ath9k v: kernel.    \n\n*Default fedora btrfs filesystem.    \nSuspension working    \nPassed kernel regression tests*\n",
+							"timestamp": "2023-11-24 12:57:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/5545678c86b7a87ee5d907a87573978f63c78b2d498edda166dac72f81003f73?s=24&d=retro",
+								"email": "geraldo.simiao.kutz@gmail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-br"
+									},
+									{
+										"name": "advocates"
+									},
+									{
+										"name": "respins-sig"
+									}
+								],
+								"id": 5881,
+								"name": "geraldosimiao",
+								"openid": "geraldosimiao.id.fedoraproject.org"
+							},
+							"user_id": 5881
+						},
+						"comment_id": 3291861,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291864,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291864,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291864,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291901,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291901,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works on a whole lot of aarch64 devices including various Jetson (nane, Xaveir AGX, Xavier NX), Raspberry Pi (02W, RPi3, RPi4), Pine64, Rock960, macbin. Also tested on Intel Atom (Up2, Fitlet2).",
+							"timestamp": "2023-11-24 13:21:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291901,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292092,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292092,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on AMD Ryzen 9 5950X, 128GB ECC RAM. ",
+							"timestamp": "2023-11-24 18:16:59",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a21deb83aceb4fc6a8473e24cc6ff4a5846d7dbfb5aba218d35b143c85b863ba?s=24&d=retro",
+								"email": "moneta.mace@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 1962,
+								"name": "macemoneta",
+								"openid": "macemoneta.id.fedoraproject.org"
+							},
+							"user_id": 1962
+						},
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292166,
+							"karma": -1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292166,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "for me it's not functional.\n\nI'm not sure what part of this kernel exactly is responsible for my problems but this version (and some earlier versions - it was a on and off while fedora 38) causes multiple programs to freeze. for now i rolled back to 6.5.10-200.fc38\n\nsome of the symptoms:\n- right click in firefox or any context menu or dialog makes firefox freeze and crash. repeats after killing the process and restarting firefox. if this happened once, restarting the machine is impossible. it hangs while shutdown.\n- qemu freezes and crashes if you start any vm. same here: if you started this once, the machine hangs while shutdown. only holding power off button after a while stops the horror.\n\nactually i did not find any useful information in the logs. i don't get any useful error messages, only freezes.\n\ni don't want to rule it out that it may be a hardware problem, but some kernel versions are enabling these freezes.\n\ni'm even not sure if that's the best place for my problem, but the kernel is the only useful context i can find.",
+							"timestamp": "2023-11-24 20:56:43",
+							"update_id": 565571,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/86e62eba34ecdaea52fae2946ead22d7ca5018f5e5deb24dd8b4051abeb13834?s=24&d=retro",
+								"email": "roland@detterbeck.net",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 7965,
+								"name": "rdetterbeck",
+								"openid": "rdetterbeck.id.fedoraproject.org"
+							},
+							"user_id": 7965
+						},
+						"comment_id": 3292166,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292201,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292201,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seem OK here.  Ryzen 3700x, Rog Strix B550-F, Nvidia 2070 from rpmfusion, Intel SSD.  Secure boot disabled.",
+							"timestamp": "2023-11-24 22:39:02",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/f54d156796b8b1eb2f53ceb145575f95b4f9ee0bda93bc7e64ba1dd077641bd3?s=24&d=retro",
+								"email": "johnhoward2@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7557,
+								"name": "johnh99",
+								"openid": "johnh99.id.fedoraproject.org"
+							},
+							"user_id": 7557
+						},
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292208,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292208,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "kernel-tools-libs appears to have changed the libcpupower.so.0 to .so.1, however the underlying .so.0.0.1 is the same version as in the previous kernel-tools version.\n\nThis looks like some sort of typo has crept in.",
+							"timestamp": "2023-11-24 23:08:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3292208,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3292228,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292228,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "So far 6.6.2-201.fc39.x86_64 works fine on AMD Ryzen 7 PRO 6850U. F38 KDE Spin, up to date as of now with stable updates plus the 6.6.2-201.fc39.x86_64 kernel packages. tainted = 0. Maybe I can add a regression test for my hardware in the next days.",
+							"timestamp": "2023-11-25 00:51:55",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/537b0583eeebcf9497086ecb30fa033bde83bca72e86aca48570916b05526be4?s=24&d=retro",
+								"email": "py0xc3@posteo.net",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "docs"
+									},
+									{
+										"name": "ask-fedora"
+									}
+								],
+								"id": 7249,
+								"name": "py0xc3",
+								"openid": "py0xc3.id.fedoraproject.org"
+							},
+							"user_id": 7249
+						},
+						"comment_id": 3292228,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291877,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291877,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works fin on Ryzen 7840/780m",
+							"timestamp": "2023-11-24 13:05:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3291877,
+						"karma": 0
+					},
+					{
+						"bug_id": 2249952,
+						"comment": {
+							"id": 3291902,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291902,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on RPi4",
+							"timestamp": "2023-11-24 13:21:30",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291902,
+						"karma": 0
+					}
+				],
+				"parent": false,
+				"security": false,
+				"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
+			},
+			{
+				"bug_id": 2250955,
+				"feedback": [
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291799,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291799,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "i7-9700K(UHD Graphics 630): kernel regression test passed. Works fine for daily use.",
+							"timestamp": "2023-11-24 10:35:02",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/d7c3abfa40c4dab1bd2aa752c939a0807d47f83deaae077c0963f00f840d1188?s=24&d=retro",
+								"email": "masami256@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									}
+								],
+								"id": 200,
+								"name": "masami",
+								"openid": "masami.id.fedoraproject.org"
+							},
+							"user_id": 200
+						},
+						"comment_id": 3291799,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291322,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291322,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seems to work fine on bare-metal HP Z440, AMD RX570 with UEFI. No issues to report so far and kernel regression tests both PASS.",
+							"timestamp": "2023-11-23 21:16:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/c635c6d9baca693996f7fa7efbffc35745c73e2982a9056d4f9eed637f3d560a?s=24&d=retro",
+								"email": "mj.oppliger@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5886,
+								"name": "tharadash",
+								"openid": "tharadash.id.fedoraproject.org"
+							},
+							"user_id": 5886
+						},
+						"comment_id": 3291322,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291254,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291254,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works for me... I have been running 6.6.x since the test week with no issues.   \n\nThe enabled Default and Performance tests pass OK.\nWork Station > Asus Prime mobo, Ryzen5 5600g/AMDGPU 400 Series Chipset, (UEFI + Secure Boot) SSD's > RAID1 (ext4) running Plasma DE.",
+							"timestamp": "2023-11-23 19:25:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/88829acfa2e62e9a39447ed1f4c01514a2b456f981d16c8621513903951a3687?s=24&d=retro",
+								"email": "colin.thomson@g6avk.co.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 449,
+								"name": "g6avk",
+								"openid": "g6avk.id.fedoraproject.org"
+							},
+							"user_id": 449
+						},
+						"comment_id": 3291254,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291272,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291272,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:59:17",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291272,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3290993,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3290993,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 15:34:53",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3290993,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291271,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291271,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default & performance tests pass (KVM)",
+							"timestamp": "2023-11-23 19:58:25",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+								"email": "brett.hassall@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5390,
+								"name": "bretth",
+								"openid": "bretth.id.fedoraproject.org"
+							},
+							"user_id": 5390
+						},
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291273,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291273,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "The kernel and kernel-headers packages update normally, however kernel-tools and kernel-tools-libs have a conflict with the gnome-applets and gnome-flashback packages as shown below:\n\nProblem 1: problem with installed package gnome-applets-3.50.0-2.fc39.x86_64\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - cannot install the best update candidate for package kernel-tools-libs-6.5.4-300.fc39.x86_64\n Problem 2: problem with installed package gnome-flashback-3.50.0-2.fc39.x86_64\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from @System requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-flashback-3.50.0-2.fc39.x86_64 from fedora requires gnome-applets(x86-64), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from @System requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - package gnome-applets-3.50.0-2.fc39.x86_64 from fedora requires libcpupower.so.0()(64bit), but none of the providers can be installed\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from @System\n  - cannot install both kernel-tools-libs-6.6.2-200.fc39.x86_64 from @commandline and kernel-tools-libs-6.5.4-300.fc39.x86_64 from fedora\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires libcpupower.so.1()(64bit), but none of the providers can be installed\n  - package kernel-tools-6.6.2-200.fc39.x86_64 from @commandline requires kernel-tools-libs = 6.6.2-200.fc39, but none of the providers can be installed\n  - cannot install the best update candidate for package kernel-tools-6.5.4-300.fc39.x86_64\n",
+							"timestamp": "2023-11-23 20:00:48",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3291273,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291300,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291300,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Default test passed (AMD 4500U using iGPU) Thank you for the update!",
+							"timestamp": "2023-11-23 20:44:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/be7a7768c5f347a9d33ebb3486a83f6bb5b1b531234f68f3373f08e9cc3a837c?s=24&d=retro",
+								"email": "kioshi242@proton.me",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7765,
+								"name": "boxjellyfish",
+								"openid": "boxjellyfish.id.fedoraproject.org"
+							},
+							"user_id": 7765
+						},
+						"comment_id": 3291300,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291865,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291865,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:58",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291865,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3292165,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292165,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "No regressions noted; Framework laptop AMD 7840U",
+							"timestamp": "2023-11-24 20:34:46",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/e6e5c9cafd454eb7370601644154482a69b2edb027bfa6936db4a99317df1b51?s=24&d=retro",
+								"email": "dimitris@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 840,
+								"name": "dimitrisk",
+								"openid": "dimitrisk.id.fedoraproject.org"
+							},
+							"user_id": 840
+						},
+						"comment_id": 3292165,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3292215,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292215,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 23:50:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/24a04ba286a757b4b6f972eb806b9bfcd157686bd946a131fef8b85cfed949d5?s=24&d=retro",
+								"email": "js314592@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7481,
+								"name": "js314592",
+								"openid": "js314592.id.fedoraproject.org"
+							},
+							"user_id": 7481
+						},
+						"comment_id": 3292215,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291288,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291288,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-23 20:32:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/22af1d551c0653e5d468576a79748c25405a018d8dc3dff3d8dad9c6fe5933a2?s=24&d=retro",
+								"email": "itrymybest80@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 5222,
+								"name": "itrymybest80",
+								"openid": "itrymybest80.id.fedoraproject.org"
+							},
+							"user_id": 5222
+						},
+						"comment_id": 3291288,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291419,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291419,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works great for me, finally includes fixed preferred cores placement logic on Ryzen.",
+							"timestamp": "2023-11-23 23:58:04",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/93027731630e51c4a38473a5f5977bb6dceff144859a8be61a38c06af9a4ba9c?s=24&d=retro",
+								"email": "agurenko@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3175,
+								"name": "agurenko",
+								"openid": "agurenko.id.fedoraproject.org"
+							},
+							"user_id": 3175
+						},
+						"comment_id": 3291419,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291469,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291469,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 01:42:39",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/8364563f7a3e319a0f7ddf27dbe9945f8351d415cc7ae99cd3275291defec2b0?s=24&d=retro",
+								"email": "eugenemah@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-hams"
+									}
+								],
+								"id": 2935,
+								"name": "imabug",
+								"openid": "imabug.id.fedoraproject.org"
+							},
+							"user_id": 2935
+						},
+						"comment_id": 3291469,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291807,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291807,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "LGTM, Lenovo Yoga Slim 7 Pro 14ACH5, CPU AMD Ryzen 9 5900hx, GPU AMD Renoir, Wifi Mediatek mt7921e\n\n",
+							"timestamp": "2023-11-24 10:37:38",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/4ed42beaf63545d253254b9204c57986b8d58d88202671b73712dfd59ec57a0b?s=24&d=retro",
+								"email": "lmouillart@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 2343,
+								"name": "lmouillart",
+								"openid": "lmouillart.id.fedoraproject.org"
+							},
+							"user_id": 2343
+						},
+						"comment_id": 3291807,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291861,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291861,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "**Working fine**\n\nAcer Aspire Intel® Core™ i7-3632QM CPU @ 2.20GHz Graphics Processor: Mesa DRI Intel® HD Graphics 4000.    \ndriver: i915 v: kernel arch: Gen-7 wi-fi: Qualcomm Atheros AR9485 Wireless Network Adapter vendor: Lite-On     \ndriver: ath9k v: kernel.    \n\n*Default fedora btrfs filesystem.    \nSuspension working    \nPassed kernel regression tests*\n",
+							"timestamp": "2023-11-24 12:57:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/5545678c86b7a87ee5d907a87573978f63c78b2d498edda166dac72f81003f73?s=24&d=retro",
+								"email": "geraldo.simiao.kutz@gmail.com",
+								"groups": [
+									{
+										"name": "qa"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-br"
+									},
+									{
+										"name": "advocates"
+									},
+									{
+										"name": "respins-sig"
+									}
+								],
+								"id": 5881,
+								"name": "geraldosimiao",
+								"openid": "geraldosimiao.id.fedoraproject.org"
+							},
+							"user_id": 5881
+						},
+						"comment_id": 3291861,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291864,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291864,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "",
+							"timestamp": "2023-11-24 12:58:50",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/77d26dcd3fa63e4fd65421164a8e72f958abd2770fac1ce89acc214c7c1ed642?s=24&d=retro",
+								"email": "eifr@duck.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7536,
+								"name": "eifr0980",
+								"openid": "eifr0980.id.fedoraproject.org"
+							},
+							"user_id": 7536
+						},
+						"comment_id": 3291864,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291901,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291901,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works on a whole lot of aarch64 devices including various Jetson (nane, Xaveir AGX, Xavier NX), Raspberry Pi (02W, RPi3, RPi4), Pine64, Rock960, macbin. Also tested on Intel Atom (Up2, Fitlet2).",
+							"timestamp": "2023-11-24 13:21:11",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291901,
+						"karma": 1
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3292092,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292092,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on AMD Ryzen 9 5950X, 128GB ECC RAM. ",
+							"timestamp": "2023-11-24 18:16:59",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/a21deb83aceb4fc6a8473e24cc6ff4a5846d7dbfb5aba218d35b143c85b863ba?s=24&d=retro",
+								"email": "moneta.mace@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 1962,
+								"name": "macemoneta",
+								"openid": "macemoneta.id.fedoraproject.org"
+							},
+							"user_id": 1962
+						},
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3292201,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292201,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Seem OK here.  Ryzen 3700x, Rog Strix B550-F, Nvidia 2070 from rpmfusion, Intel SSD.  Secure boot disabled.",
+							"timestamp": "2023-11-24 22:39:02",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/f54d156796b8b1eb2f53ceb145575f95b4f9ee0bda93bc7e64ba1dd077641bd3?s=24&d=retro",
+								"email": "johnhoward2@protonmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									}
+								],
+								"id": 7557,
+								"name": "johnh99",
+								"openid": "johnh99.id.fedoraproject.org"
+							},
+							"user_id": 7557
+						},
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3292208,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292208,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "kernel-tools-libs appears to have changed the libcpupower.so.0 to .so.1, however the underlying .so.0.0.1 is the same version as in the previous kernel-tools version.\n\nThis looks like some sort of typo has crept in.",
+							"timestamp": "2023-11-24 23:08:45",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/049a576cc7c265a26c5a05a71cb023cd952e83dacdee51e6d3e966f36efa193a?s=24&d=retro",
+								"email": "brian@fenrir.org.uk",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 6532,
+								"name": "tyrbiter",
+								"openid": "tyrbiter.id.fedoraproject.org"
+							},
+							"user_id": 6532
+						},
+						"comment_id": 3292208,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3292228,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3292228,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "So far 6.6.2-201.fc39.x86_64 works fine on AMD Ryzen 7 PRO 6850U. F38 KDE Spin, up to date as of now with stable updates plus the 6.6.2-201.fc39.x86_64 kernel packages. tainted = 0. Maybe I can add a regression test for my hardware in the next days.",
+							"timestamp": "2023-11-25 00:51:55",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/537b0583eeebcf9497086ecb30fa033bde83bca72e86aca48570916b05526be4?s=24&d=retro",
+								"email": "py0xc3@posteo.net",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "docs"
+									},
+									{
+										"name": "ask-fedora"
+									}
+								],
+								"id": 7249,
+								"name": "py0xc3",
+								"openid": "py0xc3.id.fedoraproject.org"
+							},
+							"user_id": 7249
+						},
+						"comment_id": 3292228,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291877,
+							"karma": 0,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291877,
+									"karma": 1,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Works fin on Ryzen 7840/780m",
+							"timestamp": "2023-11-24 13:05:15",
+							"update_id": 566126,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/ff320e47345c66937afccc4b03a053ebdcf58d0fcc21d8eeb12ef845d55d1d62?s=24&d=retro",
+								"email": "marko.bevc@gmail.com",
+								"groups": [
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "signed_fpca"
+									}
+								],
+								"id": 3703,
+								"name": "markec",
+								"openid": "markec.id.fedoraproject.org"
+							},
+							"user_id": 3703
+						},
+						"comment_id": 3291877,
+						"karma": 0
+					},
+					{
+						"bug_id": 2250955,
+						"comment": {
+							"id": 3291902,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [
+								{
+									"comment_id": 3291902,
+									"karma": 0,
+									"testcase": {
+										"id": 372,
+										"name": "QA:Testcase kernel regression"
+									},
+									"testcase_id": 372
+								}
+							],
+							"text": "Tested on RPi4",
+							"timestamp": "2023-11-24 13:21:30",
+							"update_id": 566127,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+								"email": "pbrobinson@gmail.com",
+								"groups": [
+									{
+										"name": "proventesters"
+									},
+									{
+										"name": "provenpackager"
+									},
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "sysadmin-main"
+									},
+									{
+										"name": "releng-team"
+									},
+									{
+										"name": "fedora-s390"
+									},
+									{
+										"name": "gitfedora-arm-installer"
+									},
+									{
+										"name": "gitspin-kickstarts"
+									},
+									{
+										"name": "cvsadmin"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "fedora-ppc"
+									},
+									{
+										"name": "alt-sugar"
+									},
+									{
+										"name": "torrentadmin"
+									},
+									{
+										"name": "sysadmin-cvs"
+									},
+									{
+										"name": "gitfedora-wiki"
+									},
+									{
+										"name": "sysadmin-releng"
+									},
+									{
+										"name": "aarch64"
+									},
+									{
+										"name": "sysadmin"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "fedora-arm"
+									},
+									{
+										"name": "sysadmin-secondary"
+									},
+									{
+										"name": "iot"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "arm-qa"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "gitpungi"
+									}
+								],
+								"id": 96,
+								"name": "pbrobinson",
+								"openid": "pbrobinson.id.fedoraproject.org"
+							},
+							"user_id": 96
+						},
+						"comment_id": 3291902,
+						"karma": 0
+					}
+				],
+				"parent": false,
+				"security": false,
+				"title": "dwc3 and associated modules missing on x86-64"
+			}
+		],
+		"builds": [
+			{
+				"epoch": 0,
+				"nvr": "kernel-6.6.2-101.fc38",
+				"release_id": 66,
+				"signed": true,
+				"type": "rpm"
+			},
+			{
+				"epoch": 0,
+				"nvr": "kernel-headers-6.6.2-101.fc38",
+				"release_id": 66,
+				"signed": true,
+				"type": "rpm"
+			},
+			{
+				"epoch": 0,
+				"nvr": "kernel-tools-6.6.2-100.fc38",
+				"release_id": 66,
+				"signed": true,
+				"type": "rpm"
+			}
+		],
+		"close_bugs": true,
+		"comments": [
+			{
+				"bug_feedback": [],
+				"id": 3290931,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been submitted for testing by jforbes. ",
+				"timestamp": "2023-11-23 14:11:15",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3290932,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update's test gating status has been changed to 'waiting'.",
+				"timestamp": "2023-11-23 14:11:17",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291022,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update's test gating status has been changed to 'passed'.",
+				"timestamp": "2023-11-23 15:57:10",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [
+					{
+						"bug": {
+							"bug_id": 2213132,
+							"parent": true,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
+						},
+						"bug_id": 2213132,
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2213133,
+							"parent": false,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
+						},
+						"bug_id": 2213133,
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2249952,
+							"parent": false,
+							"security": false,
+							"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
+						},
+						"bug_id": 2249952,
+						"comment_id": 3291271,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2250955,
+							"parent": false,
+							"security": false,
+							"title": "dwc3 and associated modules missing on x86-64"
+						},
+						"bug_id": 2250955,
+						"comment_id": 3291271,
+						"karma": 0
+					}
+				],
+				"id": 3291271,
+				"karma": 1,
+				"karma_critpath": 0,
+				"testcase_feedback": [
+					{
+						"comment_id": 3291271,
+						"karma": 1,
+						"testcase": {
+							"id": 372,
+							"name": "QA:Testcase kernel regression"
+						},
+						"testcase_id": 372
+					}
+				],
+				"text": "Default & performance tests pass (KVM)",
+				"timestamp": "2023-11-23 19:58:25",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://seccdn.libravatar.org/avatar/a921f7850ec7aae0c99cd21cdaa16571f7f77d0df3d1594be546ab24423eb4af?s=24&d=retro",
+					"email": "brett.hassall@gmail.com",
+					"groups": [
+						{
+							"name": "ipausers"
+						},
+						{
+							"name": "signed_fpca"
+						}
+					],
+					"id": 5390,
+					"name": "bretth",
+					"openid": "bretth.id.fedoraproject.org"
+				},
+				"user_id": 5390
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291559,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been pushed to testing.",
+				"timestamp": "2023-11-24 02:19:09",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [
+					{
+						"bug": {
+							"bug_id": 2213132,
+							"parent": true,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
+						},
+						"bug_id": 2213132,
+						"comment_id": 3291902,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2213133,
+							"parent": false,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
+						},
+						"bug_id": 2213133,
+						"comment_id": 3291902,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2249952,
+							"parent": false,
+							"security": false,
+							"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
+						},
+						"bug_id": 2249952,
+						"comment_id": 3291902,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2250955,
+							"parent": false,
+							"security": false,
+							"title": "dwc3 and associated modules missing on x86-64"
+						},
+						"bug_id": 2250955,
+						"comment_id": 3291902,
+						"karma": 0
+					}
+				],
+				"id": 3291902,
+				"karma": 1,
+				"karma_critpath": 0,
+				"testcase_feedback": [
+					{
+						"comment_id": 3291902,
+						"karma": 0,
+						"testcase": {
+							"id": 372,
+							"name": "QA:Testcase kernel regression"
+						},
+						"testcase_id": 372
+					}
+				],
+				"text": "Tested on RPi4",
+				"timestamp": "2023-11-24 13:21:30",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://seccdn.libravatar.org/avatar/861506b8dba9fe9ee12a83ce2cd7c6fff15091298f9f1a4e6149876490c53e9b?s=24&d=retro",
+					"email": "pbrobinson@gmail.com",
+					"groups": [
+						{
+							"name": "proventesters"
+						},
+						{
+							"name": "provenpackager"
+						},
+						{
+							"name": "packager"
+						},
+						{
+							"name": "bodhiadmin"
+						},
+						{
+							"name": "sysadmin-main"
+						},
+						{
+							"name": "releng-team"
+						},
+						{
+							"name": "fedora-s390"
+						},
+						{
+							"name": "gitfedora-arm-installer"
+						},
+						{
+							"name": "gitspin-kickstarts"
+						},
+						{
+							"name": "cvsadmin"
+						},
+						{
+							"name": "fedorabugs"
+						},
+						{
+							"name": "fedora-ppc"
+						},
+						{
+							"name": "alt-sugar"
+						},
+						{
+							"name": "torrentadmin"
+						},
+						{
+							"name": "sysadmin-cvs"
+						},
+						{
+							"name": "gitfedora-wiki"
+						},
+						{
+							"name": "sysadmin-releng"
+						},
+						{
+							"name": "aarch64"
+						},
+						{
+							"name": "sysadmin"
+						},
+						{
+							"name": "signed_fpca"
+						},
+						{
+							"name": "fedora-arm"
+						},
+						{
+							"name": "sysadmin-secondary"
+						},
+						{
+							"name": "iot"
+						},
+						{
+							"name": "ipausers"
+						},
+						{
+							"name": "arm-qa"
+						},
+						{
+							"name": "fedora-contributor"
+						},
+						{
+							"name": "gitpungi"
+						}
+					],
+					"id": 96,
+					"name": "pbrobinson",
+					"openid": "pbrobinson.id.fedoraproject.org"
+				},
+				"user_id": 96
+			},
+			{
+				"bug_feedback": [],
+				"id": 3291903,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update can be pushed to stable now if the maintainer wishes",
+				"timestamp": "2023-11-24 13:21:36",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [
+					{
+						"bug": {
+							"bug_id": 2213132,
+							"parent": true,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
+						},
+						"bug_id": 2213132,
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2213133,
+							"parent": false,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
+						},
+						"bug_id": 2213133,
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2249952,
+							"parent": false,
+							"security": false,
+							"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
+						},
+						"bug_id": 2249952,
+						"comment_id": 3292092,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2250955,
+							"parent": false,
+							"security": false,
+							"title": "dwc3 and associated modules missing on x86-64"
+						},
+						"bug_id": 2250955,
+						"comment_id": 3292092,
+						"karma": 0
+					}
+				],
+				"id": 3292092,
+				"karma": 1,
+				"karma_critpath": 0,
+				"testcase_feedback": [
+					{
+						"comment_id": 3292092,
+						"karma": 1,
+						"testcase": {
+							"id": 372,
+							"name": "QA:Testcase kernel regression"
+						},
+						"testcase_id": 372
+					}
+				],
+				"text": "Tested on AMD Ryzen 9 5950X, 128GB ECC RAM. ",
+				"timestamp": "2023-11-24 18:16:59",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://seccdn.libravatar.org/avatar/a21deb83aceb4fc6a8473e24cc6ff4a5846d7dbfb5aba218d35b143c85b863ba?s=24&d=retro",
+					"email": "moneta.mace@gmail.com",
+					"groups": [
+						{
+							"name": "ipausers"
+						}
+					],
+					"id": 1962,
+					"name": "macemoneta",
+					"openid": "macemoneta.id.fedoraproject.org"
+				},
+				"user_id": 1962
+			},
+			{
+				"bug_feedback": [
+					{
+						"bug": {
+							"bug_id": 2213132,
+							"parent": true,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
+						},
+						"bug_id": 2213132,
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2213133,
+							"parent": false,
+							"security": true,
+							"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
+						},
+						"bug_id": 2213133,
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2249952,
+							"parent": false,
+							"security": false,
+							"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
+						},
+						"bug_id": 2249952,
+						"comment_id": 3292201,
+						"karma": 0
+					},
+					{
+						"bug": {
+							"bug_id": 2250955,
+							"parent": false,
+							"security": false,
+							"title": "dwc3 and associated modules missing on x86-64"
+						},
+						"bug_id": 2250955,
+						"comment_id": 3292201,
+						"karma": 0
+					}
+				],
+				"id": 3292201,
+				"karma": 1,
+				"karma_critpath": 0,
+				"testcase_feedback": [
+					{
+						"comment_id": 3292201,
+						"karma": 1,
+						"testcase": {
+							"id": 372,
+							"name": "QA:Testcase kernel regression"
+						},
+						"testcase_id": 372
+					}
+				],
+				"text": "Seem OK here.  Ryzen 3700x, Rog Strix B550-F, Nvidia 2070 from rpmfusion, Intel SSD.  Secure boot disabled.",
+				"timestamp": "2023-11-24 22:39:02",
+				"update_id": 566127,
+				"user": {
+					"avatar": "https://seccdn.libravatar.org/avatar/f54d156796b8b1eb2f53ceb145575f95b4f9ee0bda93bc7e64ba1dd077641bd3?s=24&d=retro",
+					"email": "johnhoward2@protonmail.com",
+					"groups": [
+						{
+							"name": "ipausers"
+						}
+					],
+					"id": 7557,
+					"name": "johnh99",
+					"openid": "johnh99.id.fedoraproject.org"
+				},
+				"user_id": 7557
+			}
+		],
+		"compose": null,
+		"content_type": "rpm",
+		"critpath": true,
+		"critpath_groups": "critical-path-base critical-path-build critical-path-compose",
+		"date_approved": "2023-11-24 22:39:02",
+		"date_modified": null,
+		"date_pushed": "2023-11-24 02:18:31",
+		"date_stable": null,
+		"date_submitted": "2023-11-23 14:11:15",
+		"date_testing": "2023-11-24 02:18:31",
+		"display_name": "",
+		"from_tag": null,
+		"karma": 4,
+		"locked": false,
+		"meets_testing_requirements": true,
+		"notes": "The 6.6.2 kernel rebase contains new features, additional hardware support, and a number of important fixes across the tree.",
+		"pushed": true,
+		"release": {
+			"branch": "f38",
+			"candidate_tag": "f38-updates-candidate",
+			"composed_by_bodhi": true,
+			"create_automatic_updates": false,
+			"dist_tag": "f38",
+			"eol": "2024-05-14",
+			"id_prefix": "FEDORA",
+			"long_name": "Fedora 38",
+			"mail_template": "fedora_errata_template",
+			"name": "F38",
+			"override_tag": "f38-override",
+			"package_manager": "dnf",
+			"pending_signing_tag": "f38-signing-pending",
+			"pending_stable_tag": "f38-updates-pending",
+			"pending_testing_tag": "f38-updates-testing-pending",
+			"stable_tag": "f38-updates",
+			"state": "current",
+			"testing_repository": "updates-testing",
+			"testing_tag": "f38-updates-testing",
+			"version": "38"
+		},
+		"request": null,
+		"require_bugs": true,
+		"require_testcases": true,
+		"requirements": "",
+		"severity": "unspecified",
+		"stable_days": 14,
+		"stable_karma": 3,
+		"status": "testing",
+		"suggest": "unspecified",
+		"test_cases": [
+			{
+				"id": 372,
+				"name": "QA:Testcase kernel regression"
+			}
+		],
+		"test_gating_status": "passed",
+		"title": "kernel-6.6.2-101.fc38 kernel-headers-6.6.2-101.fc38 kernel-tools-6.6.2-100.fc38",
+		"type": "security",
+		"unstable_karma": -3,
+		"updateid": "FEDORA-2023-bd14c83780",
+		"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2023-bd14c83780",
+		"user": {
+			"avatar": "https://seccdn.libravatar.org/avatar/03ead14065750aad5e4eb5ee42f7c60fb1e50ea2f5ba2dc9a89639bc381796da?s=24&d=retro",
+			"email": "jforbes@redhat.com",
+			"groups": [
+				{
+					"name": "proventesters"
+				},
+				{
+					"name": "provenpackager"
+				},
+				{
+					"name": "packager"
+				},
+				{
+					"name": "fedorabugs"
+				},
+				{
+					"name": "ipausers"
+				},
+				{
+					"name": "gitkernel-tests"
+				},
+				{
+					"name": "hosted-content"
+				},
+				{
+					"name": "signed_fpca"
+				},
+				{
+					"name": "fedora-contributor"
+				},
+				{
+					"name": "gitqemu-kvm-fedora"
+				},
+				{
+					"name": "sysadmin-kernel"
+				},
+				{
+					"name": "cla_redhat"
+				},
+				{
+					"name": "security-team"
+				}
+			],
+			"id": 910,
+			"name": "jforbes",
+			"openid": "jforbes.id.fedoraproject.org"
+		},
+		"version_hash": "5b27cbb7759627481e69347e1de5901f1e02537d"
+	}
+]

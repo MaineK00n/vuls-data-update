@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2209114</bug_id>
+          <alias>CVE-2023-2602</alias>
+          <creation_ts>2023-05-22 16:54:30 +0000</creation_ts>
+          <short_desc>CVE-2023-2602 libcap: Memory Leak on pthread_create() Error</short_desc>
+          <delta_ts>2023-11-21 11:41:39 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Other</classification>
+          <product>Security Response</product>
+          <component>vulnerability</component>
+          <version>unspecified</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          <resolution/>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security</keywords>
+          <priority>low</priority>
+          <bug_severity>low</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2210641</dependson>
+    
+    
+    <dependson>2210643</dependson>
+    
+    
+    <dependson>2210645</dependson>
+    
+    
+    <dependson>2210644</dependson>
+    
+    
+    <dependson>2222197</dependson>
+    
+    
+    <dependson>2222198</dependson>
+          <blocked>2207492</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter>juneau</reporter>
+          <assigned_to name="Nobody">nobody</assigned_to>
+          <cc>ansasaki</cc>
+    
+    
+    <cc>bdettelb</cc>
+    
+    
+    <cc>jmitchel</cc>
+    
+    
+    <cc>jtanner</cc>
+    
+    
+    <cc>kshier</cc>
+    
+    
+    <cc>lgriffin</cc>
+    
+    
+    <cc>rsroka</cc>
+          
+          
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes>A vulnerability was found in the pthread_create() function in libcap. This issue may allow a malicious actor to use cause __real_pthread_create() to return an error, which can exhaust the process memory.</cf_release_notes>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          <external_bugs name="Red Hat Product Errata">RHSA-2023:4524</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:5071</external_bugs>
+    
+    
+    
+    <external_bugs name="Red Hat Product Errata">RHSA-2023:7400</external_bugs>
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>17308509</commentid>
+    <comment_count>0</comment_count>
+    <who name="">juneau</who>
+    <bug_when>2023-05-22 16:54:30 +0000</bug_when>
+    <thetext>Original Report:
+
+Source: libcap2
+Version: 1:2.66-3
+Severity: important
+Tags: security upstream
+X-Debbugs-Cc: carnil@debian.org, Debian Security Team &lt;team@security.debian.org&gt;
+
+The following vulnerabilities were published for libcap2.
+
+CVE-2023-2602[0]:
+| LCAP-CR-23-01 (Correct the check of pthread_create()'s return value)
+
+[0] https://security-tracker.debian.org/tracker/CVE-2023-2602
+    https://www.cve.org/CVERecord?id=CVE-2023-2602
+
+fixed in 1:2.66-4</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17331217</commentid>
+    <comment_count>2</comment_count>
+    <who name="Sandipan Roy">saroy</who>
+    <bug_when>2023-05-29 04:16:04 +0000</bug_when>
+    <thetext>Created libcap tracking bugs for this issue:
+
+Affects: fedora-37 [bug 2210641]
+Affects: fedora-38 [bug 2210643]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17518874</commentid>
+    <comment_count>7</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-08-08 08:19:56 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 8
+
+Via RHSA-2023:4524 https://access.redhat.com/errata/RHSA-2023:4524</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17604046</commentid>
+    <comment_count>8</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-09-12 10:13:08 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 9
+
+Via RHSA-2023:5071 https://access.redhat.com/errata/RHSA-2023:5071</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17769432</commentid>
+    <comment_count>10</comment_count>
+    <who name="errata-xmlrpc">errata-xmlrpc</who>
+    <bug_when>2023-11-21 11:41:37 +0000</bug_when>
+    <thetext>This issue has been addressed in the following products:
+
+  Red Hat Enterprise Linux 8.6 Extended Update Support
+
+Via RHSA-2023:7400 https://access.redhat.com/errata/RHSA-2023:7400</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

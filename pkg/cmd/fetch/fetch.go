@@ -16,6 +16,7 @@ import (
 	debianOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/gentoo"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/netbsd"
@@ -435,27 +436,31 @@ func newCmdFetchEPEL() *cobra.Command {
 
 func newCmdFetchFedora() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "fedora"),
-		retry: 3,
+		dir:         filepath.Join(util.CacheDir(), "fedora"),
+		retry:       3,
+		concurrency: 5,
+		wait:        1,
 	}
 
 	cmd := &cobra.Command{
 		Use:   "fedora",
 		Short: "Fetch Fedora data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch fedora
+			$ vuls-data-update fetch fedora F39
 		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := fedora.Fetch(fedora.WithDir(options.dir), fedora.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch fedora")
-			// 	}
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := fedora.Fetch(args, fedora.WithDir(options.dir), fedora.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch fedora")
+			}
 			return nil
 		},
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fedora"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency process")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }

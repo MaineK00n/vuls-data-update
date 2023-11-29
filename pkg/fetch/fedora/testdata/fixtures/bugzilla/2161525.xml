@@ -1,0 +1,2547 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2161525</bug_id>
+          
+          <creation_ts>2023-01-17 08:04:20 +0000</creation_ts>
+          <short_desc>Review Request: jupyterlab - JupyterLab computational environment</short_desc>
+          <delta_ts>2023-03-15 13:16:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>Package Review</component>
+          <version>rawhide</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>RAWHIDE</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords/>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2161519</dependson>
+    
+    
+    <dependson>2161520</dependson>
+    
+    
+    <dependson>2161522</dependson>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lumír Balhar">lbalhar</reporter>
+          <assigned_to name="Karolina Surma">ksurma</assigned_to>
+          <cc>ksurma</cc>
+    
+    
+    <cc>mhroncok</cc>
+    
+    
+    <cc>package-review</cc>
+    
+    
+    <cc>torsava</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-03-15 13:16:54</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      <flag name="fedora-review" id="5809804" type_id="65" status="+" setter="ksurma"/>
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16973149</commentid>
+    <comment_count>0</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-17 08:04:20 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a32-1.fc37.src.rpm
+Description: JupyterLab is the next-generation user interface for Project Jupyter offering all the familiar building blocks of the classic Jupyter
+Notebook (notebook, terminal, text editor, file browser, rich outputs, etc.)
+in a flexible and powerful user interface.
+Fedora Account System Username: lbalhar
+
+I'm testing this package together with many more in COPR designed to package Jupyterlab and the latest Python notebook into Fedora: https://copr.fedorainfracloud.org/coprs/lbalhar/notebook/builds/</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16973162</commentid>
+    <comment_count>1</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-17 08:08:51 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5239303
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161525-python-jupyterlab/fedora-rawhide-x86_64/05239303-python-jupyterlab/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003086</commentid>
+    <comment_count>2</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-27 20:40:28 +0000</bug_when>
+    <thetext>Updated to alpha 33.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a33-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003094</commentid>
+    <comment_count>3</comment_count>
+      <attachid>1940807</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 20:44:28 +0000</bug_when>
+    <thetext>Created attachment 1940807
+The .spec file difference from Copr build 5239303 to 5334341</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17003095</commentid>
+    <comment_count>4</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-27 20:44:30 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5334341
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161525-python-jupyterlab/fedora-rawhide-x86_64/05334341-python-jupyterlab/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17006621</commentid>
+    <comment_count>5</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-30 12:03:03 +0000</bug_when>
+    <thetext>Before the deps are available in rawhide, I've looked at the spec only.
+
+
+
+
+This is used 3 times in the spec file: 4.0.0%{prerel}
+
+Maybe you might want to define a macro for it. But it's probably fine as it is :/ I suspect that once this goes out of pre-releases, this will be replaced simply with %{version} forever.
+
+
+
+&gt; BuildRequires:  nodejs
+&gt; BuildRequires:  npm
+
+This makes me ask: Are there no bundled javascript libraries in this package?
+
+
+
+&gt; pytest-tornasync will never be available in Fedora
+
+Why never? If the comment said "is not available" I would be less curious :D
+
+
+
+&gt; upstream will switch to pytest-jupyter soon
+
+Any links for this that could be added to the spec?
+
+
+
+&gt; %config(noreplace) %{_sysconfdir}/jupyter/jupyter_notebook_config.d/jupyterlab.json
+&gt; %config(noreplace) %{_sysconfdir}/jupyter/jupyter_server_config.d/jupyterlab.json
+
+Please add Requires: python-jupyter-filesystem</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17007018</commentid>
+    <comment_count>6</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-30 14:17:02 +0000</bug_when>
+    <thetext>(In reply to Miro Hrončok from comment #5)
+&gt; Before the deps are available in rawhide, I've looked at the spec only.
+&gt; 
+&gt; 
+&gt; This is used 3 times in the spec file: 4.0.0%{prerel}
+&gt; 
+&gt; Maybe you might want to define a macro for it. But it's probably fine as it
+&gt; is :/ I suspect that once this goes out of pre-releases, this will be
+&gt; replaced simply with %{version} forever.
+
+It will, yes.
+
+&gt; 
+&gt; &gt; BuildRequires:  nodejs
+&gt; &gt; BuildRequires:  npm
+&gt; 
+&gt; This makes me ask: Are there no bundled javascript libraries in this package?
+
+I don't think so. None of the js files look like a bundled library to me.
+
+&gt; 
+&gt; &gt; pytest-tornasync will never be available in Fedora
+&gt; 
+&gt; Why never? If the comment said "is not available" I would be less curious :D
+
+Upstream is dead and pytest-jupyter contains some parts of tornasync now.
+
+&gt; 
+&gt; &gt; upstream will switch to pytest-jupyter soon
+&gt; 
+&gt; Any links for this that could be added to the spec?
+
+Link added.
+
+&gt; 
+&gt; &gt; %config(noreplace) %{_sysconfdir}/jupyter/jupyter_notebook_config.d/jupyterlab.json
+&gt; &gt; %config(noreplace) %{_sysconfdir}/jupyter/jupyter_server_config.d/jupyterlab.json
+&gt; 
+&gt; Please add Requires: python-jupyter-filesystem
+
+Fixed.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a33-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17007025</commentid>
+    <comment_count>7</comment_count>
+      <attachid>1941094</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-30 14:20:51 +0000</bug_when>
+    <thetext>Created attachment 1941094
+The .spec file difference from Copr build 5334341 to 5363541</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17007026</commentid>
+    <comment_count>8</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-30 14:20:53 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5363541
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2161525-python-jupyterlab/fedora-rawhide-x86_64/05363541-python-jupyterlab/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17045354</commentid>
+    <comment_count>9</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-02-14 10:16:43 +0000</bug_when>
+    <thetext>I've fixed License and added all bundled Provides. There are now 303 bundled JS libs. There is only one package right now containing more bundled libs than this one - grafana with 540 bundled libs.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a33-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17045380</commentid>
+    <comment_count>10</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-02-14 10:27:22 +0000</bug_when>
+    <thetext>WOW.
+
+What is the meaning of @ in the bundled provides?</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17045395</commentid>
+    <comment_count>11</comment_count>
+      <attachid>1944063</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-02-14 10:32:29 +0000</bug_when>
+    <thetext>Created attachment 1944063
+The .spec file difference from Copr build 5363541 to 5525076</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17080527</commentid>
+    <comment_count>12</comment_count>
+    <who name="Karolina Surma">ksurma</who>
+    <bug_when>2023-02-28 11:45:58 +0000</bug_when>
+    <thetext>fedora-review complains about the non-marked license file in jupyterlab/static, there is more of them
+
+$ ls | grep 'LICEN[CS]E'
+1036.f6c57d1265adca83594e.js.LICENSE.txt
+3807.1801a45778a3aa52b8b9.js.LICENSE.txt
+3935.200aeb85f6884cbd976d.js.LICENSE.txt
+4008.9030f3b9de5aecde1790.js.LICENSE.txt
+5096.d02334b201bf65864ddb.js.LICENSE.txt
+7294.78897ca348581a9dae29.js.LICENSE.txt
+7451.e06be24e1fee9b2e4387.js.LICENSE.txt
+911.f79cede096e683d1ea34.js.LICENSE.txt
+9747.56b3d4353668e791b7de.js.LICENSE.txt</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17080570</commentid>
+    <comment_count>13</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-02-28 12:10:11 +0000</bug_when>
+    <thetext>If desired, prepending the lines in %{pyproject_files} with %license could be done via a sed -i call.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17080753</commentid>
+    <comment_count>14</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-02-28 13:27:05 +0000</bug_when>
+    <thetext>I've added this:
+
+# Add %%license to some bundled LICENSE.txt files
+sed -i "s/\(.*\.LICEN[SC]E\.txt\)/%%license \1/" %{pyproject_files}
+
+And the result is:
+$ rpm -qLp python3-jupyterlab-4.0.0\~a33-1.fc39.noarch.rpm 
+/usr/lib/python3.11/site-packages/jupyterlab-4.0.0a33.dist-info/licenses/LICENSE
+/usr/lib/python3.11/site-packages/jupyterlab/static/1036.f6c57d1265adca83594e.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/3807.1801a45778a3aa52b8b9.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/3935.200aeb85f6884cbd976d.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/4008.9030f3b9de5aecde1790.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/5096.d02334b201bf65864ddb.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/7294.78897ca348581a9dae29.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/7451.e06be24e1fee9b2e4387.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/911.f79cede096e683d1ea34.js.LICENSE.txt
+/usr/lib/python3.11/site-packages/jupyterlab/static/9747.56b3d4353668e791b7de.js.LICENSE.txt
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a33-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17080825</commentid>
+    <comment_count>15</comment_count>
+      <attachid>1946927</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-02-28 13:39:47 +0000</bug_when>
+    <thetext>Created attachment 1946927
+The .spec file difference from Copr build 5525076 to 5579097</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17081293</commentid>
+    <comment_count>16</comment_count>
+    <who name="Karolina Surma">ksurma</who>
+    <bug_when>2023-02-28 15:40:38 +0000</bug_when>
+    <thetext>I don't know whether this is required or just the oversensitivity of the fedora-review:
+
+- If (and only if) the source package includes the text of the license(s)
+  in its own file, then that file, containing the text of the license(s)
+  for the package is included in %license.
+  Note: License file third-party-licenses.json is not marked as %license
+  See: https://docs.fedoraproject.org/en-US/packaging-
+  guidelines/LicensingGuidelines/#_license_text
+
+
+[?]: Avoid bundling fonts in non-fonts packages.
+     Note: Package contains font files
+
+in jupyterlab/static:
+
+$ ls | grep -v js
+373c04fd2418f5c77eea.eot
+3f6d3488cf65374f6f67.woff
+79d088064beb3826054f.eot
+8ea8791754915a898a31.woff2
+9674eb1bd55047179038.svg
+9834b82ad26e2a37583d.woff2
+a3b9817780214caf01e8.svg
+af6397503fcefbd61397.ttf
+be0a084962d8066884f7.svg
+cb9e9e693192413cde2b.woff
+cda59d6efffa685830fd.ttf
+e4299464e7b012968eed.eot
+e42a88444448ac3d6054.woff2
+e8711bbb871afd8e9dea.ttf
+f9217f66874b0c01cd8c.woff
+
+Packaging guidelines are rather short on the matter and it's unclear to me what applies in this case. 
+For example in the Web Assets page there's an explicit ban on WOFF font formats (https://docs.fedoraproject.org/en-US/packaging-guidelines/Web_Assets/).
+These files don't land in the %{_datadir}/web-assets though. I don't know what to suggest here :(.
+
+
+Also, rpmlint prints out a long list of errors, some of them may be moot, but some look like something to fix.
+
+python3-jupyterlab.noarch: E: zero-length /usr/lib/python3.11/site-packages/jupyterlab/themes/@jupyterlab/theme-dark-extension/index.js
+python3-jupyterlab.noarch: E: zero-length /usr/lib/python3.11/site-packages/jupyterlab/themes/@jupyterlab/theme-light-extension/index.js
+python3-jupyterlab.noarch: E: zero-length /usr/share/jupyter/lab/themes/@jupyterlab/theme-dark-extension/index.js
+python3-jupyterlab.noarch: E: zero-length /usr/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.js
+python3-jupyterlab.noarch: E: non-executable-script /usr/lib/python3.11/site-packages/jupyterlab/node-version-check.js 644 /usr/bin/env node
+python3-jupyterlab.noarch: E: non-executable-script /usr/lib/python3.11/site-packages/jupyterlab/staging/yarn.js 644 /usr/bin/env node
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jlpm
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-lab
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labextension
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labhub
+python3-jupyterlab.noarch: W: hidden-file-or-dir /usr/lib/python3.11/site-packages/jupyterlab/staging/.yarnrc
+python3-jupyterlab.noarch: W: files-duplicate /usr/lib/python3.11/site-packages/jupyterlab/tests/mock_packages/interop/consumer/jlab_mock_consumer.py /usr/lib/python3.11/site-packages/jupyterlab/tests/mock_packages/extension/mock_package.py
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/application-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/apputils-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/cell-toolbar-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/codemirror-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/collaboration-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/completer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/console-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/csvviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/debugger-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/docmanager-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/documentsearch-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/extensionmanager-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/filebrowser-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/fileeditor-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/help-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/htmlviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/hub-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/imageviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/inspector-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/launcher-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/logconsole-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/lsp-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/mainmenu-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/markdownviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/metadataform-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/notebook-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/running-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/settingeditor-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/shortcuts-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/statusbar-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/terminal-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/toc-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/tooltip-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/translation-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/application-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/apputils-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/cell-toolbar-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/codemirror-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/collaboration-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/completer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/console-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/csvviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/debugger-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/docmanager-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/documentsearch-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/extensionmanager-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/filebrowser-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/fileeditor-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/help-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/htmlviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/hub-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/imageviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/inspector-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/launcher-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/logconsole-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/lsp-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/mainmenu-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/markdownviewer-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/metadataform-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/notebook-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/running-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/settingeditor-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/shortcuts-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/statusbar-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/terminal-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/toc-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/tooltip-extension/package.json.orig
+python3-jupyterlab.noarch: E: backup-file-in-package /usr/share/jupyter/lab/schemas/@jupyterlab/translation-extension/package.json.orig</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17081427</commentid>
+    <comment_count>17</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-02-28 16:14:33 +0000</bug_when>
+    <thetext>(In reply to Karolina Surma from comment #16)
+&gt; I don't know whether this is required or just the oversensitivity of the
+&gt; fedora-review:
+&gt; 
+&gt; - If (and only if) the source package includes the text of the license(s)
+&gt;   in its own file, then that file, containing the text of the license(s)
+&gt;   for the package is included in %license.
+&gt;   Note: License file third-party-licenses.json is not marked as %license
+&gt;   See: https://docs.fedoraproject.org/en-US/packaging-
+&gt;   guidelines/LicensingGuidelines/#_license_text
+
+The file jupyterlab/static/third-party-licenses.json contains licenses for bundled packages and those are already mentioned in the License tag in the spec. Do you think that including an 1800-line-long JSON file with some of the licenses on a single line has any additional value?
+
+&gt; [?]: Avoid bundling fonts in non-fonts packages.
+&gt;      Note: Package contains font files
+&gt; 
+&gt; in jupyterlab/static:
+&gt; 
+&gt; $ ls | grep -v js
+&gt; 373c04fd2418f5c77eea.eot
+&gt; 3f6d3488cf65374f6f67.woff
+&gt; 79d088064beb3826054f.eot
+&gt; 8ea8791754915a898a31.woff2
+&gt; 9674eb1bd55047179038.svg
+&gt; 9834b82ad26e2a37583d.woff2
+&gt; a3b9817780214caf01e8.svg
+&gt; af6397503fcefbd61397.ttf
+&gt; be0a084962d8066884f7.svg
+&gt; cb9e9e693192413cde2b.woff
+&gt; cda59d6efffa685830fd.ttf
+&gt; e4299464e7b012968eed.eot
+&gt; e42a88444448ac3d6054.woff2
+&gt; e8711bbb871afd8e9dea.ttf
+&gt; f9217f66874b0c01cd8c.woff
+&gt; 
+&gt; Packaging guidelines are rather short on the matter and it's unclear to me
+&gt; what applies in this case. 
+&gt; For example in the Web Assets page there's an explicit ban on WOFF font
+&gt; formats
+&gt; (https://docs.fedoraproject.org/en-US/packaging-guidelines/Web_Assets/).
+&gt; These files don't land in the %{_datadir}/web-assets though. I don't know
+&gt; what to suggest here :(.
+
+The problem is that those font files are somehow built in a similar way as the other static files so I don't think it would be easy to just remove them, require a package containing the fonts and add a symlink somewhere. I did that in python-nbclassic, see https://src.fedoraproject.org/rpms/python-nbclassic/blob/rawhide/f/python-nbclassic.spec#_112 But I have no idea how to do it here. I can remove the woff fonts and we'll see what happens.
+
+&gt; Also, rpmlint prints out a long list of errors, some of them may be moot,
+&gt; but some look like something to fix.
+&gt; 
+&gt; python3-jupyterlab.noarch: E: zero-length
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/themes/@jupyterlab/theme-dark-
+&gt; extension/index.js
+&gt; python3-jupyterlab.noarch: E: zero-length
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/themes/@jupyterlab/theme-light-
+&gt; extension/index.js
+&gt; python3-jupyterlab.noarch: E: zero-length
+&gt; /usr/share/jupyter/lab/themes/@jupyterlab/theme-dark-extension/index.js
+&gt; python3-jupyterlab.noarch: E: zero-length
+&gt; /usr/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.js
+&gt; python3-jupyterlab.noarch: E: non-executable-script
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/node-version-check.js 644
+&gt; /usr/bin/env node
+&gt; python3-jupyterlab.noarch: E: non-executable-script
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/staging/yarn.js 644
+&gt; /usr/bin/env node
+&gt; python3-jupyterlab.noarch: W: no-manual-page-for-binary jlpm
+&gt; python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-lab
+&gt; python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labextension
+&gt; python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labhub
+&gt; python3-jupyterlab.noarch: W: hidden-file-or-dir
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/staging/.yarnrc
+&gt; python3-jupyterlab.noarch: W: files-duplicate
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/tests/mock_packages/interop/
+&gt; consumer/jlab_mock_consumer.py
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/tests/mock_packages/extension/
+&gt; mock_package.py
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/application-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/apputils-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/cell-
+&gt; toolbar-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/codemirror-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/
+&gt; collaboration-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/completer-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/console-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/csvviewer-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/debugger-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/docmanager-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/
+&gt; documentsearch-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/
+&gt; extensionmanager-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/filebrowser-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/fileeditor-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/help-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/htmlviewer-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/hub-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/imageviewer-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/inspector-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/launcher-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/logconsole-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/lsp-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/mainmenu-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/
+&gt; markdownviewer-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/
+&gt; metadataform-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/notebook-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/running-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/
+&gt; settingeditor-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/shortcuts-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/statusbar-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/terminal-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/toc-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/tooltip-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/lib/python3.11/site-packages/jupyterlab/schemas/@jupyterlab/translation-
+&gt; extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/application-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/apputils-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/cell-toolbar-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/codemirror-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/collaboration-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/completer-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/console-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/csvviewer-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/debugger-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/docmanager-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/documentsearch-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/extensionmanager-extension/
+&gt; package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/filebrowser-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/fileeditor-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/help-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/htmlviewer-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/hub-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/imageviewer-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/inspector-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/launcher-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/logconsole-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/lsp-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/mainmenu-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/markdownviewer-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/metadataform-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/notebook-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/running-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/settingeditor-extension/package.
+&gt; json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/shortcuts-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/statusbar-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/terminal-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/toc-extension/package.json.orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/tooltip-extension/package.json.
+&gt; orig
+&gt; python3-jupyterlab.noarch: E: backup-file-in-package
+&gt; /usr/share/jupyter/lab/schemas/@jupyterlab/translation-extension/package.
+&gt; json.orig
+
+I can remove all the hidden, empty, and backup files and see what impact it'll have.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17081708</commentid>
+    <comment_count>18</comment_count>
+    <who name="Karolina Surma">ksurma</who>
+    <bug_when>2023-02-28 17:25:53 +0000</bug_when>
+    <thetext>A nitpick from the metadata inspection: pyproject.toml contains `pytest-cov` which is detected by macros and pulled as a build-time dependency.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17081831</commentid>
+    <comment_count>19</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-02-28 17:50:59 +0000</bug_when>
+    <thetext>(In reply to Karolina Surma from comment #18)
+&gt; A nitpick from the metadata inspection: pyproject.toml contains `pytest-cov`
+&gt; which is detected by macros and pulled as a build-time dependency.
+
+Fixed.
+
+And after a couple more seds, rms, finds and lns, the result of rpmlint is:
+
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jlpm
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-lab
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labextension
+python3-jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labhub
+==== 1 packages and 0 specfiles checked; 0 errors, 4 warnings, 0 badness; has taken 0.3 s ====
+
+After some manual testing, it seems that it still works fine. I'll report some of the manual modification to upstream later.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a33-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17081867</commentid>
+    <comment_count>20</comment_count>
+      <attachid>1947015</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-02-28 18:02:53 +0000</bug_when>
+    <thetext>Created attachment 1947015
+The .spec file difference from Copr build 5579097 to 5580050</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17087790</commentid>
+    <comment_count>21</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-03-02 13:32:07 +0000</bug_when>
+    <thetext>I did an update to alpha 34, checked the licenses, and re-generated the bundled provides. It still builds, installs, and works well.
+
+Spec URL: https://lbalhar.fedorapeople.org/python-jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/python-jupyterlab-4.0.0~a34-1.fc37.src.rpm
+
+The next generation of notebook will use this package as a library but for users, it's an application. Therefore I'm thinking about renaming the package to jupyterlab. What do you think about it? We have pytest and poetry but python-notebook …</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17087817</commentid>
+    <comment_count>22</comment_count>
+      <attachid>1947486</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-03-02 13:42:43 +0000</bug_when>
+    <thetext>Created attachment 1947486
+The .spec file difference from Copr build 5580050 to 5586278</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17087838</commentid>
+    <comment_count>23</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-03-02 13:51:30 +0000</bug_when>
+    <thetext>&gt; The next generation of notebook will use this package as a library but for users, it's an application.
+
+Agreed. I'd name it jupyterlab and add %py_provides python3-jupyterlab.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17087940</commentid>
+    <comment_count>24</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-03-02 14:25:53 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/jupyterlab.spec
+SRPM URL: https://lbalhar.fedorapeople.org/jupyterlab-4.0.0~a34-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17088233</commentid>
+    <comment_count>25</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-03-02 15:44:04 +0000</bug_when>
+    <thetext>I've noticed one thing. %global _description and %descriptinn is rather far away from each other, and the %_description macro is now only used once. Maybe it might be cleaner to drop it and write the text directly into %description?</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17089772</commentid>
+    <comment_count>26</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-03-03 08:58:47 +0000</bug_when>
+    <thetext>(In reply to Miro Hrončok from comment #25)
+&gt; I've noticed one thing. %global _description and %descriptinn is rather far
+&gt; away from each other, and the %_description macro is now only used once.
+&gt; Maybe it might be cleaner to drop it and write the text directly into
+&gt; %description?
+
+Fixed.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17090557</commentid>
+    <comment_count>27</comment_count>
+    <who name="Karolina Surma">ksurma</who>
+    <bug_when>2023-03-03 15:19:16 +0000</bug_when>
+    <thetext>I installed the package on my Rawhide machine and checked around half of the menu items, no issues spotted.
+I don't see anything striking in the package metadata, nor the build logs.
+Things in the specfile are commented around, I find it sufficient. Please raise the uncovered issues with upstream.
+
+Package APPROVED.
+
+Package Review
+==============
+
+Legend:
+[x] = Pass, [!] = Fail, [-] = Not applicable, [?] = Not evaluated
+
+
+Issues:
+=======
+- Packages MUST NOT have dependencies (either build-time or runtime) on
+  packages named with the unversioned python- prefix unless no properly
+  versioned package exists. Dependencies on Python packages instead MUST
+  use names beginning with python2- or python3- as appropriate.
+  Note: Unversionned Python dependency found.
+  See: https://docs.fedoraproject.org/en-US/packaging-
+  guidelines/Python/#_dependencies
+
+That's a new one -- It seems it comes from python-jupyter-filesystem though, so this is not an issue (see Requires below)
+
+[?]: Package contains desktop file if it is a GUI application.
+    - Notebook has got one, maybe the Lab could too? (Not a MUST item).
+
+[?]: (Possible future enhancement) There's `%{_datadir}/jupyter/lab` in the files -- if other extension packages will use this directory, maybe it'll make sense in to include it into python-jupyter-filesystem.
+
+- If (and only if) the source package includes the text of the license(s)
+  in its own file, then that file, containing the text of the license(s)
+  for the package is included in %license.
+  Note: License file third-party-licenses.json is not marked as %license
+  See: https://docs.fedoraproject.org/en-US/packaging-
+  guidelines/LicensingGuidelines/#_license_text
+
+Decided that's moot. License texts were marked correctly.
+
+===== MUST items =====
+
+Generic:
+[x]: Package is licensed with an open-source compatible license and meets
+     other legal requirements as defined in the legal section of Packaging
+     Guidelines.
+[x]: License field in the package spec file matches the actual license.
+     Note: Checking patched sources after %prep for licenses. Licenses
+     found: "Unknown or generated", "BSD 3-Clause License", "MIT License
+     BSD 3-Clause License", "*No copyright* BSD 3-Clause License", "BSD
+     3-Clause License [generated file]", "*No copyright* [generated file]",
+     "MIT License", "BSD 0-Clause License", "Apache License 2.0", "*No
+     copyright* Apache License 2.0". 555 files have unknown license.
+     Detailed output of licensecheck in
+     /home/ksurma/tmp/2161525-jupyterlab/licensecheck.txt
+[x]: If the package is under multiple licenses, the licensing breakdown
+     must be documented in the spec.
+[x]: Package contains no bundled libraries without FPC exception.
+[x]: Changelog in prescribed format.
+[x]: Sources contain only permissible code or content.
+[?]: Package contains desktop file if it is a GUI application.
+    - Notebook has got one, maybe the Lab could too?
+[-]: Development files must be in a -devel package
+[x]: Package uses nothing in %doc for runtime.
+[x]: Package consistently uses macros (instead of hard-coded directory
+     names).
+[x]: Package is named according to the Package Naming Guidelines.
+[x]: Package does not generate any conflict.
+[x]: Package obeys FHS, except libexecdir and /usr/target.
+[-]: If the package is a rename of another package, proper Obsoletes and
+     Provides are present.
+[x]: Requires correct, justified where necessary.
+[x]: Spec file is legible and written in American English.
+[-]: Package contains systemd file(s) if in need.
+[x]: Package is not known to require an ExcludeArch tag.
+[x]: Large documentation must go in a -doc subpackage. Large could be size
+     (~1MB) or number of files.
+     Note: Documentation size is 20480 bytes in 1 files.
+[x]: Package complies to the Packaging Guidelines
+[x]: Package successfully compiles and builds into binary rpms on at least
+     one supported primary architecture.
+[x]: Package installs properly.
+[x]: Rpmlint is run on all rpms the build produces.
+     Note: There are rpmlint messages (see attachment).
+[x]: Package requires other packages for directories it uses.
+[x]: Package must own all directories that it creates.
+[x]: Package does not own files or directories owned by other packages.
+[x]: Package uses either %{buildroot} or $RPM_BUILD_ROOT
+[x]: Package does not run rm -rf %{buildroot} (or $RPM_BUILD_ROOT) at the
+     beginning of %install.
+[x]: %config files are marked noreplace or the reason is justified.
+[x]: Macros in Summary, %description expandable at SRPM build time.
+[x]: Dist tag is present.
+[x]: Package does not contain duplicates in %files.
+[x]: Permissions on files are set properly.
+[x]: Package must not depend on deprecated() packages.
+[x]: Package use %makeinstall only when make install DESTDIR=... doesn't
+     work.
+[x]: Package is named using only allowed ASCII characters.
+[x]: No %config files under /usr.
+[x]: Package does not use a name that already exists.
+[x]: Package is not relocatable.
+[x]: Sources used to build the package match the upstream source, as
+     provided in the spec URL.
+[x]: Spec file name must match the spec package %{name}, in the format
+     %{name}.spec.
+[x]: File names are valid UTF-8.
+[x]: Packages must not store files under /srv, /opt or /usr/local
+
+Python:
+[x]: Python eggs must not download any dependencies during the build
+     process.
+[-]: A package which is used by another package via an egg interface should
+     provide egg info.
+[x]: Package meets the Packaging Guidelines::Python
+[x]: Package contains BR: python2-devel or python3-devel
+[x]: Python packages must not contain %{pythonX_site(lib|arch)}/* in %files
+[x]: Binary eggs must be removed in %prep
+
+===== SHOULD items =====
+
+Generic:
+[x]: Avoid bundling fonts in non-fonts packages.
+     Note: Package contains font files - it's not a trivial task in this package
+[-]: If the source package does not include license text(s) as a separate
+     file from upstream, the packager SHOULD query upstream to include it.
+[x]: Final provides and requires are sane (see attachments).
+[x]: Package functions as described.
+[x]: Latest version is packaged.
+[x]: Package does not include license text files separate from upstream.
+[-]: Sources are verified with gpgverify first in %prep if upstream
+     publishes signatures.
+     Note: gpgverify is not used.
+[x]: Package should compile and build into binary rpms on all supported
+     architectures.
+[x]: %check is present and all tests pass.
+[?]: Packages should try to preserve timestamps of original installed
+     files.
+[x]: Reviewer should test that the package builds in mock.
+[x]: Buildroot is not present
+[x]: Package has no %clean section with rm -rf %{buildroot} (or
+     $RPM_BUILD_ROOT)
+[x]: No file requires outside of /etc, /bin, /sbin, /usr/bin, /usr/sbin.
+[x]: Packager, Vendor, PreReq, Copyright tags should not be in spec file
+[x]: Sources can be downloaded from URI in Source: tag
+[x]: SourceX is a working URL.
+[x]: Spec use %global instead of %define unless justified.
+
+===== EXTRA items =====
+
+Generic:
+[x]: Rpmlint is run on all installed packages.
+     Note: There are rpmlint messages (see attachment).
+[x]: Spec file according to URL is the same as in SRPM.
+
+
+Rpmlint
+-------
+Checking: jupyterlab-4.0.0~a34-1.fc39.noarch.rpm
+          jupyterlab-4.0.0~a34-1.fc39.src.rpm
+================================================ rpmlint session starts ===============================================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+rpmlintrc: [PosixPath('/tmp/tmpgpzzk9ut')]
+checks: 31, packages: 2
+
+jupyterlab.noarch: W: no-manual-page-for-binary jlpm
+jupyterlab.noarch: W: no-manual-page-for-binary jupyter-lab
+jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labextension
+jupyterlab.noarch: W: no-manual-page-for-binary jupyter-labhub
+jupyterlab.noarch: W: name-repeated-in-summary JupyterLab
+jupyterlab.src: W: name-repeated-in-summary JupyterLab
+================= 2 packages and 0 specfiles checked; 0 errors, 6 warnings, 0 badness; has taken 1.5 s ================
+
+
+Requires
+--------
+jupyterlab (rpmlib, GLIBC filtered):
+    (python3.11dist(jupyter-server) &lt; 3~~ with python3.11dist(jupyter-server) &gt;= 2.0.1)
+    (python3.11dist(jupyterlab-server) &lt; 3~~ with python3.11dist(jupyterlab-server) &gt;= 2.19)
+    /usr/bin/python3
+    config(jupyterlab)
+    python(abi)
+    python-jupyter-filesystem
+    python3.11dist(async-lru)
+    python3.11dist(ipykernel)
+    python3.11dist(jinja2)
+    python3.11dist(jupyter-core)
+    python3.11dist(jupyter-lsp)
+    python3.11dist(notebook-shim)
+    python3.11dist(packaging)
+    python3.11dist(tornado)
+    python3.11dist(traitlets)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17092038</commentid>
+    <comment_count>28</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-03-04 21:07:28 +0000</bug_when>
+    <thetext>The Pagure repository was created at https://src.fedoraproject.org/rpms/jupyterlab</thetext>
+  </long_desc>
+      
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940807</attachid>
+            <date>2023-01-27 20:44:28 +0000</date>
+            <delta_ts>2023-01-27 20:44:28 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5239303 to 5334341</desc>
+            <filename>spec-from-5239303-to-5334341.diff</filename>
+            <type>text/plain</type>
+            <size>963</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MjM5MzAz
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTMzNDM0
+MQpAQCAtMSwxMCArMSwxMiBAQAorJWdsb2JhbCBwcmVyZWwgYTMzCisKIE5hbWU6ICAgICAgICAg
+ICBweXRob24tanVweXRlcmxhYgotVmVyc2lvbjogICAgICAgIDQuMC4wfmEzMgorVmVyc2lvbjog
+ICAgICAgIDQuMC4wfiV7cHJlcmVsfQogUmVsZWFzZTogICAgICAgIDElez9kaXN0fQogU3VtbWFy
+eTogICAgICAgIEp1cHl0ZXJMYWIgY29tcHV0YXRpb25hbCBlbnZpcm9ubWVudAogTGljZW5zZTog
+ICAgICAgIEJTRC0zLUNsYXVzZQogVVJMOiAgICAgICAgICAgIGh0dHBzOi8vanVweXRlci5vcmcK
+LVNvdXJjZTogICAgICAgICAle3B5cGlfc291cmNlIGp1cHl0ZXJsYWIgNC4wLjBhMzJ9CitTb3Vy
+Y2U6ICAgICAgICAgJXtweXBpX3NvdXJjZSBqdXB5dGVybGFiIDQuMC4wJXtwcmVyZWx9fQogCiBC
+dWlsZEFyY2g6ICAgICAgbm9hcmNoCiBCdWlsZFJlcXVpcmVzOiAgcHl0aG9uMy1kZXZlbApAQCAt
+MjMsMTEgKzI1LDE0IEBACiAlcGFja2FnZSAtbiAgICAgcHl0aG9uMy1qdXB5dGVybGFiCiBTdW1t
+YXJ5OiAgICAgICAgJXtzdW1tYXJ5fQogCislcHlfcHJvdmlkZXMgICAganVweXRlcmxhYgorJXB5
+X3Byb3ZpZGVzICAgIGp1cHl0ZXItbGFiCisKICVkZXNjcmlwdGlvbiAtbiBweXRob24zLWp1cHl0
+ZXJsYWIgJV9kZXNjcmlwdGlvbgogCiAKICVwcmVwCi0lYXV0b3NldHVwIC1wMSAtbiBqdXB5dGVy
+bGFiLTQuMC4wYTMyCislYXV0b3NldHVwIC1wMSAtbiBqdXB5dGVybGFiLTQuMC4wJXtwcmVyZWx9
+CiAKICMgcHl0ZXN0LXRvcm5hc3luYyB3aWxsIG5ldmVyIGJlIGF2YWlsYWJsZSBpbiBGZWRvcmEK
+ICMgYW5kIHVwc3RyZWFtIHdpbGwgc3dpdGNoIHRvIHB5dGVzdC1qdXB5dGVyIHNvb24K
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1941094</attachid>
+            <date>2023-01-30 14:20:51 +0000</date>
+            <delta_ts>2023-01-30 14:20:51 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5334341 to 5363541</desc>
+            <filename>spec-from-5334341-to-5363541.diff</filename>
+            <type>text/plain</type>
+            <size>663</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MzM0MzQx
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTM2MzU0
+MQpAQCAtMjUsNiArMjUsOCBAQAogJXBhY2thZ2UgLW4gICAgIHB5dGhvbjMtanVweXRlcmxhYgog
+U3VtbWFyeTogICAgICAgICV7c3VtbWFyeX0KIAorUmVxdWlyZXM6IHB5dGhvbi1qdXB5dGVyLWZp
+bGVzeXN0ZW0KKwogJXB5X3Byb3ZpZGVzICAgIGp1cHl0ZXJsYWIKICVweV9wcm92aWRlcyAgICBq
+dXB5dGVyLWxhYgogCkBAIC0zNCw4ICszNiw5IEBACiAlcHJlcAogJWF1dG9zZXR1cCAtcDEgLW4g
+anVweXRlcmxhYi00LjAuMCV7cHJlcmVsfQogCi0jIHB5dGVzdC10b3JuYXN5bmMgd2lsbCBuZXZl
+ciBiZSBhdmFpbGFibGUgaW4gRmVkb3JhCisjIHB5dGVzdC10b3JuYXN5bmMgaXMgbm90IGF2YWls
+YWJsZSBpbiBGZWRvcmEKICMgYW5kIHVwc3RyZWFtIHdpbGwgc3dpdGNoIHRvIHB5dGVzdC1qdXB5
+dGVyIHNvb24KKyMgaHR0cHM6Ly9naXRodWIuY29tL2p1cHl0ZXJsYWIvanVweXRlcmxhYi9pc3N1
+ZXMvMTM3OTQKIHNlZCAtaSAiL3B5dGVzdC10b3JuYXN5bmMvZCIgcHlwcm9qZWN0LnRvbWwKIAog
+c2VkIC1pICIvY292ZXJhZ2UvZCIgcHlwcm9qZWN0LnRvbWwK
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1944063</attachid>
+            <date>2023-02-14 10:32:29 +0000</date>
+            <delta_ts>2023-02-14 10:32:29 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5363541 to 5525076</desc>
+            <filename>spec-from-5363541-to-5525076.diff</filename>
+            <type>text/plain</type>
+            <size>18773</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MzYzNTQx
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTUyNTA3
+NgpAQCAtNCw3ICs0LDI0IEBACiBWZXJzaW9uOiAgICAgICAgNC4wLjB+JXtwcmVyZWx9CiBSZWxl
+YXNlOiAgICAgICAgMSV7P2Rpc3R9CiBTdW1tYXJ5OiAgICAgICAgSnVweXRlckxhYiBjb21wdXRh
+dGlvbmFsIGVudmlyb25tZW50Ci1MaWNlbnNlOiAgICAgICAgQlNELTMtQ2xhdXNlCisjIEp1cHl0
+ZXJMYWIgaXRzZWxmIGlzIEJTRC0zLUNsYXVzZSBhbmQKKyMgc2VtdmVyLnB5IGZpbGUgaXMgTUlU
+LgorIyBUaGUgcmVzdCBhcmUgbGljZW5zZXMgb2YgYnVuZGxlZCBKUyBsaWJzLgorIyBUbyBnZXQg
+dGhlbSwgcnVuOgorIyBjYXQgdGhpcmQtcGFydHktbGljZW5zZXMuanNvbiB8IHNlZCAtbiAnL2xp
+Y2Vuc2VJZC9zLyJsaWNlbnNlSWQiOiAiXCguKlwpIiwvXDEvcCcgfCBzb3J0IHwgdW5pcQorIyBp
+biBqdXB5dGVybGFiL3N0YXRpYy4gVGhlIHJlc3VsdCBpczoKKyMKKyMgQXBhY2hlLTIuMAorIyBC
+U0QtMi1DbGF1c2UKKyMgQlNELTMtQ2xhdXNlCisjIChDQy1CWS00LjAgQU5EIE9GTC0xLjEgQU5E
+IE1JVCkKKyMgSVNDCisjIE1JVAorIyBVbmxpY2Vuc2UKKyMKKyMgKyBUaGVyZSBpcyBvbmUgYnVu
+ZGxlZCBsaWIgd2l0aG91dCBhIGxpY2Vuc2UgaW4gdGhlIEpTT04gZmlsZQorIyBhbmQgaXQncyBN
+SVQsIHNlZSBodHRwczovL2dpdGh1Yi5jb20veWpzL3ktY29kZW1pcnJvci5uZXh0L2lzc3Vlcy8y
+NQorTGljZW5zZTogICAgICAgIEFwYWNoZS0yLjAgQU5EIEJTRC0yLUNsYXVzZSBBTkQgQlNELTMt
+Q2xhdXNlIEFORCAoQ0MtQlktNC4wIEFORCBPRkwtMS4xIEFORCBNSVQpIEFORCBJU0MgQU5EIE1J
+VCBBTkQgVW5saWNlbnNlCiBVUkw6ICAgICAgICAgICAgaHR0cHM6Ly9qdXB5dGVyLm9yZwogU291
+cmNlOiAgICAgICAgICV7cHlwaV9zb3VyY2UganVweXRlcmxhYiA0LjAuMCV7cHJlcmVsfX0KIApA
+QCAtMjksNiArNDYsMzEzIEBACiAKICVweV9wcm92aWRlcyAgICBqdXB5dGVybGFiCiAlcHlfcHJv
+dmlkZXMgICAganVweXRlci1sYWIKKworIyBCdW5kbGVkIHByb3ZpZGVzCisjIEdlbmVyYXRlZCBi
+eToKKyMgcHl0aG9uMyAtYyAiaW1wb3J0IGpzb247IFtwcmludChmXCJQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoe3BbJ25hbWUnXX0pID0ge3BbJ3ZlcnNpb25JbmZvJ119XCIpIGZvciBwIGluIGpz
+b24ubG9hZChvcGVuKFwidGhpcmQtcGFydHktbGljZW5zZXMuanNvblwiKSlbXCJwYWNrYWdlc1wi
+XV0iCisjIGluIGp1cHl0ZXJsYWIvc3RhdGljLgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBi
+YWJlbC9ydW50aW1lKSA9IDcuMjAuNgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWly
+cm9yL2F1dG9jb21wbGV0ZSkgPSA2LjQuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2Rl
+bWlycm9yL2NvbW1hbmRzKSA9IDYuMS4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGNvZGVt
+aXJyb3IvbGFuZy1jcHApID0gNi4wLjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1p
+cnJvci9sYW5nLWNzcykgPSA2LjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWly
+cm9yL2xhbmctaHRtbCkgPSA2LjQuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWly
+cm9yL2xhbmctamF2YSkgPSA2LjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWly
+cm9yL2xhbmctamF2YXNjcmlwdCkgPSA2LjEuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBj
+b2RlbWlycm9yL2xhbmctanNvbikgPSA2LjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBj
+b2RlbWlycm9yL2xhbmctbWFya2Rvd24pID0gNi4wLjUKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAY29kZW1pcnJvci9sYW5nLXBocCkgPSA2LjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBjb2RlbWlycm9yL2xhbmctcHl0aG9uKSA9IDYuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGNvZGVtaXJyb3IvbGFuZy1ydXN0KSA9IDYuMC4xCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGNvZGVtaXJyb3IvbGFuZy1zcWwpID0gNi4zLjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAY29kZW1pcnJvci9sYW5nLXdhc3QpID0gNi4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAY29kZW1pcnJvci9sYW5nLXhtbCkgPSA2LjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBjb2RlbWlycm9yL2xhbmd1YWdlKSA9IDYuMy4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+QGNvZGVtaXJyb3IvbGVnYWN5LW1vZGVzKSA9IDYuMy4xCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGNvZGVtaXJyb3Ivc2VhcmNoKSA9IDYuMi4zCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+QGNvZGVtaXJyb3Ivc3RhdGUpID0gNi4xLjQKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29k
+ZW1pcnJvci92aWV3KSA9IDYuNy4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGZvcnRhd2Vz
+b21lL2ZvbnRhd2Vzb21lLWZyZWUpID0gNS4xNS40CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+QGp1cHl0ZXIveWRvYykgPSAwLjMuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVy
+bGFiL2FwcGxpY2F0aW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGp1cHl0ZXJsYWIvYXBwbGljYXRpb24tZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvYXBwdXRpbHMpID0gNC4wLjAtYWxw
+aGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9hcHB1dGlscy1leHRl
+bnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRl
+cmxhYi9hdHRhY2htZW50cykgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBqdXB5dGVybGFiL2NlbGwtdG9vbGJhcikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2NlbGwtdG9vbGJhci1leHRlbnNpb24pID0gNC4w
+LjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jZWxscykg
+PSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2Nl
+bGx0YWdzKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0
+ZXJsYWIvY2VsbHRhZ3MtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY29kZWVkaXRvcikgPSA0LjAuMC1hbHBoYS4xOAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2NvZGVtaXJyb3IpID0gNC4wLjAtYWxw
+aGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jb2RlbWlycm9yLWV4
+dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5
+dGVybGFiL2NvbGxhYm9yYXRpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChAanVweXRlcmxhYi9jb2xsYWJvcmF0aW9uLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBo
+YS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2NvbXBsZXRlcikgPSA0
+LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2NvbXBs
+ZXRlci1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi9jb25zb2xlKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY29uc29sZS1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jb3JldXRpbHMpID0gNi4wLjAt
+YWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jc3Z2aWV3ZXIp
+ID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9j
+c3Z2aWV3ZXItZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoQGp1cHl0ZXJsYWIvZGVidWdnZXIpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9kZWJ1Z2dlci1leHRlbnNpb24pID0gNC4wLjAtYWxw
+aGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9kb2NtYW5hZ2VyKSA9
+IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZG9j
+bWFuYWdlci1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChAanVweXRlcmxhYi9kb2Nwcm92aWRlcikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2RvY3JlZ2lzdHJ5KSA9IDQuMC4wLWFscGhhLjE4
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZG9jdW1lbnRzZWFyY2gpID0g
+NC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9kb2N1
+bWVudHNlYXJjaC1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChAanVweXRlcmxhYi9leHRlbnNpb25tYW5hZ2VyKSA9IDQuMC4wLWFscGhhLjE4CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZXh0ZW5zaW9ubWFuYWdlci1leHRl
+bnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRl
+cmxhYi9maWxlYnJvd3NlcikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBqdXB5dGVybGFiL2ZpbGVicm93c2VyLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2ZpbGVlZGl0b3IpID0gNC4wLjAt
+YWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9maWxlZWRpdG9y
+LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBq
+dXB5dGVybGFiL2hlbHAtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvaHRtbHZpZXdlcikgPSA0LjAuMC1hbHBoYS4xOAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2h0bWx2aWV3ZXItZXh0ZW5zaW9uKSA9
+IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvaHVi
+LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBq
+dXB5dGVybGFiL2ltYWdldmlld2VyKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoQGp1cHl0ZXJsYWIvaW1hZ2V2aWV3ZXItZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhh
+LjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvaW5zcGVjdG9yKSA9IDQu
+MC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvaW5zcGVj
+dG9yLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBqdXB5dGVybGFiL2phdmFzY3JpcHQtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvanNvbi1leHRlbnNpb24pID0gNC4wLjAt
+YWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9sYXVuY2hlcikg
+PSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2xh
+dW5jaGVyLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBqdXB5dGVybGFiL2xvZ2NvbnNvbGUpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9sb2djb25zb2xlLWV4dGVuc2lvbikgPSA0LjAuMC1h
+bHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2xzcCkgPSA0LjAu
+MC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2xzcC1leHRl
+bnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRl
+cmxhYi9tYWlubWVudSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBqdXB5dGVybGFiL21haW5tZW51LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL21hcmtkb3dudmlld2VyKSA9IDQuMC4wLWFs
+cGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvbWFya2Rvd252aWV3
+ZXItZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+QGp1cHl0ZXJsYWIvbWFya2VkcGFyc2VyLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL21hdGhqYXgyKSA9IDQuMC4wLWFscGhh
+LjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvbWF0aGpheDItZXh0ZW5z
+aW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJs
+YWIvbWV0YWRhdGFmb3JtKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGp1cHl0ZXJsYWIvbWV0YWRhdGFmb3JtLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL25iZm9ybWF0KSA9IDQuMC4wLWFs
+cGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvbm90ZWJvb2spID0g
+NC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9ub3Rl
+Ym9vay1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi9vYnNlcnZhYmxlcykgPSA1LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKEBqdXB5dGVybGFiL291dHB1dGFyZWEpID0gNC4wLjAtYWxwaGEuMTgKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9wZGYtZXh0ZW5zaW9uKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvcHJvcGVydHkt
+aW5zcGVjdG9yKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1
+cHl0ZXJsYWIvcmVuZGVybWltZSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBqdXB5dGVybGFiL3JlbmRlcm1pbWUtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvcmVuZGVybWltZS1pbnRlcmZh
+Y2VzKSA9IDMuOC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJs
+YWIvcnVubmluZykgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBq
+dXB5dGVybGFiL3J1bm5pbmctZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvc2VydmljZXMpID0gNy4wLjAtYWxwaGEuMTgKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9zZXR0aW5nZWRpdG9yKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvc2V0dGluZ2Vk
+aXRvci1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi9zZXR0aW5ncmVnaXN0cnkpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9zaG9ydGN1dHMtZXh0ZW5zaW9uKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvc3RhdGVkYikg
+PSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3N0
+YXR1c2JhcikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5
+dGVybGFiL3N0YXR1c2Jhci1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChAanVweXRlcmxhYi90ZXJtaW5hbCkgPSA0LjAuMC1hbHBoYS4xOAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3Rlcm1pbmFsLWV4dGVuc2lvbikgPSA0
+LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3RoZW1l
+LWRhcmstZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGp1cHl0ZXJsYWIvdGhlbWUtbGlnaHQtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdG9jKSA9IDYuMC4wLWFscGhhLjE4
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdG9jLWV4dGVuc2lvbikgPSA2
+LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3Rvb2x0
+aXApID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxh
+Yi90b29sdGlwLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBqdXB5dGVybGFiL3RyYW5zbGF0aW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdHJhbnNsYXRpb24tZXh0ZW5zaW9uKSA9IDQu
+MC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdWktY29t
+cG9uZW50cykgPSA0LjAuMC1hbHBoYS4zMworUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5
+dGVybGFiL3VpLWNvbXBvbmVudHMtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdmRvbSkgPSA0LjAuMC1hbHBoYS4xOAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3Zkb20tZXh0ZW5zaW9uKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdmVnYTUtZXh0
+ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVy
+L2NvbW1vbikgPSAxLjAuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsZXplci9jcHApID0g
+MS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6ZXIvY3NzKSA9IDEuMS4xCitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVyL2hpZ2hsaWdodCkgPSAxLjEuMworUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBsZXplci9odG1sKSA9IDEuMi4wCitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoQGxlemVyL2phdmEpID0gMS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6
+ZXIvamF2YXNjcmlwdCkgPSAxLjMuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsZXplci9q
+c29uKSA9IDEuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVyL2xyKSA9IDEuMi41
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVyL21hcmtkb3duKSA9IDEuMC4yCitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVyL3BocCkgPSAxLjAuMAorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKEBsZXplci9weXRob24pID0gMS4xLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAbGV6ZXIvcnVzdCkgPSAxLjAuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsZXplci94
+bWwpID0gMS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbHVtaW5vL2FsZ29yaXRobSkg
+PSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGx1bWluby9hcHBsaWNh
+dGlvbikgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGx1bWluby9j
+b2xsZWN0aW9ucykgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGx1
+bWluby9jb21tYW5kcykgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+QGx1bWluby9jb3JldXRpbHMpID0gMi4wLjAtYWxwaGEuNgorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBsdW1pbm8vZGF0YWdyaWQpID0gMS4wLjAtYWxwaGEuNgorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBsdW1pbm8vZGlzcG9zYWJsZSkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGx1bWluby9kb211dGlscykgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoQGx1bWluby9kcmFnZHJvcCkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQoQGx1bWluby9rZXlib2FyZCkgPSAyLjAuMC1hbHBoYS42CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGx1bWluby9tZXNzYWdpbmcpID0gMi4wLjAtYWxwaGEuNgor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1pbm8vcG9sbGluZykgPSAyLjAuMC1hbHBoYS42
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGx1bWluby9wcm9wZXJ0aWVzKSA9IDIuMC4wLWFs
+cGhhLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbHVtaW5vL3NpZ25hbGluZykgPSAyLjAu
+MC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGx1bWluby92aXJ0dWFsZG9tKSA9
+IDIuMC4wLWFscGhhLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbHVtaW5vL3dpZGdldHMp
+ID0gMi4wLjAtYWxwaGEuNgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBudGVyYWN0L3RyYW5z
+Zm9ybS12ZG9tKSA9IDQuMC4xNi1hbHBoYS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoQHJq
+c2YvY29yZSkgPSA0LjIuMworUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGFqdikgPSA2LjEyLjYK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChiYXNlMTYpID0gMS4wLjAKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChibGFja2xpc3QpID0gMS4xLjQKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChj
+bG9uZSkgPSAyLjEuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGNsc3gpID0gMS4yLjEKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChjb2xvcikgPSAzLjIuMQorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKGNvbG9yLWNvbnZlcnQpID0gMS45LjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChj
+b2xvci1uYW1lKSA9IDEuMS4zCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoY29sb3Itc3RyaW5n
+KSA9IDEuOS4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoY29tcHV0ZS1nY2QpID0gMS4yLjEK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChjb21wdXRlLWxjbSkgPSAxLjEuMgorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKGNvcmUtanMtcHVyZSkgPSAzLjI2LjEKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChjcmVhdGUtcmVhY3QtY2xhc3MpID0gMTUuNy4wCitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoY3JlbHQpID0gMS4wLjUKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChjc3MtbG9hZGVy
+KSA9IDYuNy4zCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoZDMtYXJyYXkpID0gMy4xLjEKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1jb2xvcikgPSAzLjEuMAorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKGQzLWRlbGF1bmF5KSA9IDYuMC4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+ZDMtZGlzcGF0Y2gpID0gMy4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1kc3YpID0g
+My4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1mb3JjZSkgPSAzLjAuMAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKGQzLWZvcm1hdCkgPSAzLjEuMAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKGQzLWdlbykgPSAzLjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGQzLWdlby1w
+cm9qZWN0aW9uKSA9IDQuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoZDMtaGllcmFyY2h5
+KSA9IDMuMS4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoZDMtaW50ZXJwb2xhdGUpID0gMy4w
+LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1wYXRoKSA9IDMuMC4xCitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoZDMtcXVhZHRyZWUpID0gMy4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChkMy1zY2FsZSkgPSA0LjAuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGQzLXNoYXBl
+KSA9IDMuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoZDMtdGltZSkgPSAzLjEuMAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKGQzLXRpbWUtZm9ybWF0KSA9IDQuMS4wCitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoZDMtdGltZXIpID0gMy4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChkZWVwbWVyZ2UpID0gNC4yLjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkZWxhdW5hdG9y
+KSA9IDUuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoZG9tLXNlcmlhbGl6ZXIpID0gMS40
+LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkb21lbGVtZW50dHlwZSkgPSAyLjMuMAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKGRvbWhhbmRsZXIpID0gNC4zLjEKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChkb211dGlscykgPSAyLjguMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGVu
+dGl0aWVzKSA9IDIuMi4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoZXNjYXBlLXN0cmluZy1y
+ZWdleHApID0gMS4wLjUKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChmYXN0LWRlZXAtZXF1YWwp
+ID0gMy4xLjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChmYXN0LWpzb24tcGF0Y2gpID0gMy4x
+LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChmYXN0LWpzb24tc3RhYmxlLXN0cmluZ2lmeSkg
+PSAyLjEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGZyZWUtc3R5bGUpID0gMy4xLjAKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChodG1scGFyc2VyMikgPSA2LjEuMAorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKGludGVybm1hcCkgPSAyLjAuMworUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KGlzLWFycmF5aXNoKSA9IDAuMy4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoaXMtcGxhaW4t
+b2JqZWN0KSA9IDUuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoaXNvbW9ycGhpYy5qcykg
+PSAwLjIuNQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGpzb24tc2NoZW1hLWNvbXBhcmUpID0g
+MC4yLjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChqc29uLXNjaGVtYS1tZXJnZS1hbGxvZikg
+PSAwLjYuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGpzb24tc2NoZW1hLXRyYXZlcnNlKSA9
+IDAuNC4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoanNvbi1zdHJpbmdpZnktcHJldHR5LWNv
+bXBhY3QpID0gMy4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChqc29uNSkgPSAyLjIuMwor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGpzb25wb2ludGVyKSA9IDUuMC4xCitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQobGliMCkgPSAwLjIuNTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChs
+b2Rhc2gpID0gNC4xNy4yMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGxvZGFzaC1lcykgPSA0
+LjE3LjIxCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobG9kYXNoLmNsb25lZGVlcCkgPSA0LjUu
+MAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGxvZGFzaC5jdXJyeSkgPSA0LjEuMQorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKGxvZGFzaC5lc2NhcGUpID0gNC4wLjEKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChsb2Rhc2gubWVyZ2V3aXRoKSA9IDQuNi4yCitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQobHJ1LWNhY2hlKSA9IDYuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobWFya2Vk
+KSA9IDQuMC4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG1pbmltaXN0KSA9IDEuMi43CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobmFub2lkKSA9IDMuMy40CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQob2JqZWN0LWFzc2lnbikgPSA0LjEuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KHBhcnNlLXNyY3NldCkgPSAxLjAuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHBhdGgtYnJv
+d3NlcmlmeSkgPSAxLjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHBpY29jb2xvcnMpID0g
+MS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChwb3N0Y3NzKSA9IDguNC4yMAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKHByb2Nlc3MpID0gMC4xMS4xMAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKHByb3AtdHlwZXMpID0gMTUuOC4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQocXVl
+cnlzdHJpbmdpZnkpID0gMi4yLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZWFjdCkgPSAx
+OC4yLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZWFjdC1iYXNlMTYtc3R5bGluZykgPSAw
+LjkuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHJlYWN0LWRvbSkgPSAxOC4yLjAKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChyZWFjdC1oaWdobGlnaHRlcikgPSAwLjQuMworUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKHJlYWN0LWlzKSA9IDE2LjkuMAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKHJlYWN0LWpzb24tdHJlZSkgPSAwLjE2LjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChy
+ZWFjdC1wYWdpbmF0ZSkgPSA2LjUuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHJlYWN0LXRv
+YXN0aWZ5KSA9IDkuMS4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQocmVnZXhwLW1hdGNoLWlu
+ZGljZXMpID0gMS4wLjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZWdleHAtdHJlZSkgPSAw
+LjEuMjQKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZXF1aXJlcy1wb3J0KSA9IDEuMC4wCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQocm9idXN0LXByZWRpY2F0ZXMpID0gMy4wLjEKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChzYW5pdGl6ZS1odG1sKSA9IDIuNy4zCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoc2NoZWR1bGVyKSA9IDAuMjMuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KHNlbXZlcikgPSA3LjMuOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHNpbXBsZS1zd2l6emxl
+KSA9IDAuMi4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoc3R5bGUtbG9hZGVyKSA9IDMuMy4x
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoc3R5bGUtbW9kKSA9IDQuMC4wCitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQodG9wb2pzb24tY2xpZW50KSA9IDMuMS4wCitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQodHlwZXN0eWxlKSA9IDIuNC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodXJp
+LWpzKSA9IDQuNC4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodXJsLXBhcnNlKSA9IDEuNS4x
+MAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZhbGlkYXRlLmlvLWFycmF5KSA9IDEuMC42CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQodmFsaWRhdGUuaW8tZnVuY3Rpb24pID0gMS4wLjIKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2YWxpZGF0ZS5pby1pbnRlZ2VyKSA9IDEuMC41CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQodmFsaWRhdGUuaW8taW50ZWdlci1hcnJheSkgPSAxLjAuMAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZhbGlkYXRlLmlvLW51bWJlcikgPSAxLjAuMworUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EpID0gNS4yMi4xCitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQodmVnYS1jYW52YXMpID0gMS4yLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdh
+LWNyb3NzZmlsdGVyKSA9IDQuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1kYXRh
+ZmxvdykgPSA1LjcuNAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtZW1iZWQpID0gNi4y
+MS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1lbmNvZGUpID0gNC45LjAKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLWV2ZW50LXNlbGVjdG9yKSA9IDMuMC4wCitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQodmVnYS1leHByZXNzaW9uKSA9IDUuMC4wCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQodmVnYS1mb3JjZSkgPSA0LjEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KHZlZ2EtZm9ybWF0KSA9IDEuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1mdW5j
+dGlvbnMpID0gNS4xMy4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1nZW8pID0gNC40
+LjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLWhpZXJhcmNoeSkgPSA0LjEuMAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtaW50ZXJwcmV0ZXIpID0gMS4wLjQKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZCh2ZWdhLWxhYmVsKSA9IDEuMi4wCitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQodmVnYS1saXRlKSA9IDUuNS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1s
+b2FkZXIpID0gNC41LjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXBhcnNlcikgPSA2
+LjEuNAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtcHJvamVjdGlvbikgPSAxLjUuMAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtcmVncmVzc2lvbikgPSAxLjEuMAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtcnVudGltZSkgPSA2LjEuMworUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKHZlZ2Etc2NhbGUpID0gNy4yLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2
+ZWdhLXNjZW5lZ3JhcGgpID0gNC4xMC4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1z
+Y2hlbWEtdXJsLXBhcnNlcikgPSAyLjIuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2Et
+c2VsZWN0aW9ucykgPSA1LjQuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2Etc3RhdGlz
+dGljcykgPSAxLjguMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtdGhlbWVzKSA9IDIu
+MTIuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtdGltZSkgPSAyLjEuMAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtdG9vbHRpcCkgPSAwLjI4LjAKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZCh2ZWdhLXRyYW5zZm9ybXMpID0gNC4xMC4wCitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQodmVnYS11dGlsKSA9IDEuMTcuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2Et
+dmlldykgPSA1LjExLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXZpZXctdHJhbnNm
+b3JtcykgPSA0LjUuOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2Etdm9yb25vaSkgPSA0
+LjIuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2Etd29yZGNsb3VkKSA9IDQuMS4zCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQodnNjb2RlLWpzb25ycGMpID0gOC4wLjIKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZCh2c2NvZGUtd3MtanNvbnJwYykgPSAxLjAuMgorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKHczYy1rZXluYW1lKSA9IDIuMi41CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQod2hhdHdnLWZldGNoKSA9IDMuNi4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoeHRlcm0p
+ID0gNS4xLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh4dGVybS1hZGRvbi1jYW52YXMpID0g
+MC4zLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh4dGVybS1hZGRvbi1maXQpID0gMC43LjAK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh4dGVybS1hZGRvbi13ZWItbGlua3MpID0gMC44LjAK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh4dGVybS1hZGRvbi13ZWJnbCkgPSAwLjE0LjAKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZCh5LWNvZGVtaXJyb3IubmV4dCkgPSAwLjMuMgorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKHktcHJvdG9jb2xzKSA9IDEuMC41CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoeS13ZWJzb2NrZXQpID0gMS40LjUKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh5
+YWxsaXN0KSA9IDQuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQoeWpzKSA9IDEzLjUuNDQK
+IAogJWRlc2NyaXB0aW9uIC1uIHB5dGhvbjMtanVweXRlcmxhYiAlX2Rlc2NyaXB0aW9uCiAKQEAg
+LTc4LDUgKzQwMiw1IEBACiAKIAogJWNoYW5nZWxvZwotKiBNb24gSmFuIDE2IDIwMjMgTHVtw4PC
+rXIgQmFsaGFyIDxsYmFsaGFyQHJlZGhhdC5jb20+IC0gNC4wLjB+YTMyLTEKKyogTW9uIEphbiAx
+NiAyMDIzIEx1bcODwq1yIEJhbGhhciA8bGJhbGhhckByZWRoYXQuY29tPiAtIDQuMC4wfmEzMy0x
+CiAtIEluaXRpYWwgcGFja2FnZQo=
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1946927</attachid>
+            <date>2023-02-28 13:39:47 +0000</date>
+            <delta_ts>2023-02-28 13:39:47 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5525076 to 5579097</desc>
+            <filename>spec-from-5525076-to-5579097.diff</filename>
+            <type>text/plain</type>
+            <size>37001</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81NTI1MDc2
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTU3OTA5
+NwpAQCAtMjcsNiArMjcsNyBAQAogCiBCdWlsZEFyY2g6ICAgICAgbm9hcmNoCiBCdWlsZFJlcXVp
+cmVzOiAgcHl0aG9uMy1kZXZlbAorIyBOZWVkZWQgZm9yIHRlc3RzCiBCdWlsZFJlcXVpcmVzOiAg
+bm9kZWpzCiBCdWlsZFJlcXVpcmVzOiAgbnBtCiAKQEAgLTQ5LDMxMCArNTAsMzEwIEBACiAKICMg
+QnVuZGxlZCBwcm92aWRlcwogIyBHZW5lcmF0ZWQgYnk6Ci0jIHB5dGhvbjMgLWMgImltcG9ydCBq
+c29uOyBbcHJpbnQoZlwiUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHtwWyduYW1lJ119KSA9IHtw
+Wyd2ZXJzaW9uSW5mbyddfVwiKSBmb3IgcCBpbiBqc29uLmxvYWQob3BlbihcInRoaXJkLXBhcnR5
+LWxpY2Vuc2VzLmpzb25cIikpW1wicGFja2FnZXNcIl1dIgorIyBweXRob24zIC1jICJpbXBvcnQg
+anNvbjsgW3ByaW50KGZcIlByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oe3BbJ25hbWUnXX0p
+KSA9IHtwWyd2ZXJzaW9uSW5mbyddfVwiKSBmb3IgcCBpbiBqc29uLmxvYWQob3BlbihcInRoaXJk
+LXBhcnR5LWxpY2Vuc2VzLmpzb25cIikpW1wicGFja2FnZXNcIl1dIgogIyBpbiBqdXB5dGVybGFi
+L3N0YXRpYy4KLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAYmFiZWwvcnVudGltZSkgPSA3LjIw
+LjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9hdXRvY29tcGxldGUpID0g
+Ni40LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9jb21tYW5kcykgPSA2
+LjEuMgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWlycm9yL2xhbmctY3BwKSA9IDYu
+MC4yCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGNvZGVtaXJyb3IvbGFuZy1jc3MpID0gNi4w
+LjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5nLWh0bWwpID0gNi40
+LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5nLWphdmEpID0gNi4w
+LjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5nLWphdmFzY3JpcHQp
+ID0gNi4xLjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5nLWpzb24p
+ID0gNi4wLjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5nLW1hcmtk
+b3duKSA9IDYuMC41Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGNvZGVtaXJyb3IvbGFuZy1w
+aHApID0gNi4wLjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5nLXB5
+dGhvbikgPSA2LjEuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWlycm9yL2xhbmct
+cnVzdCkgPSA2LjAuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWlycm9yL2xhbmct
+c3FsKSA9IDYuMy4zCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGNvZGVtaXJyb3IvbGFuZy13
+YXN0KSA9IDYuMC4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGNvZGVtaXJyb3IvbGFuZy14
+bWwpID0gNi4wLjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAY29kZW1pcnJvci9sYW5ndWFn
+ZSkgPSA2LjMuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWlycm9yL2xlZ2FjeS1t
+b2RlcykgPSA2LjMuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWlycm9yL3NlYXJj
+aCkgPSA2LjIuMwotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBjb2RlbWlycm9yL3N0YXRlKSA9
+IDYuMS40Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGNvZGVtaXJyb3IvdmlldykgPSA2Ljcu
+MQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBmb3J0YXdlc29tZS9mb250YXdlc29tZS1mcmVl
+KSA9IDUuMTUuNAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVyL3lkb2MpID0gMC4z
+LjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9hcHBsaWNhdGlvbikgPSA0
+LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2FwcGxp
+Y2F0aW9uLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBqdXB5dGVybGFiL2FwcHV0aWxzKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvYXBwdXRpbHMtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhh
+LjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvYXR0YWNobWVudHMpID0g
+NC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jZWxs
+LXRvb2xiYXIpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVw
+eXRlcmxhYi9jZWxsLXRvb2xiYXItZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRl
+czogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY2VsbHMpID0gNC4wLjAtYWxwaGEuMTgKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jZWxsdGFncykgPSA0LjAuMC1hbHBo
+YS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2NlbGx0YWdzLWV4dGVu
+c2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVy
+bGFiL2NvZGVlZGl0b3IpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi9jb2RlbWlycm9yKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY29kZW1pcnJvci1leHRlbnNpb24pID0gNC4wLjAtYWxw
+aGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jb2xsYWJvcmF0aW9u
+KSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIv
+Y29sbGFib3JhdGlvbi1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChAanVweXRlcmxhYi9jb21wbGV0ZXIpID0gNC4wLjAtYWxwaGEuMTgKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9jb21wbGV0ZXItZXh0ZW5zaW9uKSA9IDQu
+MC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY29uc29s
+ZSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFi
+L2NvbnNvbGUtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoQGp1cHl0ZXJsYWIvY29yZXV0aWxzKSA9IDYuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY3N2dmlld2VyKSA9IDQuMC4wLWFscGhhLjE4Ci1Q
+cm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvY3N2dmlld2VyLWV4dGVuc2lvbikg
+PSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2Rl
+YnVnZ2VyKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0
+ZXJsYWIvZGVidWdnZXItZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZG9jbWFuYWdlcikgPSA0LjAuMC1hbHBoYS4xOAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2RvY21hbmFnZXItZXh0ZW5zaW9uKSA9
+IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZG9j
+cHJvdmlkZXIpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVw
+eXRlcmxhYi9kb2NyZWdpc3RyeSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBqdXB5dGVybGFiL2RvY3VtZW50c2VhcmNoKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZG9jdW1lbnRzZWFyY2gtZXh0ZW5zaW9u
+KSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIv
+ZXh0ZW5zaW9ubWFuYWdlcikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBqdXB5dGVybGFiL2V4dGVuc2lvbm1hbmFnZXItZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhh
+LjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZmlsZWJyb3dzZXIpID0g
+NC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9maWxl
+YnJvd3Nlci1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChAanVweXRlcmxhYi9maWxlZWRpdG9yKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvZmlsZWVkaXRvci1leHRlbnNpb24pID0gNC4wLjAt
+YWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9oZWxwLWV4dGVu
+c2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVy
+bGFiL2h0bWx2aWV3ZXIpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi9odG1sdmlld2VyLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2h1Yi1leHRlbnNpb24pID0gNC4wLjAt
+YWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9pbWFnZXZpZXdl
+cikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFi
+L2ltYWdldmlld2VyLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKEBqdXB5dGVybGFiL2luc3BlY3RvcikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL2luc3BlY3Rvci1leHRlbnNpb24pID0gNC4w
+LjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9qYXZhc2Ny
+aXB0LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBqdXB5dGVybGFiL2pzb24tZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvbGF1bmNoZXIpID0gNC4wLjAtYWxwaGEuMTgKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9sYXVuY2hlci1leHRlbnNpb24pID0g
+NC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9sb2dj
+b25zb2xlKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0
+ZXJsYWIvbG9nY29uc29sZS1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9sc3ApID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9sc3AtZXh0ZW5zaW9uKSA9IDQuMC4wLWFscGhh
+LjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvbWFpbm1lbnUpID0gNC4w
+LjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9tYWlubWVu
+dS1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChA
+anVweXRlcmxhYi9tYXJrZG93bnZpZXdlcikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKEBqdXB5dGVybGFiL21hcmtkb3dudmlld2VyLWV4dGVuc2lvbikgPSA0LjAu
+MC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL21hcmtlZHBh
+cnNlci1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi9tYXRoamF4MikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKEBqdXB5dGVybGFiL21hdGhqYXgyLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4x
+OAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL21ldGFkYXRhZm9ybSkgPSA0
+LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL21ldGFk
+YXRhZm9ybS1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChAanVweXRlcmxhYi9uYmZvcm1hdCkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKEBqdXB5dGVybGFiL25vdGVib29rKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvbm90ZWJvb2stZXh0ZW5zaW9uKSA9IDQu
+MC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvb2JzZXJ2
+YWJsZXMpID0gNS4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRl
+cmxhYi9vdXRwdXRhcmVhKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGp1cHl0ZXJsYWIvcGRmLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3Byb3BlcnR5LWluc3BlY3RvcikgPSA0LjAuMC1h
+bHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3JlbmRlcm1pbWUp
+ID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9y
+ZW5kZXJtaW1lLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBqdXB5dGVybGFiL3JlbmRlcm1pbWUtaW50ZXJmYWNlcykgPSAzLjguMC1hbHBoYS4x
+OAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3J1bm5pbmcpID0gNC4wLjAt
+YWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9ydW5uaW5nLWV4
+dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5
+dGVybGFiL3NlcnZpY2VzKSA9IDcuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoQGp1cHl0ZXJsYWIvc2V0dGluZ2VkaXRvcikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3NldHRpbmdlZGl0b3ItZXh0ZW5zaW9uKSA9IDQu
+MC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvc2V0dGlu
+Z3JlZ2lzdHJ5KSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1
+cHl0ZXJsYWIvc2hvcnRjdXRzLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3N0YXRlZGIpID0gNC4wLjAtYWxwaGEuMTgKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9zdGF0dXNiYXIpID0gNC4wLjAtYWxw
+aGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi9zdGF0dXNiYXItZXh0
+ZW5zaW9uKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0
+ZXJsYWIvdGVybWluYWwpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi90ZXJtaW5hbC1leHRlbnNpb24pID0gNC4wLjAtYWxwaGEuMTgKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi90aGVtZS1kYXJrLWV4dGVuc2lvbikgPSA0
+LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3RoZW1l
+LWxpZ2h0LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKEBqdXB5dGVybGFiL3RvYykgPSA2LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBqdXB5dGVybGFiL3RvYy1leHRlbnNpb24pID0gNi4wLjAtYWxwaGEuMTgKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi90b29sdGlwKSA9IDQuMC4wLWFscGhhLjE4
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGp1cHl0ZXJsYWIvdG9vbHRpcC1leHRlbnNpb24p
+ID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi90
+cmFuc2xhdGlvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBq
+dXB5dGVybGFiL3RyYW5zbGF0aW9uLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3VpLWNvbXBvbmVudHMpID0gNC4wLjAtYWxw
+aGEuMzMKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAanVweXRlcmxhYi91aS1jb21wb25lbnRz
+LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBq
+dXB5dGVybGFiL3Zkb20pID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChAanVweXRlcmxhYi92ZG9tLWV4dGVuc2lvbikgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBqdXB5dGVybGFiL3ZlZ2E1LWV4dGVuc2lvbikgPSA0LjAuMC1hbHBo
+YS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsZXplci9jb21tb24pID0gMS4wLjIKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6ZXIvY3BwKSA9IDEuMC4wCi1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGxlemVyL2NzcykgPSAxLjEuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBsZXplci9oaWdobGlnaHQpID0gMS4xLjMKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6
+ZXIvaHRtbCkgPSAxLjIuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsZXplci9qYXZhKSA9
+IDEuMC4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVyL2phdmFzY3JpcHQpID0gMS4z
+LjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6ZXIvanNvbikgPSAxLjAuMAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKEBsZXplci9scikgPSAxLjIuNQotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBsZXplci9tYXJrZG93bikgPSAxLjAuMgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBsZXplci9waHApID0gMS4wLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6ZXIvcHl0
+aG9uKSA9IDEuMS4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoQGxlemVyL3J1c3QpID0gMS4w
+LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbGV6ZXIveG1sKSA9IDEuMC4wCi1Qcm92aWRl
+czogICAgICAgIGJ1bmRsZWQoQGx1bWluby9hbGdvcml0aG0pID0gMi4wLjAtYWxwaGEuNgotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1pbm8vYXBwbGljYXRpb24pID0gMi4wLjAtYWxwaGEu
+NgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1pbm8vY29sbGVjdGlvbnMpID0gMi4wLjAt
+YWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1pbm8vY29tbWFuZHMpID0gMi4w
+LjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1pbm8vY29yZXV0aWxzKSA9
+IDIuMC4wLWFscGhhLjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbHVtaW5vL2RhdGFncmlk
+KSA9IDEuMC4wLWFscGhhLjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbHVtaW5vL2Rpc3Bv
+c2FibGUpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1pbm8v
+ZG9tdXRpbHMpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBsdW1p
+bm8vZHJhZ2Ryb3ApID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEBs
+dW1pbm8va2V5Ym9hcmQpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KEBsdW1pbm8vbWVzc2FnaW5nKSA9IDIuMC4wLWFscGhhLjYKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChAbHVtaW5vL3BvbGxpbmcpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKEBsdW1pbm8vcHJvcGVydGllcykgPSAyLjAuMC1hbHBoYS42Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoQGx1bWluby9zaWduYWxpbmcpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKEBsdW1pbm8vdmlydHVhbGRvbSkgPSAyLjAuMC1hbHBoYS42Ci1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoQGx1bWluby93aWRnZXRzKSA9IDIuMC4wLWFscGhhLjYKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChAbnRlcmFjdC90cmFuc2Zvcm0tdmRvbSkgPSA0LjAuMTYt
+YWxwaGEuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKEByanNmL2NvcmUpID0gNC4yLjMKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChhanYpID0gNi4xMi42Ci1Qcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoYmFzZTE2KSA9IDEuMC4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoYmxhY2tsaXN0
+KSA9IDEuMS40Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoY2xvbmUpID0gMi4xLjIKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChjbHN4KSA9IDEuMi4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoY29sb3IpID0gMy4yLjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChjb2xvci1jb252ZXJ0
+KSA9IDEuOS4zCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoY29sb3ItbmFtZSkgPSAxLjEuMwot
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGNvbG9yLXN0cmluZykgPSAxLjkuMQotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKGNvbXB1dGUtZ2NkKSA9IDEuMi4xCi1Qcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoY29tcHV0ZS1sY20pID0gMS4xLjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChjb3Jl
+LWpzLXB1cmUpID0gMy4yNi4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoY3JlYXRlLXJlYWN0
+LWNsYXNzKSA9IDE1LjcuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGNyZWx0KSA9IDEuMC41
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoY3NzLWxvYWRlcikgPSA2LjcuMwotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKGQzLWFycmF5KSA9IDMuMS4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoZDMtY29sb3IpID0gMy4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1kZWxhdW5h
+eSkgPSA2LjAuMgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGQzLWRpc3BhdGNoKSA9IDMuMC4x
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoZDMtZHN2KSA9IDMuMC4xCi1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoZDMtZm9yY2UpID0gMy4wLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChk
+My1mb3JtYXQpID0gMy4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1nZW8pID0gMy4w
+LjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1nZW8tcHJvamVjdGlvbikgPSA0LjAuMAot
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGQzLWhpZXJhcmNoeSkgPSAzLjEuMgotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKGQzLWludGVycG9sYXRlKSA9IDMuMC4xCi1Qcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoZDMtcGF0aCkgPSAzLjAuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGQzLXF1
+YWR0cmVlKSA9IDMuMC4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoZDMtc2NhbGUpID0gNC4w
+LjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChkMy1zaGFwZSkgPSAzLjEuMAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKGQzLXRpbWUpID0gMy4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChkMy10aW1lLWZvcm1hdCkgPSA0LjEuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGQzLXRp
+bWVyKSA9IDMuMC4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoZGVlcG1lcmdlKSA9IDQuMi4y
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoZGVsYXVuYXRvcikgPSA1LjAuMAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKGRvbS1zZXJpYWxpemVyKSA9IDEuNC4xCi1Qcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoZG9tZWxlbWVudHR5cGUpID0gMi4zLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChkb21oYW5kbGVyKSA9IDQuMy4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoZG9tdXRpbHMp
+ID0gMi44LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChlbnRpdGllcykgPSAyLjIuMAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKGVzY2FwZS1zdHJpbmctcmVnZXhwKSA9IDEuMC41Ci1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoZmFzdC1kZWVwLWVxdWFsKSA9IDMuMS4zCi1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoZmFzdC1qc29uLXBhdGNoKSA9IDMuMS4xCi1Qcm92aWRlczogICAgICAg
+IGJ1bmRsZWQoZmFzdC1qc29uLXN0YWJsZS1zdHJpbmdpZnkpID0gMi4xLjAKLVByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChmcmVlLXN0eWxlKSA9IDMuMS4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoaHRtbHBhcnNlcjIpID0gNi4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChpbnRlcm5t
+YXApID0gMi4wLjMKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChpcy1hcnJheWlzaCkgPSAwLjMu
+MgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGlzLXBsYWluLW9iamVjdCkgPSA1LjAuMAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKGlzb21vcnBoaWMuanMpID0gMC4yLjUKLVByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChqc29uLXNjaGVtYS1jb21wYXJlKSA9IDAuMi4yCi1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoanNvbi1zY2hlbWEtbWVyZ2UtYWxsb2YpID0gMC42LjAKLVByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChqc29uLXNjaGVtYS10cmF2ZXJzZSkgPSAwLjQuMQotUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKGpzb24tc3RyaW5naWZ5LXByZXR0eS1jb21wYWN0KSA9IDMuMC4wCi1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQoanNvbjUpID0gMi4yLjMKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChqc29ucG9pbnRlcikgPSA1LjAuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGxpYjAp
+ID0gMC4yLjU4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobG9kYXNoKSA9IDQuMTcuMjEKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChsb2Rhc2gtZXMpID0gNC4xNy4yMQotUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKGxvZGFzaC5jbG9uZWRlZXApID0gNC41LjAKLVByb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChsb2Rhc2guY3VycnkpID0gNC4xLjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChs
+b2Rhc2guZXNjYXBlKSA9IDQuMC4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobG9kYXNoLm1l
+cmdld2l0aCkgPSA0LjYuMgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKGxydS1jYWNoZSkgPSA2
+LjAuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG1hcmtlZCkgPSA0LjAuMTgKLVByb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChtaW5pbWlzdCkgPSAxLjIuNwotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5hbm9pZCkgPSAzLjMuNAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG9iamVjdC1hc3Np
+Z24pID0gNC4xLjEKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChwYXJzZS1zcmNzZXQpID0gMS4w
+LjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChwYXRoLWJyb3dzZXJpZnkpID0gMS4wLjEKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChwaWNvY29sb3JzKSA9IDEuMC4wCi1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQocG9zdGNzcykgPSA4LjQuMjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChw
+cm9jZXNzKSA9IDAuMTEuMTAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChwcm9wLXR5cGVzKSA9
+IDE1LjguMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHF1ZXJ5c3RyaW5naWZ5KSA9IDIuMi4w
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQocmVhY3QpID0gMTguMi4wCi1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQocmVhY3QtYmFzZTE2LXN0eWxpbmcpID0gMC45LjEKLVByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChyZWFjdC1kb20pID0gMTguMi4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+cmVhY3QtaGlnaGxpZ2h0ZXIpID0gMC40LjMKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZWFj
+dC1pcykgPSAxNi45LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZWFjdC1qc29uLXRyZWUp
+ID0gMC4xNi4yCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQocmVhY3QtcGFnaW5hdGUpID0gNi41
+LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChyZWFjdC10b2FzdGlmeSkgPSA5LjEuMQotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKHJlZ2V4cC1tYXRjaC1pbmRpY2VzKSA9IDEuMC4yCi1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQocmVnZXhwLXRyZWUpID0gMC4xLjI0Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQocmVxdWlyZXMtcG9ydCkgPSAxLjAuMAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKHJvYnVzdC1wcmVkaWNhdGVzKSA9IDMuMC4xCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+c2FuaXRpemUtaHRtbCkgPSAyLjcuMwotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHNjaGVkdWxl
+cikgPSAwLjIzLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChzZW12ZXIpID0gNy4zLjgKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChzaW1wbGUtc3dpenpsZSkgPSAwLjIuMgotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKHN0eWxlLWxvYWRlcikgPSAzLjMuMQotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKHN0eWxlLW1vZCkgPSA0LjAuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHRvcG9q
+c29uLWNsaWVudCkgPSAzLjEuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHR5cGVzdHlsZSkg
+PSAyLjQuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHVyaS1qcykgPSA0LjQuMQotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKHVybC1wYXJzZSkgPSAxLjUuMTAKLVByb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZCh2YWxpZGF0ZS5pby1hcnJheSkgPSAxLjAuNgotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKHZhbGlkYXRlLmlvLWZ1bmN0aW9uKSA9IDEuMC4yCi1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQodmFsaWRhdGUuaW8taW50ZWdlcikgPSAxLjAuNQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KHZhbGlkYXRlLmlvLWludGVnZXItYXJyYXkpID0gMS4wLjAKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZCh2YWxpZGF0ZS5pby1udW1iZXIpID0gMS4wLjMKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZCh2ZWdhKSA9IDUuMjIuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtY2FudmFzKSA9
+IDEuMi42Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1jcm9zc2ZpbHRlcikgPSA0LjEu
+MAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtZGF0YWZsb3cpID0gNS43LjQKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLWVtYmVkKSA9IDYuMjEuMAotUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKHZlZ2EtZW5jb2RlKSA9IDQuOS4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+dmVnYS1ldmVudC1zZWxlY3RvcikgPSAzLjAuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZl
+Z2EtZXhwcmVzc2lvbikgPSA1LjAuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtZm9y
+Y2UpID0gNC4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLWZvcm1hdCkgPSAxLjEu
+MAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtZnVuY3Rpb25zKSA9IDUuMTMuMAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtZ2VvKSA9IDQuNC4wCi1Qcm92aWRlczogICAgICAg
+IGJ1bmRsZWQodmVnYS1oaWVyYXJjaHkpID0gNC4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZCh2ZWdhLWludGVycHJldGVyKSA9IDEuMC40Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVn
+YS1sYWJlbCkgPSAxLjIuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtbGl0ZSkgPSA1
+LjUuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtbG9hZGVyKSA9IDQuNS4wCi1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1wYXJzZXIpID0gNi4xLjQKLVByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZCh2ZWdhLXByb2plY3Rpb24pID0gMS41LjAKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZCh2ZWdhLXJlZ3Jlc3Npb24pID0gMS4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2
+ZWdhLXJ1bnRpbWUpID0gNi4xLjMKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXNjYWxl
+KSA9IDcuMi4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS1zY2VuZWdyYXBoKSA9IDQu
+MTAuMQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2Etc2NoZW1hLXVybC1wYXJzZXIpID0g
+Mi4yLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXNlbGVjdGlvbnMpID0gNS40LjAK
+LVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXN0YXRpc3RpY3MpID0gMS44LjAKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXRoZW1lcykgPSAyLjEyLjAKLVByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZCh2ZWdhLXRpbWUpID0gMi4xLjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2
+ZWdhLXRvb2x0aXApID0gMC4yOC4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS10cmFu
+c2Zvcm1zKSA9IDQuMTAuMAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHZlZ2EtdXRpbCkgPSAx
+LjE3LjAKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXZpZXcpID0gNS4xMS4wCi1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQodmVnYS12aWV3LXRyYW5zZm9ybXMpID0gNC41LjgKLVByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZCh2ZWdhLXZvcm9ub2kpID0gNC4yLjAKLVByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZCh2ZWdhLXdvcmRjbG91ZCkgPSA0LjEuMwotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKHZzY29kZS1qc29ucnBjKSA9IDguMC4yCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQodnNj
+b2RlLXdzLWpzb25ycGMpID0gMS4wLjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh3M2Mta2V5
+bmFtZSkgPSAyLjIuNQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHdoYXR3Zy1mZXRjaCkgPSAz
+LjYuMgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHh0ZXJtKSA9IDUuMS4wCi1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQoeHRlcm0tYWRkb24tY2FudmFzKSA9IDAuMy4wCi1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQoeHRlcm0tYWRkb24tZml0KSA9IDAuNy4wCi1Qcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoeHRlcm0tYWRkb24td2ViLWxpbmtzKSA9IDAuOC4wCi1Qcm92aWRlczogICAgICAgIGJ1
+bmRsZWQoeHRlcm0tYWRkb24td2ViZ2wpID0gMC4xNC4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQoeS1jb2RlbWlycm9yLm5leHQpID0gMC4zLjIKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZCh5
+LXByb3RvY29scykgPSAxLjAuNQotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKHktd2Vic29ja2V0
+KSA9IDEuNC41Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQoeWFsbGlzdCkgPSA0LjAuMAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKHlqcykgPSAxMy41LjQ0CitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQobnBtKEBiYWJlbC9ydW50aW1lKSkgPSA3LjIwLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGNvZGVtaXJyb3IvYXV0b2NvbXBsZXRlKSkgPSA2LjQuMAorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShAY29kZW1pcnJvci9jb21tYW5kcykpID0gNi4xLjIKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChucG0oQGNvZGVtaXJyb3IvbGFuZy1jcHApKSA9IDYuMC4yCitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBjb2RlbWlycm9yL2xhbmctY3NzKSkgPSA2LjAuMQor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAY29kZW1pcnJvci9sYW5nLWh0bWwpKSA9IDYu
+NC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBjb2RlbWlycm9yL2xhbmctamF2YSkp
+ID0gNi4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGNvZGVtaXJyb3IvbGFuZy1q
+YXZhc2NyaXB0KSkgPSA2LjEuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAY29kZW1p
+cnJvci9sYW5nLWpzb24pKSA9IDYuMC4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBj
+b2RlbWlycm9yL2xhbmctbWFya2Rvd24pKSA9IDYuMC41CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBjb2RlbWlycm9yL2xhbmctcGhwKSkgPSA2LjAuMQorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbShAY29kZW1pcnJvci9sYW5nLXB5dGhvbikpID0gNi4xLjAKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQGNvZGVtaXJyb3IvbGFuZy1ydXN0KSkgPSA2LjAuMQorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAY29kZW1pcnJvci9sYW5nLXNxbCkpID0gNi4zLjMKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGNvZGVtaXJyb3IvbGFuZy13YXN0KSkgPSA2LjAu
+MQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAY29kZW1pcnJvci9sYW5nLXhtbCkpID0g
+Ni4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGNvZGVtaXJyb3IvbGFuZ3VhZ2Up
+KSA9IDYuMy4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBjb2RlbWlycm9yL2xlZ2Fj
+eS1tb2RlcykpID0gNi4zLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGNvZGVtaXJy
+b3Ivc2VhcmNoKSkgPSA2LjIuMworUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAY29kZW1p
+cnJvci9zdGF0ZSkpID0gNi4xLjQKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGNvZGVt
+aXJyb3IvdmlldykpID0gNi43LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGZvcnRh
+d2Vzb21lL2ZvbnRhd2Vzb21lLWZyZWUpKSA9IDUuMTUuNAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlci95ZG9jKSkgPSAwLjMuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9hcHBsaWNhdGlvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvYXBwbGljYXRpb24tZXh0ZW5zaW9uKSkg
+PSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxh
+Yi9hcHB1dGlscykpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oQGp1cHl0ZXJsYWIvYXBwdXRpbHMtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9hdHRhY2htZW50cykpID0gNC4w
+LjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY2Vs
+bC10b29sYmFyKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShAanVweXRlcmxhYi9jZWxsLXRvb2xiYXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9jZWxscykpID0gNC4wLjAt
+YWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY2VsbHRh
+Z3MpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL2NlbGx0YWdzLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY29kZWVkaXRvcikpID0gNC4wLjAtYWxwaGEu
+MTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY29kZW1pcnJvcikp
+ID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvY29kZW1pcnJvci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvbGxhYm9yYXRpb24pKSA9IDQuMC4wLWFscGhh
+LjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvbGxhYm9yYXRp
+b24tZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9jb21wbGV0ZXIpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvbXBsZXRlci1leHRlbnNpb24pKSA9IDQu
+MC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2Nv
+bnNvbGUpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBq
+dXB5dGVybGFiL2NvbnNvbGUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9jb3JldXRpbHMpKSA9IDYuMC4wLWFscGhh
+LjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NzdnZpZXdlcikp
+ID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvY3N2dmlld2VyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZGVidWdnZXIpKSA9IDQuMC4wLWFscGhhLjE4CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2RlYnVnZ2VyLWV4dGVuc2lv
+bikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvZG9jbWFuYWdlcikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvZG9jbWFuYWdlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhh
+LjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2RvY3Byb3ZpZGVy
+KSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRl
+cmxhYi9kb2NyZWdpc3RyeSkpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvZG9jdW1lbnRzZWFyY2gpKSA9IDQuMC4wLWFscGhhLjE4CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2RvY3VtZW50c2VhcmNoLWV4
+dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+QGp1cHl0ZXJsYWIvZXh0ZW5zaW9ubWFuYWdlcikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZXh0ZW5zaW9ubWFuYWdlci1leHRlbnNp
+b24pKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL2ZpbGVicm93c2VyKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbShAanVweXRlcmxhYi9maWxlYnJvd3Nlci1leHRlbnNpb24pKSA9IDQuMC4wLWFs
+cGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2ZpbGVlZGl0
+b3IpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL2ZpbGVlZGl0b3ItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9oZWxwLWV4dGVuc2lvbikpID0gNC4wLjAt
+YWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvaHRtbHZp
+ZXdlcikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1
+cHl0ZXJsYWIvaHRtbHZpZXdlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2h1Yi1leHRlbnNpb24pKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2ltYWdl
+dmlld2VyKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+anVweXRlcmxhYi9pbWFnZXZpZXdlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2luc3BlY3RvcikpID0gNC4wLjAt
+YWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvaW5zcGVj
+dG9yLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGp1cHl0ZXJsYWIvamF2YXNjcmlwdC1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2pzb24tZXh0ZW5zaW9u
+KSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRl
+cmxhYi9sYXVuY2hlcikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGp1cHl0ZXJsYWIvbGF1bmNoZXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9sb2djb25zb2xlKSkgPSA0
+LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9s
+b2djb25zb2xlLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvbHNwKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9sc3AtZXh0ZW5zaW9uKSkgPSA0LjAuMC1h
+bHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tYWlubWVu
+dSkpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvbWFpbm1lbnUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tYXJrZG93bnZpZXdlcikpID0gNC4wLjAtYWxw
+aGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvbWFya2Rvd252
+aWV3ZXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlcmxhYi9tYXJrZWRwYXJzZXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBo
+YS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tYXRoamF4Mikp
+ID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvbWF0aGpheDItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tZXRhZGF0YWZvcm0pKSA9IDQuMC4wLWFscGhhLjE4
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21ldGFkYXRhZm9ybS1l
+eHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBt
+KEBqdXB5dGVybGFiL25iZm9ybWF0KSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9ub3RlYm9vaykpID0gNC4wLjAtYWxwaGEuMTgKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvbm90ZWJvb2stZXh0ZW5zaW9u
+KSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRl
+cmxhYi9vYnNlcnZhYmxlcykpID0gNS4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvb3V0cHV0YXJlYSkpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvcGRmLWV4dGVuc2lvbikpID0gNC4w
+LjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvcHJv
+cGVydHktaW5zcGVjdG9yKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlcmxhYi9yZW5kZXJtaW1lKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9yZW5kZXJtaW1lLWV4dGVuc2lvbikp
+ID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvcmVuZGVybWltZS1pbnRlcmZhY2VzKSkgPSAzLjguMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9ydW5uaW5nKSkgPSA0LjAuMC1hbHBoYS4xOAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9ydW5uaW5nLWV4dGVuc2lv
+bikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvc2VydmljZXMpKSA9IDcuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBqdXB5dGVybGFiL3NldHRpbmdlZGl0b3IpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3NldHRpbmdlZGl0b3ItZXh0ZW5z
+aW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVw
+eXRlcmxhYi9zZXR0aW5ncmVnaXN0cnkpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3Nob3J0Y3V0cy1leHRlbnNpb24pKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3N0YXRl
+ZGIpKSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL3N0YXR1c2JhcikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvc3RhdHVzYmFyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEu
+MTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdGVybWluYWwpKSA9
+IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFi
+L3Rlcm1pbmFsLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdGhlbWUtZGFyay1leHRlbnNpb24pKSA9IDQuMC4wLWFs
+cGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3RoZW1lLWxp
+Z2h0LWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGp1cHl0ZXJsYWIvdG9jKSkgPSA2LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90b2MtZXh0ZW5zaW9uKSkgPSA2LjAuMC1hbHBoYS4x
+OAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90b29sdGlwKSkgPSA0
+LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90
+b29sdGlwLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvdHJhbnNsYXRpb24pKSA9IDQuMC4wLWFscGhhLjE4CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3RyYW5zbGF0aW9uLWV4dGVuc2lv
+bikpID0gNC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvdWktY29tcG9uZW50cykpID0gNC4wLjAtYWxwaGEuMzMKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdWktY29tcG9uZW50cy1leHRlbnNpb24pKSA9IDQuMC4w
+LWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3Zkb20p
+KSA9IDQuMC4wLWFscGhhLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVy
+bGFiL3Zkb20tZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbShAanVweXRlcmxhYi92ZWdhNS1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsZXplci9jb21tb24pKSA9IDEuMC4yCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsZXplci9jcHApKSA9IDEuMC4wCitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBsZXplci9jc3MpKSA9IDEuMS4xCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBsZXplci9oaWdobGlnaHQpKSA9IDEuMS4zCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBsZXplci9odG1sKSkgPSAxLjIuMAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbShAbGV6ZXIvamF2YSkpID0gMS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGxlemVyL2phdmFzY3JpcHQpKSA9IDEuMy4yCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBsZXplci9qc29uKSkgPSAxLjAuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShAbGV6ZXIvbHIpKSA9IDEuMi41CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsZXpl
+ci9tYXJrZG93bikpID0gMS4wLjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGxlemVy
+L3BocCkpID0gMS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGxlemVyL3B5dGhv
+bikpID0gMS4xLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGxlemVyL3J1c3QpKSA9
+IDEuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsZXplci94bWwpKSA9IDEuMC4w
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vYWxnb3JpdGhtKSkgPSAyLjAu
+MC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vYXBwbGljYXRp
+b24pKSA9IDIuMC4wLWFscGhhLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWlu
+by9jb2xsZWN0aW9ucykpID0gMi4wLjAtYWxwaGEuNgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAbHVtaW5vL2NvbW1hbmRzKSkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQobnBtKEBsdW1pbm8vY29yZXV0aWxzKSkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vZGF0YWdyaWQpKSA9IDEuMC4wLWFscGhhLjYK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby9kaXNwb3NhYmxlKSkgPSAyLjAu
+MC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vZG9tdXRpbHMp
+KSA9IDIuMC4wLWFscGhhLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby9k
+cmFnZHJvcCkpID0gMi4wLjAtYWxwaGEuNgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+bHVtaW5vL2tleWJvYXJkKSkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBsdW1pbm8vbWVzc2FnaW5nKSkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vcG9sbGluZykpID0gMi4wLjAtYWxwaGEuNgorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAbHVtaW5vL3Byb3BlcnRpZXMpKSA9IDIuMC4wLWFscGhh
+LjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby9zaWduYWxpbmcpKSA9IDIu
+MC4wLWFscGhhLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby92aXJ0dWFs
+ZG9tKSkgPSAyLjAuMC1hbHBoYS42CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1p
+bm8vd2lkZ2V0cykpID0gMi4wLjAtYWxwaGEuNgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShAbnRlcmFjdC90cmFuc2Zvcm0tdmRvbSkpID0gNC4wLjE2LWFscGhhLjAKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQHJqc2YvY29yZSkpID0gNC4yLjMKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oYWp2KSkgPSA2LjEyLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+YmFzZTE2KSkgPSAxLjAuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShibGFja2xpc3Qp
+KSA9IDEuMS40CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNsb25lKSkgPSAyLjEuMgor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShjbHN4KSkgPSAxLjIuMQorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShjb2xvcikpID0gMy4yLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oY29sb3ItY29udmVydCkpID0gMS45LjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oY29sb3ItbmFtZSkpID0gMS4xLjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oY29s
+b3Itc3RyaW5nKSkgPSAxLjkuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShjb21wdXRl
+LWdjZCkpID0gMS4yLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oY29tcHV0ZS1sY20p
+KSA9IDEuMS4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNvcmUtanMtcHVyZSkpID0g
+My4yNi4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNyZWF0ZS1yZWFjdC1jbGFzcykp
+ID0gMTUuNy4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNyZWx0KSkgPSAxLjAuNQor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShjc3MtbG9hZGVyKSkgPSA2LjcuMworUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShkMy1hcnJheSkpID0gMy4xLjEKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0oZDMtY29sb3IpKSA9IDMuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKGQzLWRlbGF1bmF5KSkgPSA2LjAuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShkMy1kaXNwYXRjaCkpID0gMy4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oZDMt
+ZHN2KSkgPSAzLjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShkMy1mb3JjZSkpID0g
+My4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oZDMtZm9ybWF0KSkgPSAzLjEuMAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShkMy1nZW8pKSA9IDMuMC4xCitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQobnBtKGQzLWdlby1wcm9qZWN0aW9uKSkgPSA0LjAuMAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShkMy1oaWVyYXJjaHkpKSA9IDMuMS4yCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKGQzLWludGVycG9sYXRlKSkgPSAzLjAuMQorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShkMy1wYXRoKSkgPSAzLjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShkMy1xdWFkdHJlZSkpID0gMy4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+ZDMtc2NhbGUpKSA9IDQuMC4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGQzLXNoYXBl
+KSkgPSAzLjEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShkMy10aW1lKSkgPSAzLjEu
+MAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShkMy10aW1lLWZvcm1hdCkpID0gNC4xLjAK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oZDMtdGltZXIpKSA9IDMuMC4xCitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKGRlZXBtZXJnZSkpID0gNC4yLjIKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0oZGVsYXVuYXRvcikpID0gNS4wLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oZG9tLXNlcmlhbGl6ZXIpKSA9IDEuNC4xCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKGRvbWVsZW1lbnR0eXBlKSkgPSAyLjMuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShkb21oYW5kbGVyKSkgPSA0LjMuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShk
+b211dGlscykpID0gMi44LjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oZW50aXRpZXMp
+KSA9IDIuMi4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGVzY2FwZS1zdHJpbmctcmVn
+ZXhwKSkgPSAxLjAuNQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShmYXN0LWRlZXAtZXF1
+YWwpKSA9IDMuMS4zCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGZhc3QtanNvbi1wYXRj
+aCkpID0gMy4xLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oZmFzdC1qc29uLXN0YWJs
+ZS1zdHJpbmdpZnkpKSA9IDIuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGZyZWUt
+c3R5bGUpKSA9IDMuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGh0bWxwYXJzZXIy
+KSkgPSA2LjEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShpbnRlcm5tYXApKSA9IDIu
+MC4zCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGlzLWFycmF5aXNoKSkgPSAwLjMuMgor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShpcy1wbGFpbi1vYmplY3QpKSA9IDUuMC4wCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGlzb21vcnBoaWMuanMpKSA9IDAuMi41CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGpzb24tc2NoZW1hLWNvbXBhcmUpKSA9IDAuMi4yCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGpzb24tc2NoZW1hLW1lcmdlLWFsbG9mKSkgPSAw
+LjYuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShqc29uLXNjaGVtYS10cmF2ZXJzZSkp
+ID0gMC40LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oanNvbi1zdHJpbmdpZnktcHJl
+dHR5LWNvbXBhY3QpKSA9IDMuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGpzb241
+KSkgPSAyLjIuMworUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShqc29ucG9pbnRlcikpID0g
+NS4wLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0obGliMCkpID0gMC4yLjU4CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGxvZGFzaCkpID0gNC4xNy4yMQorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShsb2Rhc2gtZXMpKSA9IDQuMTcuMjEKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0obG9kYXNoLmNsb25lZGVlcCkpID0gNC41LjAKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0obG9kYXNoLmN1cnJ5KSkgPSA0LjEuMQorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShsb2Rhc2guZXNjYXBlKSkgPSA0LjAuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShsb2Rhc2gubWVyZ2V3aXRoKSkgPSA0LjYuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShscnUtY2FjaGUpKSA9IDYuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKG1h
+cmtlZCkpID0gNC4wLjE4CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKG1pbmltaXN0KSkg
+PSAxLjIuNworUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShuYW5vaWQpKSA9IDMuMy40CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKG9iamVjdC1hc3NpZ24pKSA9IDQuMS4xCitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHBhcnNlLXNyY3NldCkpID0gMS4wLjIKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChucG0ocGF0aC1icm93c2VyaWZ5KSkgPSAxLjAuMQorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShwaWNvY29sb3JzKSkgPSAxLjAuMAorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShwb3N0Y3NzKSkgPSA4LjQuMjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0ocHJvY2VzcykpID0gMC4xMS4xMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShw
+cm9wLXR5cGVzKSkgPSAxNS44LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocXVlcnlz
+dHJpbmdpZnkpKSA9IDIuMi4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlYWN0KSkg
+PSAxOC4yLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocmVhY3QtYmFzZTE2LXN0eWxp
+bmcpKSA9IDAuOS4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlYWN0LWRvbSkpID0g
+MTguMi4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlYWN0LWhpZ2hsaWdodGVyKSkg
+PSAwLjQuMworUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShyZWFjdC1pcykpID0gMTYuOS4w
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlYWN0LWpzb24tdHJlZSkpID0gMC4xNi4y
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlYWN0LXBhZ2luYXRlKSkgPSA2LjUuMAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShyZWFjdC10b2FzdGlmeSkpID0gOS4xLjEKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocmVnZXhwLW1hdGNoLWluZGljZXMpKSA9IDEuMC4y
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlZ2V4cC10cmVlKSkgPSAwLjEuMjQKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocmVxdWlyZXMtcG9ydCkpID0gMS4wLjAKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChucG0ocm9idXN0LXByZWRpY2F0ZXMpKSA9IDMuMC4xCitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHNhbml0aXplLWh0bWwpKSA9IDIuNy4zCitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKHNjaGVkdWxlcikpID0gMC4yMy4wCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKHNlbXZlcikpID0gNy4zLjgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oc2ltcGxlLXN3aXp6bGUpKSA9IDAuMi4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+bnBtKHN0eWxlLWxvYWRlcikpID0gMy4zLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+c3R5bGUtbW9kKSkgPSA0LjAuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh0b3BvanNv
+bi1jbGllbnQpKSA9IDMuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHR5cGVzdHls
+ZSkpID0gMi40LjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0odXJpLWpzKSkgPSA0LjQu
+MQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh1cmwtcGFyc2UpKSA9IDEuNS4xMAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2YWxpZGF0ZS5pby1hcnJheSkpID0gMS4wLjYKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0odmFsaWRhdGUuaW8tZnVuY3Rpb24pKSA9IDEuMC4y
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZhbGlkYXRlLmlvLWludGVnZXIpKSA9IDEu
+MC41CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZhbGlkYXRlLmlvLWludGVnZXItYXJy
+YXkpKSA9IDEuMC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZhbGlkYXRlLmlvLW51
+bWJlcikpID0gMS4wLjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0odmVnYSkpID0gNS4y
+Mi4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZlZ2EtY2FudmFzKSkgPSAxLjIuNgor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLWNyb3NzZmlsdGVyKSkgPSA0LjEuMAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLWRhdGFmbG93KSkgPSA1LjcuNAorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLWVtYmVkKSkgPSA2LjIxLjAKK1Byb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChucG0odmVnYS1lbmNvZGUpKSA9IDQuOS4wCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKHZlZ2EtZXZlbnQtc2VsZWN0b3IpKSA9IDMuMC4wCitQcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQobnBtKHZlZ2EtZXhwcmVzc2lvbikpID0gNS4wLjAKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0odmVnYS1mb3JjZSkpID0gNC4xLjAKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0odmVnYS1mb3JtYXQpKSA9IDEuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKHZlZ2EtZnVuY3Rpb25zKSkgPSA1LjEzLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0odmVnYS1nZW8pKSA9IDQuNC4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZl
+Z2EtaGllcmFyY2h5KSkgPSA0LjEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdh
+LWludGVycHJldGVyKSkgPSAxLjAuNAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdh
+LWxhYmVsKSkgPSAxLjIuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLWxpdGUp
+KSA9IDUuNS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZlZ2EtbG9hZGVyKSkgPSA0
+LjUuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLXBhcnNlcikpID0gNi4xLjQK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0odmVnYS1wcm9qZWN0aW9uKSkgPSAxLjUuMAor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLXJlZ3Jlc3Npb24pKSA9IDEuMS4wCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZlZ2EtcnVudGltZSkpID0gNi4xLjMKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChucG0odmVnYS1zY2FsZSkpID0gNy4yLjAKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0odmVnYS1zY2VuZWdyYXBoKSkgPSA0LjEwLjEKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0odmVnYS1zY2hlbWEtdXJsLXBhcnNlcikpID0gMi4yLjAKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChucG0odmVnYS1zZWxlY3Rpb25zKSkgPSA1LjQuMAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdhLXN0YXRpc3RpY3MpKSA9IDEuOC4wCitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKHZlZ2EtdGhlbWVzKSkgPSAyLjEyLjAKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0odmVnYS10aW1lKSkgPSAyLjEuMAorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbSh2ZWdhLXRvb2x0aXApKSA9IDAuMjguMAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbSh2ZWdhLXRyYW5zZm9ybXMpKSA9IDQuMTAuMAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbSh2ZWdhLXV0aWwpKSA9IDEuMTcuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bSh2ZWdhLXZpZXcpKSA9IDUuMTEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdh
+LXZpZXctdHJhbnNmb3JtcykpID0gNC41LjgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+dmVnYS12b3Jvbm9pKSkgPSA0LjIuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh2ZWdh
+LXdvcmRjbG91ZCkpID0gNC4xLjMKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0odnNjb2Rl
+LWpzb25ycGMpKSA9IDguMC4yCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHZzY29kZS13
+cy1qc29ucnBjKSkgPSAxLjAuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh3M2Mta2V5
+bmFtZSkpID0gMi4yLjUKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0od2hhdHdnLWZldGNo
+KSkgPSAzLjYuMgorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh4dGVybSkpID0gNS4xLjAK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oeHRlcm0tYWRkb24tY2FudmFzKSkgPSAwLjMu
+MAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh4dGVybS1hZGRvbi1maXQpKSA9IDAuNy4w
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHh0ZXJtLWFkZG9uLXdlYi1saW5rcykpID0g
+MC44LjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oeHRlcm0tYWRkb24td2ViZ2wpKSA9
+IDAuMTQuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh5LWNvZGVtaXJyb3IubmV4dCkp
+ID0gMC4zLjIKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oeS1wcm90b2NvbHMpKSA9IDEu
+MC41CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHktd2Vic29ja2V0KSkgPSAxLjQuNQor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh5YWxsaXN0KSkgPSA0LjAuMAorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbSh5anMpKSA9IDEzLjUuNDQKIAogJWRlc2NyaXB0aW9uIC1uIHB5
+dGhvbjMtanVweXRlcmxhYiAlX2Rlc2NyaXB0aW9uCiAKQEAgLTM4MCw2ICszODEsOSBAQAogJWlu
+c3RhbGwKICVweXByb2plY3RfaW5zdGFsbAogJXB5cHJvamVjdF9zYXZlX2ZpbGVzIGp1cHl0ZXJs
+YWIKKworIyBBZGQgJSVsaWNlbnNlIHRvIHNvbWUgYnVuZGxlZCBMSUNFTlNFLnR4dCBmaWxlcwor
+c2VkIC1pICJzL1woLipcLkxJQ0VOW1NDXUVcLnR4dFwpLyUlbGljZW5zZSBcMS8iICV7cHlwcm9q
+ZWN0X2ZpbGVzfQogCiBpbnN0YWxsIC1tIDA3NTUgLXAgLWQgJXtidWlsZHJvb3R9JXtfc3lzY29u
+ZmRpcn0vanVweXRlci9qdXB5dGVyX25vdGVib29rX2NvbmZpZy5kCiBpbnN0YWxsIC1tIDA3NTUg
+LXAgLWQgJXtidWlsZHJvb3R9JXtfc3lzY29uZmRpcn0vanVweXRlci9qdXB5dGVyX3NlcnZlcl9j
+b25maWcuZAo=
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1947015</attachid>
+            <date>2023-02-28 18:02:53 +0000</date>
+            <delta_ts>2023-02-28 18:02:53 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5579097 to 5580050</desc>
+            <filename>spec-from-5579097-to-5580050.diff</filename>
+            <type>text/plain</type>
+            <size>1747</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81NTc5MDk3
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTU4MDA1
+MApAQCAtMzY3LDcgKzM2NywyMSBAQAogc2VkIC1pICIvcHl0ZXN0LXRvcm5hc3luYy9kIiBweXBy
+b2plY3QudG9tbAogCiBzZWQgLWkgIi9jb3ZlcmFnZS9kIiBweXByb2plY3QudG9tbAorc2VkIC1p
+ICIvcHl0ZXN0LWNvdi9kIiBweXByb2plY3QudG9tbAogc2VkIC1pICIvcHl0ZXN0LWNoZWNrLWxp
+bmtzL2QiIHB5cHJvamVjdC50b21sCisKKyMgUmVtb3ZlIHdvZmYgYW5kIHdvZmYyIGZvbnRzCitm
+aW5kIGp1cHl0ZXJsYWIvc3RhdGljIC1uYW1lICIqLndvZmYiIC1kZWxldGUKK2ZpbmQganVweXRl
+cmxhYi9zdGF0aWMgLW5hbWUgIioud29mZjIiIC1kZWxldGUKKworIyBSZW1vdmUgYWxsIGVtcHR5
+IGZpbGVzCitmaW5kIC4vIC1lbXB0eSAtdHlwZSBmIC1kZWxldGUKKworIyBSZW1vdmUgc2hlYmFu
+Z3MgZnJvbSBub24tZXhlY3V0YWJsZSBzY3JpcHRzCitzZWQgLWkgIjFkIiBqdXB5dGVybGFiL3N0
+YWdpbmcveWFybi5qcyBqdXB5dGVybGFiL25vZGUtdmVyc2lvbi1jaGVjay5qcworCisjIFJlbW92
+ZSBhbGwgYmFja3VwIGZpbGVzCitmaW5kIC4vIC1uYW1lICIqLmpzb24ub3JpZyIgLWRlbGV0ZQog
+CiAKICVnZW5lcmF0ZV9idWlsZHJlcXVpcmVzCkBAIC0zOTAsMTAgKzQwNCwyMCBAQAogbXYgLXYg
+JXtidWlsZHJvb3R9eyV7X3ByZWZpeH0sfSV7X3N5c2NvbmZkaXJ9L2p1cHl0ZXIvanVweXRlcl9u
+b3RlYm9va19jb25maWcuZC9qdXB5dGVybGFiLmpzb24KIG12IC12ICV7YnVpbGRyb290fXsle19w
+cmVmaXh9LH0le19zeXNjb25mZGlyfS9qdXB5dGVyL2p1cHl0ZXJfc2VydmVyX2NvbmZpZy5kL2p1
+cHl0ZXJsYWIuanNvbgogCisjIFJlcGxhY2UgaWRlbnRpY2FsIGZpbGVzIHdpdGggYSBzeW1saW5r
+CitwdXNoZCAle2J1aWxkcm9vdH0le3B5dGhvbjNfc2l0ZWxpYn0vanVweXRlcmxhYi90ZXN0cy9t
+b2NrX3BhY2thZ2VzCitsbiAtc2YgLi4vLi4vZXh0ZW5zaW9uL21vY2tfcGFja2FnZS5weSBpbnRl
+cm9wL2NvbnN1bWVyL2psYWJfbW9ja19jb25zdW1lci5weQorcG9wZAorCiAlY2hlY2sKICMgU29t
+ZSB0ZXN0cyBmYWlsIGJlY2F1c2Ugb2YgbWlzc2luZyB0b3JuYXN5bmMgYW5kCiAjIHNvbWUgdHJ5
+IHRvIGluc3RhbGwgZGVwZW5kZW5jaWVzIGZyb20gaW50ZXJuZXQgdmlhIG5wbS4KLSVweXRlc3Qg
+LWsgIm5vdCB0ZXN0X2J1aWxkIGFuZCBub3QgdGVzdF9jaGVjayBhbmQgbm90IHRlc3RfaW5zdGFs
+bF9hbmRfdW5pbnN0YWxsIGFuZCBub3QgdGVzdF91bmluc3RhbGxfY29yZV9leHRlbnNpb24iCisj
+IHRlc3RfbG9hZF9leHRlbnNpb24gaXMgZmxha3kuCislcHl0ZXN0IC1rICJub3QgdGVzdF9idWls
+ZCBhbmQgbm90IHRlc3RfY2hlY2sgYW5kIG5vdCB0ZXN0X2luc3RhbGxfYW5kX3VuaW5zdGFsbCBh
+bmQgbm90IHRlc3RfdW5pbnN0YWxsX2NvcmVfZXh0ZW5zaW9uIGFuZCBub3QgdGVzdF9sb2FkX2V4
+dGVuc2lvbiIKKworIyBSZW1vdmUgaGlkZGVuIGZpbGUgbmVlZGVkIGJ5IHRlc3RzCitybSAle2J1
+aWxkcm9vdH0le3B5dGhvbjNfc2l0ZWxpYn0vanVweXRlcmxhYi9zdGFnaW5nLy55YXJucmMKK3Nl
+ZCAtaSAiL1wueWFybnJjL2QiICV7cHlwcm9qZWN0X2ZpbGVzfQogCiAKICVmaWxlcyAtbiBweXRo
+b24zLWp1cHl0ZXJsYWIgLWYgJXtweXByb2plY3RfZmlsZXN9Cg==
+</data>
+
+          </attachment>
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1947486</attachid>
+            <date>2023-03-02 13:42:43 +0000</date>
+            <delta_ts>2023-03-02 13:42:43 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5580050 to 5586278</desc>
+            <filename>spec-from-5580050-to-5586278.diff</filename>
+            <type>text/plain</type>
+            <size>20069</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81NTgwMDUw
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTU4NjI3
+OApAQCAtMSw0ICsxLDQgQEAKLSVnbG9iYWwgcHJlcmVsIGEzMworJWdsb2JhbCBwcmVyZWwgYTM0
+CiAKIE5hbWU6ICAgICAgICAgICBweXRob24tanVweXRlcmxhYgogVmVyc2lvbjogICAgICAgIDQu
+MC4wfiV7cHJlcmVsfQpAQCAtNzUsMTAyICs3NSw5NyBAQAogUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAY29kZW1pcnJvci92aWV3KSkgPSA2LjcuMQogUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAZm9ydGF3ZXNvbWUvZm9udGF3ZXNvbWUtZnJlZSkpID0gNS4xNS40CiBQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVyL3lkb2MpKSA9IDAuMy4xCi1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2FwcGxpY2F0aW9uKSkgPSA0LjAuMC1hbHBo
+YS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9hcHBsaWNhdGlv
+bi1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+bnBtKEBqdXB5dGVybGFiL2FwcHV0aWxzKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9hcHB1dGlscy1leHRlbnNpb24pKSA9IDQuMC4w
+LWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2F0dGFj
+aG1lbnRzKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+anVweXRlcmxhYi9jZWxsLXRvb2xiYXIpKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NlbGwtdG9vbGJhci1leHRlbnNpb24pKSA9IDQu
+MC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2Nl
+bGxzKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVw
+eXRlcmxhYi9jZWxsdGFncykpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvY2VsbHRhZ3MtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4x
+OAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9jb2RlZWRpdG9yKSkg
+PSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxh
+Yi9jb2RlbWlycm9yKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9jb2RlbWlycm9yLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgK
+LVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY29sbGFib3JhdGlvbikp
+ID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvY29sbGFib3JhdGlvbi1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczog
+ICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvbXBsZXRlcikpID0gNC4wLjAtYWxwaGEu
+MTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY29tcGxldGVyLWV4
+dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+QGp1cHl0ZXJsYWIvY29uc29sZSkpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY29uc29sZS1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhh
+LjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvcmV1dGlscykp
+ID0gNi4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvY3N2dmlld2VyKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9jc3Z2aWV3ZXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAot
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9kZWJ1Z2dlcikpID0gNC4w
+LjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZGVi
+dWdnZXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlcmxhYi9kb2NtYW5hZ2VyKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9kb2NtYW5hZ2VyLWV4dGVuc2lvbikp
+ID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJs
+YWIvZG9jcHJvdmlkZXIpKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBqdXB5dGVybGFiL2RvY3JlZ2lzdHJ5KSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9kb2N1bWVudHNlYXJjaCkpID0gNC4w
+LjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZG9j
+dW1lbnRzZWFyY2gtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9leHRlbnNpb25tYW5hZ2VyKSkgPSA0LjAuMC1hbHBo
+YS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9leHRlbnNpb25t
+YW5hZ2VyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvZmlsZWJyb3dzZXIpKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2ZpbGVicm93c2VyLWV4dGVuc2lv
+bikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvZmlsZWVkaXRvcikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvZmlsZWVkaXRvci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhh
+LjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2hlbHAtZXh0ZW5z
+aW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVw
+eXRlcmxhYi9odG1sdmlld2VyKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbShAanVweXRlcmxhYi9odG1sdmlld2VyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxw
+aGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvaHViLWV4dGVu
+c2lvbikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1
+cHl0ZXJsYWIvaW1hZ2V2aWV3ZXIpKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAg
+IGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2ltYWdldmlld2VyLWV4dGVuc2lvbikpID0gNC4wLjAt
+YWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvaW5zcGVj
+dG9yKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVw
+eXRlcmxhYi9pbnNwZWN0b3ItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9qYXZhc2NyaXB0LWV4dGVuc2lvbikpID0g
+NC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIv
+anNvbi1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBqdXB5dGVybGFiL2xhdW5jaGVyKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9sYXVuY2hlci1leHRlbnNpb24pKSA9IDQu
+MC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2xv
+Z2NvbnNvbGUpKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBt
+KEBqdXB5dGVybGFiL2xvZ2NvbnNvbGUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9sc3ApKSA9IDQuMC4wLWFscGhh
+LjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2xzcC1leHRlbnNp
+b24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL21haW5tZW51KSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlcmxhYi9tYWlubWVudS1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21hcmtkb3dudmlld2Vy
+KSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRl
+cmxhYi9tYXJrZG93bnZpZXdlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21hcmtlZHBhcnNlci1leHRlbnNpb24p
+KSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVy
+bGFiL21hdGhqYXgyKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9tYXRoamF4Mi1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Q
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21ldGFkYXRhZm9ybSkpID0g
+NC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIv
+bWV0YWRhdGFmb3JtLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvbmJmb3JtYXQpKSA9IDQuMC4wLWFscGhhLjE4Ci1Q
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL25vdGVib29rKSkgPSA0LjAu
+MC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9ub3Rl
+Ym9vay1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBqdXB5dGVybGFiL29ic2VydmFibGVzKSkgPSA1LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9vdXRwdXRhcmVhKSkgPSA0LjAuMC1h
+bHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9wZGYtZXh0
+ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+anVweXRlcmxhYi9wcm9wZXJ0eS1pbnNwZWN0b3IpKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3JlbmRlcm1pbWUpKSA9IDQuMC4wLWFs
+cGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3JlbmRlcm1p
+bWUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9yZW5kZXJtaW1lLWludGVyZmFjZXMpKSA9IDMuOC4wLWFscGhhLjE4
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3J1bm5pbmcpKSA9IDQu
+MC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3J1
+bm5pbmctZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlcmxhYi9zZXJ2aWNlcykpID0gNy4wLjAtYWxwaGEuMTgKLVByb3ZpZGVz
+OiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvc2V0dGluZ2VkaXRvcikpID0gNC4wLjAt
+YWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvc2V0dGlu
+Z2VkaXRvci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1
+bmRsZWQobnBtKEBqdXB5dGVybGFiL3NldHRpbmdyZWdpc3RyeSkpID0gNC4wLjAtYWxwaGEuMTgK
+LVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvc2hvcnRjdXRzLWV4dGVu
+c2lvbikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1
+cHl0ZXJsYWIvc3RhdGVkYikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvc3RhdHVzYmFyKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9zdGF0dXNiYXItZXh0ZW5zaW9uKSkg
+PSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxh
+Yi90ZXJtaW5hbCkpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oQGp1cHl0ZXJsYWIvdGVybWluYWwtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90aGVtZS1kYXJrLWV4dGVuc2lv
+bikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvdGhlbWUtbGlnaHQtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90b2MpKSA9IDYuMC4wLWFscGhhLjE4Ci1Q
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3RvYy1leHRlbnNpb24pKSA9
+IDYuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFi
+L3Rvb2x0aXApKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBt
+KEBqdXB5dGVybGFiL3Rvb2x0aXAtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90cmFuc2xhdGlvbikpID0gNC4wLjAt
+YWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdHJhbnNs
+YXRpb24tZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOAotUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAanVweXRlcmxhYi91aS1jb21wb25lbnRzKSkgPSA0LjAuMC1hbHBoYS4zMwotUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi91aS1jb21wb25lbnRzLWV4dGVu
+c2lvbikpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1
+cHl0ZXJsYWIvdmRvbSkpID0gNC4wLjAtYWxwaGEuMTgKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGp1cHl0ZXJsYWIvdmRvbS1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE4Ci1Qcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3ZlZ2E1LWV4dGVuc2lvbikpID0g
+NC4wLjAtYWxwaGEuMTgKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIv
+YXBwbGljYXRpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQo
+bnBtKEBqdXB5dGVybGFiL2FwcGxpY2F0aW9uLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvYXBwdXRpbHMpKSA9IDQu
+MC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2Fw
+cHV0aWxzLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvYXR0YWNobWVudHMpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92
+aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NlbGwtdG9vbGJhcikpID0gNC4w
+LjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY2Vs
+bC10b29sYmFyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY2VsbHMpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NlbGx0YWdzKSkgPSA0LjAuMC1hbHBo
+YS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9jZWxsdGFncy1l
+eHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBt
+KEBqdXB5dGVybGFiL2NvZGVlZGl0b3IpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvZGVtaXJyb3IpKSA9IDQuMC4wLWFscGhhLjE5
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvZGVtaXJyb3ItZXh0
+ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+anVweXRlcmxhYi9jb21wbGV0ZXIpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvbXBsZXRlci1leHRlbnNpb24pKSA9IDQuMC4wLWFs
+cGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NvbnNvbGUp
+KSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVy
+bGFiL2NvbnNvbGUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9jb3JldXRpbHMpKSA9IDYuMC4wLWFscGhhLjE5CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2NzdnZpZXdlcikpID0gNC4w
+LjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvY3N2
+dmlld2VyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvZGVidWdnZXIpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2RlYnVnZ2VyLWV4dGVuc2lvbikpID0g
+NC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIv
+ZG9jbWFuYWdlcikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oQGp1cHl0ZXJsYWIvZG9jbWFuYWdlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2RvY3JlZ2lzdHJ5KSkgPSA0
+LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9k
+b2N1bWVudHNlYXJjaCkpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGp1cHl0ZXJsYWIvZG9jdW1lbnRzZWFyY2gtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBo
+YS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9leHRlbnNpb25t
+YW5hZ2VyKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+anVweXRlcmxhYi9leHRlbnNpb25tYW5hZ2VyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZmlsZWJyb3dzZXIpKSA9
+IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFi
+L2ZpbGVicm93c2VyLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZmlsZWVkaXRvcikpID0gNC4wLjAtYWxwaGEuMTkK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvZmlsZWVkaXRvci1leHRl
+bnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBq
+dXB5dGVybGFiL2hlbHAtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9odG1sdmlld2VyKSkgPSA0LjAuMC1hbHBoYS4x
+OQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9odG1sdmlld2VyLWV4
+dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+QGp1cHl0ZXJsYWIvaHViLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvaW1hZ2V2aWV3ZXIpKSA9IDQuMC4wLWFscGhh
+LjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2ltYWdldmlld2Vy
+LWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oQGp1cHl0ZXJsYWIvaW5zcGVjdG9yKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAg
+ICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9pbnNwZWN0b3ItZXh0ZW5zaW9uKSkgPSA0LjAu
+MC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9qYXZh
+c2NyaXB0LWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvanNvbi1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2xhdW5jaGVyKSkgPSA0LjAu
+MC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9sYXVu
+Y2hlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBqdXB5dGVybGFiL2xvZ2NvbnNvbGUpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL2xvZ2NvbnNvbGUtZXh0ZW5zaW9uKSkg
+PSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxh
+Yi9sc3ApKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBq
+dXB5dGVybGFiL2xzcC1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21haW5tZW51KSkgPSA0LjAuMC1hbHBoYS4xOQor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tYWlubWVudS1leHRlbnNp
+b24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL21hcmtkb3dudmlld2VyKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAg
+ICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tYXJrZG93bnZpZXdlci1leHRlbnNpb24pKSA9IDQu
+MC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21h
+cmtlZHBhcnNlci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAg
+IGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL21hdGhqYXgyKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9tYXRoamF4Mi1leHRlbnNpb24p
+KSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVy
+bGFiL21ldGFkYXRhZm9ybSkpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGp1cHl0ZXJsYWIvbWV0YWRhdGFmb3JtLWV4dGVuc2lvbikpID0gNC4wLjAtYWxw
+aGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvbmJmb3JtYXQp
+KSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVy
+bGFiL25vdGVib29rKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAanVweXRlcmxhYi9ub3RlYm9vay1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5CitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL29ic2VydmFibGVzKSkgPSA1
+LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9v
+dXRwdXRhcmVhKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShAanVweXRlcmxhYi9wZGYtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9wcm9wZXJ0eS1pbnNwZWN0b3IpKSA9IDQu
+MC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3Jl
+bmRlcm1pbWUpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBt
+KEBqdXB5dGVybGFiL3JlbmRlcm1pbWUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJv
+dmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9yZW5kZXJtaW1lLWludGVyZmFj
+ZXMpKSA9IDMuOC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5
+dGVybGFiL3J1bm5pbmcpKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBqdXB5dGVybGFiL3J1bm5pbmctZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9zZXJ2aWNlcykpID0gNy4w
+LjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvc2V0
+dGluZ2VkaXRvcikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oQGp1cHl0ZXJsYWIvc2V0dGluZ2VkaXRvci1leHRlbnNpb24pKSA9IDQuMC4wLWFscGhhLjE5
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3NldHRpbmdyZWdpc3Ry
+eSkpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0
+ZXJsYWIvc2hvcnRjdXRzLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvc3RhdGVkYikpID0gNC4wLjAtYWxwaGEuMTkK
+K1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvc3RhdHVzYmFyKSkgPSA0
+LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi9z
+dGF0dXNiYXItZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBi
+dW5kbGVkKG5wbShAanVweXRlcmxhYi90ZXJtaW5hbCkpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdGVybWluYWwtZXh0ZW5zaW9uKSkg
+PSA0LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxh
+Yi90aGVtZS1kYXJrLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdGhlbWUtbGlnaHQtZXh0ZW5zaW9uKSkgPSA0LjAu
+MC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90b2Mp
+KSA9IDYuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVy
+bGFiL3RvYy1leHRlbnNpb24pKSA9IDYuMC4wLWFscGhhLjE5CitQcm92aWRlczogICAgICAgIGJ1
+bmRsZWQobnBtKEBqdXB5dGVybGFiL3Rvb2x0aXApKSA9IDQuMC4wLWFscGhhLjE5CitQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBqdXB5dGVybGFiL3Rvb2x0aXAtZXh0ZW5zaW9uKSkgPSA0
+LjAuMC1hbHBoYS4xOQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi90
+cmFuc2xhdGlvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChu
+cG0oQGp1cHl0ZXJsYWIvdHJhbnNsYXRpb24tZXh0ZW5zaW9uKSkgPSA0LjAuMC1hbHBoYS4xOQor
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxhYi91aS1jb21wb25lbnRzKSkg
+PSA0LjAuMC1hbHBoYS4zNAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAanVweXRlcmxh
+Yi91aS1jb21wb25lbnRzLWV4dGVuc2lvbikpID0gNC4wLjAtYWxwaGEuMTkKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQGp1cHl0ZXJsYWIvdmVnYTUtZXh0ZW5zaW9uKSkgPSA0LjAuMC1h
+bHBoYS4xOQogUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAbGV6ZXIvY29tbW9uKSkgPSAx
+LjAuMgogUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAbGV6ZXIvY3BwKSkgPSAxLjAuMAog
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAbGV6ZXIvY3NzKSkgPSAxLjEuMQpAQCAtMTg1
+LDI1ICsxODAsMjcgQEAKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGxlemVyL3B5dGhv
+bikpID0gMS4xLjEKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGxlemVyL3J1c3QpKSA9
+IDEuMC4wCiBQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsZXplci94bWwpKSA9IDEuMC4w
+Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vYWxnb3JpdGhtKSkgPSAyLjAu
+MC1hbHBoYS42Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vYXBwbGljYXRp
+b24pKSA9IDIuMC4wLWFscGhhLjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWlu
+by9jb2xsZWN0aW9ucykpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShAbHVtaW5vL2NvbW1hbmRzKSkgPSAyLjAuMC1hbHBoYS42Ci1Qcm92aWRlczogICAgICAg
+IGJ1bmRsZWQobnBtKEBsdW1pbm8vY29yZXV0aWxzKSkgPSAyLjAuMC1hbHBoYS42Ci1Qcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vZGF0YWdyaWQpKSA9IDEuMC4wLWFscGhhLjYK
+LVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby9kaXNwb3NhYmxlKSkgPSAyLjAu
+MC1hbHBoYS42Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vZG9tdXRpbHMp
+KSA9IDIuMC4wLWFscGhhLjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby9k
+cmFnZHJvcCkpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShA
+bHVtaW5vL2tleWJvYXJkKSkgPSAyLjAuMC1hbHBoYS42Ci1Qcm92aWRlczogICAgICAgIGJ1bmRs
+ZWQobnBtKEBsdW1pbm8vbWVzc2FnaW5nKSkgPSAyLjAuMC1hbHBoYS42Ci1Qcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vcG9sbGluZykpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAbHVtaW5vL3Byb3BlcnRpZXMpKSA9IDIuMC4wLWFscGhh
+LjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby9zaWduYWxpbmcpKSA9IDIu
+MC4wLWFscGhhLjYKLVByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1bWluby92aXJ0dWFs
+ZG9tKSkgPSAyLjAuMC1hbHBoYS42Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1p
+bm8vd2lkZ2V0cykpID0gMi4wLjAtYWxwaGEuNgotUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShAbnRlcmFjdC90cmFuc2Zvcm0tdmRvbSkpID0gNC4wLjE2LWFscGhhLjAKLVByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQHJqc2YvY29yZSkpID0gNC4yLjMKLVByb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oYWp2KSkgPSA2LjEyLjYKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0o
+QGx1bWluby9hbGdvcml0aG0pKSA9IDIuMC4wLWJldGEuMAorUHJvdmlkZXM6ICAgICAgICBidW5k
+bGVkKG5wbShAbHVtaW5vL2FwcGxpY2F0aW9uKSkgPSAyLjAuMC1iZXRhLjEKK1Byb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0oQGx1bWluby9jb2xsZWN0aW9ucykpID0gMi4wLjAtYmV0YS4wCitQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vY29tbWFuZHMpKSA9IDIuMC4wLWJl
+dGEuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAbHVtaW5vL2NvcmV1dGlscykpID0g
+Mi4wLjAtYmV0YS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vZGF0YWdy
+aWQpKSA9IDIuMC4wLWJldGEuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShAbHVtaW5v
+L2Rpc3Bvc2FibGUpKSA9IDIuMC4wLWJldGEuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5w
+bShAbHVtaW5vL2RvbXV0aWxzKSkgPSAyLjAuMC1iZXRhLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVu
+ZGxlZChucG0oQGx1bWluby9kcmFnZHJvcCkpID0gMi4wLjAtYmV0YS4xCitQcm92aWRlczogICAg
+ICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8va2V5Ym9hcmQpKSA9IDIuMC4wLWJldGEuMAorUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShAbHVtaW5vL21lc3NhZ2luZykpID0gMi4wLjAtYmV0YS4w
+CitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vcG9sbGluZykpID0gMi4wLjAt
+YmV0YS4xCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vcHJvcGVydGllcykp
+ID0gMi4wLjAtYmV0YS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKEBsdW1pbm8vc2ln
+bmFsaW5nKSkgPSAyLjAuMC1iZXRhLjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oQGx1
+bWluby92aXJ0dWFsZG9tKSkgPSAyLjAuMC1iZXRhLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQGx1bWluby93aWRnZXRzKSkgPSAyLjAuMC1iZXRhLjEKK1Byb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oQHJqc2YvY29yZSkpID0gNS4xLjAKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxl
+ZChucG0oQHJqc2YvdXRpbHMpKSA9IDUuMS4wCitQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBt
+KEByanNmL3ZhbGlkYXRvci1hanY4KSkgPSA1LjEuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShhanYpKSA9IDguMTIuMAorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShhanYtZm9y
+bWF0cykpID0gMi4xLjEKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oYmFzZTE2KSkgPSAx
+LjAuMAogUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShibGFja2xpc3QpKSA9IDEuMS40CiBQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNsb25lKSkgPSAyLjEuMgpAQCAtMjE0LDcgKzIx
+MSw2IEBACiBQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNvbG9yLXN0cmluZykpID0gMS45
+LjEKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oY29tcHV0ZS1nY2QpKSA9IDEuMi4xCiBQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGNvbXB1dGUtbGNtKSkgPSAxLjEuMgotUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShjb3JlLWpzLXB1cmUpKSA9IDMuMjYuMQogUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShjcmVhdGUtcmVhY3QtY2xhc3MpKSA9IDE1LjcuMAogUHJvdmlk
+ZXM6ICAgICAgICBidW5kbGVkKG5wbShjcmVsdCkpID0gMS4wLjUKIFByb3ZpZGVzOiAgICAgICAg
+YnVuZGxlZChucG0oY3NzLWxvYWRlcikpID0gNi43LjMKQEAgLTI1NCwxNSArMjUwLDE0IEBACiBQ
+cm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGlzLXBsYWluLW9iamVjdCkpID0gNS4wLjAKIFBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oaXNvbW9ycGhpYy5qcykpID0gMC4yLjUKIFByb3Zp
+ZGVzOiAgICAgICAgYnVuZGxlZChucG0oanNvbi1zY2hlbWEtY29tcGFyZSkpID0gMC4yLjIKLVBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oanNvbi1zY2hlbWEtbWVyZ2UtYWxsb2YpKSA9IDAu
+Ni4wCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGpzb24tc2NoZW1hLXRyYXZlcnNlKSkg
+PSAwLjQuMQorUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShqc29uLXNjaGVtYS1tZXJnZS1h
+bGxvZikpID0gMC44LjEKK1Byb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oanNvbi1zY2hlbWEt
+dHJhdmVyc2UpKSA9IDEuMC4wCiBQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGpzb24tc3Ry
+aW5naWZ5LXByZXR0eS1jb21wYWN0KSkgPSAzLjAuMAogUHJvdmlkZXM6ICAgICAgICBidW5kbGVk
+KG5wbShqc29uNSkpID0gMi4yLjMKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oanNvbnBv
+aW50ZXIpKSA9IDUuMC4xCiBQcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKGxpYjApKSA9IDAu
+Mi41OAogUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShsb2Rhc2gpKSA9IDQuMTcuMjEKIFBy
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0obG9kYXNoLWVzKSkgPSA0LjE3LjIxCi1Qcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKGxvZGFzaC5jbG9uZWRlZXApKSA9IDQuNS4wCiBQcm92aWRl
+czogICAgICAgIGJ1bmRsZWQobnBtKGxvZGFzaC5jdXJyeSkpID0gNC4xLjEKIFByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0obG9kYXNoLmVzY2FwZSkpID0gNC4wLjEKIFByb3ZpZGVzOiAgICAg
+ICAgYnVuZGxlZChucG0obG9kYXNoLm1lcmdld2l0aCkpID0gNC42LjIKQEAgLTI4Miw3ICsyNzcs
+NyBAQAogUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbShyZWFjdC1iYXNlMTYtc3R5bGluZykp
+ID0gMC45LjEKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocmVhY3QtZG9tKSkgPSAxOC4y
+LjAKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocmVhY3QtaGlnaGxpZ2h0ZXIpKSA9IDAu
+NC4zCi1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHJlYWN0LWlzKSkgPSAxNi45LjAKK1By
+b3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0ocmVhY3QtaXMpKSA9IDE4LjIuMAogUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShyZWFjdC1qc29uLXRyZWUpKSA9IDAuMTYuMgogUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbShyZWFjdC1wYWdpbmF0ZSkpID0gNi41LjAKIFByb3ZpZGVzOiAg
+ICAgICAgYnVuZGxlZChucG0ocmVhY3QtdG9hc3RpZnkpKSA9IDkuMS4xCkBAIC0zNTEsNyArMzQ2
+LDYgQEAKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oeHRlcm0tYWRkb24td2ViZ2wpKSA9
+IDAuMTQuMAogUHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh5LWNvZGVtaXJyb3IubmV4dCkp
+ID0gMC4zLjIKIFByb3ZpZGVzOiAgICAgICAgYnVuZGxlZChucG0oeS1wcm90b2NvbHMpKSA9IDEu
+MC41Ci1Qcm92aWRlczogICAgICAgIGJ1bmRsZWQobnBtKHktd2Vic29ja2V0KSkgPSAxLjQuNQog
+UHJvdmlkZXM6ICAgICAgICBidW5kbGVkKG5wbSh5YWxsaXN0KSkgPSA0LjAuMAogUHJvdmlkZXM6
+ICAgICAgICBidW5kbGVkKG5wbSh5anMpKSA9IDEzLjUuNDQKIApAQCAtNDMwLDUgKzQyNCw1IEBA
+CiAKIAogJWNoYW5nZWxvZwotKiBNb24gSmFuIDE2IDIwMjMgTHVtw4PCrXIgQmFsaGFyIDxsYmFs
+aGFyQHJlZGhhdC5jb20+IC0gNC4wLjB+YTMzLTEKKyogTW9uIEphbiAxNiAyMDIzIEx1bcODwq1y
+IEJhbGhhciA8bGJhbGhhckByZWRoYXQuY29tPiAtIDQuMC4wfmEzNC0xCiAtIEluaXRpYWwgcGFj
+a2FnZQo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

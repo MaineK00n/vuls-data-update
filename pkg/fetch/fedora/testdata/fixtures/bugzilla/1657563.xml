@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>1657563</bug_id>
+          <alias>CVE-2018-16873</alias>
+          <creation_ts>2018-12-10 00:58:31 +0000</creation_ts>
+          <short_desc>CVE-2018-16873 golang: "go get" command vulnerable to RCE via import of malicious package</short_desc>
+          <delta_ts>2022-03-13 16:25:03 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Other</classification>
+          <product>Security Response</product>
+          <component>vulnerability</component>
+          <version>unspecified</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>1659288</dependson>
+    
+    
+    <dependson>1659392</dependson>
+    
+    
+    <dependson>1659393</dependson>
+    
+    
+    <dependson>1659913</dependson>
+    
+    
+    <dependson>1660654</dependson>
+    
+    
+    <dependson>1660655</dependson>
+    
+    
+    <dependson>1663381</dependson>
+    
+    
+    <dependson>1663386</dependson>
+    
+    
+    <dependson>1664332</dependson>
+    
+    
+    <dependson>1732081</dependson>
+    
+    
+    <dependson>1732082</dependson>
+    
+    
+    <dependson>1732083</dependson>
+    
+    
+    <dependson>1732084</dependson>
+          <blocked>1657559</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Sam Fowler">sfowler</reporter>
+          <assigned_to name="Red Hat Product Security">security-response-team</assigned_to>
+          <cc>abhgupta</cc>
+    
+    
+    <cc>admiller</cc>
+    
+    
+    <cc>ahardin</cc>
+    
+    
+    <cc>amurdaca</cc>
+    
+    
+    <cc>bleanhar</cc>
+    
+    
+    <cc>bmontgom</cc>
+    
+    
+    <cc>ccoleman</cc>
+    
+    
+    <cc>dbaker</cc>
+    
+    
+    <cc>dedgar</cc>
+    
+    
+    <cc>deparker</cc>
+    
+    
+    <cc>dominik.mierzejewski</cc>
+    
+    
+    <cc>eparis</cc>
+    
+    
+    <cc>jburrell</cc>
+    
+    
+    <cc>jcajka</cc>
+    
+    
+    <cc>jgoulding</cc>
+    
+    
+    <cc>jjoyce</cc>
+    
+    
+    <cc>jokerman</cc>
+    
+    
+    <cc>jschluet</cc>
+    
+    
+    <cc>lemenkov</cc>
+    
+    
+    <cc>lhh</cc>
+    
+    
+    <cc>lpeer</cc>
+    
+    
+    <cc>mburns</cc>
+    
+    
+    <cc>mchappel</cc>
+    
+    
+    <cc>mmccomas</cc>
+    
+    
+    <cc>nstielau</cc>
+    
+    
+    <cc>renich</cc>
+    
+    
+    <cc>sclewis</cc>
+    
+    
+    <cc>security-response-team</cc>
+    
+    
+    <cc>sfowler</cc>
+    
+    
+    <cc>sisharma</cc>
+    
+    
+    <cc>slinaber</cc>
+    
+    
+    <cc>sponnaga</cc>
+    
+    
+    <cc>sthangav</cc>
+    
+    
+    <cc>trankin</cc>
+    
+    
+    <cc>wzheng</cc>
+          
+          
+          
+          <cf_fixed_in>golang 1.10.6, golang 1.11.3</cf_fixed_in>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2021-10-27 03:20:44</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>12286774</commentid>
+    <comment_count>0</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2018-12-10 00:58:31 +0000</bug_when>
+    <thetext>Go before versions 1.10.6 and 1.11.3 is vulnerable to remote code execution.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12286782</commentid>
+    <comment_count>1</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2018-12-10 01:04:13 +0000</bug_when>
+    <thetext>Pre-announcement:
+
+https://groups.google.com/forum/#!msg/golang-announce/D4sE5tGvhe8/2_RCSJ3yBQAJ</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12290440</commentid>
+    <comment_count>2</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2018-12-11 00:45:01 +0000</bug_when>
+    <thetext>In Go before 1.10.6 and 1.11.x before 1.11.3, the "go get" command is vulnerable to remote code execution when executed with the -u flag and the import path of a malicious Go package, or a package that imports it directly or indirectly. Specifically, it is only vulnerable in GOPATH mode, but not in module mode (the distinction is documented at https://golang.org/cmd/go/#hdr-Module_aware_go_get). Using custom domains, it’s possible to arrange things so that a Git repository is cloned to a folder named ".git" by using a vanity import path that ends with  "/.git". If the Git repository root contains a "HEAD" file, a "config" file, an "objects" directory, a "refs" directory, with some work to ensure the proper ordering of operations, "go get -u" can be tricked into considering the parent directory as a repository root, and running Git commands on it. That will use the "config" file in the original Git repository root for its configuration, and if that config file contains malicious commands, they will execute on the system running "go get -u".</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12302830</commentid>
+    <comment_count>3</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2018-12-14 01:56:26 +0000</bug_when>
+    <thetext>External Reference:
+
+https://groups.google.com/forum/?pli=1#!topic/golang-announce/Kw31K8G7Fi0
+
+
+Upstream Issue:
+
+https://github.com/golang/go/issues/29230</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12302831</commentid>
+    <comment_count>4</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2018-12-14 01:56:29 +0000</bug_when>
+    <thetext>Acknowledgments:
+
+Name: Dmitri Shuralyov (the Go team)</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12302835</commentid>
+    <comment_count>5</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2018-12-14 01:56:46 +0000</bug_when>
+    <thetext>Created golang tracking bugs for this issue:
+
+Affects: fedora-all [bug 1659288]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12338415</commentid>
+    <comment_count>15</comment_count>
+    <who name="Sam Fowler">sfowler</who>
+    <bug_when>2019-01-04 06:48:01 +0000</bug_when>
+    <thetext>Created golang:1.1/golang tracking bugs for this issue:
+
+Affects: fedora-29 [bug 1663381]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12346364</commentid>
+    <comment_count>18</comment_count>
+    <who name="Tomas Hoger">thoger</who>
+    <bug_when>2019-01-08 13:38:25 +0000</bug_when>
+    <thetext>Created golang tracking bugs for this issue:
+
+Affects: epel-all [bug 1664332]</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>12659039</commentid>
+    <comment_count>20</comment_count>
+    <who name="Huzaifa S. Sidhpurwala">huzaifas</who>
+    <bug_when>2019-04-23 09:49:54 +0000</bug_when>
+    <thetext>Statement:
+
+This issue affects the version of golang package in Red Hat Enterprise Linux 7. The golang package, previously available in the Optional channel, will no longer receive updates in Red Hat Enterprise Linux 7. Developers are encouraged to use the Go Toolset instead, which is available through the Red Hat Developer program. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/7.6_release_notes/chap-red_hat_enterprise_linux-7.6_release_notes-deprecated_functionality_in_rhel7#idm139716309923696</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

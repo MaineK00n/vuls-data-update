@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2210635</bug_id>
+          
+          <creation_ts>2023-05-29 04:14:59 +0000</creation_ts>
+          <short_desc>CVE-2023-2603 libcap: Integer Overflow in _libcap_strdup() [fedora-38]</short_desc>
+          <delta_ts>2023-11-24 02:19:05 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>libcap</component>
+          <version>38</version>
+          <rep_platform>Unspecified</rep_platform>
+          <op_sys>Unspecified</op_sys>
+          <bug_status>ON_QA</bug_status>
+          <resolution/>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords>Security, SecurityTracking</keywords>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>1919609</dependson>
+          <blocked>2209113</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Sandipan Roy">saroy</reporter>
+          <assigned_to name="Carlos Rodriguez-Fernandez">carlosrodrifernandez</assigned_to>
+          <cc>karsten</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>No Doc Update</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>17331198</commentid>
+    <comment_count>0</comment_count>
+    <who name="Sandipan Roy">saroy</who>
+    <bug_when>2023-05-29 04:14:59 +0000</bug_when>
+    <thetext>
+More information about this security flaw is available in the following bug:
+
+http://bugzilla.redhat.com/show_bug.cgi?id=2209113
+
+Disclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17331199</commentid>
+    <comment_count>1</comment_count>
+    <who name="Sandipan Roy">saroy</who>
+    <bug_when>2023-05-29 04:15:02 +0000</bug_when>
+    <thetext>Use the following template to for the 'fedpkg update' request to submit an
+update for this issue as it contains the top-level parent bug(s) as well as
+this tracking bug.  This will ensure that all associated bugs get updated
+when new packages are pushed to stable.
+
+=====
+
+# bugfix, security, enhancement, newpackage (required)
+type=security
+
+# low, medium, high, urgent (required)
+severity=medium
+
+# testing, stable
+request=testing
+
+# Bug numbers: 1234,9876
+bugs=2209113,2210635
+
+# Description of your update
+notes=Security fix for [PUT CVEs HERE]
+
+# Enable request automation based on the stable/unstable karma thresholds
+autokarma=True
+stable_karma=3
+unstable_karma=-3
+
+# Automatically close bugs when this marked as stable
+close_bugs=True
+
+# Suggest that users restart after update
+suggest_reboot=False
+
+======
+
+Additionally, you may opt to use the bodhi web interface to submit updates:
+
+https://bodhi.fedoraproject.org/updates/new</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17765796</commentid>
+    <comment_count>2</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-11-19 00:23:27 +0000</bug_when>
+    <thetext>This package has changed maintainer in Fedora. Reassigning to the new maintainer of this component.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17766627</commentid>
+    <comment_count>3</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-11-20 00:06:54 +0000</bug_when>
+    <thetext>This package has changed maintainer in Fedora. Reassigning to the new maintainer of this component.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17771262</commentid>
+    <comment_count>4</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-11-22 12:09:03 +0000</bug_when>
+    <thetext>This package has changed maintainer in Fedora. Reassigning to the new maintainer of this component.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777405</commentid>
+    <comment_count>5</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 18:58:54 +0000</bug_when>
+    <thetext>FEDORA-2023-5911638116 has been submitted as an update to Fedora 38. https://bodhi.fedoraproject.org/updates/FEDORA-2023-5911638116</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17777633</commentid>
+    <comment_count>6</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-24 02:19:05 +0000</bug_when>
+    <thetext>FEDORA-2023-5911638116 has been pushed to the Fedora 38 testing repository.
+Soon you'll be able to install the update with the following command:
+`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2023-5911638116`
+You can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2023-5911638116
+
+See also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates.</thetext>
+  </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

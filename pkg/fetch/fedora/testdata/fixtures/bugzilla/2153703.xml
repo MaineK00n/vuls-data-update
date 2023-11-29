@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.redhat.com/page.cgi?id=bugzilla.dtd">
+<bugzilla version="5.0.4.rh94" urlbase="https://bugzilla.redhat.com/" maintainer="bugzilla-owner@redhat.com">
+
+    <bug>
+          <bug_id>2153703</bug_id>
+          
+          <creation_ts>2022-12-15 09:25:34 +0000</creation_ts>
+          <short_desc>Review Request: rust-yrs - High performance implementation of the Yjs CRDT</short_desc>
+          <delta_ts>2023-11-23 12:41:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Fedora</classification>
+          <product>Fedora</product>
+          <component>Package Review</component>
+          <version>rawhide</version>
+          <rep_platform>All</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>ERRATA</resolution>
+          
+          
+          <bug_file_loc/>
+          <status_whiteboard/>
+          <keywords/>
+          <priority>medium</priority>
+          <bug_severity>medium</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>2153697</dependson>
+    
+    
+    <dependson>2153699</dependson>
+          <blocked>2161518</blocked>
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lumír Balhar">lbalhar</reporter>
+          <assigned_to name="Miro Hrončok">mhroncok</assigned_to>
+          <cc>mhroncok</cc>
+    
+    
+    <cc>package-review</cc>
+    
+    
+    <cc>vondruch</cc>
+          
+          <qa_contact name="Fedora Extras Quality Assurance">extras-qa</qa_contact>
+          
+          <cf_fixed_in/>
+          <cf_doc_type>If docs needed, set a value</cf_doc_type>
+          <cf_release_notes/>
+          <cf_story_points>---</cf_story_points>
+          
+          <cf_environment/>
+          <cf_last_closed>2023-01-25 13:24:09</cf_last_closed>
+          <cf_type>---</cf_type>
+          <cf_regression_status>---</cf_regression_status>
+          <cf_mount_type>---</cf_mount_type>
+          <cf_documentation_action>---</cf_documentation_action>
+          <cf_crm/>
+          <cf_verified_branch/>
+          <cf_category>---</cf_category>
+          <cf_ovirt_team>---</cf_ovirt_team>
+          
+          <cf_cloudforms_team>---</cf_cloudforms_team>
+          <cf_target_upstream_version/>
+          
+          
+          
+          
+          
+          
+          <target_release>---</target_release>
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      <flag name="fedora-review" id="5768965" type_id="65" status="+" setter="mhroncok"/>
+
+          <comment_sort_order>oldest_to_newest</comment_sort_order>  
+          <long_desc isprivate="0">
+    <commentid>16883815</commentid>
+    <comment_count>0</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2022-12-15 09:25:34 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/rust-yrs.spec
+SRPM URL: https://lbalhar.fedorapeople.org/rust-yrs-0.14.1-1.fc37.src.rpm
+Description: High performance implementation of the Yjs CRDT.
+Fedora Account System Username: lbalhar
+
+This package depends on rust-lib0 and rust-atomic_refcell (both on review now).</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16975930</commentid>
+    <comment_count>1</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-17 21:43:06 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/rust-yrs.spec
+SRPM URL: https://lbalhar.fedorapeople.org/rust-yrs-0.12.2-1.fc37.src.rpm
+
+I've decided to package an older version 0.12 because python-y-py needs it (directly) and there is currently no need for the latest version to be packaged.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16975936</commentid>
+    <comment_count>2</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-17 21:47:13 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5241594
+(failed)
+
+Build log:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2153703-rust-yrs/fedora-rawhide-x86_64/05241594-rust-yrs/builder-live.log.gz
+
+Please make sure the package builds successfully at least for Fedora Rawhide.
+
+- If the build failed for unrelated reasons (e.g. temporary network
+  unavailability), please ignore it.
+- If the build failed because of missing BuildRequires, please make sure they
+  are listed in the "Depends On" field
+
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997118</commentid>
+    <comment_count>7</comment_count>
+    <who name="Lumír Balhar">lbalhar</who>
+    <bug_when>2023-01-25 11:50:27 +0000</bug_when>
+    <thetext>Spec URL: https://lbalhar.fedorapeople.org/rust-yrs.spec
+SRPM URL: https://lbalhar.fedorapeople.org/rust-yrs-0.12.2-1.fc37.src.rpm</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997134</commentid>
+    <comment_count>8</comment_count>
+      <attachid>1940394</attachid>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-25 11:58:33 +0000</bug_when>
+    <thetext>Created attachment 1940394
+The .spec file difference from Copr build 5241594 to 5290645</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997135</commentid>
+    <comment_count>9</comment_count>
+    <who name="Jakub Kadlčík">jkadlcik</who>
+    <bug_when>2023-01-25 11:58:35 +0000</bug_when>
+    <thetext>Copr build:
+https://copr.fedorainfracloud.org/coprs/build/5290645
+(succeeded)
+
+Review template:
+https://download.copr.fedorainfracloud.org/results/@fedora-review/fedora-review-2153703-rust-yrs/fedora-rawhide-x86_64/05290645-rust-yrs/fedora-review/review.txt
+
+Please take a look if any issues were found.
+
+---
+This comment was created by the fedora-review-service
+https://github.com/FrostyX/fedora-review-service</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997305</commentid>
+    <comment_count>10</comment_count>
+    <who name="Miro Hrončok">mhroncok</who>
+    <bug_when>2023-01-25 12:32:39 +0000</bug_when>
+    <thetext>Package Review
+==============
+
+Legend:
+[x] = Pass, [!] = Fail, [-] = Not applicable, [?] = Not evaluated
+[ ] = Manual review needed
+
+
+
+===== MUST items =====
+
+Generic:
+[x]: Package successfully compiles and builds into binary rpms on at least
+     one supported primary architecture.
+[x]: Package is licensed with an open-source compatible license and meets
+     other legal requirements as defined in the legal section of Packaging
+     Guidelines.
+[x]: License field in the package spec file matches the actual license.
+     Note: Checking patched sources after %prep for licenses. Licenses
+     found: "Unknown or generated", "MIT License". 33 files have unknown
+     license.
+[x]: License file installed when any subpackage combination is installed.
+[x]: %build honors applicable compiler flags or justifies otherwise.
+[x]: Package contains no bundled libraries without FPC exception.
+[x]: Changelog in prescribed format.
+[x]: Sources contain only permissible code or content.
+[-]: Package contains desktop file if it is a GUI application.
+[x]: Development files must be in a -devel package
+[x]: Package uses nothing in %doc for runtime.
+[x]: Package consistently uses macros (instead of hard-coded directory
+     names).
+[x]: Package is named according to the Package Naming Guidelines.
+[x]: Package does not generate any conflict.
+[x]: Package obeys FHS, except libexecdir and /usr/target.
+[-]: If the package is a rename of another package, proper Obsoletes and
+     Provides are present.
+[x]: Requires correct, justified where necessary.
+[x]: Spec file is legible and written in American English.
+[-]: Package contains systemd file(s) if in need.
+[x]: Package is not known to require an ExcludeArch tag.
+[x]: Package complies to the Packaging Guidelines
+[x]: Package installs properly.
+[x]: Rpmlint is run on all rpms the build produces.
+     Note: There are rpmlint messages (see attachment).
+[x]: If (and only if) the source package includes the text of the
+     license(s) in its own file, then that file, containing the text of the
+     license(s) for the package is included in %license.
+[x]: Package requires other packages for directories it uses.
+[x]: Package must own all directories that it creates.
+[x]: Package does not own files or directories owned by other packages.
+[x]: Package uses either %{buildroot} or $RPM_BUILD_ROOT
+[x]: Package does not run rm -rf %{buildroot} (or $RPM_BUILD_ROOT) at the
+     beginning of %install.
+[x]: Macros in Summary, %description expandable at SRPM build time.
+[x]: Dist tag is present.
+[x]: Package does not contain duplicates in %files.
+[x]: Permissions on files are set properly.
+[x]: Package must not depend on deprecated() packages.
+[x]: Package use %makeinstall only when make install DESTDIR=... doesn't
+     work.
+[x]: Package is named using only allowed ASCII characters.
+[x]: Package does not use a name that already exists.
+[x]: Package is not relocatable.
+[x]: Sources used to build the package match the upstream source, as
+     provided in the spec URL.
+[x]: Spec file name must match the spec package %{name}, in the format
+     %{name}.spec.
+[x]: File names are valid UTF-8.
+[x]: Large documentation must go in a -doc subpackage. Large could be size
+     (~1MB) or number of files.
+     Note: Documentation size is 0 bytes in 0 files.
+[x]: Packages must not store files under /srv, /opt or /usr/local
+
+===== SHOULD items =====
+
+Generic:
+[x]: Reviewer should test that the package builds in mock.
+[-]: If the source package does not include license text(s) as a separate
+     file from upstream, the packager SHOULD query upstream to include it.
+[x]: Final provides and requires are sane (see attachments).
+[-]: Fully versioned dependency in subpackages if applicable.
+[?]: Package functions as described.
+[?]: Latest version is packaged.
+[x]: Package does not include license text files separate from upstream.
+[-]: Sources are verified with gpgverify first in %prep if upstream
+     publishes signatures.
+     Note: gpgverify is not used.
+[?]: Package should compile and build into binary rpms on all supported
+     architectures.
+[x]: %check is present and all tests pass.
+[?]: Packages should try to preserve timestamps of original installed
+     files.
+[x]: Buildroot is not present
+[x]: Package has no %clean section with rm -rf %{buildroot} (or
+     $RPM_BUILD_ROOT)
+[x]: No file requires outside of /etc, /bin, /sbin, /usr/bin, /usr/sbin.
+[x]: Packager, Vendor, PreReq, Copyright tags should not be in spec file
+[x]: Sources can be downloaded from URI in Source: tag
+[x]: SourceX is a working URL.
+[x]: Spec use %global instead of %define unless justified.
+
+===== EXTRA items =====
+
+Generic:
+[x]: Rpmlint is run on all installed packages.
+     Note: There are rpmlint messages (see attachment).
+
+
+Rpmlint
+-------
+Checking: rust-yrs-devel-0.12.2-1.fc38.noarch.rpm
+          rust-yrs+default-devel-0.12.2-1.fc38.noarch.rpm
+          rust-yrs-0.12.2-1.fc38.src.rpm
+============================ rpmlint session starts ============================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+rpmlintrc: [PosixPath('/tmp/tmp3108qkua')]
+checks: 31, packages: 3
+
+rust-yrs+default-devel.noarch: W: no-documentation
+rust-yrs-devel.noarch: W: files-duplicate /usr/share/licenses/rust-yrs-devel/LICENSE /usr/share/cargo/registry/yrs-0.12.2/LICENSE
+ 3 packages and 0 specfiles checked; 0 errors, 2 warnings, 0 badness; has taken 0.4 s 
+
+This looks like rust2rpm problem, not a problem in this package per se.
+
+
+Rpmlint (installed packages)
+----------------------------
+============================ rpmlint session starts ============================
+rpmlint: 2.4.0
+configuration:
+    /usr/lib/python3.11/site-packages/rpmlint/configdefaults.toml
+    /etc/xdg/rpmlint/fedora-legacy-licenses.toml
+    /etc/xdg/rpmlint/fedora-spdx-licenses.toml
+    /etc/xdg/rpmlint/fedora.toml
+    /etc/xdg/rpmlint/scoring.toml
+    /etc/xdg/rpmlint/users-groups.toml
+    /etc/xdg/rpmlint/warn-on-functions.toml
+checks: 31, packages: 2
+
+rust-yrs+default-devel.noarch: W: no-documentation
+rust-yrs-devel.noarch: W: files-duplicate /usr/share/licenses/rust-yrs-devel/LICENSE /usr/share/cargo/registry/yrs-0.12.2/LICENSE
+ 2 packages and 0 specfiles checked; 0 errors, 2 warnings, 0 badness; has taken 0.1 s 
+
+Same.
+
+Source checksums
+----------------
+https://github.com/y-crdt/y-crdt/raw/release-v0.12.2/LICENSE :
+  CHECKSUM(SHA256) this package     : b6d81564e9c46473907bd3c09d4d5ab0f21cfbe6ac35d46daf1bdb0423182a5b
+  CHECKSUM(SHA256) upstream package : b6d81564e9c46473907bd3c09d4d5ab0f21cfbe6ac35d46daf1bdb0423182a5b
+https://crates.io/api/v1/crates/yrs/0.12.2/download#/yrs-0.12.2.crate :
+  CHECKSUM(SHA256) this package     : a232e4e529a06548e97270e6ec00afd5f14dae517b8df3c2a1a3f3a4558b7326
+  CHECKSUM(SHA256) upstream package : a232e4e529a06548e97270e6ec00afd5f14dae517b8df3c2a1a3f3a4558b7326
+
+
+Requires
+--------
+rust-yrs-devel (rpmlib, GLIBC filtered):
+    (crate(lib0/default) &gt;= 0.12.2 with crate(lib0/default) &lt; 0.13.0~)
+    (crate(rand/default) &gt;= 0.7.0 with crate(rand/default) &lt; 0.8.0~)
+    (crate(smallstr/default) &gt;= 0.2.0 with crate(smallstr/default) &lt; 0.3.0~)
+    (crate(smallstr/union) &gt;= 0.2.0 with crate(smallstr/union) &lt; 0.3.0~)
+    cargo
+
+rust-yrs+default-devel (rpmlib, GLIBC filtered):
+    cargo
+    crate(yrs)
+
+
+
+Provides
+--------
+rust-yrs-devel:
+    crate(yrs)
+    rust-yrs-devel
+
+rust-yrs+default-devel:
+    crate(yrs/default)
+    rust-yrs+default-devel
+
+
+Package APPROVED.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997325</commentid>
+    <comment_count>11</comment_count>
+    <who name="Fedora Admin user for bugzilla script actions">fedora-admin-xmlrpc</who>
+    <bug_when>2023-01-25 12:41:14 +0000</bug_when>
+    <thetext>The Pagure repository was created at https://src.fedoraproject.org/rpms/rust-yrs</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997430</commentid>
+    <comment_count>12</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-01-25 13:22:03 +0000</bug_when>
+    <thetext>FEDORA-2023-17f4eee25e has been submitted as an update to Fedora 38. https://bodhi.fedoraproject.org/updates/FEDORA-2023-17f4eee25e</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>16997443</commentid>
+    <comment_count>13</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-01-25 13:24:09 +0000</bug_when>
+    <thetext>FEDORA-2023-17f4eee25e has been pushed to the Fedora 38 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776860</commentid>
+    <comment_count>14</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 12:31:33 +0000</bug_when>
+    <thetext>FEDORA-2023-91e69ea326 has been submitted as an update to Fedora 40. https://bodhi.fedoraproject.org/updates/FEDORA-2023-91e69ea326</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776866</commentid>
+    <comment_count>15</comment_count>
+    <who name="Fedora Update System">updates</who>
+    <bug_when>2023-11-23 12:33:48 +0000</bug_when>
+    <thetext>FEDORA-2023-91e69ea326 has been pushed to the Fedora 40 stable repository.
+If problem still persists, please make note of it in this bug report.</thetext>
+  </long_desc><long_desc isprivate="0">
+    <commentid>17776882</commentid>
+    <comment_count>16</comment_count>
+    <who name="Vít Ondruch">vondruch</who>
+    <bug_when>2023-11-23 12:41:02 +0000</bug_when>
+    <thetext>Ups, I have referred to this ticket in my update by mistake. Sorry for the noise.</thetext>
+  </long_desc>
+      
+          <attachment isobsolete="0" ispatch="1" isprivate="0">
+            <attachid>1940394</attachid>
+            <date>2023-01-25 11:58:33 +0000</date>
+            <delta_ts>2023-01-25 11:58:33 +0000</delta_ts>
+            <desc>The .spec file difference from Copr build 5241594 to 5290645</desc>
+            <filename>spec-from-5241594-to-5290645.diff</filename>
+            <type>text/plain</type>
+            <size>471</size>
+            <attacher name="Jakub Kadlčík">jkadlcik</attacher>
+            
+              <data encoding="base64">LS0tIGh0dHBzOi8vY29wci5mZWRvcmFpbmZyYWNsb3VkLm9yZy9jb3Bycy9idWlsZC81MjQxNTk0
+CisrKyBodHRwczovL2NvcHIuZmVkb3JhaW5mcmFjbG91ZC5vcmcvY29wcnMvYnVpbGQvNTI5MDY0
+NQpAQCAtMTQsNyArMTQsNyBAQAogU291cmNlOiAgICAgICAgICV7Y3JhdGVzX3NvdXJjZX0KICMg
+TGljZW5zZSBmaWxlLCBzYW1lIHByb2plY3QganVzdCBhIGRpZmZlcmVudCBmb2xkZXIKICMgUmVw
+b3J0ZWQ6IGh0dHBzOi8vZ2l0aHViLmNvbS95LWNyZHQveS1jcmR0L2lzc3Vlcy8yMjgKLVNvdXJj
+ZTogICAgICAgICBodHRwczovL2dpdGh1Yi5jb20veS1jcmR0L3ktY3JkdC9ibG9iL21haW4vTElD
+RU5TRQorU291cmNlOiAgICAgICAgIGh0dHBzOi8vZ2l0aHViLmNvbS95LWNyZHQveS1jcmR0L3Jh
+dy9yZWxlYXNlLXYle3ZlcnNpb259L0xJQ0VOU0UKIAogQnVpbGRSZXF1aXJlczogIHJ1c3QtcGFj
+a2FnaW5nID49IDIxCiAK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

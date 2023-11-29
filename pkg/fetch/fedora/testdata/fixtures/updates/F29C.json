@@ -1,0 +1,324 @@
+[
+	{
+		"alias": "FEDORA-CONTAINER-2019-8b04b1c212",
+		"autokarma": true,
+		"autotime": false,
+		"bugs": [
+			{
+				"bug_id": 1657563,
+				"feedback": [
+					{
+						"bug_id": 1657563,
+						"comment": {
+							"id": 882476,
+							"karma": 1,
+							"karma_critpath": 0,
+							"testcase_feedback": [],
+							"text": "",
+							"timestamp": "2019-01-08 16:04:51",
+							"update_id": 129310,
+							"user": {
+								"avatar": "https://seccdn.libravatar.org/avatar/8622052dd0a739c68c98003950a86157dffde07400a7787aeb0471943c0a5fea?s=24&d=retro",
+								"email": "bazanluis20@gmail.com",
+								"groups": [
+									{
+										"name": "packager"
+									},
+									{
+										"name": "bodhiadmin"
+									},
+									{
+										"name": "fedora-mx"
+									},
+									{
+										"name": "signed_fpca"
+									},
+									{
+										"name": "gitfas"
+									},
+									{
+										"name": "campusambassadors"
+									},
+									{
+										"name": "fedora-ar"
+									},
+									{
+										"name": "l10n"
+									},
+									{
+										"name": "icaroproject"
+									},
+									{
+										"name": "ambassadors"
+									},
+									{
+										"name": "fedora-contributor"
+									},
+									{
+										"name": "fedorabugs"
+									},
+									{
+										"name": "neuro-sig"
+									},
+									{
+										"name": "fedora-cl"
+									},
+									{
+										"name": "fedora-pa"
+									},
+									{
+										"name": "fedora-py"
+									},
+									{
+										"name": "cvsl10n"
+									},
+									{
+										"name": "triagers"
+									},
+									{
+										"name": "bzrpython-fedora"
+									},
+									{
+										"name": "fudcon"
+									},
+									{
+										"name": "ipausers"
+									},
+									{
+										"name": "fedora-ec"
+									},
+									{
+										"name": "advocates"
+									}
+								],
+								"id": 341,
+								"name": "lbazan",
+								"openid": "lbazan.id.fedoraproject.org"
+							},
+							"user_id": 341
+						},
+						"comment_id": 882476,
+						"karma": 0
+					}
+				],
+				"parent": true,
+				"security": true,
+				"title": "CVE-2018-16873 golang: \"go get\" command vulnerable to RCE via import of malicious package"
+			}
+		],
+		"builds": [
+			{
+				"nvr": "golang-1.11-6.fc29",
+				"release_id": 25,
+				"signed": true,
+				"type": "container"
+			}
+		],
+		"close_bugs": true,
+		"comments": [
+			{
+				"bug_feedback": [],
+				"id": 887168,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been submitted for testing by jcajka. ",
+				"timestamp": "2019-01-22 15:15:49",
+				"update_id": 130329,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 887413,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been pushed to testing.",
+				"timestamp": "2019-01-23 02:34:03",
+				"update_id": 130329,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 889616,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has reached 7 days in testing and can be pushed to stable now if the maintainer wishes",
+				"timestamp": "2019-01-30 06:00:33",
+				"update_id": 130329,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 889648,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been submitted for batched by jcajka. ",
+				"timestamp": "2019-01-30 07:46:04",
+				"update_id": 130329,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 889855,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been submitted for stable by bodhi. ",
+				"timestamp": "2019-01-30 23:45:40",
+				"update_id": 130329,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			},
+			{
+				"bug_feedback": [],
+				"id": 889886,
+				"karma": 0,
+				"karma_critpath": 0,
+				"testcase_feedback": [],
+				"text": "This update has been pushed to stable.",
+				"timestamp": "2019-01-31 00:04:36",
+				"update_id": 130329,
+				"user": {
+					"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+					"email": null,
+					"groups": [],
+					"id": 91,
+					"name": "bodhi",
+					"openid": "bodhi.id.fedoraproject.org"
+				},
+				"user_id": 91
+			}
+		],
+		"compose": null,
+		"content_type": "container",
+		"critpath": false,
+		"critpath_groups": null,
+		"date_approved": null,
+		"date_modified": null,
+		"date_pushed": "2019-01-31 00:04:17",
+		"date_stable": "2019-01-31 00:04:17",
+		"date_submitted": "2019-01-22 15:15:49",
+		"date_testing": "2019-01-23 02:33:51",
+		"display_name": "",
+		"from_tag": null,
+		"karma": 0,
+		"locked": false,
+		"meets_testing_requirements": true,
+		"notes": "* Rebase to go1.11.4\n* Security fix for CVE-2018-16875, CVE-2018-16874 and CVE-2018-16873",
+		"pushed": true,
+		"release": {
+			"branch": "f29",
+			"candidate_tag": "f29-container-updates-candidate",
+			"composed_by_bodhi": true,
+			"create_automatic_updates": false,
+			"dist_tag": "f29-container",
+			"eol": null,
+			"id_prefix": "FEDORA-CONTAINER",
+			"long_name": "Fedora 29 Containers",
+			"mail_template": "fedora_errata_template",
+			"name": "F29C",
+			"override_tag": "f29-container-override",
+			"package_manager": "unspecified",
+			"pending_signing_tag": "",
+			"pending_stable_tag": "f29-container-updates-pending",
+			"pending_testing_tag": "f29-container-updates-testing-pending",
+			"stable_tag": "f29-container-updates",
+			"state": "archived",
+			"testing_repository": null,
+			"testing_tag": "f29-container-updates-testing",
+			"version": "29"
+		},
+		"request": null,
+		"require_bugs": false,
+		"require_testcases": false,
+		"requirements": "",
+		"severity": "medium",
+		"stable_days": 0,
+		"stable_karma": 3,
+		"status": "stable",
+		"suggest": "unspecified",
+		"test_cases": [],
+		"test_gating_status": "ignored",
+		"title": "golang-1.11-6.fc29",
+		"type": "security",
+		"unstable_karma": -3,
+		"updateid": "FEDORA-CONTAINER-2019-8b04b1c212",
+		"url": "https://bodhi.fedoraproject.org/updates/FEDORA-CONTAINER-2019-8b04b1c212",
+		"user": {
+			"avatar": "https://seccdn.libravatar.org/avatar/d258ab8adb25c645f6e0a47dcb366cf7b69cdafab467240207068d6cc5a3563b?s=24&d=retro",
+			"email": "jcajka@cajka.dev",
+			"groups": [
+				{
+					"name": "packager"
+				},
+				{
+					"name": "ipausers"
+				},
+				{
+					"name": "fedora-contributor"
+				},
+				{
+					"name": "signed_fpca"
+				},
+				{
+					"name": "fedorabugs"
+				},
+				{
+					"name": "sysadmin"
+				},
+				{
+					"name": "sysadmin-osbs"
+				},
+				{
+					"name": "go-sig"
+				}
+			],
+			"id": 605,
+			"name": "jcajka",
+			"openid": "jcajka.id.fedoraproject.org"
+		},
+		"version_hash": "e346537652583169056a25661727470323b0f91f"
+	}
+]
