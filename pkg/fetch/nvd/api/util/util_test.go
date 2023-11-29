@@ -2,7 +2,6 @@ package util_test
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -10,27 +9,44 @@ import (
 	"testing"
 	"time"
 
-	utilapi "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api"
+	nvdutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-// When Read() is called, this reader feturns error until #{errorCount} calls. It succeeeds after that.
-type errorIOReadCloser struct {
+type errorIOReader struct {
+	readError error
+}
+
+func (f *errorIOReader) Read([]byte) (int, error) {
+	return 0, f.readError
+}
+
+func newFakeRoundTripper(errorCount int, readError error, reqCount *int) http.RoundTripper {
+	return fakeRoundTripper{
+		internal:   http.DefaultTransport,
+		errorCount: errorCount,
+		readError:  readError,
+		reqCount:   reqCount,
+	}
+}
+
+type fakeRoundTripper struct {
+	internal   http.RoundTripper
 	errorCount int
 	readError  error
-	readCount  *int
+	reqCount   *int
 }
 
-func (f *errorIOReadCloser) Read(p []byte) (int, error) {
-	(*f.readCount)++
-	if *f.readCount <= f.errorCount {
-		return 0, f.readError
+// When HTTP request is issued, this RoundTripper returns errorneous response until #{errorCount} calls.
+// It returns normal rosponse after #{errorCount}.
+func (f fakeRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+	(*f.reqCount)++
+	resp, err := f.internal.RoundTrip(req)
+	if *f.reqCount <= f.errorCount {
+		resp.Body.Close()
+		resp.Body = io.NopCloser(&errorIOReader{readError: f.readError})
 	}
-	return len(p), io.EOF
-}
-
-func (f *errorIOReadCloser) Close() error {
-	return nil
+	return resp, err
 }
 
 func TestCheckRetry(t *testing.T) {
@@ -41,6 +57,13 @@ func TestCheckRetry(t *testing.T) {
 		readError        error
 		hasError         bool
 	}{
+		{
+			name:             "No error",
+			expectedReqCount: 1,
+			errorCount:       0,
+			readError:        nil,
+			hasError:         false,
+		},
 		{
 			name:             "unexpected EOF",
 			expectedReqCount: 3,
@@ -68,18 +91,13 @@ func TestCheckRetry(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			reqCount := 0
-			readCount := 0
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				reqCount++
 				http.ServeContent(w, r, "test.txt", time.Now(), bytes.NewReader([]byte("12345")))
 			}))
 			defer ts.Close()
 
-			checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
-				resp.Body = &errorIOReadCloser{errorCount: tt.errorCount, readError: tt.readError, readCount: &readCount}
-				return utilapi.CheckRetry(ctx, resp, err)
-			}
-			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(checkRetry))
+			netHTTPClient := &http.Client{Transport: newFakeRoundTripper(tt.errorCount, tt.readError, &reqCount)}
+			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(2), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(netHTTPClient))
 
 			_, err := c.Get(ts.URL)
 
