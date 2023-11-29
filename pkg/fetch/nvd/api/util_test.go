@@ -25,9 +25,8 @@ func (f *errorIOReadCloser) Read(p []byte) (int, error) {
 	(*f.readCount)++
 	if *f.readCount <= f.errorCount {
 		return 0, f.readError
-	} else {
-		return len(p), io.EOF
 	}
+	return len(p), io.EOF
 }
 
 func (f *errorIOReadCloser) Close() error {
