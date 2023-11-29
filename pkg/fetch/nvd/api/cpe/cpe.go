@@ -16,7 +16,7 @@ import (
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
-	utilapi "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api"
+	utilapi "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )

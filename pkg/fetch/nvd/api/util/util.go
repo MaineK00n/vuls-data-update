@@ -1,9 +1,8 @@
-package api
+package util
 
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"

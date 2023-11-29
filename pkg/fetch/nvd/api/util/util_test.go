@@ -1,4 +1,4 @@
-package api_test
+package util_test
 
 import (
 	"bytes"
