@@ -1,7 +1,6 @@
 package cpe
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
@@ -11,7 +10,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
@@ -155,22 +153,7 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch NVD CPE API. dir: %s", options.dir)
 
-	checkRetry := func(ctx context.Context, resp *http.Response, err error) (bool, error) {
-		if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
-			return shouldRetry, err
-		}
-
-		// NVD JSON API returns 403 in rate limit excesses, should retry.
-		// Also, the API returns 408 infreqently.
-		switch resp.StatusCode {
-		case http.StatusForbidden, http.StatusRequestTimeout:
-			return true, fmt.Errorf("unexpected HTTP status %s", resp.Status)
-		default:
-			return false, nil
-		}
-	}
-
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(checkRetry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry))
 
 	h := make(http.Header)
 	if options.apiKey != "" {
