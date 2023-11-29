@@ -18,7 +18,7 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	defer originalBody.Close()
 
 	if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
-		return shouldRetry, err
+		return shouldRetry, errors.Wrap(err, "retry policy")
 	}
 
 	// NVD JSON API returns 403 in rate limit excesses, should retry.
