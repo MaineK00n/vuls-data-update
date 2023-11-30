@@ -14,6 +14,7 @@ import (
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
+	jvnutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -76,7 +77,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch JVNDB Detail")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
 	}
