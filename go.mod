@@ -15,7 +15,7 @@ require (
 	github.com/tealeg/xlsx v1.0.5
 	github.com/ulikunitz/xz v0.5.11
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
-	golang.org/x/net v0.18.0
+	golang.org/x/net v0.19.0
 	golang.org/x/sync v0.5.0
 	modernc.org/sqlite v1.27.0
 )
@@ -35,7 +35,7 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/mod v0.13.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect
 	lukechampine.com/uint128 v1.3.0 // indirect
