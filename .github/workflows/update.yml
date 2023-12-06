@@ -43,7 +43,6 @@ jobs:
             - "attack"
             - "capec"
             - "cwe"
-            - "epss"
             - "exploit-exploitdb"
             - "exploit-github"
             - "exploit-inthewild"
@@ -461,4 +460,62 @@ jobs:
           command: |
             cd vuls-data-raw-fedora
             git push
+    
+  fetch-epss:
+    name: fetch vuls-data-raw-epss
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: "go.mod"
+
+      - name: go install
+        run: go install ./cmd/vuls-data-update
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-raw-epss"
+
+      - name: Check out fetch data repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-epss
+          path: vuls-data-raw-epss
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Fetch
+        run: vuls-data-update fetch epss --dir vuls-data-raw-epss $(date --utc -d "-1 days" "+%Y-%m-%d")
+
+      - name: Split Large Files
+        run: find vuls-data-raw-epss -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Restore
+        run: |
+          cd vuls-data-raw-epss
+          deleted=$(git ls-files --deleted | grep -v $(date --utc -d "-1 days" "+%Y-%m-%d").json || [[ $? == 1 ]])
+          if [[ -n ${deleted} ]]; then
+            git restore ${deleted}
+          fi
+
+      - name: Push
+        run: |
+          cd vuls-data-raw-epss
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "update $(date --utc -d "-1 days" "+%Y-%m-%d")"
+            git push
+          fi
     

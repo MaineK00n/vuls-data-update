@@ -2120,8 +2120,10 @@ func newCmdFetchCWE() *cobra.Command {
 }
 func newCmdFetchEPSS() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "epss"),
-		retry: 3,
+		dir:         filepath.Join(util.CacheDir(), "epss"),
+		retry:       3,
+		concurrency: 4,
+		wait:        1,
 	}
 
 	cmd := &cobra.Command{
@@ -2130,9 +2132,9 @@ func newCmdFetchEPSS() *cobra.Command {
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch epss
 		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := epss.Fetch(epss.WithDir(options.dir), epss.WithRetry(options.retry)); err != nil {
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := epss.Fetch(args, epss.WithDir(options.dir), epss.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch epss")
 			}
 			return nil
@@ -2141,6 +2143,8 @@ func newCmdFetchEPSS() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "epss"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 4, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }

@@ -1,12 +1,13 @@
 package epss_test
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -17,16 +18,16 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		file     string
+		args     []string
 		hasError bool
 	}{
 		{
 			name: "happy path",
-			file: "testdata/fixtures/epss_scores-current.csv.gz",
+			args: []string{"2021-04-14", "2021-04-22", "2021-09-01", "2022-02-04", "2023-03-07"},
 		},
 		{
 			name:     "404 not found",
-			file:     "",
+			args:     []string{"2021-04-03"},
 			hasError: true,
 		},
 	}
@@ -34,20 +35,12 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.file == "" {
-					http.NotFound(w, r)
-					return
-				}
-				http.ServeFile(w, r, tt.file)
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", strings.TrimPrefix(r.URL.Path, string(os.PathSeparator))))
 			}))
 			defer ts.Close()
 
-			dataURL, err := url.JoinPath(ts.URL, tt.file)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
 			dir := t.TempDir()
-			err = epss.Fetch(epss.WithDataURL(dataURL), epss.WithDir(dir), epss.WithRetry(0))
+			err := epss.Fetch(tt.args, epss.WithDataURL(fmt.Sprintf("%s/epss_scores-%%s.csv.gz", ts.URL)), epss.WithDir(dir), epss.WithRetry(0), epss.WithConcurrency(1), epss.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
