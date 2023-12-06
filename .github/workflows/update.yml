@@ -40,6 +40,18 @@ jobs:
             - "windows-cvrf"
             - "windows-wsusscn2"
 
+            - "cargo-ghsa"
+            - "composer-ghsa"
+            - "erlang-ghsa"
+            - "golang-ghsa"
+            - "maven-ghsa"
+            - "npm-ghsa"
+            - "nuget-ghsa"
+            - "pip-ghsa"
+            - "pub-ghsa"
+            - "rubygems-ghsa"
+            - "swift-ghsa"
+
             - "attack"
             - "capec"
             - "cwe"
