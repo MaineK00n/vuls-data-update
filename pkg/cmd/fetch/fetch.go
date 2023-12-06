@@ -41,6 +41,18 @@ import (
 	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
 	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
 
+	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
+	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/ghsa"
+	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
+	golangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/ghsa"
+	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
+	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/ghsa"
+	nugetGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/ghsa"
+	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/ghsa"
+	pubGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/ghsa"
+	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
+	swiftGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/ghsa"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cwe"
@@ -112,14 +124,15 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchCargoDB(), newCmdFetchCargoGHSA(), newCmdFetchCargoOSV(),
 		newCmdFetchComposerDB(), newCmdFetchComposerGHSA(), newCmdFetchComposerGLSA(),
 		newCmdFetchConanGLSA(),
-		newCmdFetchDartGHSA(), newCmdFetchDartOSV(),
 		newCmdFetchErlangGHSA(), newCmdFetchErlangOSV(),
 		newCmdFetchGolangDB(), newCmdFetchGolangGHSA(), newCmdFetchGolangGLSA(), newCmdFetchGolangVulnDB(), newCmdFetchGolangOSV(),
 		newCmdFetchMavenGHSA(), newCmdFetchMavenGLSA(),
 		newCmdFetchNpmDB(), newCmdFetchNpmGHSA(), newCmdFetchNpmGLSA(), newCmdFetchNpmOSV(),
 		newCmdFetchNugetGHSA(), newCmdFetchNugetGLSA(), newCmdFetchNugetOSV(),
 		newCmdFetchPipDB(), newCmdFetchPipGHSA(), newCmdFetchPipGLSA(), newCmdFetchPipOSV(),
+		newCmdFetchPubGHSA(), newCmdFetchPubOSV(),
 		newCmdFetchRubygemsDB(), newCmdFetchRubygemsGHSA(), newCmdFetchRubygemsGLSA(), newCmdFetchRubygemsOSV(),
+		newCmdFetchSwiftGHSA(),
 
 		newCmdFetchAttack(),
 		newCmdFetchCapec(),
@@ -1203,9 +1216,9 @@ func newCmdFetchCargoGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := cargoGHSA.Fetch(cargoGHSA.WithDir(options.dir), cargoGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch cargo ghsa")
-			// 	}
+			if err := cargoGHSA.Fetch(cargoGHSA.WithDir(options.dir), cargoGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cargo ghsa")
+			}
 			return nil
 		},
 	}
@@ -1284,9 +1297,9 @@ func newCmdFetchComposerGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := composerGHSA.Fetch(composerGHSA.WithDir(options.dir), composerGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch composer ghsa")
-			// 	}
+			if err := composerGHSA.Fetch(composerGHSA.WithDir(options.dir), composerGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch composer ghsa")
+			}
 			return nil
 		},
 	}
@@ -1351,60 +1364,6 @@ func newCmdFetchConanGLSA() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchDartGHSA() *cobra.Command {
-	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "dart", "ghsa"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "dart-ghsa",
-		Short: "Fetch Dart GitHub Security Advisory data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch dart-ghsa
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := dartGHSA.Fetch(dartGHSA.WithDir(options.dir), dartGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch dart ghsa")
-			// 	}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "dart", "ghsa"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdFetchDartOSV() *cobra.Command {
-	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "dart", "osv"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "dart-osv",
-		Short: "Fetch Dart Open Source Vulnerabilities Database data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch dart-osv
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := dartOSV.Fetch(dartOSV.WithDir(options.dir), dartOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch dart osv")
-			// 	}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "dart", "osv"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
 func newCmdFetchErlangGHSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "erlang", "ghsa"),
@@ -1419,9 +1378,9 @@ func newCmdFetchErlangGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := erlangGHSA.Fetch(erlangGHSA.WithDir(options.dir), erlangGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch erlang-ghsa")
-			// 	}
+			if err := erlangGHSA.Fetch(erlangGHSA.WithDir(options.dir), erlangGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch erlang-ghsa")
+			}
 			return nil
 		},
 	}
@@ -1500,9 +1459,9 @@ func newCmdFetchGolangGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangGHSA.Fetch(golangGHSA.WithDir(options.dir), golangGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch golang ghsa")
-			// 	}
+			if err := golangGHSA.Fetch(golangGHSA.WithDir(options.dir), golangGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch golang ghsa")
+			}
 			return nil
 		},
 	}
@@ -1608,9 +1567,9 @@ func newCmdFetchMavenGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := mavenGHSA.Fetch(mavenGHSA.WithDir(options.dir), mavenGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch maven ghsa")
-			// 	}
+			if err := mavenGHSA.Fetch(mavenGHSA.WithDir(options.dir), mavenGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch maven ghsa")
+			}
 			return nil
 		},
 	}
@@ -1620,6 +1579,7 @@ func newCmdFetchMavenGHSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchMavenGLSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "maven", "glsa"),
@@ -1646,6 +1606,7 @@ func newCmdFetchMavenGLSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNpmDB() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "npm", "db"),
@@ -1672,6 +1633,7 @@ func newCmdFetchNpmDB() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNpmGHSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "npm", "ghsa"),
@@ -1686,9 +1648,9 @@ func newCmdFetchNpmGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmGHSA.Fetch(npmGHSA.WithDir(options.dir), npmGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch npm ghsa")
-			// 	}
+			if err := npmGHSA.Fetch(npmGHSA.WithDir(options.dir), npmGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch npm ghsa")
+			}
 			return nil
 		},
 	}
@@ -1698,6 +1660,7 @@ func newCmdFetchNpmGHSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNpmGLSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "npm", "glsa"),
@@ -1724,6 +1687,7 @@ func newCmdFetchNpmGLSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNpmOSV() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "npm", "osv"),
@@ -1750,6 +1714,7 @@ func newCmdFetchNpmOSV() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNugetGHSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "nuget", "ghsa"),
@@ -1764,9 +1729,9 @@ func newCmdFetchNugetGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nugetGHSA.Fetch(nugetGHSA.WithDir(options.dir), nugetGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch nuget ghsa")
-			// 	}
+			if err := nugetGHSA.Fetch(nugetGHSA.WithDir(options.dir), nugetGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nuget ghsa")
+			}
 			return nil
 		},
 	}
@@ -1857,6 +1822,7 @@ func newCmdFetchPipDB() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchPipGHSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "pip", "ghsa"),
@@ -1871,9 +1837,9 @@ func newCmdFetchPipGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipGHSA.Fetch(pipGHSA.WithDir(options.dir), pipGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch pip ghsa")
-			// 	}
+			if err := pipGHSA.Fetch(pipGHSA.WithDir(options.dir), pipGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch pip ghsa")
+			}
 			return nil
 		},
 	}
@@ -1883,6 +1849,7 @@ func newCmdFetchPipGHSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchPipGLSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "pip", "glsa"),
@@ -1909,6 +1876,7 @@ func newCmdFetchPipGLSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchPipOSV() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "pip", "osv"),
@@ -1931,6 +1899,60 @@ func newCmdFetchPipOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchPubGHSA() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "pub", "ghsa"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pub-ghsa",
+		Short: "Fetch Pub GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch pub-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := pubGHSA.Fetch(pubGHSA.WithDir(options.dir), pubGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch pub ghsa")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pub", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchPubOSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "pub", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pub-osv",
+		Short: "Fetch Pub Open Source Vulnerabilities Database data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch pub-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			// 	if err := pubOSV.Fetch(pubOSV.WithDir(options.dir), pubOSV.WithRetry(options.retry)); err != nil {
+			// 		return errors.Wrap(err, "failed to fetch pub osv")
+			// 	}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pub", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1962,6 +1984,7 @@ func newCmdFetchRubygemsDB() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchRubygemsGHSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "rubygems", "ghsa"),
@@ -1976,9 +1999,9 @@ func newCmdFetchRubygemsGHSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsGHSA.Fetch(rubygemsGHSA.WithDir(options.dir), rubygemsGHSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch rubygems ghsa")
-			// 	}
+			if err := rubygemsGHSA.Fetch(rubygemsGHSA.WithDir(options.dir), rubygemsGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch rubygems ghsa")
+			}
 			return nil
 		},
 	}
@@ -1988,6 +2011,7 @@ func newCmdFetchRubygemsGHSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchRubygemsGLSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "rubygems", "glsa"),
@@ -2014,6 +2038,7 @@ func newCmdFetchRubygemsGLSA() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchRubygemsOSV() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "rubygems", "osv"),
@@ -2040,6 +2065,34 @@ func newCmdFetchRubygemsOSV() *cobra.Command {
 
 	return cmd
 }
+
+func newCmdFetchSwiftGHSA() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "swift", "ghsa"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "swift-ghsa",
+		Short: "Fetch Swift GitHub Security Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch swift-ghsa
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := swiftGHSA.Fetch(swiftGHSA.WithDir(options.dir), swiftGHSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch swift ghsa")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "swift", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
 func newCmdFetchAttack() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "attack"),
@@ -2066,6 +2119,7 @@ func newCmdFetchAttack() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchCapec() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "capec"),
@@ -2092,6 +2146,7 @@ func newCmdFetchCapec() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchCWE() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "cwe"),
@@ -2118,6 +2173,7 @@ func newCmdFetchCWE() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchEPSS() *cobra.Command {
 	options := &options{
 		dir:         filepath.Join(util.CacheDir(), "epss"),
@@ -2148,6 +2204,7 @@ func newCmdFetchEPSS() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchExploitExploitDB() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "exploit", "exploitdb"),
@@ -2174,6 +2231,7 @@ func newCmdFetchExploitExploitDB() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchExploitGitHub() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "exploit", "github"),
@@ -2200,6 +2258,7 @@ func newCmdFetchExploitGitHub() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchExploitInthewild() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "exploit", "inthewild"),
@@ -2226,6 +2285,7 @@ func newCmdFetchExploitInthewild() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchExploitExploitTrickest() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "exploit", "trickest"),
@@ -2468,6 +2528,7 @@ func newCmdFetchMSF() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNVDAPICVE() *cobra.Command {
 	options := &options{
 		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
@@ -2510,6 +2571,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNVDAPICPE() *cobra.Command {
 	options := &options{
 		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cpe"),
@@ -2552,6 +2614,7 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 
 	return cmd
 }
+
 func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 	options := &options{
 		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"),
