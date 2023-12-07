@@ -1,10 +1,16 @@
 package osv
 
 import (
+	"archive/zip"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -24,14 +30,14 @@ type Option interface {
 	apply(*options)
 }
 
-type repoURLOption string
+type dataURLOption string
 
-func (u repoURLOption) apply(opts *options) {
+func (u dataURLOption) apply(opts *options) {
 	opts.dataURL = string(u)
 }
 
-func WithRepoURL(repoURL string) Option {
-	return repoURLOption(repoURL)
+func WithDataURL(url string) Option {
+	return dataURLOption(url)
 }
 
 type dirOption string
@@ -75,6 +81,54 @@ func Fetch(opts ...Option) error {
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	bs, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "read all response body")
+	}
+
+	r, err := zip.NewReader(bytes.NewReader(bs), int64(len(bs)))
+	if err != nil {
+		return errors.Wrap(err, "create zip reader")
+	}
+
+	for _, zf := range r.File {
+		if zf.FileInfo().IsDir() {
+			continue
+		}
+
+		a, err := func() (*OSV, error) {
+			f, err := zf.Open()
+			if err != nil {
+				return nil, errors.Wrapf(err, "open %s", zf.Name)
+			}
+			defer f.Close()
+
+			var a OSV
+			if err := json.NewDecoder(f).Decode(&a); err != nil {
+				return nil, errors.Wrap(err, "decode json")
+			}
+			return &a, nil
+		}()
+		if err != nil {
+			return errors.Wrapf(err, "read %s", zf.Name)
+		}
+
+		lhs, _, ok := strings.Cut(a.ID, "-")
+		if !ok {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(GO|GHSA|OSV)-.+", a.ID)
+			continue
+		}
+
+		t, err := time.Parse("2006-01-02T15:04:05Z", a.Published)
+		if err != nil {
+			return errors.Wrap(err, "parse time")
+		}
+
+		if err := util.Write(filepath.Join(options.dir, lhs, t.Format("2006"), fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, lhs, t.Format("2006"), fmt.Sprintf("%s.json", a.ID)))
+		}
 	}
 
 	return nil

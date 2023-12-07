@@ -1,0 +1,94 @@
+{
+	"schema_version": "1.6.0",
+	"id": "ALBA-2022:8256",
+	"modified": "2023-06-19T09:29:32Z",
+	"published": "2022-11-15T00:00:00Z",
+	"summary": "Important: qatzip bug fix and enhancement update",
+	"details": "For detailed information on changes in this release, see the AlmaLinux Release Notes linked from the References section.",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "AlmaLinux:9",
+				"name": "qatzip"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.9-1.el9"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/AlmaLinux/osv-database/blob/master/advisories/almalinux9/ALBA-2022:8256.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "AlmaLinux:9",
+				"name": "qatzip-devel"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.9-1.el9"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/AlmaLinux/osv-database/blob/master/advisories/almalinux9/ALBA-2022:8256.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "AlmaLinux:9",
+				"name": "qatzip-libs"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.0.9-1.el9"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://github.com/AlmaLinux/osv-database/blob/master/advisories/almalinux9/ALBA-2022:8256.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://access.redhat.com/errata/RHBA-2022:8256"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://access.redhat.com/security/cve/CVE-2022-36369"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/2170784"
+		},
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.almalinux.org/9/ALBA-2022-8256.html"
+		}
+	]
+}

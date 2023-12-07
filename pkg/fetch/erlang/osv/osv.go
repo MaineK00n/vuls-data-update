@@ -1,10 +1,15 @@
 package osv
 
 import (
+	"archive/zip"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -75,6 +80,48 @@ func Fetch(opts ...Option) error {
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	bs, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "read all response body")
+	}
+
+	r, err := zip.NewReader(bytes.NewReader(bs), int64(len(bs)))
+	if err != nil {
+		return errors.Wrap(err, "create zip reader")
+	}
+
+	for _, zf := range r.File {
+		if zf.FileInfo().IsDir() {
+			continue
+		}
+
+		a, err := func() (*OSV, error) {
+			f, err := zf.Open()
+			if err != nil {
+				return nil, errors.Wrapf(err, "open %s", zf.Name)
+			}
+			defer f.Close()
+
+			var a OSV
+			if err := json.NewDecoder(f).Decode(&a); err != nil {
+				return nil, errors.Wrap(err, "decode json")
+			}
+			return &a, nil
+		}()
+		if err != nil {
+			return errors.Wrapf(err, "read %s", zf.Name)
+		}
+
+		t, err := time.Parse("2006-01-02T15:04:05Z", a.Published)
+		if err != nil {
+			return errors.Wrap(err, "parse time")
+		}
+
+		if err := util.Write(filepath.Join(options.dir, t.Format("2006"), t.Format("01"), fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, t.Format("2006"), t.Format("01"), fmt.Sprintf("%s.json", a.ID)))
+		}
 	}
 
 	return nil

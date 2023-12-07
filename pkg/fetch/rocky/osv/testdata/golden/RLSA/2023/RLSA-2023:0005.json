@@ -1,0 +1,60 @@
+{
+	"schema_version": "1.6.0",
+	"id": "RLSA-2023:0005",
+	"modified": "2023-02-02T14:08:58.894629Z",
+	"published": "2023-01-02T06:07:03Z",
+	"related": [
+		"CVE-2022-42920"
+	],
+	"summary": "Important: bcel security update",
+	"details": "The Byte Code Engineering Library (Apache Commons BCEL) is intended to give users a convenient way to analyze, create, and manipulate (binary) Java class files (those ending with .class).\n\nSecurity Fix(es):\n\n* Apache-Commons-BCEL: arbitrary bytecode produced via out-of-bounds writing (CVE-2022-42920)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"severity": [
+		{
+			"type": "CVSS_V3",
+			"score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+		}
+	],
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:9",
+				"name": "bcel",
+				"purl": "pkg:rpm/rocky-linux/bcel?distro=rocky-linux-9-aarch64&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.4.1-9.el9_1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2023:0005.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.rockylinux.org/RLSA-2023:0005"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142707"
+		}
+	],
+	"credits": [
+		{
+			"name": "Rocky Enterprise Software Foundation"
+		},
+		{
+			"name": "Red Hat"
+		}
+	]
+}
