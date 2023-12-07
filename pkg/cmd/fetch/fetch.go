@@ -10,9 +10,12 @@ import (
 	"github.com/spf13/cobra"
 
 	almaErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
+	almaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/osv"
+	alpineOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/osv"
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
+	debianOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/osv"
 	debianOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
@@ -29,6 +32,7 @@ import (
 	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
+	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/osv"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
 	suseCSAFVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
@@ -42,16 +46,29 @@ import (
 	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
 
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
+	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/ghsa"
+	composerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/osv"
 	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
+	erlangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/osv"
 	golangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/ghsa"
+	golangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/osv"
+	haskellOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/osv"
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
+	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/ghsa"
+	npmOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/osv"
 	nugetGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/ghsa"
+	nugetOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/osv"
 	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/ghsa"
+	pipOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/osv"
 	pubGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/ghsa"
+	pubOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/osv"
+	rOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/r/osv"
 	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
+	rubygemsOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/osv"
 	swiftGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/ghsa"
+	swiftOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/osv"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
@@ -122,17 +139,19 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchWindowsBulletin(), newCmdFetchWindowsCVRF(), newCmdFetchWindowsMSUC(), newCmdFetchWindowsWSUSSCN2(),
 
 		newCmdFetchCargoDB(), newCmdFetchCargoGHSA(), newCmdFetchCargoOSV(),
-		newCmdFetchComposerDB(), newCmdFetchComposerGHSA(), newCmdFetchComposerGLSA(),
+		newCmdFetchComposerDB(), newCmdFetchComposerGHSA(), newCmdFetchComposerGLSA(), newCmdFetchComposerOSV(),
 		newCmdFetchConanGLSA(),
 		newCmdFetchErlangGHSA(), newCmdFetchErlangOSV(),
 		newCmdFetchGolangDB(), newCmdFetchGolangGHSA(), newCmdFetchGolangGLSA(), newCmdFetchGolangVulnDB(), newCmdFetchGolangOSV(),
-		newCmdFetchMavenGHSA(), newCmdFetchMavenGLSA(),
+		newCmdFetchHaskellOSV(),
+		newCmdFetchMavenGHSA(), newCmdFetchMavenGLSA(), newCmdFetchMavenOSV(),
 		newCmdFetchNpmDB(), newCmdFetchNpmGHSA(), newCmdFetchNpmGLSA(), newCmdFetchNpmOSV(),
 		newCmdFetchNugetGHSA(), newCmdFetchNugetGLSA(), newCmdFetchNugetOSV(),
 		newCmdFetchPipDB(), newCmdFetchPipGHSA(), newCmdFetchPipGLSA(), newCmdFetchPipOSV(),
 		newCmdFetchPubGHSA(), newCmdFetchPubOSV(),
+		newCmdFetchROSV(),
 		newCmdFetchRubygemsDB(), newCmdFetchRubygemsGHSA(), newCmdFetchRubygemsGLSA(), newCmdFetchRubygemsOSV(),
-		newCmdFetchSwiftGHSA(),
+		newCmdFetchSwiftGHSA(), newCmdFetchSwiftOSV(),
 
 		newCmdFetchAttack(),
 		newCmdFetchCapec(),
@@ -191,9 +210,9 @@ func newCmdFetchAlmaOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := almaOSV.Fetch(almaOSV.WithDir(options.dir), almaOSV.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch almalinux")
-			// }
+			if err := almaOSV.Fetch(almaOSV.WithDir(options.dir), almaOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch almalinux")
+			}
 			return nil
 		},
 	}
@@ -245,9 +264,9 @@ func newCmdFetchAlpineOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := alpineOSV.Fetch(alpineOSV.WithDir(options.dir), alpineOSV.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch alpine linux")
-			// }
+			if err := alpineOSV.Fetch(alpineOSV.WithDir(options.dir), alpineOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch alpine linux")
+			}
 			return nil
 		},
 	}
@@ -407,9 +426,9 @@ func newCmdFetchDebianOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := debianOSV.Fetch(debianOSV.WithDir(options.dir), debianOSV.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch debian osv")
-			// }
+			if err := debianOSV.Fetch(debianOSV.WithDir(options.dir), debianOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch debian osv")
+			}
 			return nil
 		},
 	}
@@ -826,9 +845,9 @@ func newCmdFetchRockyOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// if err := rockyOSV.Fetch(rockyOSV.WithDir(options.dir), rockyOSV.WithRetry(options.retry)); err != nil {
-			// 	return errors.Wrap(err, "failed to fetch rocky")
-			// }
+			if err := rockyOSV.Fetch(rockyOSV.WithDir(options.dir), rockyOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch rocky")
+			}
 			return nil
 		},
 	}
@@ -1243,9 +1262,9 @@ func newCmdFetchCargoOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := cargoOSV.Fetch(cargoOSV.WithDir(options.dir), cargoOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch cargo osv")
-			// 	}
+			if err := cargoOSV.Fetch(cargoOSV.WithDir(options.dir), cargoOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cargo osv")
+			}
 			return nil
 		},
 	}
@@ -1337,6 +1356,33 @@ func newCmdFetchComposerGLSA() *cobra.Command {
 	return cmd
 }
 
+func newCmdFetchComposerOSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "composer", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "composer-osv",
+		Short: "Fetch Composer OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch composer-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := composerOSV.Fetch(composerOSV.WithDir(options.dir), composerOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch composer osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
 func newCmdFetchConanGLSA() *cobra.Command {
 	options := &options{
 		dir:   filepath.Join(util.CacheDir(), "conan", "glsa"),
@@ -1405,9 +1451,9 @@ func newCmdFetchErlangOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := erlangOSV.Fetch(erlangOSV.WithDir(options.dir), erlangOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch erlang osv")
-			// 	}
+			if err := erlangOSV.Fetch(erlangOSV.WithDir(options.dir), erlangOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch erlang osv")
+			}
 			return nil
 		},
 	}
@@ -1513,9 +1559,9 @@ func newCmdFetchGolangOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangOSV.Fetch(golangOSV.WithDir(options.dir), golangOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch golang osv")
-			// 	}
+			if err := golangOSV.Fetch(golangOSV.WithDir(options.dir), golangOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch golang osv")
+			}
 			return nil
 		},
 	}
@@ -1548,6 +1594,33 @@ func newCmdFetchGolangVulnDB() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "vulndb"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchHaskellOSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "haskell", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "haskell-osv",
+		Short: "Fetch Haskell OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch haskell-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := haskellOSV.Fetch(haskellOSV.WithDir(options.dir), haskellOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch haskell osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "haskell", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1602,6 +1675,33 @@ func newCmdFetchMavenGLSA() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchMavenOSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "maven", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "maven-osv",
+		Short: "Fetch Maven OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch maven-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := mavenOSV.Fetch(mavenOSV.WithDir(options.dir), mavenOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch maven osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -1702,9 +1802,9 @@ func newCmdFetchNpmOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmOSV.Fetch(npmOSV.WithDir(options.dir), npmOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch npm osv")
-			// 	}
+			if err := npmOSV.Fetch(npmOSV.WithDir(options.dir), npmOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch npm osv")
+			}
 			return nil
 		},
 	}
@@ -1783,9 +1883,9 @@ func newCmdFetchNugetOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nugetOSV.Fetch(nugetOSV.WithDir(options.dir), nugetOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch nuget osv")
-			// 	}
+			if err := nugetOSV.Fetch(nugetOSV.WithDir(options.dir), nugetOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nuget osv")
+			}
 			return nil
 		},
 	}
@@ -1891,9 +1991,9 @@ func newCmdFetchPipOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipOSV.Fetch(pipOSV.WithDir(options.dir), pipOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch pip osv")
-			// 	}
+			if err := pipOSV.Fetch(pipOSV.WithDir(options.dir), pipOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch pip osv")
+			}
 			return nil
 		},
 	}
@@ -1945,14 +2045,41 @@ func newCmdFetchPubOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pubOSV.Fetch(pubOSV.WithDir(options.dir), pubOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch pub osv")
-			// 	}
+			if err := pubOSV.Fetch(pubOSV.WithDir(options.dir), pubOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch pub osv")
+			}
 			return nil
 		},
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pub", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchROSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "r", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "r-osv",
+		Short: "Fetch R OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch r-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := rOSV.Fetch(rOSV.WithDir(options.dir), rOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch r osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "r", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -2053,9 +2180,9 @@ func newCmdFetchRubygemsOSV() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsOSV.Fetch(rubygemsOSV.WithDir(options.dir), rubygemsOSV.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch rubygems osv")
-			// 	}
+			if err := rubygemsOSV.Fetch(rubygemsOSV.WithDir(options.dir), rubygemsOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch rubygems osv")
+			}
 			return nil
 		},
 	}
@@ -2088,6 +2215,33 @@ func newCmdFetchSwiftGHSA() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "swift", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdFetchSwiftOSV() *cobra.Command {
+	options := &options{
+		dir:   filepath.Join(util.CacheDir(), "swift", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "swift-osv",
+		Short: "Fetch Swift OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch swift-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := swiftOSV.Fetch(swiftOSV.WithDir(options.dir), swiftOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch swift osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "swift", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd

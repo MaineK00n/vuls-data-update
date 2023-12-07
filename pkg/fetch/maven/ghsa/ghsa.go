@@ -17,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://github.com/github/advisory-database/archive/refs/heads/main.tar.gz" // Maven
+const dataURL = "https://github.com/github/advisory-database/archive/refs/heads/main.tar.gz"
 
 type options struct {
 	dataURL string

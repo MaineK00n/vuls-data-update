@@ -1,10 +1,15 @@
 package osv
 
 import (
+	"archive/zip"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -75,6 +80,53 @@ func Fetch(opts ...Option) error {
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	bs, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "read all response body")
+	}
+
+	r, err := zip.NewReader(bytes.NewReader(bs), int64(len(bs)))
+	if err != nil {
+		return errors.Wrap(err, "create zip reader")
+	}
+
+	for _, zf := range r.File {
+		if zf.FileInfo().IsDir() {
+			continue
+		}
+
+		a, err := func() (*OSV, error) {
+			f, err := zf.Open()
+			if err != nil {
+				return nil, errors.Wrapf(err, "open %s", zf.Name)
+			}
+			defer f.Close()
+
+			var a OSV
+			if err := json.NewDecoder(f).Decode(&a); err != nil {
+				return nil, errors.Wrap(err, "decode json")
+			}
+			return &a, nil
+		}()
+		if err != nil {
+			return errors.Wrapf(err, "read %s", zf.Name)
+		}
+
+		splitted, err := util.Split(a.ID, "-", "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "HSEC-yyyy-\\d{4}", a.ID)
+			continue
+		}
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "HSEC-yyyy-\\d{4}", a.ID)
+			continue
+		}
+
+		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.ID)))
+		}
 	}
 
 	return nil
