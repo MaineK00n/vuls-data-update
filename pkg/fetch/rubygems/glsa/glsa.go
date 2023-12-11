@@ -1,12 +1,17 @@
 package glsa
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -79,6 +84,44 @@ func Fetch(opts ...Option) error {
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	gr, err := gzip.NewReader(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "create gzip reader")
+	}
+
+	tr := tar.NewReader(gr)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return errors.Wrap(err, "next tar reader")
+		}
+
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
+
+		if filepath.Ext(hdr.Name) != ".yml" {
+			continue
+		}
+
+		var adv GLSA
+		if err := yaml.NewDecoder(tr).Decode(&adv); err != nil {
+			return errors.Wrap(err, "decode yaml")
+		}
+
+		name, ok := strings.CutPrefix(adv.PackageSlug, "gem/")
+		if !ok {
+			return errors.Errorf("unexpected package_slug format. expected: %q, actual: %q", "gem/<package name>", adv.PackageSlug)
+		}
+
+		if err := util.Write(filepath.Join(options.dir, name, fmt.Sprintf("%s.json", strings.TrimSuffix(filepath.Base(hdr.Name), ".yml"))), adv); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, name, filepath.Base(hdr.Name)))
+		}
 	}
 
 	return nil

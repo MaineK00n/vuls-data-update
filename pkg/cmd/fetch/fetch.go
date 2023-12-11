@@ -48,24 +48,32 @@ import (
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/ghsa"
+	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/glsa"
 	composerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/osv"
+	conanGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/conan/glsa"
 	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
 	erlangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/osv"
 	golangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/ghsa"
+	golangGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/glsa"
 	golangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/osv"
 	haskellOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/osv"
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
+	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/glsa"
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/ghsa"
+	npmGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/glsa"
 	npmOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/osv"
 	nugetGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/ghsa"
+	nugetGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/glsa"
 	nugetOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/osv"
 	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/ghsa"
+	pipGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/glsa"
 	pipOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/osv"
 	pubGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/ghsa"
 	pubOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/osv"
 	rOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/r/osv"
 	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
+	rubygemsGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/glsa"
 	rubygemsOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/osv"
 	swiftGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/ghsa"
 	swiftOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/osv"
@@ -1343,9 +1351,9 @@ func newCmdFetchComposerGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := composerGLSA.Fetch(composerGLSA.WithDir(options.dir), composerGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch composer glsa")
-			// 	}
+			if err := composerGLSA.Fetch(composerGLSA.WithDir(options.dir), composerGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch composer glsa")
+			}
 			return nil
 		},
 	}
@@ -1397,9 +1405,9 @@ func newCmdFetchConanGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := conanGLSA.Fetch(conanGLSA.WithDir(options.dir), conanGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch conan glsa")
-			// 	}
+			if err := conanGLSA.Fetch(conanGLSA.WithDir(options.dir), conanGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch conan glsa")
+			}
 			return nil
 		},
 	}
@@ -1532,9 +1540,9 @@ func newCmdFetchGolangGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangGLSA.Fetch(golangGLSA.WithDir(options.dir), golangGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch golang glsa")
-			// 	}
+			if err := golangGLSA.Fetch(golangGLSA.WithDir(options.dir), golangGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch golang glsa")
+			}
 			return nil
 		},
 	}
@@ -1667,9 +1675,9 @@ func newCmdFetchMavenGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := mavenGLSA.Fetch(mavenGLSA.WithDir(options.dir), mavenGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch maven glsa")
-			// 	}
+			if err := mavenGLSA.Fetch(mavenGLSA.WithDir(options.dir), mavenGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch maven glsa")
+			}
 			return nil
 		},
 	}
@@ -1775,9 +1783,9 @@ func newCmdFetchNpmGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmGLSA.Fetch(npmGLSA.WithDir(options.dir),npmGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch npm glsa")
-			// 	}
+			if err := npmGLSA.Fetch(npmGLSA.WithDir(options.dir), npmGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch npm glsa")
+			}
 			return nil
 		},
 	}
@@ -1856,9 +1864,9 @@ func newCmdFetchNugetGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := nugetGLSA.Fetch(nugetGLSA.WithDir(options.dir), nugetGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch nuget glsa")
-			// 	}
+			if err := nugetGLSA.Fetch(nugetGLSA.WithDir(options.dir), nugetGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nuget glsa")
+			}
 			return nil
 		},
 	}
@@ -1964,9 +1972,9 @@ func newCmdFetchPipGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipGLSA.Fetch(pipGLSA.WithDir(options.dir), pipGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch pip glsa")
-			// 	}
+			if err := pipGLSA.Fetch(pipGLSA.WithDir(options.dir), pipGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch pip glsa")
+			}
 			return nil
 		},
 	}
@@ -2153,9 +2161,9 @@ func newCmdFetchRubygemsGLSA() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsGLSA.Fetch(rubygemsGLSA.WithDir(options.dir), rubygemsGLSA.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch rubygems glsa")
-			// 	}
+			if err := rubygemsGLSA.Fetch(rubygemsGLSA.WithDir(options.dir), rubygemsGLSA.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch rubygems glsa")
+			}
 			return nil
 		},
 	}
