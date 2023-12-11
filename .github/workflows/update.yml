@@ -590,20 +590,24 @@ jobs:
         id: list
         run: |
           go install github.com/sibprogrammer/xq@latest
-          echo "advisory=$(curl https://filestore.fortinet.com/fortiguard/rss/ir.xml | xq -x //item/link | xargs -L 1 basename | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "advisory=$(sort <(curl https://filestore.fortinet.com/fortiguard/rss/ir.xml | xq -x //item/link | xargs -L 1 basename) <(find vuls-data-raw-fortinet-cvrf/ -name "*.json" | xargs -I {} sh -c "basename {} .json") <(find vuls-data-raw-fortinet-cvrf/ -name "*.json" | xargs -I {} sh -c "basename {} .json") | uniq -u | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - name: Fetch
+        if: ${{ steps.list.outputs.advisory != '' }}
         run: vuls-data-update fetch fortinet --dir vuls-data-raw-fortinet-cvrf ${{ steps.list.outputs.advisory }}
 
       - name: Split Large Files
-        run: find vuls-data-raw-epss -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+        if: ${{ steps.list.outputs.advisory != '' }}
+        run: find vuls-data-raw-fortinet-cvrf -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
 
       - name: set Git config
+        if: ${{ steps.list.outputs.advisory != '' }}
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
 
       - name: Restore
+        if: ${{ steps.list.outputs.advisory != '' }}
         run: |
           cd vuls-data-raw-fortinet-cvrf
           deleted=$(sort <(git ls-files --deleted) <(echo ${{ steps.list.outputs.advisory }} | xargs -n 1 | sed -e 's/\(FG-IR-\([0-9]\{2\}\)-[0-9]\{3\}\)/20\2\/\1.json/g') <(echo ${{ steps.list.outputs.advisory }} | xargs -n 1 | sed -e 's/\(FG-IR-\([0-9]\{2\}\)-[0-9]\{3\}\)/20\2\/\1.json/g') | uniq -u)
@@ -612,6 +616,7 @@ jobs:
           fi
 
       - name: Push
+        if: ${{ steps.list.outputs.advisory != '' }}
         run: |
           cd vuls-data-raw-fortinet-cvrf
           if [[ -n $(git status --porcelain) ]]; then
