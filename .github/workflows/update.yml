@@ -590,7 +590,7 @@ jobs:
         id: list
         run: |
           go install github.com/sibprogrammer/xq@latest
-          echo "advisory=$(curl https://filestore.fortinet.com/fortiguard/rss/ir.xml | xq -x //item/link | xargs -L 1 basename)" >> $GITHUB_OUTPUT
+          echo "advisory=$(curl https://filestore.fortinet.com/fortiguard/rss/ir.xml | xq -x //item/link | xargs -L 1 basename | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - name: Fetch
         run: vuls-data-update fetch fortinet --dir vuls-data-raw-fortinet-cvrf ${{ steps.list.outputs.advisory }}
