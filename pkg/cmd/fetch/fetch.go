@@ -20,6 +20,7 @@ import (
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/gentoo"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/netbsd"
@@ -136,6 +137,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdFetchDebianOval(), newCmdFetchDebianSecurityTrackerAPI(), newCmdFetchDebianSecurityTrackerSalsa(), newCmdFetchDebianOSV(),
 		newCmdFetchEPEL(),
 		newCmdFetchFedora(),
+		newCmdFetchFortinet(),
 		newCmdFetchFreeBSD(),
 		newCmdFetchGentoo(),
 		newCmdFetchNetBSD(),
@@ -500,6 +502,37 @@ func newCmdFetchFedora() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fedora"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency process")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdFetchFortinet() *cobra.Command {
+	options := &options{
+		dir:         filepath.Join(util.CacheDir(), "fortinet"),
+		retry:       3,
+		concurrency: 4,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "fortinet",
+		Short: "Fetch Fortinet data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch fortinet
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := fortinet.Fetch(args, fortinet.WithDir(options.dir), fortinet.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch fortinet")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fortinet"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 4, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd

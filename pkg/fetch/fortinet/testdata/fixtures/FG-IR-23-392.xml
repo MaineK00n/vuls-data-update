@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrf:cvrfdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
+    <cvrf:DocumentTitle>FortiSIEM - Encrypted password stored in logs</cvrf:DocumentTitle>
+    <cvrf:DocumentType>Fortinet PSIRT Advisories</cvrf:DocumentType>
+    <cvrf:DocumentPublisher Type="Vendor">
+        <cvrf:ContactDetails>
+            Fortinet PSIRT Contact:
+            Website: https://fortiguard.fortinet.com/faq/psirt-contact
+        </cvrf:ContactDetails>
+     </cvrf:DocumentPublisher>
+    <cvrf:DocumentTracking>
+        <cvrf:Identification>
+            <cvrf:ID>FG-IR-23-392</cvrf:ID>
+        </cvrf:Identification>
+        <cvrf:Status>Final</cvrf:Status>
+        <cvrf:Version>1</cvrf:Version>
+        <cvrf:RevisionHistory>
+            <cvrf:Revision>
+                <cvrf:Number>1</cvrf:Number>
+                <cvrf:Date>2023-11-14T00:00:00</cvrf:Date>
+                <cvrf:Description>Current version</cvrf:Description>
+        </cvrf:Revision>
+       </cvrf:RevisionHistory>
+        <cvrf:InitialReleaseDate>2023-11-14T00:00:00</cvrf:InitialReleaseDate>
+        <cvrf:CurrentReleaseDate>2023-11-14T00:00:00</cvrf:CurrentReleaseDate>
+    </cvrf:DocumentTracking>
+    <cvrf:DocumentNotes>
+        <cvrf:Note Title="Summary" Type="Summary" Ordinal="1">
+            An insertion of sensitive information into log file vulnerability [CWE-532] in FortiSIEM may allow an authenticated user to view an encrypted ElasticSearch password via debug log files generated when FortiSIEM is configured with ElasticSearch Event Storage.  
+        </cvrf:Note>
+        <cvrf:Note Title="Description" Type="General" Ordinal="2">
+            None
+        </cvrf:Note>
+        <cvrf:Note Title="Impact" Type="General" Ordinal="3">
+            Information disclosure
+        </cvrf:Note>
+        <cvrf:Note Title="Affected Products" Type="General" Ordinal="4">
+            FortiSIEM version 7.0.0 FortiSIEM version 6.7.0 through 6.7.6 FortiSIEM version 6.6.0 through 6.6.3 FortiSIEM version 6.5.0 through 6.5.1 FortiSIEM version 6.4.0 through 6.4.2 FortiSIEM 6.3 all versions FortiSIEM 6.2 all versions FortiSIEM 6.1 all versions FortiSIEM 5.4 all versions FortiSIEM 5.3 all versions  
+        </cvrf:Note>
+    </cvrf:DocumentNotes>
+    <cvrf:Acknowledgments>
+        <cvrf:Acknowledgment>
+            <cvrf:Description>Internally discovered and reported by Jingjin Zhu</cvrf:Description>
+        </cvrf:Acknowledgment>
+    </cvrf:Acknowledgments>
+    <ProductTree>
+        <Branch Name="Fortinet" Type="Vendor">
+            <Branch Name="FortiSIEM" Type="Product Name">
+                <Branch Name="7.0.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-7.0.0">FortiSIEM 7.0.0</FullProductName>
+                </Branch>
+                <Branch Name="6.7.6" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.6">FortiSIEM 6.7.6</FullProductName>
+                </Branch>
+                <Branch Name="6.7.5" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.5">FortiSIEM 6.7.5</FullProductName>
+                </Branch>
+                <Branch Name="6.7.4" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.4">FortiSIEM 6.7.4</FullProductName>
+                </Branch>
+                <Branch Name="6.7.3" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.3">FortiSIEM 6.7.3</FullProductName>
+                </Branch>
+                <Branch Name="6.7.2" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.2">FortiSIEM 6.7.2</FullProductName>
+                </Branch>
+                <Branch Name="6.7.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.1">FortiSIEM 6.7.1</FullProductName>
+                </Branch>
+                <Branch Name="6.7.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.7.0">FortiSIEM 6.7.0</FullProductName>
+                </Branch>
+                <Branch Name="6.6.3" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.6.3">FortiSIEM 6.6.3</FullProductName>
+                </Branch>
+                <Branch Name="6.6.2" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.6.2">FortiSIEM 6.6.2</FullProductName>
+                </Branch>
+                <Branch Name="6.6.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.6.1">FortiSIEM 6.6.1</FullProductName>
+                </Branch>
+                <Branch Name="6.6.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.6.0">FortiSIEM 6.6.0</FullProductName>
+                </Branch>
+                <Branch Name="6.5.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.5.1">FortiSIEM 6.5.1</FullProductName>
+                </Branch>
+                <Branch Name="6.5.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.5.0">FortiSIEM 6.5.0</FullProductName>
+                </Branch>
+                <Branch Name="6.4.2" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.4.2">FortiSIEM 6.4.2</FullProductName>
+                </Branch>
+                <Branch Name="6.4.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.4.1">FortiSIEM 6.4.1</FullProductName>
+                </Branch>
+                <Branch Name="6.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.4.0">FortiSIEM 6.4.0</FullProductName>
+                </Branch>
+                <Branch Name="6.3.3" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.3.3">FortiSIEM 6.3.3</FullProductName>
+                </Branch>
+                <Branch Name="6.3.2" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.3.2">FortiSIEM 6.3.2</FullProductName>
+                </Branch>
+                <Branch Name="6.3.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.3.1">FortiSIEM 6.3.1</FullProductName>
+                </Branch>
+                <Branch Name="6.3.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.3.0">FortiSIEM 6.3.0</FullProductName>
+                </Branch>
+                <Branch Name="6.2.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.2.1">FortiSIEM 6.2.1</FullProductName>
+                </Branch>
+                <Branch Name="6.2.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.2.0">FortiSIEM 6.2.0</FullProductName>
+                </Branch>
+                <Branch Name="6.1.2" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.1.2">FortiSIEM 6.1.2</FullProductName>
+                </Branch>
+                <Branch Name="6.1.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.1.1">FortiSIEM 6.1.1</FullProductName>
+                </Branch>
+                <Branch Name="6.1.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-6.1.0">FortiSIEM 6.1.0</FullProductName>
+                </Branch>
+                <Branch Name="5.4.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-5.4.0">FortiSIEM 5.4.0</FullProductName>
+                </Branch>
+                <Branch Name="5.3.3" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-5.3.3">FortiSIEM 5.3.3</FullProductName>
+                </Branch>
+                <Branch Name="5.3.2" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-5.3.2">FortiSIEM 5.3.2</FullProductName>
+                </Branch>
+                <Branch Name="5.3.1" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-5.3.1">FortiSIEM 5.3.1</FullProductName>
+                </Branch>
+                <Branch Name="5.3.0" Type="Product Version">
+                    <FullProductName ProductID="FortiSIEM-5.3.0">FortiSIEM 5.3.0</FullProductName>
+                </Branch>
+            </Branch>
+        </Branch>
+    </ProductTree>
+    <Vulnerability Ordinal="1">
+        <Title>FortiSIEM - Encrypted password stored in logs</Title>
+        <cvrf:CVE>CVE-2023-45585</cvrf:CVE>
+        <ProductStatuses>
+            <Status Type="Known Affected">
+                <ProductID>FortiSIEM-7.0.0</ProductID>
+                <ProductID>FortiSIEM-6.7.6</ProductID>
+                <ProductID>FortiSIEM-6.7.5</ProductID>
+                <ProductID>FortiSIEM-6.7.4</ProductID>
+                <ProductID>FortiSIEM-6.7.3</ProductID>
+                <ProductID>FortiSIEM-6.7.2</ProductID>
+                <ProductID>FortiSIEM-6.7.1</ProductID>
+                <ProductID>FortiSIEM-6.7.0</ProductID>
+                <ProductID>FortiSIEM-6.6.3</ProductID>
+                <ProductID>FortiSIEM-6.6.2</ProductID>
+                <ProductID>FortiSIEM-6.6.1</ProductID>
+                <ProductID>FortiSIEM-6.6.0</ProductID>
+                <ProductID>FortiSIEM-6.5.1</ProductID>
+                <ProductID>FortiSIEM-6.5.0</ProductID>
+                <ProductID>FortiSIEM-6.4.2</ProductID>
+                <ProductID>FortiSIEM-6.4.1</ProductID>
+                <ProductID>FortiSIEM-6.4.0</ProductID>
+                <ProductID>FortiSIEM-6.3.3</ProductID>
+                <ProductID>FortiSIEM-6.3.2</ProductID>
+                <ProductID>FortiSIEM-6.3.1</ProductID>
+                <ProductID>FortiSIEM-6.3.0</ProductID>
+                <ProductID>FortiSIEM-6.2.1</ProductID>
+                <ProductID>FortiSIEM-6.2.0</ProductID>
+                <ProductID>FortiSIEM-6.1.2</ProductID>
+                <ProductID>FortiSIEM-6.1.1</ProductID>
+                <ProductID>FortiSIEM-6.1.0</ProductID>
+                <ProductID>FortiSIEM-5.4.0</ProductID>
+                <ProductID>FortiSIEM-5.3.3</ProductID>
+                <ProductID>FortiSIEM-5.3.2</ProductID>
+                <ProductID>FortiSIEM-5.3.1</ProductID>
+                <ProductID>FortiSIEM-5.3.0</ProductID>
+            </Status>
+        </ProductStatuses>
+        <CVSSScoreSets>
+            <ScoreSetV3>
+                <BaseScoreV3>2.1</BaseScoreV3>
+                <VectorV3>CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:L/I:N/A:N/E:P/RL:O/RC:C</VectorV3>
+            </ScoreSetV3>
+        </CVSSScoreSets>
+        <References Type="Self">
+            <Reference>
+                <URL>https://fortiguard.fortinet.com/psirt/FG-IR-23-392</URL>
+                <Description>FortiSIEM - Encrypted password stored in logs</Description>
+            </Reference>Reference>
+        </References>
+    </Vulnerability>
+</cvrf:cvrfdoc>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrf:cvrfdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cvrf-common="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/common" xmlns:cvrf="http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf">
+    <cvrf:DocumentTitle>Potential Man-In-The Middle Vulnerability in FortiClient VPN</cvrf:DocumentTitle>
+    <cvrf:DocumentType>Fortinet PSIRT Advisories</cvrf:DocumentType>
+    <cvrf:DocumentPublisher Type="Vendor">
+        <cvrf:ContactDetails>
+            Fortinet PSIRT Contact:
+            Website: https://fortiguard.fortinet.com/faq/psirt-contact
+        </cvrf:ContactDetails>
+     </cvrf:DocumentPublisher>
+    <cvrf:DocumentTracking>
+        <cvrf:Identification>
+            <cvrf:ID>FG-IR-13-008</cvrf:ID>
+        </cvrf:Identification>
+        <cvrf:Status>Final</cvrf:Status>
+        <cvrf:Version>1</cvrf:Version>
+        <cvrf:RevisionHistory>
+            <cvrf:Revision>
+                <cvrf:Number>1</cvrf:Number>
+                <cvrf:Date>2013-05-13T00:00:00</cvrf:Date>
+                <cvrf:Description>Current version</cvrf:Description>
+        </cvrf:Revision>
+       </cvrf:RevisionHistory>
+        <cvrf:InitialReleaseDate>2013-05-13T00:00:00</cvrf:InitialReleaseDate>
+        <cvrf:CurrentReleaseDate>2013-05-13T00:00:00</cvrf:CurrentReleaseDate>
+    </cvrf:DocumentTracking>
+    <cvrf:DocumentNotes>
+        <cvrf:Note Title="Summary" Type="Summary" Ordinal="1">
+            Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.
+        </cvrf:Note>
+        <cvrf:Note Title="Description" Type="General" Ordinal="2">
+            Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.
+        </cvrf:Note>
+        <cvrf:Note Title="Impact" Type="General" Ordinal="3">
+            Critical
+        </cvrf:Note>
+        <cvrf:Note Title="Affected Products" Type="General" Ordinal="4">
+            FortiClient Lite 4.3.3.445 for WindowsFortiClient 4.3.3.445 for WindowsFortiClient 4.0.2 for MacOSFortiClient SSL VPN 4.0.2012 for LinuxFortiClient Lite 2.0 for Android
+        </cvrf:Note>
+        <cvrf:Note Title="Solutions" Type="General" Ordinal="5">
+            Solutions have been available since April 2012. It is recommended to update to a version greater or equal to the following affected product list:FortiClient Lite 4.3.4.461 for WindowsFortiClient 4.3.5.472 for WindowsFortiClient 4.0.3.134 for MacOSFortiClient SSL VPN 4.0.2258 for LinuxFortiClient 4.0 for Android (Replaces FortiClient Lite 2.0)
+        </cvrf:Note>
+    </cvrf:DocumentNotes>
+    <cvrf:DocumentReferences>
+        <cvrf:Reference>
+            <cvrf:URL>https://fortiguard.fortinet.com/psirt/FG-IR-13-008</cvrf:URL>
+            <cvrf:Description>Potential Man-In-The Middle Vulnerability in FortiClient VPN</cvrf:Description>
+        </cvrf:Reference>
+        <cvrf:Reference>
+            <cvrf:URL>&lt;a href=&#34;http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html&#34;&gt;Neohapsis&lt;/a&gt;</cvrf:URL>
+            <cvrf:Description>&lt;a href=&#34;http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html&#34;&gt;Neohapsis&lt;/a&gt;</cvrf:Description>
+        </cvrf:Reference>
+    </cvrf:DocumentReferences>
+    <cvrf:Acknowledgments>
+        <cvrf:Acknowledgment>
+            <cvrf:Description>Cédric Tissières and Philippe Oechslin, Objectif Sécurité</cvrf:Description>
+        </cvrf:Acknowledgment>
+    </cvrf:Acknowledgments>
+    <Vulnerability Ordinal="1">
+        <Title>Potential Man-In-The Middle Vulnerability in FortiClient VPN</Title>
+        <References Type="Self">
+            <Reference>
+                <URL>https://fortiguard.fortinet.com/psirt/FG-IR-13-008</URL>
+                <Description>Potential Man-In-The Middle Vulnerability in FortiClient VPN</Description>
+            </Reference>Reference>
+            <Reference>
+                <URL>&lt;a href=&#34;http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html&#34;&gt;Neohapsis&lt;/a&gt;</URL>
+                <Description>&lt;a href=&#34;http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html&#34;&gt;Neohapsis&lt;/a&gt;</Description>
+            </Reference>
+        </References>
+    </Vulnerability>
+</cvrf:cvrfdoc>
