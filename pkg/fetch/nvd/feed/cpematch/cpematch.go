@@ -64,7 +64,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL: baseURL,
-		dir:     filepath.Join(util.CacheDir(), "nvd", "feed", "cpematch"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"),
 		retry:   3,
 	}
 

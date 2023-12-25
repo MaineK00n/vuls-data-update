@@ -1,4 +1,4 @@
-name: Update vuls-data-raw-*
+name: Fetch
 on:
   schedule:
     - cron: '0 */6 * * *'

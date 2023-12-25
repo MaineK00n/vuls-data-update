@@ -60,7 +60,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		repositoryToCPEURL: repositoryToCPEURL,
-		dir:                filepath.Join(util.CacheDir(), "redhat", "oval", "repository-to-cpe"),
+		dir:                filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"),
 		retry:              3,
 	}
 

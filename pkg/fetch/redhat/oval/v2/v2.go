@@ -64,7 +64,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		feedURL: feedURL,
-		dir:     filepath.Join(util.CacheDir(), "redhat", "oval", "v2"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v2"),
 		retry:   3,
 	}
 

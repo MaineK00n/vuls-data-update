@@ -77,7 +77,7 @@ func WithConcurrency(concurrency int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL:     dataURL,
-		dir:         filepath.Join(util.CacheDir(), "windows", "wsusscn2"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"),
 		retry:       3,
 		concurrency: 2,
 	}

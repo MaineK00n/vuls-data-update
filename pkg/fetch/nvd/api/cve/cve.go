@@ -136,7 +136,7 @@ func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:        apiURL,
 		apiKey:         "",
-		dir:            filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
+		dir:            filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
 		retry:          20,
 		resultsPerPage: resultsPerPageMax,
 	}

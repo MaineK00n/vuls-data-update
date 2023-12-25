@@ -137,7 +137,7 @@ func WithMirror(m Mirror) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "debian", "tracker", "salsa"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "debian", "tracker", "salsa"),
 		retry:   3,
 		mirror: Mirror{
 			ReleaseMain:     releaseMain,

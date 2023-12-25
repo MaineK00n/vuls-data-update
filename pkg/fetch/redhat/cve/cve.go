@@ -85,7 +85,7 @@ func WithWait(wait int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL:     dataURL,
-		dir:         filepath.Join(util.CacheDir(), "redhat", "cve"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
 		retry:       20,
 		concurrency: 10,
 		wait:        1,

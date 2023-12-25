@@ -1,0 +1,63 @@
+name: Extract
+on:
+    workflow_run:
+        workflows: [Fetch]
+        types:
+          - completed
+    workflow_dispatch:
+
+jobs:
+    extract-epss:
+        name: extract vuls-data-extracted-epss
+        runs-on: ubuntu-latest
+        steps:
+          - name: Check out code into the Go module directory
+            uses: actions/checkout@v4
+
+          - name: Set up Go 1.x
+            uses: actions/setup-go@v5
+            with:
+              go-version-file: "go.mod"
+            
+          - name: go install
+            run: go install ./cmd/vuls-data-update
+            
+          - uses: actions/create-github-app-token@v1
+            id: app-token
+            with:
+              app-id: ${{ vars.APP_ID }}
+              private-key: ${{ secrets.PRIVATE_KEY }}
+              owner: vulsio
+              repositories: "vuls-data-extracted-epss"
+
+          - name: Check out raw repository
+            uses: actions/checkout@v4
+            with:
+              repository: vulsio/vuls-data-raw-epss
+            
+          - name: Check out extracted repository
+            uses: actions/checkout@v4
+            with:
+              repository: vulsio/vuls-data-extracted-epss
+              path: vuls-data-extracted-epss
+              token: ${{ steps.app-token.outputs.token }}
+            
+          - name: Extract
+            run: vuls-data-update fetch epss --dir vuls-data-extracted-epss --since $(date --utc -d "3 month ago" "+%Y-%m-%d") vuls-data-raw-epss
+            
+          - name: Split Large Files
+            run: find vuls-data-extracted-epss -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+            
+          - name: set Git config
+            run: |
+              git config --global user.email "action@github.com"
+              git config --global user.name "GitHub Action"
+            
+          - name: Push
+            run: |
+              cd vuls-data-extracted-epss
+              if [[ -n $(git status --porcelain) ]]; then
+                git add .
+                git commit -m "update"
+                git push
+              fi

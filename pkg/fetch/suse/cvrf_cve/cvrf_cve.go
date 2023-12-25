@@ -86,7 +86,7 @@ func WithWait(wait int) Option {
 func Fetch(years []string, opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "suse", "cvrf-cve"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,

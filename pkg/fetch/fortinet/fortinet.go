@@ -83,7 +83,7 @@ func WithWait(wait int) Option {
 func Fetch(args []string, opts ...Option) error {
 	options := &options{
 		dataURL:     dataURL,
-		dir:         filepath.Join(util.CacheDir(), "fortinet"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet"),
 		retry:       3,
 		concurrency: 4,
 		wait:        1,

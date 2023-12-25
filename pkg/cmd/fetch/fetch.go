@@ -130,58 +130,58 @@ func NewCmdFetch() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newCmdFetchAlmaErrata(), newCmdFetchAlmaOSV(),
-		newCmdFetchAlpineSecDB(), newCmdFetchAlpineOSV(),
-		newCmdFetchAmazon(),
-		newCmdFetchArch(),
-		newCmdFetchDebianOval(), newCmdFetchDebianSecurityTrackerAPI(), newCmdFetchDebianSecurityTrackerSalsa(), newCmdFetchDebianOSV(),
-		newCmdFetchEPEL(),
-		newCmdFetchFedora(),
-		newCmdFetchFortinet(),
-		newCmdFetchFreeBSD(),
-		newCmdFetchGentoo(),
-		newCmdFetchNetBSD(),
-		newCmdFetchOracle(),
-		newCmdFetchRedhatOvalRepositoryToCPE(), newCmdFetchRedhatOvalV1(), newCmdFetchRedhatOvalV2(), newCmdFetchRedhatCVE(), newCmdFetchRedhatCVRF(), newCmdFetchRedhatCSAF(), newCmdFetchRedhatVEX(),
-		newCmdFetchRockyErrata(), newCmdFetchRockyOSV(),
-		newCmdFetchSUSEOval(), newCmdFetchSUSECVRF(), newCmdFetchSUSECVRFCVE(), newCmdFetchSUSECSAF(), newCmdFetchSUSECSAFVEX(),
-		newCmdFetchUbuntuOVAL(), newCmdFetchUbuntuCVETracker(),
-		newCmdFetchWindowsBulletin(), newCmdFetchWindowsCVRF(), newCmdFetchWindowsMSUC(), newCmdFetchWindowsWSUSSCN2(),
+		newCmdAlmaErrata(), newCmdAlmaOSV(),
+		newCmdAlpineSecDB(), newCmdAlpineOSV(),
+		newCmdAmazon(),
+		newCmdArch(),
+		newCmdDebianOval(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
+		newCmdEPEL(),
+		newCmdFedora(),
+		newCmdFortinet(),
+		newCmdFreeBSD(),
+		newCmdGentoo(),
+		newCmdNetBSD(),
+		newCmdOracle(),
+		newCmdRedhatOvalRepositoryToCPE(), newCmdRedhatOvalV1(), newCmdRedhatOvalV2(), newCmdRedhatCVE(), newCmdRedhatCVRF(), newCmdRedhatCSAF(), newCmdRedhatVEX(),
+		newCmdRockyErrata(), newCmdRockyOSV(),
+		newCmdSUSEOval(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(),
+		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(),
+		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
 
-		newCmdFetchCargoDB(), newCmdFetchCargoGHSA(), newCmdFetchCargoOSV(),
-		newCmdFetchComposerDB(), newCmdFetchComposerGHSA(), newCmdFetchComposerGLSA(), newCmdFetchComposerOSV(),
-		newCmdFetchConanGLSA(),
-		newCmdFetchErlangGHSA(), newCmdFetchErlangOSV(),
-		newCmdFetchGolangDB(), newCmdFetchGolangGHSA(), newCmdFetchGolangGLSA(), newCmdFetchGolangVulnDB(), newCmdFetchGolangOSV(),
-		newCmdFetchHaskellOSV(),
-		newCmdFetchMavenGHSA(), newCmdFetchMavenGLSA(), newCmdFetchMavenOSV(),
-		newCmdFetchNpmDB(), newCmdFetchNpmGHSA(), newCmdFetchNpmGLSA(), newCmdFetchNpmOSV(),
-		newCmdFetchNugetGHSA(), newCmdFetchNugetGLSA(), newCmdFetchNugetOSV(),
-		newCmdFetchPipDB(), newCmdFetchPipGHSA(), newCmdFetchPipGLSA(), newCmdFetchPipOSV(),
-		newCmdFetchPubGHSA(), newCmdFetchPubOSV(),
-		newCmdFetchROSV(),
-		newCmdFetchRubygemsDB(), newCmdFetchRubygemsGHSA(), newCmdFetchRubygemsGLSA(), newCmdFetchRubygemsOSV(),
-		newCmdFetchSwiftGHSA(), newCmdFetchSwiftOSV(),
+		newCmdCargoDB(), newCmdCargoGHSA(), newCmdCargoOSV(),
+		newCmdComposerDB(), newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(),
+		newCmdConanGLSA(),
+		newCmdErlangGHSA(), newCmdErlangOSV(),
+		newCmdGolangDB(), newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangVulnDB(), newCmdGolangOSV(),
+		newCmdHaskellOSV(),
+		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
+		newCmdNpmDB(), newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(),
+		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
+		newCmdPipDB(), newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(),
+		newCmdPubGHSA(), newCmdPubOSV(),
+		newCmdROSV(),
+		newCmdRubygemsDB(), newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(),
+		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 
-		newCmdFetchAttack(),
-		newCmdFetchCapec(),
-		newCmdFetchCWE(),
-		newCmdFetchEPSS(),
-		newCmdFetchExploitExploitDB(), newCmdFetchExploitGitHub(), newCmdFetchExploitInthewild(), newCmdFetchExploitExploitTrickest(),
-		newCmdFetchJVNFeedDetail(), newCmdFetchJVNFeedProduct(), newCmdFetchJVNFeedRSS(),
-		newCmdFetchKEV(),
-		newCmdFetchMitreCVRF(), newCmdFetchMitreV4(), newCmdFetchMitreV5(),
-		newCmdFetchMSF(),
-		newCmdFetchNVDAPICVE(), newCmdFetchNVDAPICPE(), newCmdFetchNVDAPICPEMatch(), newCmdFetchNVDFeedCVE(), newCmdFetchNVDFeedCPE(), newCmdFetchNVDFeedCPEMatch(),
-		newCmdFetchSnort(),
+		newCmdAttack(),
+		newCmdCapec(),
+		newCmdCWE(),
+		newCmdEPSS(),
+		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInthewild(), newCmdExploitExploitTrickest(),
+		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
+		newCmdKEV(),
+		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
+		newCmdMSF(),
+		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
+		newCmdSnort(),
 	)
 
 	return cmd
 }
 
-func newCmdFetchAlmaErrata() *cobra.Command {
+func newCmdAlmaErrata() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "alma", "errata"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "errata"),
 		retry: 3,
 	}
 
@@ -200,15 +200,15 @@ func newCmdFetchAlmaErrata() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alma", "errata"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "alma", "errata"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchAlmaOSV() *cobra.Command {
+func newCmdAlmaOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "alma", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "osv"),
 		retry: 3,
 	}
 
@@ -227,15 +227,15 @@ func newCmdFetchAlmaOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alma", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "alma", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchAlpineSecDB() *cobra.Command {
+func newCmdAlpineSecDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "alpine", "secdb"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "alpine", "secdb"),
 		retry: 3,
 	}
 
@@ -254,15 +254,15 @@ func newCmdFetchAlpineSecDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alpine", "secdb"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "alpine", "secdb"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchAlpineOSV() *cobra.Command {
+func newCmdAlpineOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "alpine", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "alpine", "osv"),
 		retry: 3,
 	}
 
@@ -281,15 +281,15 @@ func newCmdFetchAlpineOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "alpine", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "alpine", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchAmazon() *cobra.Command {
+func newCmdAmazon() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "amazon"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "amazon"),
 		retry: 3,
 	}
 
@@ -308,15 +308,15 @@ func newCmdFetchAmazon() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "amazon"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "amazon"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchArch() *cobra.Command {
+func newCmdArch() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "arch"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "arch"),
 		retry: 3,
 	}
 
@@ -335,15 +335,15 @@ func newCmdFetchArch() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "arch"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "arch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchDebianOval() *cobra.Command {
+func newCmdDebianOval() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "debian", "oval"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "oval"),
 		retry: 3,
 	}
 
@@ -362,15 +362,15 @@ func newCmdFetchDebianOval() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "oval"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchDebianSecurityTrackerAPI() *cobra.Command {
+func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "debian", "security-tracker", "api"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "api"),
 		retry: 3,
 	}
 
@@ -389,15 +389,15 @@ func newCmdFetchDebianSecurityTrackerAPI() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "security-tracker", "api"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "api"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchDebianSecurityTrackerSalsa() *cobra.Command {
+func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "debian", "security-tracker", "salsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "salsa"),
 		retry: 3,
 	}
 
@@ -416,15 +416,15 @@ func newCmdFetchDebianSecurityTrackerSalsa() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "security-tracker", "salsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "salsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchDebianOSV() *cobra.Command {
+func newCmdDebianOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "debian", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "osv"),
 		retry: 3,
 	}
 
@@ -443,15 +443,15 @@ func newCmdFetchDebianOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "debian", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchEPEL() *cobra.Command {
+func newCmdEPEL() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "epel"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "epel"),
 		retry: 3,
 	}
 
@@ -470,15 +470,15 @@ func newCmdFetchEPEL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "epel"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "epel"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchFedora() *cobra.Command {
+func newCmdFedora() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fedora"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1,
@@ -499,7 +499,7 @@ func newCmdFetchFedora() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fedora"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "fedora"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency process")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -507,9 +507,9 @@ func newCmdFetchFedora() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchFortinet() *cobra.Command {
+func newCmdFortinet() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fortinet"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet"),
 		retry:       3,
 		concurrency: 4,
 		wait:        1,
@@ -530,7 +530,7 @@ func newCmdFetchFortinet() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fortinet"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "fortinet"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 4, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -538,9 +538,9 @@ func newCmdFetchFortinet() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchFreeBSD() *cobra.Command {
+func newCmdFreeBSD() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "freebsd"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "freebsd"),
 		retry: 3,
 	}
 
@@ -559,15 +559,15 @@ func newCmdFetchFreeBSD() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "freebsd"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "freebsd"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchGentoo() *cobra.Command {
+func newCmdGentoo() *cobra.Command {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "gentoo"),
+		dir: filepath.Join(util.CacheDir(), "fetch", "gentoo"),
 	}
 
 	cmd := &cobra.Command{
@@ -585,14 +585,14 @@ func newCmdFetchGentoo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "gentoo"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "gentoo"), "output fetch results to specified directory")
 
 	return cmd
 }
 
-func newCmdFetchNetBSD() *cobra.Command {
+func newCmdNetBSD() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "netbsd"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "netbsd"),
 		retry: 3,
 	}
 
@@ -611,15 +611,15 @@ func newCmdFetchNetBSD() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "netbsd"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "netbsd"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchOracle() *cobra.Command {
+func newCmdOracle() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "oracle"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "oracle"),
 		retry: 3,
 	}
 
@@ -638,15 +638,15 @@ func newCmdFetchOracle() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "oracle"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "oracle"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRedhatCVE() *cobra.Command {
+func newCmdRedhatCVE() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "redhat", "cve"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
 		retry:       20,
 		concurrency: 10,
 		wait:        1,
@@ -667,7 +667,7 @@ func newCmdFetchRedhatCVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "cve"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -675,9 +675,9 @@ func newCmdFetchRedhatCVE() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchRedhatCSAF() *cobra.Command {
+func newCmdRedhatCSAF() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "redhat", "csaf"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"),
 		retry:       3,
 		concurrency: 10,
 		wait:        1,
@@ -698,7 +698,7 @@ func newCmdFetchRedhatCSAF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "csaf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -706,9 +706,9 @@ func newCmdFetchRedhatCSAF() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchRedhatCVRF() *cobra.Command {
+func newCmdRedhatCVRF() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "redhat", "cvrf"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cvrf"),
 		retry: 3,
 	}
 
@@ -727,15 +727,15 @@ func newCmdFetchRedhatCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "cvrf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRedhatOvalRepositoryToCPE() *cobra.Command {
+func newCmdRedhatOvalRepositoryToCPE() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "repository-to-cpe"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"),
 		retry: 3,
 	}
 
@@ -754,15 +754,15 @@ func newCmdFetchRedhatOvalRepositoryToCPE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "oval", "repository-to-cpe"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRedhatOvalV1() *cobra.Command {
+func newCmdRedhatOvalV1() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "v1"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v1"),
 		retry: 3,
 	}
 
@@ -781,15 +781,15 @@ func newCmdFetchRedhatOvalV1() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "oval", "v1"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v1"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRedhatOvalV2() *cobra.Command {
+func newCmdRedhatOvalV2() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "redhat", "oval", "v2"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v2"),
 		retry: 3,
 	}
 
@@ -808,15 +808,15 @@ func newCmdFetchRedhatOvalV2() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "oval", "v2"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v2"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRedhatVEX() *cobra.Command {
+func newCmdRedhatVEX() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "redhat", "vex"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
 		retry:       3,
 		concurrency: 10,
 		wait:        1,
@@ -837,7 +837,7 @@ func newCmdFetchRedhatVEX() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "redhat", "vex"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -845,9 +845,9 @@ func newCmdFetchRedhatVEX() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchRockyErrata() *cobra.Command {
+func newCmdRockyErrata() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "rocky", "errata"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
 		retry: 3,
 	}
 
@@ -866,15 +866,15 @@ func newCmdFetchRockyErrata() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rocky", "errata"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRockyOSV() *cobra.Command {
+func newCmdRockyOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "rocky", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "osv"),
 		retry: 3,
 	}
 
@@ -893,15 +893,15 @@ func newCmdFetchRockyOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rocky", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rocky", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchSUSEOval() *cobra.Command {
+func newCmdSUSEOval() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "suse", "oval"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "oval"),
 		retry:       3,
 		concurrency: 3,
 		wait:        1,
@@ -922,7 +922,7 @@ func newCmdFetchSUSEOval() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "oval"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 3, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -930,9 +930,9 @@ func newCmdFetchSUSEOval() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchSUSECVRF() *cobra.Command {
+func newCmdSUSECVRF() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "suse", "cvrf"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -953,7 +953,7 @@ func newCmdFetchSUSECVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "cvrf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -961,9 +961,9 @@ func newCmdFetchSUSECVRF() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchSUSECVRFCVE() *cobra.Command {
+func newCmdSUSECVRFCVE() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "suse", "cvrf-cve"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -991,7 +991,7 @@ func newCmdFetchSUSECVRFCVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "cvrf-cve"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -999,9 +999,9 @@ func newCmdFetchSUSECVRFCVE() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchSUSECSAF() *cobra.Command {
+func newCmdSUSECSAF() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "suse", "csaf"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -1022,7 +1022,7 @@ func newCmdFetchSUSECSAF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "csaf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -1030,9 +1030,9 @@ func newCmdFetchSUSECSAF() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchSUSECSAFVEX() *cobra.Command {
+func newCmdSUSECSAFVEX() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "suse", "csaf-vex"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"),
 		retry:       3,
 		concurrency: 20,
 		wait:        1,
@@ -1060,7 +1060,7 @@ func newCmdFetchSUSECSAFVEX() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "suse", "csaf-vex"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -1068,9 +1068,9 @@ func newCmdFetchSUSECSAFVEX() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchUbuntuOVAL() *cobra.Command {
+func newCmdUbuntuOVAL() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "ubuntu", "oval"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "oval"),
 		retry: 3,
 	}
 
@@ -1089,15 +1089,15 @@ func newCmdFetchUbuntuOVAL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "ubuntu", "oval"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "ubuntu", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchUbuntuCVETracker() *cobra.Command {
+func newCmdUbuntuCVETracker() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "ubuntu", "ubuntu-cve-tracker"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "ubuntu-cve-tracker"),
 		retry: 3,
 	}
 
@@ -1116,14 +1116,14 @@ func newCmdFetchUbuntuCVETracker() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "ubuntu", "ubuntu-cve-tracker"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "ubuntu", "ubuntu-cve-tracker"), "output fetch results to specified directory")
 
 	return cmd
 }
 
-func newCmdFetchWindowsBulletin() *cobra.Command {
+func newCmdWindowsBulletin() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "windows", "bulletin"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "bulletin"),
 		retry: 3,
 	}
 
@@ -1142,15 +1142,15 @@ func newCmdFetchWindowsBulletin() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "bulletin"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "bulletin"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchWindowsCVRF() *cobra.Command {
+func newCmdWindowsCVRF() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "windows", "cvrf"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "cvrf"),
 		retry: 3,
 	}
 
@@ -1169,15 +1169,15 @@ func newCmdFetchWindowsCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "cvrf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchWindowsMSUC() *cobra.Command {
+func newCmdWindowsMSUC() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "windows", "msuc"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1,
@@ -1198,7 +1198,7 @@ func newCmdFetchWindowsMSUC() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "msuc"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -1206,9 +1206,9 @@ func newCmdFetchWindowsMSUC() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchWindowsWSUSSCN2() *cobra.Command {
+func newCmdWindowsWSUSSCN2() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "windows", "wsusscn2"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"),
 		retry:       3,
 		concurrency: 2,
 	}
@@ -1228,16 +1228,16 @@ func newCmdFetchWindowsWSUSSCN2() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "windows", "wsusscn2"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 2, "number of concurrency cabextract")
 
 	return cmd
 }
 
-func newCmdFetchCargoDB() *cobra.Command {
+func newCmdCargoDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "cargo", "db"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "db"),
 		retry: 3,
 	}
 
@@ -1256,15 +1256,15 @@ func newCmdFetchCargoDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cargo", "db"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchCargoGHSA() *cobra.Command {
+func newCmdCargoGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "cargo", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "ghsa"),
 		retry: 3,
 	}
 
@@ -1283,15 +1283,15 @@ func newCmdFetchCargoGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cargo", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchCargoOSV() *cobra.Command {
+func newCmdCargoOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "cargo", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "osv"),
 		retry: 3,
 	}
 
@@ -1310,15 +1310,15 @@ func newCmdFetchCargoOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cargo", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchComposerDB() *cobra.Command {
+func newCmdComposerDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "composer", "db"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "db"),
 		retry: 3,
 	}
 
@@ -1337,15 +1337,15 @@ func newCmdFetchComposerDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "db"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "composer", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchComposerGHSA() *cobra.Command {
+func newCmdComposerGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "composer", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "ghsa"),
 		retry: 3,
 	}
 
@@ -1364,15 +1364,15 @@ func newCmdFetchComposerGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "composer", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchComposerGLSA() *cobra.Command {
+func newCmdComposerGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "composer", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "glsa"),
 		retry: 3,
 	}
 
@@ -1391,15 +1391,15 @@ func newCmdFetchComposerGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "composer", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchComposerOSV() *cobra.Command {
+func newCmdComposerOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "composer", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "osv"),
 		retry: 3,
 	}
 
@@ -1418,15 +1418,15 @@ func newCmdFetchComposerOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "composer", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "composer", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchConanGLSA() *cobra.Command {
+func newCmdConanGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "conan", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "conan", "glsa"),
 		retry: 3,
 	}
 
@@ -1445,15 +1445,15 @@ func newCmdFetchConanGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "conan", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "conan", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchErlangGHSA() *cobra.Command {
+func newCmdErlangGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "erlang", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "erlang", "ghsa"),
 		retry: 3,
 	}
 
@@ -1472,15 +1472,15 @@ func newCmdFetchErlangGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "erlang", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "erlang", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchErlangOSV() *cobra.Command {
+func newCmdErlangOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "erlang", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "erlang", "osv"),
 		retry: 3,
 	}
 
@@ -1499,15 +1499,15 @@ func newCmdFetchErlangOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "erlang", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "erlang", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchGolangDB() *cobra.Command {
+func newCmdGolangDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "golang", "db"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "db"),
 		retry: 3,
 	}
 
@@ -1526,15 +1526,15 @@ func newCmdFetchGolangDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "db"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchGolangGHSA() *cobra.Command {
+func newCmdGolangGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "golang", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "ghsa"),
 		retry: 3,
 	}
 
@@ -1553,15 +1553,15 @@ func newCmdFetchGolangGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchGolangGLSA() *cobra.Command {
+func newCmdGolangGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "golang", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "glsa"),
 		retry: 3,
 	}
 
@@ -1580,15 +1580,15 @@ func newCmdFetchGolangGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchGolangOSV() *cobra.Command {
+func newCmdGolangOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "golang", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "osv"),
 		retry: 3,
 	}
 
@@ -1607,15 +1607,15 @@ func newCmdFetchGolangOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchGolangVulnDB() *cobra.Command {
+func newCmdGolangVulnDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "golang", "vulndb"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"),
 		retry: 3,
 	}
 
@@ -1634,15 +1634,15 @@ func newCmdFetchGolangVulnDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "golang", "vulndb"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchHaskellOSV() *cobra.Command {
+func newCmdHaskellOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "haskell", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"),
 		retry: 3,
 	}
 
@@ -1661,15 +1661,15 @@ func newCmdFetchHaskellOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "haskell", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMavenGHSA() *cobra.Command {
+func newCmdMavenGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "maven", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "maven", "ghsa"),
 		retry: 3,
 	}
 
@@ -1688,15 +1688,15 @@ func newCmdFetchMavenGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "maven", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMavenGLSA() *cobra.Command {
+func newCmdMavenGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "maven", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "maven", "glsa"),
 		retry: 3,
 	}
 
@@ -1715,15 +1715,15 @@ func newCmdFetchMavenGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "maven", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMavenOSV() *cobra.Command {
+func newCmdMavenOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "maven", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "maven", "osv"),
 		retry: 3,
 	}
 
@@ -1742,15 +1742,15 @@ func newCmdFetchMavenOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "maven", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "maven", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNpmDB() *cobra.Command {
+func newCmdNpmDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "npm", "db"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "db"),
 		retry: 3,
 	}
 
@@ -1769,15 +1769,15 @@ func newCmdFetchNpmDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "db"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNpmGHSA() *cobra.Command {
+func newCmdNpmGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "npm", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "ghsa"),
 		retry: 3,
 	}
 
@@ -1796,15 +1796,15 @@ func newCmdFetchNpmGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNpmGLSA() *cobra.Command {
+func newCmdNpmGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "npm", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "glsa"),
 		retry: 3,
 	}
 
@@ -1823,15 +1823,15 @@ func newCmdFetchNpmGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNpmOSV() *cobra.Command {
+func newCmdNpmOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "npm", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "osv"),
 		retry: 3,
 	}
 
@@ -1850,15 +1850,15 @@ func newCmdFetchNpmOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "npm", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNugetGHSA() *cobra.Command {
+func newCmdNugetGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "nuget", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nuget", "ghsa"),
 		retry: 3,
 	}
 
@@ -1877,15 +1877,15 @@ func newCmdFetchNugetGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nuget", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nuget", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNugetGLSA() *cobra.Command {
+func newCmdNugetGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "nuget", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nuget", "glsa"),
 		retry: 3,
 	}
 
@@ -1904,15 +1904,15 @@ func newCmdFetchNugetGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nuget", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nuget", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNugetOSV() *cobra.Command {
+func newCmdNugetOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "nuget", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nuget", "osv"),
 		retry: 3,
 	}
 
@@ -1931,15 +1931,15 @@ func newCmdFetchNugetOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nuget", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nuget", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchPipDB() *cobra.Command {
+func newCmdPipDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "pip", "db"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "db"),
 		retry: 3,
 	}
 
@@ -1958,15 +1958,15 @@ func newCmdFetchPipDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "db"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pip", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchPipGHSA() *cobra.Command {
+func newCmdPipGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "pip", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "ghsa"),
 		retry: 3,
 	}
 
@@ -1985,15 +1985,15 @@ func newCmdFetchPipGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pip", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchPipGLSA() *cobra.Command {
+func newCmdPipGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "pip", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "glsa"),
 		retry: 3,
 	}
 
@@ -2012,15 +2012,15 @@ func newCmdFetchPipGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pip", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchPipOSV() *cobra.Command {
+func newCmdPipOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "pip", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "osv"),
 		retry: 3,
 	}
 
@@ -2039,15 +2039,15 @@ func newCmdFetchPipOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pip", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pip", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchPubGHSA() *cobra.Command {
+func newCmdPubGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "pub", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "pub", "ghsa"),
 		retry: 3,
 	}
 
@@ -2066,15 +2066,15 @@ func newCmdFetchPubGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pub", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pub", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchPubOSV() *cobra.Command {
+func newCmdPubOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "pub", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "pub", "osv"),
 		retry: 3,
 	}
 
@@ -2093,15 +2093,15 @@ func newCmdFetchPubOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "pub", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pub", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchROSV() *cobra.Command {
+func newCmdROSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "r", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "r", "osv"),
 		retry: 3,
 	}
 
@@ -2120,15 +2120,15 @@ func newCmdFetchROSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "r", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "r", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRubygemsDB() *cobra.Command {
+func newCmdRubygemsDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "rubygems", "db"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"),
 		retry: 3,
 	}
 
@@ -2147,15 +2147,15 @@ func newCmdFetchRubygemsDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "db"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRubygemsGHSA() *cobra.Command {
+func newCmdRubygemsGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "rubygems", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "ghsa"),
 		retry: 3,
 	}
 
@@ -2174,15 +2174,15 @@ func newCmdFetchRubygemsGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRubygemsGLSA() *cobra.Command {
+func newCmdRubygemsGLSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "rubygems", "glsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "glsa"),
 		retry: 3,
 	}
 
@@ -2201,15 +2201,15 @@ func newCmdFetchRubygemsGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "glsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "glsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchRubygemsOSV() *cobra.Command {
+func newCmdRubygemsOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "rubygems", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "osv"),
 		retry: 3,
 	}
 
@@ -2228,15 +2228,15 @@ func newCmdFetchRubygemsOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "rubygems", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchSwiftGHSA() *cobra.Command {
+func newCmdSwiftGHSA() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "swift", "ghsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "swift", "ghsa"),
 		retry: 3,
 	}
 
@@ -2255,15 +2255,15 @@ func newCmdFetchSwiftGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "swift", "ghsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "swift", "ghsa"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchSwiftOSV() *cobra.Command {
+func newCmdSwiftOSV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "swift", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "swift", "osv"),
 		retry: 3,
 	}
 
@@ -2282,15 +2282,15 @@ func newCmdFetchSwiftOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "swift", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "swift", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchAttack() *cobra.Command {
+func newCmdAttack() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "attack"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "attack"),
 		retry: 3,
 	}
 
@@ -2309,15 +2309,15 @@ func newCmdFetchAttack() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "attack"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "attack"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchCapec() *cobra.Command {
+func newCmdCapec() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "capec"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "capec"),
 		retry: 3,
 	}
 
@@ -2336,15 +2336,15 @@ func newCmdFetchCapec() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "capec"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "capec"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchCWE() *cobra.Command {
+func newCmdCWE() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "cwe"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cwe"),
 		retry: 3,
 	}
 
@@ -2363,15 +2363,15 @@ func newCmdFetchCWE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "cwe"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cwe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchEPSS() *cobra.Command {
+func newCmdEPSS() *cobra.Command {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "epss"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "epss"),
 		retry:       3,
 		concurrency: 4,
 		wait:        1,
@@ -2392,7 +2392,7 @@ func newCmdFetchEPSS() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "epss"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "epss"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 4, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
@@ -2400,9 +2400,9 @@ func newCmdFetchEPSS() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchExploitExploitDB() *cobra.Command {
+func newCmdExploitExploitDB() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "exploit", "exploitdb"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "exploitdb"),
 		retry: 3,
 	}
 
@@ -2421,15 +2421,15 @@ func newCmdFetchExploitExploitDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "exploitdb"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "exploit", "exploitdb"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchExploitGitHub() *cobra.Command {
+func newCmdExploitGitHub() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "exploit", "github"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "github"),
 		retry: 3,
 	}
 
@@ -2448,15 +2448,15 @@ func newCmdFetchExploitGitHub() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "github"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "exploit", "github"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchExploitInthewild() *cobra.Command {
+func newCmdExploitInthewild() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "exploit", "inthewild"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "inthewild"),
 		retry: 3,
 	}
 
@@ -2475,15 +2475,15 @@ func newCmdFetchExploitInthewild() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "inthewild"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "exploit", "inthewild"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchExploitExploitTrickest() *cobra.Command {
+func newCmdExploitExploitTrickest() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "exploit", "trickest"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "trickest"),
 		retry: 3,
 	}
 
@@ -2502,15 +2502,15 @@ func newCmdFetchExploitExploitTrickest() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "exploit", "trickest"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "exploit", "trickest"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchJVNFeedDetail() *cobra.Command {
+func newCmdJVNFeedDetail() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "jvn", "feed", "detail"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "detail"),
 		retry: 3,
 	}
 
@@ -2529,15 +2529,15 @@ func newCmdFetchJVNFeedDetail() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "jvn", "feed", "detail"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "detail"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchJVNFeedProduct() *cobra.Command {
+func newCmdJVNFeedProduct() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "jvn", "feed", "product"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "product"),
 		retry: 3,
 	}
 
@@ -2556,15 +2556,15 @@ func newCmdFetchJVNFeedProduct() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "jvn", "feed", "product"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "product"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchJVNFeedRSS() *cobra.Command {
+func newCmdJVNFeedRSS() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "jvn", "feed", "rss"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "rss"),
 		retry: 3,
 	}
 
@@ -2583,15 +2583,15 @@ func newCmdFetchJVNFeedRSS() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "jvn", "feed", "rss"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "rss"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchKEV() *cobra.Command {
+func newCmdKEV() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "kev"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "kev"),
 		retry: 3,
 	}
 
@@ -2610,15 +2610,15 @@ func newCmdFetchKEV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "kev"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "kev"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMitreCVRF() *cobra.Command {
+func newCmdMitreCVRF() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "mitre", "cvrf"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"),
 		retry: 3,
 	}
 
@@ -2637,15 +2637,15 @@ func newCmdFetchMitreCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "mitre", "cvrf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMitreV4() *cobra.Command {
+func newCmdMitreV4() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "mitre", "v4"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v4"),
 		retry: 3,
 	}
 
@@ -2664,15 +2664,15 @@ func newCmdFetchMitreV4() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "mitre", "v4"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "mitre", "v4"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMitreV5() *cobra.Command {
+func newCmdMitreV5() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "mitre", "v5"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v5"),
 		retry: 3,
 	}
 
@@ -2691,15 +2691,15 @@ func newCmdFetchMitreV5() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "mitre", "v5"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "mitre", "v5"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchMSF() *cobra.Command {
+func newCmdMSF() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "msf"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "msf"),
 		retry: 3,
 	}
 
@@ -2718,15 +2718,15 @@ func newCmdFetchMSF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "msf"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "msf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNVDAPICVE() *cobra.Command {
+func newCmdNVDAPICVE() *cobra.Command {
 	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cve"),
+		dir:          filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
 		retry:        20,
 		retryWaitMin: 6,
 		retryWaitMax: 30,
@@ -2754,7 +2754,7 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cve"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
 	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
@@ -2767,9 +2767,9 @@ func newCmdFetchNVDAPICVE() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchNVDAPICPE() *cobra.Command {
+func newCmdNVDAPICPE() *cobra.Command {
 	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cpe"),
+		dir:          filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
 		retry:        20,
 		retryWaitMin: 6,
 		retryWaitMax: 30,
@@ -2797,7 +2797,7 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cpe"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
 	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
@@ -2810,9 +2810,9 @@ func newCmdFetchNVDAPICPE() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchNVDAPICPEMatch() *cobra.Command {
+func newCmdNVDAPICPEMatch() *cobra.Command {
 	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"),
+		dir:          filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
 		retry:        20,
 		retryWaitMin: 6,
 		retryWaitMax: 30,
@@ -2840,7 +2840,7 @@ func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "api", "cpematch"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
 	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
@@ -2853,9 +2853,9 @@ func newCmdFetchNVDAPICPEMatch() *cobra.Command {
 	return cmd
 }
 
-func newCmdFetchNVDFeedCVE() *cobra.Command {
+func newCmdNVDFeedCVE() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cve"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve"),
 		retry: 3,
 	}
 
@@ -2874,15 +2874,15 @@ func newCmdFetchNVDFeedCVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "feed", "cve"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNVDFeedCPE() *cobra.Command {
+func newCmdNVDFeedCPE() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cpe"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe"),
 		retry: 3,
 	}
 
@@ -2901,15 +2901,15 @@ func newCmdFetchNVDFeedCPE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "feed", "cpe"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchNVDFeedCPEMatch() *cobra.Command {
+func newCmdNVDFeedCPEMatch() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cpematch"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"),
 		retry: 3,
 	}
 
@@ -2928,15 +2928,15 @@ func newCmdFetchNVDFeedCPEMatch() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "nvd", "feed", "cpematch"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdFetchSnort() *cobra.Command {
+func newCmdSnort() *cobra.Command {
 	options := &options{
-		dir:   filepath.Join(util.CacheDir(), "snort"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "snort"),
 		retry: 3,
 	}
 
@@ -2955,7 +2955,7 @@ func newCmdFetchSnort() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "snort"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "snort"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
