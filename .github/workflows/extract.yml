@@ -43,7 +43,7 @@ jobs:
               token: ${{ steps.app-token.outputs.token }}
             
           - name: Extract
-            run: vuls-data-update fetch epss --dir vuls-data-extracted-epss --since $(date --utc -d "3 month ago" "+%Y-%m-%d") vuls-data-raw-epss
+            run: vuls-data-update extract epss --dir vuls-data-extracted-epss --since $(date --utc -d "3 month ago" "+%Y-%m-%d") vuls-data-raw-epss
             
           - name: Split Large Files
             run: find vuls-data-extracted-epss -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
