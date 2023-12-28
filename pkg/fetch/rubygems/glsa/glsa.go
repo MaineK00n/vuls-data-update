@@ -62,7 +62,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		repoURL: defaultRepoURL,
-		dir:     filepath.Join(util.CacheDir(), "rubygems", "glsa"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "rubygems", "glsa"),
 		retry:   3,
 	}
 

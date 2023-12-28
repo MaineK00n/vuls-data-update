@@ -80,7 +80,7 @@ func Fetch(opts ...Option) error {
 
 	options := &options{
 		baseURLs: us,
-		dir:      filepath.Join(util.CacheDir(), "nvd", "feed", "cve"),
+		dir:      filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve"),
 		retry:    3,
 	}
 

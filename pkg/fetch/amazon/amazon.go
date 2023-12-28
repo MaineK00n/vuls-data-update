@@ -78,7 +78,7 @@ func Fetch(opts ...Option) error {
 			"2022": {Core: "https://cdn.amazonlinux.com/al2022/core/mirrors/latest/x86_64/mirror.list"},
 			"2023": {Core: "https://cdn.amazonlinux.com/al2023/core/mirrors/latest/x86_64/mirror.list"},
 		},
-		dir:   filepath.Join(util.CacheDir(), "amazon"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "amazon"),
 		retry: 3,
 	}
 

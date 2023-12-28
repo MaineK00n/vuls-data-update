@@ -57,7 +57,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		repoURL: defaultRepoURL,
-		dir:     filepath.Join(util.CacheDir(), "golang", "db"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "golang", "db"),
 		retry:   3,
 	}
 

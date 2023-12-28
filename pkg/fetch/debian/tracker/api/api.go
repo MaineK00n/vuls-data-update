@@ -63,7 +63,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		advisoryURL: advisoryURL,
-		dir:         filepath.Join(util.CacheDir(), "debian", "tracker", "api"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "debian", "tracker", "api"),
 		retry:       3,
 	}
 

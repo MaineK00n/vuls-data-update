@@ -62,7 +62,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		repoURL: defaultRepoURL,
-		dir:     filepath.Join(util.CacheDir(), "pip", "glsa"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "pip", "glsa"),
 		retry:   3,
 	}
 

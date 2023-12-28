@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 			ICS:        icsURL,
 			Mobile:     mobileURL,
 		},
-		dir:   filepath.Join(util.CacheDir(), "attack"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "attack"),
 		retry: 3,
 	}
 

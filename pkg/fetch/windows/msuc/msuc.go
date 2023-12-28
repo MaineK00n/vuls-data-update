@@ -84,7 +84,7 @@ func WithWait(wait int) Option {
 func Fetch(queries []string, opts ...Option) error {
 	options := &options{
 		msucURL:     msucURL,
-		dir:         filepath.Join(util.CacheDir(), "windows", "msuc"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1,

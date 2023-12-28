@@ -65,7 +65,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		url:   cpeDictionaryURL,
-		dir:   filepath.Join(util.CacheDir(), "nvd", "feed", "cpe"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe"),
 		retry: 3,
 	}
 

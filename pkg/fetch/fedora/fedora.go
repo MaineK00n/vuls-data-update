@@ -117,7 +117,7 @@ func Fetch(releases []string, opts ...Option) error {
 			Package:  packageURL,
 			Bugzilla: bugzillaURL,
 		},
-		dir:         filepath.Join(util.CacheDir(), "fedora"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora"),
 		retry:       20,
 		concurrency: 5,
 		wait:        1,
