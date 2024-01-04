@@ -88,7 +88,7 @@ func newCmdEPSS() *cobra.Command {
 		Use:   "epss <Raw EPSS Repository PATH>",
 		Short: "Extract EPSS data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract epss
+			$ vuls-data-update extract vuls-data-raw-epss
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -109,7 +109,7 @@ func newCmdEPSS() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "epss"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "epss"), "output extract results to specified directory")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
 	cmd.Flags().StringVarP(&options.since, "since", "", "2021-04-14", "since date. format: \"yyyy-mm-dd\"")
 	cmd.Flags().StringVarP(&options.until, "until", "", time.Now().Format("2006-01-02"), "until date. format: \"yyyy-mm-dd\"")
