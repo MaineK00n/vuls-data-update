@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	almaErrata "github.com/MaineK00n/vuls-data-update/pkg/extract/alma/errata"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/epss"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
@@ -23,7 +24,7 @@ func NewCmdExtract() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		// newCmdAlmaErrata(), newCmdAlmaOSV(),
+		newCmdAlmaErrata(), // newCmdAlmaOSV(),
 		// newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		// newCmdAmazon(),
 		// newCmdArch(),
@@ -72,6 +73,34 @@ func NewCmdExtract() *cobra.Command {
 	return cmd
 }
 
+func newCmdAlmaErrata() *cobra.Command {
+	options := &struct {
+		dir string
+	}{
+		dir: filepath.Join(util.CacheDir(), "extract", "alma", "errata"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "alma-errata <Raw AlmaLinux Errata Repository PATH>",
+		Short: "Extract AlmaLinux Errata data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract alma-errata vuls-data-raw-alma-errata
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+
+			if err := almaErrata.Extract(args[0], almaErrata.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract almalinux errata")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "alma", "errata"), "output extract results to specified directory")
+
+	return cmd
+}
+
 func newCmdEPSS() *cobra.Command {
 	options := &struct {
 		dir         string
@@ -88,7 +117,7 @@ func newCmdEPSS() *cobra.Command {
 		Use:   "epss <Raw EPSS Repository PATH>",
 		Short: "Extract EPSS data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract vuls-data-raw-epss
+			$ vuls-data-update extract epss vuls-data-raw-epss
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
