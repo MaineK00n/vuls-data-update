@@ -1,214 +1,37 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/affected"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/epss"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/exploit"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/metasploit"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/snort"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+)
 
 type Info struct {
-	ID          string       `json:"id,omitempty"`
-	Title       string       `json:"title,omitempty"`
-	Description string       `json:"description,omitempty"`
-	CVSS        []CVSS       `json:"cvss,omitempty"`
-	CWE         []CWE        `json:"cwe,omitempty"`
-	Exploit     []Exploit    `json:"exploit,omitempty"`
-	Metasploit  []Metasploit `json:"metasploit,omitempty"`
-	EPSS        []EPSS       `json:"epss,omitempty"`
-	Snort       []Snort      `json:"snort,omitempty"`
-	References  []Reference  `json:"references,omitempty"`
-	Published   *time.Time   `json:"published,omitempty"`
-	Modified    *time.Time   `json:"modified,omitempty"`
+	ID          string                  `json:"id,omitempty"`
+	Title       string                  `json:"title,omitempty"`
+	Description string                  `json:"description,omitempty"`
+	Affected    []affected.Affected     `json:"affected,omitempty"`
+	Severity    []severity.Severity     `json:"severity,omitempty"`
+	CWE         []cwe.CWE               `json:"cwe,omitempty"`
+	Exploit     []exploit.Exploit       `json:"exploit,omitempty"`
+	Metasploit  []metasploit.Metasploit `json:"metasploit,omitempty"`
+	EPSS        []epss.EPSS             `json:"epss,omitempty"`
+	Snort       []snort.Snort           `json:"snort,omitempty"`
+	References  []reference.Reference   `json:"references,omitempty"`
+	Published   *time.Time              `json:"published,omitempty"`
+	Modified    *time.Time              `json:"modified,omitempty"`
+	DataSource  source.SourceID         `json:"data_source,omitempty"`
 }
 
-type CVSS struct {
-	Source  string      `json:"source,omitempty"`
-	Version string      `json:"version,omitempty"`
-	Vector  string      `json:"vector,omitempty"`
-	Metrics *CVSSMetric `json:"metrics,omitempty"`
-}
-
-type CVSSMetric struct {
-	V2  *CVSSv2  `json:"v2,omitempty"`
-	V30 *CVSSv30 `json:"v30,omitempty"`
-	V31 *CVSSv31 `json:"v31,omitempty"`
-	V40 *CVSSv40 `json:"v40,omitempty"`
-}
-
-type CVSSv2 struct {
-	// Base Metrics
-	AccessVector          string  `json:"access_vector,omitempty"`
-	AccessComplexity      string  `json:"access_complexity,omitempty"`
-	Authentication        string  `json:"authentication,omitempty"`
-	ConfidentialityImpact string  `json:"confidentiality_impact,omitempty"`
-	IntegrityImpact       string  `json:"integrity_impact,omitempty"`
-	AvailabilityImpact    string  `json:"availability_impact,omitempty"`
-	BaseScore             float64 `json:"base_score,omitempty"`
-	BaseSeverity          string  `json:"base_severity,omitempty"`
-	// Temporal Metrics
-	Exploitability   string `json:"exploitability,omitempty"`
-	RemediationLevel string `json:"remediation_level,omitempty"`
-	ReportConfidence string `json:"report_confidence,omitempty"`
-	// Environmental Metrics
-	CollateralDamagePotential  string  `json:"collateral_damage_potential,omitempty"`
-	TargetDistribution         string  `json:"target_distribution,omitempty"`
-	ConfidentialityRequirement string  `json:"confidentiality_requirement,omitempty"`
-	IntegrityRequirement       string  `json:"integrity_requirement,omitempty"`
-	AvailabilityRequirement    string  `json:"availability_requirement,omitempty"`
-	EnvironmentalScore         float64 `json:"environmental_score,omitempty"`
-	EnvironmentalSeverity      string  `json:"environmental_severity,omitempty"`
-}
-
-type CVSSv30 struct {
-	// Base Metrics
-	AttackVector          string  `json:"attack_vector,omitempty"`
-	AttackComplexity      string  `json:"attack_complexity,omitempty"`
-	PrivilegesRequired    string  `json:"privileges_required,omitempty"`
-	UserInteraction       string  `json:"user_interaction,omitempty"`
-	Scope                 string  `json:"scope,omitempty"`
-	ConfidentialityImpact string  `json:"confidentiality_impact,omitempty"`
-	IntegrityImpact       string  `json:"integrity_impact,omitempty"`
-	AvailabilityImpact    string  `json:"availability_impact,omitempty"`
-	BaseScore             float64 `json:"base_score,omitempty"`
-	BaseSeverity          string  `json:"base_severity,omitempty"`
-	// Temporal Metrics
-	ExploitCodeMaturity string  `json:"exploit_code_maturity,omitempty"`
-	RemediationLevel    string  `json:"remediation_level,omitempty"`
-	ReportConfidence    string  `json:"report_confidence,omitempty"`
-	TemporalScore       float64 `json:"temporal_score,omitempty"`
-	TemporalSeverity    string  `json:"temporal_severity,omitempty"`
-	// Environmental Metrics
-	ConfidentialityRequirement    string  `json:"confidentiality_requirement,omitempty"`
-	IntegrityRequirement          string  `json:"integrity_requirement,omitempty"`
-	AvailabilityRequirement       string  `json:"availability_requirement,omitempty"`
-	ModifiedAttackVector          string  `json:"modified_attack_vector,omitempty"`
-	ModifiedAttackComplexity      string  `json:"modified_attack_complexity,omitempty"`
-	ModifiedPrivilegesRequired    string  `json:"modified_privileges_required,omitempty"`
-	ModifiedUserInteraction       string  `json:"modified_user_interaction,omitempty"`
-	ModifiedScope                 string  `json:"modified_scope,omitempty"`
-	ModifiedConfidentialityImpact string  `json:"modified_confidentiality_impact,omitempty"`
-	ModifiedIntegrityImpact       string  `json:"modified_integrity_impact,omitempty"`
-	ModifiedAvailabilityImpact    string  `json:"modified_availability_impact,omitempty"`
-	EnvironmentalScore            float64 `json:"environmental_score,omitempty"`
-	EnvironmentalSeverity         string  `json:"environmental_severity,omitempty"`
-}
-
-type CVSSv31 struct {
-	// Base Metrics
-	AttackVector          string  `json:"attack_vector,omitempty"`
-	AttackComplexity      string  `json:"attack_complexity,omitempty"`
-	PrivilegesRequired    string  `json:"privileges_required,omitempty"`
-	UserInteraction       string  `json:"user_interaction,omitempty"`
-	Scope                 string  `json:"scope,omitempty"`
-	ConfidentialityImpact string  `json:"confidentiality_impact,omitempty"`
-	IntegrityImpact       string  `json:"integrity_impact,omitempty"`
-	AvailabilityImpact    string  `json:"availability_impact,omitempty"`
-	BaseScore             float64 `json:"base_score,omitempty"`
-	BaseSeverity          string  `json:"base_severity,omitempty"`
-	// Temporal Metrics
-	ExploitCodeMaturity string  `json:"exploit_code_maturity,omitempty"`
-	RemediationLevel    string  `json:"remediation_level,omitempty"`
-	ReportConfidence    string  `json:"report_confidence,omitempty"`
-	TemporalScore       float64 `json:"temporal_score,omitempty"`
-	TemporalSeverity    string  `json:"temporal_severity,omitempty"`
-	// Environmental Metrics
-	ConfidentialityRequirement    string  `json:"confidentiality_requirement,omitempty"`
-	IntegrityRequirement          string  `json:"integrity_requirement,omitempty"`
-	AvailabilityRequirement       string  `json:"availability_requirement,omitempty"`
-	ModifiedAttackVector          string  `json:"modified_attack_vector,omitempty"`
-	ModifiedAttackComplexity      string  `json:"modified_attack_complexity,omitempty"`
-	ModifiedPrivilegesRequired    string  `json:"modified_privileges_required,omitempty"`
-	ModifiedUserInteraction       string  `json:"modified_user_interaction,omitempty"`
-	ModifiedScope                 string  `json:"modified_scope,omitempty"`
-	ModifiedConfidentialityImpact string  `json:"modified_confidentiality_impact,omitempty"`
-	ModifiedIntegrityImpact       string  `json:"modified_integrity_impact,omitempty"`
-	ModifiedAvailabilityImpact    string  `json:"modified_availability_impact,omitempty"`
-	EnvironmentalScore            float64 `json:"environmental_score,omitempty"`
-	EnvironmentalSeverity         string  `json:"environmental_severity,omitempty"`
-}
-
-type CVSSv40 struct {
-	// Base Metrics
-	AttackVector                          string  `json:"attack_vector,omitempty"`
-	AttackComplexity                      string  `json:"attack_complexity,omitempty"`
-	AttackRequirements                    string  `json:"attack_requirements,omitempty"`
-	PrivilegesRequired                    string  `json:"privileges_required,omitempty"`
-	UserInteraction                       string  `json:"user_interaction,omitempty"`
-	VulnerableSystemConfidentialityImpact string  `json:"vulnerable_system_confidentiality_impact,omitempty"`
-	SubsequentSystemConfidentialityImpact string  `json:"subsequent_system_confidentiality_impact,omitempty"`
-	VulnerableSystemIntegrityImpact       string  `json:"vulnerable_system_integrity_impact,omitempty"`
-	SubsequentSystemIntegrityImpact       string  `json:"subsequent_system_integrity_impact,omitempty"`
-	VulnerableSystemAvailabilityImpact    string  `json:"vulnerable_system_availability_impact,omitempty"`
-	SubsequentSystemAvailabilityImpact    string  `json:"subsequent_system_availability_impact,omitempty"`
-	BaseScore                             float64 `json:"base_score,omitempty"`
-	BaseSeverity                          string  `json:"base_severity,omitempty"`
-	// Threat Metrics
-	ExploitMaturity    string  `json:"exploit_maturity,omitempty"`
-	BaseThreatScore    float64 `json:"base_threat_score,omitempty"`
-	BaseThreatSeverity string  `json:"base_threat_severity,omitempty"`
-	// Environmental Metrics
-	ModifiedAttackVector                          string  `json:"modified_attack_vector,omitempty"`
-	ModifiedAttackComplexity                      string  `json:"modified_attack_complexity,omitempty"`
-	ModifiedAttackRequirements                    string  `json:"modified_attack_requirements,omitempty"`
-	ModifiedPrivilegesRequired                    string  `json:"modified_privileges_required,omitempty"`
-	ModifiedUserInteraction                       string  `json:"modified_user_interaction,omitempty"`
-	ModifiedVulnerableSystemConfidentialityImpact string  `json:"modified_vulnerable_system_confidentiality_impact,omitempty"`
-	ModifiedSubsequentSystemConfidentialityImpact string  `json:"modified_subsequent_system_confidentiality_impact,omitempty"`
-	ModifiedVulnerableSystemIntegrityImpact       string  `json:"modified_vulnerable_system_integrity_impact,omitempty"`
-	ModifiedSubsequentSystemIntegrityImpact       string  `json:"modified_subsequent_system_integrity_impact,omitempty"`
-	ModifiedVulnerableSystemAvailabilityImpact    string  `json:"modified_vulnerable_system_availability_impact,omitempty"`
-	ModifiedSubsequentSystemAvailabilityImpact    string  `json:"modified_subsequent_system_availability_impact,omitempty"`
-	ConfidentialityRequirement                    string  `json:"confidentiality_requirement,omitempty"`
-	IntegrityRequirement                          string  `json:"integrity_requirement,omitempty"`
-	AvailabilityRequirement                       string  `json:"availability_requirement,omitempty"`
-	BaseEnvironmentaltScore                       float64 `json:"base_environmentalt_score,omitempty"`
-	BaseEnvironmentalSeverity                     string  `json:"base_environmental_severity,omitempty"`
-	BaseThreatEnvironmentaltScore                 float64 `json:"base_threat_environmentalt_score,omitempty"`
-	BaseThreatEnvironmentalSeverity               string  `json:"base_threat_environmental_severity,omitempty"`
-	// Supplemental Metrics
-	Safety                      string `json:"safety,omitempty"`
-	Automatable                 string `json:"automatable,omitempty"`
-	Recovery                    string `json:"recovery,omitempty"`
-	ValueDensity                string `json:"value_density,omitempty"`
-	VulnerabilityResponseEffort string `json:"vulnerability_response_effort,omitempty"`
-	ProviderUrgency             string `json:"provider_urgency,omitempty"`
-}
-
-type CWE struct {
-	Source string   `json:"source,omitempty"`
-	CWE    []string `json:"cwe,omitempty"`
-}
-
-type Exploit struct {
-	Source      string     `json:"source,omitempty"`
-	ID          string     `json:"id,omitempty"`
-	Description string     `json:"description,omitempty"`
-	Published   *time.Time `json:"published,omitempty"`
-	Modified    *time.Time `json:"modified,omitempty"`
-	Link        string     `json:"link,omitempty"`
-}
-
-type Metasploit struct {
-	Type        string      `json:"type,omitempty"`
-	Name        string      `json:"name,omitempty"`
-	FullName    string      `json:"full_name,omitempty"`
-	Description string      `json:"description,omitempty"`
-	Rank        int         `json:"rank,omitempty"`
-	Published   *time.Time  `json:"published,omitempty"`
-	Modified    *time.Time  `json:"modified,omitempty"`
-	References  []Reference `json:"references,omitempty"`
-}
-
-type EPSS struct {
-	Model      string    `json:"model,omitempty"`
-	ScoreDate  time.Time `json:"score_date,omitempty"`
-	EPSS       float64   `json:"epss,omitempty"`
-	Percentile *float64  `json:"percentile,omitempty"`
-}
-
-type Snort struct{}
-
-type Reference struct {
-	Source string   `json:"source,omitempty"`
-	Tags   []string `json:"tags,omitempty"`
-	Link   string   `json:"link,omitempty"`
-}
+type CPEDictionary struct{}
 
 type CWEDictionary struct{}
 
