@@ -15,7 +15,7 @@ jobs:
           matrix:
             target:
               - "alma-errata"
-              # - "alma-osv"
+              - "alma-osv"
               # - "alpine-secdb"
               # - "alpine-osv"
               # - "amazon"

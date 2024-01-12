@@ -17,7 +17,6 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/affected"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
@@ -54,7 +53,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract AlmaLinux")
+	log.Printf("[INFO] Extract AlmaLinux Errata")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -89,13 +88,10 @@ func Extract(args string, opts ...Option) error {
 			ID:          fetched.ID,
 			Title:       fetched.Title,
 			Description: fetched.Description,
-			Severity: []severityTypes.Severity{{
-				Type:     severityTypes.SeverityTypeAdvisory,
-				Advisory: fetched.Severity,
-			}},
-			Published:  &published,
-			Modified:   &modified,
-			DataSource: source.AlmaErrata,
+			Severity:    fetched.Severity,
+			Published:   &published,
+			Modified:    &modified,
+			DataSource:  source.AlmaErrata,
 		}
 
 		nvrToArches := map[string][]string{}
@@ -185,6 +181,24 @@ func Extract(args string, opts ...Option) error {
 			rm[r.Href] = rr
 		}
 		info.References = maps.Values(rm)
+
+		vm := map[string]types.Vulnerability{}
+		for _, r := range rm {
+			if !slices.Contains(r.Tags, referenceTypes.TagCVE) {
+				continue
+			}
+
+			v, ok := vm[r.Name]
+			if !ok {
+				v = types.Vulnerability{
+					CVE: r.Name,
+				}
+			}
+			v.References = append(v.References, r)
+
+			vm[r.Name] = v
+		}
+		info.Vulnerabilities = maps.Values(vm)
 
 		if err := util.Write(filepath.Join(options.dir, "main", v, y, fmt.Sprintf("%s.json", info.ID)), info); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "main", v, y, fmt.Sprintf("%s.json", info.ID)))
