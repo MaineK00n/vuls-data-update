@@ -15,20 +15,27 @@ import (
 )
 
 type Info struct {
-	ID          string                  `json:"id,omitempty"`
-	Title       string                  `json:"title,omitempty"`
-	Description string                  `json:"description,omitempty"`
-	Affected    []affected.Affected     `json:"affected,omitempty"`
-	Severity    []severity.Severity     `json:"severity,omitempty"`
-	CWE         []cwe.CWE               `json:"cwe,omitempty"`
-	Exploit     []exploit.Exploit       `json:"exploit,omitempty"`
-	Metasploit  []metasploit.Metasploit `json:"metasploit,omitempty"`
-	EPSS        []epss.EPSS             `json:"epss,omitempty"`
-	Snort       []snort.Snort           `json:"snort,omitempty"`
-	References  []reference.Reference   `json:"references,omitempty"`
-	Published   *time.Time              `json:"published,omitempty"`
-	Modified    *time.Time              `json:"modified,omitempty"`
-	DataSource  source.SourceID         `json:"data_source,omitempty"`
+	ID              string                `json:"id,omitempty"`
+	Title           string                `json:"title,omitempty"`
+	Description     string                `json:"description,omitempty"`
+	Affected        []affected.Affected   `json:"affected,omitempty"`
+	Severity        string                `json:"severity,omitempty"`
+	Vulnerabilities []Vulnerability       `json:"vulnerabilities,omitempty"`
+	References      []reference.Reference `json:"references,omitempty"`
+	Published       *time.Time            `json:"published,omitempty"`
+	Modified        *time.Time            `json:"modified,omitempty"`
+	DataSource      source.SourceID       `json:"data_source,omitempty"`
+}
+
+type Vulnerability struct {
+	CVE        string                  `json:"cve,omitempty"`
+	Severity   []severity.Severity     `json:"severity,omitempty"`
+	CWE        []cwe.CWE               `json:"cwe,omitempty"`
+	Exploit    []exploit.Exploit       `json:"exploit,omitempty"`
+	Metasploit []metasploit.Metasploit `json:"metasploit,omitempty"`
+	EPSS       []epss.EPSS             `json:"epss,omitempty"`
+	Snort      []snort.Snort           `json:"snort,omitempty"`
+	References []reference.Reference   `json:"references,omitempty"`
 }
 
 type CPEDictionary struct{}

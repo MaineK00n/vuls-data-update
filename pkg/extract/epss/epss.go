@@ -160,12 +160,17 @@ func Extract(args string, opts ...Option) error {
 
 				info := types.Info{
 					ID: req.ID,
-					EPSS: []epssTypes.EPSS{{
-						Model:      fetched.Model,
-						ScoreDate:  t,
-						EPSS:       req.EPSS,
-						Percentile: req.Percentile,
-					}},
+					Vulnerabilities: []types.Vulnerability{
+						{
+							CVE: req.ID,
+							EPSS: []epssTypes.EPSS{{
+								Model:      fetched.Model,
+								ScoreDate:  t,
+								EPSS:       req.EPSS,
+								Percentile: req.Percentile,
+							}},
+						},
+					},
 					DataSource: source.EPSS,
 				}
 				if _, err := os.Stat(filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID))); err == nil {
@@ -180,7 +185,7 @@ func Extract(args string, opts ...Option) error {
 						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID)))
 					}
 
-					i.EPSS = append(i.EPSS, epssTypes.EPSS{
+					i.Vulnerabilities[0].EPSS = append(i.Vulnerabilities[0].EPSS, epssTypes.EPSS{
 						Model:      fetched.Model,
 						ScoreDate:  t,
 						EPSS:       req.EPSS,
@@ -254,7 +259,7 @@ func Extract(args string, opts ...Option) error {
 				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req)))
 			}
 
-			slices.SortFunc(info.EPSS, func(a, b epssTypes.EPSS) int {
+			slices.SortFunc(info.Vulnerabilities[0].EPSS, func(a, b epssTypes.EPSS) int {
 				if a.ScoreDate.Before(b.ScoreDate) {
 					return -1
 				}

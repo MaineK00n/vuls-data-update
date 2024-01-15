@@ -6,20 +6,20 @@ import (
 )
 
 type Severity struct {
-	Type     SeverityType `json:"type,omitempty"`
-	Source   string       `json:"source,omitempty"`
-	Advisory string       `json:"advisory,omitempty"`
-	CVSSv2   *CVSSv2      `json:"cvss_v2,omitempty"`
-	CVSSv30  *CVSSv30     `json:"cvss_v30,omitempty"`
-	CVSSv31  *CVSSv31     `json:"cvss_v31,omitempty"`
-	CVSSv40  *CVSSv40     `json:"cvss_v40,omitempty"`
+	Type    SeverityType `json:"type,omitempty"`
+	Source  string       `json:"source,omitempty"`
+	Vendor  string       `json:"vendor,omitempty"`
+	CVSSv2  *CVSSv2      `json:"cvss_v2,omitempty"`
+	CVSSv30 *CVSSv30     `json:"cvss_v30,omitempty"`
+	CVSSv31 *CVSSv31     `json:"cvss_v31,omitempty"`
+	CVSSv40 *CVSSv40     `json:"cvss_v40,omitempty"`
 }
 
 type SeverityType int
 
 const (
 	_ SeverityType = iota
-	SeverityTypeAdvisory
+	SeverityTypeVendor
 	SeverityTypeCVSSv2
 	SeverityTypeCVSSv30
 	SeverityTypeCVSSv31
@@ -28,8 +28,8 @@ const (
 
 func (t SeverityType) String() string {
 	switch t {
-	case SeverityTypeAdvisory:
-		return "advisory"
+	case SeverityTypeVendor:
+		return "vendor"
 	case SeverityTypeCVSSv2:
 		return "cvss_v2"
 	case SeverityTypeCVSSv30:
@@ -55,8 +55,8 @@ func (t *SeverityType) UnmarshalJSON(data []byte) error {
 
 	var st SeverityType
 	switch s {
-	case "advisory":
-		st = SeverityTypeAdvisory
+	case "vendor":
+		st = SeverityTypeVendor
 	case "cvss_v2":
 		st = SeverityTypeCVSSv2
 	case "cvss_v30":

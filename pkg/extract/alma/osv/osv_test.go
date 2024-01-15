@@ -1,4 +1,4 @@
-package errata_test
+package osv_test
 
 import (
 	"encoding/json"
@@ -8,13 +8,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
-
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/alma/errata"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/alma/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/affected"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestExtract(t *testing.T) {
@@ -31,7 +30,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := errata.Extract(tt.args, errata.WithDir(dir))
+			err := osv.Extract(tt.args, osv.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -50,8 +49,7 @@ func TestExtract(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				dir, y := filepath.Split(filepath.Clean(dir))
-				dir, v := filepath.Split(filepath.Clean(dir))
-				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), v, y, file))
+				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), y, file))
 				if err != nil {
 					return err
 				}
