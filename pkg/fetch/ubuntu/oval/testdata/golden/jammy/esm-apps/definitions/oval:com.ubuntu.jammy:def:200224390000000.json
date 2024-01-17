@@ -3,11 +3,11 @@
 	"id": "oval:com.ubuntu.jammy:def:200224390000000",
 	"version": "1",
 	"metadata": {
-		"Title": "CVE-2002-2439 on Ubuntu 22.04 ESM (jammy) - low.",
-		"Description": "operator new[] sometimes returns pointers to heap blocks which are too small.  When a new array is allocated, the C++ run-time has to calculate its size.  The product may exceed the maximum value which can be stored in a machine register.  This error is ignored, and the truncated value is used for the heap allocation. This may lead to heap overflows and therefore security bugs. (See http://cert.uni-stuttgart.de/advisories/calloc.php for further references.)\n\nUpdate Instructions:\n\nRun `sudo pro fix CVE-2002-2439` to fix the vulnerability. The problem can be corrected\nby updating your system to the following package versions:\n\ngcc-snapshot - 20140405-0ubuntu1\nNo subscription required",
+		"title": "CVE-2002-2439 on Ubuntu 22.04 ESM (jammy) - low.",
+		"description": "operator new[] sometimes returns pointers to heap blocks which are too small.  When a new array is allocated, the C++ run-time has to calculate its size.  The product may exceed the maximum value which can be stored in a machine register.  This error is ignored, and the truncated value is used for the heap allocation. This may lead to heap overflows and therefore security bugs. (See http://cert.uni-stuttgart.de/advisories/calloc.php for further references.)\n\nUpdate Instructions:\n\nRun `sudo pro fix CVE-2002-2439` to fix the vulnerability. The problem can be corrected\nby updating your system to the following package versions:\n\ngcc-snapshot - 20140405-0ubuntu1\nNo subscription required",
 		"affected": {
 			"family": "unix",
-			"Platform": "Ubuntu 22.04 ESM"
+			"platform": "Ubuntu 22.04 ESM"
 		},
 		"reference": {
 			"source": "CVE",
@@ -15,10 +15,10 @@
 			"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2002-2439"
 		},
 		"advisory": {
-			"Severity": "Low",
-			"Rights": "Copyright (C) 2019 Canonical Ltd.",
-			"PublicDate": "2019-10-23 18:15:00 UTC",
-			"Bug": [
+			"severity": "Low",
+			"rights": "Copyright (C) 2019 Canonical Ltd.",
+			"public_date": "2019-10-23 18:15:00 UTC",
+			"bug": [
 				"http://gcc.gnu.org/bugzilla/show_bug.cgi?id=19351",
 				"https://bugzilla.redhat.com/show_bug.cgi?id=850911"
 			],
@@ -26,16 +26,11 @@
 				"text": "CVE-2002-2439",
 				"href": "https://ubuntu.com/security/CVE-2002-2439",
 				"public": "20191023"
-			},
-			"PublicDateAtUsn": "",
-			"AssignedTo": "",
-			"DiscoveredBy": "",
-			"Crd": "",
-			"Ref": null
+			}
 		}
 	},
 	"notes": {
-		"Note": "sbeattie> fixed upstream in gcc 4.8.0 backporting fixes may be problematic for ABI issues gcc-i686-linux-android/xenial is 4.7.4 based mdeslaur> gcc-4.7 is not the default xenial compiler and is only used to build a few packages. Fixing this would be intrusive, would require rebuilding those packages, and there is no clear attack vector on them. We will not be fixing gcc-4.7 in xenial. Marking as ignored."
+		"note": "sbeattie> fixed upstream in gcc 4.8.0 backporting fixes may be problematic for ABI issues gcc-i686-linux-android/xenial is 4.7.4 based mdeslaur> gcc-4.7 is not the default xenial compiler and is only used to build a few packages. Fixing this would be intrusive, would require rebuilding those packages, and there is no clear attack vector on them. We will not be fixing gcc-4.7 in xenial. Marking as ignored."
 	},
 	"criteria": {
 		"criterias": [

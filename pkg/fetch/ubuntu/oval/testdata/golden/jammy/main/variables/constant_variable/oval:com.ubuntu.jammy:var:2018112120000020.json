@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'libjpeg9' package binaries",
-	"Value": [
+	"value": [
 		"libjpeg-progs",
 		"libjpeg9"
 	]

@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'nvidia-graphics-drivers-455' package binaries",
-	"Value": [
+	"value": [
 		"libnvidia-cfg1-435",
 		"libnvidia-common-435",
 		"libnvidia-common-455",

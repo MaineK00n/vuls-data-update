@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'gcc-h8300-hms' package binaries",
-	"Value": [
+	"value": [
 		"^gcc-h8300-hms(?::\\w+|)\\s+(.*)$"
 	]
 }

@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'thunderbird' package binaries",
-	"Value": [
+	"value": [
 		"thunderbird",
 		"thunderbird-gnome-support",
 		"thunderbird-mozsymbols",

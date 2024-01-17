@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'openjfx' package binaries",
-	"Value": [
+	"value": [
 		"libopenjfx-java",
 		"libopenjfx-jni",
 		"openjfx",

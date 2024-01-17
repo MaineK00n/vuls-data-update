@@ -2,8 +2,8 @@
 	"id": "oval:com.ubuntu.jammy:obj:200224390000010",
 	"version": "1",
 	"comment": "The 'gcc-h8300-hms' package binary.",
-	"Path": ".",
-	"Filename": "manifest",
+	"path": ".",
+	"filename": "manifest",
 	"pattern": {
 		"operation": "pattern match",
 		"datatype": "string",

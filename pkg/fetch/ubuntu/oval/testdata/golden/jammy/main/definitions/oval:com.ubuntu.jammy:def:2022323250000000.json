@@ -3,11 +3,11 @@
 	"id": "oval:com.ubuntu.jammy:def:2022323250000000",
 	"version": "1",
 	"metadata": {
-		"Title": "CVE-2022-32325 on Ubuntu 22.04 LTS (jammy) - low.",
-		"Description": "JPEGOPTIM v1.4.7 was discovered to contain a segmentation violation which is caused by a READ memory access at jpegoptim.c.",
+		"title": "CVE-2022-32325 on Ubuntu 22.04 LTS (jammy) - low.",
+		"description": "JPEGOPTIM v1.4.7 was discovered to contain a segmentation violation which is caused by a READ memory access at jpegoptim.c.",
 		"affected": {
 			"family": "unix",
-			"Platform": "Ubuntu 22.04 LTS"
+			"platform": "Ubuntu 22.04 LTS"
 		},
 		"reference": {
 			"source": "CVE",
@@ -15,24 +15,20 @@
 			"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-32325"
 		},
 		"advisory": {
-			"Severity": "Low",
-			"Rights": "Copyright (C) 2022 Canonical Ltd.",
-			"PublicDate": "2022-07-01 22:15:00 UTC",
-			"Bug": [
+			"severity": "Low",
+			"rights": "Copyright (C) 2022 Canonical Ltd.",
+			"public_date": "2022-07-01 22:15:00 UTC",
+			"bug": [
 				"https://github.com/tjko/jpegoptim/issues/107"
 			],
 			"cve": {},
-			"PublicDateAtUsn": "",
-			"AssignedTo": "",
-			"DiscoveredBy": "",
-			"Crd": "",
-			"Ref": [
+			"ref": [
 				"https://ubuntu.com/security/CVE-2022-32325"
 			]
 		}
 	},
 	"notes": {
-		"Note": "mdeslaur> comment in jpegoptim bug seems to indicate it may be a problem in libjpeg-turbo. No fix available as of 2022-07-25, marking as deferred"
+		"note": "mdeslaur> comment in jpegoptim bug seems to indicate it may be a problem in libjpeg-turbo. No fix available as of 2022-07-25, marking as deferred"
 	},
 	"criteria": {
 		"criterias": [

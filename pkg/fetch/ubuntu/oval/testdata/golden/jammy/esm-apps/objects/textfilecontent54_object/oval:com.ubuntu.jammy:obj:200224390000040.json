@@ -2,8 +2,8 @@
 	"id": "oval:com.ubuntu.jammy:obj:200224390000040",
 	"version": "1",
 	"comment": "The 'gcc-snapshot' package binary.",
-	"Path": ".",
-	"Filename": "manifest",
+	"path": ".",
+	"filename": "manifest",
 	"pattern": {
 		"operation": "pattern match",
 		"datatype": "string",

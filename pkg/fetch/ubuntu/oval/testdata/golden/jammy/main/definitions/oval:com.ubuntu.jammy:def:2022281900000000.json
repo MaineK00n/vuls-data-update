@@ -3,11 +3,11 @@
 	"id": "oval:com.ubuntu.jammy:def:2022281900000000",
 	"version": "1",
 	"metadata": {
-		"Title": "CVE-2022-28190 on Ubuntu 22.04 LTS (jammy) - medium.",
-		"Description": "NVIDIA GPU Display Driver for Windows contains a vulnerability in the kernel mode layer (nvlddmkm.sys) handler for DxgkDdiEscape, where improper input validation can cause denial of service.",
+		"title": "CVE-2022-28190 on Ubuntu 22.04 LTS (jammy) - medium.",
+		"description": "NVIDIA GPU Display Driver for Windows contains a vulnerability in the kernel mode layer (nvlddmkm.sys) handler for DxgkDdiEscape, where improper input validation can cause denial of service.",
 		"affected": {
 			"family": "unix",
-			"Platform": "Ubuntu 22.04 LTS"
+			"platform": "Ubuntu 22.04 LTS"
 		},
 		"reference": {
 			"source": "CVE",
@@ -15,23 +15,18 @@
 			"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-28190"
 		},
 		"advisory": {
-			"Severity": "Medium",
-			"Rights": "Copyright (C) 2022 Canonical Ltd.",
-			"PublicDate": "2022-05-17 20:15:00 UTC",
-			"Bug": null,
+			"severity": "Medium",
+			"rights": "Copyright (C) 2022 Canonical Ltd.",
+			"public_date": "2022-05-17 20:15:00 UTC",
 			"cve": {},
-			"PublicDateAtUsn": "",
-			"AssignedTo": "",
-			"DiscoveredBy": "",
-			"Crd": "",
-			"Ref": [
+			"ref": [
 				"https://ubuntu.com/security/CVE-2022-28190",
 				"https://nvidia.custhelp.com/app/answers/detail/a_id/5353"
 			]
 		}
 	},
 	"notes": {
-		"Note": "sbeattie> only affects windows drivers mdeslaur> some binary drivers are no longer support by NVidia, so they are marked as ignored here"
+		"note": "sbeattie> only affects windows drivers mdeslaur> some binary drivers are no longer support by NVidia, so they are marked as ignored here"
 	},
 	"criteria": {
 		"criterias": [

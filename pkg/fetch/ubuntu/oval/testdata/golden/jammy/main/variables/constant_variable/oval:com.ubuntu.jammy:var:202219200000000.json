@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'gst-plugins-good1.0' package binaries",
-	"Value": [
+	"value": [
 		"gstreamer1.0-gtk3",
 		"gstreamer1.0-plugins-good",
 		"gstreamer1.0-pulseaudio",
