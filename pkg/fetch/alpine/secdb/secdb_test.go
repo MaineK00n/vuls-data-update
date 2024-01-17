@@ -28,6 +28,9 @@ func TestFetch(t *testing.T) {
 				"/v3.16":                "testdata/fixtures/v3.16/indexof.html",
 				"/v3.16/main.json":      "testdata/fixtures/v3.16/main.json",
 				"/v3.16/community.json": "testdata/fixtures/v3.16/community.json",
+				"/edge":                 "testdata/fixtures/edge/indexof.html",
+				"/edge/main.json":       "testdata/fixtures/edge/main.json",
+				"/edge/community.json":  "testdata/fixtures/edge/community.json",
 			},
 		},
 		{

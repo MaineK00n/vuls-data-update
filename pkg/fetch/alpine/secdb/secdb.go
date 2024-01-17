@@ -142,7 +142,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	var releases []string
 	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
-		if !strings.HasPrefix(txt, "v") {
+		if !strings.HasPrefix(txt, "v") && !strings.HasPrefix(txt, "edge") {
 			return
 		}
 		releases = append(releases, strings.TrimSuffix(txt, "/"))
