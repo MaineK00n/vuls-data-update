@@ -1,0 +1,56 @@
+{
+	"Architecture": [
+		"i386 amd64 x32"
+	],
+	"Autobuild": [
+		"yes"
+	],
+	"Binary": [
+		"intel-microcode"
+	],
+	"Build-Depends": [
+		"debhelper (>= 9), iucode-tool (>= 0.9)"
+	],
+	"Checksums-Sha256": [
+		"27384950ada8152f425c6166462950a66d27b871231738f8d3c0c062cd29241d 1830 intel-microcode_3.20230808.1~deb12u1.dsc b29c3296f94aaf1bfee1d4bc3194e1e8446730f0727613ef1a70d8d1dd51118e 7199240 intel-microcode_3.20230808.1~deb12u1.tar.xz"
+	],
+	"Directory": [
+		"pool/updates/non-free-firmware/i/intel-microcode"
+	],
+	"Format": [
+		"3.0 (native)"
+	],
+	"Homepage": [
+		"https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files"
+	],
+	"Maintainer": [
+		"Henrique de Moraes Holschuh <hmh@debian.org>"
+	],
+	"Package": [
+		"intel-microcode"
+	],
+	"Package-List": [
+		"intel-microcode deb non-free-firmware/admin standard arch=i386,amd64,x32"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"non-free-firmware/misc"
+	],
+	"Standards-Version": [
+		"4.1.1"
+	],
+	"Uploaders": [
+		"Giacomo Catenazzi <cate@debian.org>"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/hmh/intel-microcode"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/hmh/intel-microcode.git"
+	],
+	"Version": [
+		"3.20230808.1~deb12u1"
+	]
+}

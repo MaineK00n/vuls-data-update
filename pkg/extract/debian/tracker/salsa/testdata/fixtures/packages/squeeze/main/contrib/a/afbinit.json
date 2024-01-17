@@ -1,0 +1,38 @@
+{
+	"Architecture": [
+		"sparc"
+	],
+	"Binary": [
+		"afbinit"
+	],
+	"Build-Depends": [
+		"debhelper (>= 5.0.0)"
+	],
+	"Directory": [
+		"pool/contrib/a/afbinit"
+	],
+	"Files": [
+		"bcfb1c4ef335b4e479a1d0b3cfa2e44b 553 afbinit_1.0-4.dsc c126b3ebb72e5028fd5d35fb6128316f 2979 afbinit_1.0.orig.tar.gz 894ee8cf4afa258aa879be7ebe90edf9 3815 afbinit_1.0-4.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Maintainer": [
+		"Emanuele Rocca <ema@debian.org>"
+	],
+	"Package": [
+		"afbinit"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"contrib/utils"
+	],
+	"Standards-Version": [
+		"3.7.3"
+	],
+	"Version": [
+		"1.0-4"
+	]
+}

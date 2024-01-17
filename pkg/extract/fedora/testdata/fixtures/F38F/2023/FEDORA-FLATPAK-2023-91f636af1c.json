@@ -1,0 +1,246 @@
+{
+	"alias": "FEDORA-FLATPAK-2023-91f636af1c",
+	"autokarma": true,
+	"autotime": true,
+	"builds": [
+		{
+			"nvr": "firefox-stable-3820231006182118.1",
+			"release_id": 73,
+			"signed": true,
+			"type": "flatpak"
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 3237151,
+			"text": "This update has been submitted for testing by kalev. ",
+			"timestamp": "2023-10-06 22:52:09",
+			"update_id": 555673,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3237152,
+			"text": "This update's test gating status has been changed to 'ignored'.",
+			"timestamp": "2023-10-06 22:52:10",
+			"update_id": 555673,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3237294,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2023-10-07 02:05:58",
+			"update_id": 555673,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3240902,
+			"karma": 1,
+			"testcase_feedback": [
+				{
+					"comment_id": 3240902,
+					"testcase": {
+						"id": 68,
+						"name": "QA:Testcase firefox addons"
+					},
+					"testcase_id": 68
+				},
+				{
+					"comment_id": 3240902,
+					"testcase": {
+						"id": 69,
+						"name": "QA:Testcase firefox browse"
+					},
+					"testcase_id": 69
+				},
+				{
+					"comment_id": 3240902,
+					"testcase": {
+						"id": 70,
+						"name": "QA:Testcase firefox media"
+					},
+					"testcase_id": 70
+				},
+				{
+					"comment_id": 3240902,
+					"testcase": {
+						"id": 437,
+						"name": "QA:Testcase firefox screenshot"
+					},
+					"testcase_id": 437
+				}
+			],
+			"text": "Works in daily use.",
+			"timestamp": "2023-10-10 11:36:11",
+			"update_id": 555673,
+			"user": {
+				"avatar": "https://seccdn.libravatar.org/avatar/f8db9b35a53624d807b2dd11c2109d12585c5852f0ff616077f8ed9348854fb1?s=24&d=retro",
+				"email": "marttikuosmanen@yahoo.co.uk",
+				"groups": [
+					{
+						"name": "ipausers"
+					},
+					{
+						"name": "signed_fpca"
+					}
+				],
+				"id": 417,
+				"name": "kuosmanen",
+				"openid": "kuosmanen.id.fedoraproject.org"
+			},
+			"user_id": 417
+		},
+		{
+			"id": 3240903,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2023-10-10 11:36:11",
+			"update_id": 555673,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3241690,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2023-10-11 00:40:00",
+			"update_id": 555673,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "flatpak",
+	"critpath_groups": "",
+	"date_approved": "2023-10-10 11:36:11",
+	"date_pushed": "2023-10-11 00:39:59",
+	"date_stable": "2023-10-11 00:39:59",
+	"date_submitted": "2023-10-06 22:52:09",
+	"date_testing": "2023-10-07 02:05:58",
+	"karma": 1,
+	"meets_testing_requirements": true,
+	"notes": "This update provides the latest release of Firefox, with an important security fix.",
+	"pushed": true,
+	"release": {
+		"branch": "f38",
+		"candidate_tag": "f38-flatpak-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f38-flatpak",
+		"id_prefix": "FEDORA-FLATPAK",
+		"long_name": "Fedora 38 Flatpaks",
+		"mail_template": "fedora_errata_template",
+		"name": "F38F",
+		"override_tag": "f38-flatpak-override",
+		"package_manager": "unspecified",
+		"pending_stable_tag": "f38-flatpak-updates-pending",
+		"pending_testing_tag": "f38-flatpak-updates-testing-pending",
+		"stable_tag": "f38-flatpak-updates",
+		"state": "current",
+		"testing_tag": "f38-flatpak-updates-testing",
+		"version": "38"
+	},
+	"require_bugs": true,
+	"require_testcases": true,
+	"requirements": "",
+	"severity": "urgent",
+	"stable_days": 7,
+	"stable_karma": 1,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_cases": [
+		{
+			"id": 68,
+			"name": "QA:Testcase firefox addons"
+		},
+		{
+			"id": 69,
+			"name": "QA:Testcase firefox browse"
+		},
+		{
+			"id": 70,
+			"name": "QA:Testcase firefox media"
+		},
+		{
+			"id": 437,
+			"name": "QA:Testcase firefox screenshot"
+		}
+	],
+	"test_gating_status": "ignored",
+	"title": "firefox-stable-3820231006182118.1",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-FLATPAK-2023-91f636af1c",
+	"unstable_karma": -3,
+	"updateid": "FEDORA-FLATPAK-2023-91f636af1c",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/e66f540a8e2d93d96cbba97628e82213a8eed237c744f2ce5184d7c9588a8d18?s=24&d=retro",
+		"email": "klember@redhat.com",
+		"groups": [
+			{
+				"name": "qa"
+			},
+			{
+				"name": "packager"
+			},
+			{
+				"name": "provenpackager"
+			},
+			{
+				"name": "gnome-sig"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			},
+			{
+				"name": "gitspin-kickstarts"
+			},
+			{
+				"name": "rust-sig"
+			},
+			{
+				"name": "hosted-content"
+			},
+			{
+				"name": "flatpak-sig"
+			}
+		],
+		"id": 285,
+		"name": "kalev",
+		"openid": "kalev.id.fedoraproject.org"
+	},
+	"version_hash": "ef022f474a983d2c5331d3c5c537f2e9c82b06c5"
+}

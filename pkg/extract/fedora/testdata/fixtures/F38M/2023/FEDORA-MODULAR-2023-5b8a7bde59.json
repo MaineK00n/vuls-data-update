@@ -1,0 +1,3355 @@
+{
+	"alias": "FEDORA-MODULAR-2023-5b8a7bde59",
+	"autokarma": true,
+	"autotime": true,
+	"bugs": [
+		{
+			"bug_id": 2142973,
+			"security": true,
+			"title": "CVE-2022-21594 CVE-2022-21599 CVE-2022-21604 CVE-2022-21608 CVE-2022-21611 CVE-2022-21617 CVE-2022-21625 CVE-2022-21632 CVE-2022-21633 CVE-2022-21637 CVE-2022-21640 CVE-2022-39400 CVE-2022-39408 ... mysql:8.0/community-mysql: various flaws [fedora-all]",
+			"bugzilla": {
+				"bug_id": "2142973",
+				"creation_ts": "2022-11-15 16:38:40 +0000",
+				"short_desc": "CVE-2022-21594 CVE-2022-21599 CVE-2022-21604 CVE-2022-21608 CVE-2022-21611 CVE-2022-21617 CVE-2022-21625 CVE-2022-21632 CVE-2022-21633 CVE-2022-21637 CVE-2022-21640 CVE-2022-39400 CVE-2022-39408 ... mysql:8.0/community-mysql: various flaws [fedora-all]",
+				"delta_ts": "2023-09-16 00:28:34 +0000",
+				"bug_status": "CLOSED",
+				"resolution": "ERRATA",
+				"keywords": "Security, SecurityTracking",
+				"priority": "medium",
+				"bug_severity": "medium",
+				"blocked": [
+					{
+						"bug_id": "2142861",
+						"alias": "CVE-2022-21594",
+						"creation_ts": "2022-11-15 11:28:08 +0000",
+						"short_desc": "CVE-2022-21594 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:14:13 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790811",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:28:08 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792075",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:41:25 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097426",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:45 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098066",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:24:56 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21594"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259915",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:02:57 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290083",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:43 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142863",
+						"alias": "CVE-2022-21599",
+						"creation_ts": "2022-11-15 11:28:20 +0000",
+						"short_desc": "CVE-2022-21599 mysql: Server: Stored Procedure unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:14:37 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790813",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:28:20 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Stored Procedure). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792073",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:41:13 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097427",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:45 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098067",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:25:55 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21599"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259917",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:02 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290084",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:44 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142865",
+						"alias": "CVE-2022-21604",
+						"creation_ts": "2022-11-15 11:28:31 +0000",
+						"short_desc": "CVE-2022-21604 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:14:52 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790816",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:28:31 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: InnoDB). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792052",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:39:15 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097428",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:47 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098070",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:26:53 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21604"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259918",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:05 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290086",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:48 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142868",
+						"alias": "CVE-2022-21608",
+						"creation_ts": "2022-11-15 11:28:48 +0000",
+						"short_desc": "CVE-2022-21608 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:15:24 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790819",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:28:48 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 5.7.39 and prior and 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792049",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:39:01 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097429",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:49 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098071",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:27:52 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21608"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259919",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:07 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290087",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:48 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142869",
+						"alias": "CVE-2022-21611",
+						"creation_ts": "2022-11-15 11:28:54 +0000",
+						"short_desc": "CVE-2022-21611 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:15:32 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790820",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:28:54 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: InnoDB). Supported versions that are affected are 8.0.30 and prior. Difficult to exploit vulnerability allows high privileged attacker with logon to the infrastructure where MySQL Server executes to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792055",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:39:26 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097430",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:50 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098075",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:28:49 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21611"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259920",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:11 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290088",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:53 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142870",
+						"alias": "CVE-2022-21617",
+						"creation_ts": "2022-11-15 11:29:00 +0000",
+						"short_desc": "CVE-2022-21617 mysql: Server: Connection Handling unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:15:40 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790821",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:00 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Connection Handling). Supported versions that are affected are 5.7.39 and prior and 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792059",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:39:51 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097431",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:52 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098077",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:29:47 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21617"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259921",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:12 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290089",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:53 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142871",
+						"alias": "CVE-2022-21625",
+						"creation_ts": "2022-11-15 11:29:06 +0000",
+						"short_desc": "CVE-2022-21625 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:15:47 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790822",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:06 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Difficult to exploit vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792046",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:38:51 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097432",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:54 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098198",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:54:52 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21625"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259922",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:16 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290090",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:57 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142872",
+						"alias": "CVE-2022-21632",
+						"creation_ts": "2022-11-15 11:29:11 +0000",
+						"short_desc": "CVE-2022-21632 mysql: Server: Security: Privileges unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:15:56 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790823",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:11 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Security: Privileges). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792061",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:40:03 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097433",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:55 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098220",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:55:52 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21632"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259923",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:16 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290091",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 09:59:58 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142873",
+						"alias": "CVE-2022-21633",
+						"creation_ts": "2022-11-15 11:29:16 +0000",
+						"short_desc": "CVE-2022-21633 mysql: Server: Replication unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:16:03 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790824",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:16 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Replication). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792057",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:39:39 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097434",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:58 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098226",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:56:50 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21633"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259924",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:17 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290092",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:02 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142875",
+						"alias": "CVE-2022-21637",
+						"creation_ts": "2022-11-15 11:29:27 +0000",
+						"short_desc": "CVE-2022-21637 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:16:17 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790826",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:27 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: InnoDB). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792069",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:40:51 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097435",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:59 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098228",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:57:49 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21637"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259925",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:21 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290093",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:03 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142877",
+						"alias": "CVE-2022-21640",
+						"creation_ts": "2022-11-15 11:29:39 +0000",
+						"short_desc": "CVE-2022-21640 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:16:30 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790828",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:39 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792071",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:41:03 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097436",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:42:59 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098229",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:58:49 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-21640"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259926",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:21 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290094",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:06 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142879",
+						"alias": "CVE-2022-39400",
+						"creation_ts": "2022-11-15 11:29:51 +0000",
+						"short_desc": "CVE-2022-39400 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:16:50 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790830",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:51 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792063",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:40:15 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097437",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:43:03 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098233",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 13:59:46 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-39400"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259927",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:22 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290095",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:07 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142880",
+						"alias": "CVE-2022-39408",
+						"creation_ts": "2022-11-15 11:29:56 +0000",
+						"short_desc": "CVE-2022-39408 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:16:57 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790831",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:29:56 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows low privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792065",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:40:28 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097438",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:43:04 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098237",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 14:00:45 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-39408"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259928",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:26 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290096",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:12 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2142881",
+						"alias": "CVE-2022-39410",
+						"creation_ts": "2022-11-15 11:30:02 +0000",
+						"short_desc": "CVE-2022-39410 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+						"delta_ts": "2023-09-22 09:17:06 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2142882",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16790832",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 11:30:02 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows low privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuoct2022.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "16792067",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2022-11-15 16:40:41 +0000",
+								"thetext": "Created community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142972]\n\n\nCreated mysql:8.0/community-mysql tracking bugs for this issue:\n\nAffects: fedora-all [bug 2142973]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097439",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:43:05 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098239",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 14:01:43 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2022-39410"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259929",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:26 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290097",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:16 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2162271",
+						"alias": "CVE-2023-21864",
+						"creation_ts": "2023-01-19 09:22:55 +0000",
+						"short_desc": "CVE-2023-21864 mysql: Server: Optimizer unspecified vulnerability (CPU Jan 2023)",
+						"delta_ts": "2023-09-22 09:19:05 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2162292",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16980505",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-01-19 09:22:55 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpujan2023.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097442",
+								"comment_count": "1",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:43:14 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098332",
+								"comment_count": "2",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 14:26:44 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2023-21864"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259932",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:32 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290100",
+								"comment_count": "4",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:21 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2162272",
+						"alias": "CVE-2023-21865",
+						"creation_ts": "2023-01-19 09:23:01 +0000",
+						"short_desc": "CVE-2023-21865 mysql: Server: Optimizer unspecified vulnerability (CPU Jan 2023)",
+						"delta_ts": "2023-09-22 09:19:09 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2162292",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16980507",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-01-19 09:23:01 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpujan2023.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097443",
+								"comment_count": "1",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:43:14 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098336",
+								"comment_count": "2",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 14:27:42 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2023-21865"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259933",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:35 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290101",
+								"comment_count": "4",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:22 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2162281",
+						"alias": "CVE-2023-21874",
+						"creation_ts": "2023-01-19 09:23:49 +0000",
+						"short_desc": "CVE-2023-21874 mysql: Server: Thread Pooling unspecified vulnerability (CPU Jan 2023)",
+						"delta_ts": "2023-09-22 09:20:48 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "low",
+						"bug_severity": "low",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2162292",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "16980518",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-01-19 09:23:49 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Thread Pooling). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a partial denial of service (partial DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpujan2023.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17097450",
+								"comment_count": "1",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-03-07 09:43:29 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Software Collections for Red Hat Enterprise Linux 7\n\nVia RHSA-2023:1102 https://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17098457",
+								"comment_count": "2",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-03-07 15:10:50 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2023-21874"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259940",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:46 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290108",
+								"comment_count": "4",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:33 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							}
+						]
+					},
+					{
+						"bug_id": "2188110",
+						"alias": "CVE-2023-21912",
+						"creation_ts": "2023-04-19 20:02:39 +0000",
+						"short_desc": "CVE-2023-21912 mysql: Server: Security: Privileges unspecified vulnerability (CPU Apr 2023)",
+						"delta_ts": "2023-05-17 03:44:59 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "high",
+						"bug_severity": "high",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2188133",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "17202581",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-04-19 20:02:39 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Security: Privileges). Supported versions that are affected are 5.7.41 and prior and 8.0.30 and prior. Easily exploitable vulnerability allows unauthenticated attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuapr2023.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17212278",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-04-24 20:43:30 +0000",
+								"thetext": "The Oracle advisory states that this issue was fixed upstream in version 8.0.31. The mysql packages as shipped in following Red Hat products were previously updated to a version that contains the fix via the following errata:\n\nrh-mysql80-mysql in Red Hat Software Collections\nhttps://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259951",
+								"comment_count": "2",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:04:05 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290121",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:53 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17293050",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-05-17 03:44:56 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2023-21912"
+							}
+						]
+					},
+					{
+						"bug_id": "2188112",
+						"alias": "CVE-2023-21917",
+						"creation_ts": "2023-04-19 20:02:49 +0000",
+						"short_desc": "CVE-2023-21917 mysql: Server: Optimizer unspecified vulnerability (CPU Apr 2023)",
+						"delta_ts": "2023-09-22 09:24:10 +0000",
+						"bug_status": "CLOSED",
+						"resolution": "ERRATA",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2142969",
+							"2142970",
+							"2142971",
+							"2142972",
+							"2142973",
+							"2177732",
+							"2177734"
+						],
+						"blocked": [
+							{
+								"bug_id": "2188133",
+								"error": "NotPermitted"
+							}
+						],
+						"external_bugs": {
+							"text": "RHSA-2023:3087",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "17202583",
+								"comment_count": "0",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-04-19 20:02:49 +0000",
+								"thetext": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 8.0.30 and prior. Easily exploitable vulnerability allows high privileged attacker with network access via multiple protocols to compromise MySQL Server. Successful attacks of this vulnerability can result in unauthorized ability to cause a hang or frequently repeatable crash (complete DOS) of MySQL Server.\n\nExternal References:\n\nhttps://www.oracle.com/security-alerts/cpuapr2023.html#AppendixMSQL"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17212279",
+								"comment_count": "1",
+								"who": {
+									"text": "mcascell",
+									"name": "Mauro Matteo Cascella"
+								},
+								"bug_when": "2023-04-24 20:43:36 +0000",
+								"thetext": "The Oracle advisory states that this issue was fixed upstream in version 8.0.31. The mysql packages as shipped in following Red Hat products were previously updated to a version that contains the fix via the following errata:\n\nrh-mysql80-mysql in Red Hat Software Collections\nhttps://access.redhat.com/errata/RHSA-2023:1102"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17259916",
+								"comment_count": "2",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-09 11:03:00 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2023:2621 https://access.redhat.com/errata/RHSA-2023:2621"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17290122",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2023-05-16 10:00:57 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2023:3087 https://access.redhat.com/errata/RHSA-2023:3087"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "17293052",
+								"comment_count": "4",
+								"who": {
+									"text": "prodsec-dev",
+									"name": "Product Security DevOps Team"
+								},
+								"bug_when": "2023-05-17 03:45:55 +0000",
+								"thetext": "This bug is now closed. Further updates for individual products will be reflected on the CVE page(s):\n\nhttps://access.redhat.com/security/cve/cve-2023-21917"
+							}
+						]
+					}
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "16792043",
+						"comment_count": "0",
+						"who": {
+							"text": "mcascell",
+							"name": "Mauro Matteo Cascella"
+						},
+						"bug_when": "2022-11-15 16:38:40 +0000",
+						"thetext": "\nMore information about these security flaws is available in the following bugs:\n\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142871\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142865\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142875\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142861\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142873\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142870\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142872\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142879\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142880\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142881\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142869\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142877\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142863\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2142868\n\nDisclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "16792044",
+						"comment_count": "1",
+						"who": {
+							"text": "mcascell",
+							"name": "Mauro Matteo Cascella"
+						},
+						"bug_when": "2022-11-15 16:38:43 +0000",
+						"thetext": "Use the following template to for the 'fedpkg update' request to submit an\nupdate for this issue as it contains the top-level parent bug(s) as well as\nthis tracking bug.  This will ensure that all associated bugs get updated\nwhen new packages are pushed to stable.\n\n=====\n\n# bugfix, security, enhancement, newpackage (required)\ntype=security\n\n# low, medium, high, urgent (required)\nseverity=medium\n\n# testing, stable\nrequest=testing\n\n# Bug numbers: 1234,9876\nbugs=2142861,2142863,2142865,2142868,2142869,2142870,2142871,2142872,2142873,2142875,2142877,2142879,2142880,2142881,2142973\n\n# Description of your update\nnotes=Security fix for [PUT CVEs HERE]\n\n# Enable request automation based on the stable/unstable karma thresholds\nautokarma=True\nstable_karma=3\nunstable_karma=-3\n\n# Automatically close bugs when this marked as stable\nclose_bugs=True\n\n# Suggest that users restart after update\nsuggest_reboot=False\n\n======\n\nAdditionally, you may opt to use the bodhi web interface to submit updates:\n\nhttps://bodhi.fedoraproject.org/updates/new"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "16792081",
+						"comment_count": "2",
+						"who": {
+							"text": "mcascell",
+							"name": "Mauro Matteo Cascella"
+						},
+						"bug_when": "2022-11-15 16:44:50 +0000",
+						"thetext": "Fixed upstream in version 8.0.31."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "16981350",
+						"comment_count": "3",
+						"who": {
+							"text": "mcascell",
+							"name": "Mauro Matteo Cascella"
+						},
+						"bug_when": "2023-01-19 13:38:06 +0000",
+						"thetext": "Adding CVE-2023-21864, CVE-2023-21865 and CVE-2023-21874 - these CVEs were covered in Jan 2023 CPU [1] and listed as fixed in 8.0.31.\n\n[1] https://www.oracle.com/security-alerts/cpujan2023.html#AppendixMSQL"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17212272",
+						"comment_count": "4",
+						"who": {
+							"text": "mcascell",
+							"name": "Mauro Matteo Cascella"
+						},
+						"bug_when": "2023-04-24 20:35:32 +0000",
+						"thetext": "Adding CVE-2023-21912 and CVE-2023-21917 - these CVEs were covered in Apr 2023 CPU [1] and listed as fixed in 8.0.31.\n\n[1] https://www.oracle.com/security-alerts/cpuapr2023.html#AppendixMSQL"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17594546",
+						"comment_count": "5",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2023-09-07 10:08:42 +0000",
+						"thetext": "FEDORA-MODULAR-2023-8110bc5325 has been submitted as an update to Fedora 37 Modular. https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-8110bc5325"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17594547",
+						"comment_count": "6",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2023-09-07 10:08:43 +0000",
+						"thetext": "FEDORA-MODULAR-2023-5b8a7bde59 has been submitted as an update to Fedora 38 Modular. https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-5b8a7bde59"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17596202",
+						"comment_count": "7",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2023-09-08 01:35:11 +0000",
+						"thetext": "FEDORA-MODULAR-2023-8110bc5325 has been pushed to the Fedora 37 Modular testing repository.\n\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-8110bc5325\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17596264",
+						"comment_count": "8",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2023-09-08 01:39:21 +0000",
+						"thetext": "FEDORA-MODULAR-2023-5b8a7bde59 has been pushed to the Fedora 38 Modular testing repository.\n\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-5b8a7bde59\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17638127",
+						"comment_count": "9",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2023-09-16 00:19:53 +0000",
+						"thetext": "FEDORA-MODULAR-2023-8110bc5325 has been pushed to the Fedora 37 Modular stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "17638131",
+						"comment_count": "10",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2023-09-16 00:28:34 +0000",
+						"thetext": "FEDORA-MODULAR-2023-5b8a7bde59 has been pushed to the Fedora 38 Modular stable repository.\nIf problem still persists, please make note of it in this bug report."
+					}
+				]
+			}
+		}
+	],
+	"builds": [
+		{
+			"nvr": "mysql-8.0-3820230907003352.75741a8b",
+			"release_id": 75,
+			"signed": true,
+			"type": "module",
+			"package": {
+				"modulemd.aarch64.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					}
+				],
+				"modulemd.i686.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					}
+				],
+				"modulemd.ppc64le.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					}
+				],
+				"modulemd.s390x.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					}
+				],
+				"modulemd.src.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					}
+				],
+				"modulemd.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "aarch64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "i686"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "s390x"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					}
+				],
+				"modulemd.x86_64.txt": [
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "src"
+					},
+					{
+						"name": "community-mysql",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-common",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-debugsource",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-devel-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-errmsg",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-libs-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-server-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					},
+					{
+						"name": "community-mysql-test-debuginfo",
+						"version": "8.0.34",
+						"release": "2.module_f38+17431+1f3fdb0a",
+						"arch": "x86_64"
+					}
+				]
+			}
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 3189714,
+			"text": "This update has been submitted for testing by mschorm. ",
+			"timestamp": "2023-09-07 10:08:39",
+			"update_id": 546418,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3189715,
+			"text": "This update's test gating status has been changed to 'ignored'.",
+			"timestamp": "2023-09-07 10:08:39",
+			"update_id": 546418,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3190697,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2023-09-08 01:39:29",
+			"update_id": 546418,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3198500,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2023-09-15 01:40:30",
+			"update_id": 546418,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3200372,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2023-09-16 00:28:43",
+			"update_id": 546418,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "module",
+	"critpath_groups": "",
+	"date_approved": "2023-09-15 01:40:30",
+	"date_pushed": "2023-09-16 00:28:32",
+	"date_stable": "2023-09-16 00:28:32",
+	"date_submitted": "2023-09-07 10:08:39",
+	"date_testing": "2023-09-08 01:39:18",
+	"meets_testing_requirements": true,
+	"notes": "**MySQL 8.0.34**\n\nRelease notes:\n\n    https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-34.html",
+	"pushed": true,
+	"release": {
+		"branch": "f38m",
+		"candidate_tag": "f38-modular-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f38-modular",
+		"eol": "2024-05-14",
+		"id_prefix": "FEDORA-MODULAR",
+		"long_name": "Fedora 38 Modular",
+		"mail_template": "fedora_errata_template",
+		"name": "F38M",
+		"override_tag": "f38-modular-override",
+		"package_manager": "unspecified",
+		"pending_signing_tag": "f38-modular-signing-pending",
+		"pending_stable_tag": "f38-modular-updates-pending",
+		"pending_testing_tag": "f38-modular-updates-testing-pending",
+		"stable_tag": "f38-modular-updates",
+		"state": "current",
+		"testing_tag": "f38-modular-updates-testing",
+		"version": "38"
+	},
+	"requirements": "",
+	"severity": "medium",
+	"stable_days": 7,
+	"stable_karma": 2,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_cases": [
+		{
+			"id": 420,
+			"name": "QA:Testcase MySQL"
+		}
+	],
+	"test_gating_status": "ignored",
+	"title": "mysql-8.0-3820230907003352.75741a8b",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-MODULAR-2023-5b8a7bde59",
+	"unstable_karma": -1,
+	"updateid": "FEDORA-MODULAR-2023-5b8a7bde59",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/4148e1dc0dd062270ed8db67f6b8c50a7a1eef2c6043e8fa617fb32c1a99a4ec?s=24&d=retro",
+		"email": "mschorm@redhat.com",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			},
+			{
+				"name": "db-sig"
+			}
+		],
+		"id": 3283,
+		"name": "mschorm",
+		"openid": "mschorm.id.fedoraproject.org"
+	},
+	"version_hash": "02c5b76a1601c8aaa15a28c1785e83d7fc569026"
+}

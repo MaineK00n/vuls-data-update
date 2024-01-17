@@ -1,0 +1,9 @@
+{
+	"id": "oval:com.ubuntu.jammy:var:200224390000040",
+	"version": "1",
+	"datatype": "string",
+	"comment": "'gcc-snapshot' package binaries",
+	"value": [
+		"^gcc-snapshot(?::\\w+|)\\s+(.*)$"
+	]
+}

@@ -1,0 +1,576 @@
+{
+	"documenttitle": {
+		"text": "Red Hat Security Advisory: kernel security and bug fix update",
+		"lang": "en"
+	},
+	"DocumentType": "Security Advisory",
+	"documentpublisher": {
+		"type": "Vendor",
+		"ContactDetails": "secalert@redhat.com",
+		"IssuingAuthority": "Red Hat Product Security"
+	},
+	"documenttracking": {
+		"identification": {
+			"ID": "RHSA-2023:5628"
+		},
+		"Status": "Final",
+		"Version": "1",
+		"revisionhistory": {
+			"revision": {
+				"Number": "1",
+				"Date": "2023-10-10T16:28:00Z",
+				"Description": "Current version"
+			}
+		},
+		"InitialReleaseDate": "2023-10-10T16:28:00Z",
+		"CurrentReleaseDate": "2023-10-10T16:28:00Z",
+		"generator": {
+			"Engine": "Red Hat SDEngine 3.22.0",
+			"Date": "2023-10-10T20:06:00Z"
+		}
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\nAn update for kernel is now available for Red Hat Enterprise Linux 8.4 Advanced Mission Critical Update Support, Red Hat Enterprise Linux 8.4 Telecommunications Update Service, and Red Hat Enterprise Linux 8.4 Update Services for SAP Solutions.\n\nRed Hat Product Security has rated this update as having a security impact of Important. A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE link(s) in the References section.\n    ",
+				"title": "Topic",
+				"type": "Summary",
+				"ordinal": "1",
+				"lang": "en"
+			},
+			{
+				"text": "\nThe kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: net/sched: cls_u32 component reference counter leak if tcf_change_indev() fails (CVE-2023-3609)\n\n* kernel: net/sched: cls_fw component can be exploited as result of failure in tcf_change_indev function (CVE-2023-3776)\n\n* kernel: net/sched: Use-after-free vulnerabilities in the net/sched classifiers: cls_fw, cls_u32 and cls_route (CVE-2023-4128)\n\n* kernel: netfilter: NULL pointer dereference in nf_tables due to zeroed list head (CVE-2023-1095)\n\n* kernel: save/restore speculative MSRs during S3 suspend/resume (CVE-2023-1637)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* avoid unnecessary page fault retires on shared memory types (BZ#2221102)\n\n* [Hyper-V][RHEL-8] Fix VM crash/hang Issues due to fast VF add/remove events (BZ#2227261)\n\n* kernel-devel RPM cross-compiled by CKI contains host-arch scripts (BZ#2232139)\n\n* iavf: hang in iavf_remove() - SNO node hangs after running systemctl reboot (BZ#2232405)\n\n* netfilter: RHEL 8.8 phase 2 backports from upstream (BZ#2236818)\n    ",
+				"title": "Details",
+				"type": "General",
+				"ordinal": "2",
+				"lang": "en"
+			},
+			{
+				"text": "This content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content, or a modified version of it, you must provide attribution to Red Hat Inc. and provide a link to the original.",
+				"title": "Terms of Use",
+				"type": "Legal Disclaimer",
+				"ordinal": "3",
+				"lang": "en"
+			}
+		]
+	},
+	"documentdistribution": {
+		"text": "Copyright © 2023 Red Hat, Inc. All rights reserved.",
+		"lang": "en"
+	},
+	"aggregateseverity": {
+		"text": "Important",
+		"namespace": "https://access.redhat.com/security/updates/classification/"
+	},
+	"documentreferences": {
+		"reference": [
+			{
+				"type": "Self",
+				"URL": "https://access.redhat.com/errata/RHSA-2023:5628",
+				"Description": "https://access.redhat.com/errata/RHSA-2023:5628"
+			},
+			{
+				"type": "External",
+				"URL": "https://access.redhat.com/security/updates/classification/#important",
+				"Description": "https://access.redhat.com/security/updates/classification/#important"
+			}
+		]
+	},
+	"vulnerability": [
+		{
+			"ordinal": "1",
+			"xmlns": "http://www.icasi.org/CVRF/schema/vuln/1.1",
+			"notes": {
+				"note": {
+					"text": "A NULL pointer dereference flaw was found in the Linux kernel’s netfilter subsystem. The issue could occur due to an error in nf_tables_updtable while freeing a transaction object not placed on the list head. This flaw allows a local, unprivileged user to crash the system, resulting in a denial of service.",
+					"title": "Vulnerability Description",
+					"type": "General",
+					"ordinal": "1",
+					"lang": "en"
+				}
+			},
+			"ReleaseDate": "2022-08-09T00:00:00Z",
+			"involvements": {
+				"involvement": {
+					"party": "Vendor",
+					"status": "Completed"
+				}
+			},
+			"CVE": "CVE-2023-1095",
+			"remediations": {
+				"remediation": {
+					"type": "Vendor Fix",
+					"description": {
+						"text": "\nFor details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258\n\nThe system must be rebooted for this update to take effect.\n    ",
+						"lang": "en"
+					},
+					"URL": "https://access.redhat.com/errata/RHSA-2023:5628"
+				}
+			},
+			"references": {
+				"reference": [
+					{
+						"URL": "https://www.cve.org/CVERecord?id=CVE-2023-1095",
+						"Description": "https://www.cve.org/CVERecord?id=CVE-2023-1095"
+					},
+					{
+						"URL": "https://nvd.nist.gov/vuln/detail/CVE-2023-1095",
+						"Description": "https://nvd.nist.gov/vuln/detail/CVE-2023-1095"
+					},
+					{
+						"URL": "https://access.redhat.com/security/cve/CVE-2023-1095",
+						"Description": "CVE-2023-1095"
+					},
+					{
+						"URL": "https://bugzilla.redhat.com/show_bug.cgi?id=2173973",
+						"Description": "bz#2173973: NULL pointer dereference in nf_tables due to zeroed list head"
+					}
+				]
+			},
+			"threats": {
+				"threat": {
+					"type": "Impact",
+					"Description": "Moderate"
+				}
+			},
+			"DiscoveryDate": "2022-12-16T00:00:00Z",
+			"productstatuses": {
+				"status": {
+					"type": "Fixed",
+					"ProductID": [
+						"BaseOS-8.4.0.Z.AUS:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
+					]
+				}
+			},
+			"acknowledgments": {
+				"acknowledgment": {
+					"Description": ""
+				}
+			},
+			"cvssscoresets": {
+				"scoreset": {
+					"BaseScore": "",
+					"Vector": ""
+				}
+			}
+		},
+		{
+			"ordinal": "2",
+			"xmlns": "http://www.icasi.org/CVRF/schema/vuln/1.1",
+			"notes": {
+				"note": {
+					"text": "A flaw was found in the Linux kernel X86 CPU Power management when resuming CPU from suspend-to-RAM. This issue could allow a local user unauthorized access to memory from the CPU.",
+					"title": "Vulnerability Description",
+					"type": "General",
+					"ordinal": "1",
+					"lang": "en"
+				}
+			},
+			"ReleaseDate": "2022-04-05T00:00:00Z",
+			"involvements": {
+				"involvement": {
+					"party": "Vendor",
+					"status": "Completed"
+				}
+			},
+			"CVE": "CVE-2023-1637",
+			"remediations": {
+				"remediation": {
+					"type": "Vendor Fix",
+					"description": {
+						"text": "\nFor details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258\n\nThe system must be rebooted for this update to take effect.\n    ",
+						"lang": "en"
+					},
+					"URL": "https://access.redhat.com/errata/RHSA-2023:5628"
+				}
+			},
+			"references": {
+				"reference": [
+					{
+						"URL": "https://www.cve.org/CVERecord?id=CVE-2023-1637",
+						"Description": "https://www.cve.org/CVERecord?id=CVE-2023-1637"
+					},
+					{
+						"URL": "https://nvd.nist.gov/vuln/detail/CVE-2023-1637",
+						"Description": "https://nvd.nist.gov/vuln/detail/CVE-2023-1637"
+					},
+					{
+						"URL": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e2a1256b17b16f9b9adf1b6fea56819e7b68e463",
+						"Description": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e2a1256b17b16f9b9adf1b6fea56819e7b68e463"
+					},
+					{
+						"URL": "https://sourceware.org/bugzilla/show_bug.cgi?id=27398",
+						"Description": "https://sourceware.org/bugzilla/show_bug.cgi?id=27398"
+					},
+					{
+						"URL": "https://access.redhat.com/security/cve/CVE-2023-1637",
+						"Description": "CVE-2023-1637"
+					},
+					{
+						"URL": "https://bugzilla.redhat.com/show_bug.cgi?id=2181891",
+						"Description": "bz#2181891: save/restore speculative MSRs during S3 suspend/resume"
+					}
+				]
+			},
+			"threats": {
+				"threat": {
+					"type": "Impact",
+					"Description": "Moderate"
+				}
+			},
+			"DiscoveryDate": "2022-12-06T00:00:00Z",
+			"productstatuses": {
+				"status": {
+					"type": "Fixed",
+					"ProductID": [
+						"BaseOS-8.4.0.Z.AUS:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
+					]
+				}
+			},
+			"acknowledgments": {
+				"acknowledgment": {
+					"Description": ""
+				}
+			},
+			"cvssscoresets": {
+				"scoreset": {
+					"BaseScore": "",
+					"Vector": ""
+				}
+			}
+		},
+		{
+			"ordinal": "3",
+			"xmlns": "http://www.icasi.org/CVRF/schema/vuln/1.1",
+			"notes": {
+				"note": {
+					"text": "A double-free flaw was found in u32_set_parms in net/sched/cls_u32.c in the Network Scheduler component in the Linux kernel. This flaw allows a local attacker to use a failure event to mishandle the reference counter, leading to a local privilege escalation threat.",
+					"title": "Vulnerability Description",
+					"type": "General",
+					"ordinal": "1",
+					"lang": "en"
+				}
+			},
+			"ReleaseDate": "2023-07-21T00:00:00Z",
+			"involvements": {
+				"involvement": {
+					"party": "Vendor",
+					"status": "Completed"
+				}
+			},
+			"CVE": "CVE-2023-3609",
+			"remediations": {
+				"remediation": {
+					"type": "Vendor Fix",
+					"description": {
+						"text": "\nFor details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258\n\nThe system must be rebooted for this update to take effect.\n    ",
+						"lang": "en"
+					},
+					"URL": "https://access.redhat.com/errata/RHSA-2023:5628"
+				}
+			},
+			"references": {
+				"reference": [
+					{
+						"URL": "https://www.cve.org/CVERecord?id=CVE-2023-3609",
+						"Description": "https://www.cve.org/CVERecord?id=CVE-2023-3609"
+					},
+					{
+						"URL": "https://nvd.nist.gov/vuln/detail/CVE-2023-3609",
+						"Description": "https://nvd.nist.gov/vuln/detail/CVE-2023-3609"
+					},
+					{
+						"URL": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=04c55383fa5689357bcdd2c8036725a55ed632bc",
+						"Description": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=04c55383fa5689357bcdd2c8036725a55ed632bc"
+					},
+					{
+						"URL": "https://access.redhat.com/security/cve/CVE-2023-3609",
+						"Description": "CVE-2023-3609"
+					},
+					{
+						"URL": "https://bugzilla.redhat.com/show_bug.cgi?id=2225201",
+						"Description": "bz#2225201: cls_u32 component reference counter leak if tcf_change_indev() fails"
+					}
+				]
+			},
+			"threats": {
+				"threat": {
+					"type": "Impact",
+					"Description": "Important"
+				}
+			},
+			"DiscoveryDate": "2023-07-24T00:00:00Z",
+			"productstatuses": {
+				"status": {
+					"type": "Fixed",
+					"ProductID": [
+						"BaseOS-8.4.0.Z.AUS:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
+					]
+				}
+			},
+			"acknowledgments": {
+				"acknowledgment": {
+					"Description": ""
+				}
+			},
+			"cvssscoresets": {
+				"scoreset": {
+					"BaseScore": "",
+					"Vector": ""
+				}
+			}
+		},
+		{
+			"ordinal": "4",
+			"xmlns": "http://www.icasi.org/CVRF/schema/vuln/1.1",
+			"notes": {
+				"note": {
+					"text": "A use-after-free vulnerability was found in fw_set_parms in net/sched/cls_fw.c in network scheduler sub-component in the Linux Kernel. This issue occurs due to a missing sanity check during cleanup at the time of failure, leading to a misleading reference. This may allow a local attacker to gain local privilege escalation.",
+					"title": "Vulnerability Description",
+					"type": "General",
+					"ordinal": "1",
+					"lang": "en"
+				}
+			},
+			"ReleaseDate": "2023-07-06T00:00:00Z",
+			"involvements": {
+				"involvement": {
+					"party": "Vendor",
+					"status": "Completed"
+				}
+			},
+			"CVE": "CVE-2023-3776",
+			"remediations": {
+				"remediation": {
+					"type": "Vendor Fix",
+					"description": {
+						"text": "\nFor details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258\n\nThe system must be rebooted for this update to take effect.\n    ",
+						"lang": "en"
+					},
+					"URL": "https://access.redhat.com/errata/RHSA-2023:5628"
+				}
+			},
+			"references": {
+				"reference": [
+					{
+						"URL": "https://www.cve.org/CVERecord?id=CVE-2023-3776",
+						"Description": "https://www.cve.org/CVERecord?id=CVE-2023-3776"
+					},
+					{
+						"URL": "https://nvd.nist.gov/vuln/detail/CVE-2023-3776",
+						"Description": "https://nvd.nist.gov/vuln/detail/CVE-2023-3776"
+					},
+					{
+						"URL": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=0323bce598eea038714f941ce2b22541c46d488f",
+						"Description": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=0323bce598eea038714f941ce2b22541c46d488f"
+					},
+					{
+						"URL": "https://access.redhat.com/security/cve/CVE-2023-3776",
+						"Description": "CVE-2023-3776"
+					},
+					{
+						"URL": "https://bugzilla.redhat.com/show_bug.cgi?id=2225097",
+						"Description": "bz#2225097: cls_fw component can be exploited as result of failure in tcf_change_indev function"
+					}
+				]
+			},
+			"threats": {
+				"threat": {
+					"type": "Impact",
+					"Description": "Important"
+				}
+			},
+			"DiscoveryDate": "2023-07-24T00:00:00Z",
+			"productstatuses": {
+				"status": {
+					"type": "Fixed",
+					"ProductID": [
+						"BaseOS-8.4.0.Z.AUS:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
+					]
+				}
+			},
+			"acknowledgments": {
+				"acknowledgment": {
+					"Description": ""
+				}
+			},
+			"cvssscoresets": {
+				"scoreset": {
+					"BaseScore": "",
+					"Vector": ""
+				}
+			}
+		},
+		{
+			"ordinal": "5",
+			"xmlns": "http://www.icasi.org/CVRF/schema/vuln/1.1",
+			"notes": {
+				"note": {
+					"text": "A use-after-free flaw was found in net/sched/cls_fw.c in classifiers (cls_fw, cls_u32, and cls_route) in the Linux Kernel. This flaw allows a local attacker to perform a local privilege escalation due to incorrect handling of the existing filter, leading to a kernel information leak issue.",
+					"title": "Vulnerability Description",
+					"type": "General",
+					"ordinal": "1",
+					"lang": "en"
+				}
+			},
+			"ReleaseDate": "2023-07-29T00:00:00Z",
+			"involvements": {
+				"involvement": {
+					"party": "Vendor",
+					"status": "Completed"
+				}
+			},
+			"CVE": "CVE-2023-4128",
+			"remediations": {
+				"remediation": {
+					"type": "Vendor Fix",
+					"description": {
+						"text": "\nFor details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258\n\nThe system must be rebooted for this update to take effect.\n    ",
+						"lang": "en"
+					},
+					"URL": "https://access.redhat.com/errata/RHSA-2023:5628"
+				}
+			},
+			"references": {
+				"reference": [
+					{
+						"URL": "https://www.cve.org/CVERecord?id=CVE-2023-4128",
+						"Description": "https://www.cve.org/CVERecord?id=CVE-2023-4128"
+					},
+					{
+						"URL": "https://nvd.nist.gov/vuln/detail/CVE-2023-4128",
+						"Description": "https://nvd.nist.gov/vuln/detail/CVE-2023-4128"
+					},
+					{
+						"URL": "https://lore.kernel.org/netdev/193d6cdf-d6c9-f9be-c36a-b2a7551d5fb6@mojatatu.com/",
+						"Description": "https://lore.kernel.org/netdev/193d6cdf-d6c9-f9be-c36a-b2a7551d5fb6@mojatatu.com/"
+					},
+					{
+						"URL": "https://access.redhat.com/security/cve/CVE-2023-4128",
+						"Description": "CVE-2023-4128"
+					},
+					{
+						"URL": "https://bugzilla.redhat.com/show_bug.cgi?id=2225511",
+						"Description": "bz#2225511: cls_fw, cls_u32 and cls_route"
+					}
+				]
+			},
+			"threats": {
+				"threat": {
+					"type": "Impact",
+					"Description": "Important"
+				}
+			},
+			"DiscoveryDate": "2023-07-24T00:00:00Z",
+			"productstatuses": {
+				"status": {
+					"type": "Fixed",
+					"ProductID": [
+						"BaseOS-8.4.0.Z.AUS:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
+						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
+					]
+				}
+			},
+			"acknowledgments": {
+				"acknowledgment": {
+					"Description": ""
+				}
+			},
+			"cvssscoresets": {
+				"scoreset": {
+					"BaseScore": "",
+					"Vector": ""
+				}
+			}
+		}
+	],
+	"producttree": {
+		"xmlns": "http://www.icasi.org/CVRF/schema/prod/1.1",
+		"branch": [
+			{
+				"type": "Product Family",
+				"name": "Red Hat Enterprise Linux",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "Red Hat Enterprise Linux BaseOS AUS (v.8.4)",
+						"fullproductname": {
+							"text": "Red Hat Enterprise Linux BaseOS AUS (v.8.4)",
+							"productid": "BaseOS-8.4.0.Z.AUS",
+							"cpe": "cpe:/o:redhat:rhel_aus:8.4::baseos"
+						}
+					},
+					{
+						"type": "Product Name",
+						"name": "Red Hat Enterprise Linux BaseOS E4S (v.8.4)",
+						"fullproductname": {
+							"text": "Red Hat Enterprise Linux BaseOS E4S (v.8.4)",
+							"productid": "BaseOS-8.4.0.Z.E4S",
+							"cpe": "cpe:/o:redhat:rhel_e4s:8.4::baseos"
+						}
+					},
+					{
+						"type": "Product Name",
+						"name": "Red Hat Enterprise Linux BaseOS TUS (v.8.4)",
+						"fullproductname": {
+							"text": "Red Hat Enterprise Linux BaseOS TUS (v.8.4)",
+							"productid": "BaseOS-8.4.0.Z.TUS",
+							"cpe": "cpe:/o:redhat:rhel_tus:8.4::baseos"
+						}
+					}
+				],
+				"fullproductname": {}
+			},
+			{
+				"type": "Product Version",
+				"name": "kernel-0:4.18.0-305.108.1.el8_4",
+				"fullproductname": {
+					"text": "kernel-4.18.0-305.108.1.el8_4.src.rpm",
+					"productid": "kernel-0:4.18.0-305.108.1.el8_4",
+					"cpe": "cpe:/o:redhat:rhel_aus:8.4::baseos"
+				}
+			}
+		],
+		"relationship": [
+			{
+				"productreference": "kernel-0:4.18.0-305.108.1.el8_4",
+				"relationtype": "Default Component Of",
+				"relatestoproductreference": "BaseOS-8.4.0.Z.AUS",
+				"fullproductname": {
+					"text": "kernel-0:4.18.0-305.108.1.el8_4 as a component of Red Hat Enterprise Linux BaseOS AUS (v.8.4)",
+					"productid": "BaseOS-8.4.0.Z.AUS:kernel-0:4.18.0-305.108.1.el8_4",
+					"cpe": "cpe:/o:redhat:rhel_aus:8.4::baseos"
+				}
+			},
+			{
+				"productreference": "kernel-0:4.18.0-305.108.1.el8_4",
+				"relationtype": "Default Component Of",
+				"relatestoproductreference": "BaseOS-8.4.0.Z.E4S",
+				"fullproductname": {
+					"text": "kernel-0:4.18.0-305.108.1.el8_4 as a component of Red Hat Enterprise Linux BaseOS E4S (v.8.4)",
+					"productid": "BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
+					"cpe": "cpe:/o:redhat:rhel_e4s:8.4::baseos"
+				}
+			},
+			{
+				"productreference": "kernel-0:4.18.0-305.108.1.el8_4",
+				"relationtype": "Default Component Of",
+				"relatestoproductreference": "BaseOS-8.4.0.Z.TUS",
+				"fullproductname": {
+					"text": "kernel-0:4.18.0-305.108.1.el8_4 as a component of Red Hat Enterprise Linux BaseOS TUS (v.8.4)",
+					"productid": "BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4",
+					"cpe": "cpe:/o:redhat:rhel_tus:8.4::baseos"
+				}
+			}
+		]
+	}
+}

@@ -1,0 +1,17 @@
+[
+	{
+		"date_posted": "11-11-08",
+		"bulletin_id": "MS08-069",
+		"bulletin_kb": "955218",
+		"bulletin_severity": "Critical",
+		"bulletin_impact": "Remote Code Execution",
+		"title": "Vulnerabilities in Microsoft XML Core Services Could Allow Remote Code Execution",
+		"affected_product": "Microsoft Windows 2000 Service Pack 4",
+		"component_kb": "955069",
+		"affected_component": "Microsoft XML Core Services 3.0",
+		"impact": "Remote Code Execution",
+		"severity": "Critical",
+		"reboot": "Maybe",
+		"cves": "CVE-2007-0099,CVE-2008-4029,CVE-2008-4033"
+	}
+]

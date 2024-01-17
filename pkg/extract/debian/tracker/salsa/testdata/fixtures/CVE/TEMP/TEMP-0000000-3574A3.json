@@ -1,0 +1,37 @@
+{
+	"header": {
+		"line": "CVE-2023-XXXX [VLC: OOW in MMS URL parsing]",
+		"name": "TEMP-0000000-3574A3",
+		"description": "[VLC: OOW in MMS URL parsing]"
+	},
+	"annotations": [
+		{
+			"line": "\t- vlc 3.0.20-1",
+			"type": "package",
+			"package": "vlc",
+			"kind": "fixed",
+			"version": "3.0.20-1"
+		},
+		{
+			"line": "\t[bookworm] - vlc 3.0.20-0+deb12u1",
+			"type": "package",
+			"release": "bookworm",
+			"package": "vlc",
+			"kind": "fixed",
+			"version": "3.0.20-0+deb12u1"
+		},
+		{
+			"line": "\t[bullseye] - vlc 3.0.20-0+deb11u1",
+			"type": "package",
+			"release": "bullseye",
+			"package": "vlc",
+			"kind": "fixed",
+			"version": "3.0.20-0+deb11u1"
+		},
+		{
+			"line": "\tNOTE: https://code.videolan.org/videolan/vlc/-/commit/27840cb5b20bc4651ba6af01d0a7ae6da17297ef",
+			"type": "NOTE",
+			"description": "https://code.videolan.org/videolan/vlc/-/commit/27840cb5b20bc4651ba6af01d0a7ae6da17297ef"
+		}
+	]
+}

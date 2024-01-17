@@ -1,0 +1,346 @@
+{
+	"document_title": "Security update for libvirt",
+	"document_type": "SUSE Patch",
+	"document_publisher": {
+		"type": "Vendor",
+		"contact_details": "security@suse.de",
+		"issuing_authority": "SUSE Security Team"
+	},
+	"document_tracking": {
+		"identification": {
+			"id": "openSUSE-SU-2015:0225-1"
+		},
+		"status": "Final",
+		"version": "1",
+		"revision_history": {
+			"revision": {
+				"number": "1",
+				"date": "2015-01-29T16:46:25Z",
+				"description": "current"
+			}
+		},
+		"initial_release_date": "2015-01-29T16:46:25Z",
+		"current_release_date": "2015-01-29T16:46:25Z",
+		"generator": {
+			"engine": "cve-database/bin/generate-cvrf.pl",
+			"date": "2017-02-24T01:00:00Z"
+		}
+	},
+	"document_notes": [
+		{
+			"text": "Security update for libvirt",
+			"title": "Topic",
+			"type": "Summary"
+		},
+		{
+			"text": "\n      This update fixes the following security issues:\n\n- CVE-2015-0236: libvirt: access control bypass bsc#914693\n\n- bnc#905086: libvirt cannot properly determine cpu flags with qemu-kvm\n\n- Fixed allowing devices for containers.\n",
+			"title": "Details",
+			"type": "General"
+		},
+		{
+			"text": "The CVRF data is provided by SUSE under the Creative Commons License 4.0 with Attribution (CC-BY-4.0).",
+			"title": "Terms of Use",
+			"type": "Legal Disclaimer"
+		}
+	],
+	"documentdistribution": "Copyright SUSE LLC under the Creative Commons License 4.0 with Attribution (CC-BY-4.0)",
+	"document_references": [
+		{
+			"type": "Self",
+			"url": "https://lists.opensuse.org/opensuse-updates/2015-02/msg00028.html",
+			"description": "E-Mail link for openSUSE-SU-2015:0225-1"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/support/security/rating/",
+			"description": "SUSE Security Ratings"
+		}
+	],
+	"product_tree": {
+		"branch": [
+			{
+				"type": "Product Version",
+				"name": "libvirt-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-1.1.2-2.48.1",
+					"product_id": "libvirt-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-client-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-client-1.1.2-2.48.1",
+					"product_id": "libvirt-client-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-client-32bit-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-client-32bit-1.1.2-2.48.1",
+					"product_id": "libvirt-client-32bit-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-config-network-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-config-network-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-config-network-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-config-nwfilter-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-config-nwfilter-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-config-nwfilter-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-interface-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-interface-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-interface-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-libxl-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-libxl-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-libxl-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-lxc-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-lxc-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-lxc-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-network-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-network-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-network-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-nodedev-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-nodedev-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-nodedev-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-nwfilter-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-nwfilter-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-nwfilter-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-qemu-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-qemu-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-qemu-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-secret-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-secret-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-secret-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-storage-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-storage-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-storage-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-uml-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-uml-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-uml-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-vbox-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-vbox-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-vbox-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-driver-xen-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-driver-xen-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-driver-xen-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-lxc-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-lxc-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-lxc-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-qemu-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-qemu-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-qemu-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-uml-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-uml-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-uml-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-vbox-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-vbox-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-vbox-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-daemon-xen-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-daemon-xen-1.1.2-2.48.1",
+					"product_id": "libvirt-daemon-xen-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-devel-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-devel-1.1.2-2.48.1",
+					"product_id": "libvirt-devel-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-devel-32bit-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-devel-32bit-1.1.2-2.48.1",
+					"product_id": "libvirt-devel-32bit-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-doc-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-doc-1.1.2-2.48.1",
+					"product_id": "libvirt-doc-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-lock-sanlock-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-lock-sanlock-1.1.2-2.48.1",
+					"product_id": "libvirt-lock-sanlock-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-login-shell-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-login-shell-1.1.2-2.48.1",
+					"product_id": "libvirt-login-shell-1.1.2-2.48.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "libvirt-python-1.1.2-2.48.1",
+				"full_product_name": {
+					"text": "libvirt-python-1.1.2-2.48.1",
+					"product_id": "libvirt-python-1.1.2-2.48.1"
+				}
+			}
+		]
+	},
+	"vulnerability": [
+		{
+			"notes": [
+				{
+					"text": "libvirt before 1.2.12 allow remote authenticated users to obtain the VNC password by using the VIR_DOMAIN_XML_SECURE flag with a crafted (1) snapshot to the virDomainSnapshotGetXMLDesc interface or (2) image to the virDomainSaveImageGetXMLDesc interface.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2015-0236",
+			"product_statuses": [
+				{
+					"type": "Fixed"
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "moderate"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "4",
+					"vector_v_2": "AV:L/AC:L/Au:M/C:P/I:P/A:P"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "Please Install the update.",
+						"lang": "en"
+					},
+					"url": "https://lists.opensuse.org/opensuse-updates/2015-02/msg00028.html"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2015-0236.html",
+					"description": "CVE-2015-0236"
+				},
+				{
+					"url": "https://bugzilla.suse.com/914693",
+					"description": "SUSE Bug 914693"
+				}
+			]
+		}
+	]
+}

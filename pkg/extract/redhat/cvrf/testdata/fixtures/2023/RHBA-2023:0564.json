@@ -1,0 +1,243 @@
+{
+	"documenttitle": {
+		"text": "Red Hat Bug Fix Advisory: OpenShift Container Platform 4.11.26 packages update",
+		"lang": "en"
+	},
+	"DocumentType": "Security Advisory",
+	"documentpublisher": {
+		"type": "Vendor",
+		"ContactDetails": "secalert@redhat.com",
+		"IssuingAuthority": "Red Hat Product Security"
+	},
+	"documenttracking": {
+		"identification": {
+			"ID": "RHBA-2023:0564"
+		},
+		"Status": "Final",
+		"Version": "1",
+		"revisionhistory": {
+			"revision": {
+				"Number": "1",
+				"Date": "2023-02-09T05:35:00Z",
+				"Description": "Current version"
+			}
+		},
+		"InitialReleaseDate": "2023-02-07T16:58:00Z",
+		"CurrentReleaseDate": "2023-02-09T05:35:00Z",
+		"generator": {
+			"Engine": "Red Hat SDEngine 3.22.0",
+			"Date": "2023-10-05T08:24:00Z"
+		}
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\nRed Hat OpenShift Container Platform release 4.11.26 is now available with updates to packages and images that fix several bugs.\n    ",
+				"title": "Topic",
+				"type": "Summary",
+				"ordinal": "1",
+				"lang": "en"
+			},
+			{
+				"text": "\nRed Hat OpenShift Container Platform is Red Hat's cloud computing Kubernetes application platform solution designed for on-premise or private cloud deployments.\n\nThis advisory contains the RPM packages for Red Hat OpenShift Container Platform 4.11.26. See the following advisory for the container images for this release:\n\nhttps://access.redhat.com/errata/RHSA-2023:0565\n\nAll OpenShift Container Platform 4.11 users are advised to upgrade to these updated packages and images when they are available in the appropriate release channel.To check for available updates, use the OpenShift CLI (oc) or web console. \n\nInstructions for upgrading a cluster are available at https://docs.openshift.com/container-platform/4.11/updating/updating-cluster-cli.html\n    ",
+				"title": "Details",
+				"type": "General",
+				"ordinal": "2",
+				"lang": "en"
+			},
+			{
+				"text": "This content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content, or a modified version of it, you must provide attribution to Red Hat Inc. and provide a link to the original.",
+				"title": "Terms of Use",
+				"type": "Legal Disclaimer",
+				"ordinal": "3",
+				"lang": "en"
+			}
+		]
+	},
+	"documentdistribution": {
+		"text": "Copyright © 2023 Red Hat, Inc. All rights reserved.",
+		"lang": "en"
+	},
+	"aggregateseverity": {
+		"text": "Moderate",
+		"namespace": "https://access.redhat.com/security/updates/classification/"
+	},
+	"documentreferences": {
+		"reference": [
+			{
+				"type": "Self",
+				"URL": "https://access.redhat.com/errata/RHBA-2023:0564",
+				"Description": "https://access.redhat.com/errata/RHBA-2023:0564"
+			}
+		]
+	},
+	"vulnerability": [
+		{
+			"ordinal": "1",
+			"xmlns": "http://www.icasi.org/CVRF/schema/vuln/1.1",
+			"notes": {
+				"note": {
+					"text": "A flaw was found in the golang package. In net/http in Go, attackers can cause a denial of service because an HTTP/2 connection can hang during closing if a fatal error preempts the shutdown.",
+					"title": "Vulnerability Description",
+					"type": "General",
+					"ordinal": "1",
+					"lang": "en"
+				}
+			},
+			"ReleaseDate": "2022-09-06T00:00:00Z",
+			"involvements": {
+				"involvement": {
+					"party": "Vendor",
+					"status": "Completed"
+				}
+			},
+			"CVE": "CVE-2022-27664",
+			"remediations": {
+				"remediation": {
+					"type": "Vendor Fix",
+					"description": {
+						"text": "\nSee the following documentation, which will be updated shortly for this release, for important instructions on how to upgrade your cluster and fully apply this asynchronous errata update:\n\nhttps://docs.openshift.com/container-platform/4.11/release_notes/ocp-4-11-release-notes.html\n\nDetails on how to access this content are available at https://docs.openshift.com/container-platform/4.11/updating/updating-cluster-cli.html\n    ",
+						"lang": "en"
+					},
+					"URL": "https://access.redhat.com/errata/RHBA-2023:0564"
+				}
+			},
+			"references": {
+				"reference": [
+					{
+						"URL": "https://www.cve.org/CVERecord?id=CVE-2022-27664",
+						"Description": "https://www.cve.org/CVERecord?id=CVE-2022-27664"
+					},
+					{
+						"URL": "https://nvd.nist.gov/vuln/detail/CVE-2022-27664",
+						"Description": "https://nvd.nist.gov/vuln/detail/CVE-2022-27664"
+					},
+					{
+						"URL": "https://go.dev/issue/54658",
+						"Description": "https://go.dev/issue/54658"
+					},
+					{
+						"URL": "https://groups.google.com/g/golang-announce/c/x49AQzIVX-s/m/0tgO0pjiBQAJ",
+						"Description": "https://groups.google.com/g/golang-announce/c/x49AQzIVX-s/m/0tgO0pjiBQAJ"
+					},
+					{
+						"URL": "https://access.redhat.com/security/cve/CVE-2022-27664",
+						"Description": "CVE-2022-27664"
+					},
+					{
+						"URL": "https://bugzilla.redhat.com/show_bug.cgi?id=2124669",
+						"Description": "bz#2124669: handle server errors after sending GOAWAY"
+					}
+				]
+			},
+			"threats": {
+				"threat": {
+					"type": "Impact",
+					"Description": "Moderate"
+				}
+			},
+			"DiscoveryDate": "2022-09-06T00:00:00Z",
+			"productstatuses": {
+				"status": {
+					"type": "Fixed",
+					"ProductID": [
+						"8Base-RHOSE-4.11:cri-o-0:1.24.4-5.rhaos4.11.git57d7127.el8",
+						"8Base-RHOSE-4.11:kernel-rt-0:4.18.0-372.41.1.rt7.198.el8_6",
+						"8Base-RHOSE-4.11:openshift-0:4.11.0-202301232245.p0.g263df15.assembly.stream.el8"
+					]
+				}
+			},
+			"acknowledgments": {
+				"acknowledgment": {
+					"Description": ""
+				}
+			},
+			"cvssscoresets": {
+				"scoreset": {
+					"BaseScore": "",
+					"Vector": ""
+				}
+			}
+		}
+	],
+	"producttree": {
+		"xmlns": "http://www.icasi.org/CVRF/schema/prod/1.1",
+		"branch": [
+			{
+				"type": "Product Family",
+				"name": "Red Hat OpenShift Enterprise",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "Red Hat OpenShift Container Platform 4.11",
+						"fullproductname": {
+							"text": "Red Hat OpenShift Container Platform 4.11",
+							"productid": "8Base-RHOSE-4.11",
+							"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+						}
+					}
+				],
+				"fullproductname": {}
+			},
+			{
+				"type": "Product Version",
+				"name": "cri-o-0:1.24.4-5.rhaos4.11.git57d7127.el8",
+				"fullproductname": {
+					"text": "cri-o-1.24.4-5.rhaos4.11.git57d7127.el8.src.rpm",
+					"productid": "cri-o-0:1.24.4-5.rhaos4.11.git57d7127.el8",
+					"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "kernel-rt-0:4.18.0-372.41.1.rt7.198.el8_6",
+				"fullproductname": {
+					"text": "kernel-rt-4.18.0-372.41.1.rt7.198.el8_6.src.rpm",
+					"productid": "kernel-rt-0:4.18.0-372.41.1.rt7.198.el8_6",
+					"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "openshift-0:4.11.0-202301232245.p0.g263df15.assembly.stream.el8",
+				"fullproductname": {
+					"text": "openshift-4.11.0-202301232245.p0.g263df15.assembly.stream.el8.src.rpm",
+					"productid": "openshift-0:4.11.0-202301232245.p0.g263df15.assembly.stream.el8",
+					"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+				}
+			}
+		],
+		"relationship": [
+			{
+				"productreference": "cri-o-0:1.24.4-5.rhaos4.11.git57d7127.el8",
+				"relationtype": "Default Component Of",
+				"relatestoproductreference": "8Base-RHOSE-4.11",
+				"fullproductname": {
+					"text": "cri-o-0:1.24.4-5.rhaos4.11.git57d7127.el8 as a component of Red Hat OpenShift Container Platform 4.11",
+					"productid": "8Base-RHOSE-4.11:cri-o-0:1.24.4-5.rhaos4.11.git57d7127.el8",
+					"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+				}
+			},
+			{
+				"productreference": "kernel-rt-0:4.18.0-372.41.1.rt7.198.el8_6",
+				"relationtype": "Default Component Of",
+				"relatestoproductreference": "8Base-RHOSE-4.11",
+				"fullproductname": {
+					"text": "kernel-rt-0:4.18.0-372.41.1.rt7.198.el8_6 as a component of Red Hat OpenShift Container Platform 4.11",
+					"productid": "8Base-RHOSE-4.11:kernel-rt-0:4.18.0-372.41.1.rt7.198.el8_6",
+					"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+				}
+			},
+			{
+				"productreference": "openshift-0:4.11.0-202301232245.p0.g263df15.assembly.stream.el8",
+				"relationtype": "Default Component Of",
+				"relatestoproductreference": "8Base-RHOSE-4.11",
+				"fullproductname": {
+					"text": "openshift-0:4.11.0-202301232245.p0.g263df15.assembly.stream.el8 as a component of Red Hat OpenShift Container Platform 4.11",
+					"productid": "8Base-RHOSE-4.11:openshift-0:4.11.0-202301232245.p0.g263df15.assembly.stream.el8",
+					"cpe": "cpe:/a:redhat:openshift:4.11::el8"
+				}
+			}
+		]
+	}
+}

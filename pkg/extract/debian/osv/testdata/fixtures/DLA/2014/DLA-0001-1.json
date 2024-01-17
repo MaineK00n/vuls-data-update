@@ -1,0 +1,48 @@
+{
+	"schema_version": "1.6.0",
+	"id": "DLA-0001-1",
+	"modified": "2023-06-28T06:17:52.429597Z",
+	"published": "2014-06-02T00:00:00Z",
+	"related": [
+		"CVE-2014-3466"
+	],
+	"summary": "gnutls26 - security update",
+	"details": "\nJoonas Kuorilehto discovered that GNU TLS performed insufficient\nvalidation of session IDs during TLS/SSL handshakes. A malicious\nserver could use this to execute arbitrary code or perform denial\nor service.\n\n\nFor Debian 6 Squeeze, these issues have been fixed in gnutls26 version 2.8.6-1+squeeze4\n\n\n",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Debian:6.0",
+				"name": "gnutls26",
+				"purl": "pkg:deb/debian/gnutls26?arch=source"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2.8.6-1+squeeze4"
+						}
+					]
+				}
+			],
+			"versions": [
+				"2.8.6-1",
+				"2.8.6-1+squeeze1",
+				"2.8.6-1+squeeze2",
+				"2.8.6-1+squeeze3"
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/debian-osv/dla-osv/DLA-0001-1.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://www.debian.org/lts/security/2014/dla-0001"
+		}
+	]
+}

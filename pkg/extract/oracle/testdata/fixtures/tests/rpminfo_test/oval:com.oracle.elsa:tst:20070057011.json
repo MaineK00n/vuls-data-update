@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20070057011",
+	"version": "501",
+	"comment": "bind-libs is earlier than 30:9.3.3-8.el5",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20070057006"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20070057004"
+	}
+}

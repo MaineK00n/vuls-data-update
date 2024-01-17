@@ -1,0 +1,59 @@
+{
+	"Architecture": [
+		"i386 amd64"
+	],
+	"Autobuild": [
+		"yes"
+	],
+	"Binary": [
+		"amd64-microcode"
+	],
+	"Build-Depends": [
+		"debhelper (>= 7)"
+	],
+	"Checksums-Sha1": [
+		"04ab2ff0e6e3e2afe745a76795d8207d84d2f3e9 1655 amd64-microcode_1.20120910-2~bpo60+1.dsc 03ee814bc894c7adc557e9b31c196c677ffb920c 24461 amd64-microcode_1.20120910.orig.tar.bz2 6ab0d518db8cef039bb3d8dde64bfc02f50d59c1 9832 amd64-microcode_1.20120910-2~bpo60+1.debian.tar.gz"
+	],
+	"Checksums-Sha256": [
+		"05fe79f7c3b7910479c2284545529b437a0c364222d88b5e9dee30be8d8b4739 1655 amd64-microcode_1.20120910-2~bpo60+1.dsc 7a7df26865d1021ed72cfda327a4b2bf5a3d91f6fdc2abdcdb730416425c72d7 24461 amd64-microcode_1.20120910.orig.tar.bz2 dc400c94afd0fc934d3100a1f5c20964018f39cb70955c5b88e6aeebee504822 9832 amd64-microcode_1.20120910-2~bpo60+1.debian.tar.gz"
+	],
+	"Directory": [
+		"pool/non-free/a/amd64-microcode"
+	],
+	"Files": [
+		"bfaa3b9a39cab954f9e7e97d078e6bb6 1655 amd64-microcode_1.20120910-2~bpo60+1.dsc c06c405981d3fbd93896305c06e49414 24461 amd64-microcode_1.20120910.orig.tar.bz2 cac8683efcf3da6a423dbc9d292916eb 9832 amd64-microcode_1.20120910-2~bpo60+1.debian.tar.gz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://www.amd64.org/support/microcode.html"
+	],
+	"Maintainer": [
+		"Henrique de Moraes Holschuh <hmh@debian.org>"
+	],
+	"Package": [
+		"amd64-microcode"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"non-free/admin"
+	],
+	"Standards-Version": [
+		"3.9.3"
+	],
+	"Uploaders": [
+		"Giacomo Catenazzi <cate@debian.org>"
+	],
+	"Vcs-Browser": [
+		"http://git.debian.org/?p=users/hmh/amd64-microcode.git"
+	],
+	"Vcs-Git": [
+		"git://git.debian.org/users/hmh/amd64-microcode.git"
+	],
+	"Version": [
+		"1.20120910-2~bpo60+1"
+	]
+}

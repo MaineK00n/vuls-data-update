@@ -1,0 +1,945 @@
+{
+	"document_title": "Security update for bind",
+	"document_type": "SUSE Patch",
+	"document_publisher": {
+		"type": "Vendor",
+		"contact_details": "security@suse.de",
+		"issuing_authority": "SUSE Security Team"
+	},
+	"document_tracking": {
+		"identification": {
+			"id": "SUSE-SU-2015:0011-2"
+		},
+		"status": "Final",
+		"version": "1",
+		"revision_history": {
+			"revision": {
+				"number": "1",
+				"date": "2014-01-27T18:38:10Z",
+				"description": "current"
+			}
+		},
+		"initial_release_date": "2014-01-27T18:38:10Z",
+		"current_release_date": "2014-01-27T18:38:10Z",
+		"generator": {
+			"engine": "cve-database/bin/generate-cvrf.pl",
+			"date": "2017-02-24T01:00:00Z"
+		}
+	},
+	"document_notes": [
+		{
+			"text": "Security update for bind",
+			"title": "Topic",
+			"type": "Summary"
+		},
+		{
+			"text": "\nThis update fixes a DoS vulnerability in bind when handling malformed \nNSEC3-signed zones. CVE-2014-0591 has been assigned to this issue.\n\nSecurity Issue references:\n\n    * CVE-2014-0591\n      <http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0591>\n\n",
+			"title": "Details",
+			"type": "General"
+		},
+		{
+			"text": "The CVRF data is provided by SUSE under the Creative Commons License 4.0 with Attribution (CC-BY-4.0).",
+			"title": "Terms of Use",
+			"type": "Legal Disclaimer"
+		},
+		{
+			"text": "slessp2-bind",
+			"title": "Patchnames",
+			"type": "Details"
+		}
+	],
+	"documentdistribution": "Copyright SUSE LLC under the Creative Commons License 4.0 with Attribution (CC-BY-4.0)",
+	"document_references": [
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/",
+			"description": "Link for SUSE-SU-2015:0011-2"
+		},
+		{
+			"type": "Self",
+			"url": "https://lists.opensuse.org/opensuse-security-announce/2015-02/msg00018.html",
+			"description": "E-Mail link for SUSE-SU-2015:0011-2"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/support/security/rating/",
+			"description": "SUSE Security Ratings"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/743758",
+			"description": "SUSE Bug 743758"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/765315",
+			"description": "SUSE Bug 765315"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/772945",
+			"description": "SUSE Bug 772945"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/780157",
+			"description": "SUSE Bug 780157"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/784602",
+			"description": "SUSE Bug 784602"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/796112",
+			"description": "SUSE Bug 796112"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/815230",
+			"description": "SUSE Bug 815230"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/819475",
+			"description": "SUSE Bug 819475"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/831899",
+			"description": "SUSE Bug 831899"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/858639",
+			"description": "SUSE Bug 858639"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/882511",
+			"description": "SUSE Bug 882511"
+		},
+		{
+			"type": "Self",
+			"url": "https://bugzilla.suse.com/908994",
+			"description": "SUSE Bug 908994"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2012-1667/",
+			"description": "SUSE CVE CVE-2012-1667 page"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2012-3817/",
+			"description": "SUSE CVE CVE-2012-3817 page"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2012-4244/",
+			"description": "SUSE CVE CVE-2012-4244 page"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2012-5166/",
+			"description": "SUSE CVE CVE-2012-5166 page"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2013-4854/",
+			"description": "SUSE CVE CVE-2013-4854 page"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2014-0591/",
+			"description": "SUSE CVE CVE-2014-0591 page"
+		},
+		{
+			"type": "Self",
+			"url": "https://www.suse.com/security/cve/CVE-2014-8500/",
+			"description": "SUSE CVE CVE-2014-8500 page"
+		}
+	],
+	"product_tree": {
+		"branch": [
+			{
+				"type": "Product Family",
+				"name": "SUSE Linux Enterprise Server 11 SP2",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "SUSE Linux Enterprise Server 11 SP2",
+						"full_product_name": {
+							"text": "SUSE Linux Enterprise Server 11 SP2",
+							"product_id": "SUSE Linux Enterprise Server 11 SP2",
+							"cpe": "cpe:/o:suse:suse_sles:11:sp2"
+						}
+					}
+				],
+				"full_product_name": {}
+			},
+			{
+				"type": "Product Family",
+				"name": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+						"full_product_name": {
+							"text": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+							"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+							"cpe": "cpe:/o:suse:suse_sles_ltss:11:sp2"
+						}
+					}
+				],
+				"full_product_name": {}
+			},
+			{
+				"type": "Product Family",
+				"name": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+						"full_product_name": {
+							"text": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+							"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+							"cpe": "cpe:/o:suse:sles_sap:11:sp2"
+						}
+					}
+				],
+				"full_product_name": {}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-9.9.4P2-0.6.1",
+					"product_id": "bind-9.9.4P2-0.6.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-chrootenv-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-chrootenv-9.9.4P2-0.6.1",
+					"product_id": "bind-chrootenv-9.9.4P2-0.6.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-devel-9.9.6P1-0.5.5",
+				"full_product_name": {
+					"text": "bind-devel-9.9.6P1-0.5.5",
+					"product_id": "bind-devel-9.9.6P1-0.5.5"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-doc-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-doc-9.9.4P2-0.6.1",
+					"product_id": "bind-doc-9.9.4P2-0.6.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-libs-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-libs-9.9.4P2-0.6.1",
+					"product_id": "bind-libs-9.9.4P2-0.6.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-libs-32bit-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-libs-32bit-9.9.4P2-0.6.1",
+					"product_id": "bind-libs-32bit-9.9.4P2-0.6.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-libs-x86-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-libs-x86-9.9.4P2-0.6.1",
+					"product_id": "bind-libs-x86-9.9.4P2-0.6.1"
+				}
+			},
+			{
+				"type": "Product Version",
+				"name": "bind-utils-9.9.4P2-0.6.1",
+				"full_product_name": {
+					"text": "bind-utils-9.9.4P2-0.6.1",
+					"product_id": "bind-utils-9.9.4P2-0.6.1"
+				}
+			}
+		],
+		"relationship": [
+			{
+				"product_reference": "bind-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-devel-9.9.6P1-0.5.5",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-doc-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-libs-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-libs-x86-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-utils-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"product_reference": "bind-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-devel-9.9.6P1-0.5.5",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-doc-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-libs-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-libs-x86-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-utils-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"product_reference": "bind-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-devel-9.9.6P1-0.5.5",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-doc-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-libs-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-libs-x86-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"product_reference": "bind-utils-9.9.4P2-0.6.1",
+				"relation_type": "Default Component Of",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			}
+		]
+	},
+	"vulnerability": [
+		{
+			"notes": [
+				{
+					"text": "ISC BIND 9.x before 9.7.6-P1, 9.8.x before 9.8.3-P1, 9.9.x before 9.9.1-P1, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P1 does not properly handle resource records with a zero-length RDATA section, which allows remote DNS servers to cause a denial of service (daemon crash or data corruption) or obtain sensitive information from process memory via a crafted record.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2012-1667",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "important"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "8.5",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-1667.html",
+					"description": "CVE-2012-1667"
+				},
+				{
+					"url": "https://bugzilla.suse.com/765315",
+					"description": "SUSE Bug 765315"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
+		},
+		{
+			"notes": [
+				{
+					"text": "ISC BIND 9.4.x, 9.5.x, 9.6.x, and 9.7.x before 9.7.6-P2; 9.8.x before 9.8.3-P2; 9.9.x before 9.9.1-P2; and 9.6-ESV before 9.6-ESV-R7-P2, when DNSSEC validation is enabled, does not properly initialize the failing-query cache, which allows remote attackers to cause a denial of service (assertion failure and daemon exit) by sending many queries.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2012-3817",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "important"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-3817.html",
+					"description": "CVE-2012-3817"
+				},
+				{
+					"url": "https://bugzilla.suse.com/772945",
+					"description": "SUSE Bug 772945"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
+		},
+		{
+			"notes": [
+				{
+					"text": "ISC BIND 9.x before 9.7.6-P3, 9.8.x before 9.8.3-P3, 9.9.x before 9.9.1-P3, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P3 allows remote attackers to cause a denial of service (assertion failure and named daemon exit) via a query for a long resource record.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2012-4244",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "important"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-4244.html",
+					"description": "CVE-2012-4244"
+				},
+				{
+					"url": "https://bugzilla.suse.com/780157",
+					"description": "SUSE Bug 780157"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
+		},
+		{
+			"notes": [
+				{
+					"text": "ISC BIND 9.x before 9.7.6-P4, 9.8.x before 9.8.3-P4, 9.9.x before 9.9.1-P4, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P4 allows remote attackers to cause a denial of service (named daemon hang) via unspecified combinations of resource records.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2012-5166",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "important"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2012-5166.html",
+					"description": "CVE-2012-5166"
+				},
+				{
+					"url": "https://bugzilla.suse.com/784602",
+					"description": "SUSE Bug 784602"
+				},
+				{
+					"url": "https://bugzilla.suse.com/792926",
+					"description": "SUSE Bug 792926"
+				}
+			]
+		},
+		{
+			"notes": [
+				{
+					"text": "The RFC 5011 implementation in rdata.c in ISC BIND 9.7.x and 9.8.x before 9.8.5-P2, 9.8.6b1, 9.9.x before 9.9.3-P2, and 9.9.4b1, and DNSco BIND 9.9.3-S1 before 9.9.3-S1-P1 and 9.9.4-S1b1, allows remote attackers to cause a denial of service (assertion failure and named daemon exit) via a query with a malformed RDATA section that is not properly handled during construction of a log message, as exploited in the wild in July 2013.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2013-4854",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "low"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2013-4854.html",
+					"description": "CVE-2013-4854"
+				},
+				{
+					"url": "https://bugzilla.suse.com/831899",
+					"description": "SUSE Bug 831899"
+				}
+			]
+		},
+		{
+			"notes": [
+				{
+					"text": "The query_findclosestnsec3 function in query.c in named in ISC BIND 9.6, 9.7, and 9.8 before 9.8.6-P2 and 9.9 before 9.9.4-P2, and 9.6-ESV before 9.6-ESV-R10-P2, allows remote attackers to cause a denial of service (INSIST assertion failure and daemon exit) via a crafted DNS query to an authoritative nameserver that uses the NSEC3 signing feature.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2014-0591",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "moderate"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "2.6",
+					"vector_v_2": "AV:N/AC:H/Au:N/C:N/I:N/A:P"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2014-0591.html",
+					"description": "CVE-2014-0591"
+				},
+				{
+					"url": "https://bugzilla.suse.com/858639",
+					"description": "SUSE Bug 858639"
+				}
+			]
+		},
+		{
+			"notes": [
+				{
+					"text": "ISC BIND 9.0.x through 9.8.x, 9.9.0 through 9.9.6, and 9.10.0 through 9.10.1 does not limit delegation chaining, which allows remote attackers to cause a denial of service (memory consumption and named crash) via a large or infinite number of referrals.",
+					"title": "Vulnerability Description",
+					"type": "General"
+				}
+			],
+			"cve": "CVE-2014-8500",
+			"product_statuses": [
+				{
+					"type": "Fixed",
+					"product_id": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1"
+					]
+				}
+			],
+			"threats": [
+				{
+					"type": "Impact",
+					"description": "important"
+				}
+			],
+			"cvss_score_sets": {
+				"score_set_v_2": {
+					"base_score_v_2": "7.8",
+					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:C"
+				},
+				"score_set_v_3": {},
+				"scoreset": {}
+			},
+			"remediations": [
+				{
+					"type": "Vendor Fix",
+					"description": {
+						"text": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+						"lang": "en"
+					},
+					"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+				}
+			],
+			"references": [
+				{
+					"url": "https://www.suse.com/security/cve/CVE-2014-8500.html",
+					"description": "CVE-2014-8500"
+				},
+				{
+					"url": "https://bugzilla.suse.com/908994",
+					"description": "SUSE Bug 908994"
+				}
+			]
+		}
+	]
+}

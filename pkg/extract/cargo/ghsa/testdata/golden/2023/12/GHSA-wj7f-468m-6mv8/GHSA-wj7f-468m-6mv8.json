@@ -1,0 +1,66 @@
+{
+	"id": "GHSA-wj7f-468m-6mv8",
+	"advisories": [
+		{
+			"id": "GHSA-wj7f-468m-6mv8",
+			"title": "Environment variables still accessible through /proc",
+			"description": "### Impact\n\nEnvironment variables can be read from procfs unless a new process is started.\n\n### PoC\n\n```\nuse birdcage::{Birdcage, Sandbox};\nuse std::{env, fs};\n\nfn main() {\n    Birdcage::new().lock().unwrap();\n\n    assert_eq!(env::var_os(\"SECRET\"), None);\n\n    let environ = fs::read_to_string(\"/proc/self/environ\").unwrap();\n    assert!(!environ.contains(\"SECRET\"), \"ENVIRON CONTAINS SECRET:\\n{environ}\");\n}\n```\n\n```\n$  SECRET=test cargo run\nthread 'main' panicked at src/main.rs:10:5:\nENVIRON CONTAINS SECRET:\n [truncated]\n ```\n\n### Possible Solutions\n\nThe simplest solution would be relying on the ptrace isolation and **always** spawning a new process by changing birdcage's API to create a new command. With an additional PID namespace the guarantees could be even further reinforced.\n",
+			"severity": [
+				{
+					"type": "cvss_v31",
+					"source": "github.com/advisories",
+					"cvss_v31": {
+						"vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+						"base_score": 4,
+						"base_severity": "MEDIUM",
+						"temporal_score": 4,
+						"temporal_severity": "MEDIUM",
+						"environmental_score": 4,
+						"environmental_severity": "MEDIUM"
+					}
+				},
+				{
+					"type": "vendor",
+					"source": "github.com/advisories",
+					"vendor": "MODERATE"
+				}
+			],
+			"references": [
+				{
+					"source": "github.com/advisories",
+					"url": "https://github.com/phylum-dev/birdcage/security/advisories/GHSA-wj7f-468m-6mv8"
+				},
+				{
+					"source": "github.com/advisories",
+					"url": "https://github.com/phylum-dev/birdcage"
+				}
+			],
+			"published": "2023-12-01T22:46:37Z",
+			"modified": "2023-12-01T22:46:37Z",
+			"optional": {
+				"github_reviewed": true
+			}
+		}
+	],
+	"detection": [
+		{
+			"ecosystem": "cargo",
+			"vulnerable": true,
+			"package": {
+				"name": "birdcage"
+			},
+			"affected": {
+				"type": "semver",
+				"range": [
+					{
+						"lt": "0.7.0"
+					}
+				],
+				"fixed": [
+					"0.7.0"
+				]
+			}
+		}
+	],
+	"data_source": "cargo-ghsa"
+}

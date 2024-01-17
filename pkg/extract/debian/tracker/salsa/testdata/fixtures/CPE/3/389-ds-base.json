@@ -1,0 +1,5 @@
+{
+	"line": "389-ds-base;cpe:/a:fedoraproject:389_directory_server",
+	"package": "389-ds-base",
+	"cpe": "cpe:/a:fedoraproject:389_directory_server"
+}

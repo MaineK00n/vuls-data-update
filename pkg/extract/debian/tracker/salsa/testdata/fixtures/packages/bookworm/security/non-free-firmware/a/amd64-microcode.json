@@ -1,0 +1,53 @@
+{
+	"Architecture": [
+		"i386 amd64 x32"
+	],
+	"Autobuild": [
+		"yes"
+	],
+	"Binary": [
+		"amd64-microcode"
+	],
+	"Build-Depends": [
+		"debhelper (>= 9)"
+	],
+	"Checksums-Sha256": [
+		"cbfa3fe7bc1842f51a5828395566320056554953233c0a7ed02106106f11f651 1727 amd64-microcode_3.20230719.1~deb12u1.dsc d01bdba711b6eb9802b9e0475ad2d79cd0e3bf29269869938c1f8285426258a6 120696 amd64-microcode_3.20230719.1~deb12u1.tar.xz"
+	],
+	"Directory": [
+		"pool/updates/non-free-firmware/a/amd64-microcode"
+	],
+	"Format": [
+		"3.0 (native)"
+	],
+	"Maintainer": [
+		"Henrique de Moraes Holschuh <hmh@debian.org>"
+	],
+	"Package": [
+		"amd64-microcode"
+	],
+	"Package-List": [
+		"amd64-microcode deb non-free-firmware/admin standard arch=i386,amd64,x32"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"non-free-firmware/misc"
+	],
+	"Standards-Version": [
+		"3.9.8"
+	],
+	"Uploaders": [
+		"Giacomo Catenazzi <cate@debian.org>"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/hmh/amd64-microcode"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/hmh/amd64-microcode.git"
+	],
+	"Version": [
+		"3.20230719.1~deb12u1"
+	]
+}

@@ -1,0 +1,50 @@
+{
+	"Architecture": [
+		"any"
+	],
+	"Binary": [
+		"slurm-wlm-nvml-plugin, slurm-wlm-nvml-plugin-dev"
+	],
+	"Build-Depends": [
+		"debhelper (>= 11), libmunge-dev, libncurses-dev, po-debconf, python3, libgtk2.0-dev, default-libmysqlclient-dev, libpam0g-dev, libperl-dev, chrpath, liblua5.1-0-dev, libhwloc-dev, dh-exec, librrd-dev, libipmimonitoring-dev, hdf5-helpers, libfreeipmi-dev, libhdf5-dev, man2html, libcurl4-openssl-dev, libpmix-dev, libhttp-parser-dev, libyaml-dev, libjson-c-dev, libjwt-dev, liblz4-dev, bash-completion, libdbus-1-dev, librocm-smi-dev, libnvidia-ml-dev"
+	],
+	"Checksums-Sha256": [
+		"0ed77e2fb2f24787f3167689c23463ec8c64533e436ea09d10e2e9e3dd840b78 2513 slurm-wlm-contrib_22.05.8-4+deb12u1.dsc 8c8f6a26a5d51e6c63773f2e02653eb724540ee8b360125c8d7732314ce737d6 9699785 slurm-wlm-contrib_22.05.8.orig.tar.gz 35ab1e7bce2a85dda06e08dc712c3bd499fe45ddeef3bffe80a362ca193ab31f 93328 slurm-wlm-contrib_22.05.8-4+deb12u1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/updates/contrib/s/slurm-wlm-contrib"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://slurm.schedmd.com"
+	],
+	"Maintainer": [
+		"Gennaro Oliva <oliva.g@na.icar.cnr.it>"
+	],
+	"Package": [
+		"slurm-wlm-contrib"
+	],
+	"Package-List": [
+		"slurm-wlm-nvml-plugin deb contrib/libs optional arch=any slurm-wlm-nvml-plugin-dev deb contrib/devel optional arch=any"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"contrib/misc"
+	],
+	"Standards-Version": [
+		"4.6.2"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/hpc-team/slurm-wlm"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/hpc-team/slurm-wlm.git"
+	],
+	"Version": [
+		"22.05.8-4+deb12u1"
+	]
+}

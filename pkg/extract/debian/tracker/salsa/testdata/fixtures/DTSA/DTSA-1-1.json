@@ -1,0 +1,29 @@
+{
+	"header": {
+		"line": "[August 26th, 2005] DTSA-1-1 kismet - various",
+		"name": "DTSA-1-1"
+	},
+	"annotations": [
+		{
+			"line": "\t{CVE-2005-2626 CVE-2005-2627 }",
+			"type": "xref",
+			"bugs": [
+				"CVE-2005-2626",
+				"CVE-2005-2627"
+			]
+		},
+		{
+			"line": "\t[etch] - kismet 2005.08.R1-0.1etch1 (high)",
+			"type": "package",
+			"release": "etch",
+			"package": "kismet",
+			"kind": "fixed",
+			"version": "2005.08.R1-0.1etch1",
+			"flags": [
+				{
+					"severity": "high"
+				}
+			]
+		}
+	]
+}

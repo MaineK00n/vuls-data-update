@@ -20,6 +20,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	epssTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/epss"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
@@ -158,45 +159,49 @@ func Extract(args string, opts ...Option) error {
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req.ID)
 				}
 
-				info := types.Info{
+				data := types.Data{
 					ID: req.ID,
 					Vulnerabilities: []types.Vulnerability{
 						{
-							CVE: req.ID,
+							ID: req.ID,
 							EPSS: []epssTypes.EPSS{{
 								Model:      fetched.Model,
 								ScoreDate:  t,
 								EPSS:       req.EPSS,
 								Percentile: req.Percentile,
 							}},
+							References: []reference.Reference{{
+								Source: "api.first.org",
+								URL:    fmt.Sprintf("https://api.first.org/data/v1/epss?cve=%s", req.ID),
+							}},
 						},
 					},
 					DataSource: source.EPSS,
 				}
-				if _, err := os.Stat(filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID))); err == nil {
-					f, err := os.Open(filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID)))
+				if _, err := os.Stat(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req.ID))); err == nil {
+					f, err := os.Open(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req.ID)))
 					if err != nil {
-						return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID)))
+						return errors.Wrapf(err, "open %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req.ID)))
 					}
 					defer f.Close()
 
-					var i types.Info
-					if err := json.NewDecoder(f).Decode(&i); err != nil {
-						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID)))
+					var d types.Data
+					if err := json.NewDecoder(f).Decode(&d); err != nil {
+						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req.ID)))
 					}
 
-					i.Vulnerabilities[0].EPSS = append(i.Vulnerabilities[0].EPSS, epssTypes.EPSS{
+					d.Vulnerabilities[0].EPSS = append(d.Vulnerabilities[0].EPSS, epssTypes.EPSS{
 						Model:      fetched.Model,
 						ScoreDate:  t,
 						EPSS:       req.EPSS,
 						Percentile: req.Percentile,
 					})
 
-					info = i
+					data = d
 				}
 
-				if err := util.Write(filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID)), info); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req.ID)))
+				if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req.ID)), data); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req.ID)))
 				}
 
 				select {
@@ -248,18 +253,18 @@ func Extract(args string, opts ...Option) error {
 				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req)
 			}
 
-			f, err := os.Open(filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req)))
+			f, err := os.Open(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)))
 			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req)))
+				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)))
 			}
 			defer f.Close()
 
-			var info types.Info
-			if err := json.NewDecoder(f).Decode(&info); err != nil {
-				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req)))
+			var data types.Data
+			if err := json.NewDecoder(f).Decode(&data); err != nil {
+				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)))
 			}
 
-			slices.SortFunc(info.Vulnerabilities[0].EPSS, func(a, b epssTypes.EPSS) int {
+			slices.SortFunc(data.Vulnerabilities[0].EPSS, func(a, b epssTypes.EPSS) int {
 				if a.ScoreDate.Before(b.ScoreDate) {
 					return -1
 				}
@@ -269,8 +274,8 @@ func Extract(args string, opts ...Option) error {
 				return 0
 			})
 
-			if err := util.Write(filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req)), info); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "main", splitted[1], fmt.Sprintf("%s.json", req)))
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)), data); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)))
 			}
 
 			select {

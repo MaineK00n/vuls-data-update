@@ -1,0 +1,10 @@
+{
+	"id": "oval:org.debian.oval:ste:16043",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"evr": {
+		"text": "0:7.4.30-1+deb11u1",
+		"datatype": "debian_evr_string",
+		"operation": "less than"
+	}
+}

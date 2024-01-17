@@ -1,0 +1,14 @@
+{
+	"id": "oval:org.debian.oval:tst:9668",
+	"version": "1",
+	"check": "all",
+	"check_existence": "at_least_one_exists",
+	"comment": "389-ds-base is earlier than 0",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.debian.oval:obj:1098"
+	},
+	"state": {
+		"state_ref": "oval:org.debian.oval:ste:7397"
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"id": "oval:com.ubuntu.jammy:var:201658240000000",
+	"version": "1",
+	"datatype": "string",
+	"comment": "'thunderbird' package binaries",
+	"value": [
+		"thunderbird",
+		"thunderbird-gnome-support",
+		"thunderbird-mozsymbols",
+		"xul-ext-calendar-timezones",
+		"xul-ext-gdata-provider",
+		"xul-ext-lightning"
+	]
+}

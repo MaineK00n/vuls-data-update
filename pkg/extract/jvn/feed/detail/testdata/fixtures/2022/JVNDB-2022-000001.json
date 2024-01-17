@@ -1,0 +1,88 @@
+{
+	"vulinfoid": "JVNDB-2022-000001",
+	"vulinfodata": {
+		"title": "キヤノン製レーザープリンターおよびスモールオフィス向け複合機におけるクロスサイトスクリプティングの脆弱性",
+		"vulinfodescription": {
+			"overview": "キヤノン株式会社が提供するレーザープリンターおよびスモールオフィス向け複合機には、格納型クロスサイトスクリプティング (CWE-79) の脆弱性が存在します。  この脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。 報告者: 株式会社イエラエセキュリティ 村島 正浩 氏"
+		},
+		"affected": {
+			"affecteditem": [
+				{
+					"name": "キヤノン",
+					"productname": "(複数の製品)"
+				}
+			]
+		},
+		"impact": {
+			"cvss": [
+				{
+					"version": "2.0",
+					"severity": {
+						"text": "Low",
+						"type": "Base"
+					},
+					"base": "3.5",
+					"vector": "AV:N/AC:M/Au:S/C:N/I:P/A:N"
+				},
+				{
+					"version": "3.0",
+					"severity": {
+						"text": "Medium",
+						"type": "Base"
+					},
+					"base": "4.8",
+					"vector": "CVSS:3.0/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N"
+				}
+			],
+			"impactitem": {
+				"description": "当該製品の設定画面にアクセスしたユーザのウェブブラウザ上で、任意のスクリプトを実行される可能性があります。"
+			}
+		},
+		"solution": {
+			"solutionitem": {
+				"description": "[アップデートする] 開発者が提供する情報をもとに、ファームウェアを最新版にアップデートしてください。"
+			}
+		},
+		"related": {
+			"relateditem": [
+				{
+					"type": "vendor",
+					"name": "Canon",
+					"vulinfoid": "レーザープリンター及びスモールオフィス向け複合機のクロスサイトスクリプティングに関する脆弱性対応について",
+					"url": "https://cweb.canon.jp/e-support/info/211221xss.html"
+				},
+				{
+					"type": "advisory",
+					"name": "Common Vulnerabilities and Exposures (CVE)",
+					"vulinfoid": "CVE-2021-20877",
+					"url": "https://www.cve.org/CVERecord?id=CVE-2021-20877"
+				},
+				{
+					"type": "advisory",
+					"name": "JVN",
+					"vulinfoid": "JVN#64806328",
+					"url": "https://jvn.jp/jp/JVN64806328/index.html"
+				},
+				{
+					"type": "cwe",
+					"name": "JVNDB",
+					"vulinfoid": "CWE-79",
+					"url": "https://jvndb.jvn.jp/ja/cwe/CWE-79.html",
+					"title": "クロスサイトスクリプティング"
+				}
+			]
+		},
+		"history": {
+			"historyitem": [
+				{
+					"historyno": "1",
+					"datetime": "2022-01-18T10:08:09+09:00",
+					"description": "[2022年01月19日]\\n  掲載"
+				}
+			]
+		},
+		"datefirstpublished": "2022-01-19T12:05:15+09:00",
+		"datelastupdated": "2022-01-19T12:05:15+09:00",
+		"datepublic": "2022-01-19T00:00:00+09:00"
+	}
+}
