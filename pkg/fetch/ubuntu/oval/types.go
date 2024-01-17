@@ -1,6 +1,11 @@
 package oval
 
-type root struct {
+type ovals struct {
+	CVE map[string]string `json:"cve,omitempty"`
+	USN map[string]string `json:"usn,omitempty"`
+}
+
+type cveroot struct {
 	Generator struct {
 		ProductName    string `xml:"product_name"`
 		ProductVersion string `xml:"product_version"`
@@ -8,7 +13,7 @@ type root struct {
 		Timestamp      string `xml:"timestamp"`
 	} `xml:"generator" json:"generator,omitempty"`
 	Definitions struct {
-		Definition []Definition `xml:"definition" json:"definition,omitempty"`
+		Definition []CVEDefinition `xml:"definition" json:"definition,omitempty"`
 	} `xml:"definitions" json:"definitions,omitempty"`
 	Tests     Tests     `xml:"tests" json:"tests,omitempty"`
 	Objects   Objects   `xml:"objects" json:"objects,omitempty"`
@@ -16,16 +21,16 @@ type root struct {
 	Variables Variables `xml:"variables" json:"variables,omitempty"`
 }
 
-type Definition struct {
+type CVEDefinition struct {
 	Class    string `xml:"class,attr" json:"class,omitempty"`
 	ID       string `xml:"id,attr" json:"id,omitempty"`
 	Version  string `xml:"version,attr" json:"version,omitempty"`
 	Metadata struct {
-		Title       string `xml:"title"`
-		Description string `xml:"description"`
+		Title       string `xml:"title" json:"title,omitempty"`
+		Description string `xml:"description" json:"description,omitempty"`
 		Affected    struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
-			Platform string `xml:"platform"`
+			Platform string `xml:"platform" json:"platform,omitempty"`
 		} `xml:"affected" json:"affected,omitempty"`
 		Reference struct {
 			Source string `xml:"source,attr" json:"source,omitempty"`
@@ -33,10 +38,10 @@ type Definition struct {
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
 		} `xml:"reference" json:"reference,omitempty"`
 		Advisory struct {
-			Severity   string   `xml:"severity"`
-			Rights     string   `xml:"rights"`
-			PublicDate string   `xml:"public_date"`
-			Bug        []string `xml:"bug"`
+			Severity   string   `xml:"severity" json:"severity,omitempty"`
+			Rights     string   `xml:"rights" json:"rights,omitempty"`
+			PublicDate string   `xml:"public_date" json:"public_date,omitempty"`
+			Bug        []string `xml:"bug" json:"bug,omitempty"`
 			Cve        struct {
 				Text       string `xml:",chardata" json:"text,omitempty"`
 				Href       string `xml:"href,attr" json:"href,omitempty"`
@@ -46,16 +51,73 @@ type Definition struct {
 				CvssVector string `xml:"cvss_vector,attr" json:"cvss_vector,omitempty"`
 				Usns       string `xml:"usns,attr" json:"usns,omitempty"`
 			} `xml:"cve" json:"cve,omitempty"`
-			PublicDateAtUsn string   `xml:"public_date_at_usn"`
-			AssignedTo      string   `xml:"assigned_to"`
-			DiscoveredBy    string   `xml:"discovered_by"`
-			Crd             string   `xml:"crd"`
-			Ref             []string `xml:"ref"`
+			PublicDateAtUsn string   `xml:"public_date_at_usn" json:"public_date_at_usn,omitempty"`
+			AssignedTo      string   `xml:"assigned_to" json:"assigned_to,omitempty"`
+			DiscoveredBy    string   `xml:"discovered_by" json:"discovered_by,omitempty"`
+			Crd             string   `xml:"crd" json:"crd,omitempty"`
+			Ref             []string `xml:"ref" json:"ref,omitempty"`
 		} `xml:"advisory" json:"advisory,omitempty"`
 	} `xml:"metadata" json:"metadata,omitempty"`
 	Notes struct {
-		Note string `xml:"note"`
+		Note string `xml:"note" json:"note,omitempty"`
 	} `xml:"notes" json:"notes,omitempty"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+}
+
+type usnroot struct {
+	Generator struct {
+		ProductName    string `xml:"product_name"`
+		ProductVersion string `xml:"product_version"`
+		SchemaVersion  string `xml:"schema_version"`
+		Timestamp      string `xml:"timestamp"`
+		TermsOfUse     string `xml:"terms_of_use"`
+	} `xml:"generator" json:"generator,omitempty"`
+	Definitions struct {
+		Definition []USNDefinition `xml:"definition" json:"definition,omitempty"`
+	} `xml:"definitions" json:"definitions,omitempty"`
+	Tests     Tests     `xml:"tests" json:"tests,omitempty"`
+	Objects   Objects   `xml:"objects" json:"objects,omitempty"`
+	States    States    `xml:"states" json:"states,omitempty"`
+	Variables Variables `xml:"variables" json:"variables,omitempty"`
+}
+
+type USNDefinition struct {
+	Class    string `xml:"class,attr" json:"class,omitempty"`
+	ID       string `xml:"id,attr" json:"id,omitempty"`
+	Version  string `xml:"version,attr" json:"version,omitempty"`
+	Metadata struct {
+		Title       string `xml:"title" json:"title,omitempty"`
+		Description string `xml:"description" json:"description,omitempty"`
+		Affected    struct {
+			Family   string `xml:"family,attr" json:"family,omitempty"`
+			Platform string `xml:"platform" json:"platform,omitempty"`
+		} `xml:"affected" json:"affected,omitempty"`
+		Reference []struct {
+			Source string `xml:"source,attr" json:"source,omitempty"`
+			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
+			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
+		} `xml:"reference" json:"reference,omitempty"`
+		Advisory struct {
+			From     string `xml:"from,attr" json:"from,omitempty"`
+			Severity string `xml:"severity" json:"severity,omitempty"`
+			Issued   struct {
+				Date string `xml:"date,attr" json:"date,omitempty"`
+			} `xml:"issued" json:"issued,omitempty"`
+			Cve []struct {
+				Text         string `xml:",chardata" json:"text,omitempty"`
+				Href         string `xml:"href,attr" json:"href,omitempty"`
+				Priority     string `xml:"priority,attr" json:"priority,omitempty"`
+				Public       string `xml:"public,attr" json:"public,omitempty"`
+				CvssScore    string `xml:"cvss_score,attr" json:"cvss_score,omitempty"`
+				CvssVector   string `xml:"cvss_vector,attr" json:"cvss_vector,omitempty"`
+				CvssSeverity string `xml:"cvss_severity,attr" json:"cvss_severity,omitempty"`
+				Usns         string `xml:"usns,attr" json:"usns,omitempty"`
+				Severity     string `xml:"severity,attr" json:"severity,omitempty"`
+			} `xml:"cve" json:"cve,omitempty"`
+			Bug []string `xml:"bug" json:"bug,omitempty"`
+			Ref []string `xml:"ref" json:"ref,omitempty"`
+		} `xml:"advisory" json:"advisory,omitempty"`
+	} `xml:"metadata" json:"metadata,omitempty"`
 	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
 }
 
@@ -91,8 +153,8 @@ type Objects struct {
 		ID       string `xml:"id,attr" json:"id,omitempty"`
 		Version  string `xml:"version,attr" json:"version,omitempty"`
 		Comment  string `xml:"comment,attr" json:"comment,omitempty"`
-		Path     string `xml:"path"`
-		Filename string `xml:"filename"`
+		Path     string `xml:"path" json:"path,omitempty"`
+		Filename string `xml:"filename" json:"filename,omitempty"`
 		Pattern  struct {
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
@@ -126,6 +188,6 @@ type Variables struct {
 		Version  string   `xml:"version,attr" json:"version,omitempty"`
 		Datatype string   `xml:"datatype,attr" json:"datatype,omitempty"`
 		Comment  string   `xml:"comment,attr" json:"comment,omitempty"`
-		Value    []string `xml:"value"`
+		Value    []string `xml:"value" json:"value,omitempty"`
 	} `xml:"constant_variable" json:"constant_variable,omitempty"`
 }

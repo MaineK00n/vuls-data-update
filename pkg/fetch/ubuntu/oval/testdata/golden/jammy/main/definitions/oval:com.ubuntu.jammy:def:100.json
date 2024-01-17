@@ -3,28 +3,14 @@
 	"id": "oval:com.ubuntu.jammy:def:100",
 	"version": "1",
 	"metadata": {
-		"Title": "Check that Ubuntu 22.04 LTS (jammy) is installed.",
-		"Description": "",
-		"affected": {
-			"Platform": ""
-		},
+		"title": "Check that Ubuntu 22.04 LTS (jammy) is installed.",
+		"affected": {},
 		"reference": {},
 		"advisory": {
-			"Severity": "",
-			"Rights": "",
-			"PublicDate": "",
-			"Bug": null,
-			"cve": {},
-			"PublicDateAtUsn": "",
-			"AssignedTo": "",
-			"DiscoveredBy": "",
-			"Crd": "",
-			"Ref": null
+			"cve": {}
 		}
 	},
-	"notes": {
-		"Note": ""
-	},
+	"notes": {},
 	"criteria": {
 		"criterions": [
 			{

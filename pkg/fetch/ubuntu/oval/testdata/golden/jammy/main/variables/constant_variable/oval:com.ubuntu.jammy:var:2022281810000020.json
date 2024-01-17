@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'nvidia-graphics-drivers-430' package binaries",
-	"Value": [
+	"value": [
 		"libnvidia-cfg1-418",
 		"libnvidia-common-418",
 		"libnvidia-common-430",

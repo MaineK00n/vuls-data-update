@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'gcc-mingw-w64' package binaries",
-	"Value": [
+	"value": [
 		"^g++-mingw-w64(?::\\w+|)\\s+(.*)$",
 		"^g++-mingw-w64-i686(?::\\w+|)\\s+(.*)$",
 		"^g++-mingw-w64-i686-posix(?::\\w+|)\\s+(.*)$",

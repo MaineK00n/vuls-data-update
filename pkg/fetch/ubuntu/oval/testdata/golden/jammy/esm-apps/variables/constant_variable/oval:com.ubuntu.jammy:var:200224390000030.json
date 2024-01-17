@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'gcc-msp430' package binaries",
-	"Value": [
+	"value": [
 		"^gcc-msp430(?::\\w+|)\\s+(.*)$"
 	]
 }

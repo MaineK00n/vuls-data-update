@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'gnupg2' package binaries",
-	"Value": [
+	"value": [
 		"dirmngr",
 		"gnupg",
 		"gnupg-agent",

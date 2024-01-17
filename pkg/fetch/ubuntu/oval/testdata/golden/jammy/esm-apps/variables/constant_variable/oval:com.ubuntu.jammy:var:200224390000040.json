@@ -3,7 +3,7 @@
 	"version": "1",
 	"datatype": "string",
 	"comment": "'gcc-snapshot' package binaries",
-	"Value": [
+	"value": [
 		"^gcc-snapshot(?::\\w+|)\\s+(.*)$"
 	]
 }

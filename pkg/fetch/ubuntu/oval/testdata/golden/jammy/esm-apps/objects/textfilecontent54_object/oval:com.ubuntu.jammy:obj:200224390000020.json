@@ -2,8 +2,8 @@
 	"id": "oval:com.ubuntu.jammy:obj:200224390000020",
 	"version": "1",
 	"comment": "The 'gcc-mingw-w64' package binaries.",
-	"Path": ".",
-	"Filename": "manifest",
+	"path": ".",
+	"filename": "manifest",
 	"pattern": {
 		"operation": "pattern match",
 		"datatype": "string",
