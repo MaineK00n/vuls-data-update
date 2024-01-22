@@ -350,7 +350,7 @@ jobs:
         run: find vuls-data-raw-windows-msuc.${{ strategy.job-index }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
 
       - name: save cache
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: vuls-data-raw-windows-msuc.${{ strategy.job-index }}
           key: vuls-data-raw-windows-msuc-${{ strategy.job-index }}-${{ github.sha }}-${{ github.run_id }}
@@ -392,7 +392,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: restore cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: vuls-data-raw-windows-msuc-${{ matrix.cid }}-${{ github.sha }}-${{ github.run_id }}
           path: vuls-data-raw-windows-msuc.${{ matrix.cid }}
