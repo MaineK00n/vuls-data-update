@@ -1,0 +1,529 @@
+{
+	"ID": "ALAS2023-2023-001",
+	"Author": "linux-security@amazon.com",
+	"From": "linux-security@amazon.com",
+	"Status": "final",
+	"Type": "security",
+	"Version": "1.4",
+	"Title": "Amazon Linux 2023 - ALAS2023-2023-001: Important priority package update for rsyslog",
+	"Issued": {
+		"Date": "2023-02-17 20:41:00"
+	},
+	"Updated": {
+		"Date": "2023-02-22 23:22:00"
+	},
+	"Severity": "Important",
+	"Description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\n\tCVE-2022-24903:\n\t\tA flaw was found in rsyslog's reception TCP modules. This flaw allows an attacker to craft a malicious message leading to a heap-based buffer overflow. This issue allows the attacker to corrupt or access data stored in memory, leading to a denial of service in the rsyslog or possible remote code execution.\n\t\n\tCVE-2014-3634:\n\t\tA flaw was found in the way rsyslog handled invalid log message priority values. In certain configurations, a local attacker, or a remote attacker able to connect to the rsyslog port, could use this flaw to crash the rsyslog daemon or, potentially in rsyslog 7.x, execute arbitrary code as the user running the rsyslog daemon.\n\t",
+	"References": {
+		"Reference": [
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634",
+				"ID": "CVE-2014-3634",
+				"Title": "",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903",
+				"ID": "CVE-2022-24903",
+				"Title": "",
+				"Type": "cve"
+			}
+		]
+	},
+	"Pkglist": {
+		"Collection": {
+			"Short": "amazon-linux-2023",
+			"Name": "Amazon Linux 2023",
+			"Package": [
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmfields-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmfields-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmaudit-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmaudit-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-debugsource",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-debugsource-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmnormalize-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmnormalize-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmaudit",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmaudit-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-openssl-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-openssl-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmjsonparse",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmjsonparse-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmjsonparse-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmjsonparse-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-elasticsearch",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-elasticsearch-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "noarch",
+					"Epoch": "0",
+					"Name": "rsyslog-doc",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-doc-8.2204.0-3.amzn2023.0.2.noarch.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmkubernetes-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmkubernetes-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-logrotate",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-logrotate-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-crypto",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-crypto-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-elasticsearch-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-elasticsearch-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-openssl",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-openssl-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmfields",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmfields-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-crypto-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-crypto-debuginfo-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmkubernetes",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmkubernetes-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmnormalize",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmnormalize-8.2204.0-3.amzn2023.0.2.x86_64.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-debugsource",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-debugsource-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-elasticsearch-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-elasticsearch-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-crypto-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-crypto-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-openssl-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-openssl-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmkubernetes-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmkubernetes-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmkubernetes",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmkubernetes-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-elasticsearch",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-elasticsearch-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-crypto",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-crypto-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-openssl",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-openssl-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmnormalize-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmnormalize-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmjsonparse-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmjsonparse-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmfields-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmfields-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmaudit-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmaudit-debuginfo-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmnormalize",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmnormalize-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmjsonparse",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmjsonparse-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmfields",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmfields-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-mmaudit",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmaudit-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "i686",
+					"Epoch": "0",
+					"Name": "rsyslog-logrotate",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-logrotate-8.2204.0-3.amzn2023.0.2.i686.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmnormalize-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmnormalize-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-crypto-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-crypto-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-crypto",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-crypto-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-logrotate",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-logrotate-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmaudit",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmaudit-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmjsonparse",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmjsonparse-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-openssl-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-openssl-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-debugsource",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-debugsource-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-elasticsearch-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-elasticsearch-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmfields-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmfields-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-elasticsearch",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-elasticsearch-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmkubernetes-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmkubernetes-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-openssl",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-openssl-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmjsonparse-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmjsonparse-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmnormalize",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmnormalize-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmaudit-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmaudit-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmkubernetes",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmkubernetes-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-mmfields",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-mmfields-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "rsyslog-debuginfo",
+					"Release": "3.amzn2023.0.2",
+					"Version": "8.2204.0",
+					"Filename": "Packages/rsyslog-debuginfo-8.2204.0-3.amzn2023.0.2.aarch64.rpm"
+				}
+			]
+		}
+	}
+}

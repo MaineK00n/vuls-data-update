@@ -28,9 +28,10 @@ type options struct {
 }
 
 type MirrorURL struct {
-	Core  string
-	Extra string
-	extra []string
+	Core            string
+	Extra           string
+	extra           []string
+	KernelLivePatch string
 }
 
 type Option interface {
@@ -75,8 +76,13 @@ func Fetch(opts ...Option) error {
 				Core:  "https://cdn.amazonlinux.com/2/core/latest/x86_64/mirror.list",
 				Extra: "http://amazonlinux.default.amazonaws.com/2/extras-catalog.json",
 			},
-			"2022": {Core: "https://cdn.amazonlinux.com/al2022/core/mirrors/latest/x86_64/mirror.list"},
-			"2023": {Core: "https://cdn.amazonlinux.com/al2023/core/mirrors/latest/x86_64/mirror.list"},
+			"2022": {
+				Core: "https://cdn.amazonlinux.com/al2022/core/mirrors/latest/x86_64/mirror.list",
+			},
+			"2023": {
+				Core:            "https://cdn.amazonlinux.com/al2023/core/mirrors/latest/x86_64/mirror.list",
+				KernelLivePatch: "https://cdn.amazonlinux.com/al2023/kernel-livepatch/mirrors/latest/x86_64/mirror.list",
+			},
 		},
 		dir:   filepath.Join(util.CacheDir(), "fetch", "amazon"),
 		retry: 3,
@@ -92,8 +98,14 @@ func Fetch(opts ...Option) error {
 
 	for v := range options.mirrorURLs {
 		log.Printf("[INFO] Fetch Amazon Linux %s", v)
+		advs := map[string][]Update{}
 		switch v {
-		case "1", "2022", "2023":
+		case "1", "2022":
+			us, err := options.fetch(options.mirrorURLs[v].Core)
+			if err != nil {
+				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
+			}
+			advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
 		case "2":
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.mirrorURLs[v].Extra)
 			if err != nil {
@@ -116,26 +128,36 @@ func Fetch(opts ...Option) error {
 				m.extra = append(m.extra, strings.Replace(options.mirrorURLs[v].Core, "/core/", fmt.Sprintf("/extras/%s/", t.N), 1))
 			}
 			options.mirrorURLs[v] = m
+
+			us, err := options.fetch(options.mirrorURLs[v].Core)
+			if err != nil {
+				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
+			}
+			advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
+
+			for _, e := range options.mirrorURLs[v].extra {
+				us, err := options.fetch(e)
+				if err != nil {
+					return errors.Wrapf(err, "fetch %s", e)
+				}
+				if us != nil {
+					advs[getPackageRepository(e)] = us
+				}
+			}
+		case "2023":
+			us, err := options.fetch(options.mirrorURLs[v].Core)
+			if err != nil {
+				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
+			}
+			advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
+
+			us, err = options.fetch(options.mirrorURLs[v].KernelLivePatch)
+			if err != nil {
+				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].KernelLivePatch)
+			}
+			advs[getPackageRepository(options.mirrorURLs[v].KernelLivePatch)] = us
 		default:
 			return errors.Errorf("unexpected version. accepts %q, received %q", []string{"1", "2", "2022", "2023"}, v)
-		}
-
-		advs := map[string][]Update{}
-		us, err := options.fetch(options.mirrorURLs[v].Core)
-		if err != nil {
-			return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Core)
-		}
-
-		advs[getPackageRepository(options.mirrorURLs[v].Core)] = us
-
-		for _, e := range options.mirrorURLs[v].extra {
-			us, err := options.fetch(e)
-			if err != nil {
-				return errors.Wrapf(err, "fetch %s", e)
-			}
-			if us != nil {
-				advs[getPackageRepository(e)] = us
-			}
 		}
 
 		for r, us := range advs {
@@ -304,6 +326,8 @@ func getPackageRepository(mirror string) string {
 			return "unknown"
 		}
 		return filepath.Join("extras", lhs)
+	case strings.Contains(mirror, "/kernel-livepatch/"):
+		return "kernel-livepatch"
 	default:
 		log.Printf("WARN: failed to find repository. mirror: %s", mirror)
 		return "unknown"
