@@ -1,0 +1,43 @@
+{
+	"ID": "ALAS2023LIVEPATCH-2023-001",
+	"Author": "linux-security@amazon.com",
+	"From": "linux-security@amazon.com",
+	"Status": "final",
+	"Type": "security",
+	"Version": "1.4",
+	"Title": "Amazon Linux 2023 - Kernel Livepatch - ALAS2023LIVEPATCH-2023-001: important priority package update for kernel-livepatch-6.1.12-19.43",
+	"Issued": {
+		"Date": "2023-04-13 17:56:00"
+	},
+	"Updated": {
+		"Date": "2023-05-09 18:35:00"
+	},
+	"Severity": "important",
+	"Description": "Package updates are available for Amazon Linux 2023 - Kernel Livepatch that fix the following vulnerabilities:\nCVE-2023-26545:\n\tIn the Linux kernel before 6.1.13, there is a double free in net/mpls/af_mpls.c upon an allocation failure (for registering the sysctl table under a new location) during the renaming of a device.\n",
+	"References": {
+		"Reference": [
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-26545",
+				"ID": "CVE-2023-26545",
+				"Title": "",
+				"Type": "cve"
+			}
+		]
+	},
+	"Pkglist": {
+		"Collection": {
+			"Short": "amazon-linux-2023---kernel-livepatch",
+			"Name": "Amazon Linux 2023 - Kernel Livepatch",
+			"Package": [
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-livepatch-6.1.12-19.43",
+					"Release": "1.amzn2023",
+					"Version": "1.0",
+					"Filename": "Packages/kernel-livepatch-6.1.12-19.43-1.0-1.amzn2023.x86_64.rpm"
+				}
+			]
+		}
+	}
+}
