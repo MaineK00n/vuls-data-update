@@ -185,7 +185,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Fetch
-        run: vuls-data-update fetch ${{ matrix.target }} --dir vuls-data-raw-${{ matrix.target }} --api-key ${{ secrets.NVD_API_KEY }} --concurrency 5 --wait 0
+        run: vuls-data-update fetch ${{ matrix.target }} --dir vuls-data-raw-${{ matrix.target }} --api-key ${{ secrets.NVD_API_KEY }} --concurrency 5 --wait 0 --last-mod-start-date $(git -C vuls-data-raw-${{ matrix.target }} log -1 --format='%ad' --date=format-local:'%Y-%m-%dT%H:%M:%S.000%z' | xargs -I{} date +'%Y-%m-%dT%T.%3N%:z' -d '{} -3 days') --last-mod-end-date $(date +'%Y-%m-%dT%T.%3N%:z')
 
       - name: Split Large Files
         run: find vuls-data-raw-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
@@ -194,6 +194,14 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
+
+      - name: Restore
+        run: |
+          cd vuls-data-raw-${{ matrix.target }}
+          deleted=$(git ls-files --deleted)
+          if [[ -n ${deleted} ]]; then
+            git restore ${deleted}
+          fi
 
       - name: Push
         run: |

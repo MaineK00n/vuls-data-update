@@ -148,3 +148,94 @@ func TestCheckRetry(t *testing.T) {
 		})
 	}
 }
+
+func TestFullURL(t *testing.T) {
+	type args struct {
+		baseURL          string
+		startIndex       int
+		resultsPerPage   int
+		lastModStartDate *time.Time
+		lastModEndDate   *time.Time
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "no date",
+			args: args{
+				baseURL:        "https://services.nvd.nist.gov/rest/json/cves/2.0",
+				startIndex:     0,
+				resultsPerPage: 1,
+			},
+			want: "https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1&startIndex=0",
+		},
+		{
+			name: "lastModStartDate only",
+			args: args{
+				baseURL:          "https://services.nvd.nist.gov/rest/json/cves/2.0",
+				startIndex:       0,
+				resultsPerPage:   1,
+				lastModStartDate: func() *time.Time { t := time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC); return &t }(),
+			},
+			wantErr: true,
+		},
+		{
+			name: "lastModEndDate only",
+			args: args{
+				baseURL:        "https://services.nvd.nist.gov/rest/json/cves/2.0",
+				startIndex:     0,
+				resultsPerPage: 1,
+				lastModEndDate: func() *time.Time { t := time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC); return &t }(),
+			},
+			wantErr: true,
+		},
+		{
+			name: "date",
+			args: args{
+				baseURL:          "https://services.nvd.nist.gov/rest/json/cves/2.0",
+				startIndex:       0,
+				resultsPerPage:   1,
+				lastModStartDate: func() *time.Time { t := time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC); return &t }(),
+				lastModEndDate:   func() *time.Time { t := time.Date(2024, time.April, 15, 1, 0, 0, 0, time.UTC); return &t }(),
+			},
+			want: "https://services.nvd.nist.gov/rest/json/cves/2.0?lastModEndDate=2024-04-15T01:00:00.000%2B00:00&lastModStartDate=2024-04-15T00:00:00.000%2B00:00&resultsPerPage=1&startIndex=0",
+		},
+		{
+			name: "date range exceed 120 days",
+			args: args{
+				baseURL:          "https://services.nvd.nist.gov/rest/json/cves/2.0",
+				startIndex:       0,
+				resultsPerPage:   1,
+				lastModStartDate: func() *time.Time { t := time.Date(2023, time.December, 16, 23, 59, 59, 999999999, time.UTC); return &t }(),
+				lastModEndDate:   func() *time.Time { t := time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC); return &t }(),
+			},
+			wantErr: true,
+		},
+		{
+			name: "end date is before start date",
+			args: args{
+				baseURL:          "https://services.nvd.nist.gov/rest/json/cves/2.0",
+				startIndex:       0,
+				resultsPerPage:   1,
+				lastModStartDate: func() *time.Time { t := time.Date(2024, time.April, 15, 1, 0, 0, 0, time.UTC); return &t }(),
+				lastModEndDate:   func() *time.Time { t := time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC); return &t }(),
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := nvdutil.FullURL(tt.args.baseURL, tt.args.startIndex, tt.args.resultsPerPage, tt.args.lastModStartDate, tt.args.lastModEndDate)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FullURL() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("FullURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
