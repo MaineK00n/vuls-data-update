@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
@@ -40,7 +42,7 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	return false, nil
 }
 
-func FullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
+func FullURL(baseURL string, startIndex, resultsPerPage int, lastModStartDate, lastModEndDate *time.Time) (string, error) {
 	u, err := url.Parse(baseURL)
 	if err != nil {
 		return "", errors.Wrapf(err, "parse base URL: %s", baseURL)
@@ -48,6 +50,19 @@ func FullURL(baseURL string, startIndex, resultsPerPage int) (string, error) {
 	q := u.Query()
 	q.Set("startIndex", strconv.Itoa(startIndex))
 	q.Set("resultsPerPage", strconv.Itoa(resultsPerPage))
-	u.RawQuery = q.Encode()
+	if lastModStartDate != nil || lastModEndDate != nil {
+		if lastModStartDate == nil || lastModEndDate == nil {
+			return "", errors.New("Both lastModStartDate and lastModEndDate are required when either is present")
+		}
+		if (*lastModEndDate).Before(*lastModStartDate) {
+			return "", errors.New("end date is before start date")
+		}
+		if (*lastModEndDate).Sub(*lastModStartDate) > 120*24*time.Hour {
+			return "", errors.New("Date range cannot exceed 120 days")
+		}
+		q.Set("lastModStartDate", lastModStartDate.Format("2006-01-02T15:04:05.000-07:00"))
+		q.Set("lastModEndDate", lastModEndDate.Format("2006-01-02T15:04:05.000-07:00"))
+	}
+	u.RawQuery = strings.ReplaceAll(q.Encode(), "%3A", ":")
 	return u.String(), nil
 }

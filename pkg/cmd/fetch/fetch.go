@@ -106,16 +106,9 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
 
-type options struct {
-	dir          string
-	retry        int
-	retryWaitMin int
-	retryWaitMax int
-
-	concurrency int // SUSE CVRF/CVRF CVE/CSAF/CSAF VEX, NVD API CVE/CPE/CPEMatch, Windows WSUSSCN2
-	wait        int // SUSE CVRF/CVRF CVE/CSAF/CSAF VEX, NVD API CVE/CPE/CPEMatch
-
-	apiKey string // NVD API CVE/CPE/CPEMatch
+type base struct {
+	dir   string
+	retry int
 }
 
 func NewCmdFetch() *cobra.Command {
@@ -180,7 +173,7 @@ func NewCmdFetch() *cobra.Command {
 }
 
 func newCmdAlmaErrata() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "errata"),
 		retry: 3,
 	}
@@ -207,7 +200,7 @@ func newCmdAlmaErrata() *cobra.Command {
 }
 
 func newCmdAlmaOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "osv"),
 		retry: 3,
 	}
@@ -234,7 +227,7 @@ func newCmdAlmaOSV() *cobra.Command {
 }
 
 func newCmdAlpineSecDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "alpine", "secdb"),
 		retry: 3,
 	}
@@ -261,7 +254,7 @@ func newCmdAlpineSecDB() *cobra.Command {
 }
 
 func newCmdAlpineOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "alpine", "osv"),
 		retry: 3,
 	}
@@ -288,7 +281,7 @@ func newCmdAlpineOSV() *cobra.Command {
 }
 
 func newCmdAmazon() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "amazon"),
 		retry: 3,
 	}
@@ -315,7 +308,7 @@ func newCmdAmazon() *cobra.Command {
 }
 
 func newCmdArch() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "arch"),
 		retry: 3,
 	}
@@ -342,7 +335,7 @@ func newCmdArch() *cobra.Command {
 }
 
 func newCmdDebianOval() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "oval"),
 		retry: 3,
 	}
@@ -369,7 +362,7 @@ func newCmdDebianOval() *cobra.Command {
 }
 
 func newCmdDebianSecurityTrackerAPI() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "api"),
 		retry: 3,
 	}
@@ -396,7 +389,7 @@ func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 }
 
 func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "salsa"),
 		retry: 3,
 	}
@@ -423,7 +416,7 @@ func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 }
 
 func newCmdDebianOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "osv"),
 		retry: 3,
 	}
@@ -450,7 +443,7 @@ func newCmdDebianOSV() *cobra.Command {
 }
 
 func newCmdEPEL() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "epel"),
 		retry: 3,
 	}
@@ -477,9 +470,15 @@ func newCmdEPEL() *cobra.Command {
 }
 
 func newCmdFedora() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora"),
+			retry: 3,
+		},
 		concurrency: 5,
 		wait:        1,
 	}
@@ -508,9 +507,15 @@ func newCmdFedora() *cobra.Command {
 }
 
 func newCmdFortinet() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "fortinet"),
+			retry: 3,
+		},
 		concurrency: 4,
 		wait:        1,
 	}
@@ -539,7 +544,7 @@ func newCmdFortinet() *cobra.Command {
 }
 
 func newCmdFreeBSD() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "freebsd"),
 		retry: 3,
 	}
@@ -566,7 +571,7 @@ func newCmdFreeBSD() *cobra.Command {
 }
 
 func newCmdGentoo() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir: filepath.Join(util.CacheDir(), "fetch", "gentoo"),
 	}
 
@@ -591,7 +596,7 @@ func newCmdGentoo() *cobra.Command {
 }
 
 func newCmdNetBSD() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "netbsd"),
 		retry: 3,
 	}
@@ -618,7 +623,7 @@ func newCmdNetBSD() *cobra.Command {
 }
 
 func newCmdOracle() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "oracle"),
 		retry: 3,
 	}
@@ -645,9 +650,15 @@ func newCmdOracle() *cobra.Command {
 }
 
 func newCmdRedhatCVE() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
-		retry:       20,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
+			retry: 20,
+		},
 		concurrency: 10,
 		wait:        1,
 	}
@@ -676,9 +687,15 @@ func newCmdRedhatCVE() *cobra.Command {
 }
 
 func newCmdRedhatCSAF() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"),
+			retry: 3,
+		},
 		concurrency: 10,
 		wait:        1,
 	}
@@ -707,7 +724,7 @@ func newCmdRedhatCSAF() *cobra.Command {
 }
 
 func newCmdRedhatCVRF() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cvrf"),
 		retry: 3,
 	}
@@ -734,7 +751,7 @@ func newCmdRedhatCVRF() *cobra.Command {
 }
 
 func newCmdRedhatOvalRepositoryToCPE() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"),
 		retry: 3,
 	}
@@ -761,7 +778,7 @@ func newCmdRedhatOvalRepositoryToCPE() *cobra.Command {
 }
 
 func newCmdRedhatOvalV1() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v1"),
 		retry: 3,
 	}
@@ -788,7 +805,7 @@ func newCmdRedhatOvalV1() *cobra.Command {
 }
 
 func newCmdRedhatOvalV2() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v2"),
 		retry: 3,
 	}
@@ -815,9 +832,15 @@ func newCmdRedhatOvalV2() *cobra.Command {
 }
 
 func newCmdRedhatVEX() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
+			retry: 3,
+		},
 		concurrency: 10,
 		wait:        1,
 	}
@@ -846,7 +869,7 @@ func newCmdRedhatVEX() *cobra.Command {
 }
 
 func newCmdRockyErrata() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
 		retry: 3,
 	}
@@ -873,7 +896,7 @@ func newCmdRockyErrata() *cobra.Command {
 }
 
 func newCmdRockyOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "osv"),
 		retry: 3,
 	}
@@ -900,9 +923,15 @@ func newCmdRockyOSV() *cobra.Command {
 }
 
 func newCmdSUSEOval() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "oval"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "oval"),
+			retry: 3,
+		},
 		concurrency: 3,
 		wait:        1,
 	}
@@ -931,9 +960,15 @@ func newCmdSUSEOval() *cobra.Command {
 }
 
 func newCmdSUSECVRF() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"),
+			retry: 3,
+		},
 		concurrency: 20,
 		wait:        1,
 	}
@@ -962,9 +997,15 @@ func newCmdSUSECVRF() *cobra.Command {
 }
 
 func newCmdSUSECVRFCVE() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
+			retry: 3,
+		},
 		concurrency: 20,
 		wait:        1,
 	}
@@ -1000,9 +1041,15 @@ func newCmdSUSECVRFCVE() *cobra.Command {
 }
 
 func newCmdSUSECSAF() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
+			retry: 3,
+		},
 		concurrency: 20,
 		wait:        1,
 	}
@@ -1031,9 +1078,15 @@ func newCmdSUSECSAF() *cobra.Command {
 }
 
 func newCmdSUSECSAFVEX() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"),
+			retry: 3,
+		},
 		concurrency: 20,
 		wait:        1,
 	}
@@ -1069,7 +1122,7 @@ func newCmdSUSECSAFVEX() *cobra.Command {
 }
 
 func newCmdUbuntuOVAL() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "oval"),
 		retry: 3,
 	}
@@ -1096,7 +1149,7 @@ func newCmdUbuntuOVAL() *cobra.Command {
 }
 
 func newCmdUbuntuCVETracker() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "ubuntu-cve-tracker"),
 		retry: 3,
 	}
@@ -1122,7 +1175,7 @@ func newCmdUbuntuCVETracker() *cobra.Command {
 }
 
 func newCmdWindowsBulletin() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "bulletin"),
 		retry: 3,
 	}
@@ -1149,7 +1202,7 @@ func newCmdWindowsBulletin() *cobra.Command {
 }
 
 func newCmdWindowsCVRF() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "cvrf"),
 		retry: 3,
 	}
@@ -1176,9 +1229,15 @@ func newCmdWindowsCVRF() *cobra.Command {
 }
 
 func newCmdWindowsMSUC() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"),
+			retry: 3,
+		},
 		concurrency: 5,
 		wait:        1,
 	}
@@ -1207,9 +1266,14 @@ func newCmdWindowsMSUC() *cobra.Command {
 }
 
 func newCmdWindowsWSUSSCN2() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"),
+			retry: 3,
+		},
 		concurrency: 2,
 	}
 
@@ -1236,7 +1300,7 @@ func newCmdWindowsWSUSSCN2() *cobra.Command {
 }
 
 func newCmdCargoDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "db"),
 		retry: 3,
 	}
@@ -1263,7 +1327,7 @@ func newCmdCargoDB() *cobra.Command {
 }
 
 func newCmdCargoGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "ghsa"),
 		retry: 3,
 	}
@@ -1290,7 +1354,7 @@ func newCmdCargoGHSA() *cobra.Command {
 }
 
 func newCmdCargoOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "osv"),
 		retry: 3,
 	}
@@ -1317,7 +1381,7 @@ func newCmdCargoOSV() *cobra.Command {
 }
 
 func newCmdComposerDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "db"),
 		retry: 3,
 	}
@@ -1344,7 +1408,7 @@ func newCmdComposerDB() *cobra.Command {
 }
 
 func newCmdComposerGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "ghsa"),
 		retry: 3,
 	}
@@ -1371,7 +1435,7 @@ func newCmdComposerGHSA() *cobra.Command {
 }
 
 func newCmdComposerGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "glsa"),
 		retry: 3,
 	}
@@ -1398,7 +1462,7 @@ func newCmdComposerGLSA() *cobra.Command {
 }
 
 func newCmdComposerOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "osv"),
 		retry: 3,
 	}
@@ -1425,7 +1489,7 @@ func newCmdComposerOSV() *cobra.Command {
 }
 
 func newCmdConanGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "conan", "glsa"),
 		retry: 3,
 	}
@@ -1452,7 +1516,7 @@ func newCmdConanGLSA() *cobra.Command {
 }
 
 func newCmdErlangGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "erlang", "ghsa"),
 		retry: 3,
 	}
@@ -1479,7 +1543,7 @@ func newCmdErlangGHSA() *cobra.Command {
 }
 
 func newCmdErlangOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "erlang", "osv"),
 		retry: 3,
 	}
@@ -1506,7 +1570,7 @@ func newCmdErlangOSV() *cobra.Command {
 }
 
 func newCmdGolangDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "db"),
 		retry: 3,
 	}
@@ -1533,7 +1597,7 @@ func newCmdGolangDB() *cobra.Command {
 }
 
 func newCmdGolangGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "ghsa"),
 		retry: 3,
 	}
@@ -1560,7 +1624,7 @@ func newCmdGolangGHSA() *cobra.Command {
 }
 
 func newCmdGolangGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "glsa"),
 		retry: 3,
 	}
@@ -1587,7 +1651,7 @@ func newCmdGolangGLSA() *cobra.Command {
 }
 
 func newCmdGolangOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "osv"),
 		retry: 3,
 	}
@@ -1614,7 +1678,7 @@ func newCmdGolangOSV() *cobra.Command {
 }
 
 func newCmdGolangVulnDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"),
 		retry: 3,
 	}
@@ -1641,7 +1705,7 @@ func newCmdGolangVulnDB() *cobra.Command {
 }
 
 func newCmdHaskellOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"),
 		retry: 3,
 	}
@@ -1668,7 +1732,7 @@ func newCmdHaskellOSV() *cobra.Command {
 }
 
 func newCmdMavenGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "maven", "ghsa"),
 		retry: 3,
 	}
@@ -1695,7 +1759,7 @@ func newCmdMavenGHSA() *cobra.Command {
 }
 
 func newCmdMavenGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "maven", "glsa"),
 		retry: 3,
 	}
@@ -1722,7 +1786,7 @@ func newCmdMavenGLSA() *cobra.Command {
 }
 
 func newCmdMavenOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "maven", "osv"),
 		retry: 3,
 	}
@@ -1749,7 +1813,7 @@ func newCmdMavenOSV() *cobra.Command {
 }
 
 func newCmdNpmDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "db"),
 		retry: 3,
 	}
@@ -1776,7 +1840,7 @@ func newCmdNpmDB() *cobra.Command {
 }
 
 func newCmdNpmGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "ghsa"),
 		retry: 3,
 	}
@@ -1803,7 +1867,7 @@ func newCmdNpmGHSA() *cobra.Command {
 }
 
 func newCmdNpmGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "glsa"),
 		retry: 3,
 	}
@@ -1830,7 +1894,7 @@ func newCmdNpmGLSA() *cobra.Command {
 }
 
 func newCmdNpmOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "osv"),
 		retry: 3,
 	}
@@ -1857,7 +1921,7 @@ func newCmdNpmOSV() *cobra.Command {
 }
 
 func newCmdNugetGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "nuget", "ghsa"),
 		retry: 3,
 	}
@@ -1884,7 +1948,7 @@ func newCmdNugetGHSA() *cobra.Command {
 }
 
 func newCmdNugetGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "nuget", "glsa"),
 		retry: 3,
 	}
@@ -1911,7 +1975,7 @@ func newCmdNugetGLSA() *cobra.Command {
 }
 
 func newCmdNugetOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "nuget", "osv"),
 		retry: 3,
 	}
@@ -1938,7 +2002,7 @@ func newCmdNugetOSV() *cobra.Command {
 }
 
 func newCmdPipDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "db"),
 		retry: 3,
 	}
@@ -1965,7 +2029,7 @@ func newCmdPipDB() *cobra.Command {
 }
 
 func newCmdPipGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "ghsa"),
 		retry: 3,
 	}
@@ -1992,7 +2056,7 @@ func newCmdPipGHSA() *cobra.Command {
 }
 
 func newCmdPipGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "glsa"),
 		retry: 3,
 	}
@@ -2019,7 +2083,7 @@ func newCmdPipGLSA() *cobra.Command {
 }
 
 func newCmdPipOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "osv"),
 		retry: 3,
 	}
@@ -2046,7 +2110,7 @@ func newCmdPipOSV() *cobra.Command {
 }
 
 func newCmdPubGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "pub", "ghsa"),
 		retry: 3,
 	}
@@ -2073,7 +2137,7 @@ func newCmdPubGHSA() *cobra.Command {
 }
 
 func newCmdPubOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "pub", "osv"),
 		retry: 3,
 	}
@@ -2100,7 +2164,7 @@ func newCmdPubOSV() *cobra.Command {
 }
 
 func newCmdROSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "r", "osv"),
 		retry: 3,
 	}
@@ -2127,7 +2191,7 @@ func newCmdROSV() *cobra.Command {
 }
 
 func newCmdRubygemsDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"),
 		retry: 3,
 	}
@@ -2154,7 +2218,7 @@ func newCmdRubygemsDB() *cobra.Command {
 }
 
 func newCmdRubygemsGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "ghsa"),
 		retry: 3,
 	}
@@ -2181,7 +2245,7 @@ func newCmdRubygemsGHSA() *cobra.Command {
 }
 
 func newCmdRubygemsGLSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "glsa"),
 		retry: 3,
 	}
@@ -2208,7 +2272,7 @@ func newCmdRubygemsGLSA() *cobra.Command {
 }
 
 func newCmdRubygemsOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "osv"),
 		retry: 3,
 	}
@@ -2235,7 +2299,7 @@ func newCmdRubygemsOSV() *cobra.Command {
 }
 
 func newCmdSwiftGHSA() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "swift", "ghsa"),
 		retry: 3,
 	}
@@ -2262,7 +2326,7 @@ func newCmdSwiftGHSA() *cobra.Command {
 }
 
 func newCmdSwiftOSV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "swift", "osv"),
 		retry: 3,
 	}
@@ -2289,7 +2353,7 @@ func newCmdSwiftOSV() *cobra.Command {
 }
 
 func newCmdAttack() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "attack"),
 		retry: 3,
 	}
@@ -2316,7 +2380,7 @@ func newCmdAttack() *cobra.Command {
 }
 
 func newCmdCapec() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "capec"),
 		retry: 3,
 	}
@@ -2343,7 +2407,7 @@ func newCmdCapec() *cobra.Command {
 }
 
 func newCmdCWE() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "cwe"),
 		retry: 3,
 	}
@@ -2370,9 +2434,15 @@ func newCmdCWE() *cobra.Command {
 }
 
 func newCmdEPSS() *cobra.Command {
-	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "fetch", "epss"),
-		retry:       3,
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "epss"),
+			retry: 3,
+		},
 		concurrency: 4,
 		wait:        1,
 	}
@@ -2401,7 +2471,7 @@ func newCmdEPSS() *cobra.Command {
 }
 
 func newCmdExploitExploitDB() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "exploitdb"),
 		retry: 3,
 	}
@@ -2428,7 +2498,7 @@ func newCmdExploitExploitDB() *cobra.Command {
 }
 
 func newCmdExploitGitHub() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "github"),
 		retry: 3,
 	}
@@ -2455,7 +2525,7 @@ func newCmdExploitGitHub() *cobra.Command {
 }
 
 func newCmdExploitInthewild() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "inthewild"),
 		retry: 3,
 	}
@@ -2482,7 +2552,7 @@ func newCmdExploitInthewild() *cobra.Command {
 }
 
 func newCmdExploitExploitTrickest() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "trickest"),
 		retry: 3,
 	}
@@ -2509,7 +2579,7 @@ func newCmdExploitExploitTrickest() *cobra.Command {
 }
 
 func newCmdJVNFeedDetail() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "detail"),
 		retry: 3,
 	}
@@ -2536,7 +2606,7 @@ func newCmdJVNFeedDetail() *cobra.Command {
 }
 
 func newCmdJVNFeedProduct() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "product"),
 		retry: 3,
 	}
@@ -2563,7 +2633,7 @@ func newCmdJVNFeedProduct() *cobra.Command {
 }
 
 func newCmdJVNFeedRSS() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "jvn", "feed", "rss"),
 		retry: 3,
 	}
@@ -2590,7 +2660,7 @@ func newCmdJVNFeedRSS() *cobra.Command {
 }
 
 func newCmdKEV() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "kev"),
 		retry: 3,
 	}
@@ -2617,7 +2687,7 @@ func newCmdKEV() *cobra.Command {
 }
 
 func newCmdMitreCVRF() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"),
 		retry: 3,
 	}
@@ -2644,7 +2714,7 @@ func newCmdMitreCVRF() *cobra.Command {
 }
 
 func newCmdMitreV4() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v4"),
 		retry: 3,
 	}
@@ -2671,7 +2741,7 @@ func newCmdMitreV4() *cobra.Command {
 }
 
 func newCmdMitreV5() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "v5"),
 		retry: 3,
 	}
@@ -2698,7 +2768,7 @@ func newCmdMitreV5() *cobra.Command {
 }
 
 func newCmdMSF() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "msf"),
 		retry: 3,
 	}
@@ -2725,9 +2795,20 @@ func newCmdMSF() *cobra.Command {
 }
 
 func newCmdNVDAPICVE() *cobra.Command {
-	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
-		retry:        20,
+	options := &struct {
+		base
+		retryWaitMin     int
+		retryWaitMax     int
+		concurrency      int
+		wait             int
+		lastModStartDate string
+		lastModEndDate   string
+		apiKey           string
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
+			retry: 20,
+		},
 		retryWaitMin: 6,
 		retryWaitMax: 30,
 		concurrency:  1,
@@ -2742,10 +2823,27 @@ func newCmdNVDAPICVE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
+			var lastModStartDate, lastModEndDate *time.Time
+			if options.lastModStartDate != "" {
+				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
+				if err != nil {
+					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
+				}
+				lastModStartDate = &t
+			}
+			if options.lastModEndDate != "" {
+				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
+				if err != nil {
+					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
+				}
+				lastModEndDate = &t
+			}
+
 			if err := nvdAPICVE.Fetch(
 				nvdAPICVE.WithDir(options.dir),
 				nvdAPICVE.WithRetry(options.retry), nvdAPICVE.WithRetryWaitMin(options.retryWaitMin), nvdAPICVE.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICVE.WithConcurrency(options.concurrency), nvdAPICVE.WithWait(options.wait),
+				nvdAPICVE.WithLastModStartDate(lastModStartDate), nvdAPICVE.WithLastModEndDate(lastModEndDate),
 				nvdAPICVE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cve")
@@ -2762,15 +2860,28 @@ func newCmdNVDAPICVE() *cobra.Command {
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", "", "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
+	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", "", "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
 	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
 
 	return cmd
 }
 
 func newCmdNVDAPICPE() *cobra.Command {
-	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
-		retry:        20,
+	options := &struct {
+		base
+		retryWaitMin     int
+		retryWaitMax     int
+		concurrency      int
+		wait             int
+		lastModStartDate string
+		lastModEndDate   string
+		apiKey           string
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
+			retry: 20,
+		},
 		retryWaitMin: 6,
 		retryWaitMax: 30,
 		concurrency:  1,
@@ -2785,10 +2896,27 @@ func newCmdNVDAPICPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
+			var lastModStartDate, lastModEndDate *time.Time
+			if options.lastModStartDate != "" {
+				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
+				if err != nil {
+					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
+				}
+				lastModStartDate = &t
+			}
+			if options.lastModEndDate != "" {
+				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
+				if err != nil {
+					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
+				}
+				lastModEndDate = &t
+			}
+
 			if err := nvdAPICPE.Fetch(
 				nvdAPICPE.WithDir(options.dir),
 				nvdAPICPE.WithRetry(options.retry), nvdAPICPE.WithRetryWaitMin(options.retryWaitMin), nvdAPICPE.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICPE.WithConcurrency(options.concurrency), nvdAPICPE.WithWait(options.wait),
+				nvdAPICPE.WithLastModStartDate(lastModStartDate), nvdAPICPE.WithLastModEndDate(lastModEndDate),
 				nvdAPICPE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpe")
@@ -2805,15 +2933,28 @@ func newCmdNVDAPICPE() *cobra.Command {
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", "", "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
+	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", "", "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
 	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
 
 	return cmd
 }
 
 func newCmdNVDAPICPEMatch() *cobra.Command {
-	options := &options{
-		dir:          filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
-		retry:        20,
+	options := &struct {
+		base
+		retryWaitMin     int
+		retryWaitMax     int
+		concurrency      int
+		wait             int
+		lastModStartDate string
+		lastModEndDate   string
+		apiKey           string
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
+			retry: 20,
+		},
 		retryWaitMin: 6,
 		retryWaitMax: 30,
 		concurrency:  1,
@@ -2828,10 +2969,27 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
+			var lastModStartDate, lastModEndDate *time.Time
+			if options.lastModStartDate != "" {
+				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
+				if err != nil {
+					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
+				}
+				lastModStartDate = &t
+			}
+			if options.lastModEndDate != "" {
+				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
+				if err != nil {
+					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
+				}
+				lastModEndDate = &t
+			}
+
 			if err := nvdAPICPEMatch.Fetch(
 				nvdAPICPEMatch.WithDir(options.dir),
 				nvdAPICPEMatch.WithRetry(options.retry), nvdAPICPEMatch.WithRetryWaitMin(options.retryWaitMin), nvdAPICPEMatch.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICPEMatch.WithConcurrency(options.concurrency), nvdAPICPEMatch.WithWait(options.wait),
+				nvdAPICPEMatch.WithLastModStartDate(lastModStartDate), nvdAPICPEMatch.WithLastModEndDate(lastModEndDate),
 				nvdAPICPEMatch.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpematch")
@@ -2848,13 +3006,15 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 	// Rate limet without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", "", "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
+	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", "", "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
 	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
 
 	return cmd
 }
 
 func newCmdNVDFeedCVE() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve"),
 		retry: 3,
 	}
@@ -2881,7 +3041,7 @@ func newCmdNVDFeedCVE() *cobra.Command {
 }
 
 func newCmdNVDFeedCPE() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe"),
 		retry: 3,
 	}
@@ -2908,7 +3068,7 @@ func newCmdNVDFeedCPE() *cobra.Command {
 }
 
 func newCmdNVDFeedCPEMatch() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"),
 		retry: 3,
 	}
@@ -2935,7 +3095,7 @@ func newCmdNVDFeedCPEMatch() *cobra.Command {
 }
 
 func newCmdSnort() *cobra.Command {
-	options := &options{
+	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "snort"),
 		retry: 3,
 	}

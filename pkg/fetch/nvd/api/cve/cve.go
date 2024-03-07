@@ -25,14 +25,16 @@ const (
 )
 
 type options struct {
-	baseURL      string
-	dir          string
-	retry        int
-	retryWaitMin int
-	retryWaitMax int
-	concurrency  int
-	wait         int
-	apiKey       string
+	baseURL          string
+	dir              string
+	retry            int
+	retryWaitMin     int
+	retryWaitMax     int
+	concurrency      int
+	wait             int
+	lastModStartDate *time.Time
+	lastModEndDate   *time.Time
+	apiKey           string
 
 	// test purpose only
 	resultsPerPage int
@@ -112,6 +114,30 @@ func WithWait(wait int) Option {
 	return waitOption(wait)
 }
 
+type lastModStartDateOption struct {
+	Date *time.Time
+}
+
+func (d lastModStartDateOption) apply(opts *options) {
+	opts.lastModStartDate = d.Date
+}
+
+func WithLastModStartDate(lastModStartDate *time.Time) Option {
+	return lastModStartDateOption{Date: lastModStartDate}
+}
+
+type lastModEndDateOption struct {
+	Date *time.Time
+}
+
+func (d lastModEndDateOption) apply(opts *options) {
+	opts.lastModEndDate = d.Date
+}
+
+func WithLastModEndDate(lastModEndDate *time.Time) Option {
+	return lastModEndDateOption{Date: lastModEndDate}
+}
+
 type apiKeyOption string
 
 func (a apiKeyOption) apply(opts *options) {
@@ -160,7 +186,7 @@ func Fetch(opts ...Option) error {
 
 	// Preliminary API call to get totalResults.
 	// Use 1 as resultsPerPage to save time.
-	u, err := nvdutil.FullURL(options.baseURL, 0, 1)
+	u, err := nvdutil.FullURL(options.baseURL, 0, 1, options.lastModStartDate, options.lastModEndDate)
 	if err != nil {
 		return errors.Wrap(err, "full URL")
 	}
@@ -191,7 +217,7 @@ func Fetch(opts ...Option) error {
 	// Actual API calls
 	us := make([]string, 0, pages)
 	for startIndex := 0; startIndex < totalResults; startIndex += options.resultsPerPage {
-		url, err := nvdutil.FullURL(options.baseURL, startIndex, options.resultsPerPage)
+		url, err := nvdutil.FullURL(options.baseURL, startIndex, options.resultsPerPage, options.lastModStartDate, options.lastModEndDate)
 		if err != nil {
 			return errors.Wrap(err, "full URL")
 		}
