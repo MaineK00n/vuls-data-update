@@ -1,0 +1,3087 @@
+{
+	"document": {
+		"aggregate_severity": {
+			"namespace": "https://www.suse.com/support/security/rating/"
+		},
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"text": "Copyright 2023 SUSE LLC. All rights reserved.",
+			"tlp": {
+				"label": "WHITE",
+				"url": "https://www.first.org/tlp/"
+			}
+		},
+		"lang": "en",
+		"notes": [
+			{
+				"category": "summary",
+				"text": "Security update for bind",
+				"title": "Title of the patch"
+			},
+			{
+				"category": "description",
+				"text": "\nThis update fixes a DoS vulnerability in bind when handling malformed \nNSEC3-signed zones. CVE-2014-0591 has been assigned to this issue.\n\nSecurity Issue references:\n\n    * CVE-2014-0591\n      <http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0591>\n\n",
+				"title": "Description of the patch"
+			},
+			{
+				"category": "details",
+				"text": "slessp2-bind",
+				"title": "Patchnames"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "CSAF 2.0 data is provided by SUSE under the Creative Commons License 4.0 with Attribution (CC-BY-4.0).",
+				"title": "Terms of use"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://www.suse.com/support/security/contact/",
+			"name": "SUSE Product Security Team",
+			"namespace": "https://www.suse.com/"
+		},
+		"references": [
+			{
+				"category": "self",
+				"summary": "URL for SUSE-SU-2015:0011-2",
+				"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+			},
+			{
+				"category": "external",
+				"summary": "SUSE ratings",
+				"url": "https://www.suse.com/support/security/rating/"
+			},
+			{
+				"category": "self",
+				"summary": "URL of this CSAF notice",
+				"url": "https://ftp.suse.com/pub/projects/security/csaf/suse-su-2015_0011-2.json"
+			},
+			{
+				"category": "self",
+				"summary": "E-Mail link for SUSE-SU-2015:0011-2",
+				"url": "https://lists.opensuse.org/opensuse-security-announce/2015-02/msg00018.html"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 743758",
+				"url": "https://bugzilla.suse.com/743758"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 765315",
+				"url": "https://bugzilla.suse.com/765315"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 772945",
+				"url": "https://bugzilla.suse.com/772945"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 780157",
+				"url": "https://bugzilla.suse.com/780157"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 784602",
+				"url": "https://bugzilla.suse.com/784602"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 796112",
+				"url": "https://bugzilla.suse.com/796112"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 815230",
+				"url": "https://bugzilla.suse.com/815230"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 819475",
+				"url": "https://bugzilla.suse.com/819475"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 831899",
+				"url": "https://bugzilla.suse.com/831899"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 858639",
+				"url": "https://bugzilla.suse.com/858639"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 882511",
+				"url": "https://bugzilla.suse.com/882511"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 908994",
+				"url": "https://bugzilla.suse.com/908994"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2012-1667 page",
+				"url": "https://www.suse.com/security/cve/CVE-2012-1667/"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2012-3817 page",
+				"url": "https://www.suse.com/security/cve/CVE-2012-3817/"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2012-4244 page",
+				"url": "https://www.suse.com/security/cve/CVE-2012-4244/"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2012-5166 page",
+				"url": "https://www.suse.com/security/cve/CVE-2012-5166/"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2013-4854 page",
+				"url": "https://www.suse.com/security/cve/CVE-2013-4854/"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2014-0591 page",
+				"url": "https://www.suse.com/security/cve/CVE-2014-0591/"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2014-8500 page",
+				"url": "https://www.suse.com/security/cve/CVE-2014-8500/"
+			}
+		],
+		"title": "Security update for bind",
+		"tracking": {
+			"current_release_date": "2014-01-27T18:38:10Z",
+			"generator": {
+				"date": "2014-01-27T18:38:10Z",
+				"engine": {
+					"name": "cve-database.git:bin/generate-csaf.pl",
+					"version": "1"
+				}
+			},
+			"id": "SUSE-SU-2015:0011-2",
+			"initial_release_date": "2014-01-27T18:38:10Z",
+			"revision_history": [
+				{
+					"date": "2014-01-27T18:38:10Z",
+					"number": "1",
+					"summary": "Current version"
+				}
+			],
+			"status": "final",
+			"version": "1"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "bind-9.9.4P2-0.6.1.i586",
+								"product": {
+									"name": "bind-9.9.4P2-0.6.1.i586",
+									"product_id": "bind-9.9.4P2-0.6.1.i586"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-chrootenv-9.9.4P2-0.6.1.i586",
+								"product": {
+									"name": "bind-chrootenv-9.9.4P2-0.6.1.i586",
+									"product_id": "bind-chrootenv-9.9.4P2-0.6.1.i586"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-devel-9.9.6P1-0.5.5.i586",
+								"product": {
+									"name": "bind-devel-9.9.6P1-0.5.5.i586",
+									"product_id": "bind-devel-9.9.6P1-0.5.5.i586"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-doc-9.9.4P2-0.6.1.i586",
+								"product": {
+									"name": "bind-doc-9.9.4P2-0.6.1.i586",
+									"product_id": "bind-doc-9.9.4P2-0.6.1.i586"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-9.9.4P2-0.6.1.i586",
+								"product": {
+									"name": "bind-libs-9.9.4P2-0.6.1.i586",
+									"product_id": "bind-libs-9.9.4P2-0.6.1.i586"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-utils-9.9.4P2-0.6.1.i586",
+								"product": {
+									"name": "bind-utils-9.9.4P2-0.6.1.i586",
+									"product_id": "bind-utils-9.9.4P2-0.6.1.i586"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "i586"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "bind-9.9.4P2-0.6.1.ia64",
+								"product": {
+									"name": "bind-9.9.4P2-0.6.1.ia64",
+									"product_id": "bind-9.9.4P2-0.6.1.ia64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-chrootenv-9.9.4P2-0.6.1.ia64",
+								"product": {
+									"name": "bind-chrootenv-9.9.4P2-0.6.1.ia64",
+									"product_id": "bind-chrootenv-9.9.4P2-0.6.1.ia64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-doc-9.9.4P2-0.6.1.ia64",
+								"product": {
+									"name": "bind-doc-9.9.4P2-0.6.1.ia64",
+									"product_id": "bind-doc-9.9.4P2-0.6.1.ia64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-9.9.4P2-0.6.1.ia64",
+								"product": {
+									"name": "bind-libs-9.9.4P2-0.6.1.ia64",
+									"product_id": "bind-libs-9.9.4P2-0.6.1.ia64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-x86-9.9.4P2-0.6.1.ia64",
+								"product": {
+									"name": "bind-libs-x86-9.9.4P2-0.6.1.ia64",
+									"product_id": "bind-libs-x86-9.9.4P2-0.6.1.ia64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-utils-9.9.4P2-0.6.1.ia64",
+								"product": {
+									"name": "bind-utils-9.9.4P2-0.6.1.ia64",
+									"product_id": "bind-utils-9.9.4P2-0.6.1.ia64"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "ia64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "bind-9.9.4P2-0.6.1.ppc64",
+								"product": {
+									"name": "bind-9.9.4P2-0.6.1.ppc64",
+									"product_id": "bind-9.9.4P2-0.6.1.ppc64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+								"product": {
+									"name": "bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+									"product_id": "bind-chrootenv-9.9.4P2-0.6.1.ppc64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-doc-9.9.4P2-0.6.1.ppc64",
+								"product": {
+									"name": "bind-doc-9.9.4P2-0.6.1.ppc64",
+									"product_id": "bind-doc-9.9.4P2-0.6.1.ppc64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-9.9.4P2-0.6.1.ppc64",
+								"product": {
+									"name": "bind-libs-9.9.4P2-0.6.1.ppc64",
+									"product_id": "bind-libs-9.9.4P2-0.6.1.ppc64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+								"product": {
+									"name": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+									"product_id": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-utils-9.9.4P2-0.6.1.ppc64",
+								"product": {
+									"name": "bind-utils-9.9.4P2-0.6.1.ppc64",
+									"product_id": "bind-utils-9.9.4P2-0.6.1.ppc64"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "ppc64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "bind-9.9.4P2-0.6.1.s390x",
+								"product": {
+									"name": "bind-9.9.4P2-0.6.1.s390x",
+									"product_id": "bind-9.9.4P2-0.6.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-chrootenv-9.9.4P2-0.6.1.s390x",
+								"product": {
+									"name": "bind-chrootenv-9.9.4P2-0.6.1.s390x",
+									"product_id": "bind-chrootenv-9.9.4P2-0.6.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-devel-9.9.6P1-0.5.5.s390x",
+								"product": {
+									"name": "bind-devel-9.9.6P1-0.5.5.s390x",
+									"product_id": "bind-devel-9.9.6P1-0.5.5.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-doc-9.9.4P2-0.6.1.s390x",
+								"product": {
+									"name": "bind-doc-9.9.4P2-0.6.1.s390x",
+									"product_id": "bind-doc-9.9.4P2-0.6.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-9.9.4P2-0.6.1.s390x",
+								"product": {
+									"name": "bind-libs-9.9.4P2-0.6.1.s390x",
+									"product_id": "bind-libs-9.9.4P2-0.6.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+								"product": {
+									"name": "bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+									"product_id": "bind-libs-32bit-9.9.4P2-0.6.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-utils-9.9.4P2-0.6.1.s390x",
+								"product": {
+									"name": "bind-utils-9.9.4P2-0.6.1.s390x",
+									"product_id": "bind-utils-9.9.4P2-0.6.1.s390x"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "s390x"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "bind-9.9.4P2-0.6.1.x86_64",
+								"product": {
+									"name": "bind-9.9.4P2-0.6.1.x86_64",
+									"product_id": "bind-9.9.4P2-0.6.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+								"product": {
+									"name": "bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+									"product_id": "bind-chrootenv-9.9.4P2-0.6.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-devel-9.9.6P1-0.5.5.x86_64",
+								"product": {
+									"name": "bind-devel-9.9.6P1-0.5.5.x86_64",
+									"product_id": "bind-devel-9.9.6P1-0.5.5.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-doc-9.9.4P2-0.6.1.x86_64",
+								"product": {
+									"name": "bind-doc-9.9.4P2-0.6.1.x86_64",
+									"product_id": "bind-doc-9.9.4P2-0.6.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-9.9.4P2-0.6.1.x86_64",
+								"product": {
+									"name": "bind-libs-9.9.4P2-0.6.1.x86_64",
+									"product_id": "bind-libs-9.9.4P2-0.6.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+								"product": {
+									"name": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+									"product_id": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "bind-utils-9.9.4P2-0.6.1.x86_64",
+								"product": {
+									"name": "bind-utils-9.9.4P2-0.6.1.x86_64",
+									"product_id": "bind-utils-9.9.4P2-0.6.1.x86_64"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "x86_64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_name",
+								"name": "SUSE Linux Enterprise Server 11 SP2",
+								"product": {
+									"name": "SUSE Linux Enterprise Server 11 SP2",
+									"product_id": "SUSE Linux Enterprise Server 11 SP2",
+									"product_identification_helper": {
+										"cpe": "cpe:/o:suse:suse_sles:11:sp2"
+									}
+								}
+							},
+							{
+								"category": "product_name",
+								"name": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+								"product": {
+									"name": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+									"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS",
+									"product_identification_helper": {
+										"cpe": "cpe:/o:suse:suse_sles_ltss:11:sp2"
+									}
+								}
+							},
+							{
+								"category": "product_name",
+								"name": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+								"product": {
+									"name": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+									"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+									"product_identification_helper": {
+										"cpe": "cpe:/o:suse:sles_sap:11:sp2"
+									}
+								}
+							}
+						],
+						"category": "product_family",
+						"name": "SUSE Linux Enterprise"
+					}
+				],
+				"category": "vendor",
+				"name": "SUSE"
+			}
+		],
+		"relationships": [
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.i586 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-x86-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-libs-x86-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.i586 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-x86-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-libs-x86-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server 11 SP2-LTSS",
+					"product_id": "SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server 11 SP2-LTSS"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-chrootenv-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.i586 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-devel-9.9.6P1-0.5.5.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64"
+				},
+				"product_reference": "bind-devel-9.9.6P1-0.5.5.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-doc-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-doc-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-libs-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-libs-x86-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-libs-x86-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.i586 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.i586",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.ia64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.ia64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.ppc64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.ppc64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.s390x as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.s390x",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "bind-utils-9.9.4P2-0.6.1.x86_64 as component of SUSE Linux Enterprise Server for SAP Applications 11 SP2",
+					"product_id": "SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				},
+				"product_reference": "bind-utils-9.9.4P2-0.6.1.x86_64",
+				"relates_to_product_reference": "SUSE Linux Enterprise Server for SAP Applications 11 SP2"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2012-1667",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2012-1667"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "ISC BIND 9.x before 9.7.6-P1, 9.8.x before 9.8.3-P1, 9.9.x before 9.9.1-P1, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P1 does not properly handle resource records with a zero-length RDATA section, which allows remote DNS servers to cause a denial of service (daemon crash or data corruption) or obtain sensitive information from process memory via a crafted record.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2012-1667",
+					"url": "https://www.suse.com/security/cve/CVE-2012-1667"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 765315 for CVE-2012-1667",
+					"url": "https://bugzilla.suse.com/765315"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 792926 for CVE-2012-1667",
+					"url": "https://bugzilla.suse.com/792926"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "important"
+				}
+			],
+			"title": "CVE-2012-1667"
+		},
+		{
+			"cve": "CVE-2012-3817",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2012-3817"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "ISC BIND 9.4.x, 9.5.x, 9.6.x, and 9.7.x before 9.7.6-P2; 9.8.x before 9.8.3-P2; 9.9.x before 9.9.1-P2; and 9.6-ESV before 9.6-ESV-R7-P2, when DNSSEC validation is enabled, does not properly initialize the failing-query cache, which allows remote attackers to cause a denial of service (assertion failure and daemon exit) by sending many queries.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2012-3817",
+					"url": "https://www.suse.com/security/cve/CVE-2012-3817"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 772945 for CVE-2012-3817",
+					"url": "https://bugzilla.suse.com/772945"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 792926 for CVE-2012-3817",
+					"url": "https://bugzilla.suse.com/792926"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "important"
+				}
+			],
+			"title": "CVE-2012-3817"
+		},
+		{
+			"cve": "CVE-2012-4244",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2012-4244"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "ISC BIND 9.x before 9.7.6-P3, 9.8.x before 9.8.3-P3, 9.9.x before 9.9.1-P3, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P3 allows remote attackers to cause a denial of service (assertion failure and named daemon exit) via a query for a long resource record.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2012-4244",
+					"url": "https://www.suse.com/security/cve/CVE-2012-4244"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 780157 for CVE-2012-4244",
+					"url": "https://bugzilla.suse.com/780157"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 792926 for CVE-2012-4244",
+					"url": "https://bugzilla.suse.com/792926"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "important"
+				}
+			],
+			"title": "CVE-2012-4244"
+		},
+		{
+			"cve": "CVE-2012-5166",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2012-5166"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "ISC BIND 9.x before 9.7.6-P4, 9.8.x before 9.8.3-P4, 9.9.x before 9.9.1-P4, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P4 allows remote attackers to cause a denial of service (named daemon hang) via unspecified combinations of resource records.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2012-5166",
+					"url": "https://www.suse.com/security/cve/CVE-2012-5166"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 784602 for CVE-2012-5166",
+					"url": "https://bugzilla.suse.com/784602"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 792926 for CVE-2012-5166",
+					"url": "https://bugzilla.suse.com/792926"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "important"
+				}
+			],
+			"title": "CVE-2012-5166"
+		},
+		{
+			"cve": "CVE-2013-4854",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2013-4854"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "The RFC 5011 implementation in rdata.c in ISC BIND 9.7.x and 9.8.x before 9.8.5-P2, 9.8.6b1, 9.9.x before 9.9.3-P2, and 9.9.4b1, and DNSco BIND 9.9.3-S1 before 9.9.3-S1-P1 and 9.9.4-S1b1, allows remote attackers to cause a denial of service (assertion failure and named daemon exit) via a query with a malformed RDATA section that is not properly handled during construction of a log message, as exploited in the wild in July 2013.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2013-4854",
+					"url": "https://www.suse.com/security/cve/CVE-2013-4854"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 831899 for CVE-2013-4854",
+					"url": "https://bugzilla.suse.com/831899"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "low"
+				}
+			],
+			"title": "CVE-2013-4854"
+		},
+		{
+			"cve": "CVE-2014-0591",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2014-0591"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "The query_findclosestnsec3 function in query.c in named in ISC BIND 9.6, 9.7, and 9.8 before 9.8.6-P2 and 9.9 before 9.9.4-P2, and 9.6-ESV before 9.6-ESV-R10-P2, allows remote attackers to cause a denial of service (INSIST assertion failure and daemon exit) via a crafted DNS query to an authoritative nameserver that uses the NSEC3 signing feature.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2014-0591",
+					"url": "https://www.suse.com/security/cve/CVE-2014-0591"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 858639 for CVE-2014-0591",
+					"url": "https://bugzilla.suse.com/858639"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "moderate"
+				}
+			],
+			"title": "CVE-2014-0591"
+		},
+		{
+			"cve": "CVE-2014-8500",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2014-8500"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "ISC BIND 9.0.x through 9.8.x, 9.9.0 through 9.9.6, and 9.10.0 through 9.10.1 does not limit delegation chaining, which allows remote attackers to cause a denial of service (memory consumption and named crash) via a large or infinite number of referrals.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+					"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2014-8500",
+					"url": "https://www.suse.com/security/cve/CVE-2014-8500"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 908994 for CVE-2014-8500",
+					"url": "https://bugzilla.suse.com/908994"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-chrootenv-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-devel-9.9.6P1-0.5.5.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-doc-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-32bit-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-9.9.4P2-0.6.1.x86_64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-libs-x86-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.i586",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ia64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.ppc64",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.s390x",
+						"SUSE Linux Enterprise Server for SAP Applications 11 SP2:bind-utils-9.9.4P2-0.6.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2014-01-27T18:38:10Z",
+					"details": "important"
+				}
+			],
+			"title": "CVE-2014-8500"
+		}
+	]
+}

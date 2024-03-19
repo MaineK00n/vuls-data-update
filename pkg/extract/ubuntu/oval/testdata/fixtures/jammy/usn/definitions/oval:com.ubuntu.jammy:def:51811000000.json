@@ -1,0 +1,72 @@
+{
+	"class": "patch",
+	"id": "oval:com.ubuntu.jammy:def:51811000000",
+	"version": "1",
+	"metadata": {
+		"title": "USN-5181-1 -- jQuery UI vulnerability",
+		"description": "It was discovered that jQuery UI did not properly validate the values from untrusted sources. An attacker could use this vulnerability to cause a crash or possibly execute arbitrary code. This issue affected only Ubuntu 18.04 ESM and Ubuntu 20.4 ESM. (CVE-2021-41184)  It was discovered that jQuery UI checkboxradio widget did not properly decode certain values from HTML entities. An attacker could possibly use this issue to generate a cross-site scripting(XSS) attack, resulting in a crash or possibly execute arbitrary code. (CVE-2022-31160)  Update Instructions:  Run `sudo pro fix USN-5181-1` to fix the vulnerability. The problem can be corrected by updating your system to the following package versions:  node-jquery-ui - 1.13.1+dfsg-1ubuntu0.1~esm1 libjs-jquery-ui - 1.13.1+dfsg-1ubuntu0.1~esm1 libjs-jquery-ui-docs - 1.13.1+dfsg-1ubuntu0.1~esm1 Available with Ubuntu Pro: https://ubuntu.com/pro",
+		"affected": {
+			"family": "unix",
+			"platform": "Ubuntu 22.04 ESM"
+		},
+		"reference": [
+			{
+				"source": "USN",
+				"ref_id": "USN-5181-1",
+				"ref_url": "https://ubuntu.com/security/notices/USN-5181-1"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2021-41184",
+				"ref_url": "https://ubuntu.com/security/CVE-2021-41184"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2022-31160",
+				"ref_url": "https://ubuntu.com/security/CVE-2022-31160"
+			}
+		],
+		"advisory": {
+			"from": "security@ubuntu.com",
+			"severity": "Medium",
+			"issued": {
+				"date": "2022-09-09"
+			},
+			"cve": [
+				{
+					"text": "CVE-2021-41184",
+					"href": "https://ubuntu.com/security/CVE-2021-41184",
+					"priority": "medium",
+					"public": "20211026",
+					"cvss_score": "6.1",
+					"cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+					"cvss_severity": "medium",
+					"usns": "5181-1,6419-1"
+				},
+				{
+					"text": "CVE-2022-31160",
+					"href": "https://ubuntu.com/security/CVE-2022-31160",
+					"priority": "medium",
+					"public": "20220720",
+					"cvss_score": "6.1",
+					"cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+					"cvss_severity": "medium",
+					"usns": "5181-1,6419-1"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:com.ubuntu.jammy:tst:518110000000",
+						"comment": "Available with Ubuntu Pro: https://ubuntu.com/pro"
+					}
+				]
+			}
+		]
+	}
+}

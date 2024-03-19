@@ -2,10 +2,10 @@ package errata_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -13,8 +13,8 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/alma/errata"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/affected"
-	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 )
 
 func TestExtract(t *testing.T) {
@@ -50,14 +50,13 @@ func TestExtract(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				dir, y := filepath.Split(filepath.Clean(dir))
-				dir, v := filepath.Split(filepath.Clean(dir))
-				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), v, y, file))
+				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), y, file))
 				if err != nil {
 					return err
 				}
 				defer f.Close()
 
-				var want types.Info
+				var want types.Data
 				if err := json.NewDecoder(f).Decode(&want); err != nil {
 					return err
 				}
@@ -68,22 +67,22 @@ func TestExtract(t *testing.T) {
 				}
 				defer f.Close()
 
-				var got types.Info
+				var got types.Data
 				if err := json.NewDecoder(f).Decode(&got); err != nil {
 					return err
 				}
 
 				opts := []cmp.Option{
-					cmpopts.SortSlices(func(a, b affectedTypes.Affected) bool {
+					cmpopts.SortSlices(func(a, b types.Vulnerability) bool {
+						return a.ID < b.ID
+					}),
+					cmpopts.SortSlices(func(a, b detection.Detection) bool {
 						if a.Package.Name == b.Package.Name {
-							return strings.Join(a.Package.Arches, ", ") < strings.Join(b.Package.Arches, ", ")
+							return fmt.Sprintf("%s", a.Package.Architectures) < fmt.Sprintf("%s", b.Package.Architectures)
 						}
 						return a.Package.Name < b.Package.Name
 					}),
-					cmpopts.SortSlices(func(a, b types.Vulnerability) bool {
-						return a.CVE < b.CVE
-					}),
-					cmpopts.SortSlices(func(a, b referenceTypes.Reference) bool {
+					cmpopts.SortSlices(func(a, b reference.Reference) bool {
 						return a.URL < b.URL
 					}),
 				}

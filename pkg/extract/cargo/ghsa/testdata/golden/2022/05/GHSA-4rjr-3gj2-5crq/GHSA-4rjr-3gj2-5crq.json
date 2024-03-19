@@ -1,0 +1,80 @@
+{
+	"id": "GHSA-4rjr-3gj2-5crq",
+	"advisories": [
+		{
+			"id": "GHSA-4rjr-3gj2-5crq",
+			"title": "Exposure of Sensitive Information to an Unauthorized Actor in MongoDB Rust Driver",
+			"description": "Specific MongoDB Rust Driver versions can include credentials used by the connection pool to authenticate connections in the monitoring event that is emitted when the pool is created. The user's logging infrastructure could then potentially ingest these events and unexpectedly leak the credentials. Note that such monitoring is not enabled by default.",
+			"severity": [
+				{
+					"type": "cvss_v31",
+					"source": "github.com/advisories",
+					"cvss_v31": {
+						"vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:N/A:N",
+						"base_score": 4.4,
+						"base_severity": "MEDIUM",
+						"temporal_score": 4.4,
+						"temporal_severity": "MEDIUM",
+						"environmental_score": 4.4,
+						"environmental_severity": "MEDIUM"
+					}
+				},
+				{
+					"type": "vendor",
+					"source": "github.com/advisories",
+					"vendor": "MODERATE"
+				}
+			],
+			"references": [
+				{
+					"source": "github.com/advisories",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2021-20332"
+				},
+				{
+					"source": "github.com/advisories",
+					"url": "https://github.com/mongodb/mongo-rust-driver/commit/9e8782b1bb1104e5399c073b553719c262d4463c"
+				},
+				{
+					"source": "github.com/advisories",
+					"url": "https://github.com/mongodb/mongo-rust-driver"
+				},
+				{
+					"source": "github.com/advisories",
+					"url": "https://jira.mongodb.org/browse/RUST-591"
+				}
+			],
+			"published": "2022-05-24T19:09:36Z",
+			"modified": "2022-06-17T21:39:29Z",
+			"optional": {
+				"github_reviewed": true
+			}
+		}
+	],
+	"vulnerabilities": [
+		{
+			"id": "CVE-2021-20332"
+		}
+	],
+	"detection": [
+		{
+			"ecosystem": "cargo",
+			"vulnerable": true,
+			"package": {
+				"name": "mongodb"
+			},
+			"affected": {
+				"type": "semver",
+				"range": [
+					{
+						"lt": "2.0.0-beta",
+						"ge": "1.0.0"
+					}
+				],
+				"fixed": [
+					"2.0.0-beta"
+				]
+			}
+		}
+	],
+	"data_source": "cargo-ghsa"
+}

@@ -1,0 +1,305 @@
+{
+	"id": "oval:com.oracle.elsa:def:20070057",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nELSA-2007-0057:  Moderate: bind security update  (MODERATE)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 5"
+			]
+		},
+		"reference": [
+			{
+				"source": "elsa",
+				"ref_id": "ELSA-2007-0057",
+				"ref_url": "https://linux.oracle.com/errata/ELSA-2007-0057.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2007-0493",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2007-0493.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2007-0494",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2007-0494.html"
+			}
+		],
+		"description": "\n [30:9.3.3-8]\n - added fix for #224445 - CVE-2007-0493 BIND might crash after\n   attempting to read free()-ed memory\n - added fix for #225229 - CVE-2007-0494 BIND dnssec denial of service\n - Resolves: rhbz#224445\n - Resolves: rhbz#225229 \n",
+		"advisory": {
+			"severity": "MODERATE",
+			"rights": "Copyright 2007 Oracle, Inc.",
+			"issued": {
+				"date": "2007-06-26"
+			},
+			"cve": [
+				{
+					"text": "CVE-2007-0493",
+					"href": "https://linux.oracle.com/cve/CVE-2007-0493.html"
+				},
+				{
+					"text": "CVE-2007-0494",
+					"href": "https://linux.oracle.com/cve/CVE-2007-0494.html"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterias": [
+					{
+						"operator": "AND",
+						"criterias": [
+							{
+								"operator": "OR",
+								"criterias": [
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057003",
+												"comment": "bind is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057004",
+												"comment": "bind is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057005",
+												"comment": "bind-chroot is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057006",
+												"comment": "bind-chroot is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057007",
+												"comment": "bind-devel is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057008",
+												"comment": "bind-devel is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057009",
+												"comment": "bind-libbind-devel is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057010",
+												"comment": "bind-libbind-devel is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057011",
+												"comment": "bind-libs is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057012",
+												"comment": "bind-libs is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057013",
+												"comment": "bind-sdb is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057014",
+												"comment": "bind-sdb is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057015",
+												"comment": "bind-utils is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057016",
+												"comment": "bind-utils is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057017",
+												"comment": "caching-nameserver is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057018",
+												"comment": "caching-nameserver is signed with the Oracle Linux 5 key"
+											}
+										]
+									}
+								]
+							}
+						],
+						"criterions": [
+							{
+								"test_ref": "oval:com.oracle.elsa:tst:20070057002",
+								"comment": "Oracle Linux arch is x86_64"
+							}
+						]
+					},
+					{
+						"operator": "AND",
+						"criterias": [
+							{
+								"operator": "OR",
+								"criterias": [
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057003",
+												"comment": "bind is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057004",
+												"comment": "bind is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057005",
+												"comment": "bind-chroot is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057006",
+												"comment": "bind-chroot is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057007",
+												"comment": "bind-devel is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057008",
+												"comment": "bind-devel is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057009",
+												"comment": "bind-libbind-devel is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057010",
+												"comment": "bind-libbind-devel is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057011",
+												"comment": "bind-libs is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057012",
+												"comment": "bind-libs is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057013",
+												"comment": "bind-sdb is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057014",
+												"comment": "bind-sdb is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057015",
+												"comment": "bind-utils is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057016",
+												"comment": "bind-utils is signed with the Oracle Linux 5 key"
+											}
+										]
+									},
+									{
+										"operator": "AND",
+										"criterions": [
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057017",
+												"comment": "caching-nameserver is earlier than 30:9.3.3-8.el5"
+											},
+											{
+												"test_ref": "oval:com.oracle.elsa:tst:20070057018",
+												"comment": "caching-nameserver is signed with the Oracle Linux 5 key"
+											}
+										]
+									}
+								]
+							}
+						],
+						"criterions": [
+							{
+								"test_ref": "oval:com.oracle.elsa:tst:20070057019",
+								"comment": "Oracle Linux arch is i386"
+							}
+						]
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.oracle.elsa:tst:20070057001",
+				"comment": "Oracle Linux 5 is installed"
+			}
+		]
+	}
+}

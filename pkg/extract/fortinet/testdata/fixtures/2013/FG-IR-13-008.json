@@ -1,0 +1,103 @@
+{
+	"document_title": "Potential Man-In-The Middle Vulnerability in FortiClient VPN",
+	"document_type": "Fortinet PSIRT Advisories",
+	"documentpublisher": {
+		"type": "Vendor",
+		"contact_details": "\n            Fortinet PSIRT Contact:\n            Website: https://fortiguard.fortinet.com/faq/psirt-contact\n        "
+	},
+	"documenttracking": {
+		"identification": {
+			"id": "FG-IR-13-008"
+		},
+		"status": "Final",
+		"version": "1",
+		"revisionhistory": {
+			"revision": {
+				"number": "1",
+				"date": "2013-05-13T00:00:00",
+				"description": "Current version"
+			}
+		},
+		"initial_release_date": "2013-05-13T00:00:00",
+		"current_release_date": "2013-05-13T00:00:00"
+	},
+	"documentnotes": {
+		"note": [
+			{
+				"text": "\n            Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.\n        ",
+				"title": "Summary",
+				"type": "Summary",
+				"ordinal": "1"
+			},
+			{
+				"text": "\n            Under certain conditions, FortiClient VPN may be susceptible to a certificate validation vulnerability which would allow an attacker to intercept user credentials in a man-in-the-middle attack.\n        ",
+				"title": "Description",
+				"type": "General",
+				"ordinal": "2"
+			},
+			{
+				"text": "\n            Critical\n        ",
+				"title": "Impact",
+				"type": "General",
+				"ordinal": "3"
+			},
+			{
+				"text": "\n            FortiClient Lite 4.3.3.445 for WindowsFortiClient 4.3.3.445 for WindowsFortiClient 4.0.2 for MacOSFortiClient SSL VPN 4.0.2012 for LinuxFortiClient Lite 2.0 for Android\n        ",
+				"title": "Affected Products",
+				"type": "General",
+				"ordinal": "4"
+			},
+			{
+				"text": "\n            Solutions have been available since April 2012. It is recommended to update to a version greater or equal to the following affected product list:FortiClient Lite 4.3.4.461 for WindowsFortiClient 4.3.5.472 for WindowsFortiClient 4.0.3.134 for MacOSFortiClient SSL VPN 4.0.2258 for LinuxFortiClient 4.0 for Android (Replaces FortiClient Lite 2.0)\n        ",
+				"title": "Solutions",
+				"type": "General",
+				"ordinal": "5"
+			}
+		]
+	},
+	"document_references": {
+		"reference": [
+			{
+				"url": "https://fortiguard.fortinet.com/psirt/FG-IR-13-008",
+				"description": "Potential Man-In-The Middle Vulnerability in FortiClient VPN"
+			},
+			{
+				"url": "<a href=\"http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html\">Neohapsis</a>",
+				"description": "<a href=\"http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html\">Neohapsis</a>"
+			}
+		]
+	},
+	"acknowledgments": {
+		"acknowledgment": [
+			{
+				"description": "Cédric Tissières and Philippe Oechslin, Objectif Sécurité"
+			}
+		]
+	},
+	"vulnerability": {
+		"ordinal": "1",
+		"title": "Potential Man-In-The Middle Vulnerability in FortiClient VPN",
+		"references": {
+			"type": "Self",
+			"reference": [
+				{
+					"url": "https://fortiguard.fortinet.com/psirt/FG-IR-13-008",
+					"description": "Potential Man-In-The Middle Vulnerability in FortiClient VPN"
+				},
+				{
+					"url": "<a href=\"http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html\">Neohapsis</a>",
+					"description": "<a href=\"http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html\">Neohapsis</a>"
+				}
+			]
+		},
+		"product_statuses": {
+			"status": {}
+		},
+		"cvss_scoresets": {
+			"scoreset_v3": {}
+		}
+	},
+	"product_tree": {
+		"branch": {}
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"id": "oval:com.ubuntu.jammy:var:2020101770000000",
+	"version": "1",
+	"datatype": "string",
+	"comment": "'pillow' package binaries",
+	"value": [
+		"python3-pil",
+		"python3-pil.imagetk"
+	]
+}

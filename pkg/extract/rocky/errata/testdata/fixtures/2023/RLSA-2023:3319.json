@@ -1,0 +1,53 @@
+{
+	"affectedProducts": [
+		"Rocky Linux 8"
+	],
+	"cves": [
+		{
+			"cvss3BaseScore": "UNKNOWN",
+			"cvss3ScoringVector": "UNKNOWN",
+			"cwe": "UNKNOWN",
+			"name": "CVE-2023-24540",
+			"sourceBy": "MITRE",
+			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24540"
+		}
+	],
+	"description": "Go Toolset provides the Go programming language tools and libraries. Go is alternatively known as golang. \n\nSecurity Fix(es):\n\n* golang: html/template: improper handling of JavaScript whitespace (CVE-2023-24540)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"fixes": [
+		{
+			"sourceBy": "Red Hat",
+			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027",
+			"ticket": "2196027"
+		}
+	],
+	"name": "RLSA-2023:3319",
+	"publishedAt": "2023-05-25T17:22:28.202430Z",
+	"rpms": {
+		"Rocky Linux 8": {
+			"nvras": [
+				"delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.src.rpm",
+				"golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
+				"golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
+				"golang-bin-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
+				"golang-docs-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+				"golang-misc-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+				"golang-src-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+				"golang-tests-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+				"go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
+				"go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
+				"delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
+				"delve-debuginfo-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
+				"delve-debugsource-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
+				"golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+				"golang-bin-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+				"golang-race-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+				"go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm"
+			]
+		}
+	},
+	"severity": "SEVERITY_IMPORTANT",
+	"shortCode": "RL",
+	"synopsis": "Important: go-toolset:Rocky Linux8 security update",
+	"topic": "An update is available for module.go-toolset, golang, module.golang, go-toolset, module.delve.\nThis update affects Rocky Linux 8.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"type": "TYPE_SECURITY"
+}

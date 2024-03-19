@@ -1,0 +1,17 @@
+{
+	"id": "TEMP-0000000-0CA7E3",
+	"packages": [
+		{
+			"name": "wordpress",
+			"status": "resolved",
+			"urgency": "unimportant",
+			"fixed_version": "0",
+			"repository": [
+				{
+					"name": "sid",
+					"version": "6.0+dfsg1-1"
+				}
+			]
+		}
+	]
+}

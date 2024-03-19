@@ -1,0 +1,16 @@
+[
+	{
+		"date_posted": "03-14-17",
+		"bulletin_id": "MS17-023",
+		"bulletin_kb": "4014329",
+		"bulletin_severity": "Critical",
+		"bulletin_impact": "Remote Code Execution",
+		"title": "Security Update for Adobe Flash Player",
+		"affected_product": "Windows 10 Version 1511 for x64-based Systems",
+		"component_kb": "4014329",
+		"affected_component": "Adobe Flash Player",
+		"impact": "Remote Code Execution",
+		"severity": "Critical",
+		"reboot": "Yes"
+	}
+]

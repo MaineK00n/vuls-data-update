@@ -25,14 +25,9 @@ type OSV struct {
 			Score string `json:"score,omitempty"`
 		} `json:"severity,omitempty"`
 		Ranges []struct {
-			Type   string `json:"type,omitempty"`
-			Repo   string `json:"repo,omitempty"`
-			Events []struct {
-				Introduced   string `json:"introduced,omitempty"`
-				Fixed        string `json:"fixed,omitempty"`
-				LastAffected string `json:"last_affected,omitempty"`
-				Limit        string `json:"limit,omitempty"`
-			} `json:"events,omitempty"`
+			Type   string  `json:"type,omitempty"`
+			Repo   string  `json:"repo,omitempty"`
+			Events []Event `json:"events,omitempty"`
 		} `json:"ranges,omitempty"`
 		Versions          []string    `json:"versions,omitempty"`
 		EcosystemSpecific interface{} `json:"ecosystem_specific,omitempty"`
@@ -48,4 +43,11 @@ type OSV struct {
 		Type    string   `json:"type,omitempty"`
 	} `json:"credits,omitempty"`
 	DatabaseSpecific interface{} `json:"database_specific,omitempty"`
+}
+
+type Event struct {
+	Introduced   string `json:"introduced,omitempty"`
+	Fixed        string `json:"fixed,omitempty"`
+	LastAffected string `json:"last_affected,omitempty"`
+	Limit        string `json:"limit,omitempty"`
 }

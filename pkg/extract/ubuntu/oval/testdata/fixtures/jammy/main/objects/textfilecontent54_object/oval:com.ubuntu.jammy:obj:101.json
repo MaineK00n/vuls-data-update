@@ -1,0 +1,12 @@
+{
+	"id": "oval:com.ubuntu.jammy:obj:101",
+	"version": "1",
+	"comment": "The singleton release codename object.",
+	"pattern": {
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}

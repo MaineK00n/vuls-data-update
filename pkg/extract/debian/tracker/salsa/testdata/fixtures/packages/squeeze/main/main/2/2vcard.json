@@ -1,0 +1,47 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"2vcard"
+	],
+	"Build-Depends": [
+		"debhelper (>= 5.0.37)"
+	],
+	"Checksums-Sha1": [
+		"daa0c959021f78687ce4a22a63e4e76dd16ebcb0 967 2vcard_0.5-3.dsc b7f1ce31ec856414a3f0f1090689f91aa7456d56 9398 2vcard_0.5.orig.tar.gz 5f9acd07ebda6ab00fa6b4fe3198c13e94090862 2036 2vcard_0.5-3.diff.gz"
+	],
+	"Checksums-Sha256": [
+		"e8f76d59bdf3d900f1a7d95ac679371634ea3e564d7467fee4e5ea50dd477e0f 967 2vcard_0.5-3.dsc efdc22859ac2f8f030d038dc4faa9020082ebae34212498c288968ffd45c9764 9398 2vcard_0.5.orig.tar.gz 82673ff3456af571094066c89bcea87b25c23c87cf1d0050b731e5222563626b 2036 2vcard_0.5-3.diff.gz"
+	],
+	"Directory": [
+		"pool/main/2/2vcard"
+	],
+	"Files": [
+		"e1c6ac2c645c89eb2bb15b335a035dff 967 2vcard_0.5-3.dsc f73a69c170f772f3f6e75f2d11bbb792 9398 2vcard_0.5.orig.tar.gz 1e806d32233af87437258d86b1561f57 2036 2vcard_0.5-3.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Maintainer": [
+		"Martin Albisetti <argentina@gmail.com>"
+	],
+	"Package": [
+		"2vcard"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"utils"
+	],
+	"Standards-Version": [
+		"3.8.0"
+	],
+	"Uploaders": [
+		"Marcela Tiznado <mlt@debian.org>"
+	],
+	"Version": [
+		"0.5-3"
+	]
+}

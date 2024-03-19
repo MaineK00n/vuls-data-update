@@ -1,0 +1,9 @@
+{
+	"id": "oval:com.ubuntu.jammy:var:200224390000010",
+	"version": "1",
+	"datatype": "string",
+	"comment": "'gcc-h8300-hms' package binaries",
+	"value": [
+		"^gcc-h8300-hms(?::\\w+|)\\s+(.*)$"
+	]
+}

@@ -5,22 +5,21 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
-	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"slices"
 	"strings"
-	"time"
 
+	rpm "github.com/knqyf263/go-rpm-version"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/affected"
-	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
+	utilversion "github.com/MaineK00n/vuls-data-update/pkg/extract/util/version"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/osv"
 )
 
@@ -84,137 +83,13 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "decode %s", fpath)
 		}
 
-		published, err := time.Parse("2006-01-02T15:04:05Z", fetched.Published)
+		extracted, err := extract(fetched)
 		if err != nil {
-			return errors.Wrapf(err, "parse %s in %s", fetched.Published, fpath)
-		}
-		modified, err := time.Parse("2006-01-02T15:04:05Z", fetched.Modified)
-		if err != nil {
-			return errors.Wrapf(err, "parse %s in %s", fetched.Modified, fpath)
+			return errors.Wrapf(err, "extract for %s", fetched.ID)
 		}
 
-		info := types.Info{
-			ID:          fetched.ID,
-			Title:       fetched.Summary,
-			Description: fetched.Details,
-			Published:   &published,
-			Modified:    &modified,
-			DataSource:  source.AlmaOSV,
-		}
-
-		var as []affectedTypes.Affected
-		for _, a := range fetched.Affected {
-			p, err := func() (affectedTypes.Package, error) {
-				lhs, rhs, ok := strings.Cut(a.Package.Ecosystem, ":")
-				if !ok || lhs != "AlmaLinux" {
-					return affectedTypes.Package{}, errors.Errorf("unexpected ecosystem format. expected: %q, actual: %q", "AlmaLinux:<version>", a.Package.Ecosystem)
-				}
-				return affectedTypes.Package{
-					Ecosystem: fmt.Sprintf(affectedTypes.EcosystemTypeAlma, rhs),
-					Name:      a.Package.Name,
-				}, nil
-			}()
-			if err != nil {
-				return errors.Wrapf(err, "parse package: %v in %s", a.Package, fpath)
-			}
-			var rs []affectedTypes.Range
-			for _, r := range a.Ranges {
-				if r.Type != affectedTypes.RangeTypeEcosystem.String() {
-					return errors.Errorf("unexpected range type. expected: %q, actual: %q", affectedTypes.RangeTypeEcosystem, r.Type)
-				}
-				var es []affectedTypes.Event
-				for _, e := range r.Events {
-					es = append(es, e)
-				}
-
-				rs = append(rs, affectedTypes.Range{
-					Type:   affectedTypes.RangeTypeEcosystem,
-					Events: es,
-				})
-			}
-
-			as = append(as, affectedTypes.Affected{
-				Vulnerable: true,
-				Package:    p,
-				Ranges:     rs,
-			})
-		}
-		info.Affected = as
-
-		rm := map[string]referenceTypes.Reference{}
-		for _, r := range fetched.References {
-			u, err := url.Parse(r.URL)
-			if err != nil {
-				return errors.Wrapf(err, "parse %s in %s", r.URL, fpath)
-			}
-
-			rr, ok := rm[r.URL]
-			if !ok {
-				rr = referenceTypes.Reference{
-					Name:   path.Base(u.Path),
-					Source: "errata.almalinux.org",
-					URL:    r.URL,
-				}
-				if u.Host == "errata.almalinux.org" {
-					rr.Name = strings.TrimSuffix(path.Base(u.Path), ".html")
-				}
-			}
-
-			t := func() referenceTypes.TagType {
-				switch u.Host {
-				case "errata.almalinux.org":
-					return referenceTypes.TagVendorAdvisory
-				case "access.redhat.com":
-					switch r.Type {
-					case "ADVISORY":
-						return referenceTypes.TagThirdPartyAdvisory
-					default:
-						if !strings.HasPrefix(path.Base(u.Path), "CVE-") {
-							return referenceTypes.TagMISC
-						}
-						return referenceTypes.TagCVE
-					}
-				case "bugzilla.redhat.com":
-					return referenceTypes.TagBugzilla
-				case "vulners.com":
-					return referenceTypes.TagCVE
-				default:
-					return referenceTypes.TagMISC
-				}
-			}()
-			if !slices.Contains(rr.Tags, t) {
-				rr.Tags = append(rr.Tags, t)
-			}
-			rm[r.URL] = rr
-		}
-		info.References = maps.Values(rm)
-
-		vm := map[string]types.Vulnerability{}
-		for _, related := range fetched.Related {
-			if !strings.HasPrefix(related, "CVE-") {
-				continue
-			}
-
-			vm[related] = types.Vulnerability{
-				CVE: related,
-			}
-		}
-		for _, r := range rm {
-			if !slices.Contains(r.Tags, referenceTypes.TagCVE) {
-				continue
-			}
-			v, ok := vm[r.Name]
-			if !ok {
-				continue
-			}
-			v.References = append(v.References, r)
-
-			vm[r.Name] = v
-		}
-		info.Vulnerabilities = maps.Values(vm)
-
-		if err := util.Write(filepath.Join(options.dir, "main", filepath.Base(filepath.Dir(fpath)), fmt.Sprintf("%s.json", info.ID)), info); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "main", filepath.Base(filepath.Dir(fpath)), fmt.Sprintf("%s.json", info.ID)))
+		if err := util.Write(filepath.Join(options.dir, filepath.Base(filepath.Dir(fpath)), fmt.Sprintf("%s.json", extracted.ID)), extracted); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, filepath.Base(filepath.Dir(fpath)), fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
 		return nil
@@ -223,4 +98,124 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	return nil
+}
+
+func extract(fetched osv.OSV) (types.Data, error) {
+	extracted := types.Data{
+		ID: fetched.ID,
+		Advisories: []types.Advisory{{
+			ID:          fetched.ID,
+			Title:       fetched.Summary,
+			Description: fetched.Details,
+			Published:   utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Published),
+			Modified:    utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Modified),
+		}},
+		DataSource: source.AlmaOSV,
+	}
+
+	for _, r := range fetched.References {
+		extracted.Advisories[0].References = append(extracted.Advisories[0].References, reference.Reference{
+			Source: "errata.almalinux.org",
+			URL:    r.URL,
+		})
+	}
+
+	for _, related := range fetched.Related {
+		if !strings.HasPrefix(related, "CVE-") {
+			continue
+		}
+		extracted.Vulnerabilities = append(extracted.Vulnerabilities, types.Vulnerability{
+			ID: related,
+		})
+	}
+
+	for _, a := range fetched.Affected {
+		if !strings.HasPrefix(a.Package.Ecosystem, "AlmaLinux:") {
+			continue
+		}
+
+		d := detection.Detection{
+			Ecosystem:  fmt.Sprintf(detection.EcosystemTypeAlma, strings.TrimPrefix(a.Package.Ecosystem, "AlmaLinux:")),
+			Vulnerable: true,
+			Package: detection.Package{
+				Name: a.Package.Name,
+			},
+		}
+		var affected *detection.Affected
+		for _, r := range a.Ranges {
+			vget := func(e osv.Event) string {
+				if e.Introduced != "" {
+					return e.Introduced
+				}
+				if e.Fixed != "" {
+					return e.Fixed
+				}
+				if e.LastAffected != "" {
+					return e.LastAffected
+				}
+				if e.Limit != "" {
+					return e.Limit
+				}
+				return ""
+			}
+
+			switch r.Type {
+			case "SEMVER", "GIT":
+				continue
+			case "ECOSYSTEM":
+				affected = &detection.Affected{
+					Type: detection.RangeTypeRPM,
+				}
+
+				slices.SortFunc(r.Events, func(i, j osv.Event) int {
+					return rpm.NewVersion(vget(i)).Compare(rpm.NewVersion(vget(j)))
+				})
+
+				var i int
+				for _, e := range r.Events {
+					switch {
+					case e.Introduced != "":
+						affected.Range = append(affected.Range, detection.Range{
+							GreaterEqual: func() string {
+								if e.Introduced == "0" {
+									return ""
+								}
+								return e.Introduced
+							}(),
+						})
+						i = len(affected.Range) - 1
+					case e.Fixed != "":
+						affected.Range[i].LessThan = e.Fixed
+						affected.Fixed = append(affected.Fixed, e.Fixed)
+					case e.LastAffected != "":
+						affected.Range[i].LessEqual = e.LastAffected
+					case e.Limit != "":
+					default:
+						return types.Data{}, errors.New("no event is set")
+					}
+				}
+
+				d.Affected = affected
+			default:
+				return types.Data{}, errors.Errorf("%s is not supported", r.Type)
+			}
+		}
+
+		var vs []detection.Range
+		for _, v := range a.Versions {
+			if d.Affected == nil || !utilversion.Contains(*d.Affected, v) {
+				vs = append(vs, detection.Range{Equal: v})
+			}
+		}
+		if len(vs) > 0 {
+			if d.Affected == nil {
+				d.Affected = &detection.Affected{Type: detection.RangeTypeRPM}
+			}
+			d.Affected.Range = append(d.Affected.Range, vs...)
+		}
+
+		extracted.Detection = append(extracted.Detection, d)
+	}
+
+	return extracted, nil
 }

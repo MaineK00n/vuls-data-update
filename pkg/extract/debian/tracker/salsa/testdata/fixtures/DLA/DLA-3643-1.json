@@ -1,0 +1,23 @@
+{
+	"header": {
+		"line": "[31 Oct 2023] DLA-3643-1 pmix - security update",
+		"name": "DLA-3643-1"
+	},
+	"annotations": [
+		{
+			"line": "\t{CVE-2023-41915}",
+			"type": "xref",
+			"bugs": [
+				"CVE-2023-41915"
+			]
+		},
+		{
+			"line": "\t[buster] - pmix 3.1.2-3+deb10u1",
+			"type": "package",
+			"release": "buster",
+			"package": "pmix",
+			"kind": "fixed",
+			"version": "3.1.2-3+deb10u1"
+		}
+	]
+}

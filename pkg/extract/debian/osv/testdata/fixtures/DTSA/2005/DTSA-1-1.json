@@ -1,0 +1,36 @@
+{
+	"schema_version": "1.6.0",
+	"id": "DTSA-1-1",
+	"modified": "2005-08-26T00:00:00Z",
+	"published": "2005-08-26T00:00:00Z",
+	"related": [
+		"CVE-2005-2626",
+		"CVE-2005-2627"
+	],
+	"summary": "kismet - various",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Debian:4.0",
+				"name": "kismet",
+				"purl": "pkg:deb/debian/kismet?arch=source"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2005.08.R1-0.1etch1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/debian-osv/dtsa-osv/DTSA-1-1.json"
+			}
+		}
+	]
+}

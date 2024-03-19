@@ -1,0 +1,47 @@
+{
+	"schema_version": "1.6.0",
+	"id": "DSA-135",
+	"modified": "2023-10-16T00:05:19.431840Z",
+	"published": "2002-07-02T00:00:00Z",
+	"related": [
+		"CVE-2002-0653"
+	],
+	"summary": "libapache-mod-ssl -- buffer overflow / DoS",
+	"details": "\nThe libapache-mod-ssl package provides SSL capability to the apache\nwebserver.\nRecently, a problem has been found in the handling of .htaccess files,\nallowing arbitrary code execution as the web server user (regardless of\nExecCGI / suexec settings), DoS attacks (killing off apache children), and\nallowing someone to take control of apache child processes - all through\nspecially crafted .htaccess files.\n\n\nThis has been fixed in the libapache-mod-ssl\\_2.4.10-1.3.9-1potato2 package\n(for potato), and the libapache-mod-ssl\\_2.8.9-2 package (for woody).\nWe recommend you upgrade as soon as possible.\n\n\n",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Debian:3.0",
+				"name": "libapache-mod-ssl",
+				"purl": "pkg:deb/debian/libapache-mod-ssl?arch=source"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2.8.9-2"
+						}
+					]
+				}
+			],
+			"versions": [
+				"2.4.10-1.3.9-1potato2",
+				"2.4.10-1.3.9-1potato4",
+				"2.8.7-1"
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/debian-osv/dsa-osv/DSA-135.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://www.debian.org/security/2002/dsa-135"
+		}
+	]
+}

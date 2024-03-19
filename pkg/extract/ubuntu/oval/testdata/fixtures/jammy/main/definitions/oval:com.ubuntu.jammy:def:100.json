@@ -1,0 +1,26 @@
+{
+	"class": "inventory",
+	"id": "oval:com.ubuntu.jammy:def:100",
+	"version": "1",
+	"metadata": {
+		"title": "Check that Ubuntu 22.04 LTS (jammy) is installed.",
+		"affected": {},
+		"reference": {},
+		"advisory": {
+			"cve": {}
+		}
+	},
+	"notes": {},
+	"criteria": {
+		"criterions": [
+			{
+				"test_ref": "oval:com.ubuntu.jammy:tst:100",
+				"comment": "The host is part of the unix family."
+			},
+			{
+				"test_ref": "oval:com.ubuntu.jammy:tst:101",
+				"comment": "The host is running Ubuntu jammy."
+			}
+		]
+	}
+}

@@ -16,7 +16,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	debianOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/osv"
-	debianOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
+	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
@@ -28,9 +28,9 @@ import (
 	redhatCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/csaf"
 	redhatCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cve"
 	redhatCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cvrf"
-	redhatOvalRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/repository2cpe"
-	redhatOvalV1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
-	redhatOvalV2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
+	redhatOVALRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/repository2cpe"
+	redhatOVALv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
+	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/osv"
@@ -38,9 +38,9 @@ import (
 	suseCSAFVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
 	suseCVRFCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf_cve"
-	suseOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
-	ubuntuOval "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/oval"
-	ubuntuCveTracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
+	suseOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
+	ubuntuOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/oval"
+	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
 	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
 	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
@@ -127,40 +127,39 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAmazon(),
 		newCmdArch(),
-		newCmdDebianOval(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
-		newCmdEPEL(),
+		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdFedora(),
 		newCmdFortinet(),
 		newCmdFreeBSD(),
 		newCmdGentoo(),
 		newCmdNetBSD(),
 		newCmdOracle(),
-		newCmdRedhatOvalRepositoryToCPE(), newCmdRedhatOvalV1(), newCmdRedhatOvalV2(), newCmdRedhatCVE(), newCmdRedhatCVRF(), newCmdRedhatCSAF(), newCmdRedhatVEX(),
+		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
-		newCmdSUSEOval(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(),
+		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
 
-		newCmdCargoDB(), newCmdCargoGHSA(), newCmdCargoOSV(),
-		newCmdComposerDB(), newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(),
+		newCmdCargoGHSA(), newCmdCargoOSV(),
+		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(),
 		newCmdConanGLSA(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
-		newCmdGolangDB(), newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangVulnDB(), newCmdGolangOSV(),
+		newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangOSV(),
 		newCmdHaskellOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdNpmDB(), newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(),
+		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
-		newCmdPipDB(), newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(),
+		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRubygemsDB(), newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(),
+		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 
 		newCmdAttack(),
 		newCmdCapec(),
 		newCmdCWE(),
 		newCmdEPSS(),
-		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInthewild(), newCmdExploitExploitTrickest(),
+		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdKEV(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
@@ -334,7 +333,7 @@ func newCmdArch() *cobra.Command {
 	return cmd
 }
 
-func newCmdDebianOval() *cobra.Command {
+func newCmdDebianOVAL() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "oval"),
 		retry: 3,
@@ -348,7 +347,7 @@ func newCmdDebianOval() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := debianOval.Fetch(debianOval.WithDir(options.dir), debianOval.WithRetry(options.retry)); err != nil {
+			if err := debianOVAL.Fetch(debianOVAL.WithDir(options.dir), debianOVAL.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch debian oval")
 			}
 			return nil
@@ -437,33 +436,6 @@ func newCmdDebianOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "osv"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdEPEL() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "epel"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "epel",
-		Short: "Fetch EPEL data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch epel
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := epel.Fetch(epel.WithDir(options.dir), epel.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch epel")
-			// 	}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "epel"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
@@ -649,7 +621,7 @@ func newCmdOracle() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatCVE() *cobra.Command {
+func newCmdRedHatCVE() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
@@ -686,7 +658,7 @@ func newCmdRedhatCVE() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatCSAF() *cobra.Command {
+func newCmdRedHatCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
@@ -723,7 +695,7 @@ func newCmdRedhatCSAF() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatCVRF() *cobra.Command {
+func newCmdRedHatCVRF() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cvrf"),
 		retry: 3,
@@ -750,7 +722,7 @@ func newCmdRedhatCVRF() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatOvalRepositoryToCPE() *cobra.Command {
+func newCmdRedHatOVALRepositoryToCPE() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"),
 		retry: 3,
@@ -764,7 +736,7 @@ func newCmdRedhatOvalRepositoryToCPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOvalRepositoryToCPE.Fetch(redhatOvalRepositoryToCPE.WithDir(options.dir), redhatOvalRepositoryToCPE.WithRetry(options.retry)); err != nil {
+			if err := redhatOVALRepositoryToCPE.Fetch(redhatOVALRepositoryToCPE.WithDir(options.dir), redhatOVALRepositoryToCPE.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat oval repository-to-cpe")
 			}
 			return nil
@@ -777,7 +749,7 @@ func newCmdRedhatOvalRepositoryToCPE() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatOvalV1() *cobra.Command {
+func newCmdRedHatOVALV1() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v1"),
 		retry: 3,
@@ -791,7 +763,7 @@ func newCmdRedhatOvalV1() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOvalV1.Fetch(redhatOvalV1.WithDir(options.dir), redhatOvalV1.WithRetry(options.retry)); err != nil {
+			if err := redhatOVALv1.Fetch(redhatOVALv1.WithDir(options.dir), redhatOVALv1.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat ovalv1")
 			}
 			return nil
@@ -804,7 +776,7 @@ func newCmdRedhatOvalV1() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatOvalV2() *cobra.Command {
+func newCmdRedHatOVALV2() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "v2"),
 		retry: 3,
@@ -818,7 +790,7 @@ func newCmdRedhatOvalV2() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOvalV2.Fetch(redhatOvalV2.WithDir(options.dir), redhatOvalV2.WithRetry(options.retry)); err != nil {
+			if err := redhatOVALv2.Fetch(redhatOVALv2.WithDir(options.dir), redhatOVALv2.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat ovalv2")
 			}
 			return nil
@@ -831,7 +803,7 @@ func newCmdRedhatOvalV2() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedhatVEX() *cobra.Command {
+func newCmdRedHatVEX() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
@@ -922,7 +894,7 @@ func newCmdRockyOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdSUSEOval() *cobra.Command {
+func newCmdSUSEOVAL() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
@@ -944,7 +916,7 @@ func newCmdSUSEOval() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseOval.Fetch(suseOval.WithDir(options.dir), suseOval.WithRetry(options.retry)); err != nil {
+			if err := suseOVAL.Fetch(suseOVAL.WithDir(options.dir), suseOVAL.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse oval")
 			}
 			return nil
@@ -1135,7 +1107,7 @@ func newCmdUbuntuOVAL() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := ubuntuOval.Fetch(ubuntuOval.WithDir(options.dir), ubuntuOval.WithRetry(options.retry)); err != nil {
+			if err := ubuntuOVAL.Fetch(ubuntuOVAL.WithDir(options.dir), ubuntuOVAL.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu oval")
 			}
 			return nil
@@ -1162,7 +1134,7 @@ func newCmdUbuntuCVETracker() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := ubuntuCveTracker.Fetch(ubuntuCveTracker.WithDir(options.dir), ubuntuCveTracker.WithRetry(options.retry)); err != nil {
+			if err := ubuntuCVETracker.Fetch(ubuntuCVETracker.WithDir(options.dir), ubuntuCVETracker.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu cve tracker")
 			}
 			return nil
@@ -1299,32 +1271,32 @@ func newCmdWindowsWSUSSCN2() *cobra.Command {
 	return cmd
 }
 
-func newCmdCargoDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "db"),
-		retry: 3,
-	}
+// func newCmdCargoDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "cargo", "db"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "cargo-db",
-		Short: "Fetch Cargo DB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch cargo-db
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := cargoDB.Fetch(cargoDB.WithDir(options.dir), cargoDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch cargo db")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "cargo-db",
+// 		Short: "Fetch Cargo DB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch cargo-db
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := cargoDB.Fetch(cargoDB.WithDir(options.dir), cargoDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch cargo db")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "db"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "db"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdCargoGHSA() *cobra.Command {
 	options := &base{
@@ -1380,32 +1352,32 @@ func newCmdCargoOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdComposerDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "db"),
-		retry: 3,
-	}
+// func newCmdComposerDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "composer", "db"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "composer-db",
-		Short: "Fetch Composer DB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch composer-db
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := composerDB.Fetch(composerDB.WithDir(options.dir), composerDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch composer db")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "composer-db",
+// 		Short: "Fetch Composer DB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch composer-db
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := composerDB.Fetch(composerDB.WithDir(options.dir), composerDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch composer db")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "composer", "db"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "composer", "db"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdComposerGHSA() *cobra.Command {
 	options := &base{
@@ -1569,32 +1541,32 @@ func newCmdErlangOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdGolangDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "db"),
-		retry: 3,
-	}
+// func newCmdGolangDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "db"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "golang-db",
-		Short: "Fetch Golang DB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch golang-db
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangDB.Fetch(golangDB.WithDir(options.dir), golangDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch golang db")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "golang-db",
+// 		Short: "Fetch Golang DB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch golang-db
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := golangDB.Fetch(golangDB.WithDir(options.dir), golangDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch golang db")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "db"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "db"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdGolangGHSA() *cobra.Command {
 	options := &base{
@@ -1677,32 +1649,32 @@ func newCmdGolangOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdGolangVulnDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"),
-		retry: 3,
-	}
+// func newCmdGolangVulnDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "golang-vulndb",
-		Short: "Fetch Golang VulnDB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch golang-vulndb
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := golangVulnDB.Fetch(golangVulnDB.WithDir(options.dir), golangVulnDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch golang vulndb")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "golang-vulndb",
+// 		Short: "Fetch Golang VulnDB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch golang-vulndb
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := golangVulnDB.Fetch(golangVulnDB.WithDir(options.dir), golangVulnDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch golang vulndb")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "golang", "vulndb"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdHaskellOSV() *cobra.Command {
 	options := &base{
@@ -1812,32 +1784,32 @@ func newCmdMavenOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdNpmDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "db"),
-		retry: 3,
-	}
+// func newCmdNpmDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "npm", "db"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "npm-db",
-		Short: "Fetch NPM DB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch npm-db
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := npmDB.Fetch(npmDB.WithDir(options.dir), npmDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch npm db")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "npm-db",
+// 		Short: "Fetch NPM DB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch npm-db
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := npmDB.Fetch(npmDB.WithDir(options.dir), npmDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch npm db")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "db"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "db"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdNpmGHSA() *cobra.Command {
 	options := &base{
@@ -2001,32 +1973,32 @@ func newCmdNugetOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdPipDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "db"),
-		retry: 3,
-	}
+// func newCmdPipDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "pip", "db"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "pip-db",
-		Short: "Fetch Pip DB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch pip-db
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := pipDB.Fetch(pipDB.WithDir(options.dir), pipDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch pip db")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "pip-db",
+// 		Short: "Fetch Pip DB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch pip-db
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := pipDB.Fetch(pipDB.WithDir(options.dir), pipDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch pip db")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pip", "db"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "pip", "db"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdPipGHSA() *cobra.Command {
 	options := &base{
@@ -2190,32 +2162,32 @@ func newCmdROSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdRubygemsDB() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"),
-		retry: 3,
-	}
+// func newCmdRubygemsDB() *cobra.Command {
+// 	options := &base{
+// 		dir:   filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"),
+// 		retry: 3,
+// 	}
 
-	cmd := &cobra.Command{
-		Use:   "rubygems-db",
-		Short: "Fetch Rubygems DB data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch rubygems-db
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// 	if err := rubygemsDB.Fetch(rubygemsDB.WithDir(options.dir), rubygemsDB.WithRetry(options.retry)); err != nil {
-			// 		return errors.Wrap(err, "failed to fetch rubygems db")
-			// 	}
-			return nil
-		},
-	}
+// 	cmd := &cobra.Command{
+// 		Use:   "rubygems-db",
+// 		Short: "Fetch Rubygems DB data source",
+// 		Example: heredoc.Doc(`
+// 			$ vuls-data-update fetch rubygems-db
+// 		`),
+// 		Args: cobra.NoArgs,
+// 		RunE: func(_ *cobra.Command, _ []string) error {
+// 			// 	if err := rubygemsDB.Fetch(rubygemsDB.WithDir(options.dir), rubygemsDB.WithRetry(options.retry)); err != nil {
+// 			// 		return errors.Wrap(err, "failed to fetch rubygems db")
+// 			// 	}
+// 			return nil
+// 		},
+// 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+// 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "db"), "output fetch results to specified directory")
+// 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
-	return cmd
-}
+// 	return cmd
+// }
 
 func newCmdRubygemsGHSA() *cobra.Command {
 	options := &base{
@@ -2524,7 +2496,7 @@ func newCmdExploitGitHub() *cobra.Command {
 	return cmd
 }
 
-func newCmdExploitInthewild() *cobra.Command {
+func newCmdExploitInTheWild() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "exploit", "inthewild"),
 		retry: 3,

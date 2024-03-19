@@ -1,0 +1,1381 @@
+{
+	"document": {
+		"aggregate_severity": {
+			"namespace": "https://www.suse.com/support/security/rating/",
+			"text": "important"
+		},
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"text": "Copyright 2023 SUSE LLC. All rights reserved.",
+			"tlp": {
+				"label": "WHITE",
+				"url": "https://www.first.org/tlp/"
+			}
+		},
+		"lang": "en",
+		"notes": [
+			{
+				"category": "summary",
+				"text": "Security update for Chromium",
+				"title": "Title of the patch"
+			},
+			{
+				"category": "description",
+				"text": "Chromium was updated to 51.0.2704.103 to fix three vulnerabilities:\n\n- CVE-2016-1704: Various fixes from internal audits, fuzzing and other initiatives (shared identifier) (boo#985397)",
+				"title": "Description of the patch"
+			},
+			{
+				"category": "details",
+				"text": "openSUSE-2016-742",
+				"title": "Patchnames"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "CSAF 2.0 data is provided by SUSE under the Creative Commons License 4.0 with Attribution (CC-BY-4.0).",
+				"title": "Terms of use"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://www.suse.com/support/security/contact/",
+			"name": "SUSE Product Security Team",
+			"namespace": "https://www.suse.com/"
+		},
+		"references": [
+			{
+				"category": "self",
+				"summary": "URL for openSUSE-SU-2016:1623-1",
+				"url": "https://lists.opensuse.org/opensuse-security-announce/2016-06/msg00036.html"
+			},
+			{
+				"category": "external",
+				"summary": "SUSE ratings",
+				"url": "https://www.suse.com/support/security/rating/"
+			},
+			{
+				"category": "self",
+				"summary": "URL of this CSAF notice",
+				"url": "https://ftp.suse.com/pub/projects/security/csaf/opensuse-su-2016_1623-1.json"
+			},
+			{
+				"category": "self",
+				"summary": "E-Mail link for openSUSE-SU-2016:1623-1",
+				"url": "https://lists.opensuse.org/opensuse-security-announce/2016-06/msg00036.html"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE Bug 985397",
+				"url": "https://bugzilla.suse.com/985397"
+			},
+			{
+				"category": "self",
+				"summary": "SUSE CVE CVE-2016-1704 page",
+				"url": "https://www.suse.com/security/cve/CVE-2016-1704/"
+			}
+		],
+		"title": "Security update for Chromium",
+		"tracking": {
+			"current_release_date": "2016-07-06T12:21:45Z",
+			"generator": {
+				"date": "2016-07-06T12:21:45Z",
+				"engine": {
+					"name": "cve-database.git:bin/generate-csaf.pl",
+					"version": "1"
+				}
+			},
+			"id": "openSUSE-SU-2016:1623-1",
+			"initial_release_date": "2016-07-06T12:21:45Z",
+			"revision_history": [
+				{
+					"date": "2016-07-06T12:21:45Z",
+					"number": "1",
+					"summary": "Current version"
+				}
+			],
+			"status": "final",
+			"version": "1"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "imlib2-1.4.5-5.1.aarch64",
+								"product": {
+									"name": "imlib2-1.4.5-5.1.aarch64",
+									"product_id": "imlib2-1.4.5-5.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-devel-1.4.5-5.1.aarch64",
+								"product": {
+									"name": "imlib2-devel-1.4.5-5.1.aarch64",
+									"product_id": "imlib2-devel-1.4.5-5.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-filters-1.4.5-5.1.aarch64",
+								"product": {
+									"name": "imlib2-filters-1.4.5-5.1.aarch64",
+									"product_id": "imlib2-filters-1.4.5-5.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-loaders-1.4.5-5.1.aarch64",
+								"product": {
+									"name": "imlib2-loaders-1.4.5-5.1.aarch64",
+									"product_id": "imlib2-loaders-1.4.5-5.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libImlib2-1-1.4.5-5.1.aarch64",
+								"product": {
+									"name": "libImlib2-1-1.4.5-5.1.aarch64",
+									"product_id": "libImlib2-1-1.4.5-5.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf-lite8-2.5.0-2.1.aarch64",
+								"product": {
+									"name": "libprotobuf-lite8-2.5.0-2.1.aarch64",
+									"product_id": "libprotobuf-lite8-2.5.0-2.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf8-2.5.0-2.1.aarch64",
+								"product": {
+									"name": "libprotobuf8-2.5.0-2.1.aarch64",
+									"product_id": "libprotobuf8-2.5.0-2.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotoc8-2.5.0-2.1.aarch64",
+								"product": {
+									"name": "libprotoc8-2.5.0-2.1.aarch64",
+									"product_id": "libprotoc8-2.5.0-2.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "mosh-1.2.5-8.1.aarch64",
+								"product": {
+									"name": "mosh-1.2.5-8.1.aarch64",
+									"product_id": "mosh-1.2.5-8.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "ninja-1.5.3-4.1.aarch64",
+								"product": {
+									"name": "ninja-1.5.3-4.1.aarch64",
+									"product_id": "ninja-1.5.3-4.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-devel-2.5.0-2.1.aarch64",
+								"product": {
+									"name": "protobuf-devel-2.5.0-2.1.aarch64",
+									"product_id": "protobuf-devel-2.5.0-2.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-java-2.5.0-2.1.aarch64",
+								"product": {
+									"name": "protobuf-java-2.5.0-2.1.aarch64",
+									"product_id": "protobuf-java-2.5.0-2.1.aarch64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "python-protobuf-2.5.0-2.1.aarch64",
+								"product": {
+									"name": "python-protobuf-2.5.0-2.1.aarch64",
+									"product_id": "python-protobuf-2.5.0-2.1.aarch64"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "aarch64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "perl-Switch-2.17-4.1.noarch",
+								"product": {
+									"name": "perl-Switch-2.17-4.1.noarch",
+									"product_id": "perl-Switch-2.17-4.1.noarch"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "noarch"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "imlib2-1.4.5-5.1.ppc64le",
+								"product": {
+									"name": "imlib2-1.4.5-5.1.ppc64le",
+									"product_id": "imlib2-1.4.5-5.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-devel-1.4.5-5.1.ppc64le",
+								"product": {
+									"name": "imlib2-devel-1.4.5-5.1.ppc64le",
+									"product_id": "imlib2-devel-1.4.5-5.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-filters-1.4.5-5.1.ppc64le",
+								"product": {
+									"name": "imlib2-filters-1.4.5-5.1.ppc64le",
+									"product_id": "imlib2-filters-1.4.5-5.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-loaders-1.4.5-5.1.ppc64le",
+								"product": {
+									"name": "imlib2-loaders-1.4.5-5.1.ppc64le",
+									"product_id": "imlib2-loaders-1.4.5-5.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libImlib2-1-1.4.5-5.1.ppc64le",
+								"product": {
+									"name": "libImlib2-1-1.4.5-5.1.ppc64le",
+									"product_id": "libImlib2-1-1.4.5-5.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf-lite8-2.5.0-2.1.ppc64le",
+								"product": {
+									"name": "libprotobuf-lite8-2.5.0-2.1.ppc64le",
+									"product_id": "libprotobuf-lite8-2.5.0-2.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf8-2.5.0-2.1.ppc64le",
+								"product": {
+									"name": "libprotobuf8-2.5.0-2.1.ppc64le",
+									"product_id": "libprotobuf8-2.5.0-2.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotoc8-2.5.0-2.1.ppc64le",
+								"product": {
+									"name": "libprotoc8-2.5.0-2.1.ppc64le",
+									"product_id": "libprotoc8-2.5.0-2.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "mosh-1.2.5-8.1.ppc64le",
+								"product": {
+									"name": "mosh-1.2.5-8.1.ppc64le",
+									"product_id": "mosh-1.2.5-8.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "ninja-1.5.3-4.1.ppc64le",
+								"product": {
+									"name": "ninja-1.5.3-4.1.ppc64le",
+									"product_id": "ninja-1.5.3-4.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-devel-2.5.0-2.1.ppc64le",
+								"product": {
+									"name": "protobuf-devel-2.5.0-2.1.ppc64le",
+									"product_id": "protobuf-devel-2.5.0-2.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-java-2.5.0-2.1.ppc64le",
+								"product": {
+									"name": "protobuf-java-2.5.0-2.1.ppc64le",
+									"product_id": "protobuf-java-2.5.0-2.1.ppc64le"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "python-protobuf-2.5.0-2.1.ppc64le",
+								"product": {
+									"name": "python-protobuf-2.5.0-2.1.ppc64le",
+									"product_id": "python-protobuf-2.5.0-2.1.ppc64le"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "ppc64le"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "imlib2-1.4.5-5.1.s390x",
+								"product": {
+									"name": "imlib2-1.4.5-5.1.s390x",
+									"product_id": "imlib2-1.4.5-5.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-devel-1.4.5-5.1.s390x",
+								"product": {
+									"name": "imlib2-devel-1.4.5-5.1.s390x",
+									"product_id": "imlib2-devel-1.4.5-5.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-filters-1.4.5-5.1.s390x",
+								"product": {
+									"name": "imlib2-filters-1.4.5-5.1.s390x",
+									"product_id": "imlib2-filters-1.4.5-5.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-loaders-1.4.5-5.1.s390x",
+								"product": {
+									"name": "imlib2-loaders-1.4.5-5.1.s390x",
+									"product_id": "imlib2-loaders-1.4.5-5.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libImlib2-1-1.4.5-5.1.s390x",
+								"product": {
+									"name": "libImlib2-1-1.4.5-5.1.s390x",
+									"product_id": "libImlib2-1-1.4.5-5.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf-lite8-2.5.0-2.1.s390x",
+								"product": {
+									"name": "libprotobuf-lite8-2.5.0-2.1.s390x",
+									"product_id": "libprotobuf-lite8-2.5.0-2.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf8-2.5.0-2.1.s390x",
+								"product": {
+									"name": "libprotobuf8-2.5.0-2.1.s390x",
+									"product_id": "libprotobuf8-2.5.0-2.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotoc8-2.5.0-2.1.s390x",
+								"product": {
+									"name": "libprotoc8-2.5.0-2.1.s390x",
+									"product_id": "libprotoc8-2.5.0-2.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "mosh-1.2.5-8.1.s390x",
+								"product": {
+									"name": "mosh-1.2.5-8.1.s390x",
+									"product_id": "mosh-1.2.5-8.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "ninja-1.5.3-4.1.s390x",
+								"product": {
+									"name": "ninja-1.5.3-4.1.s390x",
+									"product_id": "ninja-1.5.3-4.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-devel-2.5.0-2.1.s390x",
+								"product": {
+									"name": "protobuf-devel-2.5.0-2.1.s390x",
+									"product_id": "protobuf-devel-2.5.0-2.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-java-2.5.0-2.1.s390x",
+								"product": {
+									"name": "protobuf-java-2.5.0-2.1.s390x",
+									"product_id": "protobuf-java-2.5.0-2.1.s390x"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "python-protobuf-2.5.0-2.1.s390x",
+								"product": {
+									"name": "python-protobuf-2.5.0-2.1.s390x",
+									"product_id": "python-protobuf-2.5.0-2.1.s390x"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "s390x"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "chromedriver-51.0.2704.103-85.3.x86_64",
+								"product": {
+									"name": "chromedriver-51.0.2704.103-85.3.x86_64",
+									"product_id": "chromedriver-51.0.2704.103-85.3.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "chromium-51.0.2704.103-85.3.x86_64",
+								"product": {
+									"name": "chromium-51.0.2704.103-85.3.x86_64",
+									"product_id": "chromium-51.0.2704.103-85.3.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",
+								"product": {
+									"name": "chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",
+									"product_id": "chromium-desktop-gnome-51.0.2704.103-85.3.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "chromium-desktop-kde-51.0.2704.103-85.3.x86_64",
+								"product": {
+									"name": "chromium-desktop-kde-51.0.2704.103-85.3.x86_64",
+									"product_id": "chromium-desktop-kde-51.0.2704.103-85.3.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64",
+								"product": {
+									"name": "chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64",
+									"product_id": "chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-1.4.5-5.1.x86_64",
+								"product": {
+									"name": "imlib2-1.4.5-5.1.x86_64",
+									"product_id": "imlib2-1.4.5-5.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-devel-1.4.5-5.1.x86_64",
+								"product": {
+									"name": "imlib2-devel-1.4.5-5.1.x86_64",
+									"product_id": "imlib2-devel-1.4.5-5.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-filters-1.4.5-5.1.x86_64",
+								"product": {
+									"name": "imlib2-filters-1.4.5-5.1.x86_64",
+									"product_id": "imlib2-filters-1.4.5-5.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "imlib2-loaders-1.4.5-5.1.x86_64",
+								"product": {
+									"name": "imlib2-loaders-1.4.5-5.1.x86_64",
+									"product_id": "imlib2-loaders-1.4.5-5.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libImlib2-1-1.4.5-5.1.x86_64",
+								"product": {
+									"name": "libImlib2-1-1.4.5-5.1.x86_64",
+									"product_id": "libImlib2-1-1.4.5-5.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf-lite8-2.5.0-2.1.x86_64",
+								"product": {
+									"name": "libprotobuf-lite8-2.5.0-2.1.x86_64",
+									"product_id": "libprotobuf-lite8-2.5.0-2.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotobuf8-2.5.0-2.1.x86_64",
+								"product": {
+									"name": "libprotobuf8-2.5.0-2.1.x86_64",
+									"product_id": "libprotobuf8-2.5.0-2.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "libprotoc8-2.5.0-2.1.x86_64",
+								"product": {
+									"name": "libprotoc8-2.5.0-2.1.x86_64",
+									"product_id": "libprotoc8-2.5.0-2.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "mosh-1.2.5-8.1.x86_64",
+								"product": {
+									"name": "mosh-1.2.5-8.1.x86_64",
+									"product_id": "mosh-1.2.5-8.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "ninja-1.5.3-4.1.x86_64",
+								"product": {
+									"name": "ninja-1.5.3-4.1.x86_64",
+									"product_id": "ninja-1.5.3-4.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-devel-2.5.0-2.1.x86_64",
+								"product": {
+									"name": "protobuf-devel-2.5.0-2.1.x86_64",
+									"product_id": "protobuf-devel-2.5.0-2.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "protobuf-java-2.5.0-2.1.x86_64",
+								"product": {
+									"name": "protobuf-java-2.5.0-2.1.x86_64",
+									"product_id": "protobuf-java-2.5.0-2.1.x86_64"
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "python-protobuf-2.5.0-2.1.x86_64",
+								"product": {
+									"name": "python-protobuf-2.5.0-2.1.x86_64",
+									"product_id": "python-protobuf-2.5.0-2.1.x86_64"
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "x86_64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_name",
+								"name": "SUSE Package Hub 12",
+								"product": {
+									"name": "SUSE Package Hub 12",
+									"product_id": "SUSE Package Hub 12",
+									"product_identification_helper": {
+										"cpe": "cpe:/o:suse:packagehub:12"
+									}
+								}
+							}
+						],
+						"category": "product_family",
+						"name": "SUSE Linux Enterprise"
+					}
+				],
+				"category": "vendor",
+				"name": "SUSE"
+			}
+		],
+		"relationships": [
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "chromedriver-51.0.2704.103-85.3.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:chromedriver-51.0.2704.103-85.3.x86_64"
+				},
+				"product_reference": "chromedriver-51.0.2704.103-85.3.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "chromium-51.0.2704.103-85.3.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:chromium-51.0.2704.103-85.3.x86_64"
+				},
+				"product_reference": "chromium-51.0.2704.103-85.3.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "chromium-desktop-gnome-51.0.2704.103-85.3.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:chromium-desktop-gnome-51.0.2704.103-85.3.x86_64"
+				},
+				"product_reference": "chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "chromium-desktop-kde-51.0.2704.103-85.3.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:chromium-desktop-kde-51.0.2704.103-85.3.x86_64"
+				},
+				"product_reference": "chromium-desktop-kde-51.0.2704.103-85.3.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64"
+				},
+				"product_reference": "chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-1.4.5-5.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-1.4.5-5.1.aarch64"
+				},
+				"product_reference": "imlib2-1.4.5-5.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-1.4.5-5.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-1.4.5-5.1.ppc64le"
+				},
+				"product_reference": "imlib2-1.4.5-5.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-1.4.5-5.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-1.4.5-5.1.s390x"
+				},
+				"product_reference": "imlib2-1.4.5-5.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-1.4.5-5.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-1.4.5-5.1.x86_64"
+				},
+				"product_reference": "imlib2-1.4.5-5.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-devel-1.4.5-5.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.aarch64"
+				},
+				"product_reference": "imlib2-devel-1.4.5-5.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-devel-1.4.5-5.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.ppc64le"
+				},
+				"product_reference": "imlib2-devel-1.4.5-5.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-devel-1.4.5-5.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.s390x"
+				},
+				"product_reference": "imlib2-devel-1.4.5-5.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-devel-1.4.5-5.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.x86_64"
+				},
+				"product_reference": "imlib2-devel-1.4.5-5.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-filters-1.4.5-5.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.aarch64"
+				},
+				"product_reference": "imlib2-filters-1.4.5-5.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-filters-1.4.5-5.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.ppc64le"
+				},
+				"product_reference": "imlib2-filters-1.4.5-5.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-filters-1.4.5-5.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.s390x"
+				},
+				"product_reference": "imlib2-filters-1.4.5-5.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-filters-1.4.5-5.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.x86_64"
+				},
+				"product_reference": "imlib2-filters-1.4.5-5.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-loaders-1.4.5-5.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.aarch64"
+				},
+				"product_reference": "imlib2-loaders-1.4.5-5.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-loaders-1.4.5-5.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.ppc64le"
+				},
+				"product_reference": "imlib2-loaders-1.4.5-5.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-loaders-1.4.5-5.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.s390x"
+				},
+				"product_reference": "imlib2-loaders-1.4.5-5.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "imlib2-loaders-1.4.5-5.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.x86_64"
+				},
+				"product_reference": "imlib2-loaders-1.4.5-5.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libImlib2-1-1.4.5-5.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.aarch64"
+				},
+				"product_reference": "libImlib2-1-1.4.5-5.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libImlib2-1-1.4.5-5.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.ppc64le"
+				},
+				"product_reference": "libImlib2-1-1.4.5-5.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libImlib2-1-1.4.5-5.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.s390x"
+				},
+				"product_reference": "libImlib2-1-1.4.5-5.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libImlib2-1-1.4.5-5.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.x86_64"
+				},
+				"product_reference": "libImlib2-1-1.4.5-5.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf-lite8-2.5.0-2.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.aarch64"
+				},
+				"product_reference": "libprotobuf-lite8-2.5.0-2.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf-lite8-2.5.0-2.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.ppc64le"
+				},
+				"product_reference": "libprotobuf-lite8-2.5.0-2.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf-lite8-2.5.0-2.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.s390x"
+				},
+				"product_reference": "libprotobuf-lite8-2.5.0-2.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf-lite8-2.5.0-2.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.x86_64"
+				},
+				"product_reference": "libprotobuf-lite8-2.5.0-2.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf8-2.5.0-2.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.aarch64"
+				},
+				"product_reference": "libprotobuf8-2.5.0-2.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf8-2.5.0-2.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.ppc64le"
+				},
+				"product_reference": "libprotobuf8-2.5.0-2.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf8-2.5.0-2.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.s390x"
+				},
+				"product_reference": "libprotobuf8-2.5.0-2.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotobuf8-2.5.0-2.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.x86_64"
+				},
+				"product_reference": "libprotobuf8-2.5.0-2.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotoc8-2.5.0-2.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotoc8-2.5.0-2.1.aarch64"
+				},
+				"product_reference": "libprotoc8-2.5.0-2.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotoc8-2.5.0-2.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotoc8-2.5.0-2.1.ppc64le"
+				},
+				"product_reference": "libprotoc8-2.5.0-2.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotoc8-2.5.0-2.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotoc8-2.5.0-2.1.s390x"
+				},
+				"product_reference": "libprotoc8-2.5.0-2.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "libprotoc8-2.5.0-2.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:libprotoc8-2.5.0-2.1.x86_64"
+				},
+				"product_reference": "libprotoc8-2.5.0-2.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "mosh-1.2.5-8.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:mosh-1.2.5-8.1.aarch64"
+				},
+				"product_reference": "mosh-1.2.5-8.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "mosh-1.2.5-8.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:mosh-1.2.5-8.1.ppc64le"
+				},
+				"product_reference": "mosh-1.2.5-8.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "mosh-1.2.5-8.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:mosh-1.2.5-8.1.s390x"
+				},
+				"product_reference": "mosh-1.2.5-8.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "mosh-1.2.5-8.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:mosh-1.2.5-8.1.x86_64"
+				},
+				"product_reference": "mosh-1.2.5-8.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "ninja-1.5.3-4.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:ninja-1.5.3-4.1.aarch64"
+				},
+				"product_reference": "ninja-1.5.3-4.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "ninja-1.5.3-4.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:ninja-1.5.3-4.1.ppc64le"
+				},
+				"product_reference": "ninja-1.5.3-4.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "ninja-1.5.3-4.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:ninja-1.5.3-4.1.s390x"
+				},
+				"product_reference": "ninja-1.5.3-4.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "ninja-1.5.3-4.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:ninja-1.5.3-4.1.x86_64"
+				},
+				"product_reference": "ninja-1.5.3-4.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "perl-Switch-2.17-4.1.noarch as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:perl-Switch-2.17-4.1.noarch"
+				},
+				"product_reference": "perl-Switch-2.17-4.1.noarch",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-devel-2.5.0-2.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.aarch64"
+				},
+				"product_reference": "protobuf-devel-2.5.0-2.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-devel-2.5.0-2.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.ppc64le"
+				},
+				"product_reference": "protobuf-devel-2.5.0-2.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-devel-2.5.0-2.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.s390x"
+				},
+				"product_reference": "protobuf-devel-2.5.0-2.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-devel-2.5.0-2.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.x86_64"
+				},
+				"product_reference": "protobuf-devel-2.5.0-2.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-java-2.5.0-2.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-java-2.5.0-2.1.aarch64"
+				},
+				"product_reference": "protobuf-java-2.5.0-2.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-java-2.5.0-2.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-java-2.5.0-2.1.ppc64le"
+				},
+				"product_reference": "protobuf-java-2.5.0-2.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-java-2.5.0-2.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-java-2.5.0-2.1.s390x"
+				},
+				"product_reference": "protobuf-java-2.5.0-2.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "protobuf-java-2.5.0-2.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:protobuf-java-2.5.0-2.1.x86_64"
+				},
+				"product_reference": "protobuf-java-2.5.0-2.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "python-protobuf-2.5.0-2.1.aarch64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:python-protobuf-2.5.0-2.1.aarch64"
+				},
+				"product_reference": "python-protobuf-2.5.0-2.1.aarch64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "python-protobuf-2.5.0-2.1.ppc64le as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:python-protobuf-2.5.0-2.1.ppc64le"
+				},
+				"product_reference": "python-protobuf-2.5.0-2.1.ppc64le",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "python-protobuf-2.5.0-2.1.s390x as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:python-protobuf-2.5.0-2.1.s390x"
+				},
+				"product_reference": "python-protobuf-2.5.0-2.1.s390x",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "python-protobuf-2.5.0-2.1.x86_64 as component of SUSE Package Hub 12",
+					"product_id": "SUSE Package Hub 12:python-protobuf-2.5.0-2.1.x86_64"
+				},
+				"product_reference": "python-protobuf-2.5.0-2.1.x86_64",
+				"relates_to_product_reference": "SUSE Package Hub 12"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2016-1704",
+			"ids": [
+				{
+					"system_name": "SUSE CVE Page",
+					"text": "https://www.suse.com/security/cve/CVE-2016-1704"
+				}
+			],
+			"notes": [
+				{
+					"category": "general",
+					"text": "Multiple unspecified vulnerabilities in Google Chrome before 51.0.2704.103 allow attackers to cause a denial of service or possibly have other impact via unknown vectors.",
+					"title": "Vulnerability description"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"SUSE Package Hub 12:chromedriver-51.0.2704.103-85.3.x86_64",
+					"SUSE Package Hub 12:chromium-51.0.2704.103-85.3.x86_64",
+					"SUSE Package Hub 12:chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",
+					"SUSE Package Hub 12:chromium-desktop-kde-51.0.2704.103-85.3.x86_64",
+					"SUSE Package Hub 12:chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64",
+					"SUSE Package Hub 12:imlib2-1.4.5-5.1.aarch64",
+					"SUSE Package Hub 12:imlib2-1.4.5-5.1.ppc64le",
+					"SUSE Package Hub 12:imlib2-1.4.5-5.1.s390x",
+					"SUSE Package Hub 12:imlib2-1.4.5-5.1.x86_64",
+					"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.aarch64",
+					"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.ppc64le",
+					"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.s390x",
+					"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.x86_64",
+					"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.aarch64",
+					"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.ppc64le",
+					"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.s390x",
+					"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.x86_64",
+					"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.aarch64",
+					"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.ppc64le",
+					"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.s390x",
+					"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.x86_64",
+					"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.aarch64",
+					"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.ppc64le",
+					"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.s390x",
+					"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.x86_64",
+					"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.aarch64",
+					"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.ppc64le",
+					"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.s390x",
+					"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.x86_64",
+					"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.aarch64",
+					"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.ppc64le",
+					"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.s390x",
+					"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.x86_64",
+					"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.aarch64",
+					"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.ppc64le",
+					"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.s390x",
+					"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.x86_64",
+					"SUSE Package Hub 12:mosh-1.2.5-8.1.aarch64",
+					"SUSE Package Hub 12:mosh-1.2.5-8.1.ppc64le",
+					"SUSE Package Hub 12:mosh-1.2.5-8.1.s390x",
+					"SUSE Package Hub 12:mosh-1.2.5-8.1.x86_64",
+					"SUSE Package Hub 12:ninja-1.5.3-4.1.aarch64",
+					"SUSE Package Hub 12:ninja-1.5.3-4.1.ppc64le",
+					"SUSE Package Hub 12:ninja-1.5.3-4.1.s390x",
+					"SUSE Package Hub 12:ninja-1.5.3-4.1.x86_64",
+					"SUSE Package Hub 12:perl-Switch-2.17-4.1.noarch",
+					"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.aarch64",
+					"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.ppc64le",
+					"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.s390x",
+					"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.x86_64",
+					"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.aarch64",
+					"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.ppc64le",
+					"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.s390x",
+					"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.x86_64",
+					"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.aarch64",
+					"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.ppc64le",
+					"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.s390x",
+					"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "external",
+					"summary": "CVE-2016-1704",
+					"url": "https://www.suse.com/security/cve/CVE-2016-1704"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 985397 for CVE-2016-1704",
+					"url": "https://bugzilla.suse.com/985397"
+				}
+			],
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "To install this SUSE Security Update use the SUSE recommended installation methods like YaST online_update or \"zypper patch\".\n",
+					"product_ids": [
+						"SUSE Package Hub 12:chromedriver-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-desktop-kde-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.aarch64",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.ppc64le",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.s390x",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.x86_64",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.aarch64",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.ppc64le",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.s390x",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.x86_64",
+						"SUSE Package Hub 12:perl-Switch-2.17-4.1.noarch",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.x86_64"
+					]
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 8.8,
+						"baseSeverity": "HIGH",
+						"vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+						"version": "3.0"
+					},
+					"products": [
+						"SUSE Package Hub 12:chromedriver-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-desktop-kde-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:chromium-ffmpegsumo-51.0.2704.103-85.3.x86_64",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-devel-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-filters-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:imlib2-loaders-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.aarch64",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.ppc64le",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.s390x",
+						"SUSE Package Hub 12:libImlib2-1-1.4.5-5.1.x86_64",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:libprotobuf-lite8-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:libprotobuf8-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:libprotoc8-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.aarch64",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.ppc64le",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.s390x",
+						"SUSE Package Hub 12:mosh-1.2.5-8.1.x86_64",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.aarch64",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.ppc64le",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.s390x",
+						"SUSE Package Hub 12:ninja-1.5.3-4.1.x86_64",
+						"SUSE Package Hub 12:perl-Switch-2.17-4.1.noarch",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:protobuf-devel-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:protobuf-java-2.5.0-2.1.x86_64",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.aarch64",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.ppc64le",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.s390x",
+						"SUSE Package Hub 12:python-protobuf-2.5.0-2.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"date": "2016-07-06T12:21:45Z",
+					"details": "moderate"
+				}
+			],
+			"title": "CVE-2016-1704"
+		}
+	]
+}

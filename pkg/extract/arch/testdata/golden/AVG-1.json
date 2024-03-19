@@ -1,0 +1,61 @@
+{
+	"id": "AVG-1",
+	"advisories": [
+		{
+			"id": "AVG-1",
+			"severity": [
+				{
+					"type": "vendor",
+					"source": "security.archlinux.org",
+					"vendor": "Critical"
+				}
+			],
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/AVG-1"
+				}
+			]
+		},
+		{
+			"id": "ASA-201611-12",
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/ASA-201611-12"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"id": "CVE-2016-6352",
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/CVE-2016-6352"
+				}
+			]
+		}
+	],
+	"detection": [
+		{
+			"ecosystem": "arch",
+			"vulnerable": true,
+			"package": {
+				"name": "lib32-gdk-pixbuf2"
+			},
+			"affected": {
+				"type": "pacman",
+				"range": [
+					{
+						"lt": "2.36.0+2+ga7c869a-1"
+					}
+				],
+				"fixed": [
+					"2.36.0+2+ga7c869a-1"
+				]
+			}
+		}
+	]
+}
