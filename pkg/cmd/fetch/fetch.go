@@ -11,6 +11,7 @@ import (
 
 	almaErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
 	almaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/osv"
+	almaOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/oval"
 	alpineOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/osv"
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
@@ -123,7 +124,7 @@ func NewCmdFetch() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newCmdAlmaErrata(), newCmdAlmaOSV(),
+		newCmdAlmaErrata(), newCmdAlmaOSV(), newCmdAlmaOVAL(),
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAmazon(),
 		newCmdArch(),
@@ -220,6 +221,33 @@ func newCmdAlmaOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "alma", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdAlmaOVAL() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "alma", "oval"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "alma-oval",
+		Short: "Fetch AlmaLinux OVAL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch alma-oval
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := almaOVAL.Fetch(almaOVAL.WithDir(options.dir), almaOVAL.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch almalinux")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "alma", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
