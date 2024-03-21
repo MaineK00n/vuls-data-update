@@ -79,6 +79,7 @@ import (
 	swiftOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/swift/osv"
 
 	cweCapecAttack "github.com/MaineK00n/vuls-data-update/pkg/extract/cwe_capec_attack"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/eol"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/epss"
 	exploitExploitDB "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/exploitdb"
 	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/github"
@@ -150,6 +151,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 
 		newCmdCWECapecAttack(),
+		newCmdEOL(),
 		newCmdEPSS(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitTrickest(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
@@ -1845,7 +1847,7 @@ func newCmdCWECapecAttack() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "cwe-capec-attack <Raw CWE Repository PATH> <Raw Capec Repository PATH> <Raw Attack Repository PATH>",
-		Short: "Extract CWE Capec Attack OSV data source",
+		Short: "Extract CWE Capec Attack data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract cwe-capec-attack vuls-data-raw-cwe-capec-attack
 		`),
@@ -1859,6 +1861,31 @@ func newCmdCWECapecAttack() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cwe-capec-attack"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdEOL() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "eol"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "eol",
+		Short: "Extract EOL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract eol
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := eol.Extract(eol.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract eol")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "eol"), "output extract results to specified directory")
 
 	return cmd
 }
