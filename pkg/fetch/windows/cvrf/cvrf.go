@@ -20,7 +20,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://api.msrc.microsoft.com/cvrf/v2.0/updates"
+const dataURL = "https://api.msrc.microsoft.com/cvrf/v3.0/updates"
 
 type options struct {
 	dataURL string
