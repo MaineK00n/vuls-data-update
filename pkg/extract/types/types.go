@@ -57,3 +57,8 @@ type CWEDictionary struct{}
 type CAPECDictionary struct{}
 
 type AttackDictionary struct{}
+
+type EOLDictionary struct {
+	Ended bool                  `json:"ended"`
+	Date  map[string]*time.Time `json:"date,omitempty"`
+}

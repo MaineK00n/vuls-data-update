@@ -163,7 +163,7 @@ func extract(fetched amazon.Update) types.Data {
 	for n, evras := range pkgs {
 		for evr, as := range evras {
 			data.Detection = append(data.Detection, detection.Detection{
-				Ecosystem: fmt.Sprintf(detection.EcosystemTypeAmazon, func() string {
+				Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAmazon, func() string {
 					switch {
 					case strings.HasPrefix(fetched.ID, "ALAS2023"):
 						return "2023"

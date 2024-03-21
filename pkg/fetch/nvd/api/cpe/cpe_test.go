@@ -167,12 +167,12 @@ func TestFetch(t *testing.T) {
 			}
 
 			actualCount := 0
-			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
 				}
 
-				if info.IsDir() {
+				if d.IsDir() {
 					return nil
 				}
 

@@ -161,7 +161,7 @@ func extract(fetched errata.Erratum, osver string) types.Data {
 	for n, vras := range packages {
 		for vr, as := range vras {
 			extracted.Detection = append(extracted.Detection, detection.Detection{
-				Ecosystem:  fmt.Sprintf(detection.EcosystemTypeAlma, osver),
+				Ecosystem:  fmt.Sprintf("%s:%s", detection.EcosystemTypeAlma, osver),
 				Vulnerable: true,
 				Package: detection.Package{
 					Name:          n,

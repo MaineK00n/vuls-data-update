@@ -47,12 +47,12 @@ func TestFetch(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
-			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
 				}
 
-				if info.IsDir() {
+				if d.IsDir() {
 					return nil
 				}
 

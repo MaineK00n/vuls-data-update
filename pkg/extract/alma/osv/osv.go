@@ -135,7 +135,7 @@ func extract(fetched osv.OSV) (types.Data, error) {
 		}
 
 		d := detection.Detection{
-			Ecosystem:  fmt.Sprintf(detection.EcosystemTypeAlma, strings.TrimPrefix(a.Package.Ecosystem, "AlmaLinux:")),
+			Ecosystem:  fmt.Sprintf("%s:%s", detection.EcosystemTypeAlma, strings.TrimPrefix(a.Package.Ecosystem, "AlmaLinux:")),
 			Vulnerable: true,
 			Package: detection.Package{
 				Name: a.Package.Name,
