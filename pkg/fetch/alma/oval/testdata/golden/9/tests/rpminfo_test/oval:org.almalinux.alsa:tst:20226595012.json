@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "nodejs-nodemon is signed with AlmaLinux OS 9 key",
+	"id": "oval:org.almalinux.alsa:tst:20226595012",
+	"version": "637",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20226595006"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alba:ste:20225749002"
+	}
+}
