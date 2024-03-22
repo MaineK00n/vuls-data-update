@@ -188,7 +188,7 @@ func extract(fetched osv.OSV) (types.Data, error) {
 		}
 
 		d := detection.Detection{
-			Ecosystem:  fmt.Sprintf(detection.EcosystemTypeAlpine, strings.TrimPrefix(a.Package.Ecosystem, "Alpine:v")),
+			Ecosystem:  fmt.Sprintf("%s:%s", detection.EcosystemTypeAlpine, strings.TrimPrefix(a.Package.Ecosystem, "Alpine:v")),
 			Vulnerable: true,
 			Package: detection.Package{
 				Name: a.Package.Name,

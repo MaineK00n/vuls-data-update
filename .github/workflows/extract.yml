@@ -84,6 +84,7 @@ jobs:
               # - "swift-osv"
 
               # - "cwe-capec-attack"
+              - "eol"
               # - "exploit-exploitdb"
               # - "exploit-github"
               # - "exploit-inthewild"

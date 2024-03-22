@@ -110,7 +110,7 @@ func extract(fetched secdb.Advisory) []types.Data {
 					}
 				}
 				d.Detection = append(d.Detection, detection.Detection{
-					Ecosystem:  fmt.Sprintf(detection.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")),
+					Ecosystem:  fmt.Sprintf("%s:%s", detection.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")),
 					Vulnerable: true,
 					Package: detection.Package{
 						Name:          pkg.Pkg.Name,
