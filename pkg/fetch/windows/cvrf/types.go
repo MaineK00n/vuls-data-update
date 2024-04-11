@@ -82,7 +82,11 @@ type Vulnerability struct {
 			Ordinal string `xml:"Ordinal,attr" json:"ordinal,omitempty"`
 		} `xml:"Note" json:"note,omitempty"`
 	} `xml:"Notes" json:"notes,omitempty"`
-	CVE             string `xml:"CVE" json:"cve,omitempty"`
+	CVE string `xml:"CVE" json:"cve,omitempty"`
+	CWE *struct {
+		ID   string `xml:"ID,attr" json:"id,omitempty"`
+		Text string `xml:",chardata" json:"text,omitempty"`
+	} `xml:"CWE" json:"cwe,omitempty"`
 	ProductStatuses struct {
 		Status struct {
 			Type      string   `xml:"Type,attr" json:"type,omitempty"`

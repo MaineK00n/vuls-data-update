@@ -46,7 +46,7 @@ func TestFetch(t *testing.T) {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 					}
 
-					s := strings.ReplaceAll(string(bs), "https://api.msrc.microsoft.com/cvrf/v3.0/document", fmt.Sprintf("http://%s/testdata/fixtures", r.Host))
+					s := strings.ReplaceAll(string(bs), "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf", fmt.Sprintf("http://%s/testdata/fixtures", r.Host))
 
 					http.ServeContent(w, r, "updates", time.Now(), strings.NewReader(s))
 				default:
