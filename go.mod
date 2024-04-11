@@ -22,7 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.8.0
 	github.com/tealeg/xlsx v1.0.5
-	github.com/ulikunitz/xz v0.5.11
+	github.com/ulikunitz/xz v0.5.12
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	golang.org/x/net v0.24.0
 	golang.org/x/sync v0.6.0
