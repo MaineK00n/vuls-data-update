@@ -23,8 +23,8 @@ const (
 	// API reference page: https://nvd.nist.gov/developers/products
 	apiURL = "https://services.nvd.nist.gov/rest/json/cpematch/2.0"
 
-	// resultsPerPage must be <= 5,000, this implementation almost uses the max value
-	resultsPerPageMax = 5_000
+	// resultsPerPage must be <= 500, this implementation almost uses the max value
+	resultsPerPageMax = 500
 )
 
 type options struct {
