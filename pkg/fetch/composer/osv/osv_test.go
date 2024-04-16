@@ -48,18 +48,16 @@ func TestFetch(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
-			if err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
 				}
 
-				if info.IsDir() {
+				if d.IsDir() {
 					return nil
 				}
 
-				dir, file := filepath.Split(path)
-				dir, d := filepath.Split(filepath.Clean(dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), d, file))
+				want, err := os.ReadFile(filepath.Join(append([]string{"testdata", "golden"}, strings.Split(strings.TrimPrefix(path, dir), string(os.PathSeparator))...)...))
 				if err != nil {
 					return err
 				}
