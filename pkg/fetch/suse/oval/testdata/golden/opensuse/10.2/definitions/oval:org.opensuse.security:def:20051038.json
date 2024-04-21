@@ -3,10 +3,10 @@
 	"version": "1",
 	"class": "vulnerability",
 	"metadata": {
-		"Title": "CVE-2005-1038",
+		"title": "CVE-2005-1038",
 		"affected": {
 			"family": "unix",
-			"Platform": [
+			"platform": [
 				"openSUSE 10.2"
 			]
 		},
@@ -17,15 +17,11 @@
 				"source": "CVE"
 			}
 		],
-		"Description": "\n\tcrontab in Vixie cron 4.1, when running with the -e option, allows local users to read the cron files of other users by changing the file being edited to a symlink.  NOTE: there is insufficient information to know whether this is a duplicate of CVE-2001-0235.\n\t",
+		"description": "\n\tcrontab in Vixie cron 4.1, when running with the -e option, allows local users to read the cron files of other users by changing the file being edited to a symlink.  NOTE: there is insufficient information to know whether this is a duplicate of CVE-2001-0235.\n\t",
 		"advisory": {
-			"Severity": "",
-			"cve": {},
 			"issued": {},
 			"updated": {},
-			"affected_cpe_list": {
-				"Cpe": null
-			}
+			"affected_cpe_list": {}
 		}
 	},
 	"criteria": {

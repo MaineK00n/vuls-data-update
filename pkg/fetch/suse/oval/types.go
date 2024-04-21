@@ -19,21 +19,21 @@ type Definition struct {
 	Version  string `xml:"version,attr" json:"version,omitempty"`
 	Class    string `xml:"class,attr" json:"class,omitempty"`
 	Metadata struct {
-		Title    string `xml:"title"`
+		Title    string `xml:"title" json:"title,omitempty"`
 		Affected struct {
 			Family   string   `xml:"family,attr" json:"family,omitempty"`
-			Platform []string `xml:"platform"`
+			Platform []string `xml:"platform" json:"platform,omitempty"`
 		} `xml:"affected" json:"affected,omitempty"`
 		Reference []struct {
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
 			Source string `xml:"source,attr" json:"source,omitempty"`
 		} `xml:"reference" json:"reference,omitempty"`
-		Description string `xml:"description"`
+		Description string `xml:"description" json:"description,omitempty"`
 		Advisory    struct {
 			From     string `xml:"from,attr" json:"from,omitempty"`
-			Severity string `xml:"severity"`
-			Cve      struct {
+			Severity string `xml:"severity" json:"severity,omitempty"`
+			Cve      []struct {
 				Text   string `xml:",chardata" json:"text,omitempty"`
 				Href   string `xml:"href,attr" json:"href,omitempty"`
 				Impact string `xml:"impact,attr" json:"impact,omitempty"`
@@ -50,7 +50,7 @@ type Definition struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
 			} `xml:"updated" json:"updated,omitempty"`
 			AffectedCpeList struct {
-				Cpe []string `xml:"cpe"`
+				Cpe []string `xml:"cpe" json:"cpe,omitempty"`
 			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitempty"`
 		} `xml:"advisory" json:"advisory,omitempty"`
 	} `xml:"metadata" json:"metadata,omitempty"`
@@ -89,7 +89,7 @@ type Objects struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Version string `xml:"version,attr" json:"version,omitempty"`
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
-		Name    string `xml:"name"`
+		Name    string `xml:"name" json:"name,omitempty"`
 	} `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
 }
 

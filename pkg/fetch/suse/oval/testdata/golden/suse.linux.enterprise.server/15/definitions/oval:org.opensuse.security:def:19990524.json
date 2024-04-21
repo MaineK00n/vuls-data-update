@@ -3,10 +3,10 @@
 	"version": "1",
 	"class": "vulnerability",
 	"metadata": {
-		"Title": "CVE-1999-0524",
+		"title": "CVE-1999-0524",
 		"affected": {
 			"family": "unix",
-			"Platform": [
+			"platform": [
 				"SUSE Linux Enterprise Desktop 15",
 				"SUSE Linux Enterprise High Performance Computing 15",
 				"SUSE Linux Enterprise Module for Basesystem 15",
@@ -27,15 +27,17 @@
 				"source": "SUSE CVE"
 			}
 		],
-		"Description": "\n    ICMP information such as (1) netmask and (2) timestamp is allowed from arbitrary hosts.\n    ",
+		"description": "\n    ICMP information such as (1) netmask and (2) timestamp is allowed from arbitrary hosts.\n    ",
 		"advisory": {
 			"from": "security@suse.de",
-			"Severity": "Moderate",
-			"cve": {
-				"text": "CVE-1999-0524",
-				"href": "https://www.suse.com/security/cve/CVE-1999-0524/",
-				"impact": "moderate"
-			},
+			"severity": "Moderate",
+			"cve": [
+				{
+					"text": "CVE-1999-0524",
+					"href": "https://www.suse.com/security/cve/CVE-1999-0524/",
+					"impact": "moderate"
+				}
+			],
 			"bugzilla": [
 				{
 					"text": "SUSE bug 992991",
@@ -49,7 +51,7 @@
 				"date": "2022-04-14"
 			},
 			"affected_cpe_list": {
-				"Cpe": [
+				"cpe": [
 					"cpe:/o:suse:sle-module-basesystem:15",
 					"cpe:/o:suse:sle-module-development-tools:15",
 					"cpe:/o:suse:sle_hpc:15",
