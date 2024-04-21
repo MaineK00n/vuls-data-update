@@ -2,5 +2,5 @@
 	"id": "oval:org.opensuse.security:obj:2009031038",
 	"version": "1",
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-	"Name": "krb5-32bit"
+	"name": "krb5-32bit"
 }

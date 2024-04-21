@@ -3,10 +3,10 @@
 	"version": "1",
 	"class": "vulnerability",
 	"metadata": {
-		"Title": "CVE-2001-1267",
+		"title": "CVE-2001-1267",
 		"affected": {
 			"family": "unix",
-			"Platform": [
+			"platform": [
 				"SUSE CORE 9 for AMD64 and Intel EM64T",
 				"SUSE CORE 9 for IBM POWER",
 				"SUSE CORE 9 for IBM S/390 31bit",
@@ -22,15 +22,11 @@
 				"source": "CVE"
 			}
 		],
-		"Description": "\n\tUnknown.\n\t",
+		"description": "\n\tUnknown.\n\t",
 		"advisory": {
-			"Severity": "",
-			"cve": {},
 			"issued": {},
 			"updated": {},
-			"affected_cpe_list": {
-				"Cpe": null
-			}
+			"affected_cpe_list": {}
 		}
 	},
 	"criteria": {

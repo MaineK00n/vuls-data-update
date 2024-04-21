@@ -2,5 +2,5 @@
 	"id": "oval:org.opensuse.security:obj:2009047546",
 	"version": "1",
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-	"Name": "SLES_SAP-release"
+	"name": "SLES_SAP-release"
 }

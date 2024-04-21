@@ -3,10 +3,10 @@
 	"version": "1",
 	"class": "vulnerability",
 	"metadata": {
-		"Title": "CVE-2001-1267",
+		"title": "CVE-2001-1267",
 		"affected": {
 			"family": "unix",
-			"Platform": [
+			"platform": [
 				"openSUSE Tumbleweed"
 			]
 		},
@@ -27,15 +27,17 @@
 				"source": "SUSE-SU"
 			}
 		],
-		"Description": "\n    Directory traversal vulnerability in GNU tar 1.13.19 and earlier allows local users to overwrite arbitrary files during archive extraction via a tar file whose filenames contain a .. (dot dot).\n    ",
+		"description": "\n    Directory traversal vulnerability in GNU tar 1.13.19 and earlier allows local users to overwrite arbitrary files during archive extraction via a tar file whose filenames contain a .. (dot dot).\n    ",
 		"advisory": {
 			"from": "security@suse.de",
-			"Severity": "Moderate",
-			"cve": {
-				"text": "CVE-2001-1267",
-				"href": "https://www.suse.com/security/cve/CVE-2001-1267/",
-				"impact": "moderate"
-			},
+			"severity": "Moderate",
+			"cve": [
+				{
+					"text": "CVE-2001-1267",
+					"href": "https://www.suse.com/security/cve/CVE-2001-1267/",
+					"impact": "moderate"
+				}
+			],
 			"bugzilla": [
 				{
 					"text": "SUSE bug 299738",
@@ -57,7 +59,7 @@
 				"date": "2021-10-02"
 			},
 			"affected_cpe_list": {
-				"Cpe": [
+				"cpe": [
 					"cpe:/o:opensuse:tumbleweed"
 				]
 			}

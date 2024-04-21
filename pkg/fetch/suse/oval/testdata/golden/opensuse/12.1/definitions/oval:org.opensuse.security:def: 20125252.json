@@ -3,10 +3,10 @@
 	"version": "1",
 	"class": "vulnerability",
 	"metadata": {
-		"Title": " CVE-2012-5252",
+		"title": " CVE-2012-5252",
 		"affected": {
 			"family": "unix",
-			"Platform": [
+			"platform": [
 				"openSUSE 12.1",
 				"openSUSE 12.1 Update"
 			]
@@ -18,15 +18,11 @@
 				"source": "CVE"
 			}
 		],
-		"Description": "\n    Unknown.\n    ",
+		"description": "\n    Unknown.\n    ",
 		"advisory": {
-			"Severity": "",
-			"cve": {},
 			"issued": {},
 			"updated": {},
-			"affected_cpe_list": {
-				"Cpe": null
-			}
+			"affected_cpe_list": {}
 		}
 	},
 	"criteria": {
