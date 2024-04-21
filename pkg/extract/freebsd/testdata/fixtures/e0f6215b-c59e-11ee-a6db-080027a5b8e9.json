@@ -1,0 +1,56 @@
+{
+	"vid": "e0f6215b-c59e-11ee-a6db-080027a5b8e9",
+	"topic": "Django -- multiple vulnerabilities",
+	"affects": [
+		{
+			"name": [
+				"py39-django32",
+				"py310-django32",
+				"py311-django32"
+			],
+			"range": [
+				{
+					"lt": "3.2.24"
+				}
+			]
+		},
+		{
+			"name": [
+				"py39-django42",
+				"py310-django42",
+				"py311-django42"
+			],
+			"range": [
+				{
+					"lt": "4.2.8"
+				}
+			]
+		},
+		{
+			"name": [
+				"py311-django50"
+			],
+			"range": [
+				{
+					"lt": "5.0.2"
+				}
+			]
+		}
+	],
+	"description": {
+		"xmlns": "http://www.w3.org/1999/xhtml",
+		"text": "\n\t<p>Django reports:</p>\n\t<blockquote cite=\"https://www.djangoproject.com/weblog/2024/feb/06/security-releases/\">\n\t  <p>CVE-2024-24680:Potential denial-of-service in intcomma template filter.</p>\n\t</blockquote>\n\t"
+	},
+	"references": {
+		"url": [
+			"https://www.djangoproject.com/weblog/2024/feb/06/security-releases/"
+		],
+		"cvename": [
+			"CVE-2024-24680"
+		]
+	},
+	"dates": {
+		"discovery": "2024-01-09",
+		"entry": "2024-02-07"
+	}
+}

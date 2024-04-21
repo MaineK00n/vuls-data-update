@@ -30,9 +30,10 @@ type Vuln struct {
 			Text  string `xml:",chardata" json:"text,omitempty"`
 			Msgid string `xml:"msgid,attr" json:"msgid,omitempty"`
 		} `xml:"mlist" json:"mlist,omitempty"`
-		BID      []string `xml:"bid" json:"bid,omitempty"`
-		CertSA   []string `xml:"certsa" json:"cert_sa,omitempty"`
-		CertVU   []string `xml:"certvu" json:"cert_vu,omitempty"`
+		BID    []string `xml:"bid" json:"bid,omitempty"`
+		CertSA []string `xml:"certsa" json:"cert_sa,omitempty"`
+		CertVU []string `xml:"certvu" json:"cert_vu,omitempty"`
+		// There is no data with tag "uscertsa" at 2024-04-21
 		USCertSA []string `xml:"uscertsa" json:"us_cert_sa,omitempty"`
 		USCertTA []string `xml:"uscertta" json:"us_cert_ta,omitempty"`
 	} `xml:"references" json:"references,omitempty"`
