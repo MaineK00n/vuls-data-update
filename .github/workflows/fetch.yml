@@ -14,6 +14,7 @@ jobs:
         target:
             - "alma-errata"
             - "alma-osv"
+            - "alma-oval"
             - "alpine-secdb"
             - "alpine-osv"
             - "amazon"

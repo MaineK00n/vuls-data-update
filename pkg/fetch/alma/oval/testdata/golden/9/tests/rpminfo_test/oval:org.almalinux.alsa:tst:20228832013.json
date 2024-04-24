@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "nodejs-packaging-bundler is earlier than 0:2021.06-4.module+el9.1.0+15718+e52ec601",
+	"id": "oval:org.almalinux.alsa:tst:20228832013",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:org.almalinux.alsa:obj:20228832007"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alsa:ste:20228832005"
+	}
+}
