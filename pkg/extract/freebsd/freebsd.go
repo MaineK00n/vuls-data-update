@@ -210,7 +210,6 @@ func extract(fetched freebsd.Vuln) types.Data {
 			ID:          fetched.Vid,
 			Title:       fetched.Topic,
 			Description: fetched.Description.Text,
-			Severity:    []severity.Severity{},
 			References:  rs,
 			Published:   utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Entry),
 			Modified:    utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Modified),
