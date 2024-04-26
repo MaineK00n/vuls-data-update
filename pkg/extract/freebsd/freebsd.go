@@ -14,7 +14,6 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
@@ -199,7 +198,7 @@ func extract(fetched freebsd.Vuln) types.Data {
 				Vulnerable: true,
 				Package:    detection.Package{Name: n},
 				Affected: &detection.Affected{
-					Type:  detection.RangeTypeVersion,
+					Type:  detection.RangeTypeFreeBSDPkg,
 					Range: rs,
 				}})
 		}

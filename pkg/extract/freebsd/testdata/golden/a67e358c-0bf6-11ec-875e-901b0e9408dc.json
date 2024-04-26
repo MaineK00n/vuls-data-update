@@ -8,6 +8,10 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/a67e358c-0bf6-11ec-875e-901b0e9408dc.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
 					"url": "https://matrix.org/blog/2021/08/31/synapse-1-41-1-released"
 				},
 				{
@@ -24,7 +28,7 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://nvd.nist.gov/vuln/detail/CVE-2021-39164"
+					"url": "https://www.cve.org/CVERecord?id=CVE-2021-39164"
 				}
 			]
 		},
@@ -33,7 +37,7 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://nvd.nist.gov/vuln/detail/CVE-2021-39163"
+					"url": "https://www.cve.org/CVERecord?id=CVE-2021-39163"
 				}
 			]
 		}
@@ -46,7 +50,7 @@
 				"name": "py36-matrix-synapse"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -61,7 +65,7 @@
 				"name": "py37-matrix-synapse"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -76,7 +80,7 @@
 				"name": "py38-matrix-synapse"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -91,7 +95,7 @@
 				"name": "py39-matrix-synapse"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -106,7 +110,7 @@
 				"name": "py310-matrix-synapse"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "1.41.1"

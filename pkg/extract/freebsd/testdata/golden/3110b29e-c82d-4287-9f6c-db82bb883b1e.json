@@ -8,6 +8,10 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/3110b29e-c82d-4287-9f6c-db82bb883b1e.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
 					"url": "https://github.com/zeek/zeek/releases/tag/v5.0.1"
 				}
 			],
@@ -22,7 +26,7 @@
 				"name": "zeek"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "5.0.1"

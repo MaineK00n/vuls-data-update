@@ -105,6 +105,8 @@ func (t RangeType) String() string {
 		return "pypi"
 	case RangeTypeMaven:
 		return "maven"
+	case RangeTypeFreeBSDPkg:
+		return "freebsd"
 	default:
 		return "version"
 	}
@@ -142,6 +144,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypePyPI
 	case "maven":
 		rt = RangeTypeMaven
+	case "freebsd":
+		rt = RangeTypeFreeBSDPkg
 	default:
 		return fmt.Errorf("invalid RangeType %s", s)
 	}

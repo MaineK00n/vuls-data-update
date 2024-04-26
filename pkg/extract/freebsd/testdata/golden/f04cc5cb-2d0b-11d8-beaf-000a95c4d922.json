@@ -8,6 +8,10 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
 					"url": "https://www.freebsd.org/security/advisories/FreeBSD-SA-03:19.bind.asc"
 				},
 				{
@@ -25,7 +29,7 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://nvd.nist.gov/vuln/detail/CVE-2003-0914"
+					"url": "https://www.cve.org/CVERecord?id=CVE-2003-0914"
 				}
 			]
 		}
@@ -38,7 +42,7 @@
 				"name": "bind"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "8.3.7",
@@ -58,7 +62,7 @@
 				"name": "FreeBSD"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "5.1_11",

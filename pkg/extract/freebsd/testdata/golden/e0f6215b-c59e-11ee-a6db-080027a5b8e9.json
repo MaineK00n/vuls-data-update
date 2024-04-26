@@ -8,6 +8,10 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/e0f6215b-c59e-11ee-a6db-080027a5b8e9.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
 					"url": "https://www.djangoproject.com/weblog/2024/feb/06/security-releases/"
 				}
 			],
@@ -20,7 +24,7 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-24680"
+					"url": "https://www.cve.org/CVERecord?id=CVE-2024-24680"
 				}
 			]
 		}
@@ -33,7 +37,7 @@
 				"name": "py39-django32"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "3.2.24"
@@ -48,7 +52,7 @@
 				"name": "py310-django32"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "3.2.24"
@@ -63,7 +67,7 @@
 				"name": "py311-django32"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "3.2.24"
@@ -78,7 +82,7 @@
 				"name": "py39-django42"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "4.2.8"
@@ -93,7 +97,7 @@
 				"name": "py310-django42"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "4.2.8"
@@ -108,7 +112,7 @@
 				"name": "py311-django42"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "4.2.8"
@@ -123,7 +127,7 @@
 				"name": "py311-django50"
 			},
 			"affected": {
-				"type": "version",
+				"type": "freebsd",
 				"range": [
 					{
 						"lt": "5.0.2"
