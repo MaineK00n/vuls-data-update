@@ -183,7 +183,7 @@ func extract(fetched freebsd.Vuln) types.Data {
 			ID: c,
 			References: []reference.Reference{{
 				Source: "vuxml.freebsd.org",
-				URL:    fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", c),
+				URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
 			}}})
 	}
 
