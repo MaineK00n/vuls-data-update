@@ -160,6 +160,14 @@ func extract(fetched freebsd.Vuln) types.Data {
 			URL:    fmt.Sprintf("https://www.kb.cert.org/vuls/id/%s", c),
 		})
 	}
+	for _, u := range fetched.References.USCertSA {
+		rs = append(rs, reference.Reference{
+			Source: "vuxml.freebsd.org",
+			// The URL i.e. http://www.uscert.gov/cas/alerts/SA04-028A.html is 503 at 2024-04-21,
+			// we should use, for example, WebArchive.org waybackmachine.
+			URL: fmt.Sprintf("http://www.uscert.gov/cas/alerts/%s.html", u),
+		})
+	}
 	for _, u := range fetched.References.USCertTA {
 		rs = append(rs, reference.Reference{
 			Source: "vuxml.freebsd.org",
