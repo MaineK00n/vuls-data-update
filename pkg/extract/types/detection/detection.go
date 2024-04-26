@@ -80,6 +80,7 @@ const (
 	RangeTypeRubyGems
 	RangeTypePyPI
 	RangeTypeMaven
+	RangeTypeFreeBSDPkg
 )
 
 func (t RangeType) String() string {
