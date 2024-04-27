@@ -186,11 +186,13 @@ func extract(fetched freebsd.Vuln) types.Data {
 			}}})
 	}
 
-	dslen := 0
-	for _, a := range fetched.Affects {
-		dslen += len(a.Name)
-	}
-	ds := make([]detection.Detection, 0, dslen)
+	ds := make([]detection.Detection, 0, func() int {
+		cap := 0
+		for _, a := range fetched.Affects {
+			cap += len(a.Name)
+		}
+		return cap
+	}())
 	for _, a := range fetched.Affects {
 		for _, n := range a.Name {
 			rs := make([]detection.Range, 0, len(a.Range))
