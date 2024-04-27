@@ -40,7 +40,7 @@ func WithDir(dir string) Option {
 
 func Extract(args string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "", ""),
+		dir: filepath.Join(util.CacheDir(), "extract", "freebsd"),
 	}
 
 	for _, o := range opts {
