@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "AlmaLinux 9 is installed",
+	"id": "oval:org.almalinux.alba:tst:20225749023",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:org.almalinux.alba:obj:20225749012"
+	},
+	"state": {
+		"state_ref": "oval:org.almalinux.alba:ste:20225749004"
+	}
+}

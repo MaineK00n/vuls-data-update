@@ -1,0 +1,10 @@
+{
+	"id": "oval:org.almalinux.alba:ste:20225749002",
+	"version": "635",
+	"arch": {},
+	"evr": {},
+	"signature_keyid": {
+		"text": "d36cb86cb86b3716",
+		"operation": "equals"
+	}
+}
