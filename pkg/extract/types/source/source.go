@@ -11,6 +11,7 @@ const (
 	_ SourceID = iota
 	AlmaErrata
 	AlmaOSV
+	AlmaOVAL
 	AlpineOSV
 	AlpineSecDB
 	Amazon
@@ -114,6 +115,8 @@ func (id SourceID) String() string {
 		return "alma-errata"
 	case AlmaOSV:
 		return "alma-osv"
+	case AlmaOVAL:
+		return "alma-oval"
 	case AlpineOSV:
 		return "alpine-osv"
 	case AlpineSecDB:
@@ -325,6 +328,8 @@ func (id *SourceID) UnmarshalJSON(data []byte) error {
 		sid = AlmaErrata
 	case "alma-osv":
 		sid = AlmaOSV
+	case "alma-oval":
+		sid = AlmaOVAL
 	case "alpine-osv":
 		sid = AlpineOSV
 	case "alpine-secdb":

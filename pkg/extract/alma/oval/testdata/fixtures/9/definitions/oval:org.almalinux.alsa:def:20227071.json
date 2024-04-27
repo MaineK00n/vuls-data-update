@@ -1,0 +1,138 @@
+{
+	"id": "oval:org.almalinux.alsa:def:20227071",
+	"version": "635",
+	"class": "patch",
+	"metadata": {
+		"Title": "ALSA-2022:7071: firefox security update (Important)",
+		"reference": [
+			{
+				"ref_id": "ALSA-2022:7071",
+				"source": "ALSA",
+				"ref_url": "https://errata.almalinux.org/9/ALSA-2022-7071.html"
+			},
+			{
+				"ref_id": "CVE-2022-42927",
+				"source": "CVE",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2022-42927"
+			},
+			{
+				"ref_id": "CVE-2022-42928",
+				"source": "CVE",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2022-42928"
+			},
+			{
+				"ref_id": "CVE-2022-42929",
+				"source": "CVE",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2022-42929"
+			},
+			{
+				"ref_id": "CVE-2022-42932",
+				"source": "CVE",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2022-42932"
+			},
+			{
+				"ref_id": "ALSA-2022:7071",
+				"source": "ALSA",
+				"ref_url": "https://errata.almalinux.org/9/ALSA-2022-7071.html"
+			}
+		],
+		"Description": "Mozilla Firefox is an open-source web browser, designed for standards compliance, performance, and portability.\n\nThis update upgrades Firefox to version 102.4.0 ESR.\n\nSecurity Fix(es):\n\n* Mozilla: Same-origin policy violation could have leaked cross-origin URLs (CVE-2022-42927)\n* Mozilla: Memory Corruption in JS Engine (CVE-2022-42928)\n* Mozilla: Denial of Service via window.print (CVE-2022-42929)\n* Mozilla: Memory safety bugs fixed in Firefox 106 and Firefox ESR 102.4 (CVE-2022-42932)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+		"advisory": {
+			"from": "packager@almalinux.org",
+			"Severity": "Important",
+			"Rights": "Copyright 2022 AlmaLinux OS",
+			"issued": {
+				"date": "2022-10-20"
+			},
+			"updated": {
+				"date": "2022-10-20"
+			},
+			"affected_cpe_list": {
+				"Cpe": [
+					"cpe:/a:almalinux:almalinux:9",
+					"cpe:/a:almalinux:almalinux:9::appstream"
+				]
+			},
+			"bugzilla": [
+				{
+					"href": "https://bugzilla.redhat.com/2136156",
+					"id": "2136156"
+				},
+				{
+					"href": "https://bugzilla.redhat.com/2136157",
+					"id": "2136157"
+				},
+				{
+					"href": "https://bugzilla.redhat.com/2136158",
+					"id": "2136158"
+				},
+				{
+					"href": "https://bugzilla.redhat.com/2136159",
+					"id": "2136159"
+				}
+			],
+			"cve": [
+				{
+					"text": "CVE-2022-42927",
+					"public": "20221018",
+					"href": "https://access.redhat.com/security/cve/CVE-2022-42927",
+					"impact": "Important",
+					"cwe": "CWE-829",
+					"cvss3": "CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2022-42928",
+					"public": "20221018",
+					"href": "https://access.redhat.com/security/cve/CVE-2022-42928",
+					"impact": "Important",
+					"cwe": "CWE-120",
+					"cvss3": "CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2022-42929",
+					"public": "20221018",
+					"href": "https://access.redhat.com/security/cve/CVE-2022-42929",
+					"impact": "Moderate",
+					"cwe": "CWE-400",
+					"cvss3": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+				},
+				{
+					"text": "CVE-2022-42932",
+					"public": "20221018",
+					"href": "https://access.redhat.com/security/cve/CVE-2022-42932",
+					"impact": "Moderate",
+					"cwe": "CWE-120",
+					"cvss3": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterions": [
+					{
+						"test_ref": "oval:org.almalinux.alba:tst:20225749023",
+						"comment": "AlmaLinux 9 is installed"
+					},
+					{
+						"test_ref": "oval:org.almalinux.alsa:tst:20227071001",
+						"comment": "firefox is earlier than 0:102.4.0-1.el9_0.alma"
+					},
+					{
+						"test_ref": "oval:org.almalinux.alsa:tst:20224590002",
+						"comment": "firefox is signed with AlmaLinux OS 9 key"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.almalinux.alba:tst:20225749024",
+				"comment": "AlmaLinux must be installed"
+			}
+		]
+	}
+}
