@@ -1,11 +1,16 @@
-package detection
+package affected_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
+	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
+)
 
 func TestAffected_LessThan(t *testing.T) {
 	type fields struct {
-		Type  RangeType
-		Range []Range
+		Type  affectedrange.RangeType
+		Range []affectedrange.Range
 		Fixed []string
 	}
 	type args struct {
@@ -22,7 +27,7 @@ func TestAffected_LessThan(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := Affected{
+			a := affected.Affected{
 				Type:  tt.fields.Type,
 				Range: tt.fields.Range,
 				Fixed: tt.fields.Fixed,
