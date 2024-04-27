@@ -67,7 +67,7 @@
 				"name": "bind916"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "9.16.48"
@@ -82,7 +82,7 @@
 				"name": "bind918"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "9.18.24"
@@ -97,7 +97,7 @@
 				"name": "bind9-devel"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "9.19.21"
@@ -112,7 +112,7 @@
 				"name": "dnsmasq"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "2.90"
@@ -127,7 +127,7 @@
 				"name": "dnsmasq-devel"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "2.90"
@@ -142,7 +142,7 @@
 				"name": "powerdns-recursor"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "5.0.2"
@@ -157,7 +157,7 @@
 				"name": "unbound"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "1.19.1"
@@ -172,7 +172,7 @@
 				"name": "FreeBSD"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "14.0_6",

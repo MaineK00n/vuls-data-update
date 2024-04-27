@@ -37,7 +37,7 @@
 				"name": "py39-django32"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "3.2.24"
@@ -52,7 +52,7 @@
 				"name": "py310-django32"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "3.2.24"
@@ -67,7 +67,7 @@
 				"name": "py311-django32"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "3.2.24"
@@ -82,7 +82,7 @@
 				"name": "py39-django42"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "4.2.8"
@@ -97,7 +97,7 @@
 				"name": "py310-django42"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "4.2.8"
@@ -112,7 +112,7 @@
 				"name": "py311-django42"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "4.2.8"
@@ -127,7 +127,7 @@
 				"name": "py311-django50"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "5.0.2"

@@ -42,7 +42,7 @@
 				"name": "bind"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "8.3.7",
@@ -62,7 +62,7 @@
 				"name": "FreeBSD"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "5.1_11",

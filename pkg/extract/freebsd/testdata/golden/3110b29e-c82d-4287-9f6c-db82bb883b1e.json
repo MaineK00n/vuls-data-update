@@ -26,7 +26,7 @@
 				"name": "zeek"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "5.0.1"

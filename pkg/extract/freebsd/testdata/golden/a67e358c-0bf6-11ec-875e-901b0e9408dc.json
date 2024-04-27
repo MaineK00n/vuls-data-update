@@ -50,7 +50,7 @@
 				"name": "py36-matrix-synapse"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -65,7 +65,7 @@
 				"name": "py37-matrix-synapse"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -80,7 +80,7 @@
 				"name": "py38-matrix-synapse"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -95,7 +95,7 @@
 				"name": "py39-matrix-synapse"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "1.41.1"
@@ -110,7 +110,7 @@
 				"name": "py310-matrix-synapse"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "1.41.1"

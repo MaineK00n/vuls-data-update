@@ -38,7 +38,7 @@
 				"name": "grafana"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "9.5.17",
@@ -70,7 +70,7 @@
 				"name": "grafana9"
 			},
 			"affected": {
-				"type": "freebsd",
+				"type": "freebsd-pkg",
 				"range": [
 					{
 						"lt": "9.5.17"
