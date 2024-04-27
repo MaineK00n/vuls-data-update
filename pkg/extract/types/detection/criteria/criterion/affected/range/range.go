@@ -1,0 +1,211 @@
+package affectedrange
+
+import (
+	"cmp"
+	"encoding/json"
+	"fmt"
+
+	gem "github.com/aquasecurity/go-gem-version"
+	npm "github.com/aquasecurity/go-npm-version/pkg"
+	pep440 "github.com/aquasecurity/go-pep440-version"
+	"github.com/hashicorp/go-version"
+	apk "github.com/knqyf263/go-apk-version"
+	deb "github.com/knqyf263/go-deb-version"
+	rpm "github.com/knqyf263/go-rpm-version"
+	mvn "github.com/masahiro331/go-mvn-version"
+	"github.com/pkg/errors"
+)
+
+type RangeType int
+
+const (
+	_ RangeType = iota
+	RangeTypeVersion
+	RangeTypeSEMVER
+	RangeTypeAPK
+	RangeTypeRPM
+	RangeTypeDPKG
+	RangeTypePacman
+	RangeTypeFreeBSDPkg
+	RangeTypeNPM
+	RangeTypeRubyGems
+	RangeTypePyPI
+	RangeTypeMaven
+)
+
+func (t RangeType) String() string {
+	switch t {
+	case RangeTypeVersion:
+		return "version"
+	case RangeTypeSEMVER:
+		return "semver"
+	case RangeTypeAPK:
+		return "apk"
+	case RangeTypeRPM:
+		return "rpm"
+	case RangeTypeDPKG:
+		return "dpkg"
+	case RangeTypePacman:
+		return "pacman"
+	case RangeTypeFreeBSDPkg:
+		return "freebsd-pkg"
+	case RangeTypeNPM:
+		return "npm"
+	case RangeTypeRubyGems:
+		return "rubygems"
+	case RangeTypePyPI:
+		return "pypi"
+	case RangeTypeMaven:
+		return "maven"
+	default:
+		return "version"
+	}
+}
+
+func (t RangeType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.String())
+}
+
+func (t *RangeType) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("data should be a string, got %s", data)
+	}
+
+	var rt RangeType
+	switch s {
+	case "version":
+		rt = RangeTypeVersion
+	case "semver":
+		rt = RangeTypeSEMVER
+	case "apk":
+		rt = RangeTypeAPK
+	case "rpm":
+		rt = RangeTypeRPM
+	case "dpkg":
+		rt = RangeTypeDPKG
+	case "pacman":
+		rt = RangeTypePacman
+	case "freebsd-pkg":
+		rt = RangeTypeFreeBSDPkg
+	case "npm":
+		rt = RangeTypeNPM
+	case "rubygems":
+		rt = RangeTypeRubyGems
+	case "pypi":
+		rt = RangeTypePyPI
+	case "maven":
+		rt = RangeTypeMaven
+	default:
+		return fmt.Errorf("invalid RangeType %s", s)
+	}
+	*t = rt
+	return nil
+}
+
+type Range struct {
+	Equal        string `json:"eq,omitempty"`
+	LessThan     string `json:"lt,omitempty"`
+	LessEqual    string `json:"le,omitempty"`
+	GreaterThan  string `json:"gt,omitempty"`
+	GreaterEqual string `json:"ge,omitempty"`
+}
+
+func Compare(x, y Range) int {
+	return cmp.Or(
+		cmp.Compare(x.Equal, y.Equal),
+		cmp.Compare(x.LessThan, y.LessThan),
+		cmp.Compare(x.LessEqual, y.LessEqual),
+		cmp.Compare(x.GreaterThan, y.GreaterThan),
+		cmp.Compare(x.GreaterEqual, y.GreaterEqual),
+	)
+}
+
+func (t RangeType) Compare(v1, v2 string) (int, error) {
+	switch t {
+	case RangeTypeVersion:
+		va, err := version.NewVersion(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new version: %s", v1)
+		}
+		vb, err := version.NewVersion(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypeSEMVER:
+		va, err := version.NewSemver(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new semver version: %s", v1)
+		}
+		vb, err := version.NewSemver(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new semver version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypeAPK:
+		va, err := apk.NewVersion(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new apk version: %s", v1)
+		}
+		vb, err := apk.NewVersion(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new apk version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypeRPM:
+		return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
+	case RangeTypeDPKG:
+		va, err := deb.NewVersion(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new dpkg version: %s", v1)
+		}
+		vb, err := deb.NewVersion(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new dpkg version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypeNPM:
+		va, err := npm.NewVersion(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new npm version: %s", v1)
+		}
+		vb, err := npm.NewVersion(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new npm version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypeRubyGems:
+		va, err := gem.NewVersion(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new rubygems version: %s", v1)
+		}
+		vb, err := gem.NewVersion(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new rubygems version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypePyPI:
+		va, err := pep440.Parse(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new pypi version: %s", v1)
+		}
+		vb, err := pep440.Parse(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new pypi version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMaven:
+		va, err := mvn.NewVersion(v1)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v1 new maven version: %s", v1)
+		}
+		vb, err := mvn.NewVersion(v2)
+		if err != nil {
+			return 0, errors.Wrapf(err, "v2 new maven version: %s", v2)
+		}
+		return va.Compare(vb), nil
+	default:
+		return 0, errors.Errorf("unsupported range type: %s", t)
+	}
+}

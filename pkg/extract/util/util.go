@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	"github.com/pkg/errors"
 	"golang.org/x/exp/maps"
 )
@@ -49,7 +50,7 @@ func ChunkSlice(length int, chunkSize int) <-chan IndexChunk {
 	return ch
 }
 
-func Write(path string, content any) error {
+func Write(path string, content any, doSort bool) error {
 	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
 	}
@@ -59,6 +60,26 @@ func Write(path string, content any) error {
 		return errors.Wrapf(err, "create %s", path)
 	}
 	defer f.Close()
+
+	if doSort {
+		switch v := content.(type) {
+		case types.Data:
+			(&v).Sort()
+		case types.CPEDictionary:
+			(&v).Sort()
+		case types.CWEDictionary:
+			(&v).Sort()
+		case types.CAPECDictionary:
+			(&v).Sort()
+		case types.AttackDictionary:
+			(&v).Sort()
+		case types.WindowsKBDictionary:
+			(&v).Sort()
+		case types.EOLDictionary:
+			(&v).Sort()
+		default:
+		}
+	}
 
 	e := json.NewEncoder(f)
 	e.SetEscapeHTML(false)

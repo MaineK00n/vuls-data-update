@@ -1,14 +1,11 @@
 package epss_test
 
 import (
-	"io/fs"
-	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/epss"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
 func TestExtract(t *testing.T) {
@@ -33,34 +30,15 @@ func TestExtract(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() {
-					return nil
-				}
-
-				dir, file := filepath.Split(path)
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
-				if err != nil {
-					return err
-				}
-
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Extract(). (-expected +got):\n%s", diff)
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
+			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+			if err != nil {
+				t.Error("unexpected error:", err)
 			}
+			gp, err := filepath.Abs(dir)
+			if err != nil {
+				t.Error("unexpected error:", err)
+			}
+			utiltest.Diff(t, ep, gp)
 		})
 	}
 }

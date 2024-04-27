@@ -91,8 +91,8 @@ func Extract(opts ...Option) error {
 				m[v] = eol
 			}
 
-			if err := util.Write(filepath.Join(options.dir, c, fmt.Sprintf("%s.json", e)), m); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, c, fmt.Sprintf("%s.json", e)))
+			if err := util.Write(filepath.Join(options.dir, "epl", c, fmt.Sprintf("%s.json", e)), m, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)))
 			}
 		}
 	}

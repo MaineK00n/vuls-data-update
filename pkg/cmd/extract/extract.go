@@ -78,7 +78,9 @@ import (
 	swiftGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/swift/ghsa"
 	swiftOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/swift/osv"
 
-	cweCapecAttack "github.com/MaineK00n/vuls-data-update/pkg/extract/cwe_capec_attack"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/attack"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/capec"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/cwe"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/eol"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/epss"
 	exploitExploitDB "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/exploitdb"
@@ -150,7 +152,9 @@ func NewCmdExtract() *cobra.Command {
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 
-		newCmdCWECapecAttack(),
+		newCmdAttack(),
+		newCmdCapec(),
+		newCmdCWE(),
 		newCmdEOL(),
 		newCmdEPSS(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitTrickest(),
@@ -1840,27 +1844,77 @@ func newCmdSwiftOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdCWECapecAttack() *cobra.Command {
+func newCmdAttack() *cobra.Command {
 	options := &base{
 		dir: filepath.Join(util.CacheDir(), "extract", "cwe-capec-attack"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "cwe-capec-attack <Raw CWE Repository PATH> <Raw Capec Repository PATH> <Raw Attack Repository PATH>",
-		Short: "Extract CWE Capec Attack data source",
+		Use:   "attack <Raw Attack Repository PATH>",
+		Short: "Extract Attack data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract cwe-capec-attack vuls-data-raw-cwe-capec-attack
+			$ vuls-data-update extract attack vuls-data-raw-attack
 		`),
-		Args: cobra.ExactArgs(3),
+		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := cweCapecAttack.Extract(args[0], args[1], args[2], cweCapecAttack.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract cwe capec attack")
+			if err := attack.Extract(args[0], attack.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract attack")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cwe-capec-attack"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "attack"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdCapec() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "capec"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "capec <Raw Capec Repository PATH>",
+		Short: "Extract Capec data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract capec vuls-data-raw-capec
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := capec.Extract(args[0], capec.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract capec")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "capec"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdCWE() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "cwe"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cwe-capec-attack <Raw CWE Repository PATH>",
+		Short: "Extract CWE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract cwe vuls-data-raw-cwe
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := cwe.Extract(args[0], cwe.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract cwe")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cwe"), "output extract results to specified directory")
 
 	return cmd
 }

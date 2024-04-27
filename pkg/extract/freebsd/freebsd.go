@@ -12,9 +12,16 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
+	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
+	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
@@ -77,8 +84,8 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		extracted := extract(fetched)
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", extracted.ID)), extracted); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", extracted.ID)))
+		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
 		return nil
@@ -176,9 +183,9 @@ func extract(fetched freebsd.Vuln) types.Data {
 		})
 	}
 
-	vs := make([]types.Vulnerability, 0, len(fetched.References.Cvename))
+	vs := make([]vulnerability.Vulnerability, 0, len(fetched.References.Cvename))
 	for _, c := range fetched.References.Cvename {
-		vs = append(vs, types.Vulnerability{
+		vs = append(vs, vulnerability.Vulnerability{
 			ID: c,
 			References: []reference.Reference{{
 				Source: "vuxml.freebsd.org",
@@ -186,7 +193,7 @@ func extract(fetched freebsd.Vuln) types.Data {
 			}}})
 	}
 
-	ds := make([]detection.Detection, 0, func() int {
+	cs := make([]criterion.Criterion, 0, func() int {
 		cap := 0
 		for _, a := range fetched.Affects {
 			cap += len(a.Name)
@@ -195,23 +202,23 @@ func extract(fetched freebsd.Vuln) types.Data {
 	}())
 	for _, a := range fetched.Affects {
 		for _, n := range a.Name {
-			rs := make([]detection.Range, 0, len(a.Range))
+			rs := make([]affectedrange.Range, 0, len(a.Range))
 			for _, r := range a.Range {
-				rs = append(rs, detection.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
+				rs = append(rs, affectedrange.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
 			}
-			ds = append(ds, detection.Detection{
-				Ecosystem:  detection.EcosystemTypeFreeBSD,
+			cs = append(cs, criterion.Criterion{
 				Vulnerable: true,
-				Package:    detection.Package{Name: n},
-				Affected: &detection.Affected{
-					Type:  detection.RangeTypeFreeBSDPkg,
+				Package:    criterionpackage.Package{Name: n},
+				Affected: &affected.Affected{
+					Type:  affectedrange.RangeTypeFreeBSDPkg,
 					Range: rs,
-				}})
+				},
+			})
 		}
 	}
 	return types.Data{
 		ID: fetched.Vid,
-		Advisories: []types.Advisory{{
+		Advisories: []advisory.Advisory{{
 			ID:          fetched.Vid,
 			Title:       fetched.Topic,
 			Description: fetched.Description.Text,
@@ -220,7 +227,15 @@ func extract(fetched freebsd.Vuln) types.Data {
 			Modified:    utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Modified),
 		}},
 		Vulnerabilities: vs,
-		Detection:       ds,
-		DataSource:      source.FreeBSD,
+		Detection: []detection.Detection{
+			{
+				Ecosystem: detection.EcosystemTypeFreeBSD,
+				Criteria: criteria.Criteria{
+					Operator:   criteria.CriteriaOperatorTypeOR,
+					Criterions: cs,
+				},
+			},
+		},
+		DataSource: source.FreeBSD,
 	}
 }
