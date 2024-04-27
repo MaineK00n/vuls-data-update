@@ -1,12 +1,14 @@
 package freebsd
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -175,6 +177,9 @@ func extract(fetched freebsd.Vuln) types.Data {
 			URL: fmt.Sprintf("http://www.uscert.gov/cas/techalerts/%s.html", u),
 		})
 	}
+	slices.SortFunc(rs, func(a, b reference.Reference) int {
+		return cmp.Compare(a.URL, b.URL)
+	})
 
 	vs := make([]types.Vulnerability, 0, len(fetched.References.Cvename))
 	for _, c := range fetched.References.Cvename {
@@ -185,6 +190,9 @@ func extract(fetched freebsd.Vuln) types.Data {
 				URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
 			}}})
 	}
+	slices.SortFunc(vs, func(a, b types.Vulnerability) int {
+		return cmp.Compare(a.ID, b.ID)
+	})
 
 	ds := make([]detection.Detection, 0, func() int {
 		cap := 0
@@ -209,6 +217,10 @@ func extract(fetched freebsd.Vuln) types.Data {
 				}})
 		}
 	}
+	slices.SortFunc(ds, func(a, b detection.Detection) int {
+		return cmp.Compare(a.Package.Name, b.Package.Name)
+	})
+
 	return types.Data{
 		ID: fetched.Vid,
 		Advisories: []types.Advisory{{

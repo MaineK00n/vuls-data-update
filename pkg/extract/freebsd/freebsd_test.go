@@ -1,19 +1,14 @@
 package freebsd_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/freebsd"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 )
 
 func TestExtract(t *testing.T) {
@@ -47,41 +42,16 @@ func TestExtract(t *testing.T) {
 					return nil
 				}
 
-				file := filepath.Base(path)
-				f, err := os.Open(filepath.Join("testdata", "golden", file))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(path)))
 				if err != nil {
 					return err
 				}
-				defer f.Close()
 
-				var want types.Data
-				if err := json.NewDecoder(f).Decode(&want); err != nil {
-					return err
-				}
-
-				f, err = os.Open(path)
+				got, err := os.ReadFile(path)
 				if err != nil {
 					return err
 				}
-				defer f.Close()
-
-				var got types.Data
-				if err := json.NewDecoder(f).Decode(&got); err != nil {
-					return err
-				}
-
-				opts := []cmp.Option{
-					cmpopts.SortSlices(func(a, b types.Vulnerability) bool {
-						return a.ID < b.ID
-					}),
-					cmpopts.SortSlices(func(a, b detection.Detection) bool {
-						return a.Package.Name < b.Package.Name
-					}),
-					cmpopts.SortSlices(func(a, b reference.Reference) bool {
-						return a.URL < b.URL
-					}),
-				}
-				if diff := cmp.Diff(want, got, opts...); diff != "" {
+				if diff := cmp.Diff(want, got); diff != "" {
 					t.Errorf("Extract(). (-expected +got):\n%s", diff)
 				}
 
