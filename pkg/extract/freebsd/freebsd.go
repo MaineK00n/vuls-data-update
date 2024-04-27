@@ -97,17 +97,17 @@ func extract(fetched freebsd.Vuln) types.Data {
 		}
 	}
 
-	reflen := 1
-	reflen += len(fetched.References.URL)
-	reflen += len(fetched.References.FreebsdSA)
-	reflen += len(fetched.References.FreebsdPR)
-	reflen += len(fetched.References.Mlist)
-	reflen += len(fetched.References.BID)
-	reflen += len(fetched.References.CertSA)
-	reflen += len(fetched.References.CertVU)
-	reflen += len(fetched.References.USCertTA)
-
-	rs := make([]reference.Reference, 0, reflen)
+	rs := make([]reference.Reference, 0,
+		1+
+			len(fetched.References.URL)+
+			len(fetched.References.FreebsdSA)+
+			len(fetched.References.FreebsdPR)+
+			len(fetched.References.Mlist)+
+			len(fetched.References.BID)+
+			len(fetched.References.CertSA)+
+			len(fetched.References.CertVU)+
+			len(fetched.References.USCertSA)+
+			len(fetched.References.USCertTA))
 	rs = append(rs, reference.Reference{
 		Source: "vuxml.freebsd.org",
 		URL:    fmt.Sprintf("https://www.vuxml.org/freebsd/%s.html", fetched.Vid),
