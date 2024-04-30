@@ -8,11 +8,11 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://grafana.com/security/security-advisories/cve-2024-1442/"
+					"url": "https://www.vuxml.org/freebsd/6d31ef38-df85-11ee-abf1-6c3be5272acd.html"
 				},
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/6d31ef38-df85-11ee-abf1-6c3be5272acd.html"
+					"url": "https://grafana.com/security/security-advisories/cve-2024-1442/"
 				}
 			],
 			"published": "2024-03-11T00:00:00Z",

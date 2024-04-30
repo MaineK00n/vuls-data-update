@@ -8,11 +8,11 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://github.com/zeek/zeek/releases/tag/v5.0.1"
+					"url": "https://www.vuxml.org/freebsd/3110b29e-c82d-4287-9f6c-db82bb883b1e.html"
 				},
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/3110b29e-c82d-4287-9f6c-db82bb883b1e.html"
+					"url": "https://github.com/zeek/zeek/releases/tag/v5.0.1"
 				}
 			],
 			"published": "2022-08-26T00:00:00Z"

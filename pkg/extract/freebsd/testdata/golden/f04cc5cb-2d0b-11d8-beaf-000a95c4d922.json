@@ -8,15 +8,15 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
 					"url": "https://www.freebsd.org/security/advisories/FreeBSD-SA-03:19.bind.asc"
 				},
 				{
 					"source": "vuxml.freebsd.org",
 					"url": "https://www.kb.cert.org/vuls/id/734644"
-				},
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
 				}
 			],
 			"published": "2003-12-12T00:00:00Z",
@@ -35,6 +35,26 @@
 		}
 	],
 	"detection": [
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "bind"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "8.3.7",
+						"ge": "8.3"
+					},
+					{
+						"lt": "8.4.3",
+						"ge": "8.4"
+					}
+				]
+			}
+		},
 		{
 			"ecosystem": "freebsd",
 			"vulnerable": true,
@@ -74,26 +94,6 @@
 					},
 					{
 						"lt": "4.4_47"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "bind"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
-					{
-						"lt": "8.3.7",
-						"ge": "8.3"
-					},
-					{
-						"lt": "8.4.3",
-						"ge": "8.4"
 					}
 				]
 			}
