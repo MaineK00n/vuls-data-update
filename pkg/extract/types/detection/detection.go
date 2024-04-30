@@ -76,6 +76,7 @@ const (
 	RangeTypeRPM
 	RangeTypeDPKG
 	RangeTypePacman
+	RangeTypeFreeBSDPkg
 	RangeTypeNPM
 	RangeTypeRubyGems
 	RangeTypePyPI
@@ -96,6 +97,8 @@ func (t RangeType) String() string {
 		return "dpkg"
 	case RangeTypePacman:
 		return "pacman"
+	case RangeTypeFreeBSDPkg:
+		return "freebsd-pkg"
 	case RangeTypeNPM:
 		return "npm"
 	case RangeTypeRubyGems:
@@ -141,6 +144,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypePyPI
 	case "maven":
 		rt = RangeTypeMaven
+	case "freebsd-pkg":
+		rt = RangeTypeFreeBSDPkg
 	default:
 		return fmt.Errorf("invalid RangeType %s", s)
 	}

@@ -1,0 +1,190 @@
+{
+	"id": "21a854cc-cac1-11ee-b7a7-353f1e043d9a",
+	"advisories": [
+		{
+			"id": "21a854cc-cac1-11ee-b7a7-353f1e043d9a",
+			"title": "DNSSEC validators -- denial-of-service/CPU exhaustion from KeyTrap and NSEC3 vulnerabilities",
+			"description": "\n\t<p>Simon Kelley reports:</p>\n\t<blockquote cite=\"https://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2024q1/017430.html\">\n\t  <p>If DNSSEC validation is enabled, then an attacker who can force a\n\t    DNS server to validate a specially crafted signed domain can use a\n\t    lot of CPU in the validator. This only affects dnsmasq installations\n\t    with DNSSEC enabled.</p>\n\t</blockquote>\n\t<p>Stichting NLnet Labs reports:</p>\n\t<blockquote cite=\"https://nlnetlabs.nl/news/2024/Feb/13/unbound-1.19.1-released/\">\n\t  <p>\n\t    The KeyTrap [CVE-2023-50387] vulnerability works by using a\n\t    combination of Keys (also colliding Keys), Signatures and number of\n\t    RRSETs on a malicious zone. Answers from that zone can force a\n\t    DNSSEC validator down a very CPU intensive and time costly\n\t    validation path.\n\t  </p>\n\t  <p>\n\t    The NSEC3 [CVE-2023-50868] vulnerability uses specially crafted responses on a\n\t    malicious zone with multiple NSEC3 RRSETs to force a DNSSEC\n\t    validator down a very CPU intensive and time costly NSEC3 hash\n\t    calculation path.\n\t  </p>\n\t</blockquote>\n\t",
+			"references": [
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/21a854cc-cac1-11ee-b7a7-353f1e043d9a.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://kb.isc.org/docs/cve-2023-50387"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://kb.isc.org/docs/cve-2023-50868"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2024q1/017430.html"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://blog.powerdns.com/2024/02/13/powerdns-recursor-4-8-6-4-9-3-5-0-2-released"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://nlnetlabs.nl/news/2024/Feb/13/unbound-1.19.1-released/"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://www.freebsd.org/security/advisories/FreeBSD-SA-24:03.unbound.asc"
+				}
+			],
+			"published": "2024-02-13T00:00:00Z",
+			"modified": "2024-04-01T00:00:00Z"
+		}
+	],
+	"vulnerabilities": [
+		{
+			"id": "CVE-2023-50387",
+			"references": [
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://www.cve.org/CVERecord?id=CVE-2023-50387"
+				}
+			]
+		},
+		{
+			"id": "CVE-2023-50868",
+			"references": [
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://www.cve.org/CVERecord?id=CVE-2023-50868"
+				}
+			]
+		}
+	],
+	"detection": [
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "bind916"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "9.16.48"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "bind918"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "9.18.24"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "bind9-devel"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "9.19.21"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "dnsmasq"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "2.90"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "dnsmasq-devel"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "2.90"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "powerdns-recursor"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "5.0.2"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "unbound"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "1.19.1"
+					}
+				]
+			}
+		},
+		{
+			"ecosystem": "freebsd",
+			"vulnerable": true,
+			"package": {
+				"name": "FreeBSD"
+			},
+			"affected": {
+				"type": "freebsd-pkg",
+				"range": [
+					{
+						"lt": "14.0_6",
+						"ge": "14.0"
+					},
+					{
+						"lt": "13.2_11",
+						"ge": "13.2"
+					}
+				]
+			}
+		}
+	],
+	"data_source": "freebsd"
+}

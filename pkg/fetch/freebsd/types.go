@@ -33,7 +33,7 @@ type Vuln struct {
 		BID      []string `xml:"bid" json:"bid,omitempty"`
 		CertSA   []string `xml:"certsa" json:"cert_sa,omitempty"`
 		CertVU   []string `xml:"certvu" json:"cert_vu,omitempty"`
-		USCertSA []string `xml:"uscertsa" json:"us_cert_sa,omitempty"`
+		USCertSA []string `xml:"uscertsa" json:"us_cert_sa,omitempty"` // There is no data with tag "uscertsa" at 2024-04-21
 		USCertTA []string `xml:"uscertta" json:"us_cert_ta,omitempty"`
 	} `xml:"references" json:"references,omitempty"`
 	Dates struct {

@@ -1,0 +1,60 @@
+{
+	"vid": "6d31ef38-df85-11ee-abf1-6c3be5272acd",
+	"topic": "Grafana -- Data source permission escalation",
+	"affects": [
+		{
+			"name": [
+				"grafana"
+			],
+			"range": [
+				{
+					"lt": "9.5.17",
+					"ge": "8.5.0"
+				},
+				{
+					"lt": "10.0.12",
+					"ge": "10.0.0"
+				},
+				{
+					"lt": "10.1.8",
+					"ge": "10.1.0"
+				},
+				{
+					"lt": "10.2.5",
+					"ge": "10.2.0"
+				},
+				{
+					"lt": "10.3.4",
+					"ge": "10.3.0"
+				}
+			]
+		},
+		{
+			"name": [
+				"grafana9"
+			],
+			"range": [
+				{
+					"lt": "9.5.17"
+				}
+			]
+		}
+	],
+	"description": {
+		"xmlns": "http://www.w3.org/1999/xhtml",
+		"text": "\n\t<p>Grafana Labs reports:</p>\n\t<blockquote cite=\"https://grafana.com/blog/2024/03/07/grafana-security-release-medium-severity-security-fix-for-cve-2024-1442/\">\n\t  <p>The vulnerability impacts Grafana Cloud and Grafana Enterprise instances,\n\t  and it is exploitable if a user who should not be able to access all data\n\t  sources is granted permissions to create a data source.</p>\n\t  <p>By default, only organization Administrators are allowed to create a data\n\t  source and have full access to all data sources. All other users need to be\n\t  explicitly granted permission to create a data source, which then means they\n\t  could exploit this vulnerability.</p>\n\t  <p>When a user creates a data source via the\n\t  <a href=\"https://grafana.com/docs/grafana/latest/developers/http_api/data_source/#create-a-data-source\">API</a>,\n\t  they can specify data source UID. If the UID is set to an asterisk (*),\n\t  the user gains permissions to query, update, and delete all data sources\n\t  in the organization. The exploit, however, does not stretch across\n\t  organizations — to exploit the vulnerability in several organizations, a user\n\t  would need permissions to create data sources in each organization.</p>\n\t  <p>The vulnerability comes from a lack of UID validation. When evaluating\n\t  permissions, we interpret an asterisk (*) as a wild card for all resources.\n\t  Therefore, we should treat it as a reserved value, and not allow the creation\n\t  of a resource with the UID set to an asterisk.</p>\n\t  <p>The CVSS score for this vulnerability is\n\t  <a href=\"https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:L/A:L&amp;version=3.1\">6 Medium</a>.</p>\n\t</blockquote>\n\t"
+	},
+	"references": {
+		"url": [
+			"https://grafana.com/security/security-advisories/cve-2024-1442/"
+		],
+		"cvename": [
+			"CVE-2024-1442"
+		]
+	},
+	"dates": {
+		"discovery": "2024-02-12",
+		"entry": "2024-03-11",
+		"modified": "2024-03-26"
+	}
+}
