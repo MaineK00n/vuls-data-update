@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -263,16 +262,6 @@ func Extract(args string, opts ...Option) error {
 			if err := json.NewDecoder(f).Decode(&data); err != nil {
 				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)))
 			}
-
-			slices.SortFunc(data.Vulnerabilities[0].EPSS, func(a, b epssTypes.EPSS) int {
-				if a.ScoreDate.Before(b.ScoreDate) {
-					return -1
-				}
-				if a.ScoreDate.After(b.ScoreDate) {
-					return +1
-				}
-				return 0
-			})
 
 			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)), data); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", req)))
