@@ -1,518 +1,303 @@
 package v5
 
-type cve struct {
-	DataType    string `json:"dataType"`
-	DataVersion string `json:"dataVersion"`
-	CveMetadata struct {
-		AssignerOrgID     string  `json:"assignerOrgId"`
-		AssignerShortName *string `json:"assignerShortName,omitempty"`
-		CveID             string  `json:"cveId"`
-		DatePublished     *string `json:"datePublished,omitempty"`
-		DateRejected      *string `json:"dateRejected,omitempty"`
-		DateReserved      string  `json:"dateReserved"`
-		DateUpdated       *string `json:"dateUpdated,omitempty"`
-		RequesterUserID   *string `json:"requesterUserId,omitempty"`
-		Serial            *int    `json:"serial,omitempty"`
-		State             string  `json:"state"`
-	} `json:"cveMetadata"`
-	Containers struct {
-		Cna struct {
-			Affected []struct {
-				CollectionURL   *string  `json:"collectionURL,omitempty"`
-				CollectionURL2  *string  `json:"collection_url,omitempty"`
-				Cpe             []string `json:"cpe,omitempty"`
-				Cpes            []string `json:"cpes,omitempty"`
-				DefaultStatus   *string  `json:"defaultStatus,omitempty"`
-				Modules         []string `json:"modules,omitempty"`
-				PackageName     *string  `json:"packageName,omitempty"`
-				Platforms       []string `json:"platforms,omitempty"`
-				Product         *string  `json:"product,omitempty"`
-				ProgramFiles    []string `json:"programFiles,omitempty"`
-				ProgramRoutines []struct {
-					Name string `json:"name"`
-				} `json:"programRoutines,omitempty"`
-				Repo     *string `json:"repo,omitempty"`
-				Vendor   *string `json:"vendor,omitempty"`
-				Versions []struct {
-					Changes []struct {
-						At     string `json:"at"`
-						Status string `json:"status"`
-					} `json:"changes,omitempty"`
-					GreaterThanOrEqual *string `json:"greaterThanOrEqual,omitempty"`
-					LessThan           *string `json:"lessThan,omitempty"`
-					LessThanOrEqual    *string `json:"lessThanOrEqual,omitempty"`
-					Status             string  `json:"status"`
-					Version            string  `json:"version"`
-					VersionType        *string `json:"versionType,omitempty"`
-				} `json:"versions,omitempty"`
-				XRedhatStatus *string `json:"x_redhatStatus,omitempty"`
-			} `json:"affected,omitempty"`
-			Configurations []struct {
-				Lang            string `json:"lang"`
-				SupportingMedia []struct {
-					Base64 bool   `json:"base64"`
-					Type   string `json:"type"`
-					Value  string `json:"value"`
-				} `json:"supportingMedia,omitempty"`
-				Value string `json:"value"`
-			} `json:"configurations,omitempty"`
-			Credits []struct {
-				Lang  string  `json:"lang"`
-				Type  *string `json:"type,omitempty"`
-				User  *string `json:"user,omitempty"`
-				Value string  `json:"value"`
-			} `json:"credits,omitempty"`
-			DateAssigned *string `json:"dateAssigned,omitempty"`
-			DatePublic   *string `json:"datePublic,omitempty"`
-			Descriptions []struct {
-				Lang            string `json:"lang"`
-				SupportingMedia []struct {
-					Base64 bool   `json:"base64"`
-					Type   string `json:"type"`
-					Value  string `json:"value"`
-				} `json:"supportingMedia,omitempty"`
-				Value string `json:"value"`
-			} `json:"descriptions,omitempty"`
-			Exploits []struct {
-				Lang            string `json:"lang"`
-				SupportingMedia []struct {
-					Base64 bool   `json:"base64"`
-					Type   string `json:"type"`
-					Value  string `json:"value"`
-				} `json:"supportingMedia,omitempty"`
-				Value string `json:"value"`
-			} `json:"exploits,omitempty"`
-			Impacts []struct {
-				CapecID      *string `json:"capecId,omitempty"`
-				Descriptions []struct {
-					Lang  string `json:"lang"`
-					Value string `json:"value"`
-				} `json:"descriptions"`
-			} `json:"impacts,omitempty"`
-			Metrics []struct {
-				CvssV20 *struct {
-					Version               string  `json:"version"`
-					VectorString          string  `json:"vectorString"`
-					BaseScore             float64 `json:"baseScore"`
-					AccessComplexity      *string `json:"accessComplexity,omitempty"`
-					AccessVector          *string `json:"accessVector,omitempty"`
-					Authentication        *string `json:"authentication,omitempty"`
-					AvailabilityImpact    *string `json:"availabilityImpact,omitempty"`
-					ConfidentialityImpact *string `json:"confidentialityImpact,omitempty"`
-					IntegrityImpact       *string `json:"integrityImpact,omitempty"`
-				} `json:"cvssV2_0,omitempty"`
-				CvssV30 *struct {
-					Version               string   `json:"version"`
-					VectorString          string   `json:"vectorString"`
-					BaseScore             float64  `json:"baseScore"`
-					BaseSeverity          string   `json:"baseSeverity"`
-					AttackComplexity      *string  `json:"attackComplexity,omitempty"`
-					AttackVector          *string  `json:"attackVector,omitempty"`
-					AvailabilityImpact    *string  `json:"availabilityImpact,omitempty"`
-					ConfidentialityImpact *string  `json:"confidentialityImpact,omitempty"`
-					ExploitCodeMaturity   *string  `json:"exploitCodeMaturity,omitempty"`
-					IntegrityImpact       *string  `json:"integrityImpact,omitempty"`
-					PrivilegesRequired    *string  `json:"privilegesRequired,omitempty"`
-					RemediationLevel      *string  `json:"remediationLevel,omitempty"`
-					ReportConfidence      *string  `json:"reportConfidence,omitempty"`
-					Scope                 *string  `json:"scope,omitempty"`
-					TemporalScore         *float64 `json:"temporalScore,omitempty"`
-					TemporalSeverity      *string  `json:"temporalSeverity,omitempty"`
-					UserInteraction       *string  `json:"userInteraction,omitempty"`
-				} `json:"cvssV3_0,omitempty"`
-				CvssV31 *struct {
-					Version                       string   `json:"version"`
-					VectorString                  string   `json:"vectorString"`
-					BaseScore                     float64  `json:"baseScore"`
-					BaseSeverity                  string   `json:"baseSeverity"`
-					AttackComplexity              *string  `json:"attackComplexity,omitempty"`
-					AttackVector                  *string  `json:"attackVector,omitempty"`
-					AvailabilityImpact            *string  `json:"availabilityImpact,omitempty"`
-					AvailabilityRequirement       *string  `json:"availabilityRequirement,omitempty"`
-					ConfidentialityImpact         *string  `json:"confidentialityImpact,omitempty"`
-					ConfidentialityRequirement    *string  `json:"confidentialityRequirement,omitempty"`
-					EnvironmentalScore            *float64 `json:"environmentalScore,omitempty"`
-					EnvironmentalSeverity         *string  `json:"environmentalSeverity,omitempty"`
-					ExploitCodeMaturity           *string  `json:"exploitCodeMaturity,omitempty"`
-					IntegrityImpact               *string  `json:"integrityImpact,omitempty"`
-					IntegrityRequirement          *string  `json:"integrityRequirement,omitempty"`
-					ModifiedAttackComplexity      *string  `json:"modifiedAttackComplexity,omitempty"`
-					ModifiedAttackVector          *string  `json:"modifiedAttackVector,omitempty"`
-					ModifiedAvailabilityImpact    *string  `json:"modifiedAvailabilityImpact,omitempty"`
-					ModifiedConfidentialityImpact *string  `json:"modifiedConfidentialityImpact,omitempty"`
-					ModifiedIntegrityImpact       *string  `json:"modifiedIntegrityImpact,omitempty"`
-					ModifiedPrivilegesRequired    *string  `json:"modifiedPrivilegesRequired,omitempty"`
-					ModifiedScope                 *string  `json:"modifiedScope,omitempty"`
-					ModifiedUserInteraction       *string  `json:"modifiedUserInteraction,omitempty"`
-					PrivilegesRequired            *string  `json:"privilegesRequired,omitempty"`
-					RemediationLevel              *string  `json:"remediationLevel,omitempty"`
-					ReportConfidence              *string  `json:"reportConfidence,omitempty"`
-					Scope                         *string  `json:"scope,omitempty"`
-					TemporalScore                 *float64 `json:"temporalScore,omitempty"`
-					TemporalSeverity              *string  `json:"temporalSeverity,omitempty"`
-					UserInteraction               *string  `json:"userInteraction,omitempty"`
-				} `json:"cvssV3_1,omitempty"`
-				Format    *string     `json:"format,omitempty"`
-				Other     interface{} `json:"other,omitempty"`
-				Scenario  *string     `json:"scenario,omitempty"`
-				Scenarios []struct {
-					Lang  string `json:"lang"`
-					Value string `json:"value"`
-				} `json:"scenarios,omitempty"`
-			} `json:"metrics,omitempty"`
-			ProblemTypes []struct {
-				Descriptions []struct {
-					CWEID       *string `json:"CWE-ID,omitempty"`
-					CweID       *string `json:"cweId,omitempty"`
-					Cweid       *string `json:"cweid,omitempty"`
-					Description string  `json:"description"`
-					Lang        string  `json:"lang"`
-					Reference   *struct {
-						URL string `json:"url"`
-					} `json:"reference,omitempty"`
-					Type *string `json:"type,omitempty"`
-				} `json:"descriptions"`
-			} `json:"problemTypes,omitempty"`
-			ProviderMetadata struct {
-				DateUpdated *string `json:"dateUpdated,omitempty"`
-				OrgID       string  `json:"orgId"`
-				ShortName   *string `json:"shortName,omitempty"`
-			} `json:"providerMetadata"`
-			References []struct {
-				Name      *string  `json:"name,omitempty"`
-				Refsource *string  `json:"refsource,omitempty"`
-				Tags      []string `json:"tags,omitempty"`
-				URL       string   `json:"url"`
-			} `json:"references,omitempty"`
-			RejectedReasons []struct {
-				Lang            string `json:"lang"`
-				SupportingMedia []struct {
-					Base64 bool   `json:"base64"`
-					Type   string `json:"type"`
-					Value  string `json:"value"`
-				} `json:"supportingMedia,omitempty"`
-				Value string `json:"value"`
-			} `json:"rejectedReasons,omitempty"`
-			ReplacedBy []string `json:"replacedBy,omitempty"`
-			Solutions  []struct {
-				Lang            string `json:"lang"`
-				SupportingMedia []struct {
-					Base64 bool   `json:"base64"`
-					Type   string `json:"type"`
-					Value  string `json:"value"`
-				} `json:"supportingMedia,omitempty"`
-				Value string `json:"value"`
-			} `json:"solutions,omitempty"`
-			Source           interface{} `json:"source,omitempty"`
-			Tags             []string    `json:"tags,omitempty"`
-			TaxonomyMappings []struct {
-				TaxonomyName      string `json:"taxonomyName"`
-				TaxonomyVersion   string `json:"taxonomyVersion"`
-				TaxonomyRelations []struct {
-					RelationshipName  string `json:"relationshipName"`
-					RelationshipValue string `json:"relationshipValue"`
-					TaxonomyID        string `json:"taxonomyId"`
-				} `json:"taxonomyRelations"`
-			} `json:"taxonomyMappings,omitempty"`
-			Timeline []struct {
-				Lang  string `json:"lang"`
-				Time  string `json:"time"`
-				Value string `json:"value"`
-			} `json:"timeline,omitempty"`
-			Title       *string `json:"title,omitempty"`
-			Workarounds []struct {
-				Lang            string `json:"lang"`
-				SupportingMedia []struct {
-					Base64 bool   `json:"base64"`
-					Type   string `json:"type"`
-					Value  string `json:"value"`
-				} `json:"supportingMedia,omitempty"`
-				Value string `json:"value"`
-			} `json:"workarounds,omitempty"`
-			XConverterErrors map[string]struct {
-				Error   string `json:"error"`
-				Message string `json:"message"`
-			} `json:"x_ConverterErrors,omitempty"`
-			XGenerator      interface{} `json:"x_generator,omitempty"`
-			XLegacyV4Record interface{} `json:"x_legacyV4Record,omitempty"`
-			XRedHatCweChain *string     `json:"x_redHatCweChain,omitempty"`
-			XRedhatCweChain *string     `json:"x_redhatCweChain,omitempty"`
+type CVE struct {
+	DataType    string      `json:"dataType"`
+	DataVersion string      `json:"dataVersion"`
+	CVEMetadata CVEMetadata `json:"cveMetadata"`
+	Containers  struct {
+		CNA struct {
+			ProviderMetadata ProviderMetadata `json:"providerMetadata"`
+			Title            *string          `json:"title,omitempty"`
+			Descriptions     []Description    `json:"descriptions,omitempty"`
+			Affected         []Product        `json:"affected,omitempty"`
+			ProblemTypes     []ProblemType    `json:"problemTypes,omitempty"`
+			Impacts          []Impact         `json:"impacts,omitempty"`
+			Metrics          []Metric         `json:"metrics,omitempty"`
+			Workarounds      []Description    `json:"workarounds,omitempty"`
+			Solutions        []Description    `json:"solutions,omitempty"`
+			Exploits         []Description    `json:"exploits,omitempty"`
+			Configurations   []Description    `json:"configurations,omitempty"`
+			References       []Reference      `json:"references,omitempty"`
+			Timeline         Timeline         `json:"timeline,omitempty"`
+			Credits          Credits          `json:"credits,omitempty"`
+			Source           interface{}      `json:"source,omitempty"`
+			Tags             []string         `json:"tags,omitempty"`
+			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitempty"`
+			DateAssigned     *string          `json:"dateAssigned,omitempty"`
+			DatePublic       *string          `json:"datePublic,omitempty"`
+			RejectedReasons  []Description    `json:"rejectedReasons,omitempty"`
+			ReplacedBy       []string         `json:"replacedBy,omitempty"`
+			XGenerator       interface{}      `json:"x_generator,omitempty"`
+			XLegacyV4Record  interface{}      `json:"x_legacyV4Record,omitempty"`
+			XRedhatCweChain  interface{}      `json:"x_redhatCweChain,omitempty"`
+			XConverterErrors interface{}      `json:"x_ConverterErrors,omitempty"`
 		} `json:"cna"`
+		ADP []struct {
+			ProviderMetadata ProviderMetadata `json:"providerMetadata"`
+			Title            *string          `json:"title,omitempty"`
+			Descriptions     []Description    `json:"descriptions,omitempty"`
+			Affected         []Product        `json:"affected,omitempty"`
+			ProblemTypes     []ProblemType    `json:"problemTypes,omitempty"`
+			Impacts          []Impact         `json:"impacts,omitempty"`
+			Metrics          []Metric         `json:"metrics,omitempty"`
+			Workarounds      []Description    `json:"workarounds,omitempty"`
+			Solutions        []Description    `json:"solutions,omitempty"`
+			Exploits         []Description    `json:"exploits,omitempty"`
+			Configurations   []Description    `json:"configurations,omitempty"`
+			References       []Reference      `json:"references,omitempty"`
+			Timeline         Timeline         `json:"timeline,omitempty"`
+			Credits          Credits          `json:"credits,omitempty"`
+			Source           interface{}      `json:"source,omitempty"`
+			Tags             []string         `json:"tags,omitempty"`
+			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitempty"`
+			DatePublic       *string          `json:"datePublic,omitempty"`
+		} `json:"adp,omitempty"`
 	} `json:"containers"`
 }
 
-type Vulnerability struct {
-	DataType    string      `json:"dataType"`
-	DataVersion string      `json:"dataVersion"`
-	CveMetadata CveMetadata `json:"cveMetadata"`
-	Containers  Containers  `json:"containers"`
-}
-
-type CveMetadata struct {
+type CVEMetadata struct {
+	CVEID             string  `json:"cveId"`
 	AssignerOrgID     string  `json:"assignerOrgId"`
 	AssignerShortName *string `json:"assignerShortName,omitempty"`
-	CveID             string  `json:"cveId"`
-	DatePublished     *string `json:"datePublished,omitempty"`
-	DateRejected      *string `json:"dateRejected,omitempty"`
-	DateReserved      string  `json:"dateReserved"`
-	DateUpdated       *string `json:"dateUpdated,omitempty"`
 	RequesterUserID   *string `json:"requesterUserId,omitempty"`
 	Serial            *int    `json:"serial,omitempty"`
 	State             string  `json:"state"`
+	DatePublished     *string `json:"datePublished,omitempty"`
+	DateUpdated       *string `json:"dateUpdated,omitempty"`
+	DateReserved      *string `json:"dateReserved,omitempty"`
+	DateRejected      *string `json:"dateRejected,omitempty"`
 }
 
-type Containers struct {
-	Cna Cna `json:"cna"`
-}
-
-type Cna struct {
-	Affected         []Affected                 `json:"affected,omitempty"`
-	Configurations   []Configuration            `json:"configurations,omitempty"`
-	Credits          []Credit                   `json:"credits,omitempty"`
-	DateAssigned     *string                    `json:"dateAssigned,omitempty"`
-	DatePublic       *string                    `json:"datePublic,omitempty"`
-	Descriptions     []Description              `json:"descriptions,omitempty"`
-	Exploits         []Exploit                  `json:"exploits,omitempty"`
-	Impacts          []Impact                   `json:"impacts,omitempty"`
-	Metrics          []Metric                   `json:"metrics,omitempty"`
-	ProblemTypes     []ProblemType              `json:"problemTypes,omitempty"`
-	ProviderMetadata ProviderMetadata           `json:"providerMetadata"`
-	References       []Reference                `json:"references,omitempty"`
-	RejectedReasons  []RejectedReason           `json:"rejectedReasons,omitempty"`
-	ReplacedBy       []string                   `json:"replacedBy,omitempty"`
-	Solutions        []Solution                 `json:"solutions,omitempty"`
-	Source           interface{}                `json:"source,omitempty"`
-	Tags             []string                   `json:"tags,omitempty"`
-	TaxonomyMappings []TaxonomyMapping          `json:"taxonomyMappings,omitempty"`
-	Timeline         []Timeline                 `json:"timeline,omitempty"`
-	Title            *string                    `json:"title,omitempty"`
-	Workarounds      []Workaround               `json:"workarounds,omitempty"`
-	XConverterErrors map[string]XConverterError `json:"x_ConverterErrors,omitempty"`
-	XGenerator       interface{}                `json:"x_generator,omitempty"`
-	XLegacyV4Record  interface{}                `json:"x_legacyV4Record,omitempty"`
-	XRedHatCweChain  *string                    `json:"x_redhatCweChain,omitempty"`
-}
-
-type Affected struct {
-	CollectionURL   *string  `json:"collectionURL,omitempty"`
-	Cpes            []string `json:"cpes,omitempty"`
-	DefaultStatus   *string  `json:"defaultStatus,omitempty"`
-	Modules         []string `json:"modules,omitempty"`
-	PackageName     *string  `json:"packageName,omitempty"`
-	Platforms       []string `json:"platforms,omitempty"`
-	Product         *string  `json:"product,omitempty"`
-	ProgramFiles    []string `json:"programFiles,omitempty"`
-	ProgramRoutines []struct {
-		Name string `json:"name"`
-	} `json:"programRoutines,omitempty"`
-	Repo     *string `json:"repo,omitempty"`
-	Vendor   *string `json:"vendor,omitempty"`
-	Versions []struct {
-		Changes []struct {
-			At     string `json:"at"`
-			Status string `json:"status"`
-		} `json:"changes,omitempty"`
-		GreaterThanOrEqual *string `json:"greaterThanOrEqual,omitempty"`
-		LessThan           *string `json:"lessThan,omitempty"`
-		LessThanOrEqual    *string `json:"lessThanOrEqual,omitempty"`
-		Status             string  `json:"status"`
-		Version            string  `json:"version"`
-		VersionType        *string `json:"versionType,omitempty"`
-	} `json:"versions,omitempty"`
-	XRedhatStatus *string `json:"x_redhatStatus,omitempty"`
-}
-
-type Configuration struct {
-	Lang            string `json:"lang"`
-	SupportingMedia []struct {
-		Base64 bool   `json:"base64"`
-		Type   string `json:"type"`
-		Value  string `json:"value"`
-	} `json:"supportingMedia,omitempty"`
-	Value string `json:"value"`
-}
-
-type Credit struct {
-	Lang  string  `json:"lang"`
-	Type  *string `json:"type,omitempty"`
-	User  *string `json:"user,omitempty"`
-	Value string  `json:"value"`
+type ProviderMetadata struct {
+	OrgID       string  `json:"orgID"`
+	ShortName   *string `json:"shortName,omitempty"`
+	DateUpdated *string `json:"dateUpdated,omitempty"`
 }
 
 type Description struct {
 	Lang            string `json:"lang"`
+	Value           string `json:"value"`
 	SupportingMedia []struct {
-		Base64 bool   `json:"base64"`
 		Type   string `json:"type"`
+		Base64 *bool  `json:"base64,omitempty"`
 		Value  string `json:"value"`
 	} `json:"supportingMedia,omitempty"`
-	Value string `json:"value"`
 }
 
-type Exploit struct {
-	Lang            string `json:"lang"`
-	SupportingMedia []struct {
-		Base64 bool   `json:"base64"`
-		Type   string `json:"type"`
-		Value  string `json:"value"`
-	} `json:"supportingMedia,omitempty"`
-	Value string `json:"value"`
+type Product struct {
+	Vendor          *string  `json:"vendor,omitempty"`
+	Product         *string  `json:"product,omitempty"`
+	CollectionURL   *string  `json:"collectionURL,omitempty"`
+	PackageName     *string  `json:"packageName,omitempty"`
+	Cpes            []string `json:"cpes,omitempty"`
+	Modules         []string `json:"modules,omitempty"`
+	ProgramFiles    []string `json:"programFiles,omitempty"`
+	ProgramRoutines []struct {
+		Name string `json:"name"`
+	} `json:"programRoutines,omitempty"`
+	Platforms     []string `json:"platforms,omitempty"`
+	Repo          *string  `json:"repo,omitempty"`
+	DefaultStatus *string  `json:"defaultStatus,omitempty"`
+	Versions      []struct {
+		Status          string  `json:"status"`
+		VersionType     *string `json:"versionType,omitempty"`
+		Version         string  `json:"version"`
+		LessThan        *string `json:"lessThan,omitempty"`
+		LessThanOrEqual *string `json:"lessThanOrEqual,omitempty"`
+		Changes         []struct {
+			At     string `json:"at"`
+			Status string `json:"status"`
+		} `json:"changes,omitempty"`
+	} `json:"versions,omitempty"`
 }
 
-type Impact struct {
-	CapecID      *string `json:"capecId,omitempty"`
+type ProblemType struct {
 	Descriptions []struct {
-		Lang  string `json:"lang"`
-		Value string `json:"value"`
+		Type        *string     `json:"type,omitempty"`
+		Lang        string      `json:"lang"`
+		Description string      `json:"description"`
+		CweID       *string     `json:"cweId,omitempty"`
+		References  []Reference `json:"references,omitempty"`
 	} `json:"descriptions"`
 }
 
+type Impact struct {
+	Descriptions []Description `json:"description"`
+	CapecID      *string       `json:"capecId,omitempty"`
+}
+
 type Metric struct {
-	CvssV20 *struct {
-		Version               string  `json:"version"`
-		VectorString          string  `json:"vectorString"`
-		BaseScore             float64 `json:"baseScore"`
-		AccessComplexity      *string `json:"accessComplexity,omitempty"`
-		AccessVector          *string `json:"accessVector,omitempty"`
-		Authentication        *string `json:"authentication,omitempty"`
-		AvailabilityImpact    *string `json:"availabilityImpact,omitempty"`
-		ConfidentialityImpact *string `json:"confidentialityImpact,omitempty"`
-		IntegrityImpact       *string `json:"integrityImpact,omitempty"`
-	} `json:"cvssV2_0,omitempty"`
-	CvssV30 *struct {
-		Version               string   `json:"version"`
-		VectorString          string   `json:"vectorString"`
-		BaseScore             float64  `json:"baseScore"`
-		BaseSeverity          string   `json:"baseSeverity"`
-		AttackComplexity      *string  `json:"attackComplexity,omitempty"`
-		AttackVector          *string  `json:"attackVector,omitempty"`
-		AvailabilityImpact    *string  `json:"availabilityImpact,omitempty"`
-		ConfidentialityImpact *string  `json:"confidentialityImpact,omitempty"`
-		ExploitCodeMaturity   *string  `json:"exploitCodeMaturity,omitempty"`
-		IntegrityImpact       *string  `json:"integrityImpact,omitempty"`
-		PrivilegesRequired    *string  `json:"privilegesRequired,omitempty"`
-		RemediationLevel      *string  `json:"remediationLevel,omitempty"`
-		ReportConfidence      *string  `json:"reportConfidence,omitempty"`
-		Scope                 *string  `json:"scope,omitempty"`
-		TemporalScore         *float64 `json:"temporalScore,omitempty"`
-		TemporalSeverity      *string  `json:"temporalSeverity,omitempty"`
-		UserInteraction       *string  `json:"userInteraction,omitempty"`
-	} `json:"cvssV3_0,omitempty"`
-	CvssV31 *struct {
-		Version                       string   `json:"version"`
-		VectorString                  string   `json:"vectorString"`
-		BaseScore                     float64  `json:"baseScore"`
-		BaseSeverity                  string   `json:"baseSeverity"`
-		AttackComplexity              *string  `json:"attackComplexity,omitempty"`
-		AttackVector                  *string  `json:"attackVector,omitempty"`
-		AvailabilityImpact            *string  `json:"availabilityImpact,omitempty"`
-		AvailabilityRequirement       *string  `json:"availabilityRequirement,omitempty"`
-		ConfidentialityImpact         *string  `json:"confidentialityImpact,omitempty"`
-		ConfidentialityRequirement    *string  `json:"confidentialityRequirement,omitempty"`
-		EnvironmentalScore            *float64 `json:"environmentalScore,omitempty"`
-		EnvironmentalSeverity         *string  `json:"environmentalSeverity,omitempty"`
-		ExploitCodeMaturity           *string  `json:"exploitCodeMaturity,omitempty"`
-		IntegrityImpact               *string  `json:"integrityImpact,omitempty"`
-		IntegrityRequirement          *string  `json:"integrityRequirement,omitempty"`
-		ModifiedAttackComplexity      *string  `json:"modifiedAttackComplexity,omitempty"`
-		ModifiedAttackVector          *string  `json:"modifiedAttackVector,omitempty"`
-		ModifiedAvailabilityImpact    *string  `json:"modifiedAvailabilityImpact,omitempty"`
-		ModifiedConfidentialityImpact *string  `json:"modifiedConfidentialityImpact,omitempty"`
-		ModifiedIntegrityImpact       *string  `json:"modifiedIntegrityImpact,omitempty"`
-		ModifiedPrivilegesRequired    *string  `json:"modifiedPrivilegesRequired,omitempty"`
-		ModifiedScope                 *string  `json:"modifiedScope,omitempty"`
-		ModifiedUserInteraction       *string  `json:"modifiedUserInteraction,omitempty"`
-		PrivilegesRequired            *string  `json:"privilegesRequired,omitempty"`
-		RemediationLevel              *string  `json:"remediationLevel,omitempty"`
-		ReportConfidence              *string  `json:"reportConfidence,omitempty"`
-		Scope                         *string  `json:"scope,omitempty"`
-		TemporalScore                 *float64 `json:"temporalScore,omitempty"`
-		TemporalSeverity              *string  `json:"temporalSeverity,omitempty"`
-		UserInteraction               *string  `json:"userInteraction,omitempty"`
-	} `json:"cvssV3_1,omitempty"`
-	Format    *string     `json:"format,omitempty"`
-	Other     interface{} `json:"other,omitempty"`
-	Scenario  *string     `json:"scenario,omitempty"`
+	Format    *string `json:"format,omitempty"`
 	Scenarios []struct {
 		Lang  string `json:"lang"`
 		Value string `json:"value"`
 	} `json:"scenarios,omitempty"`
+	CVSSv2  *CVSSv2  `json:"cvssV2_0,omitempty"`
+	CVSSv30 *CVSSv30 `json:"cvssV3_0,omitempty"`
+	CVSSv31 *CVSSv31 `json:"cvssV3_1,omitempty"`
+	CVSSv40 *CVSSv40 `json:"cvssV4_0,omitempty"`
+	Other   *struct {
+		Type    string      `json:"type"`
+		Content interface{} `json:"content"`
+	} `json:"other,omitempty"`
 }
 
-type ProblemType struct {
-	Descriptions []ProblemTypeDescription `json:"descriptions"`
+type CVSSv2 struct {
+	Version                    string   `json:"version"`
+	VectorString               string   `json:"versionString"`
+	AccessVector               *string  `json:"accessVector,omitempty"`
+	AccessComplexity           *string  `json:"accessComplexity,omitempty"`
+	Authentication             *string  `json:"authentication,omitempty"`
+	ConfidentialityImpact      *string  `json:"confidentialityImpact,omitempty"`
+	IntegrityImpact            *string  `json:"integrityImpact,omitempty"`
+	AvailabilityImpact         *string  `json:"availabilityImpact,omitempty"`
+	BaseScore                  float64  `json:"baseScore"`
+	Exploitability             *string  `json:"exploitability,omitempty"`
+	RemediationLevel           *string  `json:"remediationLevel,omitempty"`
+	ReportConfidence           *string  `json:"reportConfidence,omitempty"`
+	TemporalScore              *float64 `json:"temporalScore,omitempty"`
+	CollateralDamagePotential  *string  `json:"collateralDamagePotential,omitempty"`
+	TargetDistribution         *string  `json:"targetDistribution,omitempty"`
+	ConfidentialityRequirement *string  `json:"confidentialityRequirement,omitempty"`
+	IntegrityRequirement       *string  `json:"integrityRequirement,omitempty"`
+	AvailabilityRequirement    *string  `json:"availabilityRequirement,omitempty"`
+	EnvironmentalScore         *float64 `json:"environmentalScore,omitempty"`
 }
 
-type ProblemTypeDescription struct {
-	CWEID       *string `json:"cweid,omitempty"`
-	Description string  `json:"description"`
-	Lang        string  `json:"lang"`
-	Reference   *struct {
-		URL string `json:"url"`
-	} `json:"reference,omitempty"`
-	Type *string `json:"type,omitempty"`
+type CVSSv30 struct {
+	Version                       string   `json:"version"`
+	VectorString                  string   `json:"vectorString"`
+	AttackVector                  *string  `json:"attackVector,omitempty"`
+	AttackComplexity              *string  `json:"attackComplexity,omitempty"`
+	PrivilegesRequired            *string  `json:"privilegesRequired,omitempty"`
+	UserInteraction               *string  `json:"userInteraction,omitempty"`
+	Scope                         *string  `json:"scope,omitempty"`
+	ConfidentialityImpact         *string  `json:"confidentialityImpact,omitempty"`
+	IntegrityImpact               *string  `json:"integrityImpact,omitempty"`
+	AvailabilityImpact            *string  `json:"availabilityImpact,omitempty"`
+	BaseScore                     float64  `json:"baseScore"`
+	BaseSeverity                  string   `json:"baseSeverity"`
+	ExploitCodeMaturity           *string  `json:"exploitCodeMaturity,omitempty"`
+	RemediationLevel              *string  `json:"remediationLevel,omitempty"`
+	ReportConfidence              *string  `json:"reportConfidence,omitempty"`
+	TemporalScore                 *float64 `json:"temporalScore,omitempty"`
+	TemporalSeverity              *string  `json:"temporalSeverity,omitempty"`
+	ConfidentialityRequirement    *string  `json:"confidentialityRequirement,omitempty"`
+	IntegrityRequirement          *string  `json:"integrityRequirement,omitempty"`
+	AvailabilityRequirement       *string  `json:"availabilityRequirement,omitempty"`
+	ModifiedAttackVector          *string  `json:"modifiedAttackVector,omitempty"`
+	ModifiedAttackComplexity      *string  `json:"modifiedAttackComplexity,omitempty"`
+	ModifiedPrivilegesRequired    *string  `json:"modifiedPrivilegesRequired,omitempty"`
+	ModifiedUserInteraction       *string  `json:"modifiedUserInteraction,omitempty"`
+	ModifiedScope                 *string  `json:"modifiedScope,omitempty"`
+	ModifiedConfidentialityImpact *string  `json:"modifiedConfidentialityImpact,omitempty"`
+	ModifiedIntegrityImpact       *string  `json:"modifiedIntegrityImpact,omitempty"`
+	ModifiedAvailabilityImpact    *string  `json:"modifiedAvailabilityImpact,omitempty"`
+	EnvironmentalScore            *float64 `json:"environmentalScore,omitempty"`
+	EnvironmentalSeverity         *string  `json:"environmentalSeverity,omitempty"`
 }
 
-type ProviderMetadata struct {
-	DateUpdated *string `json:"dateUpdated,omitempty"`
-	OrgID       string  `json:"orgId"`
-	ShortName   *string `json:"shortName,omitempty"`
+type CVSSv31 struct {
+	Version                       string   `json:"version"`
+	VectorString                  string   `json:"vectorString"`
+	AttackVector                  *string  `json:"attackVector,omitempty"`
+	AttackComplexity              *string  `json:"attackComplexity,omitempty"`
+	PrivilegesRequired            *string  `json:"privilegesRequired,omitempty"`
+	UserInteraction               *string  `json:"userInteraction,omitempty"`
+	Scope                         *string  `json:"scope,omitempty"`
+	ConfidentialityImpact         *string  `json:"confidentialityImpact,omitempty"`
+	IntegrityImpact               *string  `json:"integrityImpact,omitempty"`
+	AvailabilityImpact            *string  `json:"availabilityImpact,omitempty"`
+	BaseScore                     float64  `json:"baseScore"`
+	BaseSeverity                  string   `json:"baseSeverity"`
+	ExploitCodeMaturity           *string  `json:"exploitCodeMaturity,omitempty"`
+	RemediationLevel              *string  `json:"remediationLevel,omitempty"`
+	ReportConfidence              *string  `json:"reportConfidence,omitempty"`
+	TemporalScore                 *float64 `json:"temporalScore,omitempty"`
+	TemporalSeverity              *string  `json:"temporalSeverity,omitempty"`
+	ConfidentialityRequirement    *string  `json:"confidentialityRequirement,omitempty"`
+	IntegrityRequirement          *string  `json:"integrityRequirement,omitempty"`
+	AvailabilityRequirement       *string  `json:"availabilityRequirement,omitempty"`
+	ModifiedAttackVector          *string  `json:"modifiedAttackVector,omitempty"`
+	ModifiedAttackComplexity      *string  `json:"modifiedAttackComplexity,omitempty"`
+	ModifiedPrivilegesRequired    *string  `json:"modifiedPrivilegesRequired,omitempty"`
+	ModifiedUserInteraction       *string  `json:"modifiedUserInteraction,omitempty"`
+	ModifiedScope                 *string  `json:"modifiedScope,omitempty"`
+	ModifiedConfidentialityImpact *string  `json:"modifiedConfidentialityImpact,omitempty"`
+	ModifiedIntegrityImpact       *string  `json:"modifiedIntegrityImpact,omitempty"`
+	ModifiedAvailabilityImpact    *string  `json:"modifiedAvailabilityImpact,omitempty"`
+	EnvironmentalScore            *float64 `json:"environmentalScore,omitempty"`
+	EnvironmentalSeverity         *string  `json:"environmentalSeverity,omitempty"`
+}
+
+type CVSSv40 struct {
+	Version                           string   `json:"version"`
+	VectorString                      string   `json:"vectorString"`
+	BaseScore                         float64  `json:"baseScore"`
+	BaseSeverity                      string   `json:"baseSeverity"`
+	AttackVector                      *string  `json:"attackVector,omitempty"`
+	AttackComplexity                  *string  `json:"attackComplexity,omitempty"`
+	AttackRequirements                *string  `json:"attackRequirements,omitempty"`
+	PrivilegesRequired                *string  `json:"privilegesRequired,omitempty"`
+	UserInteraction                   *string  `json:"userInteraction,omitempty"`
+	VulnConfidentialityImpact         *string  `json:"vulnConfidentialityImpact,omitempty"`
+	VulnIntegrityImpact               *string  `json:"vulnIntegrityImpact,omitempty"`
+	VulnAvailabilityImpact            *string  `json:"vulnAvailabilityImpact,omitempty"`
+	SubConfidentialityImpact          *string  `json:"subConfidentialityImpact,omitempty"`
+	SubIntegrityImpact                *string  `json:"subIntegrityImpact,omitempty"`
+	SubAvailabilityImpact             *string  `json:"subAvailabilityImpact,omitempty"`
+	ExploitMaturity                   *string  `json:"exploitMaturity,omitempty"`
+	ConfidentialityRequirement        *string  `json:"confidentialityRequirement,omitempty"`
+	IntegrityRequirement              *string  `json:"integrityRequirement,omitempty"`
+	AvailabilityRequirement           *string  `json:"availabilityRequirement,omitempty"`
+	ModifiedAttackVector              *string  `json:"modifiedAttackVector,omitempty"`
+	ModifiedAttackComplexity          *string  `json:"modifiedAttackComplexity,omitempty"`
+	ModifiedAttackRequirements        *string  `json:"modifiedAttackRequirements,omitempty"`
+	ModifiedPrivilegesRequired        *string  `json:"modifiedPrivilegesRequired,omitempty"`
+	ModifiedUserInteraction           *string  `json:"modifiedUserInteraction,omitempty"`
+	ModifiedVulnConfidentialityImpact *string  `json:"modifiedVulnConfidentialityImpact,omitempty"`
+	ModifiedVulnIntegrityImpact       *string  `json:"modifiedVulnIntegrityImpact,omitempty"`
+	ModifiedVulnAvailabilityImpact    *string  `json:"modifiedVulnAvailabilityImpact,omitempty"`
+	ModifiedSubConfidentialityImpact  *string  `json:"modifiedSubConfidentialityImpact,omitempty"`
+	ModifiedSubIntegrityImpact        *string  `json:"modifiedSubIntegrityImpact,omitempty"`
+	ModifiedSubAvailabilityImpact     *string  `json:"modifiedSubAvailabilityImpact,omitempty"`
+	Safety                            *string  `json:"Safety,omitempty"`
+	Automatable                       *string  `json:"Automatable,omitempty"`
+	Recovery                          *string  `json:"Recovery,omitempty"`
+	ValueDensity                      *string  `json:"valueDensity,omitempty"`
+	VulnerabilityResponseEffort       *string  `json:"vulnerabilityResponseEffort,omitempty"`
+	ProviderUrgency                   *string  `json:"providerUrgency,omitempty"`
+	ThreatScore                       *float64 `json:"threatScore,omitempty"`
+	ThreatSeverity                    *string  `json:"threatSeverity,omitempty"`
+	EnvironmentalScore                *float64 `json:"environmentalScore,omitempty"`
+	EnvironmentalSeverity             *string  `json:"environmentalSeverity,omitempty"`
 }
 
 type Reference struct {
-	Name      *string  `json:"name,omitempty"`
-	Refsource *string  `json:"refsource,omitempty"`
-	Tags      []string `json:"tags,omitempty"`
-	URL       string   `json:"url"`
+	Name *string  `json:"name,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	URL  string   `json:"url"`
 }
 
-type RejectedReason struct {
-	Lang            string `json:"lang"`
-	SupportingMedia []struct {
-		Base64 bool   `json:"base64"`
-		Type   string `json:"type"`
-		Value  string `json:"value"`
-	} `json:"supportingMedia,omitempty"`
+type Timeline []struct {
+	Time  string `json:"time"`
+	Lang  string `json:"lang"`
 	Value string `json:"value"`
 }
 
-type Solution struct {
-	Lang            string `json:"lang"`
-	SupportingMedia []struct {
-		Base64 bool   `json:"base64"`
-		Type   string `json:"type"`
-		Value  string `json:"value"`
-	} `json:"supportingMedia,omitempty"`
-	Value string `json:"value"`
+type Credits []struct {
+	Type  *string `json:"type,omitempty"`
+	Lang  string  `json:"lang"`
+	User  *string `json:"user,omitempty"`
+	Value string  `json:"value"`
 }
 
-type TaxonomyMapping struct {
-	TaxonomyName      string `json:"taxonomyName"`
-	TaxonomyVersion   string `json:"taxonomyVersion"`
+type TaxonomyMappings []struct {
+	TaxonomyVersion   *string `json:"taxonomyVersion,omitempty"`
+	TaxonomyName      string  `json:"taxonomyName"`
 	TaxonomyRelations []struct {
+		TaxonomyID        string `json:"taxonomyId"`
 		RelationshipName  string `json:"relationshipName"`
 		RelationshipValue string `json:"relationshipValue"`
-		TaxonomyID        string `json:"taxonomyId"`
 	} `json:"taxonomyRelations"`
-}
-
-type Timeline struct {
-	Lang  string `json:"lang"`
-	Time  string `json:"time"`
-	Value string `json:"value"`
-}
-
-type Workaround struct {
-	Lang            string `json:"lang"`
-	SupportingMedia []struct {
-		Base64 bool   `json:"base64"`
-		Type   string `json:"type"`
-		Value  string `json:"value"`
-	} `json:"supportingMedia,omitempty"`
-	Value string `json:"value"`
-}
-
-type XConverterError struct {
-	Error   string `json:"error"`
-	Message string `json:"message"`
 }

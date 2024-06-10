@@ -88,7 +88,7 @@ func Fetch(opts ...Option) error {
 		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
-	var vs []Vulnerability
+	var vs []CVE
 
 	gr, err := gzip.NewReader(resp.Body)
 	if err != nil {
@@ -114,28 +114,28 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		var c cve
+		var c CVE
 		if err := json.NewDecoder(tr).Decode(&c); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
-		vs = append(vs, convert(c))
+		vs = append(vs, c)
 	}
 
 	bar := pb.StartNew(len(vs))
 	for _, v := range vs {
-		splitted, err := util.Split(v.CveMetadata.CveID, "-", "-")
+		splitted, err := util.Split(v.CVEMetadata.CVEID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CveMetadata.CveID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVEMetadata.CVEID)
 			continue
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CveMetadata.CveID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVEMetadata.CVEID)
 			continue
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CveMetadata.CveID)), v); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CveMetadata.CveID)))
+		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVEMetadata.CVEID)), v); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVEMetadata.CVEID)))
 		}
 
 		bar.Increment()
@@ -143,127 +143,4 @@ func Fetch(opts ...Option) error {
 	bar.Finish()
 
 	return nil
-}
-
-func convert(cve cve) Vulnerability {
-	v := Vulnerability{
-		DataType:    cve.DataType,
-		DataVersion: cve.DataVersion,
-		CveMetadata: CveMetadata(cve.CveMetadata),
-		Containers: Containers{Cna: Cna{
-			DateAssigned:     cve.Containers.Cna.DateAssigned,
-			DatePublic:       cve.Containers.Cna.DatePublic,
-			ProviderMetadata: cve.Containers.Cna.ProviderMetadata,
-			ReplacedBy:       cve.Containers.Cna.ReplacedBy,
-			Source:           cve.Containers.Cna.Source,
-			Tags:             cve.Containers.Cna.Tags,
-			Title:            cve.Containers.Cna.Title,
-			XGenerator:       cve.Containers.Cna.XGenerator,
-			XLegacyV4Record:  cve.Containers.Cna.XLegacyV4Record,
-			XRedHatCweChain:  cve.Containers.Cna.XRedhatCweChain,
-		}},
-	}
-
-	for _, a := range cve.Containers.Cna.Affected {
-		affected := Affected{
-			CollectionURL:   a.CollectionURL,
-			Cpes:            append(a.Cpes, a.Cpe...),
-			DefaultStatus:   a.DefaultStatus,
-			Modules:         a.Modules,
-			Platforms:       a.Platforms,
-			Product:         a.Product,
-			ProgramFiles:    a.ProgramFiles,
-			ProgramRoutines: a.ProgramRoutines,
-			Repo:            a.Repo,
-			Vendor:          a.Vendor,
-			Versions:        a.Versions,
-			XRedhatStatus:   a.XRedhatStatus,
-		}
-		if affected.CollectionURL == nil {
-			affected.CollectionURL = a.CollectionURL2
-		}
-		v.Containers.Cna.Affected = append(v.Containers.Cna.Affected, affected)
-	}
-
-	for _, c := range cve.Containers.Cna.Configurations {
-		v.Containers.Cna.Configurations = append(v.Containers.Cna.Configurations, Configuration(c))
-	}
-
-	for _, c := range cve.Containers.Cna.Credits {
-		v.Containers.Cna.Credits = append(v.Containers.Cna.Credits, Credit(c))
-	}
-
-	for _, d := range cve.Containers.Cna.Descriptions {
-		v.Containers.Cna.Descriptions = append(v.Containers.Cna.Descriptions, Description(d))
-	}
-
-	for _, e := range cve.Containers.Cna.Exploits {
-		v.Containers.Cna.Exploits = append(v.Containers.Cna.Exploits, Exploit(e))
-	}
-
-	for _, i := range cve.Containers.Cna.Impacts {
-		v.Containers.Cna.Impacts = append(v.Containers.Cna.Impacts, Impact(i))
-	}
-
-	for _, m := range cve.Containers.Cna.Metrics {
-		v.Containers.Cna.Metrics = append(v.Containers.Cna.Metrics, Metric(m))
-	}
-
-	for _, p := range cve.Containers.Cna.ProblemTypes {
-		ds := make([]ProblemTypeDescription, 0, len(p.Descriptions))
-		for _, d := range p.Descriptions {
-			cweid := d.CweID
-			if d.CWEID != nil {
-				cweid = d.CWEID
-			}
-			if d.Cweid != nil {
-				cweid = d.Cweid
-			}
-			ds = append(ds, ProblemTypeDescription{
-				CWEID:       cweid,
-				Description: d.Description,
-				Lang:        d.Lang,
-				Reference:   d.Reference,
-				Type:        d.Type,
-			})
-		}
-		v.Containers.Cna.ProblemTypes = append(v.Containers.Cna.ProblemTypes, ProblemType{Descriptions: ds})
-	}
-
-	for _, r := range cve.Containers.Cna.References {
-		v.Containers.Cna.References = append(v.Containers.Cna.References, Reference(r))
-	}
-
-	for _, r := range cve.Containers.Cna.RejectedReasons {
-		v.Containers.Cna.RejectedReasons = append(v.Containers.Cna.RejectedReasons, RejectedReason(r))
-	}
-
-	for _, s := range cve.Containers.Cna.Solutions {
-		v.Containers.Cna.Solutions = append(v.Containers.Cna.Solutions, Solution(s))
-	}
-
-	for _, t := range cve.Containers.Cna.TaxonomyMappings {
-		v.Containers.Cna.TaxonomyMappings = append(v.Containers.Cna.TaxonomyMappings, TaxonomyMapping(t))
-	}
-
-	for _, t := range cve.Containers.Cna.Timeline {
-		v.Containers.Cna.Timeline = append(v.Containers.Cna.Timeline, Timeline(t))
-	}
-
-	for _, w := range cve.Containers.Cna.Workarounds {
-		v.Containers.Cna.Workarounds = append(v.Containers.Cna.Workarounds, Workaround(w))
-	}
-
-	if len(cve.Containers.Cna.XConverterErrors) > 0 {
-		v.Containers.Cna.XConverterErrors = make(map[string]XConverterError, len(cve.Containers.Cna.XConverterErrors))
-	}
-	for k, e := range cve.Containers.Cna.XConverterErrors {
-		v.Containers.Cna.XConverterErrors[k] = e
-	}
-
-	if v.Containers.Cna.XRedHatCweChain == nil {
-		v.Containers.Cna.XRedHatCweChain = cve.Containers.Cna.XRedHatCweChain
-	}
-
-	return v
 }
