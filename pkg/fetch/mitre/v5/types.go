@@ -273,6 +273,47 @@ type CVSSv40 struct {
 	EnvironmentalSeverity             *string  `json:"environmentalSeverity,omitempty"`
 }
 
+// https://github.com/CERTCC/SSVC/blob/a34a9768ef75209f8c1dd1bc2cf0523ba4d243c8/data/schema/SSVC_Computed.schema.json for other:ssvc
+type SSVC struct {
+	ID           string        `json:"id"`
+	Role         string        `json:"role"`
+	Version      string        `json:"version"`
+	Schema       *string       `json:"$schema,omitempty"`
+	Computed     *string       `json:"computed,omitempty"`
+	Options      []interface{} `json:"options"`
+	DecisionTree *struct {
+		Version        string        `json:"version"`
+		Lang           string        `json:"lang"`
+		Title          *string       `json:"title,omitempty"`
+		Roles          []string      `json:"roles,omitempty"`
+		DecisionTable  []interface{} `json:"decision_table"`
+		DecisionPoints []struct {
+			DecisionType string  `json:"decision_type"`
+			Label        string  `json:"label"`
+			Key          *string `json:"key,omitempty"`
+			Options      []struct {
+				Label       string  `json:"label"`
+				Key         *string `json:"key,omitempty"`
+				Color       *string `json:"color,omitempty"`
+				Description string  `json:"description"`
+			} `json:"options"`
+			Children []struct {
+				Label string  `json:"label"`
+				Key   *string `json:"key,omitempty"`
+			} `json:"children,omitempty"`
+		} `json:"decision_points"`
+	} `json:"decision_tree,omitempty"`
+	DecisionTreeURL *string `json:"decision_tree_url,omitempty"`
+	Generator       *string `json:"generator,omitempty"`
+	Timestamp       string  `json:"timestamp"`
+}
+
+// for other:kev
+type KEV struct {
+	DateAdded string `json:"date_added"`
+	Reference string `json:"reference"`
+}
+
 type Reference struct {
 	Name *string  `json:"name,omitempty"`
 	Tags []string `json:"tags,omitempty"`
