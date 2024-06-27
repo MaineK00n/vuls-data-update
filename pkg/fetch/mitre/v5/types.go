@@ -144,7 +144,7 @@ type Metric struct {
 
 type CVSSv2 struct {
 	Version                    string   `json:"version"`
-	VectorString               string   `json:"versionString"`
+	VectorString               string   `json:"vectorString"`
 	AccessVector               *string  `json:"accessVector,omitempty"`
 	AccessComplexity           *string  `json:"accessComplexity,omitempty"`
 	Authentication             *string  `json:"authentication,omitempty"`
