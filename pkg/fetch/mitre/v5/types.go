@@ -122,7 +122,7 @@ type ProblemType struct {
 }
 
 type Impact struct {
-	Descriptions []Description `json:"description"`
+	Descriptions []Description `json:"descriptions"`
 	CapecID      *string       `json:"capecId,omitempty"`
 }
 
