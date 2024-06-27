@@ -3,6 +3,7 @@ package osv_test
 import (
 	"encoding/json"
 	"io/fs"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -48,7 +49,7 @@ func TestExtract(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), file))
+				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), url.QueryEscape(file)))
 				if err != nil {
 					return err
 				}

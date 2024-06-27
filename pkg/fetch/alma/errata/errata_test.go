@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -69,7 +70,7 @@ func TestFetch(t *testing.T) {
 				}
 
 				dir, file := filepath.Split(path)
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.version, filepath.Base(dir), file))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.version, filepath.Base(dir), url.QueryEscape(file)))
 				if err != nil {
 					return err
 				}
