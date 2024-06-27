@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -34,7 +35,7 @@ func TestFetch(t *testing.T) {
 					return
 				}
 				_, f := path.Split(r.URL.Path)
-				f = filepath.Join(filepath.Dir(tt.indexof), f)
+				f = filepath.Join(filepath.Dir(tt.indexof), url.QueryEscape(f))
 				if _, err := os.Stat(f); err != nil {
 					http.NotFound(w, r)
 					return
@@ -61,7 +62,8 @@ func TestFetch(t *testing.T) {
 					return nil
 				}
 
-				want, err := os.ReadFile(filepath.Join(append([]string{"testdata", "golden"}, strings.Split(strings.TrimPrefix(path, dir), string(os.PathSeparator))...)...))
+				wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
 				if err != nil {
 					return err
 				}

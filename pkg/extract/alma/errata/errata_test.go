@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -50,7 +51,7 @@ func TestExtract(t *testing.T) {
 
 				dir, file := filepath.Split(path)
 				dir, y := filepath.Split(filepath.Clean(dir))
-				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), y, file))
+				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), y, url.QueryEscape(file)))
 				if err != nil {
 					return err
 				}
