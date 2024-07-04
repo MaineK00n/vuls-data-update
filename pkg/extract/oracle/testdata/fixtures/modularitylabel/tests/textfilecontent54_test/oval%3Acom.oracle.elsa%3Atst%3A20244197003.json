@@ -1,0 +1,12 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20244197003",
+	"version": "501",
+	"comment": "Module httpd:2.4 is enabled",
+	"check": "all",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20244197013"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20244197002"
+	}
+}

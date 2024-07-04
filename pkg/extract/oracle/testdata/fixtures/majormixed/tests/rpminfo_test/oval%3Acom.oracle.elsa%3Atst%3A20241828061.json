@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20241828061",
+	"version": "501",
+	"comment": "java-21-openjdk-fastdebug is signed with the Oracle Linux 9 key",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20241828006"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20241828002"
+	}
+}
