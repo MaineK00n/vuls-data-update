@@ -20,7 +20,7 @@ require (
 	github.com/masahiro331/go-mvn-version v0.0.0-20210429150710-d3157d602a08
 	github.com/pandatix/go-cvss v0.6.2
 	github.com/pkg/errors v0.9.1
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/tealeg/xlsx v1.0.5
 	github.com/ulikunitz/xz v0.5.12
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
