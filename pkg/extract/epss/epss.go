@@ -17,12 +17,15 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	epssTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/epss"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	epssTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/epss"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 )
 
@@ -159,9 +162,9 @@ func Extract(args string, opts ...Option) error {
 					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req.ID)
 				}
 
-				data := types.Data{
+				data := dataTypes.Data{
 					ID: req.ID,
-					Vulnerabilities: []vulnerability.Vulnerability{
+					Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 						{
 							ID: req.ID,
 							EPSS: []epssTypes.EPSS{{
@@ -170,13 +173,13 @@ func Extract(args string, opts ...Option) error {
 								EPSS:       req.EPSS,
 								Percentile: req.Percentile,
 							}},
-							References: []reference.Reference{{
+							References: []referenceTypes.Reference{{
 								Source: "api.first.org",
 								URL:    fmt.Sprintf("https://api.first.org/data/v1/epss?cve=%s", req.ID),
 							}},
 						},
 					},
-					DataSource: source.EPSS,
+					DataSource: sourceTypes.EPSS,
 				}
 				if _, err := os.Stat(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID))); err == nil {
 					f, err := os.Open(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
@@ -185,7 +188,7 @@ func Extract(args string, opts ...Option) error {
 					}
 					defer f.Close()
 
-					var d types.Data
+					var d dataTypes.Data
 					if err := json.NewDecoder(f).Decode(&d); err != nil {
 						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
 					}
@@ -259,7 +262,7 @@ func Extract(args string, opts ...Option) error {
 			}
 			defer f.Close()
 
-			var data types.Data
+			var data dataTypes.Data
 			if err := json.NewDecoder(f).Decode(&data); err != nil {
 				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req)))
 			}
@@ -281,6 +284,28 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrap(err, "err in goroutine")
 	}
 	bar.Finish()
+
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.EPSS,
+		Name: func() *string { t := "EPSS: Exploit Prediction Scoring System"; return &t }(),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
+				}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
 
 	return nil
 }

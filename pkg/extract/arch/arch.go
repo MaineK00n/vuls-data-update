@@ -10,18 +10,22 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
-	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
-	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 )
 
@@ -92,37 +96,60 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.Arch,
+		Name: func() *string { t := "Arch Linux Vulnrability Group"; return &t }(),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
+				}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
+
 	return nil
 }
 
-func extract(fetched arch.VulnerabilityGroup) types.Data {
-	extracted := types.Data{
+func extract(fetched arch.VulnerabilityGroup) dataTypes.Data {
+	extracted := dataTypes.Data{
 		ID: fetched.Name,
-		Advisories: []advisory.Advisory{{
+		Advisories: []advisoryTypes.Advisory{{
 			ID: fetched.Name,
-			Severity: []severity.Severity{{
-				Type:   severity.SeverityTypeVendor,
+			Severity: []severityTypes.Severity{{
+				Type:   severityTypes.SeverityTypeVendor,
 				Source: "security.archlinux.org",
 				Vendor: &fetched.Severity,
 			}},
-			References: []reference.Reference{{
+			References: []referenceTypes.Reference{{
 				Source: "security.archlinux.org",
 				URL:    fmt.Sprintf("https://security.archlinux.org/%s", fetched.Name),
 			}},
 		}},
+		DataSource: sourceTypes.Arch,
 	}
 
 	if fetched.Ticket != nil {
-		extracted.Advisories[0].References = append(extracted.Advisories[0].References, reference.Reference{
+		extracted.Advisories[0].References = append(extracted.Advisories[0].References, referenceTypes.Reference{
 			Source: "security.archlinux.org",
 			URL:    fmt.Sprintf("https://bugs.archlinux.org/task/%s", *fetched.Ticket),
 		})
 	}
 
 	for _, a := range fetched.Advisories {
-		extracted.Advisories = append(extracted.Advisories, advisory.Advisory{
+		extracted.Advisories = append(extracted.Advisories, advisoryTypes.Advisory{
 			ID: a,
-			References: []reference.Reference{{
+			References: []referenceTypes.Reference{{
 				Source: "security.archlinux.org",
 				URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
 			}},
@@ -130,9 +157,9 @@ func extract(fetched arch.VulnerabilityGroup) types.Data {
 	}
 
 	for _, i := range fetched.Issues {
-		extracted.Vulnerabilities = append(extracted.Vulnerabilities, vulnerability.Vulnerability{
+		extracted.Vulnerabilities = append(extracted.Vulnerabilities, vulnerabilityTypes.Vulnerability{
 			ID: i,
-			References: []reference.Reference{{
+			References: []referenceTypes.Reference{{
 				Source: "security.archlinux.org",
 				URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
 			}},
@@ -140,31 +167,31 @@ func extract(fetched arch.VulnerabilityGroup) types.Data {
 	}
 
 	affected := affectedTypes.Affected{
-		Type:  affectedrange.RangeTypePacman,
-		Range: []affectedrange.Range{{LessEqual: fetched.Affected}},
+		Type:  rangeTypes.RangeTypePacman,
+		Range: []rangeTypes.Range{{LessEqual: fetched.Affected}},
 	}
 	if fetched.Fixed != nil {
 		affected = affectedTypes.Affected{
-			Type:  affectedrange.RangeTypePacman,
-			Range: []affectedrange.Range{{LessThan: *fetched.Fixed}},
+			Type:  rangeTypes.RangeTypePacman,
+			Range: []rangeTypes.Range{{LessThan: *fetched.Fixed}},
 			Fixed: []string{*fetched.Fixed},
 		}
 	}
 
-	cs := make([]criterion.Criterion, 0, len(fetched.Packages))
+	cs := make([]criterionTypes.Criterion, 0, len(fetched.Packages))
 	for _, p := range fetched.Packages {
-		cs = append(cs, criterion.Criterion{
+		cs = append(cs, criterionTypes.Criterion{
 			Vulnerable: true,
-			Package: criterionpackage.Package{
+			Package: packageTypes.Package{
 				Name: p,
 			},
 			Affected: &affected,
 		})
 	}
-	extracted.Detection = append(extracted.Detection, detection.Detection{
-		Ecosystem: detection.EcosystemTypeArch,
-		Criteria: criteria.Criteria{
-			Operator:   criteria.CriteriaOperatorTypeOR,
+	extracted.Detection = append(extracted.Detection, detectionTypes.Detection{
+		Ecosystem: detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch),
+		Criteria: criteriaTypes.Criteria{
+			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: cs,
 		},
 	})

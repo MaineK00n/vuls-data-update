@@ -12,7 +12,14 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	attackTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack"
+	capecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/capec"
+	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cpe"
+	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
+	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
 )
 
 func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
@@ -50,8 +57,71 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 
 			var diff string
 			switch name {
+			case "datasource.json":
+				var want, got datasourceTypes.DataSource
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
 			case "data":
-				var want, got types.Data
+				var want, got dataTypes.Data
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
+			case "cpe":
+				var want, got cpeTypes.CPE
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
+			case "cwe":
+				var want, got cweTypes.CWE
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
+			case "capec":
+				var want, got capecTypes.CAPEC
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
+			case "attack":
+				var want, got attackTypes.Attack
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
+			case "windowskb":
+				var want, got windowskbTypes.WindowsKB
+				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+					return err
+				}
+				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+					return err
+				}
+				diff = cmp.Diff(want, got)
+			case "eol":
+				var want, got map[string]eolTypes.EOL
 				if err := json.NewDecoder(ef).Decode(&want); err != nil {
 					return err
 				}

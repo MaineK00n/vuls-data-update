@@ -11,19 +11,22 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
-	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
-	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
 )
@@ -96,6 +99,28 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(dir), repo, y, fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
+		if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+			ID:   sourceTypes.Amazon,
+			Name: func() *string { t := "Amazon Linux Security Center"; return &t }(),
+			Raw: func() []repositoryTypes.Repository {
+				r, _ := utilgit.GetDataSourceRepository(args)
+				if r == nil {
+					return nil
+				}
+				return []repositoryTypes.Repository{*r}
+			}(),
+			Extracted: func() *repositoryTypes.Repository {
+				if u, err := utilgit.GetOrigin(options.dir); err == nil {
+					return &repositoryTypes.Repository{
+						URL: u,
+					}
+				}
+				return nil
+			}(),
+		}, false); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+		}
+
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
@@ -104,19 +129,19 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched amazon.Update) types.Data {
-	data := types.Data{
+func extract(fetched amazon.Update) dataTypes.Data {
+	data := dataTypes.Data{
 		ID: fetched.ID,
-		Advisories: []advisory.Advisory{{
+		Advisories: []advisoryTypes.Advisory{{
 			ID:          fetched.ID,
 			Title:       fetched.Title,
 			Description: fetched.Description,
-			Severity: []severity.Severity{{
-				Type:   severity.SeverityTypeVendor,
+			Severity: []severityTypes.Severity{{
+				Type:   severityTypes.SeverityTypeVendor,
 				Source: fetched.Author,
 				Vendor: &fetched.Severity,
 			}},
-			References: []reference.Reference{{
+			References: []referenceTypes.Reference{{
 				Source: fetched.Author,
 				URL: func() string {
 					switch {
@@ -134,25 +159,25 @@ func extract(fetched amazon.Update) types.Data {
 			Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
 			Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
 		}},
-		DataSource: source.Amazon,
+		DataSource: sourceTypes.Amazon,
 	}
 
 	for _, r := range fetched.References.Reference {
 		switch r.Type {
 		case "cve":
-			data.Advisories[0].References = append(data.Advisories[0].References, reference.Reference{
+			data.Advisories[0].References = append(data.Advisories[0].References, referenceTypes.Reference{
 				Source: fetched.Author,
 				URL:    r.Href,
 			})
-			data.Vulnerabilities = append(data.Vulnerabilities, vulnerability.Vulnerability{
+			data.Vulnerabilities = append(data.Vulnerabilities, vulnerabilityTypes.Vulnerability{
 				ID: r.ID,
-				References: []reference.Reference{{
+				References: []referenceTypes.Reference{{
 					Source: fetched.Author,
 					URL:    r.Href,
 				}},
 			})
 		default:
-			data.Advisories[0].References = append(data.Advisories[0].References, reference.Reference{
+			data.Advisories[0].References = append(data.Advisories[0].References, referenceTypes.Reference{
 				Source: fetched.Author,
 				URL:    r.Href,
 			})
@@ -167,7 +192,7 @@ func extract(fetched amazon.Update) types.Data {
 		pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
 	}
 
-	cs := make([]criterion.Criterion, 0, func() int {
+	cs := make([]criterionTypes.Criterion, 0, func() int {
 		cap := 0
 		for _, evras := range pkgs {
 			cap += len(evras)
@@ -195,24 +220,24 @@ func extract(fetched amazon.Update) types.Data {
 	}()
 	for n, evras := range pkgs {
 		for evr, as := range evras {
-			cs = append(cs, criterion.Criterion{
+			cs = append(cs, criterionTypes.Criterion{
 				Vulnerable: true,
-				Package: criterionpackage.Package{
+				Package: packageTypes.Package{
 					Name:          n,
 					Repositories:  repos,
 					Architectures: as,
 				},
-				Affected: &affected.Affected{
-					Type:  affectedrange.RangeTypeRPM,
-					Range: []affectedrange.Range{{LessThan: evr}},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: evr}},
 					Fixed: []string{evr},
 				},
 			})
 		}
 	}
 
-	data.Detection = append(data.Detection, detection.Detection{
-		Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAmazon, func() string {
+	data.Detection = append(data.Detection, detectionTypes.Detection{
+		Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAmazon, func() string {
 			switch {
 			case strings.HasPrefix(fetched.ID, "ALAS2023"):
 				return "2023"
@@ -223,9 +248,9 @@ func extract(fetched amazon.Update) types.Data {
 			default:
 				return "1"
 			}
-		}()),
-		Criteria: criteria.Criteria{
-			Operator:   criteria.CriteriaOperatorTypeOR,
+		}())),
+		Criteria: criteriaTypes.Criteria{
+			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: cs,
 		},
 	})

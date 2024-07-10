@@ -4,3 +4,6 @@
 [submodule "pkg/fetch/gentoo/testdata/fixtures/glsa"]
 	path = pkg/fetch/gentoo/testdata/fixtures/glsa
 	url = https://github.com/MaineK00n/glsa.git
+[submodule "pkg/extract/util/git/testdata/fixtures/gitrepo"]
+	path = pkg/extract/util/git/testdata/fixtures/gitrepo
+	url = https://github.com/MaineK00n/vuls-data-update-utilgit.git

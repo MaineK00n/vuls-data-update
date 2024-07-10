@@ -10,12 +10,12 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/exp/maps"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
 
 type options struct {
-	eols map[string]map[string]map[string]types.EOLDictionary
+	eols map[string]map[string]map[string]eolTypes.EOL
 	dir  string
 }
 
@@ -23,15 +23,15 @@ type Option interface {
 	apply(*options)
 }
 
-var defaultEOL = map[string]map[string]map[string]types.EOLDictionary{"os": os}
+var defaultEOL = map[string]map[string]map[string]eolTypes.EOL{"os": os}
 
-type eolOption map[string]map[string]map[string]types.EOLDictionary
+type eolOption map[string]map[string]map[string]eolTypes.EOL
 
 func (e eolOption) apply(opts *options) {
-	opts.eols = map[string]map[string]map[string]types.EOLDictionary(e)
+	opts.eols = map[string]map[string]map[string]eolTypes.EOL(e)
 }
 
-func WithEOL(eol map[string]map[string]map[string]types.EOLDictionary) Option {
+func WithEOL(eol map[string]map[string]map[string]eolTypes.EOL) Option {
 	return eolOption(eol)
 }
 
@@ -71,27 +71,24 @@ func Extract(opts ...Option) error {
 					if len(ds) == 0 {
 						continue
 					}
-					if slices.Contains(ds, nil) {
-						continue
-					}
 
-					slices.SortFunc(ds, func(i, j *time.Time) int {
-						if (*i).Before(*j) {
+					slices.SortFunc(ds, func(i, j time.Time) int {
+						if (i).Before(j) {
 							return -1
 						}
-						if (*i).Equal(*j) {
+						if (i).Equal(j) {
 							return 0
 						}
 						return 1
 					})
-					if now.After(*ds[len(ds)-1]) {
+					if now.After(ds[len(ds)-1]) {
 						eol.Ended = true
 					}
 				}
 				m[v] = eol
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "epl", c, fmt.Sprintf("%s.json", e)), m, true); err != nil {
+			if err := util.Write(filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)), m, true); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "eol", c, fmt.Sprintf("%s.json", e)))
 			}
 		}
