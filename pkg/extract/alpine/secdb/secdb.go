@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -14,8 +15,14 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
+	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
+	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 )
@@ -77,8 +84,8 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		for _, data := range extract(fetched) {
-			if err := util.Write(filepath.Join(options.dir, filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", data.ID)), data); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", data.ID)))
+			if err := util.Write(filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", data.ID)))
 			}
 		}
 
@@ -99,7 +106,7 @@ func extract(fetched secdb.Advisory) []types.Data {
 				if !ok {
 					d = types.Data{
 						ID: id,
-						Vulnerabilities: []types.Vulnerability{{
+						Vulnerabilities: []vulnerability.Vulnerability{{
 							ID: id,
 							References: []reference.Reference{{
 								Source: "security.alpinelinux.org",
@@ -109,21 +116,38 @@ func extract(fetched secdb.Advisory) []types.Data {
 						DataSource: source.AlpineSecDB,
 					}
 				}
-				d.Detection = append(d.Detection, detection.Detection{
-					Ecosystem:  fmt.Sprintf("%s:%s", detection.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")),
+
+				c := criterion.Criterion{
 					Vulnerable: true,
-					Package: detection.Package{
+					Package: criterionpackage.Package{
 						Name:          pkg.Pkg.Name,
 						Repositories:  []string{fetched.Reponame},
 						Architectures: fetched.Archs,
 					},
-					Affected: &detection.Affected{
-						Type:  detection.RangeTypeAPK,
-						Range: []detection.Range{{LessThan: v}},
+					Affected: &affected.Affected{
+						Type:  affectedrange.RangeTypeAPK,
+						Range: []affectedrange.Range{{LessThan: v}},
 						Fixed: []string{v},
 					},
-				})
+				}
 
+				switch index := slices.IndexFunc(d.Detection, func(e detection.Detection) bool {
+					return e.Ecosystem == fmt.Sprintf("%s:%s", detection.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))
+				}); index {
+				case -1:
+					d.Detection = []detection.Detection{
+						{
+							Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")),
+							Criteria: criteria.Criteria{
+								Operator:   criteria.CriteriaOperatorTypeOR,
+								Criterions: []criterion.Criterion{c},
+							},
+						},
+					}
+				default:
+					d.Detection[index].Criteria.Criterions = append(d.Detection[index].Criteria.Criterions, c)
+
+				}
 				m[id] = d
 			}
 		}

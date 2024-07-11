@@ -11,9 +11,16 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
+	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
+	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 )
@@ -76,8 +83,8 @@ func Extract(args string, opts ...Option) error {
 
 		extracted := extract(fetched)
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", extracted.ID)), extracted); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", extracted.ID)))
+		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
 		return nil
@@ -91,7 +98,7 @@ func Extract(args string, opts ...Option) error {
 func extract(fetched arch.VulnerabilityGroup) types.Data {
 	extracted := types.Data{
 		ID: fetched.Name,
-		Advisories: []types.Advisory{{
+		Advisories: []advisory.Advisory{{
 			ID: fetched.Name,
 			Severity: []severity.Severity{{
 				Type:   severity.SeverityTypeVendor,
@@ -113,7 +120,7 @@ func extract(fetched arch.VulnerabilityGroup) types.Data {
 	}
 
 	for _, a := range fetched.Advisories {
-		extracted.Advisories = append(extracted.Advisories, types.Advisory{
+		extracted.Advisories = append(extracted.Advisories, advisory.Advisory{
 			ID: a,
 			References: []reference.Reference{{
 				Source: "security.archlinux.org",
@@ -123,7 +130,7 @@ func extract(fetched arch.VulnerabilityGroup) types.Data {
 	}
 
 	for _, i := range fetched.Issues {
-		extracted.Vulnerabilities = append(extracted.Vulnerabilities, types.Vulnerability{
+		extracted.Vulnerabilities = append(extracted.Vulnerabilities, vulnerability.Vulnerability{
 			ID: i,
 			References: []reference.Reference{{
 				Source: "security.archlinux.org",
@@ -132,30 +139,35 @@ func extract(fetched arch.VulnerabilityGroup) types.Data {
 		})
 	}
 
-	affected := detection.Affected{
-		Type:  detection.RangeTypePacman,
-		Range: []detection.Range{{LessEqual: fetched.Affected}},
+	affected := affectedTypes.Affected{
+		Type:  affectedrange.RangeTypePacman,
+		Range: []affectedrange.Range{{LessEqual: fetched.Affected}},
 	}
 	if fetched.Fixed != nil {
-		affected = detection.Affected{
-			Type:  detection.RangeTypePacman,
-			Range: []detection.Range{{LessThan: *fetched.Fixed}},
+		affected = affectedTypes.Affected{
+			Type:  affectedrange.RangeTypePacman,
+			Range: []affectedrange.Range{{LessThan: *fetched.Fixed}},
 			Fixed: []string{*fetched.Fixed},
 		}
 	}
 
+	cs := make([]criterion.Criterion, 0, len(fetched.Packages))
 	for _, p := range fetched.Packages {
-		extracted.Detection = append(extracted.Detection, func() detection.Detection {
-			return detection.Detection{
-				Ecosystem:  detection.EcosystemTypeArch,
-				Vulnerable: true,
-				Package: detection.Package{
-					Name: p,
-				},
-				Affected: &affected,
-			}
-		}())
+		cs = append(cs, criterion.Criterion{
+			Vulnerable: true,
+			Package: criterionpackage.Package{
+				Name: p,
+			},
+			Affected: &affected,
+		})
 	}
+	extracted.Detection = append(extracted.Detection, detection.Detection{
+		Ecosystem: detection.EcosystemTypeArch,
+		Criteria: criteria.Criteria{
+			Operator:   criteria.CriteriaOperatorTypeOR,
+			Criterions: cs,
+		},
+	})
 
 	return extracted
 }

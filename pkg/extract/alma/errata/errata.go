@@ -14,10 +14,17 @@ import (
 	"golang.org/x/exp/maps"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
+	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
+	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
 )
@@ -83,8 +90,8 @@ func Extract(args string, opts ...Option) error {
 
 		extracted := extract(fetched, v)
 
-		if err := util.Write(filepath.Join(options.dir, v, y, fmt.Sprintf("%s.json", extracted.ID)), extracted); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, y, fmt.Sprintf("%s.json", extracted.ID)))
+		if err := util.Write(filepath.Join(options.dir, "data", v, y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", v, y, fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
 		return nil
@@ -98,7 +105,7 @@ func Extract(args string, opts ...Option) error {
 func extract(fetched errata.Erratum, osver string) types.Data {
 	extracted := types.Data{
 		ID: fetched.ID,
-		Advisories: []types.Advisory{{
+		Advisories: []advisory.Advisory{{
 			ID:          fetched.ID,
 			Title:       fetched.Title,
 			Description: fetched.Description,
@@ -114,12 +121,12 @@ func extract(fetched errata.Erratum, osver string) types.Data {
 	}
 
 	rm := map[string]struct{}{fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", osver, strings.ReplaceAll(fetched.ID, ":", "-")): {}}
-	vm := map[string]types.Vulnerability{}
+	vm := map[string]vulnerability.Vulnerability{}
 	for _, r := range fetched.References {
 		rm[r.Href] = struct{}{}
 
 		if r.Type == "cve" {
-			vm[r.ID] = types.Vulnerability{
+			vm[r.ID] = vulnerability.Vulnerability{
 				ID: r.ID,
 				References: []reference.Reference{{
 					Source: "errata.almalinux.org",
@@ -158,23 +165,36 @@ func extract(fetched errata.Erratum, osver string) types.Data {
 		packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)], p.Arch)
 	}
 
+	cs := make([]criterion.Criterion, 0, func() int {
+		cap := 0
+		for _, vras := range packages {
+			cap += len(vras)
+		}
+		return cap
+	}())
 	for n, vras := range packages {
 		for vr, as := range vras {
-			extracted.Detection = append(extracted.Detection, detection.Detection{
-				Ecosystem:  fmt.Sprintf("%s:%s", detection.EcosystemTypeAlma, osver),
+			cs = append(cs, criterion.Criterion{
 				Vulnerable: true,
-				Package: detection.Package{
+				Package: criterionpackage.Package{
 					Name:          n,
 					Architectures: as,
 				},
-				Affected: &detection.Affected{
-					Type:  detection.RangeTypeRPM,
-					Range: []detection.Range{{LessThan: vr}},
+				Affected: &affected.Affected{
+					Type:  affectedrange.RangeTypeRPM,
+					Range: []affectedrange.Range{{LessThan: vr}},
 					Fixed: []string{vr},
 				},
 			})
 		}
 	}
+	extracted.Detection = append(extracted.Detection, detection.Detection{
+		Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAlma, osver),
+		Criteria: criteria.Criteria{
+			Operator:   criteria.CriteriaOperatorTypeOR,
+			Criterions: cs,
+		},
+	})
 
 	return extracted
 }

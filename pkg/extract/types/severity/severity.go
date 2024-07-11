@@ -1,6 +1,7 @@
 package severity
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 
@@ -75,4 +76,11 @@ func (t *SeverityType) UnmarshalJSON(data []byte) error {
 	}
 	*t = st
 	return nil
+}
+
+func Compare(x, y Severity) int {
+	return cmp.Or(
+		cmp.Compare(x.Source, y.Source),
+		cmp.Compare(x.Type, y.Type),
+	)
 }

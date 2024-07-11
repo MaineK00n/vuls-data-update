@@ -1,0 +1,81 @@
+{
+	"id": "AVG-5",
+	"advisories": [
+		{
+			"id": "ASA-201707-17",
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/ASA-201707-17"
+				}
+			]
+		},
+		{
+			"id": "AVG-5",
+			"severity": [
+				{
+					"type": "vendor",
+					"source": "security.archlinux.org",
+					"vendor": "Critical"
+				}
+			],
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://bugs.archlinux.org/task/54842"
+				},
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/AVG-5"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"id": "CVE-2015-7554",
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/CVE-2015-7554"
+				}
+			]
+		},
+		{
+			"id": "CVE-2016-10095",
+			"references": [
+				{
+					"source": "security.archlinux.org",
+					"url": "https://security.archlinux.org/CVE-2016-10095"
+				}
+			]
+		}
+	],
+	"detection": [
+		{
+			"ecosystem": "arch",
+			"criteria": {
+				"operator": "OR",
+				"criterions": [
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "libtiff"
+						},
+						"affected": {
+							"type": "pacman",
+							"range": [
+								{
+									"lt": "4.0.8-2"
+								}
+							],
+							"fixed": [
+								"4.0.8-2"
+							]
+						}
+					}
+				]
+			}
+		}
+	]
+}

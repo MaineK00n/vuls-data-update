@@ -1,20 +1,11 @@
 package osv_test
 
 import (
-	"encoding/json"
-	"io/fs"
-	"net/url"
-	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/alma/osv"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
+	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
 func TestExtract(t *testing.T) {
@@ -39,57 +30,15 @@ func TestExtract(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() {
-					return nil
-				}
-
-				dir, file := filepath.Split(path)
-				f, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), url.QueryEscape(file)))
-				if err != nil {
-					return err
-				}
-				defer f.Close()
-
-				var want types.Data
-				if err := json.NewDecoder(f).Decode(&want); err != nil {
-					return err
-				}
-
-				f, err = os.Open(path)
-				if err != nil {
-					return err
-				}
-				defer f.Close()
-
-				var got types.Data
-				if err := json.NewDecoder(f).Decode(&got); err != nil {
-					return err
-				}
-
-				opts := []cmp.Option{
-					cmpopts.SortSlices(func(a, b types.Vulnerability) bool {
-						return a.ID < b.ID
-					}),
-					cmpopts.SortSlices(func(a, b detection.Detection) bool {
-						return a.Package.Name < b.Package.Name
-					}),
-					cmpopts.SortSlices(func(a, b reference.Reference) bool {
-						return a.URL < b.URL
-					}),
-				}
-				if diff := cmp.Diff(want, got, opts...); diff != "" {
-					t.Errorf("Extract(). (-expected +got):\n%s", diff)
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
+			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+			if err != nil {
+				t.Error("unexpected error:", err)
 			}
+			gp, err := filepath.Abs(dir)
+			if err != nil {
+				t.Error("unexpected error:", err)
+			}
+			utiltest.Diff(t, ep, gp)
 		})
 	}
 }

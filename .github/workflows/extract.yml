@@ -16,6 +16,7 @@ jobs:
             target:
               - "alma-errata"
               - "alma-osv"
+              # - "alma-oval"
               - "alpine-secdb"
               - "alpine-osv"
               - "amazon"
@@ -26,6 +27,7 @@ jobs:
               # - "debian-security-tracker-salsa"
               # - "fedora"
               # - "fortinet"
+              # - "fortinet-cvrf"
               - "freebsd"
               # - "gentoo"
               # - "netbsd"
@@ -50,7 +52,7 @@ jobs:
               # - "windows-msuc"
               # - "windows-wsusscn2"
 
-              - "cargo-ghsa"
+              # - "cargo-ghsa"
               # - "cargo-osv"
               # - "composer-ghsa"
               # - "composer-glsa"
@@ -83,7 +85,9 @@ jobs:
               # - "swift-ghsa"
               # - "swift-osv"
 
-              # - "cwe-capec-attack"
+              # - "cwe"
+              # - "capec"
+              # - "attack"
               # - "exploit-exploitdb"
               # - "exploit-github"
               # - "exploit-inthewild"

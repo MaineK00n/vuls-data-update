@@ -12,10 +12,17 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
+	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
+	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
@@ -85,8 +92,8 @@ func Extract(args string, opts ...Option) error {
 			dir = filepath.Dir(filepath.Clean(dir))
 			repo = filepath.Join("extras", repo)
 		}
-		if err := util.Write(filepath.Join(options.dir, filepath.Base(dir), repo, y, fmt.Sprintf("%s.json", extracted.ID)), extracted); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, filepath.Base(dir), repo, y, fmt.Sprintf("%s.json", extracted.ID)))
+		if err := util.Write(filepath.Join(options.dir, "data", filepath.Base(dir), repo, y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(dir), repo, y, fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
 		return nil
@@ -100,7 +107,7 @@ func Extract(args string, opts ...Option) error {
 func extract(fetched amazon.Update) types.Data {
 	data := types.Data{
 		ID: fetched.ID,
-		Advisories: []types.Advisory{{
+		Advisories: []advisory.Advisory{{
 			ID:          fetched.ID,
 			Title:       fetched.Title,
 			Description: fetched.Description,
@@ -137,7 +144,7 @@ func extract(fetched amazon.Update) types.Data {
 				Source: fetched.Author,
 				URL:    r.Href,
 			})
-			data.Vulnerabilities = append(data.Vulnerabilities, types.Vulnerability{
+			data.Vulnerabilities = append(data.Vulnerabilities, vulnerability.Vulnerability{
 				ID: r.ID,
 				References: []reference.Reference{{
 					Source: fetched.Author,
@@ -160,52 +167,68 @@ func extract(fetched amazon.Update) types.Data {
 		pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
 	}
 
+	cs := make([]criterion.Criterion, 0, func() int {
+		cap := 0
+		for _, evras := range pkgs {
+			cap += len(evras)
+		}
+		return cap
+	}())
+
+	repos := func() []string {
+		switch {
+		case strings.HasPrefix(fetched.ID, "ALAS2023"):
+			if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
+				return []string{repo}
+			}
+			return []string{"amazonlinux"}
+		case strings.HasPrefix(fetched.ID, "ALAS2022"):
+			return []string{"amazonlinux"}
+		case strings.HasPrefix(fetched.ID, "ALAS2"):
+			if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
+				return []string{fmt.Sprintf("amzn2extra-%s", repo)}
+			}
+			return []string{"amzn2-core"}
+		default:
+			return []string{"amzn-main", "amzn-updates"}
+		}
+	}()
 	for n, evras := range pkgs {
 		for evr, as := range evras {
-			data.Detection = append(data.Detection, detection.Detection{
-				Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAmazon, func() string {
-					switch {
-					case strings.HasPrefix(fetched.ID, "ALAS2023"):
-						return "2023"
-					case strings.HasPrefix(fetched.ID, "ALAS2022"):
-						return "2022"
-					case strings.HasPrefix(fetched.ID, "ALAS2"):
-						return "2"
-					default:
-						return "1"
-					}
-				}()),
+			cs = append(cs, criterion.Criterion{
 				Vulnerable: true,
-				Package: detection.Package{
-					Name: n,
-					Repositories: func() []string {
-						switch {
-						case strings.HasPrefix(fetched.ID, "ALAS2023"):
-							if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
-								return []string{repo}
-							}
-							return []string{"amazonlinux"}
-						case strings.HasPrefix(fetched.ID, "ALAS2022"):
-							return []string{"amazonlinux"}
-						case strings.HasPrefix(fetched.ID, "ALAS2"):
-							if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
-								return []string{fmt.Sprintf("amzn2extra-%s", repo)}
-							}
-							return []string{"amzn2-core"}
-						default:
-							return []string{"amzn-main", "amzn-updates"}
-						}
-					}(),
+				Package: criterionpackage.Package{
+					Name:          n,
+					Repositories:  repos,
 					Architectures: as,
 				},
-				Affected: &detection.Affected{
-					Type:  detection.RangeTypeRPM,
-					Range: []detection.Range{{LessThan: evr}},
+				Affected: &affected.Affected{
+					Type:  affectedrange.RangeTypeRPM,
+					Range: []affectedrange.Range{{LessThan: evr}},
 					Fixed: []string{evr},
 				},
 			})
 		}
 	}
+
+	data.Detection = append(data.Detection, detection.Detection{
+		Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAmazon, func() string {
+			switch {
+			case strings.HasPrefix(fetched.ID, "ALAS2023"):
+				return "2023"
+			case strings.HasPrefix(fetched.ID, "ALAS2022"):
+				return "2022"
+			case strings.HasPrefix(fetched.ID, "ALAS2"):
+				return "2"
+			default:
+				return "1"
+			}
+		}()),
+		Criteria: criteria.Criteria{
+			Operator:   criteria.CriteriaOperatorTypeOR,
+			Criterions: cs,
+		},
+	})
 
 	return data
 }
