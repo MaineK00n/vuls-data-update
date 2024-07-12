@@ -5,20 +5,20 @@ import (
 	"encoding/json"
 	"fmt"
 
-	v2 "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
-	v30 "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
-	v31 "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
-	v40 "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
+	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
+	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
+	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
+	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
 )
 
 type Severity struct {
-	Type    SeverityType `json:"type,omitempty"`
-	Source  string       `json:"source,omitempty"`
-	Vendor  *string      `json:"vendor,omitempty"`
-	CVSSv2  *v2.CVSSv2   `json:"cvss_v2,omitempty"`
-	CVSSv30 *v30.CVSSv30 `json:"cvss_v30,omitempty"`
-	CVSSv31 *v31.CVSSv31 `json:"cvss_v31,omitempty"`
-	CVSSv40 *v40.CVSSv40 `json:"cvss_v40,omitempty"`
+	Type    SeverityType      `json:"type,omitempty"`
+	Source  string            `json:"source,omitempty"`
+	Vendor  *string           `json:"vendor,omitempty"`
+	CVSSv2  *v2Types.CVSSv2   `json:"cvss_v2,omitempty"`
+	CVSSv30 *v30Types.CVSSv30 `json:"cvss_v30,omitempty"`
+	CVSSv31 *v31Types.CVSSv31 `json:"cvss_v31,omitempty"`
+	CVSSv40 *v40Types.CVSSv40 `json:"cvss_v40,omitempty"`
 }
 
 type SeverityType int

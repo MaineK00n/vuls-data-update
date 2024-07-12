@@ -8,15 +8,15 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
-				},
-				{
-					"source": "vuxml.freebsd.org",
 					"url": "https://www.freebsd.org/security/advisories/FreeBSD-SA-03:19.bind.asc"
 				},
 				{
 					"source": "vuxml.freebsd.org",
 					"url": "https://www.kb.cert.org/vuls/id/734644"
+				},
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
 				}
 			],
 			"published": "2003-12-12T00:00:00Z",
@@ -37,63 +37,69 @@
 	"detection": [
 		{
 			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "bind"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+			"criteria": {
+				"operator": "OR",
+				"criterions": [
 					{
-						"lt": "8.3.7",
-						"ge": "8.3"
+						"vulnerable": true,
+						"package": {
+							"name": "FreeBSD"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "4.4_47"
+								},
+								{
+									"lt": "4.5_37",
+									"ge": "4.5"
+								},
+								{
+									"lt": "4.6.2_27",
+									"ge": "4.6"
+								},
+								{
+									"lt": "4.7_24",
+									"ge": "4.7"
+								},
+								{
+									"lt": "4.8_14",
+									"ge": "4.8"
+								},
+								{
+									"lt": "4.9_1",
+									"ge": "4.9"
+								},
+								{
+									"lt": "5.0_19",
+									"ge": "5.0"
+								},
+								{
+									"lt": "5.1_11",
+									"ge": "5.1"
+								}
+							]
+						}
 					},
 					{
-						"lt": "8.4.3",
-						"ge": "8.4"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "FreeBSD"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
-					{
-						"lt": "5.1_11",
-						"ge": "5.1"
-					},
-					{
-						"lt": "5.0_19",
-						"ge": "5.0"
-					},
-					{
-						"lt": "4.9_1",
-						"ge": "4.9"
-					},
-					{
-						"lt": "4.8_14",
-						"ge": "4.8"
-					},
-					{
-						"lt": "4.7_24",
-						"ge": "4.7"
-					},
-					{
-						"lt": "4.6.2_27",
-						"ge": "4.6"
-					},
-					{
-						"lt": "4.5_37",
-						"ge": "4.5"
-					},
-					{
-						"lt": "4.4_47"
+						"vulnerable": true,
+						"package": {
+							"name": "bind"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "8.3.7",
+									"ge": "8.3"
+								},
+								{
+									"lt": "8.4.3",
+									"ge": "8.4"
+								}
+							]
+						}
 					}
 				]
 			}

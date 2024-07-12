@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
 )
 
 type Criteria struct {
-	Operator   CriteriaOperatorType  `json:"operator,omitempty"`
-	Criterias  []Criteria            `json:"criterias,omitempty"`
-	Criterions []criterion.Criterion `json:"criterions,omitempty"`
+	Operator   CriteriaOperatorType       `json:"operator,omitempty"`
+	Criterias  []Criteria                 `json:"criterias,omitempty"`
+	Criterions []criterionTypes.Criterion `json:"criterions,omitempty"`
 }
 
 type CriteriaOperatorType int
@@ -61,7 +61,7 @@ func (c *Criteria) Sort() {
 	for i := range c.Criterions {
 		(&c.Criterions[i]).Sort()
 	}
-	slices.SortFunc(c.Criterions, criterion.Compare)
+	slices.SortFunc(c.Criterions, criterionTypes.Compare)
 
 	for i := range c.Criterias {
 		(&c.Criterias[i]).Sort()
@@ -72,7 +72,7 @@ func (c *Criteria) Sort() {
 func Compare(x, y Criteria) int {
 	return cmp.Or(
 		cmp.Compare(x.Operator, y.Operator),
-		slices.CompareFunc(x.Criterions, y.Criterions, criterion.Compare),
+		slices.CompareFunc(x.Criterions, y.Criterions, criterionTypes.Compare),
 		slices.CompareFunc(x.Criterias, y.Criterias, Compare),
 	)
 }

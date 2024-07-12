@@ -8,7 +8,7 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/a67e358c-0bf6-11ec-875e-901b0e9408dc.html"
+					"url": "https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=258187"
 				},
 				{
 					"source": "vuxml.freebsd.org",
@@ -16,22 +16,13 @@
 				},
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=258187"
+					"url": "https://www.vuxml.org/freebsd/a67e358c-0bf6-11ec-875e-901b0e9408dc.html"
 				}
 			],
 			"published": "2021-09-02T00:00:00Z"
 		}
 	],
 	"vulnerabilities": [
-		{
-			"id": "CVE-2021-39164",
-			"references": [
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.cve.org/CVERecord?id=CVE-2021-39164"
-				}
-			]
-		},
 		{
 			"id": "CVE-2021-39163",
 			"references": [
@@ -40,80 +31,92 @@
 					"url": "https://www.cve.org/CVERecord?id=CVE-2021-39163"
 				}
 			]
+		},
+		{
+			"id": "CVE-2021-39164",
+			"references": [
+				{
+					"source": "vuxml.freebsd.org",
+					"url": "https://www.cve.org/CVERecord?id=CVE-2021-39164"
+				}
+			]
 		}
 	],
 	"detection": [
 		{
 			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py36-matrix-synapse"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+			"criteria": {
+				"operator": "OR",
+				"criterions": [
 					{
-						"lt": "1.41.1"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py37-matrix-synapse"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py310-matrix-synapse"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "1.41.1"
+								}
+							]
+						}
+					},
 					{
-						"lt": "1.41.1"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py38-matrix-synapse"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py36-matrix-synapse"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "1.41.1"
+								}
+							]
+						}
+					},
 					{
-						"lt": "1.41.1"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py39-matrix-synapse"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py37-matrix-synapse"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "1.41.1"
+								}
+							]
+						}
+					},
 					{
-						"lt": "1.41.1"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py310-matrix-synapse"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py38-matrix-synapse"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "1.41.1"
+								}
+							]
+						}
+					},
 					{
-						"lt": "1.41.1"
+						"vulnerable": true,
+						"package": {
+							"name": "py39-matrix-synapse"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "1.41.1"
+								}
+							]
+						}
 					}
 				]
 			}

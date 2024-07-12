@@ -8,11 +8,11 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/e0f6215b-c59e-11ee-a6db-080027a5b8e9.html"
+					"url": "https://www.djangoproject.com/weblog/2024/feb/06/security-releases/"
 				},
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.djangoproject.com/weblog/2024/feb/06/security-releases/"
+					"url": "https://www.vuxml.org/freebsd/e0f6215b-c59e-11ee-a6db-080027a5b8e9.html"
 				}
 			],
 			"published": "2024-02-07T00:00:00Z"
@@ -32,105 +32,106 @@
 	"detection": [
 		{
 			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py39-django32"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+			"criteria": {
+				"operator": "OR",
+				"criterions": [
 					{
-						"lt": "3.2.24"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py310-django32"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py310-django32"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "3.2.24"
+								}
+							]
+						}
+					},
 					{
-						"lt": "3.2.24"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py311-django32"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py310-django42"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "4.2.8"
+								}
+							]
+						}
+					},
 					{
-						"lt": "3.2.24"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py39-django42"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py311-django32"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "3.2.24"
+								}
+							]
+						}
+					},
 					{
-						"lt": "4.2.8"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py310-django42"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py311-django42"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "4.2.8"
+								}
+							]
+						}
+					},
 					{
-						"lt": "4.2.8"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py311-django42"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py311-django50"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "5.0.2"
+								}
+							]
+						}
+					},
 					{
-						"lt": "4.2.8"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "py311-django50"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+						"vulnerable": true,
+						"package": {
+							"name": "py39-django32"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "3.2.24"
+								}
+							]
+						}
+					},
 					{
-						"lt": "5.0.2"
+						"vulnerable": true,
+						"package": {
+							"name": "py39-django42"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "4.2.8"
+								}
+							]
+						}
 					}
 				]
 			}

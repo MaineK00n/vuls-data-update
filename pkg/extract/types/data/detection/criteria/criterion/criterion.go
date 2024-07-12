@@ -3,14 +3,14 @@ package criterion
 import (
 	"cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
 )
 
 type Criterion struct {
-	Vulnerable bool                     `json:"vulnerable,omitempty"`
-	Package    criterionpackage.Package `json:"package,omitempty"`
-	Affected   *affected.Affected       `json:"affected,omitempty"`
+	Vulnerable bool                    `json:"vulnerable,omitempty"`
+	Package    packageTypes.Package    `json:"package,omitempty"`
+	Affected   *affectedTypes.Affected `json:"affected,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -32,7 +32,7 @@ func Compare(x, y Criterion) int {
 				return 0
 			}
 		}(),
-		criterionpackage.Compare(x.Package, y.Package),
+		packageTypes.Compare(x.Package, y.Package),
 		func() int {
 			switch {
 			case x.Affected == nil && y.Affected == nil:
@@ -42,7 +42,7 @@ func Compare(x, y Criterion) int {
 			case x.Affected != nil && y.Affected == nil:
 				return +1
 			default:
-				return affected.Compare(*x.Affected, *y.Affected)
+				return affectedTypes.Compare(*x.Affected, *y.Affected)
 			}
 		}(),
 	)
