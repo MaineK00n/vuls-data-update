@@ -6,37 +6,37 @@ import (
 	"time"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/eol"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
+	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
 		name     string
-		eol      map[string]map[string]map[string]types.EOLDictionary
+		eol      map[string]map[string]map[string]eolTypes.EOL
 		hasError bool
 	}{
 		{
 			name: "happy",
-			eol: map[string]map[string]map[string]types.EOLDictionary{
+			eol: map[string]map[string]map[string]eolTypes.EOL{
 				"os": {
 					"test": {
 						"1": {
 							Ended: true,
-							Date: map[string]*time.Time{
-								"main": func() *time.Time { t := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC); return &t }(),
+							Date: map[string]time.Time{
+								"main": time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 							},
 						},
 						"2": {
 							Ended: false,
-							Date: map[string]*time.Time{
-								"main": func() *time.Time { t := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC); return &t }(),
+							Date: map[string]time.Time{
+								"main": time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 							},
 						},
 						"3": {
 							Ended: false,
-							Date: map[string]*time.Time{
-								"main": func() *time.Time { t := time.Date(9999, 1, 1, 0, 0, 0, 0, time.UTC); return &t }(),
+							Date: map[string]time.Time{
+								"main": time.Date(9999, 1, 1, 0, 0, 0, 0, time.UTC),
 							},
 						},
 						"4": {

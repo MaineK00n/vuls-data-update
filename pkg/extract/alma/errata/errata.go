@@ -13,19 +13,22 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/exp/maps"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
-	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
-	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/severity"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
 )
 
@@ -99,36 +102,58 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.AlmaErrata,
+		Name: func() *string { t := "AlmaLinux Errata"; return &t }(),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
+				}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
+
 	return nil
 }
 
-func extract(fetched errata.Erratum, osver string) types.Data {
-	extracted := types.Data{
+func extract(fetched errata.Erratum, osver string) dataTypes.Data {
+	extracted := dataTypes.Data{
 		ID: fetched.ID,
-		Advisories: []advisory.Advisory{{
+		Advisories: []advisoryTypes.Advisory{{
 			ID:          fetched.ID,
 			Title:       fetched.Title,
 			Description: fetched.Description,
-			Severity: []severity.Severity{{
-				Type:   severity.SeverityTypeVendor,
+			Severity: []severityTypes.Severity{{
+				Type:   severityTypes.SeverityTypeVendor,
 				Source: "errata.almalinux.org",
 				Vendor: &fetched.Severity,
 			}},
 			Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
 			Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
 		}},
-		DataSource: source.AlmaErrata,
+		DataSource: sourceTypes.AlmaErrata,
 	}
 
 	rm := map[string]struct{}{fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", osver, strings.ReplaceAll(fetched.ID, ":", "-")): {}}
-	vm := map[string]vulnerability.Vulnerability{}
+	vm := map[string]vulnerabilityTypes.Vulnerability{}
 	for _, r := range fetched.References {
 		rm[r.Href] = struct{}{}
 
 		if r.Type == "cve" {
-			vm[r.ID] = vulnerability.Vulnerability{
+			vm[r.ID] = vulnerabilityTypes.Vulnerability{
 				ID: r.ID,
-				References: []reference.Reference{{
+				References: []referenceTypes.Reference{{
 					Source: "errata.almalinux.org",
 					URL:    r.Href,
 				}},
@@ -136,10 +161,10 @@ func extract(fetched errata.Erratum, osver string) types.Data {
 		}
 	}
 
-	extracted.Advisories[0].References = func() []reference.Reference {
-		rs := make([]reference.Reference, 0, len(rm))
+	extracted.Advisories[0].References = func() []referenceTypes.Reference {
+		rs := make([]referenceTypes.Reference, 0, len(rm))
 		for r := range rm {
-			rs = append(rs, reference.Reference{
+			rs = append(rs, referenceTypes.Reference{
 				Source: "errata.almalinux.org",
 				URL:    r,
 			})
@@ -165,7 +190,7 @@ func extract(fetched errata.Erratum, osver string) types.Data {
 		packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)], p.Arch)
 	}
 
-	cs := make([]criterion.Criterion, 0, func() int {
+	cs := make([]criterionTypes.Criterion, 0, func() int {
 		cap := 0
 		for _, vras := range packages {
 			cap += len(vras)
@@ -174,24 +199,24 @@ func extract(fetched errata.Erratum, osver string) types.Data {
 	}())
 	for n, vras := range packages {
 		for vr, as := range vras {
-			cs = append(cs, criterion.Criterion{
+			cs = append(cs, criterionTypes.Criterion{
 				Vulnerable: true,
-				Package: criterionpackage.Package{
+				Package: packageTypes.Package{
 					Name:          n,
 					Architectures: as,
 				},
-				Affected: &affected.Affected{
-					Type:  affectedrange.RangeTypeRPM,
-					Range: []affectedrange.Range{{LessThan: vr}},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: vr}},
 					Fixed: []string{vr},
 				},
 			})
 		}
 	}
-	extracted.Detection = append(extracted.Detection, detection.Detection{
-		Ecosystem: fmt.Sprintf("%s:%s", detection.EcosystemTypeAlma, osver),
-		Criteria: criteria.Criteria{
-			Operator:   criteria.CriteriaOperatorTypeOR,
+	extracted.Detection = append(extracted.Detection, detectionTypes.Detection{
+		Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver)),
+		Criteria: criteriaTypes.Criteria{
+			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: cs,
 		},
 	})

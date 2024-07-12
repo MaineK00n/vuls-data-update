@@ -6,9 +6,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
 	"github.com/pkg/errors"
 	"golang.org/x/exp/maps"
+
+	attackTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/attack"
+	capecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/capec"
+	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cpe"
+	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
+	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
 )
 
 func CacheDir() string {
@@ -63,19 +71,21 @@ func Write(path string, content any, doSort bool) error {
 
 	if doSort {
 		switch v := content.(type) {
-		case types.Data:
+		case dataTypes.Data:
 			(&v).Sort()
-		case types.CPEDictionary:
+		case cpeTypes.CPE:
 			(&v).Sort()
-		case types.CWEDictionary:
+		case cweTypes.CWE:
 			(&v).Sort()
-		case types.CAPECDictionary:
+		case capecTypes.CAPEC:
 			(&v).Sort()
-		case types.AttackDictionary:
+		case attackTypes.Attack:
 			(&v).Sort()
-		case types.WindowsKBDictionary:
+		case windowskbTypes.WindowsKB:
 			(&v).Sort()
-		case types.EOLDictionary:
+		case eolTypes.EOL:
+			(&v).Sort()
+		case datasourceTypes.DataSource:
 			(&v).Sort()
 		default:
 		}

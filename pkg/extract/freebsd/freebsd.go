@@ -11,18 +11,21 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/advisory"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected"
-	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/affected/range"
-	criterionpackage "github.com/MaineK00n/vuls-data-update/pkg/extract/types/detection/criteria/criterion/package"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/reference"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/vulnerability"
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
 )
@@ -93,18 +96,40 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.FreeBSD,
+		Name: func() *string { t := "FreeBSD VuXML"; return &t }(),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
+				}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
+
 	return nil
 }
 
-func extract(fetched freebsd.Vuln) types.Data {
+func extract(fetched freebsd.Vuln) dataTypes.Data {
 	if fetched.Cancelled != nil {
-		return types.Data{
+		return dataTypes.Data{
 			ID:         fetched.Vid,
-			DataSource: source.FreeBSD,
+			DataSource: sourceTypes.FreeBSD,
 		}
 	}
 
-	rs := make([]reference.Reference, 0,
+	rs := make([]referenceTypes.Reference, 0,
 		1+
 			len(fetched.References.URL)+
 			len(fetched.References.FreebsdSA)+
@@ -115,37 +140,37 @@ func extract(fetched freebsd.Vuln) types.Data {
 			len(fetched.References.CertVU)+
 			len(fetched.References.USCertSA)+
 			len(fetched.References.USCertTA))
-	rs = append(rs, reference.Reference{
+	rs = append(rs, referenceTypes.Reference{
 		Source: "vuxml.freebsd.org",
 		URL:    fmt.Sprintf("https://www.vuxml.org/freebsd/%s.html", fetched.Vid),
 	})
 	for _, u := range fetched.References.URL {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			URL:    u,
 		})
 	}
 	for _, a := range fetched.References.FreebsdSA {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			URL:    fmt.Sprintf("https://www.freebsd.org/security/advisories/FreeBSD-%s.asc", a),
 		},
 		)
 	}
 	for _, a := range fetched.References.FreebsdPR {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			URL:    fmt.Sprintf("https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=%s", strings.TrimPrefix(a, "ports/")),
 		})
 	}
 	for _, m := range fetched.References.Mlist {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			URL:    m.Text,
 		})
 	}
 	for _, b := range fetched.References.BID {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			// The URL i.e. http://www.securityfocus.com/bid/12615 is 503 at 2024-04-21,
 			// we should use, for example, WebArchive.org waybackmachine.
@@ -153,7 +178,7 @@ func extract(fetched freebsd.Vuln) types.Data {
 		})
 	}
 	for _, c := range fetched.References.CertSA {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			// The URL http://www.cert.org/advisories/CA-2004-01.html is redirected to not very detailed page,
 			// Because there is only one certsa tag at 2004, leave it as it is.
@@ -161,13 +186,13 @@ func extract(fetched freebsd.Vuln) types.Data {
 		})
 	}
 	for _, c := range fetched.References.CertVU {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			URL:    fmt.Sprintf("https://www.kb.cert.org/vuls/id/%s", c),
 		})
 	}
 	for _, u := range fetched.References.USCertSA {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			// The URL i.e. http://www.uscert.gov/cas/alerts/SA04-028A.html is 503 at 2024-04-21,
 			// we should use, for example, WebArchive.org waybackmachine.
@@ -175,7 +200,7 @@ func extract(fetched freebsd.Vuln) types.Data {
 		})
 	}
 	for _, u := range fetched.References.USCertTA {
-		rs = append(rs, reference.Reference{
+		rs = append(rs, referenceTypes.Reference{
 			Source: "vuxml.freebsd.org",
 			// The URL i.e. http://www.uscert.gov/cas/techalerts/TA07-199A.html is 503 at 2024-04-21,
 			// we should use, for example, WebArchive.org waybackmachine.
@@ -183,17 +208,17 @@ func extract(fetched freebsd.Vuln) types.Data {
 		})
 	}
 
-	vs := make([]vulnerability.Vulnerability, 0, len(fetched.References.Cvename))
+	vs := make([]vulnerabilityTypes.Vulnerability, 0, len(fetched.References.Cvename))
 	for _, c := range fetched.References.Cvename {
-		vs = append(vs, vulnerability.Vulnerability{
+		vs = append(vs, vulnerabilityTypes.Vulnerability{
 			ID: c,
-			References: []reference.Reference{{
+			References: []referenceTypes.Reference{{
 				Source: "vuxml.freebsd.org",
 				URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
 			}}})
 	}
 
-	cs := make([]criterion.Criterion, 0, func() int {
+	cs := make([]criterionTypes.Criterion, 0, func() int {
 		cap := 0
 		for _, a := range fetched.Affects {
 			cap += len(a.Name)
@@ -202,23 +227,23 @@ func extract(fetched freebsd.Vuln) types.Data {
 	}())
 	for _, a := range fetched.Affects {
 		for _, n := range a.Name {
-			rs := make([]affectedrange.Range, 0, len(a.Range))
+			rs := make([]rangeTypes.Range, 0, len(a.Range))
 			for _, r := range a.Range {
-				rs = append(rs, affectedrange.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
+				rs = append(rs, rangeTypes.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
 			}
-			cs = append(cs, criterion.Criterion{
+			cs = append(cs, criterionTypes.Criterion{
 				Vulnerable: true,
-				Package:    criterionpackage.Package{Name: n},
-				Affected: &affected.Affected{
-					Type:  affectedrange.RangeTypeFreeBSDPkg,
+				Package:    packageTypes.Package{Name: n},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeFreeBSDPkg,
 					Range: rs,
 				},
 			})
 		}
 	}
-	return types.Data{
+	return dataTypes.Data{
 		ID: fetched.Vid,
-		Advisories: []advisory.Advisory{{
+		Advisories: []advisoryTypes.Advisory{{
 			ID:          fetched.Vid,
 			Title:       fetched.Topic,
 			Description: fetched.Description.Text,
@@ -227,15 +252,15 @@ func extract(fetched freebsd.Vuln) types.Data {
 			Modified:    utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Modified),
 		}},
 		Vulnerabilities: vs,
-		Detection: []detection.Detection{
+		Detection: []detectionTypes.Detection{
 			{
-				Ecosystem: detection.EcosystemTypeFreeBSD,
-				Criteria: criteria.Criteria{
-					Operator:   criteria.CriteriaOperatorTypeOR,
+				Ecosystem: detectionTypes.EcosystemTypeFreeBSD,
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,
 				},
 			},
 		},
-		DataSource: source.FreeBSD,
+		DataSource: sourceTypes.FreeBSD,
 	}
 }
