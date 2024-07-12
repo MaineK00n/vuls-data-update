@@ -200,283 +200,7 @@
 					{
 						"vulnerable": true,
 						"package": {
-							"name": "perf",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-debuginfo",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-livepatch-5.15.43-20.123",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0-0.amzn2"
-								}
-							],
-							"fixed": [
-								"0:1.0-0.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-debuginfo-common-aarch64",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-tools-devel",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
 							"name": "bpftool",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-debuginfo-common-x86_64",
-							"architectures": [
-								"x86_64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "python-perf-debuginfo",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-tools-debuginfo",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-headers",
-							"architectures": [
-								"i686"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "python-perf",
-							"architectures": [
-								"aarch64"
-							],
-							"repositories": [
-								"amzn2extra-kernel-5.15"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:5.15.43-20.123.amzn2"
-								}
-							],
-							"fixed": [
-								"0:5.15.43-20.123.amzn2"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"package": {
-							"name": "kernel-tools",
 							"architectures": [
 								"aarch64"
 							],
@@ -522,6 +246,98 @@
 					{
 						"vulnerable": true,
 						"package": {
+							"name": "kernel",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-debuginfo",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-debuginfo-common-aarch64",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-debuginfo-common-x86_64",
+							"architectures": [
+								"x86_64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
 							"name": "kernel-devel",
 							"architectures": [
 								"aarch64"
@@ -545,7 +361,191 @@
 					{
 						"vulnerable": true,
 						"package": {
+							"name": "kernel-headers",
+							"architectures": [
+								"i686"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-livepatch-5.15.43-20.123",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:1.0-0.amzn2"
+								}
+							],
+							"fixed": [
+								"0:1.0-0.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-tools",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-tools-debuginfo",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "kernel-tools-devel",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "perf",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
 							"name": "perf-debuginfo",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "python-perf",
+							"architectures": [
+								"aarch64"
+							],
+							"repositories": [
+								"amzn2extra-kernel-5.15"
+							]
+						},
+						"affected": {
+							"type": "rpm",
+							"range": [
+								{
+									"lt": "0:5.15.43-20.123.amzn2"
+								}
+							],
+							"fixed": [
+								"0:5.15.43-20.123.amzn2"
+							]
+						}
+					},
+					{
+						"vulnerable": true,
+						"package": {
+							"name": "python-perf-debuginfo",
 							"architectures": [
 								"aarch64"
 							],

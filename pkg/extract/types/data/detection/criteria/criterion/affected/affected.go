@@ -6,24 +6,24 @@ import (
 
 	"github.com/pkg/errors"
 
-	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 )
 
 type Affected struct {
-	Type  affectedrange.RangeType `json:"type,omitempty"`
-	Range []affectedrange.Range   `json:"range,omitempty"`
-	Fixed []string                `json:"fixed,omitempty"`
+	Type  rangeTypes.RangeType `json:"type,omitempty"`
+	Range []rangeTypes.Range   `json:"range,omitempty"`
+	Fixed []string             `json:"fixed,omitempty"`
 }
 
 func (a *Affected) Sort() {
-	slices.SortFunc(a.Range, affectedrange.Compare)
+	slices.SortFunc(a.Range, rangeTypes.Compare)
 	slices.Sort(a.Fixed)
 }
 
 func Compare(x, y Affected) int {
 	return cmp.Or(
 		cmp.Compare(x.Type, y.Type),
-		slices.CompareFunc(x.Range, y.Range, affectedrange.Compare),
+		slices.CompareFunc(x.Range, y.Range, rangeTypes.Compare),
 		slices.Compare(x.Fixed, y.Fixed),
 	)
 }

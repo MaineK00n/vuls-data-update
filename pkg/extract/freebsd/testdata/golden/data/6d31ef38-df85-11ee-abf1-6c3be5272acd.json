@@ -8,11 +8,11 @@
 			"references": [
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/6d31ef38-df85-11ee-abf1-6c3be5272acd.html"
+					"url": "https://grafana.com/security/security-advisories/cve-2024-1442/"
 				},
 				{
 					"source": "vuxml.freebsd.org",
-					"url": "https://grafana.com/security/security-advisories/cve-2024-1442/"
+					"url": "https://www.vuxml.org/freebsd/6d31ef38-df85-11ee-abf1-6c3be5272acd.html"
 				}
 			],
 			"published": "2024-03-11T00:00:00Z",
@@ -33,47 +33,53 @@
 	"detection": [
 		{
 			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "grafana"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
+			"criteria": {
+				"operator": "OR",
+				"criterions": [
 					{
-						"lt": "9.5.17",
-						"ge": "8.5.0"
+						"vulnerable": true,
+						"package": {
+							"name": "grafana"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "10.0.12",
+									"ge": "10.0.0"
+								},
+								{
+									"lt": "10.1.8",
+									"ge": "10.1.0"
+								},
+								{
+									"lt": "10.2.5",
+									"ge": "10.2.0"
+								},
+								{
+									"lt": "10.3.4",
+									"ge": "10.3.0"
+								},
+								{
+									"lt": "9.5.17",
+									"ge": "8.5.0"
+								}
+							]
+						}
 					},
 					{
-						"lt": "10.0.12",
-						"ge": "10.0.0"
-					},
-					{
-						"lt": "10.1.8",
-						"ge": "10.1.0"
-					},
-					{
-						"lt": "10.2.5",
-						"ge": "10.2.0"
-					},
-					{
-						"lt": "10.3.4",
-						"ge": "10.3.0"
-					}
-				]
-			}
-		},
-		{
-			"ecosystem": "freebsd",
-			"vulnerable": true,
-			"package": {
-				"name": "grafana9"
-			},
-			"affected": {
-				"type": "freebsd-pkg",
-				"range": [
-					{
-						"lt": "9.5.17"
+						"vulnerable": true,
+						"package": {
+							"name": "grafana9"
+						},
+						"affected": {
+							"type": "freebsd-pkg",
+							"range": [
+								{
+									"lt": "9.5.17"
+								}
+							]
+						}
 					}
 				]
 			}
