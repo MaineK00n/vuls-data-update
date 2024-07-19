@@ -134,7 +134,7 @@ func Extract(inputPath string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.Oracle,
-		Name: func() *string { t := "Oracle"; return &t }(),
+		Name: func() *string { t := "Oracle Linux OVAL"; return &t }(),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(inputPath)
 			if r == nil {
