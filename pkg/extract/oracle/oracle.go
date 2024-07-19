@@ -100,10 +100,7 @@ func Extract(inputPath string, opts ...Option) error {
 			return err
 		}
 
-		if d.IsDir() {
-			return nil
-		}
-		if filepath.Ext(path) != ".json" {
+		if d.IsDir() || filepath.Ext(path) != ".json" {
 			return nil
 		}
 
@@ -431,11 +428,7 @@ func readTests(testsRoot string) (map[string]oracle.Test, map[string]oracle.Test
 			return err
 		}
 
-		if d.IsDir() {
-			return nil
-		}
-
-		if filepath.Ext(path) != ".json" {
+		if d.IsDir() || filepath.Ext(path) != ".json" {
 			return nil
 		}
 
@@ -476,11 +469,7 @@ func readObjects(objectsRoot string) (map[string]oracle.RpminfoObject, map[strin
 			return err
 		}
 
-		if d.IsDir() {
-			return nil
-		}
-
-		if filepath.Ext(path) != ".json" {
+		if d.IsDir() || filepath.Ext(path) != ".json" {
 			return nil
 		}
 
@@ -526,11 +515,7 @@ func readStates(statesRoot string) (map[string]oracle.RpminfoState, map[string]o
 			return err
 		}
 
-		if d.IsDir() {
-			return nil
-		}
-
-		if filepath.Ext(path) != ".json" {
+		if d.IsDir() || filepath.Ext(path) != ".json" {
 			return nil
 		}
 
