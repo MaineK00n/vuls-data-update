@@ -175,7 +175,7 @@ func extract(ovalDef oracle.Definition, tos tos) (dataTypes.Data, error) {
 				Type:   severityTypes.SeverityTypeVendor,
 				Source: "linux.oracle.com/security",
 				Vendor: &ovalDef.Metadata.Advisory.Severity}},
-			Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, ovalDef.Metadata.Advisory.Issued.Date),
+			Published: utiltime.Parse([]string{"2006-01-02"}, ovalDef.Metadata.Advisory.Issued.Date),
 		}},
 		DataSource: sourceTypes.Oracle,
 	}
