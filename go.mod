@@ -28,7 +28,7 @@ require (
 	golang.org/x/net v0.27.0
 	golang.org/x/sync v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
-	modernc.org/sqlite v1.30.1
+	modernc.org/sqlite v1.30.2
 )
 
 require (
