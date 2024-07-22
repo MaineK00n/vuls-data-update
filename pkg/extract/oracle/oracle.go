@@ -303,20 +303,20 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 		pkgs = append(pkgs, ps...)
 	}
 
-	if err := evalCriterions(&pkgs, tos, criteria.Criterions); err != nil {
+	// The case for parent criteria is AND and without child criterias case. Add base (ANY) one
+	if criteria.Operator == "AND" && len(criteria.Criterias) == 0 {
+		pkgs = append(pkgs, ovalPackage{})
+	}
+
+	if err := evalCriterions(pkgs, tos, criteria.Criterions); err != nil {
 		return nil, errors.Wrap(err, "eval criterions")
 	}
 	return pkgs, nil
 }
 
-func evalCriterions(pkgs *[]ovalPackage, tos tos, criterions []oracle.Criterion) error {
+func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) error {
 	if len(criterions) == 0 {
 		return nil
-	}
-
-	// The case for parent criterion is AND and without child criterions case. Add base (ANY) one
-	if len(*pkgs) == 0 {
-		*pkgs = append(*pkgs, ovalPackage{})
 	}
 
 	for _, c := range criterions {
@@ -335,12 +335,12 @@ func evalCriterions(pkgs *[]ovalPackage, tos tos, criterions []oracle.Criterion)
 			case "oraclelinux-release":
 				switch {
 				case state.Version != nil:
-					for i := range *pkgs {
-						(*pkgs)[i].major = strings.TrimPrefix(state.Version.Text, "^")
+					for i := range pkgs {
+						pkgs[i].major = strings.TrimPrefix(state.Version.Text, "^")
 					}
 				case state.Arch != nil:
-					for i := range *pkgs {
-						(*pkgs)[i].arch = state.Arch.Text
+					for i := range pkgs {
+						pkgs[i].arch = state.Arch.Text
 					}
 				default:
 					return errors.Errorf("invalid combination, obj %+v and state %+v", obj, state)
@@ -351,9 +351,9 @@ func evalCriterions(pkgs *[]ovalPackage, tos tos, criterions []oracle.Criterion)
 					if state.Evr.Operation != "less than" {
 						return errors.Errorf("unexpected evr operation: %s", state.Evr.Operation)
 					}
-					for i := range *pkgs {
-						(*pkgs)[i].ovalName = obj.Name
-						(*pkgs)[i].fixedVersion = state.Evr.Text
+					for i := range pkgs {
+						pkgs[i].ovalName = obj.Name
+						pkgs[i].fixedVersion = state.Evr.Text
 					}
 				case state.SignatureKeyid != nil:
 				case state.Release != nil:
@@ -388,8 +388,8 @@ func evalCriterions(pkgs *[]ovalPackage, tos tos, criterions []oracle.Criterion)
 			streamWithBackSlashes, _, _ := strings.Cut(strings.TrimPrefix(state.Text.Text, `\nstream\s*=\s*`), `\b[\w\W]`)
 			// There may be "." in stream and should be unescaped
 			stream := strings.ReplaceAll(streamWithBackSlashes, `\`, "")
-			for i := range *pkgs {
-				(*pkgs)[i].modularityLabel = fmt.Sprintf("%s:%s", module, stream)
+			for i := range pkgs {
+				pkgs[i].modularityLabel = fmt.Sprintf("%s:%s", module, stream)
 			}
 		}
 	}
