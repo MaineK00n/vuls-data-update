@@ -420,15 +420,13 @@ func readTests(testsRoot string) (map[string]oracle.Test, map[string]oracle.Test
 		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
 			return errors.Wrapf(err, "decode %s", path)
 		}
-		rel, err := filepath.Rel(testsRoot, path)
-		if err != nil {
-			return err
-		}
-		switch filepath.Dir(rel) {
+		switch filepath.Base(filepath.Dir(path)) {
 		case "rpminfo_test":
 			rpminfoTests[fetched.ID] = fetched
 		case "textfilecontent54_test":
 			textfileTests[fetched.ID] = fetched
+		default:
+			return errors.Errorf("unexpected test type. expected: %q, actual: %q", []string{"rpminfo_test", "textfilecontent54_test"}, filepath.Base(filepath.Dir(path)))
 		}
 		return nil
 	}); err != nil {
