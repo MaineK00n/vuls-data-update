@@ -473,7 +473,7 @@ func readObjects(objectsRoot string) (map[string]oracle.RpminfoObject, map[strin
 		}
 		return nil
 	}); err != nil {
-		return map[string]oracle.RpminfoObject{}, map[string]oracle.Textfilecontent54Object{}, errors.Wrapf(err, "walk %s", objectsRoot)
+		return nil, nil, errors.Wrapf(err, "walk %s", objectsRoot)
 	}
 
 	return rpminfoObjs, textinfoObjs, nil
