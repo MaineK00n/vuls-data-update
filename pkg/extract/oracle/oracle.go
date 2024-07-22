@@ -255,7 +255,7 @@ type ovalPackage struct {
 func collectPackages(criteria oracle.Criteria, tos tos) (packages, error) {
 	pkgs, err := evalCriteria(criteria, tos)
 	if err != nil {
-		return packages{}, errors.Wrapf(err, "applyCriteria")
+		return nil, errors.Wrapf(err, "eval criteria")
 	}
 
 	allPkgs := packages{}
