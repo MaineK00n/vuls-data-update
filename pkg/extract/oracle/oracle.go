@@ -164,7 +164,7 @@ type packageKey struct {
 }
 type archtectures []string
 
-func extract(ovalDef oracle.Definition, tos tos) (dataTypes.Data, error) {
+func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 	data := dataTypes.Data{
 		ID: ovalDef.ID,
 		Advisories: []advisoryTypes.Advisory{{
