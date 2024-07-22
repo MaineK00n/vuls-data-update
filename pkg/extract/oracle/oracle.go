@@ -76,7 +76,7 @@ func Extract(inputPath string, opts ...Option) error {
 
 	rpminfoTests, textfileTests, err := readTests(filepath.Join(inputPath, "tests"))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "read tests")
 	}
 	rpminfoObjs, textfileObjs, err := readObjects(filepath.Join(inputPath, "objects"))
 	if err != nil {
