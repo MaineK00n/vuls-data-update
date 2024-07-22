@@ -80,11 +80,11 @@ func Extract(inputPath string, opts ...Option) error {
 	}
 	rpminfoObjs, textfileObjs, err := readObjects(filepath.Join(inputPath, "objects"))
 	if err != nil {
-		return return errors.Wrap(err, "read objects")
+		return errors.Wrap(err, "read objects")
 	}
 	rpminfoStates, textfileStates, err := readStates(filepath.Join(inputPath, "states"))
 	if err != nil {
-		return return errors.Wrap(err, "read states")
+		return errors.Wrap(err, "read states")
 	}
 
 	tos := tos{
@@ -166,23 +166,23 @@ type archtectures []string
 
 func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 	data := dataTypes.Data{
-		ID: ovalDef.ID,
+		ID: def.ID,
 		Advisories: []advisoryTypes.Advisory{{
-			ID:          ovalDef.ID,
-			Title:       ovalDef.Metadata.Title,
-			Description: ovalDef.Metadata.Description,
+			ID:          def.ID,
+			Title:       def.Metadata.Title,
+			Description: def.Metadata.Description,
 			Severity: []severityTypes.Severity{{
 				Type:   severityTypes.SeverityTypeVendor,
 				Source: "linux.oracle.com/security",
-				Vendor: &ovalDef.Metadata.Advisory.Severity}},
-			Published: utiltime.Parse([]string{"2006-01-02"}, ovalDef.Metadata.Advisory.Issued.Date),
+				Vendor: &def.Metadata.Advisory.Severity}},
+			Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
 		}},
 		DataSource: sourceTypes.Oracle,
 	}
 
 	data.Vulnerabilities = func() []vulnerabilityTypes.Vulnerability {
-		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(ovalDef.Metadata.Advisory.Cve))
-		for _, cve := range ovalDef.Metadata.Advisory.Cve {
+		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
+		for _, cve := range def.Metadata.Advisory.Cve {
 			vs = append(vs, vulnerabilityTypes.Vulnerability{
 				ID: cve.Text,
 				References: []referenceTypes.Reference{{
@@ -195,8 +195,8 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 	}()
 
 	data.Advisories[0].References = func() []referenceTypes.Reference {
-		refs := make([]referenceTypes.Reference, 0, len(ovalDef.Metadata.Reference))
-		for _, r := range ovalDef.Metadata.Reference {
+		refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference))
+		for _, r := range def.Metadata.Reference {
 			refs = append(refs, referenceTypes.Reference{
 				Source: "linux.oracle.com/security",
 				URL:    r.RefURL,
@@ -205,9 +205,9 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 		return refs
 	}()
 
-	allPkgs, err := collectPackages(ovalDef.Criteria, tos)
+	allPkgs, err := collectPackages(def.Criteria, tos)
 	if err != nil {
-		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", ovalDef.ID)
+		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
 	data.Detection = func() []detectionTypes.Detection {

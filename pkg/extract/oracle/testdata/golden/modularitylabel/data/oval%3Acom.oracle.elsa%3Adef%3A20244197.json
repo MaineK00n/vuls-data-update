@@ -21,7 +21,8 @@
 					"source": "linux.oracle.com/security",
 					"url": "https://linux.oracle.com/errata/ELSA-2024-4197.html"
 				}
-			]
+			],
+			"published": "2024-07-01T00:00:00Z"
 		}
 	],
 	"vulnerabilities": [

@@ -25,7 +25,8 @@
 					"source": "linux.oracle.com/security",
 					"url": "https://linux.oracle.com/errata/ELSA-2007-0057.html"
 				}
-			]
+			],
+			"published": "2007-06-26T00:00:00Z"
 		}
 	],
 	"vulnerabilities": [
