@@ -155,7 +155,12 @@ func Extract(inputPath string, opts ...Option) error {
 }
 
 func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
-	data := dataTypes.Data{
+	ds, err := collectPackages(def.Criteria, tos)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
+	}
+
+	return dataTypes.Data{
 		ID: def.ID,
 		Advisories: []advisoryTypes.Advisory{{
 			ID:          def.ID,
@@ -165,43 +170,34 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 				Type:   severityTypes.SeverityTypeVendor,
 				Source: "linux.oracle.com/security",
 				Vendor: &def.Metadata.Advisory.Severity}},
+			References: func() []referenceTypes.Reference {
+				refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference))
+				for _, r := range def.Metadata.Reference {
+					refs = append(refs, referenceTypes.Reference{
+						Source: "linux.oracle.com/security",
+						URL:    r.RefURL,
+					})
+				}
+				return refs
+			}(),
 			Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
 		}},
+		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
+			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
+			for _, cve := range def.Metadata.Advisory.Cve {
+				vs = append(vs, vulnerabilityTypes.Vulnerability{
+					ID: cve.Text,
+					References: []referenceTypes.Reference{{
+						Source: "linux.oracle.com/security",
+						URL:    cve.Href,
+					}},
+				})
+			}
+			return vs
+		}(),
+		Detection:  ds,
 		DataSource: sourceTypes.Oracle,
-	}
-
-	data.Vulnerabilities = func() []vulnerabilityTypes.Vulnerability {
-		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
-		for _, cve := range def.Metadata.Advisory.Cve {
-			vs = append(vs, vulnerabilityTypes.Vulnerability{
-				ID: cve.Text,
-				References: []referenceTypes.Reference{{
-					Source: "linux.oracle.com/security",
-					URL:    cve.Href,
-				}},
-			})
-		}
-		return vs
-	}()
-
-	data.Advisories[0].References = func() []referenceTypes.Reference {
-		refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference))
-		for _, r := range def.Metadata.Reference {
-			refs = append(refs, referenceTypes.Reference{
-				Source: "linux.oracle.com/security",
-				URL:    r.RefURL,
-			})
-		}
-		return refs
-	}()
-
-	ds, err := collectPackages(def.Criteria, tos)
-	if err != nil {
-		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
-	}
-	data.Detection = ds
-
-	return data, nil
+	}, nil
 }
 
 type ovalPackage struct {
@@ -389,7 +385,7 @@ func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) 
 			}
 			remaining, _, found = strings.Cut(remaining, `\b[\w\W]`)
 			if !found {
-				return errors.Errorf(`unexpected stream pattern at suffix. expected: \nstream\s*=\s*, actual: %s`, remaining)
+				return errors.Errorf(`unexpected stream pattern. expected: <stream>\b[\w\W]..., actual: %s`, remaining)
 			}
 			// There may be "." in stream and should be unescaped
 			stream := strings.ReplaceAll(remaining, `\`, "")
