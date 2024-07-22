@@ -246,7 +246,7 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 
 type ovalPackage struct {
 	major           string
-	ovalName        string
+	name        string
 	fixedVersion    string
 	modularityLabel string
 	arch            string
@@ -269,9 +269,9 @@ func collectPackages(criteria oracle.Criteria, tos tos) (packages, error) {
 			name: func() string {
 				switch p.modularityLabel {
 				case "":
-					return p.ovalName
+					return p.name
 				default:
-					return fmt.Sprintf("%s::%s", p.modularityLabel, p.ovalName)
+					return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
 				}
 			}(),
 			fixedVersion: p.fixedVersion,
@@ -352,7 +352,7 @@ func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) 
 						return errors.Errorf("unexpected evr operation: %s", state.Evr.Operation)
 					}
 					for i := range pkgs {
-						pkgs[i].ovalName = obj.Name
+						pkgs[i].name = obj.Name
 						pkgs[i].fixedVersion = state.Evr.Text
 					}
 				case state.SignatureKeyid != nil:
