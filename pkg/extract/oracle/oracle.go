@@ -290,7 +290,7 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 	case criteria.Operator == "OR" && len(criteria.Criterias) == 0:
 		return nil, errors.Errorf("criterias under OR criteria MUST exist")
 	case criteria.Operator == "AND" && len(criteria.Criterias) > 1:
-		return []ovalPackage{}, errors.Errorf("criterias under AND-criteria MUST be < 2")
+		return nil, errors.Errorf("criterias under AND-criteria MUST be < 2")
 	}
 
 	var pkgs []ovalPackage
