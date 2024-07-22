@@ -516,7 +516,7 @@ func readStates(statesRoot string) (map[string]oracle.RpminfoState, map[string]o
 		}
 		return nil
 	}); err != nil {
-		return map[string]oracle.RpminfoState{}, map[string]oracle.Textfilecontent54State{}, errors.Wrapf(err, "walk %s", statesRoot)
+		return nil, nil, errors.Wrapf(err, "walk %s", statesRoot)
 	}
 
 	return rpminfoStates, textfileStates, nil
