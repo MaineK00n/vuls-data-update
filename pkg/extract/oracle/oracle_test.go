@@ -26,6 +26,11 @@ func TestExtract(t *testing.T) {
 			goldenPath: "./testdata/golden/modularitylabel",
 		},
 		{
+			name:       "modularitylabel-stream-reversed",
+			args:       "./testdata/fixtures/modularitylabel-stream-reversed",
+			goldenPath: "./testdata/golden/modularitylabel-stream-reversed",
+		},
+		{
 			name:       "majormixed",
 			args:       "./testdata/fixtures/majormixed",
 			goldenPath: "./testdata/golden/majormixed",

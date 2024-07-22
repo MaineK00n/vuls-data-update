@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20244197002",
+	"version": "501",
+	"comment": "Oracle Linux arch is aarch64",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20244197001"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20244197004"
+	}
+}

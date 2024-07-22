@@ -1,0 +1,9 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:com.oracle.elsa:ste:20244197003",
+	"attr_version": "501",
+	"version": {
+		"text": "^8",
+		"operation": "pattern match"
+	}
+}

@@ -375,18 +375,28 @@ func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) 
 			module := strings.ReplaceAll(remaining, `\`, "")
 
 			// <ind-def:text operation="pattern match">\nstream\s*=\s*ol8\b[\w\W]*\nstate\s*=\s*(enabled|1|true)|\nstate\s*=\s*(enabled|1|true)[\w\W]*\nstream\s*=\s*ol8\b</ind-def:text>
-			remaining, found = strings.CutPrefix(state.Text.Text, `\nstream\s*=\s*`)
-			if !found {
-				return errors.Errorf(`unexpected stream pattern at prefix. expected: \nstream\s*=\s*, actual: %s`, state.Text.Text)
+			// To extract "stream" value, the regexp pattern of reversed order ("state" at the beginning) is also considered,
+			// e.g. \nstate\s*=\s*(enabled|1|true)[\w\W]*\nstream\s*=\s*ol8\b|\nstream\s*=\s*ol8\b[\w\W]*\nstate\s*=\s*(enabled|1|true)
+			var ss []string
+			for _, s := range strings.Split(state.Text.Text, `\n`) {
+				if s == "" {
+					continue
+				}
+
+				lhs, rhs, ok := strings.Cut(s, `\s*=\s*`)
+				if !ok {
+					return errors.Errorf("unexpected pattern. expected: %s, actual: %s", `<entry>\s*=\s*<value>`, s)
+				}
+				if lhs == "stream" {
+					ss = append(ss, strings.ReplaceAll(strings.TrimSuffix(strings.TrimSuffix(strings.TrimSuffix(rhs, "|"), `[\w\W]*`), `\b`), `\`, ""))
+				}
 			}
-			remaining, _, found = strings.Cut(remaining, `\b[\w\W]`)
-			if !found {
-				return errors.Errorf(`unexpected stream pattern. expected: <stream>\b[\w\W]..., actual: %s`, remaining)
+			ss = util.Unique(ss)
+			if len(ss) != 1 {
+				return errors.Errorf("stream cannot be determined to a single value. values: %v, text: %s", ss, state.Text.Text)
 			}
-			// There may be "." in stream and should be unescaped
-			stream := strings.ReplaceAll(remaining, `\`, "")
 			for i := range pkgs {
-				pkgs[i].modularityLabel = fmt.Sprintf("%s:%s", module, stream)
+				pkgs[i].modularityLabel = fmt.Sprintf("%s:%s", module, ss[0])
 			}
 		}
 	}
