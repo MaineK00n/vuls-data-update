@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20241828032",
+	"version": "501",
+	"comment": "java-21-openjdk is signed with the Oracle Linux 8 key",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20241828016"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20241828001"
+	}
+}

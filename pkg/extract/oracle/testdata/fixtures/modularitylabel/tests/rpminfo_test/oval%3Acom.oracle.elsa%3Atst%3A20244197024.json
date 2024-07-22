@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20244197024",
+	"version": "501",
+	"comment": "mod_md is earlier than 1:2.0.8-8.module+el8.9.0+90011+2f9c6a23",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20244197012"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20244197008"
+	}
+}

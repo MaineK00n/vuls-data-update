@@ -58,92 +58,91 @@ type Criterion struct {
 	Comment string `xml:"comment,attr" json:"comment,omitempty"`
 }
 
+type Test struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
+	Check   string `xml:"check,attr" json:"check,omitempty"`
+	Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+	Object  struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitempty"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitempty"`
+}
+
 type Tests struct {
-	RpminfoTest []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Comment string `xml:"comment,attr" json:"comment,omitempty"`
-		Check   string `xml:"check,attr" json:"check,omitempty"`
-		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
-		Object  struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
-	} `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
-	Textfilecontent54Test []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Comment string `xml:"comment,attr" json:"comment,omitempty"`
-		Check   string `xml:"check,attr" json:"check,omitempty"`
-		Object  struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
-	} `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitempty"`
+	RpminfoTest           []Test `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
+	Textfilecontent54Test []Test `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitempty"`
+}
+
+type RpminfoObject struct {
+	Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Name    string `xml:"name" json:"name,omitempty"`
+}
+
+type Textfilecontent54Object struct {
+	ID       string `xml:"id,attr" json:"id,omitempty"`
+	Version  string `xml:"version,attr" json:"version,omitempty"`
+	Filepath struct {
+		Text     string `xml:",chardata" json:"text,omitempty"`
+		Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
+	} `xml:"filepath" json:"filepath,omitempty"`
+	Pattern struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"pattern" json:"pattern,omitempty"`
+	Instance struct {
+		Text     string `xml:",chardata" json:"text,omitempty"`
+		Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
+	} `xml:"instance" json:"instance,omitempty"`
 }
 
 type Objects struct {
-	RpminfoObject []struct {
-		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Name    string `xml:"name" json:"name,omitempty"`
-	} `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
-	Textfilecontent54Object []struct {
-		ID       string `xml:"id,attr" json:"id,omitempty"`
-		Version  string `xml:"version,attr" json:"version,omitempty"`
-		Filepath struct {
-			Text     string `xml:",chardata" json:"text,omitempty"`
-			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"filepath" json:"filepath,omitempty"`
-		Pattern struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"pattern" json:"pattern,omitempty"`
-		Instance struct {
-			Text     string `xml:",chardata" json:"text,omitempty"`
-			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"instance" json:"instance,omitempty"`
-	} `xml:"textfilecontent54_object" json:"textfilecontent_54_object,omitempty"`
+	RpminfoObject           []RpminfoObject           `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
+	Textfilecontent54Object []Textfilecontent54Object `xml:"textfilecontent54_object" json:"textfilecontent_54_object,omitempty"`
+}
+
+type RpminfoState struct {
+	Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
+	ID             string `xml:"id,attr" json:"id,omitempty"`
+	AttrVersion    string `xml:"version,attr" json:"attr_version,omitempty"`
+	SignatureKeyid *struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"signature_keyid" json:"signature_keyid,omitempty"`
+	Version *struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"version" json:"version,omitempty"`
+	Arch *struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"arch" json:"arch,omitempty"`
+	Evr *struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"evr" json:"evr,omitempty"`
+	Release *struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"release" json:"release,omitempty"`
+}
+
+type Textfilecontent54State struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Text    struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"text" json:"text,omitempty"`
 }
 
 type States struct {
-	RpminfoState []struct {
-		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
-		ID             string `xml:"id,attr" json:"id,omitempty"`
-		AttrVersion    string `xml:"version,attr" json:"attr_version,omitempty"`
-		SignatureKeyid *struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"signature_keyid" json:"signature_keyid,omitempty"`
-		Version *struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"version" json:"version,omitempty"`
-		Arch *struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"arch" json:"arch,omitempty"`
-		Evr *struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"evr" json:"evr,omitempty"`
-		Release *struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"release" json:"release,omitempty"`
-	} `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
-	Textfilecontent54State []struct {
-		ID      string `xml:"id,attr" json:"id,omitempty"`
-		Version string `xml:"version,attr" json:"version,omitempty"`
-		Text    struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"text" json:"text,omitempty"`
-	} `xml:"textfilecontent54_state" json:"textfilecontent_54_state,omitempty"`
+	RpminfoState           []RpminfoState           `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
+	Textfilecontent54State []Textfilecontent54State `xml:"textfilecontent54_state" json:"textfilecontent_54_state,omitempty"`
 }

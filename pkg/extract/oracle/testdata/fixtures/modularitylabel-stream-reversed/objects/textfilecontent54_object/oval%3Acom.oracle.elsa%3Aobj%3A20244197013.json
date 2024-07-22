@@ -1,0 +1,16 @@
+{
+	"id": "oval:com.oracle.elsa:obj:20244197013",
+	"version": "641",
+	"filepath": {
+		"text": "/etc/dnf/modules.d/httpd.module",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "\\[httpd\\][\\w\\W]*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}

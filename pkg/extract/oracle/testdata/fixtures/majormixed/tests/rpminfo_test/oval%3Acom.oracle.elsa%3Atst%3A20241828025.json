@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20241828025",
+	"version": "501",
+	"comment": "java-21-openjdk-src-slowdebug is earlier than 1:21.0.3.0.9-1.0.1.el8",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20241828013"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20241828005"
+	}
+}

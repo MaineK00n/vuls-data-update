@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:20244197022",
+	"version": "501",
+	"comment": "mod_http2 is earlier than 0:1.15.7-10.module+el8.10.0+90327+96b8ea28",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:20244197011"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:20244197007"
+	}
+}
