@@ -430,7 +430,7 @@ func readTests(testsRoot string) (map[string]oracle.Test, map[string]oracle.Test
 		}
 		return nil
 	}); err != nil {
-		return map[string]oracle.Test{}, map[string]oracle.Test{}, errors.Wrapf(err, "walk %s", testsRoot)
+		return nil, nil, errors.Wrapf(err, "walk %s", testsRoot)
 	}
 
 	return rpminfoTests, textfileTests, nil
