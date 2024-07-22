@@ -308,7 +308,7 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 	// With these constraints, we can ignore Criteria.Operator (AND or OR) to extract package information.
 	switch {
 	case criteria.Operator == "OR" && len(criteria.Criterions) > 0:
-		return []ovalPackage{}, errors.Errorf("criteriaons under OR criteria MUST not exist")
+		return nil, errors.Errorf("criterions under OR criteria MUST not exist")
 	case criteria.Operator == "OR" && len(criteria.Criterias) == 0:
 		return []ovalPackage{}, errors.Errorf("criterias under OR criteria MUST exist")
 	case criteria.Operator == "AND" && len(criteria.Criterias) > 1:
