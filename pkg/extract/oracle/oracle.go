@@ -110,12 +110,12 @@ func Extract(inputPath string, opts ...Option) error {
 		}
 		defer f.Close()
 
-		var ovalDef oracle.Definition
-		if err := json.NewDecoder(f).Decode(&ovalDef); err != nil {
+		var def oracle.Definition
+		if err := json.NewDecoder(f).Decode(&def); err != nil {
 			return errors.Wrapf(err, "decode %s", path)
 		}
 
-		data, err := extract(ovalDef, tos)
+		data, err := extract(def, tos)
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
 		}
