@@ -304,7 +304,7 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 	}
 
 	if err := evalCriterions(&pkgs, tos, criteria.Criterions); err != nil {
-		return []ovalPackage{}, err
+		return nil, errors.Wrap(err, "eval criterions")
 	}
 	return pkgs, nil
 }
