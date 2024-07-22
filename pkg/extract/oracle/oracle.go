@@ -455,11 +455,7 @@ func readObjects(objectsRoot string) (map[string]oracle.RpminfoObject, map[strin
 		}
 		defer f.Close()
 
-		rel, err := filepath.Rel(objectsRoot, path)
-		if err != nil {
-			return err
-		}
-		switch filepath.Dir(rel) {
+		switch filepath.Base(filepath.Dir(path)) {
 		case "rpminfo_object":
 			var fetched oracle.RpminfoObject
 			if err := json.NewDecoder(f).Decode(&fetched); err != nil {
@@ -472,8 +468,9 @@ func readObjects(objectsRoot string) (map[string]oracle.RpminfoObject, map[strin
 				return errors.Wrapf(err, "decode %s", path)
 			}
 			textinfoObjs[fetched.ID] = fetched
+		default:
+			return errors.Errorf("unexpected object type. expected: %q, actual: %q", []string{"rpminfo_object", "textfilecontent54_object"}, filepath.Base(filepath.Dir(path)))
 		}
-
 		return nil
 	}); err != nil {
 		return map[string]oracle.RpminfoObject{}, map[string]oracle.Textfilecontent54Object{}, errors.Wrapf(err, "walk %s", objectsRoot)
