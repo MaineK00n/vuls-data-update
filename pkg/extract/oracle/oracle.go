@@ -180,48 +180,26 @@ func extract(ovalDef oracle.Definition, tos tos) (dataTypes.Data, error) {
 		DataSource: sourceTypes.Oracle,
 	}
 
-	refURLs := map[string]struct{}{}             // URL -> struct{}
-	vulnURLs := map[string]map[string]struct{}{} // vuln ID -> URL -> struct{}
-
-	for _, r := range ovalDef.Metadata.Reference {
-		refURLs[r.RefURL] = struct{}{}
-		if r.Source == "CVE" {
-			if vulnURLs[r.RefID] == nil {
-				vulnURLs[r.RefID] = map[string]struct{}{}
-			}
-			vulnURLs[r.RefID][r.RefURL] = struct{}{}
-		}
-	}
-	for _, c := range ovalDef.Metadata.Advisory.Cve {
-		vulnURLs[c.Text][c.Href] = struct{}{}
-	}
-
 	data.Vulnerabilities = func() []vulnerabilityTypes.Vulnerability {
-		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(vulnURLs))
-		for vulnID, urls := range vulnURLs {
+		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(ovalDef.Metadata.Advisory.Cve))
+		for _, cve := range ovalDef.Metadata.Advisory.Cve {
 			vs = append(vs, vulnerabilityTypes.Vulnerability{
-				ID: vulnID,
-				References: func() []referenceTypes.Reference {
-					refs := make([]referenceTypes.Reference, 0, len(urls))
-					for url := range urls {
-						refs = append(refs, referenceTypes.Reference{
-							Source: "linux.oracle.com/security",
-							URL:    url,
-						})
-					}
-					return refs
-				}(),
+				ID: cve.Text,
+				References: []referenceTypes.Reference{{
+					Source: "linux.oracle.com/security",
+					URL:    cve.Href,
+				}},
 			})
 		}
 		return vs
 	}()
 
 	data.Advisories[0].References = func() []referenceTypes.Reference {
-		refs := make([]referenceTypes.Reference, 0, len(refURLs))
-		for url := range refURLs {
+		refs := make([]referenceTypes.Reference, 0, len(ovalDef.Metadata.Reference))
+		for _, r := range ovalDef.Metadata.Reference {
 			refs = append(refs, referenceTypes.Reference{
 				Source: "linux.oracle.com/security",
-				URL:    url,
+				URL:    r.RefURL,
 			})
 		}
 		return refs
