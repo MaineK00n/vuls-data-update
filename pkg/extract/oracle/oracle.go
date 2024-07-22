@@ -298,7 +298,7 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 	for _, ca := range criteria.Criterias {
 		ps, err := evalCriteria(ca, tos)
 		if err != nil {
-			return []ovalPackage{}, err
+			return nil, errors.Wrap(err, "eval criteria")
 		}
 		pkgs = append(pkgs, ps...)
 	}
