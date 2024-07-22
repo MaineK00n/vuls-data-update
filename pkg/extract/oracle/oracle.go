@@ -246,7 +246,7 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 
 type ovalPackage struct {
 	major           string
-	name        string
+	name            string
 	fixedVersion    string
 	modularityLabel string
 	arch            string
@@ -383,11 +383,27 @@ func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) 
 			}
 
 			// <ind-def:pattern operation="pattern match">\[container\-tools\][\w\W]*</ind-def:pattern>
-			module := strings.ReplaceAll(strings.TrimSuffix(strings.TrimPrefix(obj.Pattern.Text, `\[`), `\][\w\W]*`), `\`, "")
+			remaining, found := strings.CutPrefix(obj.Pattern.Text, `\[`)
+			if !found {
+				return errors.Errorf(`unexpected module pattern at prefix. expected: \[, actual: %s`, obj.Pattern.Text)
+			}
+			remaining, found = strings.CutSuffix(remaining, `\][\w\W]*`)
+			if !found {
+				return errors.Errorf(`unexpected module pattern at suffix. expected: \][\w\W]*, actual: %s`, remaining)
+			}
+			module := strings.ReplaceAll(remaining, `\`, "")
+
 			// <ind-def:text operation="pattern match">\nstream\s*=\s*ol8\b[\w\W]*\nstate\s*=\s*(enabled|1|true)|\nstate\s*=\s*(enabled|1|true)[\w\W]*\nstream\s*=\s*ol8\b</ind-def:text>
-			streamWithBackSlashes, _, _ := strings.Cut(strings.TrimPrefix(state.Text.Text, `\nstream\s*=\s*`), `\b[\w\W]`)
+			remaining, found = strings.CutPrefix(state.Text.Text, `\nstream\s*=\s*`)
+			if !found {
+				return errors.Errorf(`unexpected stream pattern at prefix. expected: \nstream\s*=\s*, actual: %s`, state.Text.Text)
+			}
+			remaining, _, found = strings.Cut(remaining, `\b[\w\W]`)
+			if !found {
+				return errors.Errorf(`unexpected stream pattern at suffix. expected: \nstream\s*=\s*, actual: %s`, remaining)
+			}
 			// There may be "." in stream and should be unescaped
-			stream := strings.ReplaceAll(streamWithBackSlashes, `\`, "")
+			stream := strings.ReplaceAll(remaining, `\`, "")
 			for i := range pkgs {
 				pkgs[i].modularityLabel = fmt.Sprintf("%s:%s", module, stream)
 			}
