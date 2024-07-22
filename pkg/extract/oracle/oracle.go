@@ -300,10 +300,6 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 }
 
 func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) error {
-	if len(criterions) == 0 {
-		return nil
-	}
-
 	for _, c := range criterions {
 		test, ok := tos.rpminfoTests[c.TestRef]
 		if ok {
