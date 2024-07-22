@@ -498,17 +498,12 @@ func readStates(statesRoot string) (map[string]oracle.RpminfoState, map[string]o
 		}
 		defer f.Close()
 
-		rel, err := filepath.Rel(statesRoot, path)
-		if err != nil {
-			return err
-		}
-		switch filepath.Dir(rel) {
+		switch filepath.Base(filepath.Dir(path)) {
 		case "rpminfo_state":
 			var fetched oracle.RpminfoState
 			if err := json.NewDecoder(f).Decode(&fetched); err != nil {
 				return errors.Wrapf(err, "decode %s", path)
 			}
-
 			rpminfoStates[fetched.ID] = fetched
 		case "textfilecontent54_state":
 			var fetched oracle.Textfilecontent54State
@@ -516,6 +511,8 @@ func readStates(statesRoot string) (map[string]oracle.RpminfoState, map[string]o
 				return errors.Wrapf(err, "decode %s", path)
 			}
 			textfileStates[fetched.ID] = fetched
+		default:
+			return errors.Errorf("unexpected state type. expected: %q, actual: %q", []string{"rpminfo_state", "textfilecontent54_state"}, filepath.Base(filepath.Dir(path)))
 		}
 		return nil
 	}); err != nil {
