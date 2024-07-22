@@ -25,6 +25,7 @@ func TestExtract(t *testing.T) {
 			args:       "./testdata/fixtures/modularitylabel",
 			goldenPath: "./testdata/golden/modularitylabel",
 		},
+		// Based on "modularitylabel" case, the regexp pattern of module stream is altered and others are identical
 		{
 			name:       "modularitylabel-stream-reversed",
 			args:       "./testdata/fixtures/modularitylabel-stream-reversed",
