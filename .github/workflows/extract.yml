@@ -98,7 +98,7 @@ jobs:
               # - "kev"
               # - "mitre-cvrf"
               # - "mitre-v4"
-              # - "mitre-v5"
+              - "mitre-v5"
               # - "msf"
               # - "nvd-api-cve"
               # - "nvd-api-cpe" 
