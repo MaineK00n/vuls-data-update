@@ -120,8 +120,14 @@ func Extract(inputPath string, opts ...Option) error {
 			return errors.Wrapf(err, "extract %s", path)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", data.ID)))
+		ss := strings.Split(data.ID, "-")
+		if !strings.HasPrefix(data.ID, "ELSA-") || len(ss) < 3 {
+			return errors.Wrapf(err, "invalid ID format: %s", data.ID)
+		}
+		year := ss[1]
+
+		if err := util.Write(filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)))
 		}
 
 		return nil
@@ -155,15 +161,27 @@ func Extract(inputPath string, opts ...Option) error {
 }
 
 func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
+	id := func() string {
+		for _, r := range def.Metadata.Reference {
+			if r.Source == "elsa" {
+				return r.RefID
+			}
+		}
+		return ""
+	}()
+	if id == "" {
+		return dataTypes.Data{}, errors.Errorf("advisory ID not found. definition: %s", def.ID)
+	}
+
 	ds, err := collectPackages(def.Criteria, tos)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
 	return dataTypes.Data{
-		ID: def.ID,
+		ID: id,
 		Advisories: []advisoryTypes.Advisory{{
-			ID:          def.ID,
+			ID:          id,
 			Title:       def.Metadata.Title,
 			Description: def.Metadata.Description,
 			Severity: []severityTypes.Severity{{
