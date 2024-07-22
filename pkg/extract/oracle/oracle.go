@@ -303,7 +303,7 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 		pkgs = append(pkgs, ps...)
 	}
 
-	// The case for parent criteria is AND and without child criterias case. Add base (ANY) one
+	// If this criteria is AND and without child criterias case. Add base (ANY) one
 	if criteria.Operator == "AND" && len(criteria.Criterias) == 0 {
 		pkgs = append(pkgs, ovalPackage{})
 	}
