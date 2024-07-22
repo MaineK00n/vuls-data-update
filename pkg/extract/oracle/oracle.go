@@ -154,16 +154,6 @@ func Extract(inputPath string, opts ...Option) error {
 	return nil
 }
 
-// Structs to collect packages by major version and gather architectures
-type packages map[majorType]perMajorPackages
-type majorType string
-type perMajorPackages map[packageKey]archtectures
-type packageKey struct {
-	name         string
-	fixedVersion string
-}
-type archtectures []string
-
 func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 	data := dataTypes.Data{
 		ID: def.ID,
@@ -205,41 +195,11 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 		return refs
 	}()
 
-	allPkgs, err := collectPackages(def.Criteria, tos)
+	ds, err := collectPackages(def.Criteria, tos)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
-
-	data.Detection = func() []detectionTypes.Detection {
-		ds := make([]detectionTypes.Detection, 0, len(allPkgs))
-		for major, pkgs := range allPkgs {
-			ds = append(ds, detectionTypes.Detection{
-				Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeOracle, major)),
-				Criteria: criteriaTypes.Criteria{
-					Operator: criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: func() []criterionTypes.Criterion {
-						criterions := make([]criterionTypes.Criterion, 0, len(pkgs))
-						for pkg, archs := range pkgs {
-							criterions = append(criterions, criterionTypes.Criterion{
-								Vulnerable: true,
-								Package: packageTypes.Package{
-									Name:          pkg.name,
-									Architectures: archs,
-								},
-								Affected: &affectedTypes.Affected{
-									Type:  rangeTypes.RangeTypeRPM,
-									Range: []rangeTypes.Range{{LessThan: pkg.fixedVersion}},
-									Fixed: []string{pkg.fixedVersion},
-								},
-							})
-						}
-						return criterions
-					}(),
-				},
-			})
-		}
-		return ds
-	}()
+	data.Detection = ds
 
 	return data, nil
 }
@@ -252,33 +212,62 @@ type ovalPackage struct {
 	arch            string
 }
 
-func collectPackages(criteria oracle.Criteria, tos tos) (packages, error) {
+func collectPackages(criteria oracle.Criteria, tos tos) ([]detectionTypes.Detection, error) {
 	pkgs, err := evalCriteria(criteria, tos)
 	if err != nil {
 		return nil, errors.Wrapf(err, "eval criteria")
 	}
 
-	allPkgs := packages{}
+	m := map[ovalPackage][]string{}
 	for _, p := range pkgs {
-		pkgs, ok := allPkgs[majorType(p.major)]
-		if !ok {
-			pkgs = perMajorPackages{}
-			allPkgs[majorType(p.major)] = pkgs
-		}
-		key := packageKey{
-			name: func() string {
-				switch p.modularityLabel {
-				case "":
-					return p.name
-				default:
-					return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
-				}
-			}(),
-			fixedVersion: p.fixedVersion,
-		}
-		pkgs[key] = append(pkgs[key], p.arch)
+		m[ovalPackage{
+			major:           p.major,
+			name:            p.name,
+			fixedVersion:    p.fixedVersion,
+			modularityLabel: p.modularityLabel,
+		}] = append(m[ovalPackage{
+			major:           p.major,
+			name:            p.name,
+			fixedVersion:    p.fixedVersion,
+			modularityLabel: p.modularityLabel,
+		}], p.arch)
 	}
-	return allPkgs, nil
+
+	// major version -> criterion
+	mm := map[string][]criterionTypes.Criterion{}
+	for p, as := range m {
+		mm[p.major] = append(mm[p.major], criterionTypes.Criterion{
+			Vulnerable: true,
+			Package: packageTypes.Package{
+				Name: func() string {
+					switch p.modularityLabel {
+					case "":
+						return p.name
+					default:
+						return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
+					}
+				}(),
+				Architectures: as,
+			},
+			Affected: &affectedTypes.Affected{
+				Type:  rangeTypes.RangeTypeRPM,
+				Range: []rangeTypes.Range{{LessThan: p.fixedVersion}},
+				Fixed: []string{p.fixedVersion},
+			},
+		})
+	}
+
+	ds := make([]detectionTypes.Detection, 0, len(mm))
+	for v, cs := range mm {
+		ds = append(ds, detectionTypes.Detection{
+			Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeOracle, v)),
+			Criteria: criteriaTypes.Criteria{
+				Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: cs,
+			},
+		})
+	}
+	return ds, nil
 }
 
 func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
