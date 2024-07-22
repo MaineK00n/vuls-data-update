@@ -80,7 +80,7 @@ func Extract(inputPath string, opts ...Option) error {
 	}
 	rpminfoObjs, textfileObjs, err := readObjects(filepath.Join(inputPath, "objects"))
 	if err != nil {
-		return err
+		return return errors.Wrap(err, "read objects")
 	}
 	rpminfoStates, textfileStates, err := readStates(filepath.Join(inputPath, "states"))
 	if err != nil {
