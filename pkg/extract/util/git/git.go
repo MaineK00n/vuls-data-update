@@ -12,18 +12,6 @@ func IsGitRepository(path string) bool {
 	return err == nil
 }
 
-func GetHEADCommit(path string) (string, error) {
-	repo, err := git.PlainOpen(path)
-	if err != nil {
-		return "", errors.Wrap(err, "open as git repository")
-	}
-	ref, err := repo.Head()
-	if err != nil {
-		return "", errors.Wrap(err, "get HEAD")
-	}
-	return ref.Hash().String(), nil
-}
-
 func GetOrigin(path string) (string, error) {
 	repo, err := git.PlainOpen(path)
 	if err != nil {
@@ -49,8 +37,15 @@ func GetDataSourceRepository(path string) (*repositoryTypes.Repository, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "get HEAD")
 	}
+
+	c, err := repo.CommitObject(ref.Hash())
+	if err != nil {
+		return nil, errors.Wrap(err, "get HEAD commit")
+	}
+
 	return &repositoryTypes.Repository{
 		URL:    remote.Config().URLs[0],
 		Commit: ref.Hash().String(),
+		Date:   &c.Author.When,
 	}, nil
 }
