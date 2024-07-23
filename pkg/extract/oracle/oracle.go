@@ -121,8 +121,8 @@ func Extract(inputPath string, opts ...Option) error {
 		}
 
 		ss := strings.Split(data.ID, "-")
-		if !strings.HasPrefix(data.ID, "ELSA-") || len(ss) < 3 {
-			return errors.Wrapf(err, "invalid ID format: %s", data.ID)
+		if len(ss) < 3 || ss[0] != "ELSA" {
+			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ELSA-<year>-<ID>",data.ID)
 		}
 		year := ss[1]
 
