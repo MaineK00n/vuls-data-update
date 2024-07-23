@@ -3,8 +3,8 @@
 	"advisories": [
 		{
 			"id": "ELSA-2024-4197",
-			"title": "\nELSA-2024-4197:  httpd:2.4/httpd security update (MODERATE)\n",
-			"description": "\nhttpd\n[2.4.37-65.0.1]\n- Replace index.html with Oracle's index page oracle_index.html\n\n[2.4.37-65]\n- Resolves: RHEL-31857 - httpd:2.4/httpd: HTTP response\n  splitting (CVE-2023-38709)\n\nmod_http2\nmod_md\n",
+			"title": "ELSA-2024-4197:  httpd:2.4/httpd security update (MODERATE)",
+			"description": "httpd\n[2.4.37-65.0.1]\n- Replace index.html with Oracle's index page oracle_index.html\n\n[2.4.37-65]\n- Resolves: RHEL-31857 - httpd:2.4/httpd: HTTP response\n  splitting (CVE-2023-38709)\n\nmod_http2\nmod_md",
 			"severity": [
 				{
 					"type": "vendor",

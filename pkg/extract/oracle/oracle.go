@@ -122,7 +122,7 @@ func Extract(inputPath string, opts ...Option) error {
 
 		ss := strings.Split(data.ID, "-")
 		if len(ss) < 3 || ss[0] != "ELSA" {
-			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ELSA-<year>-<ID>",data.ID)
+			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ELSA-<year>-<ID>", data.ID)
 		}
 		year := ss[1]
 
@@ -182,8 +182,8 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 		ID: id,
 		Advisories: []advisoryTypes.Advisory{{
 			ID:          id,
-			Title:       def.Metadata.Title,
-			Description: def.Metadata.Description,
+			Title:       strings.TrimSpace(def.Metadata.Title),
+			Description: strings.TrimSpace(def.Metadata.Description),
 			Severity: []severityTypes.Severity{{
 				Type:   severityTypes.SeverityTypeVendor,
 				Source: "linux.oracle.com/security",
