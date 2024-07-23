@@ -161,16 +161,9 @@ func Extract(inputPath string, opts ...Option) error {
 }
 
 func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
-	id := func() string {
-		for _, r := range def.Metadata.Reference {
-			if r.Source == "elsa" {
-				return r.RefID
-			}
-		}
-		return ""
-	}()
-	if id == "" {
-		return dataTypes.Data{}, errors.Errorf("advisory ID not found. definition: %s", def.ID)
+	id, _, ok := strings.Cut(strings.TrimSpace(def.Metadata.Title), ":")
+	if !ok {
+		return dataTypes.Data{}, errors.Errorf("unexpected title format. expected: %q, actual: %q", "<Advisory ID>: ...", def.Metadata.Title)
 	}
 
 	ds, err := collectPackages(def.Criteria, tos)
