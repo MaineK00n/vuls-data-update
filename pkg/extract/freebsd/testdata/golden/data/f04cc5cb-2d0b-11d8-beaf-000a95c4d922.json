@@ -2,35 +2,45 @@
 	"id": "f04cc5cb-2d0b-11d8-beaf-000a95c4d922",
 	"advisories": [
 		{
-			"id": "f04cc5cb-2d0b-11d8-beaf-000a95c4d922",
-			"title": "bind8 negative cache poison attack",
-			"description": "\n\t<p>A programming error in BIND 8 named can result in a DNS\n\tmessage being incorrectly cached as a negative response.  As\n\ta result, an attacker may arrange for malicious DNS messages\n\tto be delivered to a target name server, and cause that name\n\tserver to cache a negative response for some target domain\n\tname.  The name server would thereafter respond negatively\n\tto legitimate queries for that domain name, resulting in a\n\tdenial-of-service for applications that require DNS.</p>\n      ",
-			"references": [
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.freebsd.org/security/advisories/FreeBSD-SA-03:19.bind.asc"
-				},
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.kb.cert.org/vuls/id/734644"
-				},
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
-				}
-			],
-			"published": "2003-12-12T00:00:00Z",
-			"modified": "2004-05-05T00:00:00Z"
+			"content": {
+				"id": "f04cc5cb-2d0b-11d8-beaf-000a95c4d922",
+				"title": "bind8 negative cache poison attack",
+				"description": "\n\t<p>A programming error in BIND 8 named can result in a DNS\n\tmessage being incorrectly cached as a negative response.  As\n\ta result, an attacker may arrange for malicious DNS messages\n\tto be delivered to a target name server, and cause that name\n\tserver to cache a negative response for some target domain\n\tname.  The name server would thereafter respond negatively\n\tto legitimate queries for that domain name, resulting in a\n\tdenial-of-service for applications that require DNS.</p>\n      ",
+				"references": [
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.freebsd.org/security/advisories/FreeBSD-SA-03:19.bind.asc"
+					},
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.kb.cert.org/vuls/id/734644"
+					},
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.vuxml.org/freebsd/f04cc5cb-2d0b-11d8-beaf-000a95c4d922.html"
+					}
+				],
+				"published": "2003-12-12T00:00:00Z",
+				"modified": "2004-05-05T00:00:00Z"
+			},
+			"ecosystems": [
+				"freebsd"
+			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2003-0914",
-			"references": [
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.cve.org/CVERecord?id=CVE-2003-0914"
-				}
+			"content": {
+				"id": "CVE-2003-0914",
+				"references": [
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2003-0914"
+					}
+				]
+			},
+			"ecosystems": [
+				"freebsd"
 			]
 		}
 	],

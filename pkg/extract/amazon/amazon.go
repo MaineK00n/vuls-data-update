@@ -13,6 +13,7 @@ import (
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
@@ -22,6 +23,7 @@ import (
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -130,113 +132,7 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched amazon.Update) dataTypes.Data {
-	data := dataTypes.Data{
-		ID: fetched.ID,
-		Advisories: []advisoryTypes.Advisory{{
-			ID:          fetched.ID,
-			Title:       fetched.Title,
-			Description: fetched.Description,
-			Severity: []severityTypes.Severity{{
-				Type:   severityTypes.SeverityTypeVendor,
-				Source: fetched.Author,
-				Vendor: &fetched.Severity,
-			}},
-			References: []referenceTypes.Reference{{
-				Source: fetched.Author,
-				URL: func() string {
-					switch {
-					case strings.HasPrefix(fetched.ID, "ALAS2023"):
-						return fmt.Sprintf("https://alas.aws.amazon.com/AL2023/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2023"))
-					case strings.HasPrefix(fetched.ID, "ALAS2022"):
-						return fmt.Sprintf("https://alas.aws.amazon.com/AL2022/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2022"))
-					case strings.HasPrefix(fetched.ID, "ALAS2"):
-						return fmt.Sprintf("https://alas.aws.amazon.com/AL2/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2"))
-					default:
-						return fmt.Sprintf("https://alas.aws.amazon.com/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS"))
-					}
-				}(),
-			}},
-			Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
-			Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
-		}},
-		DataSource: sourceTypes.Amazon,
-	}
-
-	for _, r := range fetched.References.Reference {
-		switch r.Type {
-		case "cve":
-			data.Advisories[0].References = append(data.Advisories[0].References, referenceTypes.Reference{
-				Source: fetched.Author,
-				URL:    r.Href,
-			})
-			data.Vulnerabilities = append(data.Vulnerabilities, vulnerabilityTypes.Vulnerability{
-				ID: r.ID,
-				References: []referenceTypes.Reference{{
-					Source: fetched.Author,
-					URL:    r.Href,
-				}},
-			})
-		default:
-			data.Advisories[0].References = append(data.Advisories[0].References, referenceTypes.Reference{
-				Source: fetched.Author,
-				URL:    r.Href,
-			})
-		}
-	}
-
-	pkgs := map[string]map[string][]string{}
-	for _, p := range fetched.Pkglist.Collection.Package {
-		if pkgs[p.Name] == nil {
-			pkgs[p.Name] = map[string][]string{}
-		}
-		pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
-	}
-
-	cs := make([]criterionTypes.Criterion, 0, func() int {
-		cap := 0
-		for _, evras := range pkgs {
-			cap += len(evras)
-		}
-		return cap
-	}())
-
-	repos := func() []string {
-		switch {
-		case strings.HasPrefix(fetched.ID, "ALAS2023"):
-			if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
-				return []string{repo}
-			}
-			return []string{"amazonlinux"}
-		case strings.HasPrefix(fetched.ID, "ALAS2022"):
-			return []string{"amazonlinux"}
-		case strings.HasPrefix(fetched.ID, "ALAS2"):
-			if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
-				return []string{fmt.Sprintf("amzn2extra-%s", repo)}
-			}
-			return []string{"amzn2-core"}
-		default:
-			return []string{"amzn-main", "amzn-updates"}
-		}
-	}()
-	for n, evras := range pkgs {
-		for evr, as := range evras {
-			cs = append(cs, criterionTypes.Criterion{
-				Vulnerable: true,
-				Package: packageTypes.Package{
-					Name:          n,
-					Repositories:  repos,
-					Architectures: as,
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  rangeTypes.RangeTypeRPM,
-					Range: []rangeTypes.Range{{LessThan: evr}},
-					Fixed: []string{evr},
-				},
-			})
-		}
-	}
-
-	data.Detection = append(data.Detection, detectionTypes.Detection{
+	ds := detectionTypes.Detection{
 		Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAmazon, func() string {
 			switch {
 			case strings.HasPrefix(fetched.ID, "ALAS2023"):
@@ -250,10 +146,125 @@ func extract(fetched amazon.Update) dataTypes.Data {
 			}
 		}())),
 		Criteria: criteriaTypes.Criteria{
-			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: cs,
-		},
-	})
+			Operator: criteriaTypes.CriteriaOperatorTypeOR,
+			Criterions: func() []criterionTypes.Criterion {
+				pkgs := map[string]map[string][]string{}
+				for _, p := range fetched.Pkglist.Collection.Package {
+					if pkgs[p.Name] == nil {
+						pkgs[p.Name] = map[string][]string{}
+					}
+					pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
+				}
 
-	return data
+				cs := make([]criterionTypes.Criterion, 0, func() int {
+					cap := 0
+					for _, evras := range pkgs {
+						cap += len(evras)
+					}
+					return cap
+				}())
+
+				repos := func() []string {
+					switch {
+					case strings.HasPrefix(fetched.ID, "ALAS2023"):
+						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
+							return []string{repo}
+						}
+						return []string{"amazonlinux"}
+					case strings.HasPrefix(fetched.ID, "ALAS2022"):
+						return []string{"amazonlinux"}
+					case strings.HasPrefix(fetched.ID, "ALAS2"):
+						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
+							return []string{fmt.Sprintf("amzn2extra-%s", repo)}
+						}
+						return []string{"amzn2-core"}
+					default:
+						return []string{"amzn-main", "amzn-updates"}
+					}
+				}()
+				for n, evras := range pkgs {
+					for evr, as := range evras {
+						cs = append(cs, criterionTypes.Criterion{
+							Vulnerable: true,
+							Package: packageTypes.Package{
+								Name:          n,
+								Repositories:  repos,
+								Architectures: as,
+							},
+							Affected: &affectedTypes.Affected{
+								Type:  rangeTypes.RangeTypeRPM,
+								Range: []rangeTypes.Range{{LessThan: evr}},
+								Fixed: []string{evr},
+							},
+						})
+					}
+				}
+
+				return cs
+			}(),
+		},
+	}
+
+	return dataTypes.Data{
+		ID: fetched.ID,
+		Advisories: []advisoryTypes.Advisory{{
+			Content: advisoryContentTypes.Content{
+				ID:          fetched.ID,
+				Title:       fetched.Title,
+				Description: fetched.Description,
+				Severity: []severityTypes.Severity{{
+					Type:   severityTypes.SeverityTypeVendor,
+					Source: fetched.Author,
+					Vendor: &fetched.Severity,
+				}},
+				References: func() []referenceTypes.Reference {
+					rs := []referenceTypes.Reference{{
+						Source: fetched.Author,
+						URL: func() string {
+							switch {
+							case strings.HasPrefix(fetched.ID, "ALAS2023"):
+								return fmt.Sprintf("https://alas.aws.amazon.com/AL2023/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2023"))
+							case strings.HasPrefix(fetched.ID, "ALAS2022"):
+								return fmt.Sprintf("https://alas.aws.amazon.com/AL2022/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2022"))
+							case strings.HasPrefix(fetched.ID, "ALAS2"):
+								return fmt.Sprintf("https://alas.aws.amazon.com/AL2/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS2"))
+							default:
+								return fmt.Sprintf("https://alas.aws.amazon.com/ALAS%s.html", strings.TrimPrefix(fetched.ID, "ALAS"))
+							}
+						}(),
+					}}
+					for _, r := range fetched.References.Reference {
+						rs = append(rs, referenceTypes.Reference{
+							Source: fetched.Author,
+							URL:    r.Href,
+						})
+					}
+					return rs
+				}(),
+				Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
+				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
+			},
+			Ecosystems: []detectionTypes.Ecosystem{ds.Ecosystem},
+		}},
+		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
+			var vs []vulnerabilityTypes.Vulnerability
+			for _, r := range fetched.References.Reference {
+				if r.Type == "cve" {
+					vs = append(vs, vulnerabilityTypes.Vulnerability{
+						Content: vulnerabilityContentTypes.Content{
+							ID: r.ID,
+							References: []referenceTypes.Reference{{
+								Source: fetched.Author,
+								URL:    r.Href,
+							}},
+						},
+						Ecosystems: []detectionTypes.Ecosystem{ds.Ecosystem},
+					})
+				}
+			}
+			return vs
+		}(),
+		Detection:  []detectionTypes.Detection{ds},
+		DataSource: sourceTypes.Amazon,
+	}
 }

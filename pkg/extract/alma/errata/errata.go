@@ -15,6 +15,7 @@ import (
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
@@ -24,6 +25,7 @@ import (
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -93,8 +95,23 @@ func Extract(args string, opts ...Option) error {
 
 		extracted := extract(fetched, v)
 
-		if err := util.Write(filepath.Join(options.dir, "data", v, y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", v, y, fmt.Sprintf("%s.json", extracted.ID)))
+		if _, err := os.Stat(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
+			f, err := os.Open(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
+			if err != nil {
+				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
+			}
+			defer f.Close()
+
+			var base dataTypes.Data
+			if err := json.NewDecoder(f).Decode(&base); err != nil {
+				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
+			}
+
+			extracted.Merge(base)
+		}
+
+		if err := util.Write(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
 		return nil
@@ -128,98 +145,110 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched errata.Erratum, osver string) dataTypes.Data {
-	extracted := dataTypes.Data{
+	return dataTypes.Data{
 		ID: fetched.ID,
 		Advisories: []advisoryTypes.Advisory{{
-			ID:          fetched.ID,
-			Title:       fetched.Title,
-			Description: fetched.Description,
-			Severity: []severityTypes.Severity{{
-				Type:   severityTypes.SeverityTypeVendor,
-				Source: "errata.almalinux.org",
-				Vendor: &fetched.Severity,
-			}},
-			Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
-			Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
+			Content: advisoryContentTypes.Content{
+				ID:          fetched.ID,
+				Title:       fetched.Title,
+				Description: fetched.Description,
+				Severity: []severityTypes.Severity{{
+					Type:   severityTypes.SeverityTypeVendor,
+					Source: "errata.almalinux.org",
+					Vendor: &fetched.Severity,
+				}},
+				References: func() []referenceTypes.Reference {
+					m := map[referenceTypes.Reference]struct{}{{
+						Source: "errata.almalinux.org",
+						URL:    fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", osver, strings.ReplaceAll(fetched.ID, ":", "-")),
+					}: {}}
+					for _, r := range fetched.References {
+						m[referenceTypes.Reference{
+							Source: "errata.almalinux.org",
+							URL:    r.Href,
+						}] = struct{}{}
+					}
+					return maps.Keys(m)
+				}(),
+				Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
+				Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
+			},
+			Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver))},
 		}},
+		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
+			m := map[string]vulnerabilityContentTypes.Content{}
+			for _, r := range fetched.References {
+				if r.Type == "cve" {
+					base, ok := m[r.ID]
+					if !ok {
+						base.ID = r.ID
+					}
+					base.References = append(base.References, referenceTypes.Reference{
+						Source: "errata.almalinux.org",
+						URL:    r.Href,
+					})
+					m[r.ID] = base
+				}
+			}
+
+			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(m))
+			for _, c := range m {
+				vs = append(vs, vulnerabilityTypes.Vulnerability{
+					Content:    c,
+					Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver))},
+				})
+			}
+			return vs
+		}(),
+		Detection: func() []detectionTypes.Detection {
+			modules := map[string]string{}
+			for _, m := range fetched.Modules {
+				modules[fmt.Sprintf("%s:%s:%s:%s:%s", m.Name, m.Stream, m.Version, m.Context, m.Arch)] = fmt.Sprintf("%s:%s", m.Name, m.Stream)
+			}
+
+			packages := map[string]map[string][]string{}
+			for _, p := range fetched.Packages {
+				n := p.Name
+				if prefix, ok := modules[p.Module]; ok {
+					n = fmt.Sprintf("%s::%s", prefix, n)
+				}
+				if packages[n] == nil {
+					packages[n] = map[string][]string{}
+				}
+				packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)], p.Arch)
+			}
+
+			cs := make([]criterionTypes.Criterion, 0, func() int {
+				cap := 0
+				for _, vras := range packages {
+					cap += len(vras)
+				}
+				return cap
+			}())
+			for n, vras := range packages {
+				for vr, as := range vras {
+					cs = append(cs, criterionTypes.Criterion{
+						Vulnerable: true,
+						Package: packageTypes.Package{
+							Name:          n,
+							Architectures: as,
+						},
+						Affected: &affectedTypes.Affected{
+							Type:  rangeTypes.RangeTypeRPM,
+							Range: []rangeTypes.Range{{LessThan: vr}},
+							Fixed: []string{vr},
+						},
+					})
+				}
+			}
+			return []detectionTypes.Detection{{
+				Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver)),
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: cs,
+				},
+			}}
+		}(),
 		DataSource: sourceTypes.AlmaErrata,
 	}
-
-	rm := map[string]struct{}{fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", osver, strings.ReplaceAll(fetched.ID, ":", "-")): {}}
-	vm := map[string]vulnerabilityTypes.Vulnerability{}
-	for _, r := range fetched.References {
-		rm[r.Href] = struct{}{}
-
-		if r.Type == "cve" {
-			vm[r.ID] = vulnerabilityTypes.Vulnerability{
-				ID: r.ID,
-				References: []referenceTypes.Reference{{
-					Source: "errata.almalinux.org",
-					URL:    r.Href,
-				}},
-			}
-		}
-	}
-
-	extracted.Advisories[0].References = func() []referenceTypes.Reference {
-		rs := make([]referenceTypes.Reference, 0, len(rm))
-		for r := range rm {
-			rs = append(rs, referenceTypes.Reference{
-				Source: "errata.almalinux.org",
-				URL:    r,
-			})
-		}
-		return rs
-	}()
-	extracted.Vulnerabilities = maps.Values(vm)
-
-	modules := map[string]string{}
-	for _, m := range fetched.Modules {
-		modules[fmt.Sprintf("%s:%s:%s:%s:%s", m.Name, m.Stream, m.Version, m.Context, m.Arch)] = fmt.Sprintf("%s:%s", m.Name, m.Stream)
-	}
-
-	packages := map[string]map[string][]string{}
-	for _, p := range fetched.Packages {
-		n := p.Name
-		if prefix, ok := modules[p.Module]; ok {
-			n = fmt.Sprintf("%s::%s", prefix, n)
-		}
-		if packages[n] == nil {
-			packages[n] = map[string][]string{}
-		}
-		packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)], p.Arch)
-	}
-
-	cs := make([]criterionTypes.Criterion, 0, func() int {
-		cap := 0
-		for _, vras := range packages {
-			cap += len(vras)
-		}
-		return cap
-	}())
-	for n, vras := range packages {
-		for vr, as := range vras {
-			cs = append(cs, criterionTypes.Criterion{
-				Vulnerable: true,
-				Package: packageTypes.Package{
-					Name:          n,
-					Architectures: as,
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  rangeTypes.RangeTypeRPM,
-					Range: []rangeTypes.Range{{LessThan: vr}},
-					Fixed: []string{vr},
-				},
-			})
-		}
-	}
-	extracted.Detection = append(extracted.Detection, detectionTypes.Detection{
-		Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver)),
-		Criteria: criteriaTypes.Criteria{
-			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: cs,
-		},
-	})
-
-	return extracted
 }

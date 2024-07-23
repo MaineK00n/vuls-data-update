@@ -2,30 +2,40 @@
 	"id": "e0f6215b-c59e-11ee-a6db-080027a5b8e9",
 	"advisories": [
 		{
-			"id": "e0f6215b-c59e-11ee-a6db-080027a5b8e9",
-			"title": "Django -- multiple vulnerabilities",
-			"description": "\n\t<p>Django reports:</p>\n\t<blockquote cite=\"https://www.djangoproject.com/weblog/2024/feb/06/security-releases/\">\n\t  <p>CVE-2024-24680:Potential denial-of-service in intcomma template filter.</p>\n\t</blockquote>\n\t",
-			"references": [
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.djangoproject.com/weblog/2024/feb/06/security-releases/"
-				},
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.vuxml.org/freebsd/e0f6215b-c59e-11ee-a6db-080027a5b8e9.html"
-				}
-			],
-			"published": "2024-02-07T00:00:00Z"
+			"content": {
+				"id": "e0f6215b-c59e-11ee-a6db-080027a5b8e9",
+				"title": "Django -- multiple vulnerabilities",
+				"description": "\n\t<p>Django reports:</p>\n\t<blockquote cite=\"https://www.djangoproject.com/weblog/2024/feb/06/security-releases/\">\n\t  <p>CVE-2024-24680:Potential denial-of-service in intcomma template filter.</p>\n\t</blockquote>\n\t",
+				"references": [
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.djangoproject.com/weblog/2024/feb/06/security-releases/"
+					},
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.vuxml.org/freebsd/e0f6215b-c59e-11ee-a6db-080027a5b8e9.html"
+					}
+				],
+				"published": "2024-02-07T00:00:00Z"
+			},
+			"ecosystems": [
+				"freebsd"
+			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2024-24680",
-			"references": [
-				{
-					"source": "vuxml.freebsd.org",
-					"url": "https://www.cve.org/CVERecord?id=CVE-2024-24680"
-				}
+			"content": {
+				"id": "CVE-2024-24680",
+				"references": [
+					{
+						"source": "vuxml.freebsd.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-24680"
+					}
+				]
+			},
+			"ecosystems": [
+				"freebsd"
 			]
 		}
 	],

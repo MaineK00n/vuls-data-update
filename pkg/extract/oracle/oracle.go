@@ -13,6 +13,7 @@ import (
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
@@ -22,6 +23,7 @@ import (
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -171,37 +173,51 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
+	es := func() []detectionTypes.Ecosystem {
+		var es []detectionTypes.Ecosystem
+		for _, d := range ds {
+			es = append(es, d.Ecosystem)
+		}
+		return es
+	}()
+
 	return dataTypes.Data{
 		ID: id,
 		Advisories: []advisoryTypes.Advisory{{
-			ID:          id,
-			Title:       strings.TrimSpace(def.Metadata.Title),
-			Description: strings.TrimSpace(def.Metadata.Description),
-			Severity: []severityTypes.Severity{{
-				Type:   severityTypes.SeverityTypeVendor,
-				Source: "linux.oracle.com/security",
-				Vendor: &def.Metadata.Advisory.Severity}},
-			References: func() []referenceTypes.Reference {
-				refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference))
-				for _, r := range def.Metadata.Reference {
-					refs = append(refs, referenceTypes.Reference{
-						Source: "linux.oracle.com/security",
-						URL:    r.RefURL,
-					})
-				}
-				return refs
-			}(),
-			Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
+			Content: advisoryContentTypes.Content{
+				ID:          id,
+				Title:       strings.TrimSpace(def.Metadata.Title),
+				Description: strings.TrimSpace(def.Metadata.Description),
+				Severity: []severityTypes.Severity{{
+					Type:   severityTypes.SeverityTypeVendor,
+					Source: "linux.oracle.com/security",
+					Vendor: &def.Metadata.Advisory.Severity}},
+				References: func() []referenceTypes.Reference {
+					refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference))
+					for _, r := range def.Metadata.Reference {
+						refs = append(refs, referenceTypes.Reference{
+							Source: "linux.oracle.com/security",
+							URL:    r.RefURL,
+						})
+					}
+					return refs
+				}(),
+				Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
+			},
+			Ecosystems: es,
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
 			for _, cve := range def.Metadata.Advisory.Cve {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
-					ID: cve.Text,
-					References: []referenceTypes.Reference{{
-						Source: "linux.oracle.com/security",
-						URL:    cve.Href,
-					}},
+					Content: vulnerabilityContentTypes.Content{
+						ID: cve.Text,
+						References: []referenceTypes.Reference{{
+							Source: "linux.oracle.com/security",
+							URL:    cve.Href,
+						}},
+					},
+					Ecosystems: es,
 				})
 			}
 			return vs

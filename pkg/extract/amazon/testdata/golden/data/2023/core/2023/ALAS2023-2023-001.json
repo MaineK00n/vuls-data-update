@@ -2,49 +2,64 @@
 	"id": "ALAS2023-2023-001",
 	"advisories": [
 		{
-			"id": "ALAS2023-2023-001",
-			"title": "Amazon Linux 2023 - ALAS2023-2023-001: Important priority package update for rsyslog",
-			"description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\n\tCVE-2022-24903:\n\t\tA flaw was found in rsyslog's reception TCP modules. This flaw allows an attacker to craft a malicious message leading to a heap-based buffer overflow. This issue allows the attacker to corrupt or access data stored in memory, leading to a denial of service in the rsyslog or possible remote code execution.\n\t\n\tCVE-2014-3634:\n\t\tA flaw was found in the way rsyslog handled invalid log message priority values. In certain configurations, a local attacker, or a remote attacker able to connect to the rsyslog port, could use this flaw to crash the rsyslog daemon or, potentially in rsyslog 7.x, execute arbitrary code as the user running the rsyslog daemon.\n\t",
-			"severity": [
-				{
-					"type": "vendor",
-					"source": "linux-security@amazon.com",
-					"vendor": "Important"
-				}
-			],
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634"
-				},
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903"
-				},
-				{
-					"source": "linux-security@amazon.com",
-					"url": "https://alas.aws.amazon.com/AL2023/ALAS-2023-001.html"
-				}
+			"content": {
+				"id": "ALAS2023-2023-001",
+				"title": "Amazon Linux 2023 - ALAS2023-2023-001: Important priority package update for rsyslog",
+				"description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\n\tCVE-2022-24903:\n\t\tA flaw was found in rsyslog's reception TCP modules. This flaw allows an attacker to craft a malicious message leading to a heap-based buffer overflow. This issue allows the attacker to corrupt or access data stored in memory, leading to a denial of service in the rsyslog or possible remote code execution.\n\t\n\tCVE-2014-3634:\n\t\tA flaw was found in the way rsyslog handled invalid log message priority values. In certain configurations, a local attacker, or a remote attacker able to connect to the rsyslog port, could use this flaw to crash the rsyslog daemon or, potentially in rsyslog 7.x, execute arbitrary code as the user running the rsyslog daemon.\n\t",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux-security@amazon.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://alas.aws.amazon.com/AL2023/ALAS-2023-001.html"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:2023"
 			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2014-3634",
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634"
-				}
+			"content": {
+				"id": "CVE-2014-3634",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:2023"
 			]
 		},
 		{
-			"id": "CVE-2022-24903",
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903"
-				}
+			"content": {
+				"id": "CVE-2022-24903",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:2023"
 			]
 		}
 	],

@@ -2,36 +2,46 @@
 	"id": "ALAS2023LIVEPATCH-2023-001",
 	"advisories": [
 		{
-			"id": "ALAS2023LIVEPATCH-2023-001",
-			"title": "Amazon Linux 2023 - Kernel Livepatch - ALAS2023LIVEPATCH-2023-001: important priority package update for kernel-livepatch-6.1.12-19.43",
-			"description": "Package updates are available for Amazon Linux 2023 - Kernel Livepatch that fix the following vulnerabilities:\nCVE-2023-26545:\n\tIn the Linux kernel before 6.1.13, there is a double free in net/mpls/af_mpls.c upon an allocation failure (for registering the sysctl table under a new location) during the renaming of a device.\n",
-			"severity": [
-				{
-					"type": "vendor",
-					"source": "linux-security@amazon.com",
-					"vendor": "important"
-				}
-			],
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-26545"
-				},
-				{
-					"source": "linux-security@amazon.com",
-					"url": "https://alas.aws.amazon.com/AL2023/ALASLIVEPATCH-2023-001.html"
-				}
+			"content": {
+				"id": "ALAS2023LIVEPATCH-2023-001",
+				"title": "Amazon Linux 2023 - Kernel Livepatch - ALAS2023LIVEPATCH-2023-001: important priority package update for kernel-livepatch-6.1.12-19.43",
+				"description": "Package updates are available for Amazon Linux 2023 - Kernel Livepatch that fix the following vulnerabilities:\nCVE-2023-26545:\n\tIn the Linux kernel before 6.1.13, there is a double free in net/mpls/af_mpls.c upon an allocation failure (for registering the sysctl table under a new location) during the renaming of a device.\n",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux-security@amazon.com",
+						"vendor": "important"
+					}
+				],
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-26545"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://alas.aws.amazon.com/AL2023/ALASLIVEPATCH-2023-001.html"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:2023"
 			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2023-26545",
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-26545"
-				}
+			"content": {
+				"id": "CVE-2023-26545",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-26545"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:2023"
 			]
 		}
 	],

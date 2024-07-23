@@ -21,6 +21,7 @@ import (
 	epssTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/epss"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -164,8 +165,8 @@ func Extract(args string, opts ...Option) error {
 
 				data := dataTypes.Data{
 					ID: req.ID,
-					Vulnerabilities: []vulnerabilityTypes.Vulnerability{
-						{
+					Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
+						Content: vulnerabilityContentTypes.Content{
 							ID: req.ID,
 							EPSS: []epssTypes.EPSS{{
 								Model:      fetched.Model,
@@ -178,7 +179,7 @@ func Extract(args string, opts ...Option) error {
 								URL:    fmt.Sprintf("https://api.first.org/data/v1/epss?cve=%s", req.ID),
 							}},
 						},
-					},
+					}},
 					DataSource: sourceTypes.EPSS,
 				}
 				if _, err := os.Stat(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID))); err == nil {
@@ -193,7 +194,7 @@ func Extract(args string, opts ...Option) error {
 						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
 					}
 
-					d.Vulnerabilities[0].EPSS = append(d.Vulnerabilities[0].EPSS, epssTypes.EPSS{
+					d.Vulnerabilities[0].Content.EPSS = append(d.Vulnerabilities[0].Content.EPSS, epssTypes.EPSS{
 						Model:      fetched.Model,
 						ScoreDate:  t,
 						EPSS:       req.EPSS,
