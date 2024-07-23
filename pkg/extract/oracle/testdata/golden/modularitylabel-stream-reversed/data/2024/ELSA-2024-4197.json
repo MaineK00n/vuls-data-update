@@ -2,37 +2,47 @@
 	"id": "ELSA-2024-4197",
 	"advisories": [
 		{
-			"id": "ELSA-2024-4197",
-			"title": "ELSA-2024-4197:  httpd:2.4/httpd security update (MODERATE)",
-			"description": "httpd\n[2.4.37-65.0.1]\n- Replace index.html with Oracle's index page oracle_index.html\n\n[2.4.37-65]\n- Resolves: RHEL-31857 - httpd:2.4/httpd: HTTP response\n  splitting (CVE-2023-38709)\n\nmod_http2\nmod_md",
-			"severity": [
-				{
-					"type": "vendor",
-					"source": "linux.oracle.com/security",
-					"vendor": "MODERATE"
-				}
-			],
-			"references": [
-				{
-					"source": "linux.oracle.com/security",
-					"url": "https://linux.oracle.com/cve/CVE-2023-38709.html"
-				},
-				{
-					"source": "linux.oracle.com/security",
-					"url": "https://linux.oracle.com/errata/ELSA-2024-4197.html"
-				}
-			],
-			"published": "2024-07-01T00:00:00Z"
+			"content": {
+				"id": "ELSA-2024-4197",
+				"title": "ELSA-2024-4197:  httpd:2.4/httpd security update (MODERATE)",
+				"description": "httpd\n[2.4.37-65.0.1]\n- Replace index.html with Oracle's index page oracle_index.html\n\n[2.4.37-65]\n- Resolves: RHEL-31857 - httpd:2.4/httpd: HTTP response\n  splitting (CVE-2023-38709)\n\nmod_http2\nmod_md",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux.oracle.com/security",
+						"vendor": "MODERATE"
+					}
+				],
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2023-38709.html"
+					},
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/errata/ELSA-2024-4197.html"
+					}
+				],
+				"published": "2024-07-01T00:00:00Z"
+			},
+			"ecosystems": [
+				"oracle:8"
+			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2023-38709",
-			"references": [
-				{
-					"source": "linux.oracle.com/security",
-					"url": "https://linux.oracle.com/cve/CVE-2023-38709.html"
-				}
+			"content": {
+				"id": "CVE-2023-38709",
+				"references": [
+					{
+						"source": "linux.oracle.com/security",
+						"url": "https://linux.oracle.com/cve/CVE-2023-38709.html"
+					}
+				]
+			},
+			"ecosystems": [
+				"oracle:8"
 			]
 		}
 	],

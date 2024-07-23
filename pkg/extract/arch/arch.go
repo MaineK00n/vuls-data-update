@@ -12,6 +12,7 @@ import (
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
@@ -21,6 +22,7 @@ import (
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -122,79 +124,99 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched arch.VulnerabilityGroup) dataTypes.Data {
-	extracted := dataTypes.Data{
+	return dataTypes.Data{
 		ID: fetched.Name,
-		Advisories: []advisoryTypes.Advisory{{
-			ID: fetched.Name,
-			Severity: []severityTypes.Severity{{
-				Type:   severityTypes.SeverityTypeVendor,
-				Source: "security.archlinux.org",
-				Vendor: &fetched.Severity,
-			}},
-			References: []referenceTypes.Reference{{
-				Source: "security.archlinux.org",
-				URL:    fmt.Sprintf("https://security.archlinux.org/%s", fetched.Name),
-			}},
-		}},
+		Advisories: func() []advisoryTypes.Advisory {
+			as := []advisoryTypes.Advisory{{
+				Content: advisoryContentTypes.Content{
+					ID: fetched.Name,
+					Severity: []severityTypes.Severity{{
+						Type:   severityTypes.SeverityTypeVendor,
+						Source: "security.archlinux.org",
+						Vendor: &fetched.Severity,
+					}},
+					References: func() []referenceTypes.Reference {
+						rs := []referenceTypes.Reference{{
+							Source: "security.archlinux.org",
+							URL:    fmt.Sprintf("https://security.archlinux.org/%s", fetched.Name),
+						}}
+
+						if fetched.Ticket != nil {
+							rs = append(rs, referenceTypes.Reference{
+								Source: "security.archlinux.org",
+								URL:    fmt.Sprintf("https://bugs.archlinux.org/task/%s", *fetched.Ticket),
+							})
+						}
+
+						return rs
+					}(),
+				},
+				Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch)},
+			}}
+
+			for _, a := range fetched.Advisories {
+				as = append(as, advisoryTypes.Advisory{
+					Content: advisoryContentTypes.Content{
+						ID: a,
+						References: []referenceTypes.Reference{{
+							Source: "security.archlinux.org",
+							URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
+						}},
+					},
+					Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch)},
+				})
+			}
+
+			return as
+		}(),
+		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
+			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(fetched.Issues))
+			for _, i := range fetched.Issues {
+				vs = append(vs, vulnerabilityTypes.Vulnerability{
+					Content: vulnerabilityContentTypes.Content{
+						ID: i,
+						References: []referenceTypes.Reference{{
+							Source: "security.archlinux.org",
+							URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
+						}},
+					},
+					Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch)},
+				})
+			}
+			return vs
+		}(),
+		Detection: func() []detectionTypes.Detection {
+			affected := affectedTypes.Affected{
+				Type:  rangeTypes.RangeTypePacman,
+				Range: []rangeTypes.Range{{LessEqual: fetched.Affected}},
+			}
+			if fetched.Fixed != nil {
+				affected = affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypePacman,
+					Range: []rangeTypes.Range{{LessThan: *fetched.Fixed}},
+					Fixed: []string{*fetched.Fixed},
+				}
+			}
+
+			cs := make([]criterionTypes.Criterion, 0, len(fetched.Packages))
+			for _, p := range fetched.Packages {
+				cs = append(cs, criterionTypes.Criterion{
+					Vulnerable: true,
+					Package: packageTypes.Package{
+						Name: p,
+					},
+					Affected: &affected,
+				})
+			}
+
+			return []detectionTypes.Detection{{
+				Ecosystem: detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch),
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: cs,
+				},
+			}}
+		}(),
 		DataSource: sourceTypes.Arch,
 	}
-
-	if fetched.Ticket != nil {
-		extracted.Advisories[0].References = append(extracted.Advisories[0].References, referenceTypes.Reference{
-			Source: "security.archlinux.org",
-			URL:    fmt.Sprintf("https://bugs.archlinux.org/task/%s", *fetched.Ticket),
-		})
-	}
-
-	for _, a := range fetched.Advisories {
-		extracted.Advisories = append(extracted.Advisories, advisoryTypes.Advisory{
-			ID: a,
-			References: []referenceTypes.Reference{{
-				Source: "security.archlinux.org",
-				URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
-			}},
-		})
-	}
-
-	for _, i := range fetched.Issues {
-		extracted.Vulnerabilities = append(extracted.Vulnerabilities, vulnerabilityTypes.Vulnerability{
-			ID: i,
-			References: []referenceTypes.Reference{{
-				Source: "security.archlinux.org",
-				URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
-			}},
-		})
-	}
-
-	affected := affectedTypes.Affected{
-		Type:  rangeTypes.RangeTypePacman,
-		Range: []rangeTypes.Range{{LessEqual: fetched.Affected}},
-	}
-	if fetched.Fixed != nil {
-		affected = affectedTypes.Affected{
-			Type:  rangeTypes.RangeTypePacman,
-			Range: []rangeTypes.Range{{LessThan: *fetched.Fixed}},
-			Fixed: []string{*fetched.Fixed},
-		}
-	}
-
-	cs := make([]criterionTypes.Criterion, 0, len(fetched.Packages))
-	for _, p := range fetched.Packages {
-		cs = append(cs, criterionTypes.Criterion{
-			Vulnerable: true,
-			Package: packageTypes.Package{
-				Name: p,
-			},
-			Affected: &affected,
-		})
-	}
-	extracted.Detection = append(extracted.Detection, detectionTypes.Detection{
-		Ecosystem: detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch),
-		Criteria: criteriaTypes.Criteria{
-			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: cs,
-		},
-	})
-
-	return extracted
 }

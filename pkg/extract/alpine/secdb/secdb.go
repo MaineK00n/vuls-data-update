@@ -7,11 +7,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
@@ -22,6 +20,7 @@ import (
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -87,8 +86,23 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		for _, data := range extract(fetched) {
-			if err := util.Write(filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", data.ID)))
+			if _, err := os.Stat(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID))); err == nil {
+				f, err := os.Open(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+				if err != nil {
+					return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+				}
+				defer f.Close()
+
+				var base dataTypes.Data
+				if err := json.NewDecoder(f).Decode(&base); err != nil {
+					return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
+				}
+
+				data.Merge(base)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
 			}
 		}
 
@@ -123,26 +137,11 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched secdb.Advisory) []dataTypes.Data {
-	m := map[string]dataTypes.Data{}
+	m := map[string][]criterionTypes.Criterion{}
 	for _, pkg := range fetched.Packages {
 		for v, ids := range pkg.Pkg.Secfixes {
 			for _, id := range ids {
-				d, ok := m[id]
-				if !ok {
-					d = dataTypes.Data{
-						ID: id,
-						Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
-							ID: id,
-							References: []referenceTypes.Reference{{
-								Source: "security.alpinelinux.org",
-								URL:    fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", id),
-							}},
-						}},
-						DataSource: sourceTypes.AlpineSecDB,
-					}
-				}
-
-				c := criterionTypes.Criterion{
+				m[id] = append(m[id], criterionTypes.Criterion{
 					Vulnerable: true,
 					Package: packageTypes.Package{
 						Name:          pkg.Pkg.Name,
@@ -154,28 +153,34 @@ func extract(fetched secdb.Advisory) []dataTypes.Data {
 						Range: []rangeTypes.Range{{LessThan: v}},
 						Fixed: []string{v},
 					},
-				}
-
-				switch index := slices.IndexFunc(d.Detection, func(e detectionTypes.Detection) bool {
-					return e.Ecosystem == detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")))
-				}); index {
-				case -1:
-					d.Detection = []detectionTypes.Detection{
-						{
-							Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
-							Criteria: criteriaTypes.Criteria{
-								Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-								Criterions: []criterionTypes.Criterion{c},
-							},
-						},
-					}
-				default:
-					d.Detection[index].Criteria.Criterions = append(d.Detection[index].Criteria.Criterions, c)
-
-				}
-				m[id] = d
+				})
 			}
 		}
 	}
-	return maps.Values(m)
+
+	ds := make([]dataTypes.Data, 0, len(m))
+	for id, cs := range m {
+		ds = append(ds, dataTypes.Data{
+			ID: id,
+			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
+				Content: vulnerabilityContentTypes.Content{
+					ID: id,
+					References: []referenceTypes.Reference{{
+						Source: "security.alpinelinux.org",
+						URL:    fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", id),
+					}},
+				},
+				Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")))},
+			}},
+			Detection: []detectionTypes.Detection{{
+				Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: cs,
+				},
+			}},
+			DataSource: sourceTypes.AlpineSecDB,
+		})
+	}
+	return ds
 }

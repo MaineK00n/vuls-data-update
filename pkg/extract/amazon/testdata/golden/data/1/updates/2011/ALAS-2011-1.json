@@ -2,40 +2,50 @@
 	"id": "ALAS-2011-1",
 	"advisories": [
 		{
-			"id": "ALAS-2011-1",
-			"title": "Amazon Linux AMI 2011.09 - ALAS-2011-1: medium priority package update for httpd",
-			"description": "Package updates are available for Amazon Linux AMI that fix the following vulnerabilities:\nCVE-2011-3192:\n\tThe byterange filter in the Apache HTTP Server 1.3.x, 2.0.x through 2.0.64, and 2.2.x through 2.2.19 allows remote attackers to cause a denial of service (memory and CPU consumption) via a Range header that expresses multiple overlapping ranges, as exploited in the wild in August 2011, a different vulnerability than CVE-2007-0086.\nA flaw was found in the way the Apache HTTP Server handled Range HTTP headers. A remote attacker could use this flaw to cause httpd to use an excessive amount of memory and CPU time via HTTP requests with a specially-crafted Range header.\n",
-			"severity": [
-				{
-					"type": "vendor",
-					"source": "linux-security@amazon.com",
-					"vendor": "medium"
-				}
-			],
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
-				},
-				{
-					"source": "linux-security@amazon.com",
-					"url": "https://alas.aws.amazon.com/ALAS-2011-1.html"
-				},
-				{
-					"source": "linux-security@amazon.com",
-					"url": "https://rhn.redhat.com/errata/RHSA-2011:1245.html"
-				}
+			"content": {
+				"id": "ALAS-2011-1",
+				"title": "Amazon Linux AMI 2011.09 - ALAS-2011-1: medium priority package update for httpd",
+				"description": "Package updates are available for Amazon Linux AMI that fix the following vulnerabilities:\nCVE-2011-3192:\n\tThe byterange filter in the Apache HTTP Server 1.3.x, 2.0.x through 2.0.64, and 2.2.x through 2.2.19 allows remote attackers to cause a denial of service (memory and CPU consumption) via a Range header that expresses multiple overlapping ranges, as exploited in the wild in August 2011, a different vulnerability than CVE-2007-0086.\nA flaw was found in the way the Apache HTTP Server handled Range HTTP headers. A remote attacker could use this flaw to cause httpd to use an excessive amount of memory and CPU time via HTTP requests with a specially-crafted Range header.\n",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux-security@amazon.com",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://alas.aws.amazon.com/ALAS-2011-1.html"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://rhn.redhat.com/errata/RHSA-2011:1245.html"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:1"
 			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2011-3192",
-			"references": [
-				{
-					"source": "linux-security@amazon.com",
-					"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
-				}
+			"content": {
+				"id": "CVE-2011-3192",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
+					}
+				]
+			},
+			"ecosystems": [
+				"amazon:1"
 			]
 		}
 	],

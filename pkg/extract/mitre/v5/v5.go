@@ -20,6 +20,7 @@ import (
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -126,137 +127,139 @@ func extract(fetched v5.CVE) (dataTypes.Data, error) {
 		return dataTypes.Data{
 			ID: fetched.CVEMetadata.CVEID,
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
-				ID: fetched.CVEMetadata.CVEID,
-				Title: func() string {
-					if fetched.Containers.CNA.Title != nil {
-						return *fetched.Containers.CNA.Title
-					}
-					return ""
-				}(),
-				Description: func() string {
-					for _, d := range fetched.Containers.CNA.Descriptions {
-						if d.Lang == "en" {
-							return d.Value
+				Content: vulnerabilityContentTypes.Content{
+					ID: fetched.CVEMetadata.CVEID,
+					Title: func() string {
+						if fetched.Containers.CNA.Title != nil {
+							return *fetched.Containers.CNA.Title
 						}
-					}
-					return ""
-				}(),
-				Severity: func() []severityTypes.Severity {
-					m := map[string][]v5.Metric{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.Metrics}
-					for _, c := range fetched.Containers.ADP {
-						m[getSource(c.ProviderMetadata)] = c.Metrics
-					}
-
-					var ss []severityTypes.Severity
-					for source, ms := range m {
-						for _, metric := range ms {
-							if metric.CVSSv2 != nil {
-								v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
-								if err != nil {
-									log.Printf("[WARN] unexpected CVSS v2 vector: %s", metric.CVSSv2.VectorString)
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:   severityTypes.SeverityTypeCVSSv2,
-									Source: source,
-									CVSSv2: v2,
-								})
-							}
-							if metric.CVSSv30 != nil {
-								v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
-								if err != nil {
-									log.Printf("[WARN] unexpected CVSS v3.0 vector: %s", metric.CVSSv30.VectorString)
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:    severityTypes.SeverityTypeCVSSv30,
-									Source:  source,
-									CVSSv30: v30,
-								})
-							}
-							if metric.CVSSv31 != nil {
-								v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
-								if err != nil {
-									log.Printf("[WARN] unexpected CVSS v3.1 vector: %s", metric.CVSSv31.VectorString)
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:    severityTypes.SeverityTypeCVSSv31,
-									Source:  source,
-									CVSSv31: v31,
-								})
-							}
-							if metric.CVSSv40 != nil {
-								v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
-								if err != nil {
-									log.Printf("[WARN] unexpected CVSS v4.0 vector: %s", metric.CVSSv40.VectorString)
-									continue
-								}
-								ss = append(ss, severityTypes.Severity{
-									Type:    severityTypes.SeverityTypeCVSSv40,
-									Source:  source,
-									CVSSv40: v40,
-								})
+						return ""
+					}(),
+					Description: func() string {
+						for _, d := range fetched.Containers.CNA.Descriptions {
+							if d.Lang == "en" {
+								return d.Value
 							}
 						}
-					}
-					return ss
-				}(),
-				CWE: func() []cweTypes.CWE {
-					m := map[string][]v5.ProblemType{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.ProblemTypes}
-					for _, c := range fetched.Containers.ADP {
-						m[getSource(c.ProviderMetadata)] = c.ProblemTypes
-					}
+						return ""
+					}(),
+					Severity: func() []severityTypes.Severity {
+						m := map[string][]v5.Metric{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.Metrics}
+						for _, c := range fetched.Containers.ADP {
+							m[getSource(c.ProviderMetadata)] = c.Metrics
+						}
 
-					mm := make(map[string][]string)
-					for source, ps := range m {
-						for _, p := range ps {
-							for _, d := range p.Descriptions {
-								if d.CweID != nil {
-									mm[source] = append(mm[source], *d.CweID)
+						var ss []severityTypes.Severity
+						for source, ms := range m {
+							for _, metric := range ms {
+								if metric.CVSSv2 != nil {
+									v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
+									if err != nil {
+										log.Printf("[WARN] unexpected CVSS v2 vector: %s", metric.CVSSv2.VectorString)
+										continue
+									}
+									ss = append(ss, severityTypes.Severity{
+										Type:   severityTypes.SeverityTypeCVSSv2,
+										Source: source,
+										CVSSv2: v2,
+									})
+								}
+								if metric.CVSSv30 != nil {
+									v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
+									if err != nil {
+										log.Printf("[WARN] unexpected CVSS v3.0 vector: %s", metric.CVSSv30.VectorString)
+										continue
+									}
+									ss = append(ss, severityTypes.Severity{
+										Type:    severityTypes.SeverityTypeCVSSv30,
+										Source:  source,
+										CVSSv30: v30,
+									})
+								}
+								if metric.CVSSv31 != nil {
+									v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
+									if err != nil {
+										log.Printf("[WARN] unexpected CVSS v3.1 vector: %s", metric.CVSSv31.VectorString)
+										continue
+									}
+									ss = append(ss, severityTypes.Severity{
+										Type:    severityTypes.SeverityTypeCVSSv31,
+										Source:  source,
+										CVSSv31: v31,
+									})
+								}
+								if metric.CVSSv40 != nil {
+									v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
+									if err != nil {
+										log.Printf("[WARN] unexpected CVSS v4.0 vector: %s", metric.CVSSv40.VectorString)
+										continue
+									}
+									ss = append(ss, severityTypes.Severity{
+										Type:    severityTypes.SeverityTypeCVSSv40,
+										Source:  source,
+										CVSSv40: v40,
+									})
 								}
 							}
 						}
-					}
+						return ss
+					}(),
+					CWE: func() []cweTypes.CWE {
+						m := map[string][]v5.ProblemType{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.ProblemTypes}
+						for _, c := range fetched.Containers.ADP {
+							m[getSource(c.ProviderMetadata)] = c.ProblemTypes
+						}
 
-					cwes := make([]cweTypes.CWE, 0, len(mm))
-					for source, cs := range mm {
-						cwes = append(cwes, cweTypes.CWE{
-							Source: source,
-							CWE:    cs,
-						})
-					}
-					return cwes
-				}(),
-				References: func() []referenceTypes.Reference {
-					m := map[string][]v5.Reference{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.References}
-					for _, c := range fetched.Containers.ADP {
-						m[getSource(c.ProviderMetadata)] = c.References
-					}
+						mm := make(map[string][]string)
+						for source, ps := range m {
+							for _, p := range ps {
+								for _, d := range p.Descriptions {
+									if d.CweID != nil {
+										mm[source] = append(mm[source], *d.CweID)
+									}
+								}
+							}
+						}
 
-					var refs []referenceTypes.Reference
-					for source, rs := range m {
-						for _, r := range rs {
-							refs = append(refs, referenceTypes.Reference{
+						cwes := make([]cweTypes.CWE, 0, len(mm))
+						for source, cs := range mm {
+							cwes = append(cwes, cweTypes.CWE{
 								Source: source,
-								URL:    r.URL,
+								CWE:    cs,
 							})
 						}
-					}
-					return refs
-				}(),
-				Published: func() *time.Time {
-					if fetched.CVEMetadata.DatePublished != nil {
-						return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DatePublished)
-					}
-					return nil
-				}(),
-				Modified: func() *time.Time {
-					if fetched.CVEMetadata.DateUpdated != nil {
-						return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DateUpdated)
-					}
-					return nil
-				}(),
+						return cwes
+					}(),
+					References: func() []referenceTypes.Reference {
+						m := map[string][]v5.Reference{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.References}
+						for _, c := range fetched.Containers.ADP {
+							m[getSource(c.ProviderMetadata)] = c.References
+						}
+
+						var refs []referenceTypes.Reference
+						for source, rs := range m {
+							for _, r := range rs {
+								refs = append(refs, referenceTypes.Reference{
+									Source: source,
+									URL:    r.URL,
+								})
+							}
+						}
+						return refs
+					}(),
+					Published: func() *time.Time {
+						if fetched.CVEMetadata.DatePublished != nil {
+							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DatePublished)
+						}
+						return nil
+					}(),
+					Modified: func() *time.Time {
+						if fetched.CVEMetadata.DateUpdated != nil {
+							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DateUpdated)
+						}
+						return nil
+					}(),
+				},
 			}},
 			DataSource: sourceTypes.MitreV5,
 		}, nil
@@ -264,33 +267,35 @@ func extract(fetched v5.CVE) (dataTypes.Data, error) {
 		return dataTypes.Data{
 			ID: fetched.CVEMetadata.CVEID,
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
-				ID: fetched.CVEMetadata.CVEID,
-				Title: func() string {
-					if fetched.Containers.CNA.Title != nil {
-						return *fetched.Containers.CNA.Title
-					}
-					return ""
-				}(),
-				Description: func() string {
-					for _, d := range fetched.Containers.CNA.RejectedReasons {
-						if d.Lang == "en" {
-							return d.Value
+				Content: vulnerabilityContentTypes.Content{
+					ID: fetched.CVEMetadata.CVEID,
+					Title: func() string {
+						if fetched.Containers.CNA.Title != nil {
+							return *fetched.Containers.CNA.Title
 						}
-					}
-					return ""
-				}(),
-				Published: func() *time.Time {
-					if fetched.CVEMetadata.DatePublished != nil {
-						return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DatePublished)
-					}
-					return nil
-				}(),
-				Modified: func() *time.Time {
-					if fetched.CVEMetadata.DateRejected != nil {
-						return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DateRejected)
-					}
-					return nil
-				}(),
+						return ""
+					}(),
+					Description: func() string {
+						for _, d := range fetched.Containers.CNA.RejectedReasons {
+							if d.Lang == "en" {
+								return d.Value
+							}
+						}
+						return ""
+					}(),
+					Published: func() *time.Time {
+						if fetched.CVEMetadata.DatePublished != nil {
+							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DatePublished)
+						}
+						return nil
+					}(),
+					Modified: func() *time.Time {
+						if fetched.CVEMetadata.DateRejected != nil {
+							return utiltime.Parse([]string{"2006-01-02T15:04:05.000Z"}, *fetched.CVEMetadata.DateRejected)
+						}
+						return nil
+					}(),
+				},
 			}},
 			DataSource: sourceTypes.MitreV5,
 		}, nil

@@ -2,39 +2,54 @@
 	"id": "AVG-1",
 	"advisories": [
 		{
-			"id": "ASA-201611-12",
-			"references": [
-				{
-					"source": "security.archlinux.org",
-					"url": "https://security.archlinux.org/ASA-201611-12"
-				}
+			"content": {
+				"id": "ASA-201611-12",
+				"references": [
+					{
+						"source": "security.archlinux.org",
+						"url": "https://security.archlinux.org/ASA-201611-12"
+					}
+				]
+			},
+			"ecosystems": [
+				"arch"
 			]
 		},
 		{
-			"id": "AVG-1",
-			"severity": [
-				{
-					"type": "vendor",
-					"source": "security.archlinux.org",
-					"vendor": "Critical"
-				}
-			],
-			"references": [
-				{
-					"source": "security.archlinux.org",
-					"url": "https://security.archlinux.org/AVG-1"
-				}
+			"content": {
+				"id": "AVG-1",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security.archlinux.org",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security.archlinux.org",
+						"url": "https://security.archlinux.org/AVG-1"
+					}
+				]
+			},
+			"ecosystems": [
+				"arch"
 			]
 		}
 	],
 	"vulnerabilities": [
 		{
-			"id": "CVE-2016-6352",
-			"references": [
-				{
-					"source": "security.archlinux.org",
-					"url": "https://security.archlinux.org/CVE-2016-6352"
-				}
+			"content": {
+				"id": "CVE-2016-6352",
+				"references": [
+					{
+						"source": "security.archlinux.org",
+						"url": "https://security.archlinux.org/CVE-2016-6352"
+					}
+				]
+			},
+			"ecosystems": [
+				"arch"
 			]
 		}
 	],
