@@ -120,8 +120,14 @@ func Extract(inputPath string, opts ...Option) error {
 			return errors.Wrapf(err, "extract %s", path)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", data.ID)))
+		ss := strings.Split(data.ID, "-")
+		if len(ss) < 3 || ss[0] != "ELSA" {
+			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ELSA-<year>-<ID>", data.ID)
+		}
+		year := ss[1]
+
+		if err := util.Write(filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)))
 		}
 
 		return nil
@@ -155,17 +161,22 @@ func Extract(inputPath string, opts ...Option) error {
 }
 
 func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
+	id, _, ok := strings.Cut(strings.TrimSpace(def.Metadata.Title), ":")
+	if !ok {
+		return dataTypes.Data{}, errors.Errorf("unexpected title format. expected: %q, actual: %q", "<Advisory ID>: ...", def.Metadata.Title)
+	}
+
 	ds, err := collectPackages(def.Criteria, tos)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
 	return dataTypes.Data{
-		ID: def.ID,
+		ID: id,
 		Advisories: []advisoryTypes.Advisory{{
-			ID:          def.ID,
-			Title:       def.Metadata.Title,
-			Description: def.Metadata.Description,
+			ID:          id,
+			Title:       strings.TrimSpace(def.Metadata.Title),
+			Description: strings.TrimSpace(def.Metadata.Description),
 			Severity: []severityTypes.Severity{{
 				Type:   severityTypes.SeverityTypeVendor,
 				Source: "linux.oracle.com/security",
