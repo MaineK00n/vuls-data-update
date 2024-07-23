@@ -1,10 +1,14 @@
 package repository
 
-import "cmp"
+import (
+	"cmp"
+	"time"
+)
 
 type Repository struct {
-	URL    string `json:"url,omitempty"`
-	Commit string `json:"commit,omitempty"`
+	URL    string     `json:"url,omitempty"`
+	Commit string     `json:"commit,omitempty"`
+	Date   *time.Time `json:"date,omitempty"`
 }
 
 func Compare(x, y Repository) int {
