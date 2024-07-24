@@ -95,7 +95,7 @@ jobs:
               # - "jvn-feed-detail"
               # - "jvn-feed-product"
               # - "jvn-feed-rss"
-              # - "kev"
+              - "kev"
               # - "mitre-cvrf"
               # - "mitre-v4"
               - "mitre-v5"
