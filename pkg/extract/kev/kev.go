@@ -151,5 +151,6 @@ func extract(fetched kev.Vulnerability) dataTypes.Data {
 				},
 			},
 		}},
+		DataSource: sourceTypes.KEV,
 	}
 }
