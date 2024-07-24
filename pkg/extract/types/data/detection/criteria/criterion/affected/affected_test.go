@@ -1,7 +1,6 @@
 package affected_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
@@ -29,47 +28,11 @@ func TestCompare(t *testing.T) {
 	}
 }
 
-func TestAffected_Filter(t *testing.T) {
+func TestAffected_Accept(t *testing.T) {
 	type fields struct {
 		Type  affectedrange.RangeType
 		Range []affectedrange.Range
 		Fixed []string
-	}
-	type args struct {
-		v string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    affected.Affected
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			a := affected.Affected{
-				Type:  tt.fields.Type,
-				Range: tt.fields.Range,
-				Fixed: tt.fields.Fixed,
-			}
-			got, err := a.Filter(tt.args.v)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Affected.Filter() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Affected.Filter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestAffected_Contains(t *testing.T) {
-	type fields struct {
-		Type  affectedrange.RangeType
-		Range []affectedrange.Range
 	}
 	type args struct {
 		v string
@@ -216,13 +179,14 @@ func TestAffected_Contains(t *testing.T) {
 			got, err := (affected.Affected{
 				Type:  tt.fields.Type,
 				Range: tt.fields.Range,
-			}).Contains(tt.args.v)
+				Fixed: tt.fields.Fixed,
+			}).Accept(tt.args.v)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Affected.Contains() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Affected.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("Affected.Contains() = %v, want %v", got, tt.want)
+				t.Errorf("Affected.Accept() = %v, want %v", got, tt.want)
 			}
 		})
 	}

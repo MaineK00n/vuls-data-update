@@ -121,36 +121,48 @@ func Compare(x, y Range) int {
 	)
 }
 
+type NewVersionError struct {
+	RangeType RangeType
+	Version   string
+	Err       error
+}
+
+func (e *NewVersionError) Error() string {
+	return fmt.Sprintf("new version type %q, string %q: %v", e.RangeType, e.Version, e.Err)
+}
+
+func (e *NewVersionError) Unwrap() error { return e.Err }
+
 func (t RangeType) Compare(v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeVersion:
 		va, err := version.NewVersion(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := version.NewVersion(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeSEMVER:
 		va, err := version.NewSemver(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new semver version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := version.NewSemver(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new semver version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeAPK:
 		va, err := apk.NewVersion(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new apk version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := apk.NewVersion(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new apk version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
@@ -158,51 +170,51 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 	case RangeTypeDPKG:
 		va, err := deb.NewVersion(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new dpkg version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := deb.NewVersion(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new dpkg version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeNPM:
 		va, err := npm.NewVersion(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new npm version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := npm.NewVersion(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new npm version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeRubyGems:
 		va, err := gem.NewVersion(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new rubygems version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := gem.NewVersion(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new rubygems version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypePyPI:
 		va, err := pep440.Parse(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new pypi version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := pep440.Parse(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new pypi version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMaven:
 		va, err := mvn.NewVersion(v1)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v1 new maven version: %s", v1)
+			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
 		}
 		vb, err := mvn.NewVersion(v2)
 		if err != nil {
-			return 0, errors.Wrapf(err, "v2 new maven version: %s", v2)
+			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
 		}
 		return va.Compare(vb), nil
 	default:

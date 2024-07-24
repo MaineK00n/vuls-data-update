@@ -28,13 +28,16 @@ func Compare(x, y Affected) int {
 	)
 }
 
-func (a Affected) Filter(v string) (Affected, error) {
-	filtered := Affected{Type: a.Type}
+func (a Affected) Accept(v string) (bool, error) {
 	for _, r := range a.Range {
 		if r.Equal != "" {
 			n, err := a.Type.Compare(r.Equal, v)
 			if err != nil {
-				return Affected{}, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.Equal, v)
+				var newVersionErr *rangeTypes.NewVersionError
+				if errors.As(err, &newVersionErr) {
+					continue
+				}
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.Equal, v)
 			}
 			if n != 0 {
 				continue
@@ -43,7 +46,11 @@ func (a Affected) Filter(v string) (Affected, error) {
 		if r.GreaterEqual != "" {
 			n, err := a.Type.Compare(r.GreaterEqual, v)
 			if err != nil {
-				return Affected{}, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterEqual, v)
+				var newVersionErr *rangeTypes.NewVersionError
+				if errors.As(err, &newVersionErr) {
+					continue
+				}
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterEqual, v)
 			}
 			if n > 0 {
 				continue
@@ -52,7 +59,11 @@ func (a Affected) Filter(v string) (Affected, error) {
 		if r.GreaterThan != "" {
 			n, err := a.Type.Compare(r.GreaterThan, v)
 			if err != nil {
-				return Affected{}, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterThan, v)
+				var newVersionErr *rangeTypes.NewVersionError
+				if errors.As(err, &newVersionErr) {
+					continue
+				}
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterThan, v)
 			}
 			if n >= 0 {
 				continue
@@ -61,7 +72,11 @@ func (a Affected) Filter(v string) (Affected, error) {
 		if r.LessEqual != "" {
 			n, err := a.Type.Compare(r.LessEqual, v)
 			if err != nil {
-				return Affected{}, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessEqual, v)
+				var newVersionErr *rangeTypes.NewVersionError
+				if errors.As(err, &newVersionErr) {
+					continue
+				}
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessEqual, v)
 			}
 			if n < 0 {
 				continue
@@ -70,32 +85,16 @@ func (a Affected) Filter(v string) (Affected, error) {
 		if r.LessThan != "" {
 			n, err := a.Type.Compare(r.LessThan, v)
 			if err != nil {
-				return Affected{}, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessThan, v)
+				var newVersionErr *rangeTypes.NewVersionError
+				if errors.As(err, &newVersionErr) {
+					continue
+				}
+				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessThan, v)
 			}
 			if n <= 0 {
 				continue
 			}
 		}
-		filtered.Range = append(filtered.Range, r)
-	}
-	for _, fixed := range a.Fixed {
-		n, err := a.Type.Compare(fixed, v)
-		if err != nil {
-			return Affected{}, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, fixed, v)
-		}
-		if n >= 0 {
-			filtered.Fixed = append(filtered.Fixed, fixed)
-		}
-	}
-	return filtered, nil
-}
-
-func (a Affected) Contains(v string) (bool, error) {
-	filtered, err := a.Filter(v)
-	if err != nil {
-		return false, errors.Wrap(err, "filter affected")
-	}
-	if len(filtered.Range) > 0 {
 		return true, nil
 	}
 	return false, nil
