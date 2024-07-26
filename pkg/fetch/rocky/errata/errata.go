@@ -75,9 +75,9 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch Rocky Linux")
 
-	var as []Advisory
+	var advs []Advisory
 	for i := 0; ; i++ {
-		a, err := func() ([]Advisory, error) {
+		as, err := func() ([]Advisory, error) {
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch advisory")
@@ -104,11 +104,11 @@ func Fetch(opts ...Option) error {
 			break
 		}
 
-		as = append(as, a...)
+		advs = append(advs, as...)
 	}
 
-	bar := pb.StartNew(len(as))
-	for _, a := range as {
+	bar := pb.StartNew(len(advs))
+	for _, a := range advs {
 		splitted, err := util.Split(a.Name, "-", ":")
 		if err != nil {
 			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
