@@ -98,6 +98,16 @@ jobs:
             - "nvd-feed-cpematch"
             - "snort"
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -159,6 +169,16 @@ jobs:
             - "nvd-api-cpe"
             - "nvd-api-cpematch"
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -239,6 +259,16 @@ jobs:
             - "suse-csaf-vex"
         year: ${{ fromJson(needs.generate-year.outputs.year) }}
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -344,6 +374,16 @@ jobs:
     outputs:
       total: ${{ strategy.job-total }}
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -388,6 +428,16 @@ jobs:
       matrix: 
         cid: ${{ fromJson(needs.generate-msuc-cache-id.outputs.cid) }}
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
@@ -449,6 +499,16 @@ jobs:
       matrix:
         release: ${{ fromJson(needs.fetch-fedora-release.outputs.release) }}
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -514,6 +574,16 @@ jobs:
     name: fetch vuls-data-raw-epss
     runs-on: ubuntu-latest
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -572,6 +642,16 @@ jobs:
     name: fetch vuls-data-raw-fortinet
     runs-on: ubuntu-latest
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768 
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
