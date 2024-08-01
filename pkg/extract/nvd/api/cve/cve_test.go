@@ -10,19 +10,35 @@ import (
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
-		name     string
-		args     string
-		hasError bool
+		name        string
+		cveDir      string
+		cpematchDir string
+		golden      string
+		hasError    bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:        "happy",
+			cveDir:      "./testdata/fixtures/happy/cve",
+			cpematchDir: "./testdata/fixtures/happy/cpematch",
+			golden:      "./testdata/golden/happy",
+		},
+		{
+			name:        "with-and",
+			cveDir:      "./testdata/fixtures/with-and/cve",
+			cpematchDir: "./testdata/fixtures/with-and/cpematch",
+			golden:      "./testdata/golden/with-and",
+		},
+		{
+			name:        "with-cpematch",
+			cveDir:      "./testdata/fixtures/with-cpematch/cve",
+			cpematchDir: "./testdata/fixtures/with-cpematch/cpematch",
+			golden:      "./testdata/golden/with-cpematch",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := cve.Extract(tt.args, cve.WithDir(dir))
+			err := cve.Extract(tt.cveDir, tt.cpematchDir, cve.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -30,7 +46,7 @@ func TestExtract(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
-			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+			ep, err := filepath.Abs(tt.golden)
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}

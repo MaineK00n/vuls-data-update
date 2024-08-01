@@ -31,6 +31,8 @@ const (
 	RangeTypeRubyGems
 	RangeTypePyPI
 	RangeTypeMaven
+
+	RangeTypeUnknown
 )
 
 func (t RangeType) String() string {
@@ -57,6 +59,8 @@ func (t RangeType) String() string {
 		return "pypi"
 	case RangeTypeMaven:
 		return "maven"
+	case RangeTypeUnknown:
+		return "unknown"
 	default:
 		return "version"
 	}
@@ -96,6 +100,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypePyPI
 	case "maven":
 		rt = RangeTypeMaven
+	case "unknown":
+		rt = RangeTypeUnknown
 	default:
 		return fmt.Errorf("invalid RangeType %s", s)
 	}
@@ -205,6 +211,8 @@ func (t RangeType) Compare(v1, v2 string) (int, error) {
 			return 0, errors.Wrapf(err, "v2 new maven version: %s", v2)
 		}
 		return va.Compare(vb), nil
+	case RangeTypeUnknown:
+		return 0, errors.Errorf("unknown range type")
 	default:
 		return 0, errors.Errorf("unsupported range type: %s", t)
 	}

@@ -2268,19 +2268,25 @@ func newCmdMSF() *cobra.Command {
 }
 
 func newCmdNVDAPICVE() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"),
+		},
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
 		Use:   "nvd-api-cve <Raw NVD API CVE Repository PATH>",
 		Short: "Extract NVD API CVE data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-api-cve vuls-data-raw-nvd-api-cve
+			$ vuls-data-update extract nvd-api-cve vuls-data-raw-nvd-api-cve vuls-data-raw-nvd-api-cpematch
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdAPICVE.Extract(args[0], nvdAPICVE.WithDir(options.dir)); err != nil {
+			if err := nvdAPICVE.Extract(args[0], args[1], nvdAPICVE.WithDir(options.dir), nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract nvd api cve")
 			}
 			return nil
@@ -2288,6 +2294,7 @@ func newCmdNVDAPICVE() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"), "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
 
 	return cmd
 }

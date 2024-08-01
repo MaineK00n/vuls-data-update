@@ -1,232 +1,303 @@
 name: Extract
 on:
-    workflow_run:
-        workflows: [Fetch]
-        types:
-          - completed
-    workflow_dispatch:
+  workflow_run:
+    workflows: [Fetch]
+    types:
+      - completed
+  workflow_dispatch:
 
 jobs:
-    extract-main:
-        name: extract vuls-data-extracted-${{ matrix.target }}
-        runs-on: ubuntu-latest
-        strategy:
-          fail-fast: false
-          matrix:
-            target:
-              - "alma-errata"
-              - "alma-osv"
-              # - "alma-oval"
-              - "alpine-secdb"
-              - "alpine-osv"
-              - "amazon"
-              - "arch"
-              # - "debian-osv"
-              # - "debian-oval"
-              # - "debian-security-tracker-api"
-              # - "debian-security-tracker-salsa"
-              # - "fedora"
-              # - "fortinet"
-              # - "fortinet-cvrf"
-              - "freebsd"
-              # - "gentoo"
-              # - "netbsd"
-              - "oracle"
-              # - "redhat-cve"
-              # - "redhat-csaf"
-              # - "redhat-cvrf"
-              # - "redhat-ovalv1"
-              # - "redhat-ovalv2"
-              # - "redhat-vex"
-              # - "rocky-errata"
-              # - "rocky-osv"
-              # - "suse-oval"
-              # - "suse-cvrf"
-              # - "suse-cvrf-cve"
-              # - "suse-csaf"
-              # - "suse-csaf-vex"
-              # - "ubuntu-oval"
-              # - "ubuntu-cve-tracker"
-              # - "windows-bulletin"
-              # - "windows-cvrf"
-              # - "windows-msuc"
-              # - "windows-wsusscn2"
+  extract-main:
+    name: extract vuls-data-extracted-${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - "alma-errata"
+          - "alma-osv"
+          # - "alma-oval"
+          - "alpine-secdb"
+          - "alpine-osv"
+          - "amazon"
+          - "arch"
+          # - "debian-osv"
+          # - "debian-oval"
+          # - "debian-security-tracker-api"
+          # - "debian-security-tracker-salsa"
+          # - "fedora"
+          # - "fortinet"
+          # - "fortinet-cvrf"
+          - "freebsd"
+          # - "gentoo"
+          # - "netbsd"
+          - "oracle"
+          # - "redhat-cve"
+          # - "redhat-csaf"
+          # - "redhat-cvrf"
+          # - "redhat-ovalv1"
+          # - "redhat-ovalv2"
+          # - "redhat-vex"
+          # - "rocky-errata"
+          # - "rocky-osv"
+          # - "suse-oval"
+          # - "suse-cvrf"
+          # - "suse-cvrf-cve"
+          # - "suse-csaf"
+          # - "suse-csaf-vex"
+          # - "ubuntu-oval"
+          # - "ubuntu-cve-tracker"
+          # - "windows-bulletin"
+          # - "windows-cvrf"
+          # - "windows-msuc"
+          # - "windows-wsusscn2"
 
-              # - "cargo-ghsa"
-              # - "cargo-osv"
-              # - "composer-ghsa"
-              # - "composer-glsa"
-              # - "composer-osv"
-              # - "conan-glsa"
-              # - "erlang-ghsa"
-              # - "erlang-osv"
-              # - "golang-ghsa"
-              # - "golang-glsa"
-              # - "golang-osv"
-              # - "haskell-osv"
-              # - "maven-ghsa"
-              # - "maven-glsa"
-              # - "maven-osv"
-              # - "npm-ghsa"
-              # - "npm-glsa"
-              # - "npm-osv"
-              # - "nuget-ghsa"
-              # - "nuget-glsa"
-              # - "nuget-osv"
-              # - "pip-ghsa"
-              # - "pip-glsa"
-              # - "pip-osv"
-              # - "pub-ghsa"
-              # - "pub-osv"
-              # - "r-osv"
-              # - "rubygems-ghsa"
-              # - "rubygems-glsa"
-              # - "rubygems-osv"
-              # - "swift-ghsa"
-              # - "swift-osv"
+          # - "cargo-ghsa"
+          # - "cargo-osv"
+          # - "composer-ghsa"
+          # - "composer-glsa"
+          # - "composer-osv"
+          # - "conan-glsa"
+          # - "erlang-ghsa"
+          # - "erlang-osv"
+          # - "golang-ghsa"
+          # - "golang-glsa"
+          # - "golang-osv"
+          # - "haskell-osv"
+          # - "maven-ghsa"
+          # - "maven-glsa"
+          # - "maven-osv"
+          # - "npm-ghsa"
+          # - "npm-glsa"
+          # - "npm-osv"
+          # - "nuget-ghsa"
+          # - "nuget-glsa"
+          # - "nuget-osv"
+          # - "pip-ghsa"
+          # - "pip-glsa"
+          # - "pip-osv"
+          # - "pub-ghsa"
+          # - "pub-osv"
+          # - "r-osv"
+          # - "rubygems-ghsa"
+          # - "rubygems-glsa"
+          # - "rubygems-osv"
+          # - "swift-ghsa"
+          # - "swift-osv"
 
-              # - "cwe"
-              # - "capec"
-              # - "attack"
-              - "epss"
-              # - "exploit-exploitdb"
-              # - "exploit-github"
-              # - "exploit-inthewild"
-              # - "exploit-trickest"
-              # - "jvn-feed-detail"
-              # - "jvn-feed-product"
-              # - "jvn-feed-rss"
-              - "kev"
-              # - "mitre-cvrf"
-              # - "mitre-v4"
-              - "mitre-v5"
-              # - "msf"
-              # - "nvd-api-cve"
-              # - "nvd-api-cpe" 
-              # - "nvd-api-cpematch"
-              # - "nvd-feed-cve"
-              # - "nvd-feed-cpe" 
-              # - "nvd-feed-cpematch"
-              # - "snort"
-        steps:
-          - name: Maximize build space
-            uses: easimon/maximize-build-space@v10
-            with:
-              root-reserve-mb: 32768 
-              remove-dotnet: 'true'
-              remove-android: 'true'
-              remove-haskell: 'true'
-              remove-codeql: 'true'
-              remove-docker-images: 'true'
+          # - "cwe"
+          # - "capec"
+          # - "attack"
+          - "epss"
+          # - "exploit-exploitdb"
+          # - "exploit-github"
+          # - "exploit-inthewild"
+          # - "exploit-trickest"
+          # - "jvn-feed-detail"
+          # - "jvn-feed-product"
+          # - "jvn-feed-rss"
+          - "kev"
+          # - "mitre-cvrf"
+          # - "mitre-v4"
+          - "mitre-v5"
+          # - "msf"
+          # - "nvd-api-cpe"
+          # - "nvd-api-cpematch"
+          # - "nvd-feed-cve"
+          # - "nvd-feed-cpe"
+          # - "nvd-feed-cpematch"
+          # - "snort"
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
-          - name: Check out code into the Go module directory
-            uses: actions/checkout@v4
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
 
-          - name: Set up Go 1.x
-            uses: actions/setup-go@v5
-            with:
-              go-version-file: "go.mod"
-            
-          - name: go install
-            run: go install ./cmd/vuls-data-update
-            
-          - uses: actions/create-github-app-token@v1
-            id: app-token
-            with:
-              app-id: ${{ vars.APP_ID }}
-              private-key: ${{ secrets.PRIVATE_KEY }}
-              owner: vulsio
-              repositories: "vuls-data-extracted-${{ matrix.target }}"
-          
-          - name: Check out raw repository
-            uses: actions/checkout@v4
-            with:
-              repository: vulsio/vuls-data-raw-${{ matrix.target }}
-              path: vuls-data-raw-${{ matrix.target }}
-            
-          - name: Check out extracted repository
-            uses: actions/checkout@v4
-            with:
-              repository: vulsio/vuls-data-extracted-${{ matrix.target }}
-              path: vuls-data-extracted-${{ matrix.target }}
-              token: ${{ steps.app-token.outputs.token }}
-              
-          - name: Extract
-            run: vuls-data-update extract ${{ matrix.target }} --dir vuls-data-extracted-${{ matrix.target }} vuls-data-raw-${{ matrix.target }}
-              
-          - name: Split Large Files
-            run: find vuls-data-extracted-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
-              
-          - name: set Git config
-            run: |
-              git config --global user.email "action@github.com"
-              git config --global user.name "GitHub Action"
-              
-          - name: Push
-            run: |
-              cd vuls-data-extracted-${{ matrix.target }}
-              if [[ -n $(git status --porcelain) ]]; then
-                git add .
-                git commit -m "update"
-                git push
-              fi
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
 
-    extract-eol:
-      name: extract vuls-data-extracted-eol
-      runs-on: ubuntu-latest
-      steps:
-        - name: Maximize build space
-          uses: easimon/maximize-build-space@v10
-          with:
-            root-reserve-mb: 32768 
-            remove-dotnet: 'true'
-            remove-android: 'true'
-            remove-haskell: 'true'
-            remove-codeql: 'true'
-            remove-docker-images: 'true'
+      - name: go install
+        run: go install ./cmd/vuls-data-update
 
-        - name: Check out code into the Go module directory
-          uses: actions/checkout@v4
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-extracted-${{ matrix.target }}"
 
-        - name: Set up Go 1.x
-          uses: actions/setup-go@v5
-          with:
-            go-version-file: "go.mod"
-          
-        - name: go install
-          run: go install ./cmd/vuls-data-update
-          
-        - uses: actions/create-github-app-token@v1
-          id: app-token
-          with:
-            app-id: ${{ vars.APP_ID }}
-            private-key: ${{ secrets.PRIVATE_KEY }}
-            owner: vulsio
-            repositories: "vuls-data-extracted-eol"
+      - name: Check out raw repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-${{ matrix.target }}
+          path: vuls-data-raw-${{ matrix.target }}
 
-        - name: Check out extracted repository
-          uses: actions/checkout@v4
-          with:
-            repository: vulsio/vuls-data-extracted-eol
-            path: vuls-data-extracted-eol
-            token: ${{ steps.app-token.outputs.token }}
-          
-        - name: Extract
-          run: vuls-data-update extract eol --dir vuls-data-extracted-eol
-          
-        - name: Split Large Files
-          run: find vuls-data-extracted-eol -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
-          
-        - name: set Git config
-          run: |
-            git config --global user.email "action@github.com"
-            git config --global user.name "GitHub Action"
-          
-        - name: Push
-          run: |
-            cd vuls-data-extracted-eol
-            if [[ -n $(git status --porcelain) ]]; then
-              git add .
-              git commit -m "update"
-              git push
-            fi
+      - name: Check out extracted repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-extracted-${{ matrix.target }}
+          path: vuls-data-extracted-${{ matrix.target }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Extract
+        run: vuls-data-update extract ${{ matrix.target }} --dir vuls-data-extracted-${{ matrix.target }} vuls-data-raw-${{ matrix.target }}
+
+      - name: Split Large Files
+        run: find vuls-data-extracted-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Push
+        run: |
+          cd vuls-data-extracted-${{ matrix.target }}
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "update"
+            git push
+          fi
+
+  extract-nvd-api-cve:
+    name: extract vuls-data-extracted-nvd-api-cve
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: go install
+        run: go install ./cmd/vuls-data-update
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-extracted-nvd-api-cve"
+
+      - name: Check out raw repository, CVE
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-nvd-api-cve
+          path: vuls-data-raw-nvd-api-cve
+
+      - name: Check out raw repository, CPEMATCH
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-nvd-api-cpematch
+          path: vuls-data-raw-nvd-api-cpematch
+
+      - name: Check out extracted repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-extracted-nvd-api-cve
+          path: vuls-data-extracted-nvd-api-cve
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Extract
+        run: vuls-data-update extract nvd-api-cve --dir vuls-data-extracted-nvd-api-cve vuls-data-raw-nvd-api-cve vuls-data-raw-nvd-api-cpematch
+
+      - name: Split Large Files
+        run: find vuls-data-extracted-nvd-api-cve -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Push
+        run: |
+          cd vuls-data-extracted-nvd-api-cve
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "update"
+            git push
+          fi
+
+  extract-eol:
+    name: extract vuls-data-extracted-eol
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: go install
+        run: go install ./cmd/vuls-data-update
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-extracted-eol"
+
+      - name: Check out extracted repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-extracted-eol
+          path: vuls-data-extracted-eol
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Extract
+        run: vuls-data-update extract eol --dir vuls-data-extracted-eol
+
+      - name: Split Large Files
+        run: find vuls-data-extracted-eol -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Push
+        run: |
+          cd vuls-data-extracted-eol
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "update"
+            git push
+          fi
