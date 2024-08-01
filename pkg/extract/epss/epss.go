@@ -1,21 +1,16 @@
 package epss
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
-	"sync"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/sync/errgroup"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	epssTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/epss"
@@ -31,10 +26,7 @@ import (
 )
 
 type options struct {
-	dir         string
-	concurrency int
-	since       time.Time
-	until       time.Time
+	dir string
 }
 
 type Option interface {
@@ -51,42 +43,9 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-type concurrencyOption int
-
-func (c concurrencyOption) apply(opts *options) {
-	opts.concurrency = int(c)
-}
-
-func WithConcurrency(concurrency int) Option {
-	return concurrencyOption(concurrency)
-}
-
-type sinceOption time.Time
-
-func (t sinceOption) apply(opts *options) {
-	opts.since = time.Time(t)
-}
-
-func WithSince(since time.Time) Option {
-	return sinceOption(since)
-}
-
-type untilOption time.Time
-
-func (t untilOption) apply(opts *options) {
-	opts.until = time.Time(t)
-}
-
-func WithUntil(until time.Time) Option {
-	return untilOption(until)
-}
-
 func Extract(args string, opts ...Option) error {
 	options := &options{
-		dir:         filepath.Join(util.CacheDir(), "extract", "epss"),
-		concurrency: runtime.NumCPU(),
-		since:       time.Date(2021, time.April, 14, 0, 0, 0, 0, time.UTC),
-		until:       time.Now(),
+		dir: filepath.Join(util.CacheDir(), "extract", "epss"),
 	}
 
 	for _, o := range opts {
@@ -99,7 +58,7 @@ func Extract(args string, opts ...Option) error {
 
 	log.Printf("[INFO] Extract Exploit Prediction Scoring System: EPSS")
 
-	m := sync.Map{}
+	var latest time.Time
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -118,173 +77,59 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "parse %s", strings.TrimSuffix(filepath.Base(path), ".json"))
 		}
 
-		if t.Before(options.since) || t.After(options.until) {
-			return nil
+		if t.After(latest) {
+			latest = t
 		}
-
-		log.Printf("[INFO] Extract %s", path)
-
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
-		var fetched epss.EPSS
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
-		}
-
-		t, err = time.Parse("2006-01-02T15:04:05-0700", fetched.ScoreDate)
-		if err != nil {
-			return errors.Wrapf(err, "parse %s", fetched.ScoreDate)
-		}
-
-		reqChan := make(chan epss.CVE, len(fetched.Data))
-		go func() {
-			defer close(reqChan)
-			for _, d := range fetched.Data {
-				m.Store(d.ID, struct{}{})
-				reqChan <- d
-			}
-		}()
-
-		bar := pb.StartNew(len(fetched.Data))
-		g, ctx := errgroup.WithContext(context.Background())
-		g.SetLimit(options.concurrency)
-		for req := range reqChan {
-			req := req
-			g.Go(func() error {
-				splitted, err := util.Split(req.ID, "-", "-")
-				if err != nil {
-					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req.ID)
-				}
-				if _, err := time.Parse("2006", splitted[1]); err != nil {
-					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req.ID)
-				}
-
-				data := dataTypes.Data{
-					ID: req.ID,
-					Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
-						Content: vulnerabilityContentTypes.Content{
-							ID: req.ID,
-							EPSS: []epssTypes.EPSS{{
-								Model:      fetched.Model,
-								ScoreDate:  t,
-								EPSS:       req.EPSS,
-								Percentile: req.Percentile,
-							}},
-							References: []referenceTypes.Reference{{
-								Source: "api.first.org",
-								URL:    fmt.Sprintf("https://api.first.org/data/v1/epss?cve=%s", req.ID),
-							}},
-						},
-					}},
-					DataSource: sourceTypes.EPSS,
-				}
-				if _, err := os.Stat(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID))); err == nil {
-					f, err := os.Open(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
-					if err != nil {
-						return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
-					}
-					defer f.Close()
-
-					var d dataTypes.Data
-					if err := json.NewDecoder(f).Decode(&d); err != nil {
-						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
-					}
-
-					d.Vulnerabilities[0].Content.EPSS = append(d.Vulnerabilities[0].Content.EPSS, epssTypes.EPSS{
-						Model:      fetched.Model,
-						ScoreDate:  t,
-						EPSS:       req.EPSS,
-						Percentile: req.Percentile,
-					})
-
-					data = d
-				}
-
-				if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)), data, false); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req.ID)))
-				}
-
-				select {
-				case <-ctx.Done():
-					return ctx.Err()
-				default:
-					bar.Increment()
-					return nil
-				}
-			})
-		}
-		if err := g.Wait(); err != nil {
-			return errors.Wrap(err, "err in goroutine")
-		}
-		bar.Finish()
 
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	var cves []string
-	m.Range(func(key, _ any) bool {
-		cves = append(cves, key.(string))
-		return true
-	})
+	f, err := os.Open(filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
+	if err != nil {
+		return errors.Wrapf(err, "opens %s", filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
+	}
+	defer f.Close()
 
-	reqChan := make(chan string, len(cves))
-	go func() {
-		defer close(reqChan)
-		for _, cve := range cves {
-			reqChan <- cve
+	var fetched epss.EPSS
+	if err := json.NewDecoder(f).Decode(&fetched); err != nil {
+		return errors.Wrapf(err, "decode %s", filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
+	}
+
+	for _, d := range fetched.Data {
+		splitted, err := util.Split(d.ID, "-", "-")
+		if err != nil {
+			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", d.ID)
 		}
-	}()
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", d.ID)
+		}
 
-	log.Printf("[INFO] Finish EPSS")
+		data := dataTypes.Data{
+			ID: d.ID,
+			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
+				Content: vulnerabilityContentTypes.Content{
+					ID: d.ID,
+					EPSS: &epssTypes.EPSS{
+						Model:      fetched.Model,
+						ScoreDate:  latest,
+						EPSS:       d.EPSS,
+						Percentile: d.Percentile,
+					},
+					References: []referenceTypes.Reference{{
+						Source: "api.first.org",
+						URL:    fmt.Sprintf("https://api.first.org/data/v1/epss?cve=%s", d.ID),
+					}},
+				},
+			}},
+			DataSource: sourceTypes.EPSS,
+		}
 
-	bar := pb.StartNew(len(cves))
-	g, ctx := errgroup.WithContext(context.Background())
-	g.SetLimit(options.concurrency)
-	for req := range reqChan {
-		req := req
-		g.Go(func() error {
-			splitted, err := util.Split(req, "-", "-")
-			if err != nil {
-				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req)
-			}
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", req)
-			}
-
-			f, err := os.Open(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req)))
-			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req)))
-			}
-			defer f.Close()
-
-			var data dataTypes.Data
-			if err := json.NewDecoder(f).Decode(&data); err != nil {
-				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req)))
-			}
-
-			if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req)), data, true); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", req)))
-			}
-
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			default:
-				bar.Increment()
-				return nil
-			}
-		})
+		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", d.ID)), data, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", d.ID)))
+		}
 	}
-	if err := g.Wait(); err != nil {
-		return errors.Wrap(err, "err in goroutine")
-	}
-	bar.Finish()
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.EPSS,
