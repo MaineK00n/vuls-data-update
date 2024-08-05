@@ -26,7 +26,7 @@ require (
 	github.com/ulikunitz/xz v0.5.12
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	golang.org/x/net v0.27.0
-	golang.org/x/sync v0.7.0
+	golang.org/x/sync v0.8.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.31.1
 )
