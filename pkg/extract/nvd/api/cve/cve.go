@@ -344,17 +344,17 @@ func configurationToCriteria(config cveTypes.Config, cpematchDir string) (criter
 }
 
 func nodeToCriteria(n cveTypes.Node, cpematchDir string) (criteriaTypes.Criteria, error) {
-	rootCa := criteriaTypes.Criteria{}
+	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
 	case "AND":
-		rootCa.Operator = criteriaTypes.CriteriaOperatorTypeAND
+		ca.Operator = criteriaTypes.CriteriaOperatorTypeAND
 	case "OR":
-		rootCa.Operator = criteriaTypes.CriteriaOperatorTypeOR
+		ca.Operator = criteriaTypes.CriteriaOperatorTypeOR
 	default:
 		return criteriaTypes.Criteria{}, errors.Errorf("invalid node operator: %s", n.Operator)
 	}
 
-	rootCa.Criterias = make([]criteriaTypes.Criteria, 0, len(n.CPEMatch))
+	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(n.CPEMatch))
 	for _, match := range n.CPEMatch {
 		wfn, err := naming.UnbindFS(match.Criteria)
 		if err != nil {
@@ -398,13 +398,12 @@ func nodeToCriteria(n cveTypes.Node, cpematchDir string) (criteriaTypes.Criteria
 			}
 		}
 
-		ca := criteriaTypes.Criteria{
+		ca.Criterias = append(ca.Criterias, criteriaTypes.Criteria{
 			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: cns,
-		}
-		rootCa.Criterias = append(rootCa.Criterias, ca)
+		})
 	}
-	return rootCa, nil
+	return ca, nil
 }
 
 func decideRangeType(match cveTypes.CPEMatch) rangeTypes.RangeType {
