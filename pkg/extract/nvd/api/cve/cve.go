@@ -298,10 +298,17 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 				Ecosystems: []detectionType.Ecosystem{detectionType.EcosystemTypeCPE},
 			},
 		},
-		Detection: []detectionType.Detection{{
-			Ecosystem: detectionType.EcosystemTypeCPE,
-			Criteria:  rootCriteria,
-		}},
+		Detection: func() []detectionType.Detection {
+			switch len(fetched.Configurations) {
+			case 0:
+				return nil
+			default:
+				return []detectionType.Detection{{
+					Ecosystem: detectionType.EcosystemTypeCPE,
+					Criteria:  rootCriteria,
+				}}
+			}
+		}(),
 		DataSource: sourceTypes.NVDAPICVE,
 	}, nil
 }
