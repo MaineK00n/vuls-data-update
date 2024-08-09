@@ -175,7 +175,7 @@ func extract(cvePath, cpematchDir, outputDir string) error {
 
 	data, err := buildData(fetched, cpematchDir)
 	if err != nil {
-		return errors.Wrapf(err, "extract %s", cvePath)
+		return errors.Wrapf(err, "buildData %s", cvePath)
 	}
 
 	if err := util.Write(filepath.Join(outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
