@@ -140,7 +140,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 			if cveGit != nil {
 				res = append(res, *cveGit)
 			}
-			cpematchGit, _ := utilgit.GetDataSourceRepository(cveDir)
+			cpematchGit, _ := utilgit.GetDataSourceRepository(cpematchDir)
 			if cpematchGit != nil {
 				res = append(res, *cpematchGit)
 			}
