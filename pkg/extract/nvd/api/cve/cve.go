@@ -231,7 +231,7 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 				return dataTypes.Data{}, errors.Wrapf(err, "cvss v30 parse. vector: %s", c.CVSSData.VectorString)
 			}
 			ss = append(ss, severityTypes.Severity{
-				Type:    severityTypes.SeverityTypeCVSSv2,
+				Type:    severityTypes.SeverityTypeCVSSv30,
 				Source:  c.Source,
 				CVSSv30: v30,
 			})
