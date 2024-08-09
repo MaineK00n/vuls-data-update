@@ -2279,7 +2279,7 @@ func newCmdNVDAPICVE() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-api-cve <Raw NVD API CVE Repository PATH>",
+		Use:   "nvd-api-cve <Raw NVD API CVE Repository PATH> <Raw NVD API CPEMATCH Repository PATH>",
 		Short: "Extract NVD API CVE data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract nvd-api-cve vuls-data-raw-nvd-api-cve vuls-data-raw-nvd-api-cpematch
