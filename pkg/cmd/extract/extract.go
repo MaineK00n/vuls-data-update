@@ -2,6 +2,7 @@ package extract
 
 import (
 	"path/filepath"
+	"runtime"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
