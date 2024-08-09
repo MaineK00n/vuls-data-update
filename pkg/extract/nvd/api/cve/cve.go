@@ -185,14 +185,28 @@ func extract(cvePath, cpematchDir, outputDir string) error {
 }
 
 func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error) {
-	rootCriteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
-	rootCriteria.Criterias = make([]criteriaTypes.Criteria, 0, len(fetched.Configurations))
-	for _, c := range fetched.Configurations {
-		ca, err := configurationToCriteria(c, cpematchDir)
-		if err != nil {
-			return dataTypes.Data{}, errors.Wrapf(err, "configuration to criteria. ID: %s", fetched.ID)
+	ds, err := func() ([]detectionType.Detection, error) {
+		switch len(fetched.Configurations) {
+		case 0:
+			return nil, nil
+		default:
+			rootCriteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
+			rootCriteria.Criterias = make([]criteriaTypes.Criteria, 0, len(fetched.Configurations))
+			for _, c := range fetched.Configurations {
+				ca, err := configurationToCriteria(c, cpematchDir)
+				if err != nil {
+					return nil, errors.Wrapf(err, "configuration to criteria. ID: %s", fetched.ID)
+				}
+				rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
+			}
+			return []detectionType.Detection{{
+				Ecosystem: detectionType.EcosystemTypeCPE,
+				Criteria:  rootCriteria,
+			}}, nil
 		}
-		rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
+	}()
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrapf(err, "build detection. ID: %s", fetched.ID)
 	}
 
 	ss := make([]severityTypes.Severity, 0, len(fetched.Metrics.CVSSMetricV2)+len(fetched.Metrics.CVSSMetricV30)+len(fetched.Metrics.CVSSMetricV31)+len(fetched.Metrics.CVSSMetricV40))
@@ -298,17 +312,7 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 				Ecosystems: []detectionType.Ecosystem{detectionType.EcosystemTypeCPE},
 			},
 		},
-		Detection: func() []detectionType.Detection {
-			switch len(fetched.Configurations) {
-			case 0:
-				return nil
-			default:
-				return []detectionType.Detection{{
-					Ecosystem: detectionType.EcosystemTypeCPE,
-					Criteria:  rootCriteria,
-				}}
-			}
-		}(),
+		Detection:  ds,
 		DataSource: sourceTypes.NVDAPICVE,
 	}, nil
 }
