@@ -102,7 +102,6 @@ jobs:
           - "mitre-v5"
           # - "msf"
           # - "nvd-api-cpe"
-          # - "nvd-api-cpematch"
           # - "nvd-feed-cve"
           # - "nvd-feed-cpe"
           # - "nvd-feed-cpematch"

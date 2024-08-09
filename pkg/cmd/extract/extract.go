@@ -95,7 +95,6 @@ import (
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/msf"
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cpe"
-	nvdAPICPEMatch "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cpematch"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cve"
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch"
@@ -161,7 +160,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdKEV(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
-		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
+		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
 		newCmdSnort(),
 	)
 
@@ -2321,31 +2320,6 @@ func newCmdNVDAPICPE() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpe"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdNVDAPICPEMatch() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpematch"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "nvd-api-cpematch <Raw NVD API CPEMatch Repository PATH>",
-		Short: "Extract NVD API CPEMatch data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-api-cpematch vuls-data-raw-nvd-api-cpematch
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdAPICPEMatch.Extract(args[0], nvdAPICPEMatch.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract nvd api cpematch")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpematch"), "output extract results to specified directory")
 
 	return cmd
 }
