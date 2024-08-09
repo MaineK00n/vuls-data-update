@@ -120,7 +120,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 		g.Go(func() error {
 			for path := range reqChan {
 				if err := extract(path, cpematchDir, options.dir); err != nil {
-					return errors.Wrapf(err, "extract")
+					return errors.Wrapf(err, "extract %s", path)
 				}
 			}
 			return nil
