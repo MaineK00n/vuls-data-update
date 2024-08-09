@@ -33,6 +33,8 @@ const (
 	EcosystemTypeUbuntu      = "ubuntu"
 	EcosystemTypeWindows     = "windows"
 
+	EcosystemTypeCPE = "cpe"
+
 	EcosystemTypeFortinet = "fortinet"
 
 	EcosystemTypeCargo    = "cargo"

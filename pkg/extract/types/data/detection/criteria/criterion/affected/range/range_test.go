@@ -39,7 +39,13 @@ func TestRangeType_Compare(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "unknown type",
+			rt:      affectedrange.RangeTypeUnknown,
+			args:    args{v1: "awful-version", v2: "XXXX"},
+			wantErr: true,
+		},
+		// TODO: Add more test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
