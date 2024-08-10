@@ -5,12 +5,12 @@ import (
 	"slices"
 
 	contentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
-	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type Advisory struct {
 	Content    contentTypes.Content       `json:"content,omitempty"`
-	Ecosystems []detectionTypes.Ecosystem `json:"ecosystems,omitempty"`
+	Ecosystems []ecosystemTypes.Ecosystem `json:"ecosystems,omitempty"`
 }
 
 func (a *Advisory) Sort() {

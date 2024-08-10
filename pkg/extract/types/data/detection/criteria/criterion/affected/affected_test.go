@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	affectedrange "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 func TestCompare(t *testing.T) {
@@ -30,12 +31,13 @@ func TestCompare(t *testing.T) {
 
 func TestAffected_Accept(t *testing.T) {
 	type fields struct {
-		Type  affectedrange.RangeType
-		Range []affectedrange.Range
+		Type  affectedrangeTypes.RangeType
+		Range []affectedrangeTypes.Range
 		Fixed []string
 	}
 	type args struct {
-		v string
+		ecosystem ecosystemTypes.Ecosystem
+		v         string
 	}
 	tests := []struct {
 		name    string
@@ -47,8 +49,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.0 [= 0.0.1]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						Equal: "0.0.1",
 					}},
@@ -61,8 +63,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.1, [= 0.0.1]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						Equal: "0.0.1",
 					}},
@@ -75,8 +77,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.1 [>0.0.0]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						GreaterThan: "0.0.0",
 					}},
@@ -89,8 +91,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.1 [>0.0.0, <0.0.2]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						LessThan:    "0.0.2",
 						GreaterThan: "0.0.0",
@@ -104,8 +106,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.1 [<0.0.2]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						LessThan: "0.0.2",
 					}},
@@ -118,8 +120,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.3 [>0.0.0, <0.0.2]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						LessThan:    "0.0.2",
 						GreaterThan: "0.0.0",
@@ -133,8 +135,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.0 [>=0.0.0]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						GreaterEqual: "0.0.0",
 					}},
@@ -147,8 +149,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.0 [<=0.0.0]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						LessEqual: "0.0.0",
 					}},
@@ -161,8 +163,8 @@ func TestAffected_Accept(t *testing.T) {
 		{
 			name: "0.0.0 [>=0.0.0, <=0.0.0]",
 			fields: fields{
-				Type: affectedrange.RangeTypeSEMVER,
-				Range: []affectedrange.Range{
+				Type: affectedrangeTypes.RangeTypeSEMVER,
+				Range: []affectedrangeTypes.Range{
 					{
 						LessEqual:    "0.0.0",
 						GreaterEqual: "0.0.0",
@@ -180,7 +182,7 @@ func TestAffected_Accept(t *testing.T) {
 				Type:  tt.fields.Type,
 				Range: tt.fields.Range,
 				Fixed: tt.fields.Fixed,
-			}).Accept(tt.args.v)
+			}).Accept(tt.args.ecosystem, tt.args.v)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Affected.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

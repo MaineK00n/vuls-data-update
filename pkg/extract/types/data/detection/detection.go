@@ -4,55 +4,13 @@ import (
 	"cmp"
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type Detection struct {
-	Ecosystem Ecosystem              `json:"ecosystem,omitempty"`
-	Criteria  criteriaTypes.Criteria `json:"criteria,omitempty"`
+	Ecosystem ecosystemTypes.Ecosystem `json:"ecosystem,omitempty"`
+	Criteria  criteriaTypes.Criteria   `json:"criteria,omitempty"`
 }
-
-type Ecosystem string
-
-const (
-	EcosystemTypeAlma        = "alma"
-	EcosystemTypeAlpine      = "alpine"
-	EcosystemTypeAmazon      = "amazon"
-	EcosystemTypeArch        = "arch"
-	EcosystemTypeDebian      = "debian"
-	EcosystemTypeEPEL        = "epel"
-	EcosystemTypeFedora      = "fedora"
-	EcosystemTypeFreeBSD     = "freebsd"
-	EcosystemTypeGentoo      = "gentoo"
-	EcosystemTypeNetBSD      = "netbsd"
-	EcosystemTypeOracle      = "oracle"
-	EcosystemTypeRedHat      = "redhat"
-	EcosystemTypeRocky       = "rocky"
-	EcosystemTypeOpenSUSE    = "opensuse"
-	EcosystemTypeSUSEServer  = "sles"
-	EcosystemTypeSUSEDesktop = "sled"
-	EcosystemTypeUbuntu      = "ubuntu"
-	EcosystemTypeWindows     = "windows"
-
-	EcosystemTypeCPE = "cpe"
-
-	EcosystemTypeFortinet = "fortinet"
-
-	EcosystemTypeCargo    = "cargo"
-	EcosystemTypeComposer = "composer"
-	EcosystemTypeConan    = "conan"
-	EcosystemTypeErlang   = "erlang"
-	EcosystemTypeGolang   = "golang"
-	EcosystemTypeHaskell  = "haskell"
-	EcosystemTypeMaven    = "maven"
-	EcosystemTypeNpm      = "npm"
-	EcosystemTypeNuget    = "nuget"
-	EcosystemTypePerl     = "perl"
-	EcosystemTypePip      = "pip"
-	EcosystemTypePub      = "pub"
-	EcosystemTypeR        = "r"
-	EcosystemTypeRubygems = "rubygems"
-	EcosystemTypeSwift    = "swift"
-)
 
 func (d *Detection) Sort() {
 	(&d.Criteria).Sort()

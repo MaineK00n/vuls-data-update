@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type Affected struct {
@@ -28,13 +29,13 @@ func Compare(x, y Affected) int {
 	)
 }
 
-func (a Affected) Accept(v string) (bool, error) {
+func (a Affected) Accept(ecosystem ecosystemTypes.Ecosystem, v string) (bool, error) {
 	for _, r := range a.Range {
 		if r.Equal != "" {
-			n, err := a.Type.Compare(r.Equal, v)
+			n, err := a.Type.Compare(ecosystem, r.Equal, v)
 			if err != nil {
-				var newVersionErr *rangeTypes.NewVersionError
-				if errors.As(err, &newVersionErr) {
+				var compareErr *rangeTypes.CompareError
+				if errors.As(err, &compareErr) {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.Equal, v)
@@ -44,10 +45,10 @@ func (a Affected) Accept(v string) (bool, error) {
 			}
 		}
 		if r.GreaterEqual != "" {
-			n, err := a.Type.Compare(r.GreaterEqual, v)
+			n, err := a.Type.Compare(ecosystem, r.GreaterEqual, v)
 			if err != nil {
-				var newVersionErr *rangeTypes.NewVersionError
-				if errors.As(err, &newVersionErr) {
+				var compareErr *rangeTypes.CompareError
+				if errors.As(err, &compareErr) {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterEqual, v)
@@ -57,10 +58,10 @@ func (a Affected) Accept(v string) (bool, error) {
 			}
 		}
 		if r.GreaterThan != "" {
-			n, err := a.Type.Compare(r.GreaterThan, v)
+			n, err := a.Type.Compare(ecosystem, r.GreaterThan, v)
 			if err != nil {
-				var newVersionErr *rangeTypes.NewVersionError
-				if errors.As(err, &newVersionErr) {
+				var compareErr *rangeTypes.CompareError
+				if errors.As(err, &compareErr) {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterThan, v)
@@ -70,10 +71,10 @@ func (a Affected) Accept(v string) (bool, error) {
 			}
 		}
 		if r.LessEqual != "" {
-			n, err := a.Type.Compare(r.LessEqual, v)
+			n, err := a.Type.Compare(ecosystem, r.LessEqual, v)
 			if err != nil {
-				var newVersionErr *rangeTypes.NewVersionError
-				if errors.As(err, &newVersionErr) {
+				var compareErr *rangeTypes.CompareError
+				if errors.As(err, &compareErr) {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessEqual, v)
@@ -83,10 +84,10 @@ func (a Affected) Accept(v string) (bool, error) {
 			}
 		}
 		if r.LessThan != "" {
-			n, err := a.Type.Compare(r.LessThan, v)
+			n, err := a.Type.Compare(ecosystem, r.LessThan, v)
 			if err != nil {
-				var newVersionErr *rangeTypes.NewVersionError
-				if errors.As(err, &newVersionErr) {
+				var compareErr *rangeTypes.CompareError
+				if errors.As(err, &compareErr) {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessThan, v)

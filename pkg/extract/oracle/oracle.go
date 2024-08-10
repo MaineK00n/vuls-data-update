@@ -20,6 +20,7 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -173,8 +174,8 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
-	es := func() []detectionTypes.Ecosystem {
-		var es []detectionTypes.Ecosystem
+	es := func() []ecosystemTypes.Ecosystem {
+		var es []ecosystemTypes.Ecosystem
 		for _, d := range ds {
 			es = append(es, d.Ecosystem)
 		}
@@ -283,7 +284,7 @@ func collectPackages(criteria oracle.Criteria, tos tos) ([]detectionTypes.Detect
 	ds := make([]detectionTypes.Detection, 0, len(mm))
 	for v, cs := range mm {
 		ds = append(ds, detectionTypes.Detection{
-			Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeOracle, v)),
+			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, v)),
 			Criteria: criteriaTypes.Criteria{
 				Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: cs,

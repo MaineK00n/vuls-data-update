@@ -22,6 +22,7 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -173,7 +174,7 @@ func extract(fetched errata.Erratum, osver string) dataTypes.Data {
 				Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
 				Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
 			},
-			Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver))},
+			Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver))},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			m := map[string]vulnerabilityContentTypes.Content{}
@@ -195,7 +196,7 @@ func extract(fetched errata.Erratum, osver string) dataTypes.Data {
 			for _, c := range m {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content:    c,
-					Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver))},
+					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver))},
 				})
 			}
 			return vs
@@ -242,7 +243,7 @@ func extract(fetched errata.Erratum, osver string) dataTypes.Data {
 				}
 			}
 			return []detectionTypes.Detection{{
-				Ecosystem: detectionTypes.Ecosystem(fmt.Sprintf("%s:%s", detectionTypes.EcosystemTypeAlma, osver)),
+				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

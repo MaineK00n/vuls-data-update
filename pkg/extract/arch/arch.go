@@ -19,6 +19,7 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -151,7 +152,7 @@ func extract(fetched arch.VulnerabilityGroup) dataTypes.Data {
 						return rs
 					}(),
 				},
-				Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch)},
+				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
 			}}
 
 			for _, a := range fetched.Advisories {
@@ -163,7 +164,7 @@ func extract(fetched arch.VulnerabilityGroup) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
 						}},
 					},
-					Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch)},
+					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
 				})
 			}
 
@@ -180,7 +181,7 @@ func extract(fetched arch.VulnerabilityGroup) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
 						}},
 					},
-					Ecosystems: []detectionTypes.Ecosystem{detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch)},
+					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
 				})
 			}
 			return vs
@@ -210,7 +211,7 @@ func extract(fetched arch.VulnerabilityGroup) dataTypes.Data {
 			}
 
 			return []detectionTypes.Detection{{
-				Ecosystem: detectionTypes.Ecosystem(detectionTypes.EcosystemTypeArch),
+				Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch),
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

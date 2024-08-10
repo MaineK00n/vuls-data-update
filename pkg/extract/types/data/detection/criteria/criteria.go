@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type Criteria struct {
@@ -90,9 +91,9 @@ type FilteredCriterion struct {
 	Accepts   []int
 }
 
-func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
+func (c Criteria) Contains(ecosystem ecosystemTypes.Ecosystem, query criterionTypes.Query) (bool, error) {
 	for _, ca := range c.Criterias {
-		isAccepted, err := ca.Contains(query)
+		isAccepted, err := ca.Contains(ecosystem, query)
 		if err != nil {
 			return false, errors.Wrap(err, "criteria contains")
 		}
@@ -102,7 +103,7 @@ func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 	}
 
 	for _, cn := range c.Criterions {
-		isAccepted, err := cn.Accept(query)
+		isAccepted, err := cn.Accept(ecosystem, query)
 		if err != nil {
 			return false, errors.Wrap(err, "criterion accept")
 		}
@@ -113,7 +114,7 @@ func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 	return false, nil
 }
 
-func (c Criteria) Accept(queries []criterionTypes.Query) (FilteredCriteria, error) {
+func (c Criteria) Accept(ecosystem ecosystemTypes.Ecosystem, queries []criterionTypes.Query) (FilteredCriteria, error) {
 	filtered := FilteredCriteria{
 		Operator: c.Operator,
 		Criterias: func() []FilteredCriteria {
@@ -131,7 +132,7 @@ func (c Criteria) Accept(queries []criterionTypes.Query) (FilteredCriteria, erro
 	}
 
 	for _, ca := range c.Criterias {
-		fca, err := ca.Accept(queries)
+		fca, err := ca.Accept(ecosystem, queries)
 		if err != nil {
 			return FilteredCriteria{}, errors.Wrap(err, "criteria accept")
 		}
@@ -141,7 +142,7 @@ func (c Criteria) Accept(queries []criterionTypes.Query) (FilteredCriteria, erro
 	for _, cn := range c.Criterions {
 		var is []int
 		for i, q := range queries {
-			isAccepted, err := cn.Accept(q)
+			isAccepted, err := cn.Accept(ecosystem, q)
 			if err != nil {
 				return FilteredCriteria{}, errors.Wrap(err, "criterion accept")
 			}

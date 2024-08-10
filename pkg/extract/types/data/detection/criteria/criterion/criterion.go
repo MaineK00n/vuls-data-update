@@ -11,6 +11,7 @@ import (
 
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type Criterion struct {
@@ -69,7 +70,7 @@ type QueryPackage struct {
 	Functions  []string
 }
 
-func (c Criterion) Accept(query Query) (bool, error) {
+func (c Criterion) Accept(ecosystem ecosystemTypes.Ecosystem, query Query) (bool, error) {
 	if !c.Vulnerable {
 		return false, nil
 	}
@@ -99,7 +100,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 			return true, nil
 		}
 
-		isAccept, err = c.Affected.Accept(version)
+		isAccept, err = c.Affected.Accept(ecosystem, version)
 		if err != nil {
 			return false, errors.Wrap(err, "affected accept")
 		}
@@ -131,7 +132,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			isAccept, err := c.Affected.Accept(strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
+			isAccept, err := c.Affected.Accept(ecosystem, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
 			if err != nil {
 				return false, errors.Wrap(err, "affected accpet")
 			}
