@@ -2,6 +2,7 @@ package extract
 
 import (
 	"path/filepath"
+	"runtime"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
@@ -94,7 +95,6 @@ import (
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/msf"
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cpe"
-	nvdAPICPEMatch "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cpematch"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cve"
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch"
@@ -160,7 +160,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdKEV(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
-		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
+		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
 		newCmdSnort(),
 	)
 
@@ -2268,19 +2268,25 @@ func newCmdMSF() *cobra.Command {
 }
 
 func newCmdNVDAPICVE() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"),
+		},
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-api-cve <Raw NVD API CVE Repository PATH>",
+		Use:   "nvd-api-cve <Raw NVD API CVE Repository PATH> <Raw NVD API CPEMATCH Repository PATH>",
 		Short: "Extract NVD API CVE data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-api-cve vuls-data-raw-nvd-api-cve
+			$ vuls-data-update extract nvd-api-cve vuls-data-raw-nvd-api-cve vuls-data-raw-nvd-api-cpematch
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdAPICVE.Extract(args[0], nvdAPICVE.WithDir(options.dir)); err != nil {
+			if err := nvdAPICVE.Extract(args[0], args[1], nvdAPICVE.WithDir(options.dir), nvdAPICVE.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract nvd api cve")
 			}
 			return nil
@@ -2288,6 +2294,7 @@ func newCmdNVDAPICVE() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"), "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
 
 	return cmd
 }
@@ -2313,31 +2320,6 @@ func newCmdNVDAPICPE() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpe"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdNVDAPICPEMatch() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpematch"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "nvd-api-cpematch <Raw NVD API CPEMatch Repository PATH>",
-		Short: "Extract NVD API CPEMatch data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-api-cpematch vuls-data-raw-nvd-api-cpematch
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdAPICPEMatch.Extract(args[0], nvdAPICPEMatch.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract nvd api cpematch")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpematch"), "output extract results to specified directory")
 
 	return cmd
 }
