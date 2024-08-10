@@ -26,6 +26,7 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
@@ -200,7 +201,7 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 				rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
 			}
 			return []detectionType.Detection{{
-				Ecosystem: detectionType.EcosystemTypeCPE,
+				Ecosystem: ecosystemTypes.EcosystemTypeCPE,
 				Criteria:  rootCriteria,
 			}}, nil
 		}
@@ -309,7 +310,7 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 					Published: utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.Published),
 					Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.LastModified),
 				},
-				Ecosystems: []detectionType.Ecosystem{detectionType.EcosystemTypeCPE},
+				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.EcosystemTypeCPE},
 			},
 		},
 		Detection:  ds,

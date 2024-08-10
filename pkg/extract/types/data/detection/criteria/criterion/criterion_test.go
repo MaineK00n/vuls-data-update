@@ -8,6 +8,7 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 func TestCompare(t *testing.T) {
@@ -38,7 +39,8 @@ func TestCriterion_Accept(t *testing.T) {
 		Affected   *affectedTypes.Affected
 	}
 	type args struct {
-		query criterionTypes.Query
+		ecosystem ecosystemTypes.Ecosystem
+		query     criterionTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -270,7 +272,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package:    tt.fields.Package,
 				Affected:   tt.fields.Affected,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.ecosystem, tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

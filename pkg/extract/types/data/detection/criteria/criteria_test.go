@@ -8,6 +8,7 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
 	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 func TestCompare(t *testing.T) {
@@ -38,7 +39,8 @@ func TestCriteria_Contains(t *testing.T) {
 		Criterions []criterionTypes.Criterion
 	}
 	type args struct {
-		query criterionTypes.Query
+		ecosystem ecosystemTypes.Ecosystem
+		query     criterionTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -229,7 +231,7 @@ func TestCriteria_Contains(t *testing.T) {
 				Criterias:  tt.fields.Criterias,
 				Criterions: tt.fields.Criterions,
 			}
-			got, err := c.Contains(tt.args.query)
+			got, err := c.Contains(tt.args.ecosystem, tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criteria.Contains() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -248,7 +250,8 @@ func TestCriteria_Accept(t *testing.T) {
 		Criterions []criterionTypes.Criterion
 	}
 	type args struct {
-		queries []criterionTypes.Query
+		ecosystem ecosystemTypes.Ecosystem
+		queries   []criterionTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -592,7 +595,7 @@ func TestCriteria_Accept(t *testing.T) {
 				Criterias:  tt.fields.Criterias,
 				Criterions: tt.fields.Criterions,
 			}
-			got, err := c.Accept(tt.args.queries)
+			got, err := c.Accept(tt.args.ecosystem, tt.args.queries)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criteria.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

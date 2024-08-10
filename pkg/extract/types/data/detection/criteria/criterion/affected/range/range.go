@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	gem "github.com/aquasecurity/go-gem-version"
 	npm "github.com/aquasecurity/go-npm-version/pkg"
@@ -14,6 +15,8 @@ import (
 	rpm "github.com/knqyf263/go-rpm-version"
 	mvn "github.com/masahiro331/go-mvn-version"
 	"github.com/pkg/errors"
+
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type RangeType int
@@ -127,6 +130,16 @@ func Compare(x, y Range) int {
 	)
 }
 
+type CompareError struct {
+	Err error
+}
+
+func (e *CompareError) Error() string {
+	return fmt.Sprintf("compare error. err: %v", e.Err)
+}
+
+func (e *CompareError) Unwrap() error { return e.Err }
+
 type NewVersionError struct {
 	RangeType RangeType
 	Version   string
@@ -139,93 +152,120 @@ func (e *NewVersionError) Error() string {
 
 func (e *NewVersionError) Unwrap() error { return e.Err }
 
-func (t RangeType) Compare(v1, v2 string) (int, error) {
+type CannotCompareError struct {
+	Reason string
+}
+
+func (e *CannotCompareError) Error() string {
+	return fmt.Sprintf("cannot version comare. %s", e.Reason)
+}
+
+var ErrRangeTypeUnknown = errors.New("unknown range type")
+
+func (t RangeType) Compare(ecosystem ecosystemTypes.Ecosystem, v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeVersion:
 		va, err := version.NewVersion(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := version.NewVersion(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeSEMVER:
 		va, err := version.NewSemver(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := version.NewSemver(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeAPK:
 		va, err := apk.NewVersion(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := apk.NewVersion(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
-		return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
+		switch {
+		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeOracle):
+			if extractOracleKsplice(v1) != extractOracleKsplice(v2) {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", v1, v2)}}
+			}
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
+		default:
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
+		}
 	case RangeTypeDPKG:
 		va, err := deb.NewVersion(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := deb.NewVersion(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeNPM:
 		va, err := npm.NewVersion(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := npm.NewVersion(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeRubyGems:
 		va, err := gem.NewVersion(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := gem.NewVersion(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypePyPI:
 		va, err := pep440.Parse(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := pep440.Parse(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeMaven:
 		va, err := mvn.NewVersion(v1)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v1, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := mvn.NewVersion(v2)
 		if err != nil {
-			return 0, &NewVersionError{RangeType: t, Version: v2, Err: err}
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
 		return va.Compare(vb), nil
 	case RangeTypeUnknown:
-		return 0, errors.Errorf("unknown range type")
+		return 0, &CompareError{Err: ErrRangeTypeUnknown}
 	default:
 		return 0, errors.Errorf("unsupported range type: %s", t)
 	}
+}
+
+func extractOracleKsplice(v string) string {
+	for _, s := range strings.Split(v, ".") {
+		if strings.HasPrefix(s, "ksplice") {
+			return s
+		}
+	}
+	return ""
 }

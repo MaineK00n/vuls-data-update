@@ -3,12 +3,12 @@ package eol
 import (
 	"time"
 
-	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 )
 
 var os = map[string]map[string]eolTypes.EOL{
-	detectionTypes.EcosystemTypeAlma: {
+	ecosystemTypes.EcosystemTypeAlma: {
 		"8": {
 			Ended: false,
 			Date: map[string]time.Time{
@@ -24,7 +24,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeAlpine: {
+	ecosystemTypes.EcosystemTypeAlpine: {
 		"2.1": {
 			Ended: true,
 			Date:  map[string]time.Time{"Standard": time.Date(2012, 11, 1, 23, 59, 59, 0, time.UTC)},
@@ -134,7 +134,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			Date:  map[string]time.Time{"Standard": time.Date(2025, 11, 1, 23, 59, 59, 0, time.UTC)},
 		},
 	},
-	detectionTypes.EcosystemTypeAmazon: {
+	ecosystemTypes.EcosystemTypeAmazon: {
 		"1": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -158,7 +158,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeArch: {"arch": {Ended: false}},
+	ecosystemTypes.EcosystemTypeArch: {"arch": {Ended: false}},
 	"centos": {
 		"3": {
 			Ended: true,
@@ -210,7 +210,7 @@ var os = map[string]map[string]eolTypes.EOL{
 		},
 		"9": {Ended: false},
 	},
-	detectionTypes.EcosystemTypeDebian: {
+	ecosystemTypes.EcosystemTypeDebian: {
 		"buzz": {Ended: true},
 		"rex":  {Ended: true},
 		"bo":   {Ended: true},
@@ -290,7 +290,7 @@ var os = map[string]map[string]eolTypes.EOL{
 		"trixie":   {Ended: false},
 		"forky":    {Ended: false},
 	},
-	detectionTypes.EcosystemTypeFedora: {
+	ecosystemTypes.EcosystemTypeFedora: {
 		"1": {
 			Ended: true,
 			Date:  map[string]time.Time{"Standard": time.Date(2004, 9, 19, 23, 59, 59, 0, time.UTC)},
@@ -452,7 +452,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			Date:  map[string]time.Time{"Standard": time.Date(2025, 5, 13, 23, 59, 59, 0, time.UTC)},
 		},
 	},
-	detectionTypes.EcosystemTypeFreeBSD: {
+	ecosystemTypes.EcosystemTypeFreeBSD: {
 		"stable/4": {
 			Ended: true,
 			Date:  map[string]time.Time{"Standard": time.Date(2007, 1, 31, 23, 59, 59, 0, time.UTC)},
@@ -661,8 +661,8 @@ var os = map[string]map[string]eolTypes.EOL{
 		"releng/14.0": {Ended: false},
 		"releng/14.1": {Ended: false},
 	},
-	detectionTypes.EcosystemTypeGentoo: {"gentoo": {Ended: false}},
-	detectionTypes.EcosystemTypeNetBSD: {
+	ecosystemTypes.EcosystemTypeGentoo: {"gentoo": {Ended: false}},
+	ecosystemTypes.EcosystemTypeNetBSD: {
 		"1": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -720,7 +720,7 @@ var os = map[string]map[string]eolTypes.EOL{
 		},
 		"9": {Ended: false},
 	},
-	detectionTypes.EcosystemTypeOracle: {
+	ecosystemTypes.EcosystemTypeOracle: {
 		"3": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -769,7 +769,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeRedHat: {
+	ecosystemTypes.EcosystemTypeRedHat: {
 		"3": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -839,7 +839,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeRocky: {
+	ecosystemTypes.EcosystemTypeRocky: {
 		"8": {
 			Ended: false,
 			Date: map[string]time.Time{
@@ -855,7 +855,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeOpenSUSE: {
+	ecosystemTypes.EcosystemTypeOpenSUSE: {
 		"9.1": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1016,7 +1016,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeSUSEServer: {
+	ecosystemTypes.EcosystemTypeSUSEServer: {
 		"10": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1174,7 +1174,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeSUSEDesktop: {
+	ecosystemTypes.EcosystemTypeSUSEDesktop: {
 		"11": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1274,7 +1274,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeUbuntu: {
+	ecosystemTypes.EcosystemTypeUbuntu: {
 		"warty": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1524,7 +1524,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	detectionTypes.EcosystemTypeWindows: {
+	ecosystemTypes.EcosystemTypeWindows: {
 		"Windows XP": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1844,7 +1844,7 @@ var os = map[string]map[string]eolTypes.EOL{
 		"13": {Ended: false},
 		"14": {Ended: false},
 	},
-	detectionTypes.EcosystemTypeFortinet: {
+	ecosystemTypes.EcosystemTypeFortinet: {
 		"FortiOS 4.2": {
 			Ended: true,
 		},
