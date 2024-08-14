@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"net/http"
 	"net/textproto"
 	"path/filepath"
@@ -23,7 +24,6 @@ import (
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 	"github.com/ulikunitz/xz"
-	"golang.org/x/exp/maps"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -562,10 +562,10 @@ func parselist(r io.Reader, parseheader func(line string) []string, finish func(
 			}
 		default:
 			if len(header) != 0 {
-				if keys := maps.Keys(anns_types); slices.Contains(keys, "NOT-FOR-US") && slices.Contains(keys, "package") {
+				if keys := slices.Collect(maps.Keys(anns_types)); slices.Contains(keys, "NOT-FOR-US") && slices.Contains(keys, "package") {
 					log.Printf("[WARN] NOT-FOR-US conflicts with package annotations: %q", headerline)
 				}
-				if keys := maps.Keys(anns_types); slices.Contains(keys, "REJECTED") && slices.Contains(keys, "package") {
+				if keys := slices.Collect(maps.Keys(anns_types)); slices.Contains(keys, "REJECTED") && slices.Contains(keys, "package") {
 					log.Printf("[WARN] REJECTED bug has package annotations: %q", headerline)
 				}
 				bugs = append(bugs, finish(header, headerline, anns))

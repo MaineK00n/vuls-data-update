@@ -3,12 +3,12 @@ package eol
 import (
 	"fmt"
 	"log"
+	"maps"
 	"path/filepath"
 	"slices"
 	"time"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
@@ -59,8 +59,6 @@ func Extract(opts ...Option) error {
 		o.apply(options)
 	}
 
-	maps.Keys(options.eols)
-
 	if err := util.RemoveAll(options.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
@@ -71,7 +69,7 @@ func Extract(opts ...Option) error {
 		for e, m := range eols {
 			for v, eol := range m {
 				if !eol.Ended {
-					ds := maps.Values(eol.Date)
+					ds := slices.Collect(maps.Values(eol.Date))
 					if len(ds) == 0 {
 						continue
 					}

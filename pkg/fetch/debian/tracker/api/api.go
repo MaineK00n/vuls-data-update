@@ -12,7 +12,6 @@ import (
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -133,9 +132,8 @@ func Fetch(opts ...Option) error {
 	for code, advs := range m {
 		log.Printf("[INFO] Fetched Debian %s Advisory", code)
 
-		as := maps.Values(advs)
-		bar := pb.StartNew(len(as))
-		for _, a := range as {
+		bar := pb.StartNew(len(advs))
+		for _, a := range advs {
 			d := "TEMP"
 			if strings.HasPrefix(a.ID, "CVE-") {
 				splitted, err := util.Split(a.ID, "-", "-")

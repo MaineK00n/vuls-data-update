@@ -1,6 +1,6 @@
 module github.com/MaineK00n/vuls-data-update
 
-go 1.22
+go 1.23
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
@@ -24,7 +24,6 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/tealeg/xlsx v1.0.5
 	github.com/ulikunitz/xz v0.5.12
-	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
 	golang.org/x/net v0.28.0
 	golang.org/x/sync v0.8.0
 	gopkg.in/yaml.v3 v3.0.1

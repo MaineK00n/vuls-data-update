@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
@@ -169,7 +170,7 @@ func extract(fetched errata.Erratum, osver string) dataTypes.Data {
 							URL:    r.Href,
 						}] = struct{}{}
 					}
-					return maps.Keys(m)
+					return slices.Collect(maps.Keys(m))
 				}(),
 				Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
 				Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
