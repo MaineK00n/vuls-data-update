@@ -1,7 +1,6 @@
 package fetch
 
 import (
-	"fmt"
 	"path/filepath"
 	"time"
 
@@ -39,6 +38,7 @@ import (
 	suseCSAFVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
 	suseCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf"
 	suseCVRFCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/cvrf_cve"
+	suseOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/osv"
 	suseOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
 	ubuntuOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/oval"
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
@@ -137,7 +137,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdOracle(),
 		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
-		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(),
+		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
 
@@ -944,7 +944,7 @@ func newCmdSUSEOVAL() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseOVAL.Fetch(suseOVAL.WithDir(options.dir), suseOVAL.WithRetry(options.retry)); err != nil {
+			if err := suseOVAL.Fetch(suseOVAL.WithDir(options.dir), suseOVAL.WithRetry(options.retry), suseOVAL.WithConcurrency(options.concurrency), suseOVAL.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse oval")
 			}
 			return nil
@@ -960,17 +960,9 @@ func newCmdSUSEOVAL() *cobra.Command {
 }
 
 func newCmdSUSECVRF() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"),
-			retry: 3,
-		},
-		concurrency: 20,
-		wait:        1,
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"),
+		retry: 3,
 	}
 
 	cmd := &cobra.Command{
@@ -981,7 +973,7 @@ func newCmdSUSECVRF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseCVRF.Fetch(suseCVRF.WithDir(options.dir), suseCVRF.WithWait(options.wait)); err != nil {
+			if err := suseCVRF.Fetch(suseCVRF.WithDir(options.dir), suseCVRF.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse cvrf")
 			}
 			return nil
@@ -990,24 +982,14 @@ func newCmdSUSECVRF() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }
 
 func newCmdSUSECVRFCVE() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
-			retry: 3,
-		},
-		concurrency: 20,
-		wait:        1,
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
+		retry: 3,
 	}
 
 	cmd := &cobra.Command{
@@ -1016,16 +998,9 @@ func newCmdSUSECVRFCVE() *cobra.Command {
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch suse-cvrf-cve
 		`),
-		ValidArgs: func() []string {
-			var ys []string
-			for y := 1999; y <= time.Now().Year(); y++ {
-				ys = append(ys, fmt.Sprintf("%d", y))
-			}
-			return ys
-		}(),
-		Args: cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := suseCVRFCVE.Fetch(args, suseCVRFCVE.WithDir(options.dir), suseCVRFCVE.WithWait(options.wait)); err != nil {
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := suseCVRFCVE.Fetch(suseCVRFCVE.WithDir(options.dir), suseCVRFCVE.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse cvrf cve")
 			}
 			return nil
@@ -1034,24 +1009,14 @@ func newCmdSUSECVRFCVE() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }
 
 func newCmdSUSECSAF() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
-			retry: 3,
-		},
-		concurrency: 20,
-		wait:        1,
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
+		retry: 3,
 	}
 
 	cmd := &cobra.Command{
@@ -1062,7 +1027,7 @@ func newCmdSUSECSAF() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := suseCSAF.Fetch(suseCSAF.WithDir(options.dir), suseCSAF.WithWait(options.wait)); err != nil {
+			if err := suseCSAF.Fetch(suseCSAF.WithDir(options.dir), suseCSAF.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse csaf")
 			}
 			return nil
@@ -1071,24 +1036,14 @@ func newCmdSUSECSAF() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
 }
 
 func newCmdSUSECSAFVEX() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"),
-			retry: 3,
-		},
-		concurrency: 20,
-		wait:        1,
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"),
+		retry: 3,
 	}
 
 	cmd := &cobra.Command{
@@ -1097,16 +1052,9 @@ func newCmdSUSECSAFVEX() *cobra.Command {
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch suse-csaf-vex
 		`),
-		ValidArgs: func() []string {
-			var ys []string
-			for y := 1999; y <= time.Now().Year(); y++ {
-				ys = append(ys, fmt.Sprintf("%d", y))
-			}
-			return ys
-		}(),
-		Args: cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := suseCSAFVEX.Fetch(args, suseCSAFVEX.WithDir(options.dir), suseCSAFVEX.WithWait(options.wait)); err != nil {
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := suseCSAFVEX.Fetch(suseCSAFVEX.WithDir(options.dir), suseCSAFVEX.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch suse csaf vex")
 			}
 			return nil
@@ -1115,8 +1063,33 @@ func newCmdSUSECSAFVEX() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 20, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdSUSEOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "suse-osv",
+		Short: "Fetch SUSE OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch suse-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := suseOSV.Fetch(suseOSV.WithDir(options.dir), suseOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch suse osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }

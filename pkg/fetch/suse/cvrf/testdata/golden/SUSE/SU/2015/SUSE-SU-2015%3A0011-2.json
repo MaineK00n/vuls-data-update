@@ -57,7 +57,7 @@
 		},
 		{
 			"type": "Self",
-			"url": "https://lists.opensuse.org/opensuse-security-announce/2015-02/msg00018.html",
+			"url": "https://lists.suse.com/pipermail/sle-security-updates/2015-February/001228.html",
 			"description": "E-Mail link for SUSE-SU-2015:0011-2"
 		},
 		{
@@ -555,6 +555,10 @@
 				{
 					"url": "https://bugzilla.suse.com/792926",
 					"description": "SUSE Bug 792926"
+				},
+				{
+					"url": "https://bugzilla.suse.com/986950",
+					"description": "SUSE Bug 986950"
 				}
 			]
 		},
@@ -938,6 +942,10 @@
 				{
 					"url": "https://bugzilla.suse.com/908994",
 					"description": "SUSE Bug 908994"
+				},
+				{
+					"url": "https://bugzilla.suse.com/986950",
+					"description": "SUSE Bug 986950"
 				}
 			]
 		}

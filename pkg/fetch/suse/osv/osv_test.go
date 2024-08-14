@@ -1,4 +1,4 @@
-package csaf_vex_test
+package osv_test
 
 import (
 	"io/fs"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/osv"
 )
 
 func TestFetch(t *testing.T) {
@@ -23,7 +23,7 @@ func TestFetch(t *testing.T) {
 	}{
 		{
 			name:     "happy path",
-			testdata: "testdata/fixtures/csaf-vex.tar.bz2",
+			testdata: "testdata/fixtures/osv.tar.bz2",
 		},
 	}
 	for _, tt := range tests {
@@ -39,7 +39,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = csaf_vex.Fetch(csaf_vex.WithBaseURL(u), csaf_vex.WithDir(dir), csaf_vex.WithRetry(0))
+			err = osv.Fetch(osv.WithBaseURL(u), osv.WithDir(dir), osv.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -56,8 +56,8 @@ func TestFetch(t *testing.T) {
 					return nil
 				}
 
-				dir, file := filepath.Split(path)
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
+				wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
 				if err != nil {
 					return err
 				}

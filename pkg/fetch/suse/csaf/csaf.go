@@ -1,31 +1,29 @@
 package csaf
 
 import (
+	"archive/tar"
+	"compress/bzip2"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://ftp.suse.com/pub/projects/security/csaf/"
+const baseURL = "https://ftp.suse.com/pub/projects/security/csaf.tar.bz2"
 
 type options struct {
-	baseURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        int
+	baseURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -62,33 +60,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type concurrencyOption int
-
-func (c concurrencyOption) apply(opts *options) {
-	opts.concurrency = int(c)
-}
-
-func WithConcurrency(concurrency int) Option {
-	return concurrencyOption(concurrency)
-}
-
-type waitOption int
-
-func (w waitOption) apply(opts *options) {
-	opts.wait = int(w)
-}
-
-func WithWait(wait int) Option {
-	return waitOption(wait)
-}
-
 func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
-		retry:       3,
-		concurrency: 20,
-		wait:        1,
+		baseURL: baseURL,
+		dir:     filepath.Join(util.CacheDir(), "fetch", "suse", "csaf"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -100,79 +76,57 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch SUSE CSAF")
-	csafs, err := options.walkIndexOf()
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
 	if err != nil {
-		return errors.Wrap(err, "walk index of")
-	}
-	us := make([]string, 0, len(csafs))
-	for _, csaf := range csafs {
-		u, err := url.JoinPath(options.baseURL, csaf)
-		if err != nil {
-			return errors.Wrap(err, "join url path")
-		}
-		us = append(us, u)
-	}
-
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
-		}
-
-		var adv CSAF
-		if err := json.NewDecoder(resp.Body).Decode(&adv); err != nil {
-			return errors.Wrap(err, "decode json")
-		}
-
-		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-", "-")
-		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-SU-yyyy:\\d+-1", adv.Document.Tracking.ID)
-			return nil
-		}
-
-		if _, err := time.Parse("2006", strings.Split(splitted[2], ":")[0]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-SU-yyyy:\\d+-1", adv.Document.Tracking.ID)
-			return nil
-		}
-
-		if err := util.Write(filepath.Join(options.dir, strings.Split(adv.Document.Tracking.ID, "-")[0], strings.Split(splitted[2], ":")[0], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.Split(adv.Document.Tracking.ID, "-")[0], strings.Split(splitted[2], ":")[0], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
-		}
-
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "pipeline get")
-	}
-
-	return nil
-}
-
-func (opts options) walkIndexOf() ([]string, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
-	if err != nil {
-		return nil, errors.Wrap(err, "fetch index of")
+		return errors.Wrap(err, "fetch suse csaf")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
-	d, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "parse as html")
-	}
-
-	var cs []string
-	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
-		txt := selection.Text()
-		if !strings.HasPrefix(txt, "opensuse-") && !strings.HasPrefix(txt, "suse-") {
-			return
+	tr := tar.NewReader(bzip2.NewReader(resp.Body))
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
 		}
-		cs = append(cs, txt)
-	})
-	return cs, nil
+		if err != nil {
+			return errors.Wrap(err, "next tar reader")
+		}
+
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
+
+		if filepath.Ext(hdr.Name) != ".json" {
+			continue
+		}
+
+		var adv CSAF
+		if err := json.NewDecoder(tr).Decode(&adv); err != nil {
+			return errors.Wrap(err, "decode json")
+		}
+
+		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-(SU|RU|FU|OU)-.*", adv.Document.Tracking.ID)
+			return nil
+		}
+
+		y := "others"
+		if lhs, _, ok := strings.Cut(splitted[2], ":"); ok {
+			if _, err := time.Parse("2006", lhs); err == nil {
+				y = lhs
+			}
+		}
+
+		if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], y, fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
+		}
+	}
+
+	return nil
 }

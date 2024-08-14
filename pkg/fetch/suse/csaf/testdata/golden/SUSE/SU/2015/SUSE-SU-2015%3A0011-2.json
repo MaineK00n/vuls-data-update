@@ -1,12 +1,13 @@
 {
 	"document": {
 		"aggregate_severity": {
-			"namespace": "https://www.suse.com/support/security/rating/"
+			"namespace": "https://www.suse.com/support/security/rating/",
+			"text": "moderate"
 		},
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
 		"distribution": {
-			"text": "Copyright 2023 SUSE LLC. All rights reserved.",
+			"text": "Copyright 2024 SUSE LLC. All rights reserved.",
 			"tlp": {
 				"label": "WHITE",
 				"url": "https://www.first.org/tlp/"
@@ -43,11 +44,6 @@
 		},
 		"references": [
 			{
-				"category": "self",
-				"summary": "URL for SUSE-SU-2015:0011-2",
-				"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
-			},
-			{
 				"category": "external",
 				"summary": "SUSE ratings",
 				"url": "https://www.suse.com/support/security/rating/"
@@ -59,8 +55,13 @@
 			},
 			{
 				"category": "self",
+				"summary": "URL for SUSE-SU-2015:0011-2",
+				"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+			},
+			{
+				"category": "self",
 				"summary": "E-Mail link for SUSE-SU-2015:0011-2",
-				"url": "https://lists.opensuse.org/opensuse-security-announce/2015-02/msg00018.html"
+				"url": "https://lists.suse.com/pipermail/sle-security-updates/2015-February/001228.html"
 			},
 			{
 				"category": "self",
@@ -1395,11 +1396,11 @@
 				{
 					"category": "general",
 					"text": "ISC BIND 9.x before 9.7.6-P1, 9.8.x before 9.8.3-P1, 9.9.x before 9.9.1-P1, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P1 does not properly handle resource records with a zero-length RDATA section, which allows remote DNS servers to cause a denial of service (daemon crash or data corruption) or obtain sensitive information from process memory via a crafted record.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -1640,11 +1641,11 @@
 				{
 					"category": "general",
 					"text": "ISC BIND 9.4.x, 9.5.x, 9.6.x, and 9.7.x before 9.7.6-P2; 9.8.x before 9.8.3-P2; 9.9.x before 9.9.1-P2; and 9.6-ESV before 9.6-ESV-R7-P2, when DNSSEC validation is enabled, does not properly initialize the failing-query cache, which allows remote attackers to cause a denial of service (assertion failure and daemon exit) by sending many queries.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -1758,6 +1759,11 @@
 					"category": "external",
 					"summary": "SUSE Bug 792926 for CVE-2012-3817",
 					"url": "https://bugzilla.suse.com/792926"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 986950 for CVE-2012-3817",
+					"url": "https://bugzilla.suse.com/986950"
 				}
 			],
 			"remediations": [
@@ -1885,11 +1891,11 @@
 				{
 					"category": "general",
 					"text": "ISC BIND 9.x before 9.7.6-P3, 9.8.x before 9.8.3-P3, 9.9.x before 9.9.1-P3, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P3 allows remote attackers to cause a denial of service (assertion failure and named daemon exit) via a query for a long resource record.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -2130,11 +2136,11 @@
 				{
 					"category": "general",
 					"text": "ISC BIND 9.x before 9.7.6-P4, 9.8.x before 9.8.3-P4, 9.9.x before 9.9.1-P4, and 9.4-ESV and 9.6-ESV before 9.6-ESV-R7-P4 allows remote attackers to cause a denial of service (named daemon hang) via unspecified combinations of resource records.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -2375,11 +2381,11 @@
 				{
 					"category": "general",
 					"text": "The RFC 5011 implementation in rdata.c in ISC BIND 9.7.x and 9.8.x before 9.8.5-P2, 9.8.6b1, 9.9.x before 9.9.3-P2, and 9.9.4b1, and DNSco BIND 9.9.3-S1 before 9.9.3-S1-P1 and 9.9.4-S1b1, allows remote attackers to cause a denial of service (assertion failure and named daemon exit) via a query with a malformed RDATA section that is not properly handled during construction of a log message, as exploited in the wild in July 2013.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -2615,11 +2621,11 @@
 				{
 					"category": "general",
 					"text": "The query_findclosestnsec3 function in query.c in named in ISC BIND 9.6, 9.7, and 9.8 before 9.8.6-P2 and 9.9 before 9.9.4-P2, and 9.6-ESV before 9.6-ESV-R10-P2, allows remote attackers to cause a denial of service (INSIST assertion failure and daemon exit) via a crafted DNS query to an authoritative nameserver that uses the NSEC3 signing feature.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -2855,11 +2861,11 @@
 				{
 					"category": "general",
 					"text": "ISC BIND 9.0.x through 9.8.x, 9.9.0 through 9.9.6, and 9.10.0 through 9.10.1 does not limit delegation chaining, which allows remote attackers to cause a denial of service (memory consumption and named crash) via a large or infinite number of referrals.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.i586",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ia64",
 					"SUSE Linux Enterprise Server 11 SP2-LTSS:bind-9.9.4P2-0.6.1.ppc64",
@@ -2968,6 +2974,11 @@
 					"category": "external",
 					"summary": "SUSE Bug 908994 for CVE-2014-8500",
 					"url": "https://bugzilla.suse.com/908994"
+				},
+				{
+					"category": "external",
+					"summary": "SUSE Bug 986950 for CVE-2014-8500",
+					"url": "https://bugzilla.suse.com/986950"
 				}
 			],
 			"remediations": [

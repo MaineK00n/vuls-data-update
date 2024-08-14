@@ -1,0 +1,1489 @@
+{
+	"id": "SUSE-SU-403 Forbidden-1",
+	"modified": "2014-10-24T22:07:03Z",
+	"published": "2014-10-24T22:07:03Z",
+	"related": [
+		"CVE-2006-7250",
+		"CVE-2009-5146",
+		"CVE-2010-2939",
+		"CVE-2010-3864",
+		"CVE-2010-4180",
+		"CVE-2011-0014",
+		"CVE-2011-1945",
+		"CVE-2011-3210",
+		"CVE-2011-4108",
+		"CVE-2011-4109",
+		"CVE-2011-4576",
+		"CVE-2011-4577",
+		"CVE-2011-4619",
+		"CVE-2011-5095",
+		"CVE-2012-0050",
+		"CVE-2012-0884",
+		"CVE-2012-1165",
+		"CVE-2012-2110",
+		"CVE-2012-2333",
+		"CVE-2013-0166",
+		"CVE-2013-0169",
+		"CVE-2014-0076",
+		"CVE-2014-0221",
+		"CVE-2014-0224",
+		"CVE-2014-3470",
+		"CVE-2014-3505",
+		"CVE-2014-3506",
+		"CVE-2014-3507",
+		"CVE-2014-3508",
+		"CVE-2014-3510",
+		"CVE-2014-3513",
+		"CVE-2014-3566",
+		"CVE-2014-3567",
+		"CVE-2014-3568",
+		"CVE-2014-3570",
+		"CVE-2014-3571",
+		"CVE-2014-3572",
+		"CVE-2014-8275",
+		"CVE-2015-0204",
+		"CVE-2015-0205",
+		"CVE-2015-0209",
+		"CVE-2015-0286",
+		"CVE-2015-0287",
+		"CVE-2015-0288",
+		"CVE-2015-0289",
+		"CVE-2015-0292",
+		"CVE-2015-0293",
+		"CVE-2015-1788",
+		"CVE-2015-1789",
+		"CVE-2015-1790",
+		"CVE-2015-1791",
+		"CVE-2015-1792",
+		"CVE-2015-3216",
+		"CVE-2015-4000"
+	],
+	"summary": "Security update for OpenSSL",
+	"details": "\nThis OpenSSL update fixes the following issues:\n\n    * Session Ticket Memory Leak (CVE-2014-3567)\n    * Build option no-ssl3 is incomplete (CVE-2014-3568)\n    * Add support for TLS_FALLBACK_SCSV to mitigate CVE-2014-3566 (POODLE)\n\nSecurity Issues:\n\n    * CVE-2014-3567\n      <http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3567>\n    * CVE-2014-3566\n      <http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566>\n    * CVE-2014-3568\n      <http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3568>\n\n",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Desktop 12",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Desktop%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Desktop 12",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Desktop%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Desktop 12 SP1",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Desktop%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Desktop 12 SP1",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Desktop%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Software Development Kit 12",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Software%20Development%20Kit%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-devel": "4.8.6-7.1",
+						"libqt4-devel-doc": "4.8.6-7.3",
+						"libqt4-devel-doc-data": "4.8.6-7.3",
+						"libqt4-linguist": "4.8.6-7.1",
+						"libqt4-private-headers-devel": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Software Development Kit 12",
+				"name": "libqt4-devel-doc",
+				"purl": "purl:rpm/suse/libqt4-devel-doc&distro=SUSE%20Linux%20Enterprise%20Software%20Development%20Kit%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-devel": "4.8.6-7.1",
+						"libqt4-devel-doc": "4.8.6-7.3",
+						"libqt4-devel-doc-data": "4.8.6-7.3",
+						"libqt4-linguist": "4.8.6-7.1",
+						"libqt4-private-headers-devel": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Software Development Kit 12",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Software%20Development%20Kit%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-devel": "4.8.6-7.1",
+						"libqt4-devel-doc": "4.8.6-7.3",
+						"libqt4-devel-doc-data": "4.8.6-7.3",
+						"libqt4-linguist": "4.8.6-7.1",
+						"libqt4-private-headers-devel": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Software Development Kit 12 SP1",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Software%20Development%20Kit%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-devel": "4.8.6-7.1",
+						"libqt4-devel-doc": "4.8.6-7.3",
+						"libqt4-devel-doc-data": "4.8.6-7.3",
+						"libqt4-linguist": "4.8.6-7.1",
+						"libqt4-private-headers-devel": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Software Development Kit 12 SP1",
+				"name": "libqt4-devel-doc",
+				"purl": "purl:rpm/suse/libqt4-devel-doc&distro=SUSE%20Linux%20Enterprise%20Software%20Development%20Kit%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-devel": "4.8.6-7.1",
+						"libqt4-devel-doc": "4.8.6-7.3",
+						"libqt4-devel-doc-data": "4.8.6-7.3",
+						"libqt4-linguist": "4.8.6-7.1",
+						"libqt4-private-headers-devel": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Software Development Kit 12 SP1",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Software%20Development%20Kit%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-devel": "4.8.6-7.1",
+						"libqt4-devel-doc": "4.8.6-7.3",
+						"libqt4-devel-doc-data": "4.8.6-7.3",
+						"libqt4-linguist": "4.8.6-7.1",
+						"libqt4-private-headers-devel": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server 12",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Server%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server 12",
+				"name": "libqt4-devel-doc",
+				"purl": "purl:rpm/suse/libqt4-devel-doc&distro=SUSE%20Linux%20Enterprise%20Server%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server 12",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Server%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server for SAP Applications 12",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server for SAP Applications 12",
+				"name": "libqt4-devel-doc",
+				"purl": "purl:rpm/suse/libqt4-devel-doc&distro=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server for SAP Applications 12",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server 12 SP1",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Server%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server 12 SP1",
+				"name": "libqt4-devel-doc",
+				"purl": "purl:rpm/suse/libqt4-devel-doc&distro=SUSE%20Linux%20Enterprise%20Server%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server 12 SP1",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Server%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server for SAP Applications 12 SP1",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server for SAP Applications 12 SP1",
+				"name": "libqt4-devel-doc",
+				"purl": "purl:rpm/suse/libqt4-devel-doc&distro=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Server for SAP Applications 12 SP1",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4": "4.8.6-7.1",
+						"libqt4-32bit": "4.8.6-7.1",
+						"libqt4-qt3support": "4.8.6-7.1",
+						"libqt4-qt3support-32bit": "4.8.6-7.1",
+						"libqt4-sql": "4.8.6-7.1",
+						"libqt4-sql-32bit": "4.8.6-7.1",
+						"libqt4-sql-mysql": "4.8.6-7.1",
+						"libqt4-sql-sqlite": "4.8.6-7.1",
+						"libqt4-x11": "4.8.6-7.1",
+						"libqt4-x11-32bit": "4.8.6-7.1",
+						"qt4-x11-tools": "4.8.6-7.3"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Workstation Extension 12",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Workstation%20Extension%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Workstation Extension 12",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Workstation%20Extension%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Workstation Extension 12 SP1",
+				"name": "libqt4",
+				"purl": "purl:rpm/suse/libqt4&distro=SUSE%20Linux%20Enterprise%20Workstation%20Extension%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Linux Enterprise Workstation Extension 12 SP1",
+				"name": "libqt4-sql-plugins",
+				"purl": "purl:rpm/suse/libqt4-sql-plugins&distro=SUSE%20Linux%20Enterprise%20Workstation%20Extension%2012%20SP1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "4.8.6-7.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"libqt4-sql-mysql-32bit": "4.8.6-7.1",
+						"libqt4-sql-postgresql": "4.8.6-7.1",
+						"libqt4-sql-postgresql-32bit": "4.8.6-7.1",
+						"libqt4-sql-sqlite-32bit": "4.8.6-7.1",
+						"libqt4-sql-unixODBC": "4.8.6-7.1",
+						"libqt4-sql-unixODBC-32bit": "4.8.6-7.1"
+					}
+				]
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://www.suse.com/support/update/announcement//suse-su-403 forbidden-1/"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/608666"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/629905"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/651003"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/657663"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/670526"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/693027"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/716144"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/739719"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/742821"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/743344"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/748738"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/749210"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/749213"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/749735"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/751946"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/751977"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/755395"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/758060"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/761324"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/761838"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/767256"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/768097"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/779952"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/802648"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/802746"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/859228"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/859924"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/860332"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/862181"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/869945"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/870192"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/879179"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/880891"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/890764"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/890767"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/890768"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/890769"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/890770"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/892403"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/901223"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/901277"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/912014"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/912015"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/912018"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/912293"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/912294"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/912296"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/915976"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/919648"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/920236"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/922488"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/922496"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/922499"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/922500"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/922501"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/929678"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/931698"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/933898"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/933911"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/934487"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/934489"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/934491"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/934493"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2006-7250"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2009-5146"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2010-2939"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2010-3864"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2010-4180"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-0014"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-1945"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-3210"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-4108"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-4109"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-4576"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-4577"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-4619"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2011-5095"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-0050"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-0884"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-1165"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-2110"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-2333"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2013-0166"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2013-0169"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-0076"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-0221"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-0224"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3470"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3505"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3506"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3507"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3508"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3510"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3513"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3566"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3567"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3568"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3570"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3571"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-3572"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-8275"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0204"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0205"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0209"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0286"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0287"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0288"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0289"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0292"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-0293"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-1788"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-1789"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-1790"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-1791"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-1792"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-3216"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2015-4000"
+		}
+	]
+}

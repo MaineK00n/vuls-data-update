@@ -1,32 +1,28 @@
 package cvrf_cve
 
 import (
+	"archive/tar"
+	"compress/bzip2"
 	"encoding/xml"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
-	"slices"
-	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf-cve/"
+const baseURL = "https://ftp.suse.com/pub/projects/security/cvrf-cve.tar.bz2"
 
 type options struct {
-	baseURL     string
-	dir         string
-	retry       int
-	concurrency int
-	wait        int
+	baseURL string
+	dir     string
+	retry   int
 }
 
 type Option interface {
@@ -63,33 +59,11 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type concurrencyOption int
-
-func (c concurrencyOption) apply(opts *options) {
-	opts.concurrency = int(c)
-}
-
-func WithConcurrency(concurrency int) Option {
-	return concurrencyOption(concurrency)
-}
-
-type waitOption int
-
-func (w waitOption) apply(opts *options) {
-	opts.wait = int(w)
-}
-
-func WithWait(wait int) Option {
-	return waitOption(wait)
-}
-
-func Fetch(years []string, opts ...Option) error {
+func Fetch(opts ...Option) error {
 	options := &options{
-		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
-		retry:       3,
-		concurrency: 20,
-		wait:        1,
+		baseURL: baseURL,
+		dir:     filepath.Join(util.CacheDir(), "fetch", "suse", "cvrf-cve"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
@@ -101,29 +75,37 @@ func Fetch(years []string, opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch SUSE CVRF CVE")
-	cves, err := options.walkIndexOf(years)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
 	if err != nil {
-		return errors.Wrap(err, "walk index of")
+		return errors.Wrap(err, "fetch suse cvrf cve")
 	}
-	us := make([]string, 0, len(cves))
-	for _, cve := range cves {
-		u, err := url.JoinPath(options.baseURL, cve)
-		if err != nil {
-			return errors.Wrap(err, "join url path")
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	tr := tar.NewReader(bzip2.NewReader(resp.Body))
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
 		}
-		us = append(us, u)
-	}
+		if err != nil {
+			return errors.Wrap(err, "next tar reader")
+		}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
 
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		if filepath.Ext(hdr.Name) != ".xml" {
+			continue
 		}
 
 		var adv CVRF
-		if err := xml.NewDecoder(resp.Body).Decode(&adv); err != nil {
+		if err := xml.NewDecoder(tr).Decode(&adv); err != nil {
 			return errors.Wrap(err, "decode xml")
 		}
 
@@ -140,46 +122,7 @@ func Fetch(years []string, opts ...Option) error {
 		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.DocumentTitle)), adv); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.DocumentTitle)))
 		}
-
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "pipeline get")
 	}
 
 	return nil
-}
-
-func (opts options) walkIndexOf(years []string) ([]string, error) {
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
-	if err != nil {
-		return nil, errors.Wrap(err, "fetch index of")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
-	}
-
-	d, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "parse as html")
-	}
-
-	var cves []string
-	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
-		txt := selection.Text()
-		if !strings.HasPrefix(txt, "cvrf-CVE-") {
-			return
-		}
-		splitted, err := util.Split(txt, "-", "-", "-")
-		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "cvrf-CVE-yyyy-\\d{4,}.json", txt)
-			return
-		}
-		if slices.Contains(years, splitted[2]) {
-			cves = append(cves, txt)
-		}
-	})
-	return cves, nil
 }
