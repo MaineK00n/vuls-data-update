@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/fs"
 	"log"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,7 +16,6 @@ import (
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -380,12 +380,12 @@ func build(a advisory) Advisory {
 			}
 		} else {
 			if _, ok := adv.Packages[release]; !ok {
-				log.Printf(`[WARN] %s: release for tags not found in package status releases. tags release: "%s", package status releases: %q`, a.Candidate, release, maps.Keys(adv.Packages))
+				log.Printf(`[WARN] %s: release for tags not found in package status releases. tags release: "%s", package status releases: %q`, a.Candidate, release, slices.Collect(maps.Keys(adv.Packages)))
 				continue
 			}
 			p, ok := adv.Packages[release][pkgname]
 			if !ok {
-				log.Printf(`[WARN] %s: package for tags not found in package status packages. tags package: "%s", package status packages: %q`, a.Candidate, pkgname, maps.Keys(adv.Packages[release]))
+				log.Printf(`[WARN] %s: package for tags not found in package status packages. tags package: "%s", package status packages: %q`, a.Candidate, pkgname, slices.Collect(maps.Keys(adv.Packages[release])))
 				continue
 			}
 			p.Tags = append(p.Tags, tag)
@@ -412,12 +412,12 @@ func build(a advisory) Advisory {
 			}
 		} else {
 			if _, ok := adv.Packages[release]; !ok {
-				log.Printf(`[WARN] %s: release for priority not found in package status releases. priority release: "%s", package status releases: %q`, a.Candidate, release, maps.Keys(adv.Packages))
+				log.Printf(`[WARN] %s: release for priority not found in package status releases. priority release: "%s", package status releases: %q`, a.Candidate, release, slices.Collect(maps.Keys(adv.Packages)))
 				continue
 			}
 			p, ok := adv.Packages[release][pkgname]
 			if !ok {
-				log.Printf(`[WARN] %s: package for priority not found in package status packages. priority package: "%s", package status packages: %q`, a.Candidate, pkgname, maps.Keys(adv.Packages[release]))
+				log.Printf(`[WARN] %s: package for priority not found in package status packages. priority package: "%s", package status packages: %q`, a.Candidate, pkgname, slices.Collect(maps.Keys(adv.Packages[release])))
 				continue
 			}
 			p.Priority = priority

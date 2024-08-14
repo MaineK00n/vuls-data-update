@@ -2,12 +2,13 @@ package util
 
 import (
 	"encoding/json"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/maps"
 )
 
 func CacheDir() string {
@@ -24,7 +25,7 @@ func Unique[T comparable](s []T) []T {
 	for _, v := range s {
 		m[v] = struct{}{}
 	}
-	return maps.Keys(m)
+	return slices.Collect(maps.Keys(m))
 }
 
 type IndexChunk struct {
