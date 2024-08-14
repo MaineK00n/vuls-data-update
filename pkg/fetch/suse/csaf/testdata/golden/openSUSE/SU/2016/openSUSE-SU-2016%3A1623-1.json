@@ -7,7 +7,7 @@
 		"category": "csaf_security_advisory",
 		"csaf_version": "2.0",
 		"distribution": {
-			"text": "Copyright 2023 SUSE LLC. All rights reserved.",
+			"text": "Copyright 2024 SUSE LLC. All rights reserved.",
 			"tlp": {
 				"label": "WHITE",
 				"url": "https://www.first.org/tlp/"
@@ -44,11 +44,6 @@
 		},
 		"references": [
 			{
-				"category": "self",
-				"summary": "URL for openSUSE-SU-2016:1623-1",
-				"url": "https://lists.opensuse.org/opensuse-security-announce/2016-06/msg00036.html"
-			},
-			{
 				"category": "external",
 				"summary": "SUSE ratings",
 				"url": "https://www.suse.com/support/security/rating/"
@@ -60,8 +55,13 @@
 			},
 			{
 				"category": "self",
+				"summary": "URL for openSUSE-SU-2016:1623-1",
+				"url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/YZEJKKNZYG5BDVQ23L4VBAOOMBMGL3BQ/#YZEJKKNZYG5BDVQ23L4VBAOOMBMGL3BQ"
+			},
+			{
+				"category": "self",
 				"summary": "E-Mail link for openSUSE-SU-2016:1623-1",
-				"url": "https://lists.opensuse.org/opensuse-security-announce/2016-06/msg00036.html"
+				"url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/YZEJKKNZYG5BDVQ23L4VBAOOMBMGL3BQ/#YZEJKKNZYG5BDVQ23L4VBAOOMBMGL3BQ"
 			},
 			{
 				"category": "self",
@@ -1155,11 +1155,11 @@
 				{
 					"category": "general",
 					"text": "Multiple unspecified vulnerabilities in Google Chrome before 51.0.2704.103 allow attackers to cause a denial of service or possibly have other impact via unknown vectors.",
-					"title": "Vulnerability description"
+					"title": "CVE description"
 				}
 			],
 			"product_status": {
-				"fixed": [
+				"recommended": [
 					"SUSE Package Hub 12:chromedriver-51.0.2704.103-85.3.x86_64",
 					"SUSE Package Hub 12:chromium-51.0.2704.103-85.3.x86_64",
 					"SUSE Package Hub 12:chromium-desktop-gnome-51.0.2704.103-85.3.x86_64",

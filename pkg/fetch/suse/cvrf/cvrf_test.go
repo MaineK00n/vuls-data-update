@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -19,33 +18,28 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		indexof  string
+		testdata string
 		hasError bool
 	}{
 		{
-			name:    "happy path",
-			indexof: "testdata/fixtures/indexof.html",
+			name:     "happy path",
+			testdata: "testdata/fixtures/cvrf1.2.tar.bz2",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path == "/" {
-					http.ServeFile(w, r, tt.indexof)
-					return
-				}
-				_, f := path.Split(r.URL.Path)
-				f = filepath.Join(filepath.Dir(tt.indexof), url.QueryEscape(f))
-				if _, err := os.Stat(f); err != nil {
-					http.NotFound(w, r)
-					return
-				}
-				http.ServeFile(w, r, f)
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
 			}))
 			defer ts.Close()
 
+			u, err := url.JoinPath(ts.URL, tt.testdata)
+			if err != nil {
+				t.Error("unexpected error:", err)
+			}
+
 			dir := t.TempDir()
-			err := cvrf.Fetch(cvrf.WithBaseURL(ts.URL), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithConcurrency(2), cvrf.WithWait(1))
+			err = cvrf.Fetch(cvrf.WithBaseURL(u), cvrf.WithDir(dir), cvrf.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

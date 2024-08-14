@@ -1,4 +1,4 @@
-package csaf_vex
+package osv
 
 import (
 	"archive/tar"
@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -17,7 +18,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://ftp.suse.com/pub/projects/security/csaf-vex.tar.bz2"
+const baseURL = "https://ftp.suse.com/pub/projects/security/osv.tar.bz2"
 
 type options struct {
 	baseURL string
@@ -62,7 +63,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL: baseURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "suse", "csaf-vex"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "suse", "osv"),
 		retry:   3,
 	}
 
@@ -74,10 +75,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch SUSE CSAF VEX")
+	log.Println("[INFO] Fetch SUSE OSV")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
 	if err != nil {
-		return errors.Wrap(err, "fetch suse csaf vex")
+		return errors.Wrap(err, "fetch suse osv")
 	}
 	defer resp.Body.Close()
 
@@ -104,23 +105,26 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		var adv CSAF
+		var adv OSV
 		if err := json.NewDecoder(tr).Decode(&adv); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
-		splitted, err := util.Split(adv.Document.Tracking.ID, "-", "-")
+		splitted, err := util.Split(adv.ID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
-			return nil
-		}
-		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", adv.Document.Tracking.ID)
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-(SU|RU|FU|OU)-.*", adv.ID)
 			return nil
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)), adv); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", adv.Document.Tracking.ID)))
+		y := "others"
+		if lhs, _, ok := strings.Cut(splitted[2], ":"); ok {
+			if _, err := time.Parse("2006", lhs); err == nil {
+				y = lhs
+			}
+		}
+
+		if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], y, fmt.Sprintf("%s.json", adv.ID)), adv); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], y, fmt.Sprintf("%s.json", adv.ID)))
 		}
 	}
 

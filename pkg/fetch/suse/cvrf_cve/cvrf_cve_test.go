@@ -4,9 +4,10 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
-	"path"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -15,50 +16,30 @@ import (
 )
 
 func TestFetch(t *testing.T) {
-	type args struct {
-		years   []string
-		indexof string
-	}
 	tests := []struct {
 		name     string
-		args     args
+		testdata string
 		hasError bool
 	}{
 		{
-			name: "happy path",
-			args: args{
-				years:   []string{"2022"},
-				indexof: "testdata/fixtures/indexof.html",
-			},
-		},
-		{
-			name: "404 not found",
-			args: args{
-				years:   []string{"0000"},
-				indexof: "testdata/fixtures/invalid_href.html",
-			},
-			hasError: true,
+			name:     "happy path",
+			testdata: "testdata/fixtures/cvrf-cve.tar.bz2",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path == "/" {
-					http.ServeFile(w, r, tt.args.indexof)
-					return
-				}
-				_, f := path.Split(r.URL.Path)
-				f = filepath.Join(filepath.Dir(tt.args.indexof), f)
-				if _, err := os.Stat(f); err != nil {
-					http.NotFound(w, r)
-					return
-				}
-				http.ServeFile(w, r, f)
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
 			}))
 			defer ts.Close()
 
+			u, err := url.JoinPath(ts.URL, tt.testdata)
+			if err != nil {
+				t.Error("unexpected error:", err)
+			}
+
 			dir := t.TempDir()
-			err := cvrf_cve.Fetch(tt.args.years, cvrf_cve.WithBaseURL(ts.URL), cvrf_cve.WithDir(dir), cvrf_cve.WithRetry(0), cvrf_cve.WithConcurrency(2), cvrf_cve.WithWait(1))
+			err = cvrf_cve.Fetch(cvrf_cve.WithBaseURL(u), cvrf_cve.WithDir(dir), cvrf_cve.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

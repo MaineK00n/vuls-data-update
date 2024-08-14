@@ -38,7 +38,10 @@ jobs:
             - "rocky-osv"
             - "suse-oval"
             - "suse-cvrf"
+            - "suse-cvrf-cve"
             - "suse-csaf"
+            - "suse-csaf-vex"
+            - "suse-osv"
             - "ubuntu-oval"
             - "ubuntu-cve-tracker"
             # - "windows-bulletin"
@@ -235,100 +238,6 @@ jobs:
             git commit -m "update"
             git push
           fi
-
-
-  generate-year:
-    name: generate 1999...Now year
-    runs-on: ubuntu-latest
-    outputs:
-      year: ${{ steps.generate.outputs.year }}
-    steps:
-      - name: Generate year
-        id: generate
-        run: echo "year=$(seq 1999 $(date +%Y) | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
-
-  fetch-suse-cve:
-    name: fetch vuls-data-raw-${{ matrix.target }} ${{ matrix.year }}
-    runs-on: ubuntu-latest
-    needs: generate-year
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-            - "suse-cvrf-cve"
-            - "suse-csaf-vex"
-        year: ${{ fromJson(needs.generate-year.outputs.year) }}
-    steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@v10
-        with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v4
-
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: "go.mod"
-
-      - name: go install
-        run: go install ./cmd/vuls-data-update
-
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: vulsio
-          repositories: "vuls-data-raw-${{ matrix.target }}"
-
-      - name: Check out fetch data repository
-        uses: actions/checkout@v4
-        with:
-          repository: vulsio/vuls-data-raw-${{ matrix.target }}
-          path: vuls-data-raw-${{ matrix.target }}
-          token: ${{ steps.app-token.outputs.token }}
-
-      - name: Fetch
-        run: vuls-data-update fetch ${{ matrix.target }} --dir vuls-data-raw-${{ matrix.target }} --concurrency 200 ${{ matrix.year }}
-
-      - name: Split Large Files
-        run: find vuls-data-raw-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
-
-      - name: set Git config
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-
-      - name: Commit
-        run: |
-          cd vuls-data-raw-${{ matrix.target }}
-          deleted=$(git ls-files --deleted | grep -v ${{ matrix.year }}/ || [[ $? == 1 ]])
-          if [[ -n ${deleted} ]]; then
-            git restore ${deleted}
-          fi
-          if [[ -n $(git status --porcelain) ]]; then
-            git add ${{ matrix.year }}
-            git commit -m "update ${{ matrix.year }}"
-          fi
-
-      - name: Push
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 10
-          max_attempts: ${{ strategy.job-total }}
-          on_retry_command: |
-            cd vuls-data-raw-${{ matrix.target }}
-            git pull --rebase
-          command: |
-            cd vuls-data-raw-${{ matrix.target }}
-            git push
 
   fetch-msuc:
     name: fetch vuls-data-raw-windows-msuc
