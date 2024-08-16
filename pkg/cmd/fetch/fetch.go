@@ -103,6 +103,7 @@ import (
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
+	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -167,6 +168,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdMSF(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
 		newCmdSnort(),
+		newCmdVulnCheckKEV(),
 	)
 
 	return cmd
@@ -3089,6 +3091,33 @@ func newCmdSnort() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "snort"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdVulnCheckKEV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "vulncheck", "kev"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "vulncheck-kev <VulnCheck token>",
+		Short: "Fetch VulnCheck KEV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch vulncheck-kev vulncheck_token
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := vulncheckKEV.Fetch(args[0], vulncheckKEV.WithDir(options.dir), vulncheckKEV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch vulncheck kev")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "vulncheck", "kev"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd

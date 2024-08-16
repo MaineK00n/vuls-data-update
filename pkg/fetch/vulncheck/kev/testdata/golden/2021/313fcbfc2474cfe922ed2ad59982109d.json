@@ -1,0 +1,25 @@
+{
+	"vendorProject": "Apple",
+	"product": "MacOS X",
+	"shortDescription": "Apple macOS Transparency, Consent, and Control (TCC) contains an unspecified permissions issue which may allow a malicious application to bypass privacy preferences.",
+	"vulnerabilityName": "Apple macOS Unspecified Vulnerability",
+	"required_action": "Apply updates per vendor instructions.",
+	"knownRansomwareCampaignUse": "Unknown",
+	"cve": [
+		"CVE-2021-30713"
+	],
+	"vulncheck_xdb": [],
+	"vulncheck_reported_exploitation": [
+		{
+			"url": "https://support.apple.com/kb/HT212529",
+			"date_added": "2022-01-19T00:00:00Z"
+		},
+		{
+			"url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+			"date_added": "2021-11-03T00:00:00Z"
+		}
+	],
+	"dueDate": "2021-11-17T00:00:00Z",
+	"cisa_date_added": "2021-11-03T00:00:00Z",
+	"date_added": "2021-11-03T00:00:00Z"
+}

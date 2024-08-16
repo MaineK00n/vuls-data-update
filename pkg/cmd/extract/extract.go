@@ -100,6 +100,7 @@ import (
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch"
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/snort"
+	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/extract/vulncheck/kev"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
@@ -162,6 +163,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdMSF(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
 		newCmdSnort(),
+		newCmdVulnCheckKEV(),
 	)
 
 	return cmd
@@ -2420,6 +2422,31 @@ func newCmdSnort() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "snort"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdVulnCheckKEV() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "vulncheck", "kev"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "vulncheck-kev <Raw VulnCheck KEV Repository PATH>",
+		Short: "Extract VulnCheck KEV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract vulncheck-kev vuls-data-raw-vulncheck-kev
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := vulncheckKEV.Extract(args[0], vulncheckKEV.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract vulncheck kev")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "vulncheck", "kev"), "output extract results to specified directory")
 
 	return cmd
 }
