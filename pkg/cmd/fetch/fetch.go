@@ -661,7 +661,7 @@ func newCmdRedHatCVE() *cobra.Command {
 			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
 			retry: 20,
 		},
-		concurrency: 10,
+		concurrency: 15,
 		wait:        1,
 	}
 
@@ -682,7 +682,7 @@ func newCmdRedHatCVE() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 15, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
 
 	return cmd
