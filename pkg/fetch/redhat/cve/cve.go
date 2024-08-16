@@ -87,7 +87,7 @@ func Fetch(opts ...Option) error {
 		dataURL:     dataURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
 		retry:       20,
-		concurrency: 10,
+		concurrency: 15,
 		wait:        1,
 	}
 
