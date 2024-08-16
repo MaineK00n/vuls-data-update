@@ -67,12 +67,12 @@
     ],
     "title": "Red Hat Security Advisory: fence-agents security update",
     "tracking": {
-      "current_release_date": "2023-11-21T15:34:29+00:00",
+      "current_release_date": "2024-08-11T08:04:44+00:00",
       "generator": {
-        "date": "2023-11-21T17:51:31+00:00",
+        "date": "2024-08-11T08:04:44+00:00",
         "engine": {
           "name": "Red Hat SDEngine",
-          "version": "3.24.0"
+          "version": "3.29.1"
         }
       },
       "id": "RHSA-2023:7435",
@@ -81,11 +81,26 @@
         {
           "date": "2023-11-21T15:34:29+00:00",
           "number": "1",
-          "summary": "Current version"
+          "summary": "Initial version"
+        },
+        {
+          "date": "2023-11-21T15:34:29+00:00",
+          "number": "2",
+          "summary": "Last updated version"
+        },
+        {
+          "date": "2024-04-28T02:34:35+00:00",
+          "number": "3",
+          "summary": "Last generated version"
+        },
+        {
+          "date": "2024-08-11T08:04:44+00:00",
+          "number": "4",
+          "summary": "test"
         }
       ],
       "status": "final",
-      "version": "1"
+      "version": "4"
     }
   },
   "product_tree": {
@@ -2925,6 +2940,11 @@
           "title": "Vulnerability summary"
         },
         {
+          "category": "other",
+          "text": "While eTurgra certificates being marked as untrusted by Mozilla is significant from a trust and security standpoint, this is still considered a low severity issue. The certificates were removed from Mozilla's root store in July 2023, indicating a proactive response to security concerns. Additionally, Red Hat does not run its own root store program, but depends on Mozilla for ssl certificates and Microsoft for signing certificates. \nThese certs are included and marked as don't trust and will not be removed until Mozilla removes them. Browsers are most at risk, which already understand and parse 'don't trust after'. If python-fi is required not to trust these certs, they should parse the 'don't trust after' attribute.",
+          "title": "Statement"
+        },
+        {
           "category": "general",
           "text": "The CVSS score(s) listed for this vulnerability do not reflect the associated product's status, and are included for informational purposes to better understand the severity of this vulnerability.",
           "title": "CVSS score applicability"
@@ -3451,14 +3471,14 @@
             "attackComplexity": "LOW",
             "attackVector": "NETWORK",
             "availabilityImpact": "NONE",
-            "baseScore": 7.5,
-            "baseSeverity": "HIGH",
-            "confidentialityImpact": "NONE",
+            "baseScore": 9.1,
+            "baseSeverity": "CRITICAL",
+            "confidentialityImpact": "HIGH",
             "integrityImpact": "HIGH",
             "privilegesRequired": "NONE",
             "scope": "UNCHANGED",
             "userInteraction": "NONE",
-            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
             "version": "3.1"
           },
           "products": [
@@ -3727,7 +3747,7 @@
       "notes": [
         {
           "category": "description",
-          "text": "urllib3 is a user-friendly HTTP client library for Python. urllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies over HTTP, that is the responsibility of the user. However, it is possible for a user to specify a `Cookie` header and unknowingly leak information via HTTP redirects to a different origin if that user doesn't disable redirects explicitly. This issue has been patched in urllib3 version 1.26.17 or 2.0.5.",
+          "text": "A flaw was found in urllib3, a user-friendly HTTP client library for Python. urllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies over HTTP, which is the responsibility of the user. However, it is possible for a user to specify a `Cookie` header and unknowingly leak information via HTTP redirects to a different origin if that user doesn't disable redirects explicitly.",
           "title": "Vulnerability description"
         },
         {

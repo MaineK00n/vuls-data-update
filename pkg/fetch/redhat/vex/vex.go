@@ -1,26 +1,30 @@
 package vex
 
 import (
-	"bufio"
+	"archive/tar"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/klauspost/compress/zstd"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://access.redhat.com/security/data/csaf/beta/vex/"
+const baseURL = "https://access.redhat.com/security/data/csaf/v2/vex/"
 
 type options struct {
-	dataURL     string
+	baseURL     string
 	dir         string
 	retry       int
 	concurrency int
@@ -31,14 +35,14 @@ type Option interface {
 	apply(*options)
 }
 
-type dataURLOption string
+type baseURLOption string
 
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
+func (u baseURLOption) apply(opts *options) {
+	opts.baseURL = string(u)
 }
 
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
+func WithBaseURL(url string) Option {
+	return baseURLOption(url)
 }
 
 type dirOption string
@@ -83,7 +87,7 @@ func WithWait(wait int) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL:     dataURL,
+		baseURL:     baseURL,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
 		retry:       3,
 		concurrency: 10,
@@ -100,7 +104,131 @@ func Fetch(opts ...Option) error {
 
 	log.Println("[INFO] Fetch RedHat CSAF VEX")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
-	u, err := url.JoinPath(options.dataURL, "index.txt")
+
+	at, err := options.fetchArchiveDate(client)
+	if err != nil {
+		return errors.Wrap(err, "fetch archive date")
+	}
+
+	log.Printf("[INFO] Fetch RedHat CSAF VEX %s Archive", at.Format("2006-01-02"))
+	if err := options.fetchArchive(client, at); err != nil {
+		return errors.Wrap(err, "fetch archive")
+	}
+
+	log.Println("[INFO] Fetch RedHat CSAF VEX Changes")
+	if err := options.fetchChanges(client, at); err != nil {
+		return errors.Wrap(err, "fetch changes")
+	}
+
+	log.Println("[INFO] Fetch RedHat CSAF VEX Deletions")
+	if err := options.fetchDeletions(client, at); err != nil {
+		return errors.Wrap(err, "fetch deletions")
+	}
+
+	return nil
+}
+
+func (o options) fetchArchiveDate(client *utilhttp.Client) (time.Time, error) {
+	u, err := url.JoinPath(o.baseURL, "archive_latest.txt")
+	if err != nil {
+		return time.Time{}, errors.Wrap(err, "url join")
+	}
+
+	resp, err := client.Get(u)
+	if err != nil {
+		return time.Time{}, errors.Wrapf(err, "fetch %s", u)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return time.Time{}, errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	bs, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return time.Time{}, errors.Wrap(err, "read response body")
+	}
+
+	s := string(bs)
+	if !strings.HasPrefix(s, "csaf_vex_") || !strings.HasSuffix(s, ".tar.zst") {
+		return time.Time{}, errors.Errorf("unexpected archive file name. expected: %q, actual: %q", "csaf_vex_yyyy-mm-dd.tar.zst", s)
+	}
+
+	at, err := time.Parse("2006-01-02", strings.TrimPrefix(strings.TrimSuffix(s, ".tar.zst"), "csaf_vex_"))
+	if err != nil {
+		return time.Time{}, errors.Wrapf(err, "time parse. unexpected archive time format. expected: %q. actual: %q", "2006-01-02", strings.TrimPrefix(strings.TrimSuffix(s, ".tar.zst"), "csaf_vex_"))
+	}
+
+	return at, nil
+}
+
+func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error {
+	u, err := url.JoinPath(o.baseURL, fmt.Sprintf("csaf_vex_%s.tar.zst", archived.Format("2006-01-02")))
+	if err != nil {
+		return errors.Wrap(err, "url join")
+	}
+
+	resp, err := client.Get(u)
+	if err != nil {
+		return errors.Wrapf(err, "fetch %s", u)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	d, err := zstd.NewReader(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "new zstd reader")
+	}
+	defer d.Close()
+
+	tr := tar.NewReader(d)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return errors.Wrap(err, "next tar reader")
+		}
+
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
+
+		if filepath.Ext(hdr.Name) != ".json" {
+			continue
+		}
+
+		var vex VEX
+		if err := json.NewDecoder(tr).Decode(&vex); err != nil {
+			return errors.Wrap(err, "decode json")
+		}
+
+		splitted, err := util.Split(vex.Document.Tracking.ID, "-", "-")
+		if err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
+			return nil
+		}
+		if _, err := time.Parse("2006", splitted[1]); err != nil {
+			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
+			return nil
+		}
+
+		if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
+		}
+	}
+
+	return nil
+}
+
+func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error {
+	u, err := url.JoinPath(o.baseURL, "changes.csv")
 	if err != nil {
 		return errors.Wrap(err, "url join")
 	}
@@ -117,21 +245,34 @@ func Fetch(opts ...Option) error {
 	}
 
 	var urls []string
-	s := bufio.NewScanner(resp.Body)
-	for s.Scan() {
-		t := s.Text()
-		if t == "" {
-			continue
+	r := csv.NewReader(resp.Body)
+	for {
+		record, err := r.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return errors.Wrap(err, "read csv record")
+		}
+		if len(record) != 2 {
+			return errors.Errorf("unexpected changes.csv record format. expected: %q, actual: %q", []string{"<path>", "<datetime>"}, record)
 		}
 
-		u, err := url.JoinPath(options.dataURL, t)
+		rt, err := time.Parse("2006-01-02T15:04:05-07:00", record[1])
 		if err != nil {
-			return errors.Wrap(err, "url join")
+			return errors.Wrap(err, "parse time")
 		}
-		urls = append(urls, u)
+
+		if rt.After(archived) {
+			u, err := url.JoinPath(o.baseURL, record[0])
+			if err != nil {
+				return errors.Wrap(err, "url join")
+			}
+			urls = append(urls, u)
+		}
 	}
 
-	if err := client.PipelineGet(urls, options.concurrency, options.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(urls, o.concurrency, o.wait, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
@@ -154,13 +295,59 @@ func Fetch(opts ...Option) error {
 			return nil
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
+		if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
 		}
 
 		return nil
 	}); err != nil {
 		return errors.Wrap(err, "pipeline get")
+	}
+
+	return nil
+}
+
+func (o options) fetchDeletions(client *utilhttp.Client, archived time.Time) error {
+	u, err := url.JoinPath(o.baseURL, "deletions.csv")
+	if err != nil {
+		return errors.Wrap(err, "url join")
+	}
+
+	resp, err := client.Get(u)
+	if err != nil {
+		return errors.Wrapf(err, "fetch %s", u)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+	}
+
+	r := csv.NewReader(resp.Body)
+	for {
+		record, err := r.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return errors.Wrap(err, "read csv record")
+		}
+		if len(record) != 2 {
+			return errors.Errorf("unexpected deletions.csv record format. expected: %q, actual: %q", []string{"<path>", "<datetime>"}, record)
+		}
+
+		rt, err := time.Parse("2006-01-02T15:04:05-07:00", record[1])
+		if err != nil {
+			return errors.Wrap(err, "parse time")
+		}
+
+		if rt.After(archived) {
+			d, f := filepath.Split(record[0])
+			if err := os.Remove(filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json"))))); err != nil {
+				return errors.Wrapf(err, "remove %s", filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json")))))
+			}
+		}
 	}
 
 	return nil
