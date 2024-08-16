@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = vex.Fetch(vex.WithDataURL(u), vex.WithDir(dir), vex.WithRetry(0), vex.WithConcurrency(1), vex.WithWait(0))
+			err = vex.Fetch(vex.WithBaseURL(u), vex.WithDir(dir), vex.WithRetry(0), vex.WithConcurrency(1), vex.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

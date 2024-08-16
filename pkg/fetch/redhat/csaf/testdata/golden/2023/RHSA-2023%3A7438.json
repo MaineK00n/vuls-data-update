@@ -62,12 +62,12 @@
 		],
 		"title": "Red Hat Security Advisory: Red Hat OpenStack Platform 17.1.1 (python-gevent) security update",
 		"tracking": {
-			"current_release_date": "2023-11-21T15:46:44+00:00",
+			"current_release_date": "2024-04-28T03:16:03+00:00",
 			"generator": {
-				"date": "2023-11-21T17:52:57+00:00",
+				"date": "2024-04-28T03:16:03+00:00",
 				"engine": {
 					"name": "Red Hat SDEngine",
-					"version": "3.24.0"
+					"version": "3.29.1"
 				}
 			},
 			"id": "RHSA-2023:7438",
@@ -76,11 +76,21 @@
 				{
 					"date": "2023-11-21T15:46:44+00:00",
 					"number": "1",
-					"summary": "Current version"
+					"summary": "Initial version"
+				},
+				{
+					"date": "2023-11-21T15:46:44+00:00",
+					"number": "2",
+					"summary": "Last updated version"
+				},
+				{
+					"date": "2024-04-28T03:16:03+00:00",
+					"number": "3",
+					"summary": "Last generated version"
 				}
 			],
 			"status": "final",
-			"version": "1"
+			"version": "3"
 		}
 	},
 	"product_tree": {

@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = csaf.Fetch(csaf.WithDataURL(u), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(1), csaf.WithWait(0))
+			err = csaf.Fetch(csaf.WithBaseURL(u), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(1), csaf.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

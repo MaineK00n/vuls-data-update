@@ -112,8 +112,14 @@ type CSAF struct {
 			Title    string `json:"title"`
 		} `json:"notes"`
 		ProductStatus struct {
-			Fixed            []string `json:"fixed"`
-			KnownNotAffected []string `json:"known_not_affected,omitempty"`
+			FirstAffected      []string `json:"first_affected,omitempty"`
+			FirstFixed         []string `json:"first_fixed,omitempty"`
+			Fixed              []string `json:"fixed,omitempty"`
+			KnownAffected      []string `json:"known_affected,omitempty"`
+			KnownNotAffected   []string `json:"known_not_affected,omitempty"`
+			LastAffected       []string `json:"last_affected,omitempty"`
+			Recommended        []string `json:"recommended,omitempty"`
+			UnderInvestigation []string `json:"under_investigation,omitempty"`
 		} `json:"product_status"`
 		References []struct {
 			Category string `json:"category"`
