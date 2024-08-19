@@ -77,7 +77,7 @@ func RemoveAll(root string) error {
 		return errors.Wrapf(err, "glob %s", filepath.Join(root, "*"))
 	}
 	for _, d := range ds {
-		if strings.HasSuffix(d, ".git") {
+		if strings.HasSuffix(d, "README.md") || strings.HasSuffix(d, ".git") {
 			continue
 		}
 		if err := os.RemoveAll(d); err != nil {
