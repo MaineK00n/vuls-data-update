@@ -86,6 +86,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "create gzip reader")
 	}
+	defer gr.Close()
 
 	tr := tar.NewReader(gr)
 	for {
