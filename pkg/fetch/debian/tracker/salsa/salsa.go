@@ -890,45 +890,46 @@ func fetchSource(c *utilhttp.Client, sourceURL string) (map[string]textproto.MIM
 				_, _ = io.Copy(io.Discard, resp.Body)
 				continue
 			}
+			return func() (map[string]textproto.MIMEHeader, error) {
+				switch compress {
+				case "gz":
+					r, err := gzip.NewReader(resp.Body)
+					if err != nil {
+						return nil, errors.Wrap(err, "create gzip reader")
+					}
+					defer r.Close()
 
-			switch compress {
-			case "gz":
-				r, err := gzip.NewReader(resp.Body)
-				if err != nil {
-					return nil, errors.Wrap(err, "create gzip reader")
+					sources, err := parseSource(r)
+					if err != nil {
+						return nil, errors.Wrapf(err, "parse %s.gz", sourceURL)
+					}
+
+					return sources, nil
+				case "xz":
+					r, err := xz.NewReader(resp.Body)
+					if err != nil {
+						return nil, errors.Wrap(err, "create gzip reader")
+					}
+
+					sources, err := parseSource(r)
+					if err != nil {
+						return nil, errors.Wrapf(err, "parse %s.xz", sourceURL)
+					}
+
+					return sources, nil
+				case "bz2":
+					r := bzip2.NewReader(resp.Body)
+
+					sources, err := parseSource(r)
+					if err != nil {
+						return nil, errors.Wrapf(err, "parse %s.bz2", sourceURL)
+					}
+
+					return sources, nil
+				default:
+					return nil, errors.Errorf("unexpected compress format. expected: %q, actual: %s", []string{"gz", "xz", "bz2"}, compress)
 				}
-				defer r.Close()
-
-				sources, err := parseSource(r)
-				if err != nil {
-					return nil, errors.Wrapf(err, "parse %s.gz", sourceURL)
-				}
-
-				return sources, nil
-			case "xz":
-				r, err := xz.NewReader(resp.Body)
-				if err != nil {
-					return nil, errors.Wrap(err, "create gzip reader")
-				}
-
-				sources, err := parseSource(r)
-				if err != nil {
-					return nil, errors.Wrapf(err, "parse %s.xz", sourceURL)
-				}
-
-				return sources, nil
-			case "bz2":
-				r := bzip2.NewReader(resp.Body)
-
-				sources, err := parseSource(r)
-				if err != nil {
-					return nil, errors.Wrapf(err, "parse %s.bz2", sourceURL)
-				}
-
-				return sources, nil
-			default:
-				return nil, errors.Errorf("unexpected compress format. expected: %q, actual: %s", []string{"gz", "xz", "bz2"}, compress)
-			}
+			}()
 		}
 	}
 
