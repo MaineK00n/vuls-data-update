@@ -1,7 +1,7 @@
 name: Extract
 on:
   workflow_run:
-    workflows: [Archive-Raw]
+    workflows: [Fetch]
     types:
       - completed
   workflow_dispatch:
