@@ -161,41 +161,6 @@ jobs:
             git push
           fi
 
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-${{ matrix.target }} | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-${{ matrix.target }} --clone=false --org=vulsio --fork-name=vuls-data-raw-${{ matrix.target }}-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-${{ matrix.target }}-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-${{ matrix.target }}.git"
-              echo "cd vuls-data-raw-${{ matrix.target }}"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
-
   fetch-nvd-api:
     name: fetch vuls-data-raw-${{ matrix.target }}
     runs-on: ubuntu-latest
@@ -272,41 +237,6 @@ jobs:
             git add .
             git commit -m "update"
             git push
-          fi
-
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-${{ matrix.target }} | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-${{ matrix.target }} --clone=false --org=vulsio --fork-name=vuls-data-raw-${{ matrix.target }}-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-${{ matrix.target }}-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-${{ matrix.target }}.git"
-              echo "cd vuls-data-raw-${{ matrix.target }}"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
           fi
 
   fetch-msuc:
@@ -457,41 +387,6 @@ jobs:
             git push
           fi
 
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-windows-msuc | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-windows-msuc --clone=false --org=vulsio --fork-name=vuls-data-raw-windows-msuc-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-windows-msuc-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-windows-msuc.git"
-              echo "cd vuls-data-raw-windows-msuc"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
-
   fetch-fedora-release:
     name: fetch fedora release
     runs-on: ubuntu-latest
@@ -584,41 +479,6 @@ jobs:
             cd vuls-data-raw-fedora
             git push
 
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-fedora | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-fedora --clone=false --org=vulsio --fork-name=vuls-data-raw-fedora-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-fedora-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-fedora.git"
-              echo "cd vuls-data-raw-fedora"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
-
   fetch-epss:
     name: fetch vuls-data-raw-epss
     runs-on: ubuntu-latest
@@ -685,41 +545,6 @@ jobs:
             git add .
             git commit -m "update $(date --utc -d "-1 days" "+%Y-%m-%d")"
             git push
-          fi
-
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-epss | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-epss --clone=false --org=vulsio --fork-name=vuls-data-raw-epss-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-epss-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-epss.git"
-              echo "cd vuls-data-raw-epss"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
           fi
 
   fetch-fortinet:
@@ -801,41 +626,6 @@ jobs:
             git push
           fi
 
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-fortinet-cvrf | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-fortinet-cvrf --clone=false --org=vulsio --fork-name=vuls-data-raw-fortinet-cvrf-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-fortinet-cvrf-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-fortinet-cvrf.git"
-              echo "cd vuls-data-raw-fortinet-cvrf"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
-
   fetch-vulncheck:
     name: fetch vuls-data-raw-${{ matrix.target }}
     runs-on: ubuntu-latest
@@ -899,39 +689,4 @@ jobs:
             git add .
             git commit -m "update"
             git push
-          fi
-
-      - name: Check github repository size
-        run: |
-          SIZE=$(curl -s https://api.github.com/repos/vulsio/vuls-data-raw-${{ matrix.target }} | jq '.size')
-          echo "repository size [KB]:" ${SIZE}
-          if [ ${SIZE} -gt 9500000 ]; then
-            echo "### Repository size is *over 9.5 GB*. Archive it!"
-
-            (
-              echo "### Repository size is *over 9.5 GB*. Archive it!"
-              echo ""
-              echo "### 1. Fork & archive the repository:"
-              echo ""
-              echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-raw-${{ matrix.target }} --clone=false --org=vulsio --fork-name=vuls-data-raw-${{ matrix.target }}-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-raw-${{ matrix.target }}-archive-<ARCHIVE-NUMBER> --yes"
-              echo "\`\`\`"
-              echo "" 
-              echo "### 2. Delete all commits and add one with the latest contents:"
-              echo ""
-              echo "\`\`\`"
-              echo "git clone git@github.com:vulsio/vuls-data-raw-${{ matrix.target }}.git"
-              echo "cd vuls-data-raw-${{ matrix.target }}"
-              echo "git checkout --orphan latest-only"
-              echo "git add -A"
-              echo "git commit -m 'just archived' > /dev/null"
-              echo "git branch -D main"
-              echo "git branch -m main"
-              echo "git push --force origin main"
-              echo "\`\`\`"
-              echo ""
-            ) >> $GITHUB_STEP_SUMMARY
-
-            exit 1
           fi
