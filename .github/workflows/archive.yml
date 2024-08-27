@@ -24,14 +24,17 @@ jobs:
           if [ ${SIZE} -gt 9500000 ]; then
             echo "### Repository size is *over 9.5 GB*. Archive it!"
 
+            ARCHIVE_MAX=$( curl -s https://api.github.com/repos/vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }}/forks | jq -r '.[. | length] |= {"name": "vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-0"} | sort_by(.name) | reverse | .[0].name ' | sed -e 's/vuls-data-.*-archive-//')
+            ARCHIVE_NEW=$(( $ARCHIVE_MAX + 1 ))
+
             (
               echo "### Repository size is *over 9.5 GB*. Archive it!"
               echo ""
               echo "### 1. Fork & archive the repository:"
               echo ""
               echo "\`\`\`"
-              echo "gh repo fork vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }} --clone=false --org=vulsio --fork-name=vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-<ARCHIVE-NUMBER>"
-              echo "gh repo archive vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-<ARCHIVE-NUMBER> --yes"
+              echo "gh repo fork vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }} --clone=false --org=vulsio --fork-name=vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-${ARCHIVE_NEW}"
+              echo "gh repo archive vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-${ARCHIVE_NEW} --yes"
               echo "\`\`\`"
               echo "" 
               echo "### 2. Delete all commits and add one with the latest contents:"
