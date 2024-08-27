@@ -1,7 +1,7 @@
 name: Fetch
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -12,104 +12,104 @@ jobs:
       fail-fast: false
       matrix:
         target:
-            - "alma-errata"
-            - "alma-osv"
-            - "alma-oval"
-            - "alpine-secdb"
-            - "alpine-osv"
-            - "amazon"
-            - "arch"
-            - "debian-osv"
-            - "debian-oval"
-            - "debian-security-tracker-api"
-            - "debian-security-tracker-salsa"
-            - "freebsd"
-            - "gentoo"
-            - "netbsd"
-            - "oracle"
-            - "redhat-cve"
-            - "redhat-csaf"
-            # - "redhat-cvrf"
-            - "redhat-oval-repository-to-cpe"
-            # - "redhat-ovalv1"
-            - "redhat-ovalv2"
-            - "redhat-vex"
-            - "rocky-errata"
-            - "rocky-osv"
-            - "suse-oval"
-            - "suse-cvrf"
-            - "suse-cvrf-cve"
-            - "suse-csaf"
-            - "suse-csaf-vex"
-            - "suse-osv"
-            - "ubuntu-oval"
-            - "ubuntu-cve-tracker"
-            # - "windows-bulletin"
-            - "windows-cvrf"
-            - "windows-wsusscn2"
+          - "alma-errata"
+          - "alma-osv"
+          - "alma-oval"
+          - "alpine-secdb"
+          - "alpine-osv"
+          - "amazon"
+          - "arch"
+          - "debian-osv"
+          - "debian-oval"
+          - "debian-security-tracker-api"
+          - "debian-security-tracker-salsa"
+          - "freebsd"
+          - "gentoo"
+          - "netbsd"
+          - "oracle"
+          - "redhat-cve"
+          - "redhat-csaf"
+          # - "redhat-cvrf"
+          - "redhat-oval-repository-to-cpe"
+          # - "redhat-ovalv1"
+          - "redhat-ovalv2"
+          - "redhat-vex"
+          - "rocky-errata"
+          - "rocky-osv"
+          - "suse-oval"
+          - "suse-cvrf"
+          - "suse-cvrf-cve"
+          - "suse-csaf"
+          - "suse-csaf-vex"
+          - "suse-osv"
+          - "ubuntu-oval"
+          - "ubuntu-cve-tracker"
+          # - "windows-bulletin"
+          - "windows-cvrf"
+          - "windows-wsusscn2"
 
-            - "cargo-ghsa"
-            - "cargo-osv"
-            - "composer-ghsa"
-            - "composer-glsa"
-            - "composer-osv"
-            - "conan-glsa"
-            - "erlang-ghsa"
-            - "erlang-osv"
-            - "golang-ghsa"
-            - "golang-glsa"
-            - "golang-osv"
-            - "haskell-osv"
-            - "maven-ghsa"
-            - "maven-glsa"
-            - "maven-osv"
-            - "npm-ghsa"
-            - "npm-glsa"
-            - "npm-osv"
-            - "nuget-ghsa"
-            - "nuget-glsa"
-            - "nuget-osv"
-            - "pip-ghsa"
-            - "pip-glsa"
-            - "pip-osv"
-            - "pub-ghsa"
-            - "pub-osv"
-            - "r-osv"
-            - "rubygems-ghsa"
-            - "rubygems-glsa"
-            - "rubygems-osv"
-            - "swift-ghsa"
-            - "swift-osv"
+          - "cargo-ghsa"
+          - "cargo-osv"
+          - "composer-ghsa"
+          - "composer-glsa"
+          - "composer-osv"
+          - "conan-glsa"
+          - "erlang-ghsa"
+          - "erlang-osv"
+          - "golang-ghsa"
+          - "golang-glsa"
+          - "golang-osv"
+          - "haskell-osv"
+          - "maven-ghsa"
+          - "maven-glsa"
+          - "maven-osv"
+          - "npm-ghsa"
+          - "npm-glsa"
+          - "npm-osv"
+          - "nuget-ghsa"
+          - "nuget-glsa"
+          - "nuget-osv"
+          - "pip-ghsa"
+          - "pip-glsa"
+          - "pip-osv"
+          - "pub-ghsa"
+          - "pub-osv"
+          - "r-osv"
+          - "rubygems-ghsa"
+          - "rubygems-glsa"
+          - "rubygems-osv"
+          - "swift-ghsa"
+          - "swift-osv"
 
-            - "attack"
-            - "capec"
-            - "cwe"
-            - "exploit-exploitdb"
-            - "exploit-github"
-            - "exploit-inthewild"
-            - "exploit-trickest"
-            - "jvn-feed-detail"
-            - "jvn-feed-product"
-            - "jvn-feed-rss"
-            - "kev"
-            # - "mitre-cvrf"
-            # - "mitre-v4"
-            - "mitre-v5"
-            - "msf"
-            - "nvd-feed-cve"
-            - "nvd-feed-cpe" 
-            - "nvd-feed-cpematch"
-            - "snort"
+          - "attack"
+          - "capec"
+          - "cwe"
+          - "exploit-exploitdb"
+          - "exploit-github"
+          - "exploit-inthewild"
+          - "exploit-trickest"
+          - "jvn-feed-detail"
+          - "jvn-feed-product"
+          - "jvn-feed-rss"
+          - "kev"
+          # - "mitre-cvrf"
+          # - "mitre-v4"
+          - "mitre-v5"
+          - "msf"
+          - "nvd-feed-cve"
+          - "nvd-feed-cpe"
+          - "nvd-feed-cpematch"
+          - "snort"
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
@@ -168,20 +168,20 @@ jobs:
       fail-fast: false
       matrix:
         target:
-            - "nvd-api-cve"
-            - "nvd-api-cpe"
-            - "nvd-api-cpematch"
+          - "nvd-api-cve"
+          - "nvd-api-cpe"
+          - "nvd-api-cpematch"
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -244,7 +244,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: 
+      matrix:
         target:
           # Windows 10 (10.0.10240)
           - '"KB3074683", "KB3081424", "KB3081436", "KB3081438", "KB3081444", "KB3081448", "KB3081455", "KB3093266", "KB3097617", "KB3105210", "KB3105213", "KB3116869", "KB3124266", "KB3135174", "KB3140745", "KB3147461", "KB3147461", "KB3156387", "KB3163017", "KB3163912", "KB3176492", "KB3185611", "KB3193821", "KB3192440", "KB3198585", "KB3205383", "KB3210720", "KB4012606", "KB4016637", "KB4015221", "KB4019474", "KB4022727", "KB4032695", "KB4025338", "KB4034668", "KB4038781", "KB4042895", "KB4048956", "KB4053581", "KB4056893", "KB4075199", "KB4077735", "KB4074596", "KB4088786", "KB4093111", "KB4103716", "KB4284860", "KB4338829", "KB4345455", "KB4343892", "KB4457132", "KB4462922", "KB4467680", "KB4471323", "KB4483228", "KB4480962", "KB4487018", "KB4491101", "KB4489872", "KB4493475", "KB4498375", "KB4499154", "KB4505051", "KB4503291", "KB4507458", "KB4512497", "KB4517276", "KB4516070", "KB4522009", "KB4524153", "KB4520011", "KB4525232", "KB4530681", "KB4534306", "KB4537776", "KB4540693", "KB4550930", "KB4556826", "KB4561649", "KB4567518", "KB4565513", "KB4571692", "KB4577049", "KB4580327", "KB4586787", "KB4592464", "KB4598231", "KB4601331", "KB4601331", "KB5000807", "KB5001631", "KB5001340", "KB5003172", "KB5003687", "KB5004950", "KB5004249", "KB5005040", "KB5005569", "KB5006675", "KB5007207", "KB5008230", "KB5009585", "KB5010789", "KB5010358", "KB5011491", "KB5012653", "KB5013963", "KB5014710", "KB5015832", "KB5016639", "KB5017327", "KB5018425", "KB5020440", "KB5019970", "KB5021243", "KB5022297", "KB5022858"'
@@ -286,12 +286,12 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
@@ -334,18 +334,18 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 1
-      matrix: 
+      matrix:
         cid: ${{ fromJson(needs.generate-msuc-cache-id.outputs.cid) }}
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
       - uses: actions/create-github-app-token@v1
         id: app-token
@@ -411,12 +411,12 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
@@ -478,7 +478,7 @@ jobs:
           command: |
             cd vuls-data-raw-fedora
             git push
-    
+
   fetch-epss:
     name: fetch vuls-data-raw-epss
     runs-on: ubuntu-latest
@@ -486,12 +486,12 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
@@ -554,13 +554,13 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
@@ -625,7 +625,7 @@ jobs:
             git commit -m "update"
             git push
           fi
-    
+
   fetch-vulncheck:
     name: fetch vuls-data-raw-${{ matrix.target }}
     runs-on: ubuntu-latest
@@ -633,18 +633,18 @@ jobs:
       fail-fast: false
       matrix:
         target:
-            - "vulncheck-kev"
+          - "vulncheck-kev"
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 32768 
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 

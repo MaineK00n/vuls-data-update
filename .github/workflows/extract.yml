@@ -106,6 +106,7 @@ jobs:
           # - "nvd-feed-cpe"
           # - "nvd-feed-cpematch"
           # - "snort"
+          # - "vulncheck-kev"
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
