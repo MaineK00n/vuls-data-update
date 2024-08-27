@@ -24,7 +24,7 @@ jobs:
           if [ ${SIZE} -gt 9500000 ]; then
             echo "### Repository size is *over 9.5 GB*. Archive it!"
 
-            ARCHIVE_MAX=$( curl -s https://api.github.com/repos/vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }}/forks | jq -r '.[. | length] |= {"name": "vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-0"} | sort_by(.name) | reverse | .[0].name ' | sed -e 's/vuls-data-.*-archive-//')
+            ARCHIVE_MAX=$( curl -s https://api.github.com/repos/vulsio/vuls-data-${{ inputs.type }}-${{ inputs.target }}/forks | jq -r '.[. | length] |= {"name": "vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-0"} | sort_by(.name) | reverse | .[0].name ' | sed -e 's/vuls-data-${{ inputs.type }}-${{ inputs.target }}-archive-//')
             ARCHIVE_NEW=$(( $ARCHIVE_MAX + 1 ))
 
             (
