@@ -1,7 +1,6 @@
 package oracle
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
@@ -30,6 +29,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
 )
@@ -52,17 +52,13 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// tos means _T_ests, _O_bjects and _S_tates. Information for evaluating OVAL criteria.
-type tos struct {
-	rpminfoTests   map[string]oracle.Test
-	textfileTests  map[string]oracle.Test
-	rpminfoObjs    map[string]oracle.RpminfoObject
-	textfileObjs   map[string]oracle.Textfilecontent54Object
-	rpminfoStates  map[string]oracle.RpminfoState
-	textfileStates map[string]oracle.Textfilecontent54State
+// extractor means _T_ests, _O_bjects and _S_tates. Information for evaluating OVAL criteria.
+type extractor struct {
+	inputDir   string
+	JSONReader *utiljson.JSONReader
 }
 
-func Extract(inputPath string, opts ...Option) error {
+func Extract(inputDir string, opts ...Option) error {
 	options := &options{
 		dir: filepath.Join(util.CacheDir(), "extract", "oracle"),
 	}
@@ -77,28 +73,7 @@ func Extract(inputPath string, opts ...Option) error {
 
 	log.Printf("[INFO] Extract Oracle")
 
-	rpminfoTests, textfileTests, err := readTests(filepath.Join(inputPath, "tests"))
-	if err != nil {
-		return errors.Wrap(err, "read tests")
-	}
-	rpminfoObjs, textfileObjs, err := readObjects(filepath.Join(inputPath, "objects"))
-	if err != nil {
-		return errors.Wrap(err, "read objects")
-	}
-	rpminfoStates, textfileStates, err := readStates(filepath.Join(inputPath, "states"))
-	if err != nil {
-		return errors.Wrap(err, "read states")
-	}
-
-	tos := tos{
-		rpminfoTests:   rpminfoTests,
-		textfileTests:  textfileTests,
-		rpminfoObjs:    rpminfoObjs,
-		textfileObjs:   textfileObjs,
-		rpminfoStates:  rpminfoStates,
-		textfileStates: textfileStates,
-	}
-	if err := filepath.WalkDir(filepath.Join(inputPath, "definitions"), func(path string, d fs.DirEntry, err error) error {
+	if err := filepath.WalkDir(filepath.Join(inputDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -107,18 +82,16 @@ func Extract(inputPath string, opts ...Option) error {
 			return nil
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
+		e := extractor{
+			inputDir:   inputDir,
+			JSONReader: utiljson.NewJSONReader(),
 		}
-		defer f.Close()
-
 		var def oracle.Definition
-		if err := json.NewDecoder(f).Decode(&def); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := e.JSONReader.Read(path, &def); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		data, err := extract(def, tos)
+		data, err := e.extract(def)
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
 		}
@@ -135,14 +108,14 @@ func Extract(inputPath string, opts ...Option) error {
 
 		return nil
 	}); err != nil {
-		return errors.Wrapf(err, "walk %s", inputPath)
+		return errors.Wrapf(err, "walk %s", inputDir)
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.Oracle,
 		Name: func() *string { t := "Oracle Linux OVAL"; return &t }(),
 		Raw: func() []repositoryTypes.Repository {
-			r, _ := utilgit.GetDataSourceRepository(inputPath)
+			r, _ := utilgit.GetDataSourceRepository(inputDir)
 			if r == nil {
 				return nil
 			}
@@ -163,13 +136,13 @@ func Extract(inputPath string, opts ...Option) error {
 	return nil
 }
 
-func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
+func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 	id, _, ok := strings.Cut(strings.TrimSpace(def.Metadata.Title), ":")
 	if !ok {
 		return dataTypes.Data{}, errors.Errorf("unexpected title format. expected: %q, actual: %q", "<Advisory ID>: ...", def.Metadata.Title)
 	}
 
-	ds, err := collectPackages(def.Criteria, tos)
+	ds, err := e.collectPackages(def.Criteria)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
@@ -223,8 +196,11 @@ func extract(def oracle.Definition, tos tos) (dataTypes.Data, error) {
 			}
 			return vs
 		}(),
-		Detection:  ds,
-		DataSource: sourceTypes.Oracle,
+		Detection: ds,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.Oracle,
+			Raws: e.JSONReader.Paths(),
+		},
 	}, nil
 }
 
@@ -236,8 +212,8 @@ type ovalPackage struct {
 	arch            string
 }
 
-func collectPackages(criteria oracle.Criteria, tos tos) ([]detectionTypes.Detection, error) {
-	pkgs, err := evalCriteria(criteria, tos)
+func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.Detection, error) {
+	pkgs, err := e.evalCriteria(criteria)
 	if err != nil {
 		return nil, errors.Wrapf(err, "eval criteria")
 	}
@@ -294,7 +270,7 @@ func collectPackages(criteria oracle.Criteria, tos tos) ([]detectionTypes.Detect
 	return ds, nil
 }
 
-func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
+func (e extractor) evalCriteria(criteria oracle.Criteria) ([]ovalPackage, error) {
 	// Exclude patterns that do not exists in oracle oval data and don't implement them, YAGNI.
 	// With these constraints, we can ignore Criteria.Operator (AND or OR) to extract package information.
 	switch {
@@ -309,7 +285,7 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 	var pkgs []ovalPackage
 
 	for _, ca := range criteria.Criterias {
-		ps, err := evalCriteria(ca, tos)
+		ps, err := e.evalCriteria(ca)
 		if err != nil {
 			return nil, errors.Wrap(err, "eval criteria")
 		}
@@ -321,23 +297,27 @@ func evalCriteria(criteria oracle.Criteria, tos tos) ([]ovalPackage, error) {
 		pkgs = append(pkgs, ovalPackage{})
 	}
 
-	if err := evalCriterions(pkgs, tos, criteria.Criterions); err != nil {
+	if err := e.evalCriterions(pkgs, criteria.Criterions); err != nil {
 		return nil, errors.Wrap(err, "eval criterions")
 	}
 	return pkgs, nil
 }
 
-func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) error {
+func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criterion) error {
 	for _, c := range criterions {
-		test, ok := tos.rpminfoTests[c.TestRef]
-		if ok {
-			obj, ok := tos.rpminfoObjs[test.Object.ObjectRef]
-			if !ok {
-				return errors.Errorf("no objectref: %s", test.Object.ObjectRef)
+		test, err := e.readTest("rpminfo_test", c.TestRef)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return errors.Wrapf(err, "read rpminfo_test file. ref: %s", c.TestRef)
+		}
+
+		if err == nil {
+			obj, err := e.readRpminfoObj(test.Object.ObjectRef)
+			if err != nil {
+				return errors.Wrapf(err, "read rpminfo object. ref: %s", test.Object.ObjectRef)
 			}
-			state, ok := tos.rpminfoStates[test.State.StateRef]
-			if !ok {
-				return errors.Errorf("no stateref: %s", test.State.StateRef)
+			state, err := e.readRpminfoState(test.State.StateRef)
+			if err != nil {
+				return errors.Wrapf(err, "read rpminfo state. ref: %s", test.State.StateRef)
 			}
 
 			switch obj.Name {
@@ -375,18 +355,20 @@ func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) 
 				}
 			}
 		} else {
-			test, ok := tos.textfileTests[c.TestRef]
-			if !ok {
-				return errors.Errorf("no testref: %s", c.TestRef)
+			test, err := e.readTest("textfilecontent54_test", c.TestRef)
+			if err != nil {
+				return errors.Wrapf(err, "read textfilecontent54_test. ref: %s", c.TestRef)
 			}
-			obj, ok := tos.textfileObjs[test.Object.ObjectRef]
-			if !ok {
-				return errors.Errorf("no objectref: %s", test.Object.ObjectRef)
+
+			obj, err := e.readTextfilecontent54Obj(test.Object.ObjectRef)
+			if err != nil {
+				return errors.Wrapf(err, "read textfilecontent54_object. ref: %s", test.Object.ObjectRef)
 			}
-			state, ok := tos.textfileStates[test.State.StateRef]
-			if !ok {
-				return errors.Errorf("no stateref: %s", test.State.StateRef)
+			state, err := e.readTextfilecontent54OState(test.State.StateRef)
+			if err != nil {
+				return errors.Wrapf(err, "read textfilecontent54_state. ref: %s", test.State.StateRef)
 			}
+
 			if !strings.HasPrefix(obj.Filepath.Text, "/etc/dnf/modules.d/") {
 				continue
 			}
@@ -432,127 +414,47 @@ func evalCriterions(pkgs []ovalPackage, tos tos, criterions []oracle.Criterion) 
 	return nil
 }
 
-func readTests(testsRoot string) (map[string]oracle.Test, map[string]oracle.Test, error) {
-	rpminfoTests := map[string]oracle.Test{}
-	textfileTests := map[string]oracle.Test{}
-
-	if err := filepath.WalkDir(filepath.Join(testsRoot), func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() || filepath.Ext(path) != ".json" {
-			return nil
-		}
-
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
-		var fetched oracle.Test
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
-		}
-		switch filepath.Base(filepath.Dir(path)) {
-		case "rpminfo_test":
-			rpminfoTests[fetched.ID] = fetched
-		case "textfilecontent54_test":
-			textfileTests[fetched.ID] = fetched
-		default:
-			return errors.Errorf("unexpected test type. expected: %q, actual: %q", []string{"rpminfo_test", "textfilecontent54_test"}, filepath.Base(filepath.Dir(path)))
-		}
-		return nil
-	}); err != nil {
-		return nil, nil, errors.Wrapf(err, "walk %s", testsRoot)
+func (e extractor) readTest(testType, id string) (oracle.Test, error) {
+	path := filepath.Join(e.inputDir, "tests", testType, fmt.Sprintf("%s.json", id))
+	var test oracle.Test
+	if err := e.JSONReader.Read(path, &test); err != nil {
+		return oracle.Test{}, errors.Wrapf(err, "read %s json. path: %s", testType, path)
 	}
-
-	return rpminfoTests, textfileTests, nil
+	return test, nil
 }
 
-func readObjects(objectsRoot string) (map[string]oracle.RpminfoObject, map[string]oracle.Textfilecontent54Object, error) {
-	rpminfoObjs := map[string]oracle.RpminfoObject{}
-	textinfoObjs := map[string]oracle.Textfilecontent54Object{}
-
-	if err := filepath.WalkDir(filepath.Join(objectsRoot), func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() || filepath.Ext(path) != ".json" {
-			return nil
-		}
-
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
-		switch filepath.Base(filepath.Dir(path)) {
-		case "rpminfo_object":
-			var fetched oracle.RpminfoObject
-			if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-				return errors.Wrapf(err, "decode %s", path)
-			}
-			rpminfoObjs[fetched.ID] = fetched
-		case "textfilecontent54_object":
-			var fetched oracle.Textfilecontent54Object
-			if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-				return errors.Wrapf(err, "decode %s", path)
-			}
-			textinfoObjs[fetched.ID] = fetched
-		default:
-			return errors.Errorf("unexpected object type. expected: %q, actual: %q", []string{"rpminfo_object", "textfilecontent54_object"}, filepath.Base(filepath.Dir(path)))
-		}
-		return nil
-	}); err != nil {
-		return nil, nil, errors.Wrapf(err, "walk %s", objectsRoot)
+func (e extractor) readRpminfoObj(id string) (oracle.RpminfoObject, error) {
+	path := filepath.Join(e.inputDir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", id))
+	var obj oracle.RpminfoObject
+	if err := e.JSONReader.Read(path, &obj); err != nil {
+		return oracle.RpminfoObject{}, errors.Wrapf(err, "read rpminfo_object json. path: %s", path)
 	}
-
-	return rpminfoObjs, textinfoObjs, nil
+	return obj, nil
 }
 
-func readStates(statesRoot string) (map[string]oracle.RpminfoState, map[string]oracle.Textfilecontent54State, error) {
-	rpminfoStates := map[string]oracle.RpminfoState{}
-	textfileStates := map[string]oracle.Textfilecontent54State{}
-
-	if err := filepath.WalkDir(statesRoot, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() || filepath.Ext(path) != ".json" {
-			return nil
-		}
-
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
-		switch filepath.Base(filepath.Dir(path)) {
-		case "rpminfo_state":
-			var fetched oracle.RpminfoState
-			if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-				return errors.Wrapf(err, "decode %s", path)
-			}
-			rpminfoStates[fetched.ID] = fetched
-		case "textfilecontent54_state":
-			var fetched oracle.Textfilecontent54State
-			if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-				return errors.Wrapf(err, "decode %s", path)
-			}
-			textfileStates[fetched.ID] = fetched
-		default:
-			return errors.Errorf("unexpected state type. expected: %q, actual: %q", []string{"rpminfo_state", "textfilecontent54_state"}, filepath.Base(filepath.Dir(path)))
-		}
-		return nil
-	}); err != nil {
-		return nil, nil, errors.Wrapf(err, "walk %s", statesRoot)
+func (e extractor) readTextfilecontent54Obj(id string) (oracle.Textfilecontent54Object, error) {
+	path := filepath.Join(e.inputDir, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", id))
+	var obj oracle.Textfilecontent54Object
+	if err := e.JSONReader.Read(path, &obj); err != nil {
+		return oracle.Textfilecontent54Object{}, errors.Wrapf(err, "read textfilecontent54_object json. path: %s", path)
 	}
+	return obj, nil
+}
 
-	return rpminfoStates, textfileStates, nil
+func (e extractor) readRpminfoState(id string) (oracle.RpminfoState, error) {
+	path := filepath.Join(e.inputDir, "states", "rpminfo_state", fmt.Sprintf("%s.json", id))
+	var state oracle.RpminfoState
+	if err := e.JSONReader.Read(path, &state); err != nil {
+		return oracle.RpminfoState{}, errors.Wrapf(err, "read rpminfo_state json. path: %s", path)
+	}
+	return state, nil
+}
+
+func (e extractor) readTextfilecontent54OState(id string) (oracle.Textfilecontent54State, error) {
+	path := filepath.Join(e.inputDir, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", id))
+	var obj oracle.Textfilecontent54State
+	if err := e.JSONReader.Read(path, &obj); err != nil {
+		return oracle.Textfilecontent54State{}, errors.Wrapf(err, "read textfilecontent54_state json. path: %s", path)
+	}
+	return obj, nil
 }

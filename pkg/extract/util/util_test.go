@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/pkg/errors"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
 
 func TestUnique(t *testing.T) {

@@ -1,11 +1,9 @@
 package v5
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -26,6 +24,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	v5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
 )
@@ -71,18 +70,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
+		jsonReader := utiljson.NewJSONReader()
 		var fetched v5.CVE
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := jsonReader.Read(path, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted, err := extract(fetched)
+		extracted, err := extract(fetched, jsonReader.Paths())
 		if err != nil {
 			return errors.Wrapf(err, "extracted %s", path)
 		}
@@ -121,7 +115,7 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched v5.CVE) (dataTypes.Data, error) {
+func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 	switch fetched.CVEMetadata.State {
 	case "PUBLISHED":
 		return dataTypes.Data{
@@ -261,7 +255,10 @@ func extract(fetched v5.CVE) (dataTypes.Data, error) {
 					}(),
 				},
 			}},
-			DataSource: sourceTypes.MitreV5,
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.MitreV5,
+				Raws: raws,
+			},
 		}, nil
 	case "REJECTED":
 		return dataTypes.Data{
@@ -297,7 +294,10 @@ func extract(fetched v5.CVE) (dataTypes.Data, error) {
 					}(),
 				},
 			}},
-			DataSource: sourceTypes.MitreV5,
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.MitreV5,
+				Raws: raws,
+			},
 		}, nil
 	default:
 		return dataTypes.Data{}, errors.Errorf("unexpected CVE state. expected: %q, actual: %q", []string{"PUBLISHED", "REJECTED"}, fetched.CVEMetadata.State)

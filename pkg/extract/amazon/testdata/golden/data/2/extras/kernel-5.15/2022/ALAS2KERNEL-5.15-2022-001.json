@@ -639,5 +639,10 @@
 			}
 		}
 	],
-	"data_source": "amazon"
+	"data_source": {
+		"id": "amazon",
+		"raws": [
+			"testdata/fixtures/2/extras/kernel-5.15/2022/ALAS2KERNEL-5.15-2022-001.json"
+		]
+	}
 }

@@ -33,6 +33,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alma/errata"
 )
 
@@ -84,18 +85,13 @@ func Extract(args string, opts ...Option) error {
 		dir, y := filepath.Split(filepath.Dir(path))
 		v := filepath.Base(filepath.Clean(dir))
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
+		jsonReader := utiljson.NewJSONReader()
 		var fetched errata.Erratum
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := jsonReader.Read(path, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, v)
+		extracted := extract(fetched, v, jsonReader.Paths())
 
 		if _, err := os.Stat(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
 			f, err := os.Open(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
@@ -146,7 +142,7 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched errata.Erratum, osver string) dataTypes.Data {
+func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data {
 	return dataTypes.Data{
 		ID: fetched.ID,
 		Advisories: []advisoryTypes.Advisory{{
@@ -251,6 +247,6 @@ func extract(fetched errata.Erratum, osver string) dataTypes.Data {
 				},
 			}}
 		}(),
-		DataSource: sourceTypes.AlmaErrata,
+		DataSource: sourceTypes.Source{ID: sourceTypes.AlmaErrata, Raws: raws},
 	}
 }

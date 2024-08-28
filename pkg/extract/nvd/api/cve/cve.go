@@ -2,12 +2,10 @@ package cve
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"hash/fnv"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -40,6 +38,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
 	cveTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
@@ -72,6 +71,12 @@ func (c concurrencyOption) apply(opts *options) {
 
 func WithConcurrency(concurrency int) Option {
 	return concurrencyOption(concurrency)
+}
+
+type extractor struct {
+	cpematchDir string
+	outputDir   string
+	JSONReader  *utiljson.JSONReader
 }
 
 func Extract(cveDir, cpematchDir string, opts ...Option) error {
@@ -163,29 +168,29 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 }
 
 func extract(cvePath, cpematchDir, outputDir string) error {
-	f, err := os.Open(cvePath)
-	if err != nil {
-		return errors.Wrapf(err, "open %s", cvePath)
+	e := extractor{
+		cpematchDir: cpematchDir,
+		outputDir:   outputDir,
+		JSONReader:  utiljson.NewJSONReader(),
 	}
-	defer f.Close()
 
 	var fetched cveTypes.CVE
-	if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-		return errors.Wrapf(err, "decode %s", cvePath)
+	if err := e.JSONReader.Read(cvePath, &fetched); err != nil {
+		return errors.Wrapf(err, "read json %s", cvePath)
 	}
 
-	data, err := buildData(fetched, cpematchDir)
+	data, err := e.buildData(fetched)
 	if err != nil {
 		return errors.Wrapf(err, "buildData %s", cvePath)
 	}
 
-	if err := util.Write(filepath.Join(outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)))
+	if err := util.Write(filepath.Join(e.outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(e.outputDir, "data", filepath.Base(filepath.Dir(cvePath)), fmt.Sprintf("%s.json", data.ID)))
 	}
 	return nil
 }
 
-func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error) {
+func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 	ds, err := func() ([]detectionType.Detection, error) {
 		switch len(fetched.Configurations) {
 		case 0:
@@ -194,7 +199,7 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 			rootCriteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
 			rootCriteria.Criterias = make([]criteriaTypes.Criteria, 0, len(fetched.Configurations))
 			for _, c := range fetched.Configurations {
-				ca, err := configurationToCriteria(c, cpematchDir)
+				ca, err := e.configurationToCriteria(c)
 				if err != nil {
 					return nil, errors.Wrapf(err, "configuration to criteria. ID: %s", fetched.ID)
 				}
@@ -313,12 +318,15 @@ func buildData(fetched cveTypes.CVE, cpematchDir string) (dataTypes.Data, error)
 				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.EcosystemTypeCPE},
 			},
 		},
-		Detection:  ds,
-		DataSource: sourceTypes.NVDAPICVE,
+		Detection: ds,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.NVDAPICVE,
+			Raws: e.JSONReader.Paths(),
+		},
 	}, nil
 }
 
-func configurationToCriteria(config cveTypes.Config, cpematchDir string) (criteriaTypes.Criteria, error) {
+func (e extractor) configurationToCriteria(config cveTypes.Config) (criteriaTypes.Criteria, error) {
 	if config.Negate {
 		return criteriaTypes.Criteria{}, errors.New("negate in Config is not implemented")
 	}
@@ -335,7 +343,7 @@ func configurationToCriteria(config cveTypes.Config, cpematchDir string) (criter
 
 	ca.Criterias = make([]criteriaTypes.Criteria, 0, len(config.Nodes))
 	for _, n := range config.Nodes {
-		child, err := nodeToCriteria(n, cpematchDir)
+		child, err := e.nodeToCriteria(n)
 		if err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrap(err, "nodeToCriteria")
 		}
@@ -344,7 +352,7 @@ func configurationToCriteria(config cveTypes.Config, cpematchDir string) (criter
 	return ca, nil
 }
 
-func nodeToCriteria(n cveTypes.Node, cpematchDir string) (criteriaTypes.Criteria, error) {
+func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, error) {
 	ca := criteriaTypes.Criteria{}
 	switch n.Operator {
 	case "AND":
@@ -385,7 +393,7 @@ func nodeToCriteria(n cveTypes.Node, cpematchDir string) (criteriaTypes.Criteria
 
 		cns := []criterionTypes.Criterion{cn}
 		if rangeType == rangeTypes.RangeTypeUnknown {
-			ns, err := cpeNamesFromCpematch(wfn, match.MatchCriteriaID, cpematchDir)
+			ns, err := e.cpeNamesFromCpematch(wfn, match.MatchCriteriaID)
 			if err != nil {
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "cpe names from cpematch. match criteria: %s", match.Criteria)
 			}
@@ -407,6 +415,23 @@ func nodeToCriteria(n cveTypes.Node, cpematchDir string) (criteriaTypes.Criteria
 	return ca, nil
 }
 
+func (e extractor) cpeNamesFromCpematch(wfn common.WellFormedName, matchCriteriaId string) ([]string, error) {
+	h := fnv.New32()
+	h.Write([]byte(fmt.Sprintf("%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct))))
+	path := filepath.Join(e.cpematchDir, fmt.Sprintf("%x", h.Sum32()), fmt.Sprintf("%s.json", matchCriteriaId))
+
+	var cpeMatch cpematch.MatchCriteria
+	if err := e.JSONReader.Read(path, &cpeMatch); err != nil {
+		return nil, errors.Wrapf(err, "read json %s", path)
+	}
+
+	ns := make([]string, 0, len(cpeMatch.Matches))
+	for _, m := range cpeMatch.Matches {
+		ns = append(ns, m.CPEName)
+	}
+	return ns, nil
+}
+
 func decideRangeType(match cveTypes.CPEMatch) rangeTypes.RangeType {
 	for _, v := range []string{match.VersionStartIncluding, match.VersionStartExcluding, match.VersionEndIncluding, match.VersionEndExcluding} {
 		switch v {
@@ -419,26 +444,4 @@ func decideRangeType(match cveTypes.CPEMatch) rangeTypes.RangeType {
 		}
 	}
 	return rangeTypes.RangeTypeSEMVER
-}
-
-func cpeNamesFromCpematch(wfn common.WellFormedName, matchCriteriaId string, cpematchDir string) ([]string, error) {
-	h := fnv.New32()
-	h.Write([]byte(fmt.Sprintf("%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct))))
-	path := filepath.Join(cpematchDir, fmt.Sprintf("%x", h.Sum32()), fmt.Sprintf("%s.json", matchCriteriaId))
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, errors.Wrapf(err, "open cpematch. path: %s", path)
-	}
-	defer f.Close()
-
-	var cpeMatch cpematch.MatchCriteria
-	if err := json.NewDecoder(f).Decode(&cpeMatch); err != nil {
-		return nil, errors.Wrapf(err, "decode %s", path)
-	}
-
-	ns := make([]string, 0, len(cpeMatch.Matches))
-	for _, m := range cpeMatch.Matches {
-		ns = append(ns, m.CPEName)
-	}
-	return ns, nil
 }

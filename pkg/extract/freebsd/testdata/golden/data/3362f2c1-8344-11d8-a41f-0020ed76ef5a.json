@@ -1,4 +1,9 @@
 {
 	"id": "3362f2c1-8344-11d8-a41f-0020ed76ef5a",
-	"data_source": "freebsd"
+	"data_source": {
+		"id": "freebsd",
+		"raws": [
+			"testdata/fixtures/3362f2c1-8344-11d8-a41f-0020ed76ef5a.json"
+		]
+	}
 }

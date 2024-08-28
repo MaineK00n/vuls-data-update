@@ -78,5 +78,10 @@
 			}
 		}
 	],
-	"data_source": "amazon"
+	"data_source": {
+		"id": "amazon",
+		"raws": [
+			"testdata/fixtures/2023/kernel-livepatch/2023/ALAS2023LIVEPATCH-2023-001.json"
+		]
+	}
 }

@@ -47,5 +47,10 @@
 			}
 		}
 	],
-	"data_source": "freebsd"
+	"data_source": {
+		"id": "freebsd",
+		"raws": [
+			"testdata/fixtures/3110b29e-c82d-4287-9f6c-db82bb883b1e.json"
+		]
+	}
 }
