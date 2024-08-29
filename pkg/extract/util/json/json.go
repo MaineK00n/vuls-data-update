@@ -16,7 +16,7 @@ type JSONReader struct {
 
 // NewJSONReader returns the pointer to JSONReader.
 func NewJSONReader() *JSONReader {
-	return &JSONReader{memo: map[string]struct{}{}}
+	return &JSONReader{memo: make(map[string]struct{})}
 }
 
 // Read reads JSON file specified by path and umarhsal it to v.
