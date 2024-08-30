@@ -1,14 +1,11 @@
 package oracle_test
 
 import (
-	"io/fs"
-	"net/url"
-	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -42,39 +39,9 @@ func TestExtract(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		inputDir := test.QueryUnescapeFileTree(t, tt.fixturePath, "vuls-data-raw-oracle")
 		t.Run(tt.name, func(t *testing.T) {
 			// Copy files under fixturePath to temp dir to convert query-escaped names to normal ones
-			rootDir := t.TempDir()
-			inputDir := filepath.Join(rootDir, "vuls-data-raw-oracle")
-			if err := os.Mkdir(inputDir, fs.ModePerm); err != nil {
-				t.Error("mkdir error:", err)
-			}
-
-			if err := filepath.WalkDir(tt.fixturePath, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() || filepath.Ext(path) != ".json" {
-					return nil
-				}
-
-				targetDir := filepath.Join(inputDir, filepath.Dir(strings.TrimPrefix(path, strings.TrimPrefix(tt.fixturePath, "./"))))
-				if err := os.MkdirAll(targetDir, fs.ModePerm); err != nil {
-					return err
-				}
-				targetBase, err := url.QueryUnescape(filepath.Base(path))
-				if err != nil {
-					return err
-				}
-				if err := os.Link(path, filepath.Join(targetDir, targetBase)); err != nil {
-					return err
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("copy fixtures", err)
-			}
 
 			outputDir := t.TempDir()
 			err := oracle.Extract(inputDir, oracle.WithDir(outputDir))

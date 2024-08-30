@@ -142,3 +142,45 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 		}
 	}
 }
+
+// QueryUnescapeFileTree copies a file tree at "from" to <temp-dir>/"to" by query-unscapeing file names.
+// It returns <temp-dir>/"to".
+func QueryUnescapeFileTree(t *testing.T, from, to string) string {
+	toPath := filepath.Join(t.TempDir(), to)
+	if err := os.Mkdir(toPath, fs.ModePerm); err != nil {
+		t.Error("mkdir error:", err)
+	}
+
+	if err := filepath.WalkDir(from, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		rel, err := filepath.Rel(from, path)
+		if err != nil {
+			return err
+		}
+		unescaped, err := url.QueryUnescape(rel)
+		if err != nil {
+			return err
+		}
+
+		targetDir := filepath.Join(toPath, filepath.Dir(unescaped))
+		if err := os.MkdirAll(targetDir, fs.ModePerm); err != nil {
+			return err
+		}
+		if err := os.Link(path, filepath.Join(toPath, unescaped)); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		t.Error("query unscape tree", err)
+	}
+
+	return toPath
+}
