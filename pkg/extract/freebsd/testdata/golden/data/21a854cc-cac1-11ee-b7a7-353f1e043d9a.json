@@ -204,7 +204,7 @@
 	"data_source": {
 		"id": "freebsd",
 		"raws": [
-			"testdata/fixtures/21a854cc-cac1-11ee-b7a7-353f1e043d9a.json"
+			"fixtures/21a854cc-cac1-11ee-b7a7-353f1e043d9a.json"
 		]
 	}
 }

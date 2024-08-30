@@ -101,7 +101,7 @@
 	"data_source": {
 		"id": "arch",
 		"raws": [
-			"testdata/fixtures/AVG-5.json"
+			"fixtures/AVG-5.json"
 		]
 	}
 }

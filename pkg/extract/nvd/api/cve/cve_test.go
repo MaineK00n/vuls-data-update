@@ -18,20 +18,20 @@ func TestExtract(t *testing.T) {
 	}{
 		{
 			name:        "happy",
-			cveDir:      "./testdata/fixtures/happy/cve",
-			cpematchDir: "./testdata/fixtures/happy/cpematch",
+			cveDir:      "./testdata/fixtures/happy/vuls-data-raw-nvd-api-cve",
+			cpematchDir: "./testdata/fixtures/happy/vuls-data-raw-nvd-api-cpematch",
 			golden:      "./testdata/golden/happy",
 		},
 		{
 			name:        "with-and",
-			cveDir:      "./testdata/fixtures/with-and/cve",
-			cpematchDir: "./testdata/fixtures/with-and/cpematch",
+			cveDir:      "./testdata/fixtures/with-and/vuls-data-raw-nvd-api-cve",
+			cpematchDir: "./testdata/fixtures/with-and/vuls-data-raw-nvd-api-cpematch",
 			golden:      "./testdata/golden/with-and",
 		},
 		{
 			name:        "with-cpematch",
-			cveDir:      "./testdata/fixtures/with-cpematch/cve",
-			cpematchDir: "./testdata/fixtures/with-cpematch/cpematch",
+			cveDir:      "./testdata/fixtures/with-cpematch/vuls-data-raw-nvd-api-cve",
+			cpematchDir: "./testdata/fixtures/with-cpematch/vuls-data-raw-nvd-api-cpematch",
 			golden:      "./testdata/golden/with-cpematch",
 		},
 	}

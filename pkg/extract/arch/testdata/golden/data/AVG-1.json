@@ -83,7 +83,7 @@
 	"data_source": {
 		"id": "arch",
 		"raws": [
-			"testdata/fixtures/AVG-1.json"
+			"fixtures/AVG-1.json"
 		]
 	}
 }

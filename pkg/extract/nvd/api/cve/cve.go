@@ -76,7 +76,7 @@ func WithConcurrency(concurrency int) Option {
 type extractor struct {
 	cpematchDir string
 	outputDir   string
-	JSONReader  *utiljson.JSONReader
+	r           *utiljson.JSONReader
 }
 
 func Extract(cveDir, cpematchDir string, opts ...Option) error {
@@ -125,7 +125,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	for i := 0; i < options.concurrency; i++ {
 		g.Go(func() error {
 			for path := range reqChan {
-				if err := extract(path, cpematchDir, options.dir); err != nil {
+				if err := extract(path, cveDir, cpematchDir, options.dir); err != nil {
 					return errors.Wrapf(err, "extract %s", path)
 				}
 			}
@@ -167,15 +167,15 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 	return nil
 }
 
-func extract(cvePath, cpematchDir, outputDir string) error {
+func extract(cvePath, cveDir, cpematchDir, outputDir string) error {
 	e := extractor{
 		cpematchDir: cpematchDir,
 		outputDir:   outputDir,
-		JSONReader:  utiljson.NewJSONReader(),
+		r:           utiljson.NewJSONReader(),
 	}
 
 	var fetched cveTypes.CVE
-	if err := e.JSONReader.Read(cvePath, &fetched); err != nil {
+	if err := e.r.Read(cvePath, cveDir, &fetched); err != nil {
 		return errors.Wrapf(err, "read json %s", cvePath)
 	}
 
@@ -321,7 +321,7 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 		Detection: ds,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.NVDAPICVE,
-			Raws: e.JSONReader.Paths(),
+			Raws: e.r.Paths(),
 		},
 	}, nil
 }
@@ -421,7 +421,7 @@ func (e extractor) cpeNamesFromCpematch(wfn common.WellFormedName, matchCriteria
 	path := filepath.Join(e.cpematchDir, fmt.Sprintf("%x", h.Sum32()), fmt.Sprintf("%s.json", matchCriteriaId))
 
 	var cpeMatch cpematch.MatchCriteria
-	if err := e.JSONReader.Read(path, &cpeMatch); err != nil {
+	if err := e.r.Read(path, e.cpematchDir, &cpeMatch); err != nil {
 		return nil, errors.Wrapf(err, "read json %s", path)
 	}
 

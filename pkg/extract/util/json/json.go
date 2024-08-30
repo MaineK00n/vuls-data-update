@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"maps"
 	"os"
+	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -21,7 +23,7 @@ func NewJSONReader() *JSONReader {
 
 // Read reads JSON file specified by path and umarhsal it to v.
 // 2nd argument v MUST be of non-nil pointer type.
-func (j *JSONReader) Read(path string, v any) error {
+func (j *JSONReader) Read(path, prefix string, v any) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return errors.Wrapf(err, "open %s", path)
@@ -31,12 +33,13 @@ func (j *JSONReader) Read(path string, v any) error {
 	if err := json.NewDecoder(f).Decode(v); err != nil {
 		return errors.Wrapf(err, "decode %s", path)
 	}
-	j.memo[path] = struct{}{}
+	j.memo[filepath.Join(filepath.Base(prefix), strings.TrimPrefix(filepath.Clean(path), filepath.Clean(prefix)))] = struct{}{}
 
 	return nil
 }
 
 // Paths returns a path slice accumulated by Read() calls.
+// Returned pathes is the string after the basename of prefixes.
 // Resulting slices has no duplication even if multiple Read() calls with the same path.
 func (j JSONReader) Paths() []string {
 	return slices.Collect(maps.Keys(j.memo))

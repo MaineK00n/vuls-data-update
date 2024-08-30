@@ -70,13 +70,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		jsonReader := utiljson.NewJSONReader()
+		r := utiljson.NewJSONReader()
 		var fetched v5.CVE
-		if err := jsonReader.Read(path, &fetched); err != nil {
+		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted, err := extract(fetched, jsonReader.Paths())
+		extracted, err := extract(fetched, r.Paths())
 		if err != nil {
 			return errors.Wrapf(err, "extracted %s", path)
 		}

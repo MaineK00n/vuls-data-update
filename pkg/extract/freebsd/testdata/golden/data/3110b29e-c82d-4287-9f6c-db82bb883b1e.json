@@ -50,7 +50,7 @@
 	"data_source": {
 		"id": "freebsd",
 		"raws": [
-			"testdata/fixtures/3110b29e-c82d-4287-9f6c-db82bb883b1e.json"
+			"fixtures/3110b29e-c82d-4287-9f6c-db82bb883b1e.json"
 		]
 	}
 }

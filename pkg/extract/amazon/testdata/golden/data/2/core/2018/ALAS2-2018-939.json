@@ -99,7 +99,7 @@
 	"data_source": {
 		"id": "amazon",
 		"raws": [
-			"testdata/fixtures/2/core/2018/ALAS2-2018-939.json"
+			"fixtures/2/core/2018/ALAS2-2018-939.json"
 		]
 	}
 }

@@ -54,8 +54,8 @@ func WithDir(dir string) Option {
 
 // extractor means _T_ests, _O_bjects and _S_tates. Information for evaluating OVAL criteria.
 type extractor struct {
-	inputDir   string
-	JSONReader *utiljson.JSONReader
+	inputDir string
+	r        *utiljson.JSONReader
 }
 
 func Extract(inputDir string, opts ...Option) error {
@@ -83,11 +83,11 @@ func Extract(inputDir string, opts ...Option) error {
 		}
 
 		e := extractor{
-			inputDir:   inputDir,
-			JSONReader: utiljson.NewJSONReader(),
+			inputDir: inputDir,
+			r:        utiljson.NewJSONReader(),
 		}
 		var def oracle.Definition
-		if err := e.JSONReader.Read(path, &def); err != nil {
+		if err := e.r.Read(path, e.inputDir, &def); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
@@ -199,7 +199,7 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 		Detection: ds,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.Oracle,
-			Raws: e.JSONReader.Paths(),
+			Raws: e.r.Paths(),
 		},
 	}, nil
 }
@@ -417,7 +417,7 @@ func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criter
 func (e extractor) readTest(testType, id string) (oracle.Test, error) {
 	path := filepath.Join(e.inputDir, "tests", testType, fmt.Sprintf("%s.json", id))
 	var test oracle.Test
-	if err := e.JSONReader.Read(path, &test); err != nil {
+	if err := e.r.Read(path, e.inputDir, &test); err != nil {
 		return oracle.Test{}, errors.Wrapf(err, "read %s json. path: %s", testType, path)
 	}
 	return test, nil
@@ -426,7 +426,7 @@ func (e extractor) readTest(testType, id string) (oracle.Test, error) {
 func (e extractor) readRpminfoObj(id string) (oracle.RpminfoObject, error) {
 	path := filepath.Join(e.inputDir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", id))
 	var obj oracle.RpminfoObject
-	if err := e.JSONReader.Read(path, &obj); err != nil {
+	if err := e.r.Read(path, e.inputDir, &obj); err != nil {
 		return oracle.RpminfoObject{}, errors.Wrapf(err, "read rpminfo_object json. path: %s", path)
 	}
 	return obj, nil
@@ -435,7 +435,7 @@ func (e extractor) readRpminfoObj(id string) (oracle.RpminfoObject, error) {
 func (e extractor) readTextfilecontent54Obj(id string) (oracle.Textfilecontent54Object, error) {
 	path := filepath.Join(e.inputDir, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", id))
 	var obj oracle.Textfilecontent54Object
-	if err := e.JSONReader.Read(path, &obj); err != nil {
+	if err := e.r.Read(path, e.inputDir, &obj); err != nil {
 		return oracle.Textfilecontent54Object{}, errors.Wrapf(err, "read textfilecontent54_object json. path: %s", path)
 	}
 	return obj, nil
@@ -444,7 +444,7 @@ func (e extractor) readTextfilecontent54Obj(id string) (oracle.Textfilecontent54
 func (e extractor) readRpminfoState(id string) (oracle.RpminfoState, error) {
 	path := filepath.Join(e.inputDir, "states", "rpminfo_state", fmt.Sprintf("%s.json", id))
 	var state oracle.RpminfoState
-	if err := e.JSONReader.Read(path, &state); err != nil {
+	if err := e.r.Read(path, e.inputDir, &state); err != nil {
 		return oracle.RpminfoState{}, errors.Wrapf(err, "read rpminfo_state json. path: %s", path)
 	}
 	return state, nil
@@ -453,7 +453,7 @@ func (e extractor) readRpminfoState(id string) (oracle.RpminfoState, error) {
 func (e extractor) readTextfilecontent54OState(id string) (oracle.Textfilecontent54State, error) {
 	path := filepath.Join(e.inputDir, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", id))
 	var obj oracle.Textfilecontent54State
-	if err := e.JSONReader.Read(path, &obj); err != nil {
+	if err := e.r.Read(path, e.inputDir, &obj); err != nil {
 		return oracle.Textfilecontent54State{}, errors.Wrapf(err, "read textfilecontent54_state json. path: %s", path)
 	}
 	return obj, nil

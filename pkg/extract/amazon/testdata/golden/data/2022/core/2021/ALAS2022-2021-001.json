@@ -158,7 +158,7 @@
 	"data_source": {
 		"id": "amazon",
 		"raws": [
-			"testdata/fixtures/2022/core/2021/ALAS2022-2021-001.json"
+			"fixtures/2022/core/2021/ALAS2022-2021-001.json"
 		]
 	}
 }

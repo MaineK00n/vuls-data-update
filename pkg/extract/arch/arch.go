@@ -83,13 +83,13 @@ func Extract(args string, opts ...Option) error {
 		}
 		defer f.Close()
 
-		jsonReader := utiljson.NewJSONReader()
+		r := utiljson.NewJSONReader()
 		var fetched arch.VulnerabilityGroup
-		if err := jsonReader.Read(path, &fetched); err != nil {
+		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, jsonReader.Paths())
+		extracted := extract(fetched, r.Paths())
 
 		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)))

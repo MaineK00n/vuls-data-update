@@ -559,7 +559,7 @@
 	"data_source": {
 		"id": "amazon",
 		"raws": [
-			"testdata/fixtures/2023/core/2023/ALAS2023-2023-001.json"
+			"fixtures/2023/core/2023/ALAS2023-2023-001.json"
 		]
 	}
 }

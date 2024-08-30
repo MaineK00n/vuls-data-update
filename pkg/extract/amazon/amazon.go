@@ -78,13 +78,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		jsonReader := utiljson.NewJSONReader()
+		r := utiljson.NewJSONReader()
 		var fetched amazon.Update
-		if err := jsonReader.Read(path, &fetched); err != nil {
+		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, jsonReader.Paths())
+		extracted := extract(fetched, r.Paths())
 
 		dir, y := filepath.Split(filepath.Dir(path))
 		dir, repo := filepath.Split(filepath.Clean(dir))

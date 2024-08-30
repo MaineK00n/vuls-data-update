@@ -65,13 +65,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		jsonReader := utiljson.NewJSONReader()
+		r := utiljson.NewJSONReader()
 		var fetched kev.Vulnerability
-		if err := jsonReader.Read(path, &fetched); err != nil {
+		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, jsonReader.Paths())
+		extracted := extract(fetched, r.Paths())
 
 		if err := util.Write(filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", extracted.ID)))

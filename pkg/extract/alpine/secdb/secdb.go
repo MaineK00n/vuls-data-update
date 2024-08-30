@@ -76,13 +76,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		jsonReader := utiljson.NewJSONReader()
+		r := utiljson.NewJSONReader()
 		var fetched secdb.Advisory
-		if err := jsonReader.Read(path, &fetched); err != nil {
+		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		for _, data := range extract(fetched, jsonReader.Paths()) {
+		for _, data := range extract(fetched, r.Paths()) {
 			if _, err := os.Stat(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID))); err == nil {
 				f, err := os.Open(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
 				if err != nil {

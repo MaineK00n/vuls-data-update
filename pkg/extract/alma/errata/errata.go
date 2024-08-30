@@ -85,13 +85,13 @@ func Extract(args string, opts ...Option) error {
 		dir, y := filepath.Split(filepath.Dir(path))
 		v := filepath.Base(filepath.Clean(dir))
 
-		jsonReader := utiljson.NewJSONReader()
+		r := utiljson.NewJSONReader()
 		var fetched errata.Erratum
-		if err := jsonReader.Read(path, &fetched); err != nil {
+		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched, v, jsonReader.Paths())
+		extracted := extract(fetched, v, r.Paths())
 
 		if _, err := os.Stat(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
 			f, err := os.Open(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))

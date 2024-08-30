@@ -86,7 +86,7 @@
 	"data_source": {
 		"id": "amazon",
 		"raws": [
-			"testdata/fixtures/1/updates/2011/ALAS-2011-1.json"
+			"fixtures/1/updates/2011/ALAS-2011-1.json"
 		]
 	}
 }

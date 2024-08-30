@@ -85,9 +85,9 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	jsonReader := utiljson.NewJSONReader()
+	r := utiljson.NewJSONReader()
 	var fetched epss.EPSS
-	if err := jsonReader.Read(filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))), &fetched); err != nil {
+	if err := r.Read(filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))), args, &fetched); err != nil {
 		return errors.Wrapf(err, "read json %s", filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
 	}
 
@@ -119,7 +119,7 @@ func Extract(args string, opts ...Option) error {
 			}},
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.EPSS,
-				Raws: jsonReader.Paths(),
+				Raws: r.Paths(),
 			},
 		}
 

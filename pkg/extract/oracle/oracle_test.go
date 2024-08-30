@@ -1,16 +1,12 @@
 package oracle_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-
-	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
@@ -48,7 +44,12 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Copy files under fixturePath to temp dir to convert query-escaped names to normal ones
-			inputDir := t.TempDir()
+			rootDir := t.TempDir()
+			inputDir := filepath.Join(rootDir, "vuls-data-raw-oracle")
+			if err := os.Mkdir(inputDir, fs.ModePerm); err != nil {
+				t.Error("mkdir error:", err)
+			}
+
 			if err := filepath.WalkDir(tt.fixturePath, func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
@@ -82,38 +83,6 @@ func TestExtract(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
-
-			// Rewrite output files under "data/" to erase temp input dir prefix
-			if err := filepath.WalkDir(filepath.Join(outputDir, "data"), func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() || filepath.Ext(path) != ".json" {
-					return nil
-				}
-
-				f, err := os.Open(path)
-				if err != nil {
-					return err
-				}
-				defer f.Close()
-
-				var data dataTypes.Data
-				if err := json.NewDecoder(f).Decode(&data); err != nil {
-					return err
-				}
-				for i, s := range data.DataSource.Raws {
-					data.DataSource.Raws[i] = strings.TrimPrefix(s, inputDir+"/")
-				}
-				if err := util.Write(path, data, false); err != nil {
-					return err
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("Erase output dir prefix", err)
 			}
 
 			ep, err := filepath.Abs(tt.goldenPath)

@@ -379,7 +379,7 @@
 	"data_source": {
 		"id": "alma-errata",
 		"raws": [
-			"testdata/fixtures/8/2019/ALSA-2019%3A3708.json"
+			"fixtures/8/2019/ALSA-2019%3A3708.json"
 		]
 	}
 }
