@@ -247,6 +247,9 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 				},
 			}}
 		}(),
-		DataSource: sourceTypes.Source{ID: sourceTypes.AlmaErrata, Raws: raws},
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.AlmaErrata,
+			Raws: raws,
+		},
 	}
 }
