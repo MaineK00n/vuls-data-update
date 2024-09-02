@@ -40,7 +40,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			outputDir := t.TempDir()
-			err := oracle.Extract(utiltest.QueryUnescapeFileTree(t, tt.fixturePath, "vuls-data-raw-oracle"), oracle.WithDir(outputDir))
+			err := oracle.Extract(utiltest.QueryUnescapeFileTree(t, tt.fixturePath), oracle.WithDir(outputDir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
