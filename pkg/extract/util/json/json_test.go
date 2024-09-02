@@ -12,67 +12,68 @@ import (
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 )
 
-type T1 struct {
-	ID    int      `json:"id,omitempty"`
-	Names []string `json:"names,omitempty"`
-}
-type T2 struct {
-	ID     int   `json:"id,omitempty"`
-	Values []int `json:"values,omitempty"`
-}
+func TestJSONReader_Read(t *testing.T) {
+	type t1 struct {
+		ID    int      `json:"id,omitempty"`
+		Names []string `json:"names,omitempty"`
+	}
 
-func TestRead(t *testing.T) {
-	tests := []struct {
-		name   string
+	type args struct {
 		path   string
-		target any
-		want   any
+		prefix string
+		v      any
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    any
+		wantErr bool
 	}{
 		{
-			name:   "t1",
-			path:   "./testdata/fixtures/t1.json",
-			target: T1{},
-			want:   T1{ID: 42, Names: []string{"alice", "bob", "charlie"}},
+			name: "happy",
+			args: args{
+				path:   "./testdata/fixtures/t1.json",
+				prefix: "./testdata",
+				v:      &t1{},
+			},
+			want: &t1{
+				ID:    42,
+				Names: []string{"alice", "bob", "charlie"},
+			},
 		},
 		{
-			name:   "t2",
-			path:   "./testdata/fixtures/t2.json",
-			target: T2{},
-			want:   T2{ID: 42, Values: []int{1, 2, 3}},
+			name: "not-pointer",
+			args: args{
+				path:   "./testdata/fixtures/t1.json",
+				prefix: "./testdata",
+				v:      t1{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "nil-pointer",
+			args: args{
+				path:   "./testdata/fixtures/t1.json",
+				prefix: "./testdata",
+				v:      func() *t1 { var t *t1; return t }(),
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := utiljson.NewJSONReader()
-			err := r.Read(tt.path, filepath.Base(tt.path), &tt.target)
-			if err != nil {
-				t.Errorf("Read() error: %v", err)
+			if err := r.Read(tt.args.path, tt.args.prefix, tt.args.v); (err != nil) != tt.wantErr {
+				t.Errorf("JSONReader.Read() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
 				return
 			}
-			if diff := cmp.Diff(tt.want, tt.want); diff != "" {
+			if diff := cmp.Diff(tt.want, tt.args.v); diff != "" {
 				t.Errorf("Read(). (-expected +got):\n%s", diff)
 			}
 		})
 	}
-}
-
-func TestReadError(t *testing.T) {
-	t.Run("not-pointer", func(t *testing.T) {
-		r := utiljson.NewJSONReader()
-		var target T1
-		err := r.Read("./testdata/fixtures/t1.json", "./testdata/fixtures", target) // not a pointer, but pass t1 itself
-		if err == nil {
-			t.Errorf("should be error but not")
-		}
-	})
-	t.Run("nil-pointer", func(t *testing.T) {
-		j := utiljson.NewJSONReader()
-		var t1 *T1
-		err := j.Read("./testdata/fixtures/t1.json", "./testdata/fixtures", t1) // nil pointer
-		if err == nil {
-			t.Errorf("should be error but not")
-		}
-	})
 }
 
 func TestPaths(t *testing.T) {
