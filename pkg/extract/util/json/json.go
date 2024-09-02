@@ -21,7 +21,7 @@ func NewJSONReader() *JSONReader {
 }
 
 // Read reads JSON file specified by path and umarhsal it to v.
-// 2nd argument v MUST be of non-nil pointer type.
+// 3rd argument v MUST be of non-nil pointer type.
 func (j *JSONReader) Read(path, prefix string, v any) error {
 	f, err := os.Open(path)
 	if err != nil {
