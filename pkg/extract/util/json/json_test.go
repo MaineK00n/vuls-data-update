@@ -1,9 +1,6 @@
 package json_test
 
 import (
-	"fmt"
-	"path/filepath"
-	"reflect"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -109,13 +106,10 @@ func TestPaths(t *testing.T) {
 
 			for _, p := range tt.paths {
 				var target any
-				var target any
 				if err := r.Read(p, "testdata/fixtures", &target); err != nil {
 					t.Fatalf("Read() error: %v", err)
 				}
 			}
-			fmt.Printf("%+v\n", reflect.TypeOf(r.Paths()))
-			fmt.Printf("%+v\n", len(r.Paths()))
 
 			if diff := cmp.Diff(tt.want, r.Paths(), cmpopts.SortSlices(func(x, y string) bool { return x < y })); diff != "" {
 				t.Errorf("Paths(). (-expected +got):\n%s", diff)
