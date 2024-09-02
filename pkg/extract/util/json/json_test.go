@@ -109,10 +109,9 @@ func TestPaths(t *testing.T) {
 
 			for _, p := range tt.paths {
 				var target any
-				err := r.Read(p, "testdata/fixtures", &target)
-				if err != nil {
-					t.Errorf("Read() error: %v", err)
-					return
+				var target any
+				if err := r.Read(p, "testdata/fixtures", &target); err != nil {
+					t.Fatalf("Read() error: %v", err)
 				}
 			}
 			fmt.Printf("%+v\n", reflect.TypeOf(r.Paths()))
