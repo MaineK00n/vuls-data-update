@@ -143,10 +143,10 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 	}
 }
 
-// QueryUnescapeFileTree copies a file tree at fixturePath to <tmp-dir>/rawName by query-unscapeing file names.
-// It returns <tmp-dir>/rawName.
-func QueryUnescapeFileTree(t *testing.T, fixturePath, rawName string) string {
-	rawPath := filepath.Join(t.TempDir(), rawName)
+// QueryUnescapeFileTree copies a file tree at fixturePath to <tmp-dir>/rawGroup by query-unescaping file names.
+// It returns <tmp-dir>/rawGroup.
+func QueryUnescapeFileTree(t *testing.T, fixturePath, rawGroup string) string {
+	rawPath := filepath.Join(t.TempDir(), rawGroup)
 	if err := os.MkdirAll(rawPath, fs.ModePerm); err != nil {
 		t.Error("mkdir error:", err)
 	}
