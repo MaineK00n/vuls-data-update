@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
