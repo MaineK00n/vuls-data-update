@@ -38,7 +38,6 @@ func TestExtract(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		inputDir := test.QueryUnescapeFileTree(t, tt.fixturePath, "vuls-data-raw-oracle")
 		t.Run(tt.name, func(t *testing.T) {
 			// Copy files under fixturePath to temp dir to convert query-escaped names to normal ones
 
