@@ -143,15 +143,15 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 	}
 }
 
-// QueryUnescapeFileTree copies a file tree at "from" to <temp-dir>/"to" by query-unscapeing file names.
-// It returns <temp-dir>/"to".
-func QueryUnescapeFileTree(t *testing.T, from, to string) string {
-	toPath := filepath.Join(t.TempDir(), to)
-	if err := os.Mkdir(toPath, fs.ModePerm); err != nil {
+// QueryUnescapeFileTree copies a file tree at fixturePath to <tmp-dir>/rawName by query-unscapeing file names.
+// It returns <tmp-dir>/rawName.
+func QueryUnescapeFileTree(t *testing.T, fixturePath, rawName string) string {
+	rawPath := filepath.Join(t.TempDir(), rawName)
+	if err := os.MkdirAll(rawPath, fs.ModePerm); err != nil {
 		t.Error("mkdir error:", err)
 	}
 
-	if err := filepath.WalkDir(from, func(path string, d fs.DirEntry, err error) error {
+	if err := filepath.WalkDir(fixturePath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -160,7 +160,7 @@ func QueryUnescapeFileTree(t *testing.T, from, to string) string {
 			return nil
 		}
 
-		rel, err := filepath.Rel(from, path)
+		rel, err := filepath.Rel(fixturePath, path)
 		if err != nil {
 			return err
 		}
@@ -169,11 +169,11 @@ func QueryUnescapeFileTree(t *testing.T, from, to string) string {
 			return err
 		}
 
-		targetDir := filepath.Join(toPath, filepath.Dir(unescaped))
+		targetDir := filepath.Join(rawPath, filepath.Dir(unescaped))
 		if err := os.MkdirAll(targetDir, fs.ModePerm); err != nil {
 			return err
 		}
-		if err := os.Link(path, filepath.Join(toPath, unescaped)); err != nil {
+		if err := os.Link(path, filepath.Join(rawPath, unescaped)); err != nil {
 			return err
 		}
 
@@ -182,5 +182,5 @@ func QueryUnescapeFileTree(t *testing.T, from, to string) string {
 		t.Error("query unscape tree", err)
 	}
 
-	return toPath
+	return rawPath
 }
