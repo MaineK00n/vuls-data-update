@@ -52,7 +52,6 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// extractor means _T_ests, _O_bjects and _S_tates. Information for evaluating OVAL criteria.
 type extractor struct {
 	inputDir string
 	r        *utiljson.JSONReader
