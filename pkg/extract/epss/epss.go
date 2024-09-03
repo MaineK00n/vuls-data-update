@@ -1,11 +1,9 @@
 package epss
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -22,6 +20,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 )
 
@@ -86,15 +85,10 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
-	f, err := os.Open(filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
-	if err != nil {
-		return errors.Wrapf(err, "opens %s", filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
-	}
-	defer f.Close()
-
+	r := utiljson.NewJSONReader()
 	var fetched epss.EPSS
-	if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-		return errors.Wrapf(err, "decode %s", filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
+	if err := r.Read(filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))), args, &fetched); err != nil {
+		return errors.Wrapf(err, "read json %s", filepath.Join(args, fmt.Sprintf("%d", latest.Year()), fmt.Sprintf("%s.json", latest.Format("2006-01-02"))))
 	}
 
 	for _, d := range fetched.Data {
@@ -123,7 +117,10 @@ func Extract(args string, opts ...Option) error {
 					}},
 				},
 			}},
-			DataSource: sourceTypes.EPSS,
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.EPSS,
+				Raws: r.Paths(),
+			},
 		}
 
 		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", d.ID)), data, true); err != nil {

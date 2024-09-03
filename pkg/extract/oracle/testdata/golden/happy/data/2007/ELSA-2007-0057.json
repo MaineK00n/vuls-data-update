@@ -242,5 +242,43 @@
 			}
 		}
 	],
-	"data_source": "oracle"
+	"data_source": {
+		"id": "oracle",
+		"raws": [
+			"happy/definitions/oval:com.oracle.elsa:def:20070057.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057001.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057002.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057003.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057004.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057005.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057006.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057007.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057008.json",
+			"happy/objects/rpminfo_object/oval:com.oracle.elsa:obj:20070057009.json",
+			"happy/states/rpminfo_state/oval:com.oracle.elsa:ste:20070057001.json",
+			"happy/states/rpminfo_state/oval:com.oracle.elsa:ste:20070057002.json",
+			"happy/states/rpminfo_state/oval:com.oracle.elsa:ste:20070057003.json",
+			"happy/states/rpminfo_state/oval:com.oracle.elsa:ste:20070057004.json",
+			"happy/states/rpminfo_state/oval:com.oracle.elsa:ste:20070057005.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057001.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057002.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057003.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057004.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057005.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057006.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057007.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057008.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057009.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057010.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057011.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057012.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057013.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057014.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057015.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057016.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057017.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057018.json",
+			"happy/tests/rpminfo_test/oval:com.oracle.elsa:tst:20070057019.json"
+		]
+	}
 }

@@ -96,5 +96,10 @@
 			}
 		}
 	],
-	"data_source": "amazon"
+	"data_source": {
+		"id": "amazon",
+		"raws": [
+			"fixtures/2/core/2018/ALAS2-2018-939.json"
+		]
+	}
 }

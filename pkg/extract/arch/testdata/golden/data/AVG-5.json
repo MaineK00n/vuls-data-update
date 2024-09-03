@@ -98,5 +98,10 @@
 			}
 		}
 	],
-	"data_source": "arch"
+	"data_source": {
+		"id": "arch",
+		"raws": [
+			"fixtures/AVG-5.json"
+		]
+	}
 }

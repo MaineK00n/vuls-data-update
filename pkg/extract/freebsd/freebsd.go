@@ -1,11 +1,9 @@
 package freebsd
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -29,6 +27,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
 )
@@ -78,18 +77,12 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
+		r := utiljson.NewJSONReader()
 		var fetched freebsd.Vuln
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := r.Read(path, args, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
-
-		extracted := extract(fetched)
+		extracted := extract(fetched, r.Paths())
 		if err := util.Write(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", extracted.ID)))
 		}
@@ -124,11 +117,14 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched freebsd.Vuln) dataTypes.Data {
+func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 	if fetched.Cancelled != nil {
 		return dataTypes.Data{
-			ID:         fetched.Vid,
-			DataSource: sourceTypes.FreeBSD,
+			ID: fetched.Vid,
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.FreeBSD,
+				Raws: raws,
+			},
 		}
 	}
 
@@ -275,6 +271,9 @@ func extract(fetched freebsd.Vuln) dataTypes.Data {
 				},
 			},
 		},
-		DataSource: sourceTypes.FreeBSD,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.FreeBSD,
+			Raws: raws,
+		},
 	}
 }

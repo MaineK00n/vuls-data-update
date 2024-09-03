@@ -27,6 +27,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 )
 
@@ -75,18 +76,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
+		r := utiljson.NewJSONReader()
 		var fetched secdb.Advisory
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := r.Read(path, args, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		for _, data := range extract(fetched) {
+		for _, data := range extract(fetched, r.Paths()) {
 			if _, err := os.Stat(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID))); err == nil {
 				f, err := os.Open(filepath.Join(options.dir, "data", fmt.Sprintf("%s.json", data.ID)))
 				if err != nil {
@@ -137,7 +133,7 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched secdb.Advisory) []dataTypes.Data {
+func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 	m := map[string][]criterionTypes.Criterion{}
 	for _, pkg := range fetched.Packages {
 		for v, ids := range pkg.Pkg.Secfixes {
@@ -180,7 +176,10 @@ func extract(fetched secdb.Advisory) []dataTypes.Data {
 					Criterions: cs,
 				},
 			}},
-			DataSource: sourceTypes.AlpineSecDB,
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.AlpineSecDB,
+				Raws: raws,
+			},
 		})
 	}
 	return ds

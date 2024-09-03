@@ -17,7 +17,7 @@ type Data struct {
 	Advisories      []advisoryTypes.Advisory           `json:"advisories,omitempty"`
 	Vulnerabilities []vulnerabilityTypes.Vulnerability `json:"vulnerabilities,omitempty"`
 	Detection       []detectionTypes.Detection         `json:"detection,omitempty"`
-	DataSource      sourceTypes.SourceID               `json:"data_source,omitempty"`
+	DataSource      sourceTypes.Source                 `json:"data_source,omitempty"`
 }
 
 func (d *Data) Sort() {
@@ -35,6 +35,8 @@ func (d *Data) Sort() {
 		d.Detection[i].Sort()
 	}
 	slices.SortFunc(d.Detection, detectionTypes.Compare)
+
+	d.DataSource.Sort()
 }
 
 func Compare(x, y Data) int {
@@ -43,7 +45,7 @@ func Compare(x, y Data) int {
 		slices.CompareFunc(x.Advisories, y.Advisories, advisoryTypes.Compare),
 		slices.CompareFunc(x.Vulnerabilities, y.Vulnerabilities, vulnerabilityTypes.Compare),
 		slices.CompareFunc(x.Detection, y.Detection, detectionTypes.Compare),
-		cmp.Compare(x.DataSource, y.DataSource),
+		sourceTypes.Compare(x.DataSource, y.DataSource),
 	)
 }
 
@@ -84,5 +86,11 @@ func (d *Data) Merge(ds ...Data) {
 		}
 
 		d.Detection = append(d.Detection, e.Detection...)
+
+		for _, r := range e.DataSource.Raws {
+			if !slices.Contains(d.DataSource.Raws, r) {
+				d.DataSource.Raws = append(d.DataSource.Raws, r)
+			}
+		}
 	}
 }

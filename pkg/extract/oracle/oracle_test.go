@@ -10,37 +10,37 @@ import (
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
-		name       string
-		args       string
-		goldenPath string
-		hasError   bool
+		name        string
+		fixturePath string
+		goldenPath  string
+		hasError    bool
 	}{
 		{
-			name:       "happy",
-			args:       "./testdata/fixtures/happy",
-			goldenPath: "./testdata/golden/happy",
+			name:        "happy",
+			fixturePath: "./testdata/fixtures/happy",
+			goldenPath:  "./testdata/golden/happy",
 		},
 		{
-			name:       "modularitylabel",
-			args:       "./testdata/fixtures/modularitylabel",
-			goldenPath: "./testdata/golden/modularitylabel",
+			name:        "modularitylabel",
+			fixturePath: "./testdata/fixtures/modularitylabel",
+			goldenPath:  "./testdata/golden/modularitylabel",
 		},
 		// Based on "modularitylabel" case, the regexp pattern of module stream is altered and others are identical
 		{
-			name:       "modularitylabel-stream-reversed",
-			args:       "./testdata/fixtures/modularitylabel-stream-reversed",
-			goldenPath: "./testdata/golden/modularitylabel-stream-reversed",
+			name:        "modularitylabel-stream-reversed",
+			fixturePath: "./testdata/fixtures/modularitylabel-stream-reversed",
+			goldenPath:  "./testdata/golden/modularitylabel-stream-reversed",
 		},
 		{
-			name:       "majormixed",
-			args:       "./testdata/fixtures/majormixed",
-			goldenPath: "./testdata/golden/majormixed",
+			name:        "majormixed",
+			fixturePath: "./testdata/fixtures/majormixed",
+			goldenPath:  "./testdata/golden/majormixed",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dir := t.TempDir()
-			err := oracle.Extract(tt.args, oracle.WithDir(dir))
+			outputDir := t.TempDir()
+			err := oracle.Extract(utiltest.QueryUnescapeFileTree(t, tt.fixturePath), oracle.WithDir(outputDir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -52,7 +52,7 @@ func TestExtract(t *testing.T) {
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
-			gp, err := filepath.Abs(dir)
+			gp, err := filepath.Abs(outputDir)
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}

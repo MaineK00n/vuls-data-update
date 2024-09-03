@@ -1,11 +1,9 @@
 package amazon
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -30,6 +28,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
 )
@@ -79,18 +78,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
+		r := utiljson.NewJSONReader()
 		var fetched amazon.Update
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := r.Read(path, args, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched)
+		extracted := extract(fetched, r.Paths())
 
 		dir, y := filepath.Split(filepath.Dir(path))
 		dir, repo := filepath.Split(filepath.Clean(dir))
@@ -132,7 +126,7 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched amazon.Update) dataTypes.Data {
+func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 	ds := detectionTypes.Detection{
 		Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAmazon, func() string {
 			switch {
@@ -265,7 +259,10 @@ func extract(fetched amazon.Update) dataTypes.Data {
 			}
 			return vs
 		}(),
-		Detection:  []detectionTypes.Detection{ds},
-		DataSource: sourceTypes.Amazon,
+		Detection: []detectionTypes.Detection{ds},
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.Amazon,
+			Raws: raws,
+		},
 	}
 }

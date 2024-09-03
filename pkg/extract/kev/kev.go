@@ -1,11 +1,9 @@
 package kev
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -21,6 +19,7 @@ import (
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
 )
@@ -66,18 +65,13 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
+		r := utiljson.NewJSONReader()
 		var fetched kev.Vulnerability
-		if err := json.NewDecoder(f).Decode(&fetched); err != nil {
-			return errors.Wrapf(err, "decode %s", path)
+		if err := r.Read(path, args, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
 		}
 
-		extracted := extract(fetched)
+		extracted := extract(fetched, r.Paths())
 
 		if err := util.Write(filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(filepath.Dir(path)), fmt.Sprintf("%s.json", extracted.ID)))
@@ -113,7 +107,7 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func extract(fetched kev.Vulnerability) dataTypes.Data {
+func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 	return dataTypes.Data{
 		ID: fetched.CveID,
 		Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
@@ -151,6 +145,9 @@ func extract(fetched kev.Vulnerability) dataTypes.Data {
 				},
 			},
 		}},
-		DataSource: sourceTypes.KEV,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.KEV,
+			Raws: raws,
+		},
 	}
 }

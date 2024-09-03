@@ -1,6 +1,16 @@
 package source
 
+import (
+	"cmp"
+	"slices"
+)
+
 type SourceID string
+
+type Source struct {
+	ID   SourceID `json:"id,omitempty"`
+	Raws []string `json:"raws,omitempty"`
+}
 
 const (
 	AlmaErrata            SourceID = "alma-errata"
@@ -105,3 +115,14 @@ const (
 	WindowsMSUC           SourceID = "windows-msuc"
 	WindowsWSUSSCN2       SourceID = "windows-wsusscn2"
 )
+
+func (d *Source) Sort() {
+	slices.Sort(d.Raws)
+}
+
+func Compare(x, y Source) int {
+	return cmp.Or(
+		cmp.Compare(x.ID, y.ID),
+		slices.Compare(x.Raws, y.Raws),
+	)
+}
