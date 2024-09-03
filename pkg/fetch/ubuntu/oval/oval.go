@@ -22,7 +22,7 @@ import (
 
 const baseURL = "https://security-metadata.canonical.com/oval/"
 
-var services = []string{"esm", "esm-apps", "esm-infra", "fips", "fips-updates"}
+var services = []string{"esm", "esm-apps", "esm-infra", "fips", "fips-updates", "fips-preview"}
 
 type options struct {
 	baseURL string
