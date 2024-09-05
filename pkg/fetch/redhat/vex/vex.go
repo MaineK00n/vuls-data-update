@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"net/url"
@@ -343,8 +344,10 @@ func (o options) fetchDeletions(client *utilhttp.Client, archived time.Time) err
 		}
 
 		if rt.After(archived) {
+			// NOTE: a file that does not exist in .tar.zst may be written to deletions.csv.
+			// e.g. https://github.com/MaineK00n/vuls-data-update/actions/runs/10653815586/job/29529368312#step:9:61
 			d, f := filepath.Split(record[0])
-			if err := os.Remove(filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json"))))); err != nil {
+			if err := os.Remove(filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json"))))); err != nil && !errors.Is(err, fs.ErrNotExist) {
 				return errors.Wrapf(err, "remove %s", filepath.Join(o.dir, d, fmt.Sprintf("%s.json", strings.ToUpper(strings.TrimSuffix(f, ".json")))))
 			}
 		}
