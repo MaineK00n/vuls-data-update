@@ -101,7 +101,7 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		if filepath.Ext(hdr.Name) != ".json" {
+		if filepath.Ext(hdr.Name) != ".json" || filepath.Base(hdr.Name) == "all.json" {
 			continue
 		}
 
