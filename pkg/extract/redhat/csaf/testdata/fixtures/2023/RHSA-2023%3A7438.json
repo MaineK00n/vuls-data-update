@@ -57,7 +57,7 @@
 			{
 				"category": "self",
 				"summary": "Canonical URL",
-				"url": "https://access.redhat.com/security/data/csaf/v2/advisories/2023/rhsa-2023_7438.json"
+				"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_7438.json"
 			}
 		],
 		"title": "Red Hat Security Advisory: Red Hat OpenStack Platform 17.1.1 (python-gevent) security update",

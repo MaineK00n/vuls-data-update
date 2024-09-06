@@ -46,7 +46,7 @@ func TestFetch(t *testing.T) {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 					}
 
-					s := strings.ReplaceAll(string(bs), "https://access.redhat.com/security/data", fmt.Sprintf("http://%s/testdata/fixtures", r.Host))
+					s := strings.ReplaceAll(string(bs), "https://security.access.redhat.com/data", fmt.Sprintf("http://%s/testdata/fixtures", r.Host))
 
 					http.ServeContent(w, r, "feed.json", time.Now(), strings.NewReader(s))
 				default:
