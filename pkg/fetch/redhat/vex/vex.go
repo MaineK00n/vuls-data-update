@@ -22,7 +22,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://access.redhat.com/security/data/csaf/v2/vex/"
+const baseURL = "https://security.access.redhat.com/data/csaf/v2/vex/"
 
 type options struct {
 	baseURL     string

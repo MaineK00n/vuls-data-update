@@ -19,7 +19,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const feedURL = "https://www.redhat.com/security/data/oval/v2/feed.json"
+const feedURL = "https://security.access.redhat.com/data/oval/v2/feed.json"
 
 type options struct {
 	feedURL string
