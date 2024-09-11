@@ -1,0 +1,82 @@
+{
+	"id": "oval:org.opensuse.security:def:19990077",
+	"version": "1",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "CVE-1999-0077",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"SUSE Linux Enterprise Micro 5.2"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "Mitre CVE-1999-0077",
+				"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-1999-0077",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "SUSE CVE-1999-0077",
+				"ref_url": "https://www.suse.com/security/cve/CVE-1999-0077",
+				"source": "SUSE CVE"
+			}
+		],
+		"description": "\n    Predictable TCP sequence numbers allow spoofing.\n    ",
+		"advisory": {
+			"from": "security@suse.de",
+			"severity": "Moderate",
+			"cve": [
+				{
+					"text": "CVE-1999-0077 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-1999-0077/"
+				},
+				{
+					"text": "CVE-1999-0077 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-1999-0077"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "SUSE bug 954946",
+					"href": "https://bugzilla.suse.com/954946"
+				}
+			],
+			"issued": {
+				"date": "2023-01-17"
+			},
+			"updated": {
+				"date": "2024-04-26"
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:suse:suse-microos:5.2"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009334017",
+						"comment": "kernel-default is not affected"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009705046",
+						"comment": "kernel-rt is not affected"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.opensuse.security:tst:2009681300",
+				"comment": "SUSE Linux Enterprise Micro 5.2 is installed"
+			}
+		]
+	}
+}

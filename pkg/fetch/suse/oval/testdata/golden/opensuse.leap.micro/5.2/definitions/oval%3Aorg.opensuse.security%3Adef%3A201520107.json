@@ -1,0 +1,346 @@
+{
+	"id": "oval:org.opensuse.security:def:201520107",
+	"version": "1",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "CVE-2015-20107",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"openSUSE Leap Micro 5.2"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "Mitre CVE-2015-20107",
+				"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-20107",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "SUSE CVE-2015-20107",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2015-20107",
+				"source": "SUSE CVE"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1385-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-June/011362.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1435-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011460.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1460-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011506.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1477-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011523.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1492-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011533.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1498-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011536.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1616-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011624.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1736-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-August/011745.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1765-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-August/011795.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1771-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-August/011814.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1780-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-August/011821.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:1852-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-August/011936.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:2082-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-September/012141.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:2123-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-September/012187.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:2125-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-September/012188.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:2126-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-September/012189.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2022:2149-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-September/012196.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2023:322-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2023-February/013693.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-CU-2023:694-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2023-March/014080.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:814-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011574.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:817-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011575.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:836-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011573.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:853-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011592.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:859-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011593.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:878-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011591.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:894-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011604.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:903-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011605.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:904-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011606.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:953-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011618.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:954-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011619.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-IU-2022:955-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011620.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2147-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-June/011323.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2166-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-June/011339.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2174-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-June/011348.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2248-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011383.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2249-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011384.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2291-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011425.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2344-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011485.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2351-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011496.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2357-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2022-July/011505.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2022:2357-2",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/26DEFHSQZHFG2QZLJD7AX3TDPAXVFWZR/",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2023:0707-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2023-March/014021.html",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SU-2023:0748-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2023-March/014044.html",
+				"source": "SUSE-SU"
+			}
+		],
+		"description": "\n    In Python (aka CPython) up to 3.10.8, the mailcap module does not add escape characters into commands discovered in the system mailcap file. This may allow attackers to inject shell commands into applications that call mailcap.findmatch with untrusted input (if they lack validation of user-provided filenames or arguments). The fix is also back-ported to 3.7, 3.8, 3.9\n    ",
+		"advisory": {
+			"from": "security@suse.de",
+			"severity": "Important",
+			"cve": [
+				{
+					"text": "CVE-2015-20107",
+					"href": "https://www.suse.com/security/cve/CVE-2015-20107/",
+					"impact": "important",
+					"cvss3": "7.1/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:L"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "SUSE bug 1198511",
+					"href": "https://bugzilla.suse.com/1198511"
+				},
+				{
+					"text": "SUSE bug 1200507",
+					"href": "https://bugzilla.suse.com/1200507"
+				},
+				{
+					"text": "SUSE bug 1201777",
+					"href": "https://bugzilla.suse.com/1201777"
+				},
+				{
+					"text": "SUSE bug 1201791",
+					"href": "https://bugzilla.suse.com/1201791"
+				},
+				{
+					"text": "SUSE bug 1205068",
+					"href": "https://bugzilla.suse.com/1205068"
+				},
+				{
+					"text": "SUSE bug 1208337",
+					"href": "https://bugzilla.suse.com/1208337"
+				}
+			],
+			"issued": {
+				"date": "2022-08-07"
+			},
+			"updated": {
+				"date": "2023-03-18"
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:opensuse:leap-micro:5.2"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterias": [
+					{
+						"operator": "AND",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009705474",
+								"comment": "libpython3_6m1_0-3.6.15-150300.10.27.1 is installed"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009177173",
+								"comment": "libpython3_6m1_0 is signed with openSUSE key"
+							}
+						]
+					},
+					{
+						"operator": "AND",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009705475",
+								"comment": "python3-3.6.15-150300.10.27.1 is installed"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009151916",
+								"comment": "python3 is signed with openSUSE key"
+							}
+						]
+					},
+					{
+						"operator": "AND",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009705476",
+								"comment": "python3-base-3.6.15-150300.10.27.1 is installed"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009151647",
+								"comment": "python3-base is signed with openSUSE key"
+							}
+						]
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.opensuse.security:tst:2009705465",
+				"comment": "openSUSE Leap Micro 5.2 is installed"
+			}
+		]
+	}
+}
