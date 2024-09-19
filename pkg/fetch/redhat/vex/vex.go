@@ -276,31 +276,35 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 	if err := client.PipelineGet(urls, o.concurrency, o.wait, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var vex VEX
+			if err := json.NewDecoder(resp.Body).Decode(&vex); err != nil {
+				return errors.Wrap(err, "decode json")
+			}
+
+			splitted, err := util.Split(vex.Document.Tracking.ID, "-", "-")
+			if err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
+				return nil
+			}
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
+				return nil
+			}
+
+			if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
+			}
+
+			return nil
+		case http.StatusNotFound:
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return nil
+		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
 			return errors.Errorf("error request response with status code %d", resp.StatusCode)
 		}
-
-		var vex VEX
-		if err := json.NewDecoder(resp.Body).Decode(&vex); err != nil {
-			return errors.Wrap(err, "decode json")
-		}
-
-		splitted, err := util.Split(vex.Document.Tracking.ID, "-", "-")
-		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
-			return nil
-		}
-		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", vex.Document.Tracking.ID)
-			return nil
-		}
-
-		if err := util.Write(filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(o.dir, splitted[1], fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
-		}
-
-		return nil
 	}); err != nil {
 		return errors.Wrap(err, "pipeline get")
 	}
