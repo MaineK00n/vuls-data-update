@@ -59,7 +59,7 @@ func NewCmdDiff() *cobra.Command {
 	cmd.Flags().Var(&opts.diffAlg, "diff-algorithm", fmt.Sprintf("algorithm for git diff, one of [%s] c.f. https://git-scm.com/docs/git-diff", strings.Join(opts.diffAlg.Choices, ", ")))
 	cmd.Flags().StringVar(&opts.remotePrefix, "remote-prefix", "https://github.com/vulsio", "prefix of git repository")
 	cmd.Flags().VarP(&opts.format, "format", "f", fmt.Sprintf("output format, one of [%s]", strings.Join(opts.format.Choices, ", ")))
-	cmd.Flags().BoolVarP(&opts.outputToFile, "output-to-file", "O", false, "output to a file under current dir. The file name is <rootID>-<kind>-<old>-<new>.(json|txt)")
+	cmd.Flags().BoolVarP(&opts.outputToFile, "output-to-file", "O", false, "output to a file under current dir. The file name is <rootID>-<kind>-<old>-<new>.(json|md)")
 
 	_ = cmd.RegisterFlagCompletionFunc("format", opts.format.Completion)
 	_ = cmd.RegisterFlagCompletionFunc("filter", opts.filter.Completion)
@@ -115,7 +115,7 @@ func output(whole diff.WholeDiff, format string, writer io.Writer) error {
 		}
 		return nil
 	default:
-		return errors.Errorf("unexpected format. expected: %q, actual: %q", []string{"json", "text"}, format)
+		return errors.Errorf("unexpected format. expected: %q, actual: %q", []string{"json", "md"}, format)
 	}
 }
 
