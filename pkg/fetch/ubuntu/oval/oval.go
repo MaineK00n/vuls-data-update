@@ -240,6 +240,16 @@ func Fetch(opts ...Option) error {
 			bar.Increment()
 		}
 		bar.Finish()
+
+		log.Printf("[INFO] Fetch Ubuntu USN %s Variables", release)
+		bar = pb.StartNew(len(r.Variables.ConstantVariable))
+		for _, v := range r.Variables.ConstantVariable {
+			if err := util.Write(filepath.Join(options.dir, release, "usn", "variables", "constant_variable", fmt.Sprintf("%s.json", v.ID)), v); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "usn", "variables", "constant_variable", fmt.Sprintf("%s.json", v.ID)))
+			}
+			bar.Increment()
+		}
+		bar.Finish()
 	}
 
 	return nil
