@@ -7,3 +7,12 @@
 [submodule "pkg/extract/util/git/testdata/fixtures/gitrepo"]
 	path = pkg/extract/util/git/testdata/fixtures/gitrepo
 	url = https://github.com/MaineK00n/vuls-data-update-utilgit.git
+[submodule "pkg/diff/testdata/fixtures/vuls-data-extracted-diff-test.git"]
+	path = pkg/diff/testdata/fixtures/vuls-data-extracted-diff-test.git
+	url = https://github.com/vulsio/vuls-data-extracted-diff-test.git
+[submodule "pkg/diff/testdata/fixtures/vuls-data-extracted-diff-test-archive-1.git"]
+	path = pkg/diff/testdata/fixtures/vuls-data-extracted-diff-test-archive-1.git
+	url = https://github.com/vulsio/vuls-data-extracted-diff-test-archive-1.git
+[submodule "pkg/diff/testdata/fixtures/vuls-data-raw-diff-test.git"]
+	path = pkg/diff/testdata/fixtures/vuls-data-raw-diff-test.git
+	url = https://github.com/vulsio/vuls-data-raw-diff-test.git
