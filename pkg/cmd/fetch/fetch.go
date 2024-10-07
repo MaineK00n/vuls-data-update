@@ -523,14 +523,14 @@ func newCmdFortinet() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fortinet",
+		Use:   "fortinet [Fortinet Advisory ID]",
 		Short: "Fetch Fortinet data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch fortinet
+			$ vuls-data-update fetch fortinet FG-IR-24-371
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := fortinet.Fetch(args, fortinet.WithDir(options.dir), fortinet.WithRetry(options.retry)); err != nil {
+			if err := fortinet.Fetch(args, fortinet.WithDir(options.dir), fortinet.WithRetry(options.retry), fortinet.WithConcurrency(options.concurrency), fortinet.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch fortinet")
 			}
 			return nil
