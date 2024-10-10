@@ -1,9 +1,0 @@
-{
-	"id": "oval:com.ubuntu.jammy:var:200224390000030",
-	"version": "1",
-	"datatype": "string",
-	"comment": "'gcc-msp430' package binaries",
-	"value": [
-		"^gcc-msp430(?::\\w+|)\\s+(.*)$"
-	]
-}
