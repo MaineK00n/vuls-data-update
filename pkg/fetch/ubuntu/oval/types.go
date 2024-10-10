@@ -186,61 +186,68 @@ type Criterion struct {
 }
 
 type Tests struct {
-	Textfilecontent54Test []struct {
-		ID             string `xml:"id,attr" json:"id,omitempty"`
-		Version        string `xml:"version,attr" json:"version,omitempty"`
-		CheckExistence string `xml:"check_existence,attr" json:"check_existence,omitempty"`
-		Check          string `xml:"check,attr" json:"check,omitempty"`
-		Comment        string `xml:"comment,attr" json:"comment,omitempty"`
-		Object         struct {
-			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
-		State struct {
-			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
-	} `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
+	Textfilecontent54Test []Textfilecontent54Test `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
+}
+
+type Textfilecontent54Test struct {
+	ID             string `xml:"id,attr" json:"id,omitempty"`
+	Version        string `xml:"version,attr" json:"version,omitempty"`
+	CheckExistence string `xml:"check_existence,attr" json:"check_existence,omitempty"`
+	Check          string `xml:"check,attr" json:"check,omitempty"`
+	Comment        string `xml:"comment,attr" json:"comment,omitempty"`
+	Object         struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitempty"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitempty"`
 }
 
 type Objects struct {
-	Textfilecontent54Object []struct {
-		ID       string `xml:"id,attr" json:"id,omitempty"`
-		Version  string `xml:"version,attr" json:"version,omitempty"`
-		Comment  string `xml:"comment,attr" json:"comment,omitempty"`
-		Path     string `xml:"path" json:"path,omitempty"`
-		Filename string `xml:"filename" json:"filename,omitempty"`
-		Pattern  struct {
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-			VarRef    string `xml:"var_ref,attr" json:"var_ref,omitempty"`
-			VarCheck  string `xml:"var_check,attr" json:"var_check,omitempty"`
-		} `xml:"pattern" json:"pattern,omitempty"`
-		Instance struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"instance" json:"instance,omitempty"`
-	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
+	Textfilecontent54Object []Textfilecontent54Object `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
 }
 
+type Textfilecontent54Object struct {
+	ID       string `xml:"id,attr" json:"id,omitempty"`
+	Version  string `xml:"version,attr" json:"version,omitempty"`
+	Comment  string `xml:"comment,attr" json:"comment,omitempty"`
+	Path     string `xml:"path" json:"path,omitempty"`
+	Filename string `xml:"filename" json:"filename,omitempty"`
+	Pattern  struct {
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+		VarRef    string `xml:"var_ref,attr" json:"var_ref,omitempty"`
+		VarCheck  string `xml:"var_check,attr" json:"var_check,omitempty"`
+	} `xml:"pattern" json:"pattern,omitempty"`
+	Instance struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+	} `xml:"instance" json:"instance,omitempty"`
+}
 type States struct {
-	Textfilecontent54State []struct {
-		ID            string `xml:"id,attr" json:"id,omitempty"`
-		Version       string `xml:"version,attr" json:"version,omitempty"`
-		Comment       string `xml:"comment,attr" json:"comment,omitempty"`
-		Subexpression struct {
-			Text      string `xml:",chardata" json:"text,omitempty"`
-			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"subexpression" json:"subexpression,omitempty"`
-	} `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
+	Textfilecontent54State []Textfilecontent54State `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
+}
+
+type Textfilecontent54State struct {
+	ID            string `xml:"id,attr" json:"id,omitempty"`
+	Version       string `xml:"version,attr" json:"version,omitempty"`
+	Comment       string `xml:"comment,attr" json:"comment,omitempty"`
+	Subexpression struct {
+		Text      string `xml:",chardata" json:"text,omitempty"`
+		Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
+		Operation string `xml:"operation,attr" json:"operation,omitempty"`
+	} `xml:"subexpression" json:"subexpression,omitempty"`
 }
 
 type Variables struct {
-	ConstantVariable []struct {
-		ID       string   `xml:"id,attr" json:"id,omitempty"`
-		Version  string   `xml:"version,attr" json:"version,omitempty"`
-		Datatype string   `xml:"datatype,attr" json:"datatype,omitempty"`
-		Comment  string   `xml:"comment,attr" json:"comment,omitempty"`
-		Value    []string `xml:"value" json:"value,omitempty"`
-	} `xml:"constant_variable" json:"constant_variable,omitempty"`
+	ConstantVariable []ConstantVariable `xml:"constant_variable" json:"constant_variable,omitempty"`
+}
+
+type ConstantVariable struct {
+	ID       string   `xml:"id,attr" json:"id,omitempty"`
+	Version  string   `xml:"version,attr" json:"version,omitempty"`
+	Datatype string   `xml:"datatype,attr" json:"datatype,omitempty"`
+	Comment  string   `xml:"comment,attr" json:"comment,omitempty"`
+	Value    []string `xml:"value" json:"value,omitempty"`
 }

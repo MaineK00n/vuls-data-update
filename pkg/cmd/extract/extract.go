@@ -895,8 +895,14 @@ func newCmdSUSECSAFVEX() *cobra.Command {
 }
 
 func newCmdUbuntuOVAL() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "ubuntu", "oval"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "ubuntu", "oval"),
+		},
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
@@ -907,7 +913,7 @@ func newCmdUbuntuOVAL() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := ubuntuOVAL.Extract(args[0], ubuntuOVAL.WithDir(options.dir)); err != nil {
+			if err := ubuntuOVAL.Extract(args[0], ubuntuOVAL.WithDir(options.dir), ubuntuOVAL.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract ubuntu oval")
 			}
 			return nil
@@ -915,6 +921,7 @@ func newCmdUbuntuOVAL() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "ubuntu", "oval"), "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
 
 	return cmd
 }

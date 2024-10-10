@@ -1,0 +1,10 @@
+{
+	"id": "oval:com.ubuntu.jammy:var:2023487950000000",
+	"version": "1",
+	"datatype": "string",
+	"comment": "The 'libssh' package binaries",
+	"value": [
+		"^libssh-4(?::\\w+|)\\s+(.*)$",
+		"^libssh-gcrypt-4(?::\\w+|)\\s+(.*)$"
+	]
+}

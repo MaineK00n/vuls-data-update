@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.ubuntu.jammy:tst:656110000000",
+	"version": "1",
+	"check_existence": "at_least_one_exists",
+	"check": "at least one",
+	"comment": "Long Term Support",
+	"object": {
+		"object_ref": "oval:com.ubuntu.jammy:obj:656110000000"
+	},
+	"state": {
+		"state_ref": "oval:com.ubuntu.jammy:ste:656110000000"
+	}
+}

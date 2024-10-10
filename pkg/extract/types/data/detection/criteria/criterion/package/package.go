@@ -2,6 +2,8 @@ package criterionpackage
 
 import (
 	"cmp"
+	"encoding/json"
+	"fmt"
 	"slices"
 
 	"github.com/knqyf263/go-cpe/matching"
@@ -10,11 +12,87 @@ import (
 )
 
 type Package struct {
-	Name          string   `json:"name,omitempty"`
-	CPE           string   `json:"cpe,omitempty"`
-	Architectures []string `json:"architectures,omitempty"`
-	Repositories  []string `json:"repositories,omitempty"`
-	Functions     []string `json:"functions,omitempty"`
+	Name          string      `json:"name,omitempty"`
+	CPE           string      `json:"cpe,omitempty"`
+	Architectures []string    `json:"architectures,omitempty"`
+	Repositories  []string    `json:"repositories,omitempty"`
+	Functions     []string    `json:"functions,omitempty"`
+	PatchStatus   PatchStatus `json:"patch_status,omitempty"`
+}
+
+type PatchStatus int
+
+const (
+	_ PatchStatus = iota
+	PatchStatusNeedsTriage
+
+	PatchStatusNotAffected
+	PatchStatusNeeded
+	PatchStatusDeferred
+	PatchStatusPending
+	PatchStatusIgnored
+	PatchStatusReleased
+
+	PatchStatusUnknown
+)
+
+func (s PatchStatus) String() string {
+	switch s {
+	case PatchStatusNeedsTriage:
+		return "needs-triage"
+	case PatchStatusNotAffected:
+		return "not-affected"
+	case PatchStatusNeeded:
+		return "needed"
+	case PatchStatusDeferred:
+		return "deferred"
+	case PatchStatusPending:
+		return "pending"
+	case PatchStatusIgnored:
+		return "ignored"
+	case PatchStatusReleased:
+		return "released"
+
+	case PatchStatusUnknown:
+		return "unknown"
+	default:
+		return "unknown"
+	}
+}
+
+func (p PatchStatus) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.String())
+}
+
+func (p *PatchStatus) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("data should be a string, got %s", data)
+	}
+
+	var ps PatchStatus
+	switch s {
+	case "needs-triage":
+		ps = PatchStatusNeedsTriage
+	case "not-affected":
+		ps = PatchStatusNotAffected
+	case "needed":
+		ps = PatchStatusNeeded
+	case "deferred":
+		ps = PatchStatusDeferred
+	case "pending":
+		ps = PatchStatusPending
+	case "ignored":
+		ps = PatchStatusIgnored
+	case "released":
+		ps = PatchStatusReleased
+	case "unknown":
+		ps = PatchStatusUnknown
+	default:
+		return fmt.Errorf("invalid PatchStatus %s", s)
+	}
+	*p = ps
+	return nil
 }
 
 func (p *Package) Sort() {
@@ -30,6 +108,7 @@ func Compare(x, y Package) int {
 		slices.Compare(x.Architectures, y.Architectures),
 		slices.Compare(x.Repositories, y.Repositories),
 		slices.Compare(x.Functions, y.Functions),
+		cmp.Compare(x.PatchStatus, y.PatchStatus),
 	)
 }
 
