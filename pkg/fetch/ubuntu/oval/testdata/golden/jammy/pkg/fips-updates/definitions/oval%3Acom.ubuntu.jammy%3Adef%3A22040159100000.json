@@ -1,0 +1,49 @@
+{
+	"class": "vulnerability",
+	"id": "oval:com.ubuntu.jammy:def:22040159100000",
+	"version": "1",
+	"metadata": {
+		"Title": "openssh",
+		"reference": {
+			"source": "Package",
+			"ref_id": "openssh",
+			"ref_url": "https://launchpad.net/ubuntu/+source/openssh"
+		},
+		"Description": "secure shell (SSH) for secure access to remote machines",
+		"affected": {
+			"family": "unix",
+			"Platform": "Ubuntu Pro FIPS-updates 22.04 LTS"
+		},
+		"advisory": {
+			"Rights": "Copyright (C) 2024 Canonical Ltd.",
+			"Component": "main",
+			"CurrentVersion": "1:8.9p1-3ubuntu1.fips.0~ppa3",
+			"cve": [
+				{
+					"text": "CVE-2023-48795",
+					"href": "https://ubuntu.com/security/CVE-2023-48795",
+					"priority": "medium",
+					"public": "20231218",
+					"cvss_score": "5.9",
+					"cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+					"cvss_severity": "medium",
+					"test_ref": "oval:com.ubuntu.jammy:tst:22040159100050",
+					"usns": "6561-1,6560-2"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:com.ubuntu.jammy:tst:22040159100050",
+						"comment": "(CVE-2023-48795) openssh package in fips-updates/jammy was vulnerable but has been fixed (note: '1:8.9p1-3ubuntu0.5')."
+					}
+				]
+			}
+		]
+	}
+}

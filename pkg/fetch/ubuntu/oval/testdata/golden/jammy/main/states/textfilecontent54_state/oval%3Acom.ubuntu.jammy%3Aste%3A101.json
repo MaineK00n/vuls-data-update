@@ -1,8 +1,0 @@
-{
-	"id": "oval:com.ubuntu.jammy:ste:101",
-	"version": "1",
-	"comment": "Ubuntu 22.04 LTS",
-	"subexpression": {
-		"text": "jammy"
-	}
-}

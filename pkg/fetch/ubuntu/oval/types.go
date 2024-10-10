@@ -2,6 +2,7 @@ package oval
 
 type ovals struct {
 	CVE map[string]string `json:"cve,omitempty"`
+	PKG map[string]string `json:"pkg,omitempty"`
 	USN map[string]string `json:"usn,omitempty"`
 }
 
@@ -61,6 +62,58 @@ type CVEDefinition struct {
 	Notes struct {
 		Note string `xml:"note" json:"note,omitempty"`
 	} `xml:"notes" json:"notes,omitempty"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+}
+
+type pkgroot struct {
+	Generator struct {
+		ProductName    string `xml:"product_name"`
+		ProductVersion string `xml:"product_version"`
+		SchemaVersion  string `xml:"schema_version"`
+		Timestamp      string `xml:"timestamp"`
+	} `xml:"generator" json:"generator,omitempty"`
+	Definitions struct {
+		Definition []PKGDefinition `xml:"definition" json:"definition,omitempty"`
+	} `xml:"definitions" json:"definitions,omitempty"`
+	Tests     Tests     `xml:"tests" json:"tests,omitempty"`
+	Objects   Objects   `xml:"objects" json:"objects,omitempty"`
+	States    States    `xml:"states" json:"states,omitempty"`
+	Variables Variables `xml:"variables" json:"variables,omitempty"`
+}
+
+type PKGDefinition struct {
+	Class    string `xml:"class,attr" json:"class,omitempty"`
+	ID       string `xml:"id,attr" json:"id,omitempty"`
+	Version  string `xml:"version,attr" json:"version,omitempty"`
+	Metadata struct {
+		Title     string `xml:"title"`
+		Reference struct {
+			Source string `xml:"source,attr" json:"source,omitempty"`
+			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
+			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
+		} `xml:"reference" json:"reference,omitempty"`
+		Description string `xml:"description"`
+		Affected    struct {
+			Family   string `xml:"family,attr" json:"family,omitempty"`
+			Platform string `xml:"platform"`
+		} `xml:"affected" json:"affected,omitempty"`
+		Advisory struct {
+			Rights         string `xml:"rights"`
+			Component      string `xml:"component"`
+			CurrentVersion string `xml:"current_version"`
+			Cve            []struct {
+				Text         string `xml:",chardata" json:"text,omitempty"`
+				Href         string `xml:"href,attr" json:"href,omitempty"`
+				Priority     string `xml:"priority,attr" json:"priority,omitempty"`
+				Public       string `xml:"public,attr" json:"public,omitempty"`
+				CvssScore    string `xml:"cvss_score,attr" json:"cvss_score,omitempty"`
+				CvssVector   string `xml:"cvss_vector,attr" json:"cvss_vector,omitempty"`
+				CvssSeverity string `xml:"cvss_severity,attr" json:"cvss_severity,omitempty"`
+				TestRef      string `xml:"test_ref,attr" json:"test_ref,omitempty"`
+				Usns         string `xml:"usns,attr" json:"usns,omitempty"`
+			} `xml:"cve" json:"cve,omitempty"`
+		} `xml:"advisory" json:"advisory,omitempty"`
+	} `xml:"metadata" json:"metadata,omitempty"`
 	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
 }
 

@@ -1,0 +1,10 @@
+{
+	"id": "oval:com.ubuntu.jammy:ste:2023487950000000",
+	"version": "1",
+	"comment": "The package version is less than '0.9.6-2ubuntu0.22.04.2'",
+	"subexpression": {
+		"text": "\n            0:0.9.6-2ubuntu0.22.04.2",
+		"datatype": "debian_evr_string",
+		"operation": "less than"
+	}
+}
