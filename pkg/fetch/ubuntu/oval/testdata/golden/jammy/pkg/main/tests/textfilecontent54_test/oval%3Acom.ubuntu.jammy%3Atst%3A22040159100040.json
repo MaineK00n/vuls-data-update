@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.ubuntu.jammy:tst:22040159100040",
+	"version": "1",
+	"check_existence": "at_least_one_exists",
+	"check": "at least one",
+	"comment": "Does the 'openssh' package exist and is the version less than '1:8.9p1-3ubuntu0.5'?",
+	"object": {
+		"object_ref": "oval:com.ubuntu.jammy:obj:22040159100040"
+	},
+	"state": {
+		"state_ref": "oval:com.ubuntu.jammy:ste:22040159100040"
+	}
+}

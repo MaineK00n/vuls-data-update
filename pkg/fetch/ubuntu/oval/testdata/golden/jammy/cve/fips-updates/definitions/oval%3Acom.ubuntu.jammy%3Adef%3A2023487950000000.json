@@ -1,0 +1,59 @@
+{
+	"class": "vulnerability",
+	"id": "oval:com.ubuntu.jammy:def:2023487950000000",
+	"version": "1",
+	"metadata": {
+		"title": "CVE-2023-48795 on Ubuntu Pro FIPS-updates 22.04 LTS (jammy) - medium",
+		"description": "The SSH transport protocol with certain OpenSSH extensions, found inOpenSSH before 9.6 and other products, allows remote attackers to bypassintegrity checks such that some packets are omitted (from the extensionnegotiation message), and a client and server may consequently end up witha connection for which some security features have been downgraded ordisabled, aka a Terrapin attack. This occurs because the SSH Binary PacketProtocol (BPP), implemented by these extensions, mishandles the handshakephase and mishandles use of sequence numbers. For example, there is aneffective attack against SSH's use of ChaCha20-Poly1305 (and CBC withEncrypt-then-MAC). The bypass occurs in chacha20-poly1305@openssh.com and(if CBC is used) the -etm@openssh.com MAC algorithms. This also affectsMaverick Synergy Java SSH API before 3.1.0-SNAPSHOT, Dropbear through2022.83, Ssh before 5.1.1 in Erlang/OTP, PuTTY before 0.80, AsyncSSH before2.14.2, golang.org/x/crypto before 0.17.0, libssh before 0.10.6, libssh2through 1.11.0, Thorn Tech SFTP Gateway before 3.4.6, Tera Term before 5.1,Paramiko before 3.4.0, jsch before 0.2.15, SFTPGo before 2.5.6, NetgatepfSense Plus through 23.09.1, Netgate pfSense CE through 2.7.2, HPN-SSHthrough 18.2.0, ProFTPD before 1.3.8b (and before 1.3.9rc2), ORYXCycloneSSH before 2.3.4, NetSarang XShell 7 before Build 0144, CrushFTPbefore 10.6.0, ConnectBot SSH library before 2.2.22, Apache MINA sshdthrough 2.11.0, sshj through 0.37.0, TinySSH through 20230101, trilead-ssh26401, LANCOM LCOS and LANconfig, FileZilla before 3.66.4, Nova before 11.8,PKIX-SSH before 14.4, SecureCRT before 9.4.3, Transmit5 before 5.10.4,Win32-OpenSSH before 9.5.0.0p1-Beta, WinSCP before 6.2.2, Bitvise SSHServer before 9.32, Bitvise SSH Client before 9.33, KiTTY through0.76.1.13, the net-ssh gem 7.2.0 for Ruby, the mscdex ssh2 module before1.15.0 for Node.js, the thrussh library before 0.35.1 for Rust, and theRussh crate before 0.40.2 for Rust.\n\n    Update Instructions:\n\n    Run `sudo pro fix CVE-2023-48795` to fix the vulnerability. The problem can be corrected\n    by updating your system to the following package versions:\n\nopenssh-client - 1:8.9p1-3ubuntu0.5\nopenssh-server - 1:8.9p1-3ubuntu0.5\nopenssh-sftp-server - 1:8.9p1-3ubuntu0.5\nopenssh-tests - 1:8.9p1-3ubuntu0.5\nssh - 1:8.9p1-3ubuntu0.5\nssh-askpass-gnome - 1:8.9p1-3ubuntu0.5\nNo subscription required\n\nlibssh-4 - 0.9.6-2ubuntu0.22.04.2\nlibssh-gcrypt-4 - 0.9.6-2ubuntu0.22.04.2\nNo subscription required\n\nlibssh2-1 - 1.10.0-3\nNo subscription required\n\npython3-paramiko - 2.9.3-0ubuntu1.2\nNo subscription required\n\npython3-asyncssh - 2.5.0-1ubuntu0.1~esm1\nAvailable with Ubuntu Pro: https://ubuntu.com/pro\n\nfilezilla - 3.58.0-1ubuntu0.1\nfilezilla-common - 3.58.0-1ubuntu0.1\nNo subscription required",
+		"affected": {
+			"family": "unix",
+			"platform": "Ubuntu Pro FIPS-updates 22.04 LTS"
+		},
+		"reference": {
+			"source": "CVE",
+			"ref_id": "CVE-2023-48795",
+			"ref_url": "https://www.cve.org/CVERecord?id=CVE-2023-48795"
+		},
+		"advisory": {
+			"severity": "Medium",
+			"rights": "Copyright (C) 2023 Canonical Ltd.",
+			"public_date": "2023-12-18 15:00:00 UTC",
+			"bug": [
+				"https://github.com/golang/go/issues/64784",
+				"https://github.com/paramiko/paramiko/issues/2337",
+				"https://github.com/libssh2/libssh2/issues/1290"
+			],
+			"cve": {
+				"text": "CVE-2023-48795",
+				"href": "https://ubuntu.com/security/CVE-2023-48795",
+				"public": "20231218",
+				"cvss_score": "5.9",
+				"cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+				"usns": "6561-1,6560-2"
+			},
+			"public_date_at_usn": "2023-12-18 15:00:00 UTC",
+			"ref": [
+				"https://ubuntu.com/security/notices/USN-6561-1",
+				"https://ubuntu.com/security/notices/USN-6560-2"
+			]
+		}
+	},
+	"notes": {},
+	"criteria": {
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:com.ubuntu.jammy:tst:2023285310000000",
+						"comment": "openssh package in jammy was vulnerable but has been fixed (note: '1:8.9p1-3ubuntu0.5')."
+					},
+					{
+						"test_ref": "oval:com.ubuntu.jammy:tst:2023487950000000",
+						"comment": "libssh package in jammy was vulnerable but has been fixed (note: '0.9.6-2ubuntu0.22.04.2')."
+					}
+				]
+			}
+		]
+	}
+}

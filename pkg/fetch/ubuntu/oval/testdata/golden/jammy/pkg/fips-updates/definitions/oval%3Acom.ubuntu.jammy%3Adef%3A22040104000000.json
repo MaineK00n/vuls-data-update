@@ -1,0 +1,49 @@
+{
+	"class": "vulnerability",
+	"id": "oval:com.ubuntu.jammy:def:22040104000000",
+	"version": "1",
+	"metadata": {
+		"Title": "libssh",
+		"reference": {
+			"source": "Package",
+			"ref_id": "libssh",
+			"ref_url": "https://launchpad.net/ubuntu/+source/libssh"
+		},
+		"Description": "A tiny C SSH library",
+		"affected": {
+			"family": "unix",
+			"Platform": "Ubuntu Pro FIPS-updates 22.04 LTS"
+		},
+		"advisory": {
+			"Rights": "Copyright (C) 2024 Canonical Ltd.",
+			"Component": "main",
+			"CurrentVersion": "0.9.6-2ubuntu0.22.04.3",
+			"cve": [
+				{
+					"text": "CVE-2023-48795",
+					"href": "https://ubuntu.com/security/CVE-2023-48795",
+					"priority": "medium",
+					"public": "20231218",
+					"cvss_score": "5.9",
+					"cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N",
+					"cvss_severity": "medium",
+					"test_ref": "oval:com.ubuntu.jammy:tst:22040104000030",
+					"usns": "6561-1,6560-2"
+				}
+			]
+		}
+	},
+	"criteria": {
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:com.ubuntu.jammy:tst:22040104000030",
+						"comment": "(CVE-2023-48795) libssh package in jammy was vulnerable but has been fixed (note: '0.9.6-2ubuntu0.22.04.2')."
+					}
+				]
+			}
+		]
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"id": "oval:com.ubuntu.jammy:var:22040159100000",
+	"version": "1",
+	"datatype": "string",
+	"comment": "The 'openssh' package binaries",
+	"value": [
+		"^openssh-client(?::\\w+|)\\s+(.*)$",
+		"^openssh-server(?::\\w+|)\\s+(.*)$",
+		"^openssh-sftp-server(?::\\w+|)\\s+(.*)$",
+		"^openssh-tests(?::\\w+|)\\s+(.*)$",
+		"^ssh(?::\\w+|)\\s+(.*)$",
+		"^ssh-askpass-gnome(?::\\w+|)\\s+(.*)$"
+	]
+}
