@@ -10,19 +10,21 @@ import (
 
 func TestExtract(t *testing.T) {
 	tests := []struct {
-		name     string
-		args     string
-		hasError bool
+		name        string
+		fixturePath string
+		goldenPath  string
+		hasError    bool
 	}{
 		{
-			name: "happy",
-			args: "./testdata/fixtures",
+			name:        "happy",
+			fixturePath: "./testdata/fixtures/",
+			goldenPath:  "./testdata/golden/",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dir := t.TempDir()
-			err := oval.Extract(tt.args, oval.WithDir(dir))
+			outputDir := t.TempDir()
+			err := oval.Extract(utiltest.QueryUnescapeFileTree(t, tt.fixturePath), oval.WithDir(outputDir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -30,11 +32,11 @@ func TestExtract(t *testing.T) {
 				t.Error("expected error has not occurred")
 			}
 
-			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+			ep, err := filepath.Abs(tt.goldenPath)
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
-			gp, err := filepath.Abs(dir)
+			gp, err := filepath.Abs(outputDir)
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}

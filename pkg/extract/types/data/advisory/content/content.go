@@ -22,6 +22,7 @@ type Content struct {
 	Optional    map[string]interface{}     `json:"optional,omitempty"`
 }
 
+// FIXME: add packages
 func (c *Content) Sort() {
 	slices.SortFunc(c.Severity, severityTypes.Compare)
 
@@ -33,6 +34,7 @@ func (c *Content) Sort() {
 	slices.SortFunc(c.References, referenceTypes.Compare)
 }
 
+// FIXME: add packages
 func Compare(x, y Content) int {
 	return cmp.Or(
 		cmp.Compare(x.ID, y.ID),

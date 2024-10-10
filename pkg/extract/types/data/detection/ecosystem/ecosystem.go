@@ -8,6 +8,10 @@ import (
 )
 
 type Ecosystem string
+type Ecosystem2 struct {
+	Name    string `json:"name,omitempty"`
+	Variant string `json:"variant,omitempty"`
+}
 
 const (
 	EcosystemTypeAlma        = "alma"

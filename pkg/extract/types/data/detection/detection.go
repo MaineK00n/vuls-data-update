@@ -8,8 +8,9 @@ import (
 )
 
 type Detection struct {
-	Ecosystem ecosystemTypes.Ecosystem `json:"ecosystem,omitempty"`
-	Criteria  criteriaTypes.Criteria   `json:"criteria,omitempty"`
+	Ecosystem  ecosystemTypes.Ecosystem  `json:"ecosystem,omitempty"`
+	Ecosystem2 ecosystemTypes.Ecosystem2 `json:"ecosystem2,omitempty"`
+	Criteria   criteriaTypes.Criteria    `json:"criteria,omitempty"`
 }
 
 func (d *Detection) Sort() {

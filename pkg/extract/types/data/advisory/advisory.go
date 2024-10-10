@@ -9,8 +9,9 @@ import (
 )
 
 type Advisory struct {
-	Content    contentTypes.Content       `json:"content,omitempty"`
-	Ecosystems []ecosystemTypes.Ecosystem `json:"ecosystems,omitempty"`
+	Content     contentTypes.Content        `json:"content,omitempty"`
+	Ecosystems  []ecosystemTypes.Ecosystem  `json:"ecosystems,omitempty"`
+	Ecosystems2 []ecosystemTypes.Ecosystem2 `json:"ecosystems2,omitempty"`
 }
 
 func (a *Advisory) Sort() {

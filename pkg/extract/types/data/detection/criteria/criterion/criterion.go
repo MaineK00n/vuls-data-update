@@ -2,6 +2,8 @@ package criterion
 
 import (
 	"cmp"
+	"encoding/json"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -15,9 +17,80 @@ import (
 )
 
 type Criterion struct {
-	Vulnerable bool                    `json:"vulnerable,omitempty"`
-	Package    packageTypes.Package    `json:"package,omitempty"`
-	Affected   *affectedTypes.Affected `json:"affected,omitempty"`
+	Vulnerable  bool                    `json:"vulnerable,omitempty"`
+	Package     packageTypes.Package    `json:"package,omitempty"`
+	Affected    *affectedTypes.Affected `json:"affected,omitempty"`
+	PatchStatus PatchStatus             `json:"patch_status,omitempty"`
+}
+
+type PatchStatus int
+
+const (
+	_ PatchStatus = iota
+	PatchStatusNeedsTriage
+
+	PatchStatusNeeded
+	PatchStatusDeferred
+	PatchStatusPending
+	PatchStatusIgnored
+	PatchStatusReleased
+
+	PatchStatusUnknown
+)
+
+func (s PatchStatus) String() string {
+	switch s {
+	case PatchStatusNeedsTriage:
+		return "needs-triage"
+	case PatchStatusNeeded:
+		return "needed"
+	case PatchStatusDeferred:
+		return "deferred"
+	case PatchStatusPending:
+		return "pending"
+	case PatchStatusIgnored:
+		return "ignored"
+	case PatchStatusReleased:
+		return "released"
+
+	case PatchStatusUnknown:
+		return "unknown"
+	default:
+		return "unknown"
+	}
+}
+
+func (p PatchStatus) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.String())
+}
+
+func (p *PatchStatus) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("data should be a string, got %s", data)
+	}
+
+	var ps PatchStatus
+	switch s {
+	case "needs-triage":
+		ps = PatchStatusNeedsTriage
+	case "needed":
+		ps = PatchStatusNeeded
+	case "deferred":
+		ps = PatchStatusDeferred
+	case "pending":
+		ps = PatchStatusPending
+	case "ignored":
+		ps = PatchStatusIgnored
+	case "released":
+		ps = PatchStatusReleased
+	case "unknown":
+		ps = PatchStatusUnknown
+	default:
+		return fmt.Errorf("invalid PatchStatus %s", s)
+	}
+	*p = ps
+	return nil
 }
 
 func (c *Criterion) Sort() {
@@ -52,6 +125,7 @@ func Compare(x, y Criterion) int {
 				return affectedTypes.Compare(*x.Affected, *y.Affected)
 			}
 		}(),
+		cmp.Compare(x.PatchStatus, y.PatchStatus),
 	)
 }
 
