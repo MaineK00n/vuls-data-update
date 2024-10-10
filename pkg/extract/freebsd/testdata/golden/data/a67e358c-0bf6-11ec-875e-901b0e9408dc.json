@@ -22,8 +22,10 @@
 				],
 				"published": "2021-09-02T00:00:00Z"
 			},
-			"ecosystems": [
-				"freebsd"
+			"scopes": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
@@ -38,8 +40,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"freebsd"
+			"scopes": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		},
 		{
@@ -52,14 +56,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"freebsd"
+			"scopes": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "freebsd",
+			"scope": {
+				"ecosystem": "freebsd"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

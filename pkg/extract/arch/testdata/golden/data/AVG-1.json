@@ -11,8 +11,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"arch"
+			"scopes": [
+				{
+					"ecosystem": "arch"
+				}
 			]
 		},
 		{
@@ -32,8 +34,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"arch"
+			"scopes": [
+				{
+					"ecosystem": "arch"
+				}
 			]
 		}
 	],
@@ -48,14 +52,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"arch"
+			"scopes": [
+				{
+					"ecosystem": "arch"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "arch",
+			"scope": {
+				"ecosystem": "arch"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

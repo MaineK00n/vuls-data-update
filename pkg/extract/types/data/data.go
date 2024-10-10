@@ -56,34 +56,38 @@ func (d *Data) Merge(ds ...Data) {
 		}
 
 		as := d.Advisories
-		for i, da := range d.Advisories {
-			for _, ea := range e.Advisories {
-				switch advisoryContentTypes.Compare(da.Content, ea.Content) {
-				case 0:
-					as[i] = advisoryTypes.Advisory{
-						Content:    da.Content,
-						Ecosystems: append(da.Ecosystems, ea.Ecosystems...),
-					}
-				default:
-					as = append(as, ea)
+		for _, ea := range e.Advisories {
+			i := slices.IndexFunc(as, func(a advisoryTypes.Advisory) bool {
+				return advisoryContentTypes.Compare(a.Content, ea.Content) == 0
+			})
+			switch {
+			case i < 0:
+				as = append(as, ea)
+			default:
+				as[i] = advisoryTypes.Advisory{
+					Content: as[i].Content,
+					Scopes:  append(as[i].Scopes, ea.Scopes...),
 				}
 			}
 		}
+		d.Advisories = as
 
 		vs := d.Vulnerabilities
-		for i, dv := range d.Vulnerabilities {
-			for _, ev := range e.Vulnerabilities {
-				switch vulnerabilityContentTypes.Compare(dv.Content, ev.Content) {
-				case 0:
-					vs[i] = vulnerabilityTypes.Vulnerability{
-						Content:    dv.Content,
-						Ecosystems: append(dv.Ecosystems, ev.Ecosystems...),
-					}
-				default:
-					vs = append(vs, ev)
+		for _, ev := range e.Vulnerabilities {
+			i := slices.IndexFunc(vs, func(v vulnerabilityTypes.Vulnerability) bool {
+				return vulnerabilityContentTypes.Compare(v.Content, ev.Content) == 0
+			})
+			switch {
+			case i < 0:
+				vs = append(vs, ev)
+			default:
+				vs[i] = vulnerabilityTypes.Vulnerability{
+					Content: vs[i].Content,
+					Scopes:  append(vs[i].Scopes, ev.Scopes...),
 				}
 			}
 		}
+		d.Vulnerabilities = vs
 
 		d.Detection = append(d.Detection, e.Detection...)
 

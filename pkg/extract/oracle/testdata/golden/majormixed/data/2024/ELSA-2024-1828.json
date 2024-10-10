@@ -33,9 +33,13 @@
 				],
 				"published": "2024-04-23T00:00:00Z"
 			},
-			"ecosystems": [
-				"oracle:8",
-				"oracle:9"
+			"scopes": [
+				{
+					"ecosystem": "oracle:8"
+				},
+				{
+					"ecosystem": "oracle:9"
+				}
 			]
 		}
 	],
@@ -50,9 +54,13 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"oracle:8",
-				"oracle:9"
+			"scopes": [
+				{
+					"ecosystem": "oracle:8"
+				},
+				{
+					"ecosystem": "oracle:9"
+				}
 			]
 		},
 		{
@@ -65,9 +73,13 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"oracle:8",
-				"oracle:9"
+			"scopes": [
+				{
+					"ecosystem": "oracle:8"
+				},
+				{
+					"ecosystem": "oracle:9"
+				}
 			]
 		},
 		{
@@ -80,15 +92,21 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"oracle:8",
-				"oracle:9"
+			"scopes": [
+				{
+					"ecosystem": "oracle:8"
+				},
+				{
+					"ecosystem": "oracle:9"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "oracle:8",
+			"scope": {
+				"ecosystem": "oracle:8"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [
@@ -579,7 +597,9 @@
 			}
 		},
 		{
-			"ecosystem": "oracle:9",
+			"scope": {
+				"ecosystem": "oracle:9"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

@@ -28,8 +28,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2"
+				}
 			]
 		}
 	],
@@ -44,8 +46,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2"
+				}
 			]
 		},
 		{
@@ -58,14 +62,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:2",
+			"scope": {
+				"ecosystem": "amazon:2"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

@@ -28,8 +28,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:1"
+			"scopes": [
+				{
+					"ecosystem": "amazon:1"
+				}
 			]
 		}
 	],
@@ -44,14 +46,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:1"
+			"scopes": [
+				{
+					"ecosystem": "amazon:1"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:1",
+			"scope": {
+				"ecosystem": "amazon:1"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

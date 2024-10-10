@@ -18,7 +18,8 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	scopeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -153,7 +154,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 						return rs
 					}(),
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+				Scopes: []scopeTypes.Scope{{Ecosystem: ecosystemTypes.EcosystemTypeArch}},
 			}}
 
 			for _, a := range fetched.Advisories {
@@ -165,7 +166,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+					Scopes: []scopeTypes.Scope{{Ecosystem: ecosystemTypes.EcosystemTypeArch}},
 				})
 			}
 
@@ -182,7 +183,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+					Scopes: []scopeTypes.Scope{{Ecosystem: ecosystemTypes.EcosystemTypeArch}},
 				})
 			}
 			return vs
@@ -212,7 +213,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 			}
 
 			return []detectionTypes.Detection{{
-				Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch),
+				Scope: scopeTypes.Scope{Ecosystem: ecosystemTypes.EcosystemTypeArch},
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

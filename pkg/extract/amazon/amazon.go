@@ -18,7 +18,8 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	scopeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -128,18 +129,20 @@ func Extract(args string, opts ...Option) error {
 
 func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 	ds := detectionTypes.Detection{
-		Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAmazon, func() string {
-			switch {
-			case strings.HasPrefix(fetched.ID, "ALAS2023"):
-				return "2023"
-			case strings.HasPrefix(fetched.ID, "ALAS2022"):
-				return "2022"
-			case strings.HasPrefix(fetched.ID, "ALAS2"):
-				return "2"
-			default:
-				return "1"
-			}
-		}())),
+		Scope: scopeTypes.Scope{
+			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAmazon, func() string {
+				switch {
+				case strings.HasPrefix(fetched.ID, "ALAS2023"):
+					return "2023"
+				case strings.HasPrefix(fetched.ID, "ALAS2022"):
+					return "2022"
+				case strings.HasPrefix(fetched.ID, "ALAS2"):
+					return "2"
+				default:
+					return "1"
+				}
+			}())),
+		},
 		Criteria: criteriaTypes.Criteria{
 			Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: func() []criterionTypes.Criterion {
@@ -239,7 +242,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
 				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
 			},
-			Ecosystems: []ecosystemTypes.Ecosystem{ds.Ecosystem},
+			Scopes: []scopeTypes.Scope{ds.Scope},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			var vs []vulnerabilityTypes.Vulnerability
@@ -253,7 +256,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 								URL:    r.Href,
 							}},
 						},
-						Ecosystems: []ecosystemTypes.Ecosystem{ds.Ecosystem},
+						Scopes: []scopeTypes.Scope{ds.Scope},
 					})
 				}
 			}

@@ -4,12 +4,12 @@ import (
 	"cmp"
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	scopeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope"
 )
 
 type Detection struct {
-	Ecosystem ecosystemTypes.Ecosystem `json:"ecosystem,omitempty"`
-	Criteria  criteriaTypes.Criteria   `json:"criteria,omitempty"`
+	Scope    scopeTypes.Scope       `json:"scope,omitempty"`
+	Criteria criteriaTypes.Criteria `json:"criteria,omitempty"`
 }
 
 func (d *Detection) Sort() {
@@ -18,7 +18,7 @@ func (d *Detection) Sort() {
 
 func Compare(x, y Detection) int {
 	return cmp.Or(
-		cmp.Compare(x.Ecosystem, y.Ecosystem),
+		scopeTypes.Compare(x.Scope, y.Scope),
 		criteriaTypes.Compare(x.Criteria, y.Criteria),
 	)
 }

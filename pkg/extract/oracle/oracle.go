@@ -19,7 +19,8 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	scopeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -146,12 +147,12 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
-	es := func() []ecosystemTypes.Ecosystem {
-		var es []ecosystemTypes.Ecosystem
+	ss := func() []scopeTypes.Scope {
+		ss := make([]scopeTypes.Scope, 0, len(ds))
 		for _, d := range ds {
-			es = append(es, d.Ecosystem)
+			ss = append(ss, d.Scope)
 		}
-		return es
+		return ss
 	}()
 
 	return dataTypes.Data{
@@ -177,7 +178,7 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 				}(),
 				Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
 			},
-			Ecosystems: es,
+			Scopes: ss,
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
@@ -190,7 +191,7 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 							URL:    cve.Href,
 						}},
 					},
-					Ecosystems: es,
+					Scopes: ss,
 				})
 			}
 			return vs
@@ -259,7 +260,7 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 	ds := make([]detectionTypes.Detection, 0, len(mm))
 	for v, cs := range mm {
 		ds = append(ds, detectionTypes.Detection{
-			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, v)),
+			Scope: scopeTypes.Scope{Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, v))},
 			Criteria: criteriaTypes.Criteria{
 				Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: cs,

@@ -36,8 +36,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2022"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2022"
+				}
 			]
 		}
 	],
@@ -52,8 +54,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2022"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2022"
+				}
 			]
 		},
 		{
@@ -66,8 +70,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2022"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2022"
+				}
 			]
 		},
 		{
@@ -80,8 +86,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2022"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2022"
+				}
 			]
 		},
 		{
@@ -94,14 +102,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2022"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2022"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:2022",
+			"scope": {
+				"ecosystem": "amazon:2022"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

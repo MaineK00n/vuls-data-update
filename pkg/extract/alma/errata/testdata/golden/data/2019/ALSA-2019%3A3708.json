@@ -70,8 +70,10 @@
 				"published": "2019-11-06T04:53:43+09:00",
 				"modified": "2022-04-28T19:46:58+09:00"
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		}
 	],
@@ -86,8 +88,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -100,8 +104,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -114,8 +120,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -128,8 +136,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -142,8 +152,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -156,8 +168,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -170,8 +184,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -184,8 +200,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -198,8 +216,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -212,8 +232,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -226,8 +248,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -240,14 +264,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"scopes": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "alma:8",
+			"scope": {
+				"ecosystem": "alma:8"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [
@@ -379,7 +407,7 @@
 	"data_source": {
 		"id": "alma-errata",
 		"raws": [
-			"fixtures/8/2019/ALSA-2019%3A3708.json"
+			"fixtures/8/2019/ALSA-2019:3708.json"
 		]
 	}
 }

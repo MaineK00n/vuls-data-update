@@ -18,7 +18,8 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	scopeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
@@ -219,7 +220,7 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 				Published: utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Entry),
 				Modified:  utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Modified),
 			},
-			Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD)},
+			Scopes: []scopeTypes.Scope{{Ecosystem: ecosystemTypes.EcosystemTypeFreeBSD}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(fetched.References.Cvename))
@@ -232,14 +233,14 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD)},
+					Scopes: []scopeTypes.Scope{{Ecosystem: ecosystemTypes.EcosystemTypeFreeBSD}},
 				})
 			}
 			return vs
 		}(),
 		Detection: []detectionTypes.Detection{
 			{
-				Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD),
+				Scope: scopeTypes.Scope{Ecosystem: ecosystemTypes.EcosystemTypeFreeBSD},
 				Criteria: criteriaTypes.Criteria{
 					Operator: criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: func() []criterionTypes.Criterion {

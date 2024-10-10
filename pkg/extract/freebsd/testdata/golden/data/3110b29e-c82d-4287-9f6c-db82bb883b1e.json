@@ -18,14 +18,18 @@
 				],
 				"published": "2022-08-26T00:00:00Z"
 			},
-			"ecosystems": [
-				"freebsd"
+			"scopes": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "freebsd",
+			"scope": {
+				"ecosystem": "freebsd"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

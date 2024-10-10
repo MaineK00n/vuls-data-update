@@ -18,7 +18,8 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	scopeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/scope/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
@@ -167,10 +168,16 @@ func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 						URL:    fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", id),
 					}},
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")))},
+				Scopes: []scopeTypes.Scope{{
+					Ecosystem: ecosystemTypes.Ecosystem(
+						fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
+				}},
 			}},
 			Detection: []detectionTypes.Detection{{
-				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
+				Scope: scopeTypes.Scope{
+					Ecosystem: ecosystemTypes.Ecosystem(
+						fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
+				},
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

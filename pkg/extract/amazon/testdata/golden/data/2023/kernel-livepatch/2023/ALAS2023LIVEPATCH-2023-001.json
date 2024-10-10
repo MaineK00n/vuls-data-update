@@ -24,8 +24,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2023"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2023"
+				}
 			]
 		}
 	],
@@ -40,14 +42,18 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"amazon:2023"
+			"scopes": [
+				{
+					"ecosystem": "amazon:2023"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:2023",
+			"scope": {
+				"ecosystem": "amazon:2023"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [
