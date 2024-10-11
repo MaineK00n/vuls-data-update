@@ -3,21 +3,21 @@
 	"id": "oval:com.ubuntu.jammy:def:22040159100000",
 	"version": "1",
 	"metadata": {
-		"Title": "openssh",
+		"title": "openssh",
 		"reference": {
 			"source": "Package",
 			"ref_id": "openssh",
 			"ref_url": "https://launchpad.net/ubuntu/+source/openssh"
 		},
-		"Description": "secure shell (SSH) for secure access to remote machines",
+		"description": "secure shell (SSH) for secure access to remote machines",
 		"affected": {
 			"family": "unix",
-			"Platform": "Ubuntu Pro FIPS-updates 22.04 LTS"
+			"platform": "Ubuntu Pro FIPS-updates 22.04 LTS"
 		},
 		"advisory": {
-			"Rights": "Copyright (C) 2024 Canonical Ltd.",
-			"Component": "main",
-			"CurrentVersion": "1:8.9p1-3ubuntu1.fips.0~ppa3",
+			"rights": "Copyright (C) 2024 Canonical Ltd.",
+			"component": "main",
+			"current_version": "1:8.9p1-3ubuntu1.fips.0~ppa3",
 			"cve": [
 				{
 					"text": "CVE-2023-48795",
