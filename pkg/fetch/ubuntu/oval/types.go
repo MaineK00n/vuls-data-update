@@ -86,21 +86,21 @@ type PKGDefinition struct {
 	ID       string `xml:"id,attr" json:"id,omitempty"`
 	Version  string `xml:"version,attr" json:"version,omitempty"`
 	Metadata struct {
-		Title     string `xml:"title"`
+		Title     string `xml:"title" json:"title,omitempty"`
 		Reference struct {
 			Source string `xml:"source,attr" json:"source,omitempty"`
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
 		} `xml:"reference" json:"reference,omitempty"`
-		Description string `xml:"description"`
+		Description string `xml:"description" json:"description,omitempty"`
 		Affected    struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
-			Platform string `xml:"platform"`
+			Platform string `xml:"platform" json:"platform,omitempty"`
 		} `xml:"affected" json:"affected,omitempty"`
 		Advisory struct {
-			Rights         string `xml:"rights"`
-			Component      string `xml:"component"`
-			CurrentVersion string `xml:"current_version"`
+			Rights         string `xml:"rights" json:"rights,omitempty"`
+			Component      string `xml:"component" json:"component,omitempty"`
+			CurrentVersion string `xml:"current_version" json:"current_version,omitempty"`
 			Cve            []struct {
 				Text         string `xml:",chardata" json:"text,omitempty"`
 				Href         string `xml:"href,attr" json:"href,omitempty"`
