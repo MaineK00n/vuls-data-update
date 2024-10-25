@@ -206,7 +206,7 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 				rootCriteria.Criterias = append(rootCriteria.Criterias, ca)
 			}
 			return []detectionType.Detection{{
-				Ecosystem: ecosystemTypes.EcosystemTypeCPE,
+				Ecosystem: ecosystemTypes.Ecosystem{Family: ecosystemTypes.EcosystemTypeCPE},
 				Criteria:  rootCriteria,
 			}}, nil
 		}
@@ -315,7 +315,7 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 					Published: utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.Published),
 					Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.LastModified),
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.EcosystemTypeCPE},
+				Ecosystems: []ecosystemTypes.Ecosystem{{Family: ecosystemTypes.EcosystemTypeCPE}},
 			},
 		},
 		Detection: ds,

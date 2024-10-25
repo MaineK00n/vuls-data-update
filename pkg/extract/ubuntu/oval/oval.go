@@ -267,7 +267,7 @@ func (e extractor) toData(def oval.CVEDefinition) (dataTypes.Data, error) {
 	if len(matched) != 2 {
 		return dataTypes.Data{}, errors.Errorf("ubuntu version not found. platform: %s", def.Metadata.Affected.Platform)
 	}
-	es := ecosystemTypes.Ecosystem2{Name: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeUbuntu, matched[1]), Variant: e.service}
+	es := ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeUbuntu, matched[1]), Branch: e.service}
 
 	ds, err := e.collectPackages(def.Criteria, es)
 	if err != nil {
@@ -300,7 +300,7 @@ func (e extractor) toData(def oval.CVEDefinition) (dataTypes.Data, error) {
 					}},
 					Published: utiltime.Parse([]string{"2006-01-02 15:04:05 UTC"}, def.Metadata.Advisory.PublicDate),
 				},
-				Ecosystems2: []ecosystemTypes.Ecosystem2{es},
+				Ecosystems: []ecosystemTypes.Ecosystem{es},
 			},
 		},
 		Detection: ds,
@@ -317,7 +317,7 @@ type ovalPackage struct {
 	patchStatus  criterionTypes.PatchStatus
 }
 
-func (e extractor) usnAdvisories(usns string, es ecosystemTypes.Ecosystem2) ([]advisoryTypes.Advisory, error) {
+func (e extractor) usnAdvisories(usns string, es ecosystemTypes.Ecosystem) ([]advisoryTypes.Advisory, error) {
 	if usns == "" {
 		return nil, nil
 	}
@@ -360,13 +360,13 @@ func (e extractor) usnAdvisories(usns string, es ecosystemTypes.Ecosystem2) ([]a
 					return rs
 				}(),
 			},
-			Ecosystems2: []ecosystemTypes.Ecosystem2{es},
+			Ecosystems: []ecosystemTypes.Ecosystem{es},
 		})
 	}
 	return as, nil
 }
 
-func (e extractor) collectPackages(criteria oval.Criteria, es ecosystemTypes.Ecosystem2) ([]detectionTypes.Detection, error) {
+func (e extractor) collectPackages(criteria oval.Criteria, es ecosystemTypes.Ecosystem) ([]detectionTypes.Detection, error) {
 	if len(criteria.Criterions) > 0 {
 		return nil, errors.Errorf("criterions under root criteria must be empty.")
 	}
@@ -383,7 +383,7 @@ func (e extractor) collectPackages(criteria oval.Criteria, es ecosystemTypes.Eco
 	}
 
 	return []detectionTypes.Detection{{
-		Ecosystem2: es,
+		Ecosystem: es,
 		Criteria: criteriaTypes.Criteria{
 			Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: func() []criterionTypes.Criterion {

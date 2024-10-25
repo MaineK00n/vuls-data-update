@@ -12,7 +12,9 @@
 				]
 			},
 			"ecosystems": [
-				"arch"
+				{
+					"family": "arch"
+				}
 			]
 		},
 		{
@@ -33,7 +35,9 @@
 				]
 			},
 			"ecosystems": [
-				"arch"
+				{
+					"family": "arch"
+				}
 			]
 		}
 	],
@@ -49,13 +53,17 @@
 				]
 			},
 			"ecosystems": [
-				"arch"
+				{
+					"family": "arch"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "arch",
+			"ecosystem": {
+				"family": "arch"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

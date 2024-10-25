@@ -259,7 +259,7 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 	ds := make([]detectionTypes.Detection, 0, len(mm))
 	for v, cs := range mm {
 		ds = append(ds, detectionTypes.Detection{
-			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, v)),
+			Ecosystem: ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, v)},
 			Criteria: criteriaTypes.Criteria{
 				Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: cs,

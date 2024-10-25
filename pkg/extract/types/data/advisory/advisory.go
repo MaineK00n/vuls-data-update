@@ -9,20 +9,20 @@ import (
 )
 
 type Advisory struct {
-	Content     contentTypes.Content        `json:"content,omitempty"`
-	Ecosystems  []ecosystemTypes.Ecosystem  `json:"ecosystems,omitempty"`
-	Ecosystems2 []ecosystemTypes.Ecosystem2 `json:"ecosystems2,omitempty"`
+	Content    contentTypes.Content       `json:"content,omitempty"`
+	Ecosystems []ecosystemTypes.Ecosystem `json:"ecosystems,omitempty"`
 }
 
 func (a *Advisory) Sort() {
 	a.Content.Sort()
 
-	slices.Sort(a.Ecosystems)
+	slices.SortFunc(a.Ecosystems, ecosystemTypes.Compare)
 }
 
 func Compare(x, y Advisory) int {
 	return cmp.Or(
 		contentTypes.Compare(x.Content, y.Content),
-		slices.Compare(x.Ecosystems, y.Ecosystems),
+
+		slices.CompareFunc(x.Ecosystems, y.Ecosystems, ecosystemTypes.Compare),
 	)
 }

@@ -26,7 +26,9 @@
 				"published": "2024-07-01T00:00:00Z"
 			},
 			"ecosystems": [
-				"oracle:8"
+				{
+					"family": "oracle:8"
+				}
 			]
 		}
 	],
@@ -42,13 +44,17 @@
 				]
 			},
 			"ecosystems": [
-				"oracle:8"
+				{
+					"family": "oracle:8"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "oracle:8",
+			"ecosystem": {
+				"family": "oracle:8"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

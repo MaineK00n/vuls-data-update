@@ -167,10 +167,10 @@ func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 						URL:    fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", id),
 					}},
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v")))},
+				Ecosystems: []ecosystemTypes.Ecosystem{{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))}},
 			}},
 			Detection: []detectionTypes.Detection{{
-				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
+				Ecosystem: ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))},
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

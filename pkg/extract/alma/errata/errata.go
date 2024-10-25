@@ -171,7 +171,7 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 				Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
 				Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
 			},
-			Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver))},
+			Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			m := map[string]vulnerabilityContentTypes.Content{}
@@ -193,7 +193,7 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 			for _, c := range m {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content:    c,
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver))},
+					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)}},
 				})
 			}
 			return vs
@@ -240,7 +240,7 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 				}
 			}
 			return []detectionTypes.Detection{{
-				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),
+				Ecosystem: ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)},
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

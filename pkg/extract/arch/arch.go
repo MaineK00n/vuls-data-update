@@ -153,7 +153,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 						return rs
 					}(),
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+				Ecosystems: []ecosystemTypes.Ecosystem{{Family: ecosystemTypes.EcosystemTypeArch}},
 			}}
 
 			for _, a := range fetched.Advisories {
@@ -165,7 +165,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+					Ecosystems: []ecosystemTypes.Ecosystem{{Family: ecosystemTypes.EcosystemTypeArch}},
 				})
 			}
 
@@ -182,7 +182,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+					Ecosystems: []ecosystemTypes.Ecosystem{{Family: ecosystemTypes.EcosystemTypeArch}},
 				})
 			}
 			return vs
@@ -212,7 +212,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 			}
 
 			return []detectionTypes.Detection{{
-				Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch),
+				Ecosystem: ecosystemTypes.Ecosystem{Family: ecosystemTypes.EcosystemTypeArch},
 				Criteria: criteriaTypes.Criteria{
 					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
 					Criterions: cs,

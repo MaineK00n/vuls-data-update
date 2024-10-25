@@ -73,7 +73,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		}
 	],
@@ -89,7 +91,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -103,7 +107,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -117,7 +123,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -131,7 +139,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -145,7 +155,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -159,7 +171,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -173,7 +187,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -187,7 +203,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -201,7 +219,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -215,7 +235,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -229,7 +251,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -243,7 +267,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		},
 		{
@@ -257,13 +283,17 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2"
+				{
+					"family": "amazon:2"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:2",
+			"ecosystem": {
+				"family": "amazon:2"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

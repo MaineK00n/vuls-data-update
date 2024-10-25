@@ -29,7 +29,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:1"
+				{
+					"family": "amazon:1"
+				}
 			]
 		}
 	],
@@ -45,13 +47,17 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:1"
+				{
+					"family": "amazon:1"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:1",
+			"ecosystem": {
+				"family": "amazon:1"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

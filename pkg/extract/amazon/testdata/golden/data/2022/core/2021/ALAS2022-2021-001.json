@@ -37,7 +37,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2022"
+				{
+					"family": "amazon:2022"
+				}
 			]
 		}
 	],
@@ -53,7 +55,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2022"
+				{
+					"family": "amazon:2022"
+				}
 			]
 		},
 		{
@@ -67,7 +71,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2022"
+				{
+					"family": "amazon:2022"
+				}
 			]
 		},
 		{
@@ -81,7 +87,9 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2022"
+				{
+					"family": "amazon:2022"
+				}
 			]
 		},
 		{
@@ -95,13 +103,17 @@
 				]
 			},
 			"ecosystems": [
-				"amazon:2022"
+				{
+					"family": "amazon:2022"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "amazon:2022",
+			"ecosystem": {
+				"family": "amazon:2022"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

@@ -30,7 +30,9 @@
 				"published": "2007-06-26T00:00:00Z"
 			},
 			"ecosystems": [
-				"oracle:5"
+				{
+					"family": "oracle:5"
+				}
 			]
 		}
 	],
@@ -46,7 +48,9 @@
 				]
 			},
 			"ecosystems": [
-				"oracle:5"
+				{
+					"family": "oracle:5"
+				}
 			]
 		},
 		{
@@ -60,13 +64,17 @@
 				]
 			},
 			"ecosystems": [
-				"oracle:5"
+				{
+					"family": "oracle:5"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "oracle:5",
+			"ecosystem": {
+				"family": "oracle:5"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

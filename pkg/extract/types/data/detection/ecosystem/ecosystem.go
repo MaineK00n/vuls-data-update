@@ -1,16 +1,16 @@
 package ecosystem
 
 import (
+	"cmp"
 	"fmt"
 	"strings"
 
 	"github.com/pkg/errors"
 )
 
-type Ecosystem string
-type Ecosystem2 struct {
-	Name    string `json:"name,omitempty"`
-	Variant string `json:"variant,omitempty"`
+type Ecosystem struct {
+	Family string `json:"family,omitempty"`
+	Branch string `json:"branch,omitempty"`
 }
 
 const (
@@ -57,106 +57,113 @@ const (
 func GetEcosystem(family, release string) (Ecosystem, error) {
 	switch family {
 	case EcosystemTypeAlma:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])}, nil
 	case EcosystemTypeAlpine:
 		ss := strings.Split(release, ".")
 		if len(ss) < 2 {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
+			return Ecosystem{}, errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
 		}
-		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])}, nil
 	case EcosystemTypeAmazon:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])}, nil
 	case EcosystemTypeArch:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeDebian:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])}, nil
 	case EcosystemTypeEPEL:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, release)}, nil
 	case EcosystemTypeFedora:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, release)}, nil
 	case EcosystemTypeFreeBSD:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeGentoo:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeNetBSD:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeOracle:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])}, nil
 	case EcosystemTypeRedHat:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])}, nil
 	case EcosystemTypeRocky:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])}, nil
 	case EcosystemTypeOpenSUSE:
 		if release == "tumbleweed" {
-			return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
+			return Ecosystem{Family: fmt.Sprintf("%s:%s", family, release)}, nil
 		}
 		if strings.HasPrefix(release, "leap:") {
 			ss := strings.Split(strings.TrimPrefix(release, "leap:"), ".")
 			if len(ss) < 2 {
-				return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "leap:<major>.<minor>(.<patch>)", release)
+				return Ecosystem{}, errors.Errorf("unexpected release format. expected: %q, actual: %q", "leap:<major>.<minor>(.<patch>)", release)
 			}
-			return Ecosystem(fmt.Sprintf("%s-leap:%s.%s", family, ss[0], ss[1])), nil
+			return Ecosystem{Family: fmt.Sprintf("%s-leap:%s.%s", family, ss[0], ss[1])}, nil
 		}
 		ss := strings.Split(release, ".")
 		if len(ss) < 2 {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
+			return Ecosystem{}, errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
 		}
-		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])}, nil
 	case EcosystemTypeSUSEServer:
 		ss := strings.Split(release, ".")
 		if len(ss) < 2 {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
+			return Ecosystem{}, errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
 		}
-		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])}, nil
 	case EcosystemTypeSUSEDesktop:
 		ss := strings.Split(release, ".")
 		if len(ss) < 2 {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
+			return Ecosystem{}, errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
 		}
-		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])}, nil
 	case EcosystemTypeUbuntu:
 		ss := strings.Split(release, ".")
 		if len(ss) < 2 {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
+			return Ecosystem{}, errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
 		}
-		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])}, nil
 	case EcosystemTypeWindows:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
+		return Ecosystem{Family: fmt.Sprintf("%s:%s", family, release)}, nil
 	case EcosystemTypeCPE:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeFortinet:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeCargo:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeComposer:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeConan:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeErlang:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeGolang:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeHaskell:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeMaven:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeNpm:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeNuget:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypePerl:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypePip:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypePub:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeR:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeRubygems:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	case EcosystemTypeSwift:
-		return Ecosystem(family), nil
+		return Ecosystem{Family: family}, nil
 	default:
-		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeSUSEServer, EcosystemTypeSUSEDesktop, EcosystemTypeUbuntu, EcosystemTypeWindows, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
+		return Ecosystem{}, errors.Errorf("unexpected family. expected: %q, actual: %q", []string{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeSUSEServer, EcosystemTypeSUSEDesktop, EcosystemTypeUbuntu, EcosystemTypeWindows, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
 	}
+}
+
+func Compare(x, y Ecosystem) int {
+	return cmp.Or(
+		cmp.Compare(x.Family, y.Family),
+		cmp.Compare(x.Branch, y.Branch),
+	)
 }

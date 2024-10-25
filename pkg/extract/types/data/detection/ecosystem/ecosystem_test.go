@@ -23,7 +23,7 @@ func TestGetEcosystem(t *testing.T) {
 				family:  "oracle",
 				release: "9",
 			},
-			want: ecosystem.Ecosystem("oracle:9"),
+			want: ecosystem.Ecosystem{Family: "oracle:9"},
 		},
 		{
 			name: "oracle 9.0",
@@ -31,7 +31,7 @@ func TestGetEcosystem(t *testing.T) {
 				family:  "oracle",
 				release: "9.0",
 			},
-			want: ecosystem.Ecosystem("oracle:9"),
+			want: ecosystem.Ecosystem{Family: "oracle:9"},
 		},
 		{
 			name: "cpe",
@@ -39,7 +39,7 @@ func TestGetEcosystem(t *testing.T) {
 				family:  "cpe",
 				release: "",
 			},
-			want: ecosystem.Ecosystem("cpe"),
+			want: ecosystem.Ecosystem{Family: "cpe"},
 		},
 	}
 	for _, tt := range tests {

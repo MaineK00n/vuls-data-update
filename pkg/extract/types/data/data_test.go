@@ -33,7 +33,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "advisory-duplicated",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-1",
+							{Family: "ecosystem1-1"},
 						},
 					},
 					{
@@ -41,7 +41,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "advisory-only-in-1",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-2",
+							{Family: "ecosystem1-2"},
 						},
 					},
 				},
@@ -56,7 +56,7 @@ func TestData_Merge(t *testing.T) {
 									ID: "advisory-only-in-2",
 								},
 								Ecosystems: []ecosystemTypes.Ecosystem{
-									"ecosystem2-1",
+									{Family: "ecosystem2-1"},
 								},
 							},
 							{
@@ -64,7 +64,7 @@ func TestData_Merge(t *testing.T) {
 									ID: "advisory-duplicated",
 								},
 								Ecosystems: []ecosystemTypes.Ecosystem{
-									"ecosystem2-2",
+									{Family: "ecosystem2-2"},
 								},
 							},
 						},
@@ -79,8 +79,8 @@ func TestData_Merge(t *testing.T) {
 							ID: "advisory-duplicated",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-1",
-							"ecosystem2-2",
+							{Family: "ecosystem1-1"},
+							{Family: "ecosystem2-2"},
 						},
 					},
 					{
@@ -88,7 +88,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "advisory-only-in-1",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-2",
+							{Family: "ecosystem1-2"},
 						},
 					},
 					{
@@ -96,7 +96,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "advisory-only-in-2",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem2-1",
+							{Family: "ecosystem2-1"},
 						},
 					},
 				},
@@ -112,7 +112,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "vulnerability-duplicated",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-1",
+							{Family: "ecosystem1-1"},
 						},
 					},
 					{
@@ -120,7 +120,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "vulnerability-only-in-1",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-2",
+							{Family: "ecosystem1-2"},
 						},
 					},
 				},
@@ -134,7 +134,7 @@ func TestData_Merge(t *testing.T) {
 								ID: "vulnerability-only-in-2",
 							},
 							Ecosystems: []ecosystemTypes.Ecosystem{
-								"ecosystem2-1",
+								{Family: "ecosystem2-1"},
 							},
 						},
 						{
@@ -142,7 +142,7 @@ func TestData_Merge(t *testing.T) {
 								ID: "vulnerability-duplicated",
 							},
 							Ecosystems: []ecosystemTypes.Ecosystem{
-								"ecosystem2-2",
+								{Family: "ecosystem2-2"},
 							},
 						},
 					},
@@ -155,8 +155,8 @@ func TestData_Merge(t *testing.T) {
 							ID: "vulnerability-duplicated",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-1",
-							"ecosystem2-2",
+							{Family: "ecosystem1-1"},
+							{Family: "ecosystem2-2"},
 						},
 					},
 					{
@@ -164,7 +164,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "vulnerability-only-in-1",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem1-2",
+							{Family: "ecosystem1-2"},
 						},
 					},
 					{
@@ -172,7 +172,7 @@ func TestData_Merge(t *testing.T) {
 							ID: "vulnerability-only-in-2",
 						},
 						Ecosystems: []ecosystemTypes.Ecosystem{
-							"ecosystem2-1",
+							{Family: "ecosystem2-1"},
 						},
 					},
 				},

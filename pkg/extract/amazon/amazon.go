@@ -128,7 +128,7 @@ func Extract(args string, opts ...Option) error {
 
 func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 	ds := detectionTypes.Detection{
-		Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAmazon, func() string {
+		Ecosystem: ecosystemTypes.Ecosystem{Family: fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAmazon, func() string {
 			switch {
 			case strings.HasPrefix(fetched.ID, "ALAS2023"):
 				return "2023"
@@ -139,7 +139,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 			default:
 				return "1"
 			}
-		}())),
+		}())},
 		Criteria: criteriaTypes.Criteria{
 			Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: func() []criterionTypes.Criterion {

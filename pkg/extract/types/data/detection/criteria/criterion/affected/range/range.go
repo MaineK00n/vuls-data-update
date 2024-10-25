@@ -196,7 +196,7 @@ func (t RangeType) Compare(ecosystem ecosystemTypes.Ecosystem, v1, v2 string) (i
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
 		switch {
-		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeOracle):
+		case strings.HasPrefix(string(ecosystem.Family), ecosystemTypes.EcosystemTypeOracle):
 			if extractOracleKsplice(v1) != extractOracleKsplice(v2) {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", v1, v2)}}
 			}

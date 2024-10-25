@@ -19,13 +19,17 @@
 				"published": "2022-08-26T00:00:00Z"
 			},
 			"ecosystems": [
-				"freebsd"
+				{
+					"family": "freebsd"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "freebsd",
+			"ecosystem": {
+				"family": "freebsd"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [

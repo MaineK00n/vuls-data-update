@@ -8,9 +8,8 @@ import (
 )
 
 type Detection struct {
-	Ecosystem  ecosystemTypes.Ecosystem  `json:"ecosystem,omitempty"`
-	Ecosystem2 ecosystemTypes.Ecosystem2 `json:"ecosystem2,omitempty"`
-	Criteria   criteriaTypes.Criteria    `json:"criteria,omitempty"`
+	Ecosystem ecosystemTypes.Ecosystem `json:"ecosystem,omitempty"`
+	Criteria  criteriaTypes.Criteria   `json:"criteria,omitempty"`
 }
 
 func (d *Detection) Sort() {
@@ -19,7 +18,7 @@ func (d *Detection) Sort() {
 
 func Compare(x, y Detection) int {
 	return cmp.Or(
-		cmp.Compare(x.Ecosystem, y.Ecosystem),
+		ecosystemTypes.Compare(x.Ecosystem, y.Ecosystem),
 		criteriaTypes.Compare(x.Criteria, y.Criteria),
 	)
 }

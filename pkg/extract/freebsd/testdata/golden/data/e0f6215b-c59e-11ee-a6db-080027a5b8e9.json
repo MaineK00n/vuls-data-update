@@ -19,7 +19,9 @@
 				"published": "2024-02-07T00:00:00Z"
 			},
 			"ecosystems": [
-				"freebsd"
+				{
+					"family": "freebsd"
+				}
 			]
 		}
 	],
@@ -35,13 +37,17 @@
 				]
 			},
 			"ecosystems": [
-				"freebsd"
+				{
+					"family": "freebsd"
+				}
 			]
 		}
 	],
 	"detection": [
 		{
-			"ecosystem": "freebsd",
+			"ecosystem": {
+				"family": "freebsd"
+			},
 			"criteria": {
 				"operator": "OR",
 				"criterions": [
