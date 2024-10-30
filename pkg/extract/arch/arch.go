@@ -17,6 +17,7 @@ import (
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -188,26 +189,38 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 			return vs
 		}(),
 		Detection: func() []detectionTypes.Detection {
-			affected := affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypePacman,
-				Range: []rangeTypes.Range{{LessEqual: fetched.Affected}},
-			}
-			if fetched.Fixed != nil {
-				affected = affectedTypes.Affected{
-					Type:  rangeTypes.RangeTypePacman,
-					Range: []rangeTypes.Range{{LessThan: *fetched.Fixed}},
-					Fixed: []string{*fetched.Fixed},
-				}
-			}
-
 			cs := make([]criterionTypes.Criterion, 0, len(fetched.Packages))
 			for _, p := range fetched.Packages {
 				cs = append(cs, criterionTypes.Criterion{
 					Vulnerable: true,
+					FixStatus: &fixstatusTypes.FixStatus{
+						Class: func() fixstatusTypes.Class {
+							switch fetched.Fixed {
+							case nil:
+								return fixstatusTypes.ClassUnfixed
+							default:
+								return fixstatusTypes.ClassFixed
+							}
+						}(),
+					},
 					Package: packageTypes.Package{
 						Name: p,
 					},
-					Affected: &affected,
+					Affected: func() *affectedTypes.Affected {
+						switch fetched.Fixed {
+						case nil:
+							return &affectedTypes.Affected{
+								Type:  rangeTypes.RangeTypePacman,
+								Range: []rangeTypes.Range{{LessEqual: fetched.Affected}},
+							}
+						default:
+							return &affectedTypes.Affected{
+								Type:  rangeTypes.RangeTypePacman,
+								Range: []rangeTypes.Range{{LessThan: *fetched.Fixed}},
+								Fixed: []string{*fetched.Fixed},
+							}
+						}
+					}(),
 				})
 			}
 

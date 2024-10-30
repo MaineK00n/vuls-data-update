@@ -94,6 +94,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk",
 							"architectures": [
@@ -115,6 +118,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-demo",
 							"architectures": [
@@ -136,6 +142,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-demo-fastdebug",
 							"architectures": [
@@ -157,6 +166,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-demo-slowdebug",
 							"architectures": [
@@ -178,6 +190,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-devel",
 							"architectures": [
@@ -199,6 +214,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-devel-fastdebug",
 							"architectures": [
@@ -220,6 +238,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-devel-slowdebug",
 							"architectures": [
@@ -241,6 +262,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-fastdebug",
 							"architectures": [
@@ -262,6 +286,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-headless",
 							"architectures": [
@@ -283,6 +310,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-headless-fastdebug",
 							"architectures": [
@@ -304,6 +334,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-headless-slowdebug",
 							"architectures": [
@@ -325,6 +358,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-javadoc",
 							"architectures": [
@@ -346,6 +382,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-javadoc-zip",
 							"architectures": [
@@ -367,6 +406,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-jmods",
 							"architectures": [
@@ -388,6 +430,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-jmods-fastdebug",
 							"architectures": [
@@ -409,6 +454,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-jmods-slowdebug",
 							"architectures": [
@@ -430,6 +478,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-slowdebug",
 							"architectures": [
@@ -451,6 +502,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-src",
 							"architectures": [
@@ -472,6 +526,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-src-fastdebug",
 							"architectures": [
@@ -493,6 +550,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-src-slowdebug",
 							"architectures": [
@@ -514,6 +574,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-static-libs",
 							"architectures": [
@@ -535,6 +598,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-static-libs-fastdebug",
 							"architectures": [
@@ -556,6 +622,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-static-libs-slowdebug",
 							"architectures": [
@@ -585,6 +654,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk",
 							"architectures": [
@@ -606,6 +678,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-demo",
 							"architectures": [
@@ -627,6 +702,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-demo-fastdebug",
 							"architectures": [
@@ -648,6 +726,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-demo-slowdebug",
 							"architectures": [
@@ -669,6 +750,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-devel",
 							"architectures": [
@@ -690,6 +774,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-devel-fastdebug",
 							"architectures": [
@@ -711,6 +798,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-devel-slowdebug",
 							"architectures": [
@@ -732,6 +822,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-fastdebug",
 							"architectures": [
@@ -753,6 +846,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-headless",
 							"architectures": [
@@ -774,6 +870,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-headless-fastdebug",
 							"architectures": [
@@ -795,6 +894,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-headless-slowdebug",
 							"architectures": [
@@ -816,6 +918,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-javadoc",
 							"architectures": [
@@ -837,6 +942,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-javadoc-zip",
 							"architectures": [
@@ -858,6 +966,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-jmods",
 							"architectures": [
@@ -879,6 +990,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-jmods-fastdebug",
 							"architectures": [
@@ -900,6 +1014,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-jmods-slowdebug",
 							"architectures": [
@@ -921,6 +1038,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-slowdebug",
 							"architectures": [
@@ -942,6 +1062,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-src",
 							"architectures": [
@@ -963,6 +1086,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-src-fastdebug",
 							"architectures": [
@@ -984,6 +1110,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-src-slowdebug",
 							"architectures": [
@@ -1005,6 +1134,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-static-libs",
 							"architectures": [
@@ -1026,6 +1158,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-static-libs-fastdebug",
 							"architectures": [
@@ -1047,6 +1182,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "java-21-openjdk-static-libs-slowdebug",
 							"architectures": [

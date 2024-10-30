@@ -23,6 +23,7 @@ import (
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
 	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -372,7 +373,13 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		rangeType := decideRangeType(match)
 		cn := criterionTypes.Criterion{
 			Vulnerable: match.Vulnerable,
-			Package:    criterionpackageTypes.Package{CPE: match.Criteria},
+			FixStatus: func() *fixstatusTypes.FixStatus {
+				if match.Vulnerable {
+					return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
+				}
+				return nil
+			}(),
+			Package: criterionpackageTypes.Package{CPE: match.Criteria},
 			Affected: func() *affectedTypes.Affected {
 				if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
 					match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
@@ -402,7 +409,13 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			for _, n := range ns {
 				cns = append(cns, criterionTypes.Criterion{
 					Vulnerable: match.Vulnerable,
-					Package:    criterionpackageTypes.Package{CPE: n},
+					FixStatus: func() *fixstatusTypes.FixStatus {
+						if match.Vulnerable {
+							return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
+						}
+						return nil
+					}(),
+					Package: criterionpackageTypes.Package{CPE: n},
 				})
 			}
 		}

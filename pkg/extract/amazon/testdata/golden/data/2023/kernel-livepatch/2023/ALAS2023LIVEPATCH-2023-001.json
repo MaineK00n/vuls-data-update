@@ -53,6 +53,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "kernel-livepatch-6.1.12-19.43",
 							"architectures": [

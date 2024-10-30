@@ -253,6 +253,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "mariadb-devel:10.3::Judy",
 							"architectures": [
@@ -273,6 +276,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "mariadb-devel:10.3::Judy-devel",
 							"architectures": [
@@ -294,6 +300,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "mariadb-devel:10.3::Judy-devel",
 							"architectures": [
@@ -314,6 +323,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "mariadb:10.3::Judy",
 							"architectures": [
@@ -334,6 +346,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "mariadb:10.3::Judy",
 							"architectures": [
@@ -354,6 +369,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "mariadb:10.5::Judy",
 							"architectures": [
@@ -379,7 +397,7 @@
 	"data_source": {
 		"id": "alma-errata",
 		"raws": [
-			"fixtures/8/2019/ALSA-2019%3A3708.json"
+			"fixtures/8/2019/ALSA-2019:3708.json"
 		]
 	}
 }

@@ -82,6 +82,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "FreeBSD"
 						},
@@ -101,6 +104,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "bind9-devel"
 						},
@@ -115,6 +121,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "bind916"
 						},
@@ -129,6 +138,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "bind918"
 						},
@@ -143,6 +155,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "dnsmasq"
 						},
@@ -157,6 +172,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "dnsmasq-devel"
 						},
@@ -171,6 +189,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "powerdns-recursor"
 						},
@@ -185,6 +206,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "unbound"
 						},

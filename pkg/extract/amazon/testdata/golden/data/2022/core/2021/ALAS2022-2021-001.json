@@ -107,6 +107,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "vim-X11-debuginfo",
 							"architectures": [
@@ -130,6 +133,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "vim-common-debuginfo",
 							"architectures": [

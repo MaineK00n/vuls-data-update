@@ -18,6 +18,7 @@ import (
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -237,6 +238,7 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 	for p, as := range m {
 		mm[p.major] = append(mm[p.major], criterionTypes.Criterion{
 			Vulnerable: true,
+			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 			Package: packageTypes.Package{
 				Name: func() string {
 					switch p.modularityLabel {

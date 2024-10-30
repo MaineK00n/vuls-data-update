@@ -10,14 +10,16 @@ import (
 	"github.com/pkg/errors"
 
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
 )
 
 type Criterion struct {
-	Vulnerable bool                    `json:"vulnerable,omitempty"`
-	Package    packageTypes.Package    `json:"package,omitempty"`
-	Affected   *affectedTypes.Affected `json:"affected,omitempty"`
+	Vulnerable bool                      `json:"vulnerable,omitempty"`
+	FixStatus  *fixstatusTypes.FixStatus `json:"fix_status,omitempty"`
+	Package    packageTypes.Package      `json:"package,omitempty"`
+	Affected   *affectedTypes.Affected   `json:"affected,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -37,6 +39,18 @@ func Compare(x, y Criterion) int {
 				return +1
 			default:
 				return 0
+			}
+		}(),
+		func() int {
+			switch {
+			case x.FixStatus == nil && y.FixStatus == nil:
+				return 0
+			case x.FixStatus == nil && y.FixStatus != nil:
+				return -1
+			case x.FixStatus != nil && y.FixStatus == nil:
+				return +1
+			default:
+				return fixstatusTypes.Compare(*x.FixStatus, *y.FixStatus)
 			}
 		}(),
 		packageTypes.Compare(x.Package, y.Package),
