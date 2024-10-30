@@ -1,0 +1,301 @@
+{
+	"schema_version": "1.6.0",
+	"id": "RHSA-2024:8709",
+	"modified": "2024-10-31T16:35:50Z",
+	"published": "2024-10-31T16:35:50Z",
+	"related": [
+		"CVE-2024-9675"
+	],
+	"summary": "Red Hat Security Advisory: podman security update",
+	"severity": [
+		{
+			"type": "CVSS_V3",
+			"score": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N"
+		}
+	],
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman",
+				"purl": "pkg:rpm/redhat/podman"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-debuginfo",
+				"purl": "pkg:rpm/redhat/podman-debuginfo"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-debugsource",
+				"purl": "pkg:rpm/redhat/podman-debugsource"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-docker",
+				"purl": "pkg:rpm/redhat/podman-docker"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-gvproxy",
+				"purl": "pkg:rpm/redhat/podman-gvproxy"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-gvproxy-debuginfo",
+				"purl": "pkg:rpm/redhat/podman-gvproxy-debuginfo"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-plugins",
+				"purl": "pkg:rpm/redhat/podman-plugins"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-plugins-debuginfo",
+				"purl": "pkg:rpm/redhat/podman-plugins-debuginfo"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-remote",
+				"purl": "pkg:rpm/redhat/podman-remote"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-remote-debuginfo",
+				"purl": "pkg:rpm/redhat/podman-remote-debuginfo"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Red Hat:rhel_eus:9.2::appstream",
+				"name": "podman-tests",
+				"purl": "pkg:rpm/redhat/podman-tests"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:4.4.1-21.el9_2"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://security.access.redhat.com/data/osv/RHSA-2024:8709.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://access.redhat.com/errata/RHSA-2024:8709"
+		},
+		{
+			"type": "ARTICLE",
+			"url": "https://access.redhat.com/security/updates/classification/#important"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2317458"
+		},
+		{
+			"type": "ADVISORY",
+			"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2024/rhsa-2024_8709.json"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://access.redhat.com/security/cve/CVE-2024-9675"
+		},
+		{
+			"type": "ADVISORY",
+			"url": "https://www.cve.org/CVERecord?id=CVE-2024-9675"
+		},
+		{
+			"type": "ADVISORY",
+			"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-9675"
+		}
+	]
+}
