@@ -133,12 +133,15 @@ func Fetch(opts ...Option) error {
 		case strings.HasPrefix(oval, "suse.linux.enterprise.server"):
 			osname = "suse.linux.enterprise.server"
 			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.server.")
-		case strings.HasPrefix(oval, "opensuse.tumbleweed"):
-			osname = "opensuse"
-			version = "tumbleweed"
+		case strings.HasPrefix(oval, "suse.linux.enterprise.micro"):
+			osname = "suse.linux.enterprise.micro"
+			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.micro.")
 		case strings.HasPrefix(oval, "opensuse.leap"):
 			osname = "opensuse.leap"
-			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "opensuse.leap.")
+			if strings.HasPrefix(oval, "opensuse.leap.micro") {
+				osname = "opensuse.leap.micro"
+			}
+			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), fmt.Sprintf("%s.", osname))
 		case strings.HasPrefix(oval, "opensuse"):
 			osname = "opensuse"
 			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "opensuse.")
@@ -214,9 +217,11 @@ func (opts options) walkIndexOf() ([]string, error) {
 		}
 		if !(strings.HasPrefix(txt, "opensuse") ||
 			strings.HasPrefix(txt, "opensuse.leap") ||
+			strings.HasPrefix(txt, "opensuse.leap.micro") ||
 			strings.HasPrefix(txt, "opensuse.tumbleweed") ||
 			strings.HasPrefix(txt, "suse.linux.enterprise.desktop") ||
-			strings.HasPrefix(txt, "suse.linux.enterprise.server")) || strings.HasPrefix(txt, "opensuse.leap.micro") {
+			strings.HasPrefix(txt, "suse.linux.enterprise.server") ||
+			strings.HasPrefix(txt, "suse.linux.enterprise.micro")) {
 			return
 		}
 		if strings.Contains(txt, "-patch") || strings.Contains(txt, "-affected") {
