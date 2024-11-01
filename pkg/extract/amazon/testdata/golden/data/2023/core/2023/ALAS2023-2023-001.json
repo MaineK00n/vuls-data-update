@@ -71,6 +71,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog",
 							"architectures": [
@@ -94,6 +97,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-crypto",
 							"architectures": [
@@ -117,6 +123,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-crypto-debuginfo",
 							"architectures": [
@@ -140,6 +149,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-debuginfo",
 							"architectures": [
@@ -163,6 +175,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-debugsource",
 							"architectures": [
@@ -186,6 +201,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-doc",
 							"architectures": [
@@ -209,6 +227,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-elasticsearch",
 							"architectures": [
@@ -232,6 +253,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-elasticsearch-debuginfo",
 							"architectures": [
@@ -255,6 +279,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-logrotate",
 							"architectures": [
@@ -278,6 +305,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmaudit",
 							"architectures": [
@@ -301,6 +331,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmaudit-debuginfo",
 							"architectures": [
@@ -324,6 +357,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmfields",
 							"architectures": [
@@ -347,6 +383,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmfields-debuginfo",
 							"architectures": [
@@ -370,6 +409,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmjsonparse",
 							"architectures": [
@@ -393,6 +435,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmjsonparse-debuginfo",
 							"architectures": [
@@ -416,6 +461,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmkubernetes",
 							"architectures": [
@@ -439,6 +487,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmkubernetes-debuginfo",
 							"architectures": [
@@ -462,6 +513,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmnormalize",
 							"architectures": [
@@ -485,6 +539,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-mmnormalize-debuginfo",
 							"architectures": [
@@ -508,6 +565,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-openssl",
 							"architectures": [
@@ -531,6 +591,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "rsyslog-openssl-debuginfo",
 							"architectures": [

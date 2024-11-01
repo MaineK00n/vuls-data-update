@@ -61,6 +61,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "fixed"
+						},
 						"package": {
 							"name": "lib32-gdk-pixbuf2"
 						},

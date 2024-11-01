@@ -47,6 +47,9 @@
 				"criterions": [
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py310-django32"
 						},
@@ -61,6 +64,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py310-django42"
 						},
@@ -75,6 +81,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py311-django32"
 						},
@@ -89,6 +98,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py311-django42"
 						},
@@ -103,6 +115,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py311-django50"
 						},
@@ -117,6 +132,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py39-django32"
 						},
@@ -131,6 +149,9 @@
 					},
 					{
 						"vulnerable": true,
+						"fix_status": {
+							"class": "unknown"
+						},
 						"package": {
 							"name": "py39-django42"
 						},
