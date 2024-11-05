@@ -1,6 +1,9 @@
-# $NetBSD: pkg-vulnerabilities,v 1.10905 2023/05/23 08:14:53 wiz Exp $
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+# $NetBSD: pkg-vulnerabilities,v 1.271 2024/10/31 11:02:38 wiz Exp $
 #
-#FORMAT 1.0.0
+#FORMAT 1.1.0
 #
 # Please read "Handling packages with security problems" in the pkgsrc
 # guide before editing this file.
@@ -27,3 +30,21 @@
 # package		type of exploit		URL
 cfengine<1.5.3nb3	remote-root-shell	ftp://ftp.NetBSD.org/pub/NetBSD/security/advisories/NetBSD-SA2000-013.txt.asc
 navigator<4.75		remote-user-access	http://www.cert.org/advisories/CA-2000-15.html
+#CHECKSUM SHA1 40f3f1a65c6f57cf95f3b75e7db6f32d15ccdb3b
+#CHECKSUM SHA512 e9121dfd201bd7ec01297b5671d5de0d46539aed2e9ec7ac59addfcfcf66de0d571f4dd0a6a4a8088baf86e8e61fb85c96e2899618865d12f63a548f66b6742d
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJnI2QzAAoJEAqTd/uumSZiXY8QAICfZzfFMJa1lfjMFw6UG4/p
+KQH/H9RCW0DruyDXszWu2UurwHlengAKhHdchlN3mDYjmZ7I/+B1JI5BqFPAtf78
+nv69BDLr6FKefRZxaYELXmKxRlY9TopcSNNBg2Q+qIRyHRxok8WGILrgZYVrEE5I
+/rvaK5MwYqCmD1LtQyujdz8+1yY6/t0E0DUzJJoRZrZ2/F/uE6a2lRqMyJDDxEV1
+D0haUYyDP56IdpXvXGJzq6J6IrvIbLz3WfNnK+yHwFka3B5s6isSkUnqJvWvi/In
+T04g1GPlT7Cidvt/lz6eYlSljDPdUblCv2OsGypTiAJsbqw+JznzW2k0/47NXHqy
+2HOKQ4lghZKDiY9dcYeM+JE+HkYXJ8DzXstjkHK2uDL00WuZJsqTjT+d7xi9icyU
+kt2TA1zehJZa3qWQTspxRdM7Vhpk56F4vxfesq8Crj3pB7kGzRQotrjgDhmPryoz
+MzCfvYNThVQ1EGoe5BEuvt33ryn7EogYXtqv1NlpHsbBOB3r/11DwwMgUSWu2jbX
+fMwzEoqlx0ROB5Ea5yvJhATaqy0Y+Vk6x13MGRzFP1wnNyn/yyd0TCq1hTsdK1qb
+kB79aYLKmPijx0DZqzgBrH2+e+6LB2iwaO0CpyB67N9KlO3DHkaobwvnKCLcPHSV
+jAdOP1pETuZyB6y+H+O9
+=CZ3d
+-----END PGP SIGNATURE-----

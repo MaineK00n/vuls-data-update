@@ -3,7 +3,6 @@ package netbsd
 import (
 	"bufio"
 	"io"
-	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -14,7 +13,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://ftp.netbsd.org/pub/pkgsrc/distfiles/vulnerabilities"
+const dataURL = "https://ftp.netbsd.org/pub/NetBSD/packages/vulns/pkg-vulnerabilities"
 
 type options struct {
 	dataURL string
@@ -73,7 +72,7 @@ func Fetch(opts ...Option) error {
 
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
-		return errors.Wrap(err, "fetch updateinfo data")
+		return errors.Wrap(err, "fetch pkg-vulnerabilities")
 	}
 	defer resp.Body.Close()
 
@@ -84,23 +83,29 @@ func Fetch(opts ...Option) error {
 
 	var vs []Vulnerability
 
+	// ref. parse_pkg_vuln https://cdn.netbsd.org/pub/pkgsrc/stable/pkgsrc/pkgtools/pkg_install/files/lib/vulnerabilities-file.c
 	s := bufio.NewScanner(resp.Body)
+LOOP:
 	for s.Scan() {
 		t := s.Text()
-		if strings.HasPrefix(t, "#") {
-			continue
+		switch {
+		case t == "":
+		case strings.HasPrefix(t, "-----BEGIN PGP SIGNED MESSAGE-----"):
+		case strings.HasPrefix(t, "Hash:"):
+		case strings.HasPrefix(t, "#"):
+		case strings.HasPrefix(t, "-----BEGIN PGP SIGNATURE-----"):
+			break LOOP
+		default:
+			ss := strings.Fields(t)
+			if len(ss) != 3 {
+				return errors.Errorf("unexpected line format. expected: %q, actual: %q", "<package> <type of exploit> <URL>", t)
+			}
+			vs = append(vs, Vulnerability{
+				Package:       ss[0],
+				TypeOfExploit: ss[1],
+				URL:           ss[2],
+			})
 		}
-
-		ss := strings.Fields(t)
-		if len(ss) != 3 {
-			log.Printf(`[WARN]: unexpected line format. expected: "<package> <type of exploit> <URL>", actual: "%s"`, t)
-			continue
-		}
-		vs = append(vs, Vulnerability{
-			Package:       ss[0],
-			TypeOfExploit: ss[1],
-			URL:           ss[2],
-		})
 	}
 	if err := s.Err(); err != nil {
 		return errors.Wrap(err, "scanner encounter error")

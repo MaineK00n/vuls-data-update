@@ -21,7 +21,7 @@ func TestFetch(t *testing.T) {
 	}{
 		{
 			name:     "happy path",
-			testdata: "testdata/fixtures/vulnerabilities",
+			testdata: "testdata/fixtures/pkg-vulnerabilities",
 		},
 	}
 	for _, tt := range tests {
