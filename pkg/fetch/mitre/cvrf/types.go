@@ -40,27 +40,20 @@ type cvrfdoc struct {
 		Title    string `xml:"Title,attr"`
 		Type     string `xml:"Type,attr"`
 	} `xml:"DocumentNotes>Note"`
-	Vulnerability []struct {
-		Title string `xml:"Title"`
-		CVE   string `xml:"CVE"`
-		Notes []struct {
-			Title string `xml:"Title,attr"`
-			Type  string `xml:"Type,attr"`
-			Text  string `xml:",chardata"`
-		} `xml:"Notes>Note"`
-		References []Reference `xml:"References>Reference"`
-	} `xml:"Vulnerability"`
+	Vulnerability []Vulnerability `xml:"Vulnerability"`
 }
 
 type Vulnerability struct {
-	Title string `json:"title,omitempty"`
-	CVE   string `json:"cve,omitempty"`
-	Notes struct {
-		Description string `json:"description,omitempty"`
-		Published   string `json:"published,omitempty"`
-		Modified    string `json:"modified,omitempty"`
-	} `json:"notes,omitempty"`
-	References []Reference `json:"references,omitempty"`
+	Title      string      `xml:"Title" json:"title,omitempty"`
+	CVE        string      `xml:"CVE" json:"cve,omitempty"`
+	Notes      []Note      `xml:"Notes>Note" json:"notes,omitempty"`
+	References []Reference `xml:"References>Reference" json:"references,omitempty"`
+}
+
+type Note struct {
+	Title string `xml:"Title,attr" json:"title,omitempty"`
+	Type  string `xml:"Type,attr" json:"type,omitempty"`
+	Text  string `xml:",chardata" json:"text,omitempty"`
 }
 
 type Reference struct {

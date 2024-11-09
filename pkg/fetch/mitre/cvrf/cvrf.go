@@ -93,37 +93,8 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
-	vs := make([]Vulnerability, 0, len(doc.Vulnerability))
-	for _, dv := range doc.Vulnerability {
-		v := Vulnerability{
-			Title:      dv.Title,
-			CVE:        dv.CVE,
-			References: dv.References,
-		}
-
-		for _, n := range dv.Notes {
-			switch n.Type {
-			case "Description":
-				v.Notes.Description = n.Text
-			case "Other":
-				switch n.Title {
-				case "Published":
-					v.Notes.Published = n.Text
-				case "Modified":
-					v.Notes.Modified = n.Text
-				default:
-					log.Printf(`[WARN] unsupport Note Title. accepts: ["Published", "Modified"], received: "%s"`, n.Title)
-				}
-			default:
-				log.Printf(`[WARN] unsupport Note type. accepts: ["Description", "Other"], received: "%s"`, n.Type)
-			}
-		}
-
-		vs = append(vs, v)
-	}
-
-	bar := pb.StartNew(len(vs))
-	for _, v := range vs {
+	bar := pb.StartNew(len(doc.Vulnerability))
+	for _, v := range doc.Vulnerability {
 		splitted, err := util.Split(v.CVE, "-", "-")
 		if err != nil {
 			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE)
