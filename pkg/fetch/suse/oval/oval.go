@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"net/http"
 	"net/url"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -129,22 +131,22 @@ func Fetch(opts ...Option) error {
 		switch {
 		case strings.HasPrefix(oval, "suse.linux.enterprise.desktop"):
 			osname = "suse.linux.enterprise.desktop"
-			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.desktop.")
+			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "suse.linux.enterprise.desktop.")
 		case strings.HasPrefix(oval, "suse.linux.enterprise.server"):
 			osname = "suse.linux.enterprise.server"
-			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.server.")
+			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "suse.linux.enterprise.server.")
 		case strings.HasPrefix(oval, "suse.linux.enterprise.micro"):
 			osname = "suse.linux.enterprise.micro"
-			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "suse.linux.enterprise.micro.")
+			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "suse.linux.enterprise.micro.")
 		case strings.HasPrefix(oval, "opensuse.leap"):
 			osname = "opensuse.leap"
 			if strings.HasPrefix(oval, "opensuse.leap.micro") {
 				osname = "opensuse.leap.micro"
 			}
-			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), fmt.Sprintf("%s.", osname))
+			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), fmt.Sprintf("%s.", osname))
 		case strings.HasPrefix(oval, "opensuse"):
 			osname = "opensuse"
-			version = strings.TrimPrefix(strings.TrimSuffix(oval, ".xml.gz"), "opensuse.")
+			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "opensuse.")
 		default:
 			return errors.Wrapf(err, `unexpected ovalname. accepts: "<osname>.<version>.xml.gz", received: "%s"`, oval)
 		}
@@ -209,7 +211,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 		return nil, errors.Wrap(err, "parse as html")
 	}
 
-	var ovals []string
+	ovals := make(map[string]string)
 	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
 		txt := selection.Text()
 		if !strings.HasSuffix(txt, ".xml.gz") {
@@ -224,10 +226,16 @@ func (opts options) walkIndexOf() ([]string, error) {
 			strings.HasPrefix(txt, "suse.linux.enterprise.micro")) {
 			return
 		}
-		if strings.Contains(txt, "-patch") || strings.Contains(txt, "-affected") {
-			return
+
+		switch {
+		case strings.Contains(txt, "-affected"):
+			ovals[strings.TrimSuffix(txt, "-affected.xml.gz")] = txt
+		case strings.Contains(txt, "-patch"):
+		default:
+			if _, ok := ovals[strings.TrimSuffix(txt, ".xml.gz")]; !ok {
+				ovals[strings.TrimSuffix(txt, ".xml.gz")] = txt
+			}
 		}
-		ovals = append(ovals, txt)
 	})
-	return ovals, nil
+	return slices.Collect(maps.Values(ovals)), nil
 }
