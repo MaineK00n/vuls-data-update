@@ -1,13 +1,12 @@
-package fortinet
+package handmade
 
 import (
 	"io/fs"
 	"log"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	"github.com/pkg/errors"
 )
 
 type options struct {

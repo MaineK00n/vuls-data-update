@@ -1,4 +1,4 @@
-package fortinet_test
+package cvrf_test
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/cvrf"
 )
 
 func TestFetch(t *testing.T) {
@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := fortinet.Fetch(tt.args, fortinet.WithDataURL(fmt.Sprintf("%s/%%s", ts.URL)), fortinet.WithDir(dir), fortinet.WithRetry(0), fortinet.WithConcurrency(1), fortinet.WithWait(0))
+			err := cvrf.Fetch(tt.args, cvrf.WithDataURL(fmt.Sprintf("%s/%%s", ts.URL)), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithConcurrency(1), cvrf.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

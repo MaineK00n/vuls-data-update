@@ -1,4 +1,4 @@
-package fortinet
+package cvrf
 
 type CVRF struct {
 	DocumentTitle     string `xml:"DocumentTitle" json:"document_title,omitempty"`

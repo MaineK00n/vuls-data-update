@@ -1,10 +1,10 @@
-package fortinet_test
+package osv_test
 
 import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/ghactions/osv"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := fortinet.Extract(tt.args, fortinet.WithDir(dir))
+			err := osv.Extract(tt.args, osv.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

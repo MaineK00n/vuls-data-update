@@ -25,10 +25,12 @@ jobs:
           - "capec"
           - "cargo-ghsa"
           - "cargo-osv"
+          # - "cargo-db"
           - "chainguard-osv"
           - "composer-ghsa"
           - "composer-glsa"
           - "composer-osv"
+          # - "composer-db"
           - "conan-glsa"
           - "cwe"
           - "debian-osv"
@@ -48,6 +50,8 @@ jobs:
           - "golang-ghsa"
           - "golang-glsa"
           - "golang-osv"
+          # - "golang-db"
+          # - "golang-vulndb"
           - "haskell-osv"
           - "jvn-feed-detail"
           - "jvn-feed-product"
@@ -65,6 +69,7 @@ jobs:
           - "npm-ghsa"
           - "npm-glsa"
           - "npm-osv"
+          # - "npm-db"
           - "nuget-ghsa"
           - "nuget-glsa"
           - "nuget-osv"
@@ -73,9 +78,11 @@ jobs:
           - "nvd-feed-cpematch"
           - "oracle"
           - "oss-fuzz-osv"
+          # - "perl-db"
           - "pip-ghsa"
           - "pip-glsa"
           - "pip-osv"
+          # - "pip-db"
           - "pub-ghsa"
           - "pub-osv"
           - "r-osv"
@@ -92,6 +99,7 @@ jobs:
           - "rubygems-ghsa"
           - "rubygems-glsa"
           - "rubygems-osv"
+          # - "rubygems-db"
           - "snort"
           - "suse-oval"
           - "suse-cvrf"
@@ -555,8 +563,8 @@ jobs:
             git push
           fi
 
-  fetch-fortinet:
-    name: fetch vuls-data-raw-fortinet
+  fetch-fortinet-cvrf:
+    name: fetch vuls-data-raw-fortinet-cvrf
     runs-on: ubuntu-latest
     steps:
       - name: Maximize build space
@@ -603,7 +611,7 @@ jobs:
 
       - name: Fetch
         if: ${{ steps.list.outputs.advisory != '' }}
-        run: vuls-data-update fetch fortinet --dir vuls-data-raw-fortinet-cvrf ${{ steps.list.outputs.advisory }}
+        run: vuls-data-update fetch fortinet-cvrf --dir vuls-data-raw-fortinet-cvrf ${{ steps.list.outputs.advisory }}
 
       - name: Split Large Files
         if: ${{ steps.list.outputs.advisory != '' }}
