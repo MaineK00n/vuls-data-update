@@ -1,0 +1,98 @@
+{
+	"id": "SUSE-SU-2015:0011-2",
+	"modified": "2014-01-27T18:38:10Z",
+	"published": "2014-01-27T18:38:10Z",
+	"related": [
+		"CVE-2012-1667",
+		"CVE-2012-3817",
+		"CVE-2012-4244",
+		"CVE-2012-5166",
+		"CVE-2013-4854",
+		"CVE-2014-0591",
+		"CVE-2014-8500"
+	],
+	"summary": "Security update for bind",
+	"details": "\nThis update fixes a DoS vulnerability in bind when handling malformed \nNSEC3-signed zones. CVE-2014-0591 has been assigned to this issue.\n\nSecurity Issue references:\n\n    * CVE-2014-0591\n      <http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0591>\n\n",
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://www.suse.com/support/update/announcement/2015/suse-su-20150011-2/"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/743758"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/765315"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/772945"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/780157"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/784602"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/796112"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/815230"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/819475"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/831899"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/858639"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/882511"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/908994"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-1667"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-3817"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-4244"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2012-5166"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2013-4854"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-0591"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2014-8500"
+		}
+	]
+}

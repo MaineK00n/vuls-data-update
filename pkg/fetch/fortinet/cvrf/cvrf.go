@@ -1,4 +1,4 @@
-package fortinet
+package cvrf
 
 import (
 	"encoding/xml"

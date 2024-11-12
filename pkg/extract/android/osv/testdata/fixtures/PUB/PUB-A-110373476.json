@@ -1,0 +1,94 @@
+{
+	"schema_version": "1.6.0",
+	"id": "PUB-A-110373476",
+	"modified": "2024-08-29T07:12:50.024093Z",
+	"published": "2021-06-01T00:00:00Z",
+	"aliases": [
+		"A-110373476",
+		"CVE-2021-0605"
+	],
+	"summary": "[slab-out-of-bounds in kernel xfrm module function xfrm_state_walk]",
+	"details": "In addr_match of xfrm.h, there is a possible out-of-bounds read due to a missing bounds check. This could lead to local information disclosure in the kernel with System execution privileges needed. User interaction is not needed for exploitation.",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Android",
+				"name": ":linux_kernel:"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": ":0"
+						},
+						{
+							"fixed": ":2021-06-05"
+						}
+					]
+				}
+			],
+			"versions": [
+				"Kernel"
+			],
+			"ecosystem_specific": {
+				"fixes": [
+					"http://android.googlesource.com/kernel/common/+/b59a23d596807a5aa88d8dd5655a66c6843729b3"
+				],
+				"severity": "Moderate",
+				"spl": "2021-06-05",
+				"types": [
+					"ID"
+				],
+				"vanir_signatures": [
+					{
+						"deprecated": false,
+						"digest": {
+							"line_hashes": [
+								"12193446288571942057135608200392438833",
+								"137073672524336082138202951569919425626",
+								"141661769773401445728171340982954635025"
+							],
+							"threshold": 0.9
+						},
+						"id": "PUB-A-110373476-3914a5bc",
+						"signature_type": "Line",
+						"signature_version": "v1",
+						"source": "http://android.googlesource.com/kernel/common/+/b59a23d596807a5aa88d8dd5655a66c6843729b3",
+						"target": {
+							"file": "net/key/af_key.c"
+						}
+					},
+					{
+						"deprecated": false,
+						"digest": {
+							"function_hash": "9210386365306330411516133361957322630",
+							"length": 1242
+						},
+						"id": "PUB-A-110373476-99e09f70",
+						"signature_type": "Function",
+						"signature_version": "v1",
+						"source": "http://android.googlesource.com/kernel/common/+/b59a23d596807a5aa88d8dd5655a66c6843729b3",
+						"target": {
+							"file": "net/key/af_key.c",
+							"function": "pfkey_dump"
+						}
+					}
+				]
+			},
+			"database_specific": {
+				"source": "https://storage.googleapis.com/android-osv/PUB-A-110373476.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://source.android.com/security/bulletin/2021-06-01"
+		},
+		{
+			"type": "FIX",
+			"url": "http://android.googlesource.com/kernel/common/+/b59a23d596807a5aa88d8dd5655a66c6843729b3"
+		}
+	]
+}

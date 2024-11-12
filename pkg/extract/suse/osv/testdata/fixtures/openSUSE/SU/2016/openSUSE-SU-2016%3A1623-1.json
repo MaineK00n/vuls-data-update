@@ -1,0 +1,296 @@
+{
+	"id": "openSUSE-SU-2016:1623-1",
+	"modified": "2016-07-06T12:21:45Z",
+	"published": "2016-07-06T12:21:45Z",
+	"related": [
+		"CVE-2016-1704"
+	],
+	"summary": "Security update for Chromium",
+	"details": "Chromium was updated to 51.0.2704.103 to fix three vulnerabilities:\n\n- CVE-2016-1704: Various fixes from internal audits, fuzzing and other initiatives (shared identifier) (boo#985397)",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "SUSE:Package Hub 12",
+				"name": "chromium",
+				"purl": "purl:rpm/suse/chromium&distro=SUSE%20Package%20Hub%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "51.0.2704.103-85.3"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"chromedriver": "51.0.2704.103-85.3",
+						"chromium": "51.0.2704.103-85.3",
+						"chromium-desktop-gnome": "51.0.2704.103-85.3",
+						"chromium-desktop-kde": "51.0.2704.103-85.3",
+						"chromium-ffmpegsumo": "51.0.2704.103-85.3",
+						"imlib2": "1.4.5-5.1",
+						"imlib2-devel": "1.4.5-5.1",
+						"imlib2-filters": "1.4.5-5.1",
+						"imlib2-loaders": "1.4.5-5.1",
+						"libImlib2-1": "1.4.5-5.1",
+						"libprotobuf-lite8": "2.5.0-2.1",
+						"libprotobuf8": "2.5.0-2.1",
+						"libprotoc8": "2.5.0-2.1",
+						"mosh": "1.2.5-8.1",
+						"ninja": "1.5.3-4.1",
+						"perl-Switch": "2.17-4.1",
+						"protobuf-devel": "2.5.0-2.1",
+						"protobuf-java": "2.5.0-2.1",
+						"python-protobuf": "2.5.0-2.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Package Hub 12",
+				"name": "imlib2",
+				"purl": "purl:rpm/suse/imlib2&distro=SUSE%20Package%20Hub%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.4.5-5.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"chromedriver": "51.0.2704.103-85.3",
+						"chromium": "51.0.2704.103-85.3",
+						"chromium-desktop-gnome": "51.0.2704.103-85.3",
+						"chromium-desktop-kde": "51.0.2704.103-85.3",
+						"chromium-ffmpegsumo": "51.0.2704.103-85.3",
+						"imlib2": "1.4.5-5.1",
+						"imlib2-devel": "1.4.5-5.1",
+						"imlib2-filters": "1.4.5-5.1",
+						"imlib2-loaders": "1.4.5-5.1",
+						"libImlib2-1": "1.4.5-5.1",
+						"libprotobuf-lite8": "2.5.0-2.1",
+						"libprotobuf8": "2.5.0-2.1",
+						"libprotoc8": "2.5.0-2.1",
+						"mosh": "1.2.5-8.1",
+						"ninja": "1.5.3-4.1",
+						"perl-Switch": "2.17-4.1",
+						"protobuf-devel": "2.5.0-2.1",
+						"protobuf-java": "2.5.0-2.1",
+						"python-protobuf": "2.5.0-2.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Package Hub 12",
+				"name": "mosh",
+				"purl": "purl:rpm/suse/mosh&distro=SUSE%20Package%20Hub%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.2.5-8.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"chromedriver": "51.0.2704.103-85.3",
+						"chromium": "51.0.2704.103-85.3",
+						"chromium-desktop-gnome": "51.0.2704.103-85.3",
+						"chromium-desktop-kde": "51.0.2704.103-85.3",
+						"chromium-ffmpegsumo": "51.0.2704.103-85.3",
+						"imlib2": "1.4.5-5.1",
+						"imlib2-devel": "1.4.5-5.1",
+						"imlib2-filters": "1.4.5-5.1",
+						"imlib2-loaders": "1.4.5-5.1",
+						"libImlib2-1": "1.4.5-5.1",
+						"libprotobuf-lite8": "2.5.0-2.1",
+						"libprotobuf8": "2.5.0-2.1",
+						"libprotoc8": "2.5.0-2.1",
+						"mosh": "1.2.5-8.1",
+						"ninja": "1.5.3-4.1",
+						"perl-Switch": "2.17-4.1",
+						"protobuf-devel": "2.5.0-2.1",
+						"protobuf-java": "2.5.0-2.1",
+						"python-protobuf": "2.5.0-2.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Package Hub 12",
+				"name": "ninja",
+				"purl": "purl:rpm/suse/ninja&distro=SUSE%20Package%20Hub%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1.5.3-4.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"chromedriver": "51.0.2704.103-85.3",
+						"chromium": "51.0.2704.103-85.3",
+						"chromium-desktop-gnome": "51.0.2704.103-85.3",
+						"chromium-desktop-kde": "51.0.2704.103-85.3",
+						"chromium-ffmpegsumo": "51.0.2704.103-85.3",
+						"imlib2": "1.4.5-5.1",
+						"imlib2-devel": "1.4.5-5.1",
+						"imlib2-filters": "1.4.5-5.1",
+						"imlib2-loaders": "1.4.5-5.1",
+						"libImlib2-1": "1.4.5-5.1",
+						"libprotobuf-lite8": "2.5.0-2.1",
+						"libprotobuf8": "2.5.0-2.1",
+						"libprotoc8": "2.5.0-2.1",
+						"mosh": "1.2.5-8.1",
+						"ninja": "1.5.3-4.1",
+						"perl-Switch": "2.17-4.1",
+						"protobuf-devel": "2.5.0-2.1",
+						"protobuf-java": "2.5.0-2.1",
+						"python-protobuf": "2.5.0-2.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Package Hub 12",
+				"name": "perl-Switch",
+				"purl": "purl:rpm/suse/perl-Switch&distro=SUSE%20Package%20Hub%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2.17-4.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"chromedriver": "51.0.2704.103-85.3",
+						"chromium": "51.0.2704.103-85.3",
+						"chromium-desktop-gnome": "51.0.2704.103-85.3",
+						"chromium-desktop-kde": "51.0.2704.103-85.3",
+						"chromium-ffmpegsumo": "51.0.2704.103-85.3",
+						"imlib2": "1.4.5-5.1",
+						"imlib2-devel": "1.4.5-5.1",
+						"imlib2-filters": "1.4.5-5.1",
+						"imlib2-loaders": "1.4.5-5.1",
+						"libImlib2-1": "1.4.5-5.1",
+						"libprotobuf-lite8": "2.5.0-2.1",
+						"libprotobuf8": "2.5.0-2.1",
+						"libprotoc8": "2.5.0-2.1",
+						"mosh": "1.2.5-8.1",
+						"ninja": "1.5.3-4.1",
+						"perl-Switch": "2.17-4.1",
+						"protobuf-devel": "2.5.0-2.1",
+						"protobuf-java": "2.5.0-2.1",
+						"python-protobuf": "2.5.0-2.1"
+					}
+				]
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "SUSE:Package Hub 12",
+				"name": "protobuf",
+				"purl": "purl:rpm/suse/protobuf&distro=SUSE%20Package%20Hub%2012"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2.5.0-2.1"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"binaries": [
+					{
+						"chromedriver": "51.0.2704.103-85.3",
+						"chromium": "51.0.2704.103-85.3",
+						"chromium-desktop-gnome": "51.0.2704.103-85.3",
+						"chromium-desktop-kde": "51.0.2704.103-85.3",
+						"chromium-ffmpegsumo": "51.0.2704.103-85.3",
+						"imlib2": "1.4.5-5.1",
+						"imlib2-devel": "1.4.5-5.1",
+						"imlib2-filters": "1.4.5-5.1",
+						"imlib2-loaders": "1.4.5-5.1",
+						"libImlib2-1": "1.4.5-5.1",
+						"libprotobuf-lite8": "2.5.0-2.1",
+						"libprotobuf8": "2.5.0-2.1",
+						"libprotoc8": "2.5.0-2.1",
+						"mosh": "1.2.5-8.1",
+						"ninja": "1.5.3-4.1",
+						"perl-Switch": "2.17-4.1",
+						"protobuf-devel": "2.5.0-2.1",
+						"protobuf-java": "2.5.0-2.1",
+						"python-protobuf": "2.5.0-2.1"
+					}
+				]
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/YZEJKKNZYG5BDVQ23L4VBAOOMBMGL3BQ/#YZEJKKNZYG5BDVQ23L4VBAOOMBMGL3BQ"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.suse.com/985397"
+		},
+		{
+			"type": "WEB",
+			"url": "https://www.suse.com/security/cve/CVE-2016-1704"
+		}
+	]
+}
