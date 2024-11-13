@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhba:obj:20194268005",
+	"version": "635",
+	"name": "ipa-client-samba"
+}

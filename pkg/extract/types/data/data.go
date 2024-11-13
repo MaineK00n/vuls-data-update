@@ -91,7 +91,19 @@ func (d *Data) Merge(ds ...Data) {
 		}
 		d.Vulnerabilities = vs
 
-		d.Detections = append(d.Detections, e.Detections...)
+		ds := d.Detections
+		for _, ed := range e.Detections {
+			i := slices.IndexFunc(ds, func(d detectionTypes.Detection) bool {
+				return d.Ecosystem == ed.Ecosystem
+			})
+			switch {
+			case i < 0:
+				ds = append(ds, ed)
+			default:
+				ds[i].Conditions = append(ds[i].Conditions, ed.Conditions...)
+			}
+		}
+		d.Detections = ds
 
 		for _, r := range e.DataSource.Raws {
 			if !slices.Contains(d.DataSource.Raws, r) {

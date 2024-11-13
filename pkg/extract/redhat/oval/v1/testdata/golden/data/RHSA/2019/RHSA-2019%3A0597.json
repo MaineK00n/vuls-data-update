@@ -1,0 +1,303 @@
+{
+	"id": "RHSA-2019:0597",
+	"advisories": [
+		{
+			"content": {
+				"id": "RHSA-2019:0597",
+				"title": "RHSA-2019:0597: cloud-init security update (Moderate)",
+				"description": "The cloud-init packages provide a set of init scripts for cloud instances. Cloud instances need special scripts to run during initialization to retrieve and install SSH keys, and to let the user run various scripts.\n\nSecurity Fix(es):\n\n* cloud-init: extra ssh keys added to authorized_keys on the Azure platform (CVE-2019-0816)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Moderate"
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/errata/RHSA-2019:0597"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-0816"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1680165"
+					}
+				],
+				"published": "2019-03-18T00:00:00Z",
+				"modified": "2019-03-18T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:7",
+					"tag": "7"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2019-0816",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "moderate"
+					},
+					{
+						"type": "cvss_v30",
+						"source": "secalert@redhat.com",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+							"base_score": 5.4,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.4,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.4,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"CWE-285"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-0816"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1680165"
+					}
+				],
+				"published": "2019-03-05T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:7",
+					"tag": "7"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "redhat:7",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "AND",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "cloud-init",
+										"architectures": [
+											"aarch64",
+											"ppc64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										],
+										"repositories": [
+											"rhel-7-for-arm-64-debug-rpms",
+											"rhel-7-for-arm-64-optional-debug-rpms",
+											"rhel-7-for-arm-64-optional-rpms",
+											"rhel-7-for-arm-64-optional-source-rpms",
+											"rhel-7-for-arm-64-rpms",
+											"rhel-7-for-arm-64-source-rpms",
+											"rhel-7-for-power-9-debug-rpms",
+											"rhel-7-for-power-9-optional-debug-rpms",
+											"rhel-7-for-power-9-optional-rpms",
+											"rhel-7-for-power-9-optional-source-rpms",
+											"rhel-7-for-power-9-rpms",
+											"rhel-7-for-power-9-source-rpms",
+											"rhel-7-for-power-debug-rpms",
+											"rhel-7-for-power-eus-debug-rpms",
+											"rhel-7-for-power-eus-optional-debug-rpms",
+											"rhel-7-for-power-eus-optional-rpms",
+											"rhel-7-for-power-eus-optional-source-rpms",
+											"rhel-7-for-power-eus-rpms",
+											"rhel-7-for-power-eus-source-rpms",
+											"rhel-7-for-power-fastrack-debug-rpms",
+											"rhel-7-for-power-fastrack-rpms",
+											"rhel-7-for-power-fastrack-source-rpms",
+											"rhel-7-for-power-le-debug-rpms",
+											"rhel-7-for-power-le-e4s-debug-rpms",
+											"rhel-7-for-power-le-e4s-optional-debug-rpms",
+											"rhel-7-for-power-le-e4s-optional-rpms",
+											"rhel-7-for-power-le-e4s-optional-source-rpms",
+											"rhel-7-for-power-le-e4s-rpms",
+											"rhel-7-for-power-le-e4s-source-rpms",
+											"rhel-7-for-power-le-eus-debug-rpms",
+											"rhel-7-for-power-le-eus-optional-debug-rpms",
+											"rhel-7-for-power-le-eus-optional-rpms",
+											"rhel-7-for-power-le-eus-optional-source-rpms",
+											"rhel-7-for-power-le-eus-rpms",
+											"rhel-7-for-power-le-eus-source-rpms",
+											"rhel-7-for-power-le-optional-debug-rpms",
+											"rhel-7-for-power-le-optional-rpms",
+											"rhel-7-for-power-le-optional-source-rpms",
+											"rhel-7-for-power-le-rpms",
+											"rhel-7-for-power-le-source-rpms",
+											"rhel-7-for-power-optional-debug-rpms",
+											"rhel-7-for-power-optional-fastrack-debug-rpms",
+											"rhel-7-for-power-optional-fastrack-rpms",
+											"rhel-7-for-power-optional-fastrack-source-rpms",
+											"rhel-7-for-power-optional-rpms",
+											"rhel-7-for-power-optional-source-rpms",
+											"rhel-7-for-power-rpms",
+											"rhel-7-for-power-source-rpms",
+											"rhel-7-for-system-z-a-debug-rpms",
+											"rhel-7-for-system-z-a-optional-debug-rpms",
+											"rhel-7-for-system-z-a-optional-rpms",
+											"rhel-7-for-system-z-a-optional-source-rpms",
+											"rhel-7-for-system-z-a-rpms",
+											"rhel-7-for-system-z-a-source-rpms",
+											"rhel-7-for-system-z-debug-rpms",
+											"rhel-7-for-system-z-eus-debug-rpms",
+											"rhel-7-for-system-z-eus-optional-debug-rpms",
+											"rhel-7-for-system-z-eus-optional-rpms",
+											"rhel-7-for-system-z-eus-optional-source-rpms",
+											"rhel-7-for-system-z-eus-rpms",
+											"rhel-7-for-system-z-eus-source-rpms",
+											"rhel-7-for-system-z-fastrack-debug-rpms",
+											"rhel-7-for-system-z-fastrack-rpms",
+											"rhel-7-for-system-z-fastrack-source-rpms",
+											"rhel-7-for-system-z-optional-debug-rpms",
+											"rhel-7-for-system-z-optional-fastrack-debug-rpms",
+											"rhel-7-for-system-z-optional-fastrack-rpms",
+											"rhel-7-for-system-z-optional-fastrack-source-rpms",
+											"rhel-7-for-system-z-optional-rpms",
+											"rhel-7-for-system-z-optional-source-rpms",
+											"rhel-7-for-system-z-rpms",
+											"rhel-7-for-system-z-source-rpms",
+											"rhel-7-server-aus-debug-rpms",
+											"rhel-7-server-aus-optional-debug-rpms",
+											"rhel-7-server-aus-optional-rpms",
+											"rhel-7-server-aus-optional-source-rpms",
+											"rhel-7-server-aus-rpms",
+											"rhel-7-server-aus-source-rpms",
+											"rhel-7-server-debug-rpms",
+											"rhel-7-server-e4s-debug-rpms",
+											"rhel-7-server-e4s-optional-debug-rpms",
+											"rhel-7-server-e4s-optional-rpms",
+											"rhel-7-server-e4s-optional-source-rpms",
+											"rhel-7-server-e4s-rpms",
+											"rhel-7-server-e4s-source-rpms",
+											"rhel-7-server-eus-debug-rpms",
+											"rhel-7-server-eus-optional-debug-rpms",
+											"rhel-7-server-eus-optional-rpms",
+											"rhel-7-server-eus-optional-source-rpms",
+											"rhel-7-server-eus-rpms",
+											"rhel-7-server-eus-source-rpms",
+											"rhel-7-server-fastrack-debug-rpms",
+											"rhel-7-server-fastrack-rpms",
+											"rhel-7-server-fastrack-source-rpms",
+											"rhel-7-server-optional-debug-rpms",
+											"rhel-7-server-optional-fastrack-debug-rpms",
+											"rhel-7-server-optional-fastrack-rpms",
+											"rhel-7-server-optional-fastrack-source-rpms",
+											"rhel-7-server-optional-rpms",
+											"rhel-7-server-optional-source-rpms",
+											"rhel-7-server-rpms",
+											"rhel-7-server-source-rpms",
+											"rhel-7-server-tus-debug-rpms",
+											"rhel-7-server-tus-optional-debug-rpms",
+											"rhel-7-server-tus-optional-rpms",
+											"rhel-7-server-tus-optional-source-rpms",
+											"rhel-7-server-tus-rpms",
+											"rhel-7-server-tus-source-rpms",
+											"rhel-ha-for-rhel-7-for-system-z-debug-rpms",
+											"rhel-ha-for-rhel-7-for-system-z-rpms",
+											"rhel-ha-for-rhel-7-for-system-z-source-rpms",
+											"rhel-ha-for-rhel-7-server-debug-rpms",
+											"rhel-ha-for-rhel-7-server-e4s-debug-rpms",
+											"rhel-ha-for-rhel-7-server-e4s-rpms",
+											"rhel-ha-for-rhel-7-server-e4s-source-rpms",
+											"rhel-ha-for-rhel-7-server-eus-debug-rpms",
+											"rhel-ha-for-rhel-7-server-eus-rpms",
+											"rhel-ha-for-rhel-7-server-eus-source-rpms",
+											"rhel-ha-for-rhel-7-server-fastrack-debug-rpms",
+											"rhel-ha-for-rhel-7-server-fastrack-rpms",
+											"rhel-ha-for-rhel-7-server-fastrack-source-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-debug-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-e4s-debug-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-e4s-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-e4s-source-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-eus-debug-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-eus-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-eus-source-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-rpms",
+											"rhel-ha-for-rhel-7-server-for-power-le-source-rpms",
+											"rhel-ha-for-rhel-7-server-rpms",
+											"rhel-ha-for-rhel-7-server-source-rpms",
+											"rhel-rs-for-rhel-7-for-system-z-debug-rpms",
+											"rhel-rs-for-rhel-7-for-system-z-rpms",
+											"rhel-rs-for-rhel-7-for-system-z-source-rpms",
+											"rhel-rs-for-rhel-7-server-debug-rpms",
+											"rhel-rs-for-rhel-7-server-eus-debug-rpms",
+											"rhel-rs-for-rhel-7-server-eus-rpms",
+											"rhel-rs-for-rhel-7-server-eus-source-rpms",
+											"rhel-rs-for-rhel-7-server-fastrack-debug-rpms",
+											"rhel-rs-for-rhel-7-server-fastrack-rpms",
+											"rhel-rs-for-rhel-7-server-fastrack-source-rpms",
+											"rhel-rs-for-rhel-7-server-for-power-le-debug-rpms",
+											"rhel-rs-for-rhel-7-server-for-power-le-eus-debug-rpms",
+											"rhel-rs-for-rhel-7-server-for-power-le-eus-rpms",
+											"rhel-rs-for-rhel-7-server-for-power-le-eus-source-rpms",
+											"rhel-rs-for-rhel-7-server-for-power-le-rpms",
+											"rhel-rs-for-rhel-7-server-for-power-le-source-rpms",
+											"rhel-rs-for-rhel-7-server-rpms",
+											"rhel-rs-for-rhel-7-server-source-rpms"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:18.2-1.el7_6.2"
+											}
+										],
+										"fixed": [
+											"0:18.2-1.el7_6.2"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "7"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "redhat-ovalv1",
+		"raws": [
+			"repository2cpe/repository-to-cpe.json",
+			"v1/7/definitions/oval:com.redhat.rhsa:def:20190597.json",
+			"v1/7/objects/rpminfo_object/oval:com.redhat.rhsa:obj:20190597001.json",
+			"v1/7/states/rpminfo_state/oval:com.redhat.rhsa:ste:20190597001.json",
+			"v1/7/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20190597001.json",
+			"v1/7/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20190597002.json",
+			"v1/7/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20150364027.json",
+			"v1/7/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20150364028.json"
+		]
+	}
+}

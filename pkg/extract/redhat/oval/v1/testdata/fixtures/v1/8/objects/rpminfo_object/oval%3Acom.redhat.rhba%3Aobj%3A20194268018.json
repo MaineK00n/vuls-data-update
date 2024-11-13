@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhba:obj:20194268018",
+	"version": "635",
+	"name": "python3-ipaserver"
+}

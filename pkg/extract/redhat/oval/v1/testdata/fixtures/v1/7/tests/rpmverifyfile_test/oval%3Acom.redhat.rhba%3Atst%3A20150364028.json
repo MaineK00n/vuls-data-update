@@ -1,0 +1,12 @@
+{
+	"check": "none satisfy",
+	"comment": "Red Hat Enterprise Linux must be installed",
+	"id": "oval:com.redhat.rhba:tst:20150364028",
+	"version": "641",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20150364014"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20150364008"
+	}
+}

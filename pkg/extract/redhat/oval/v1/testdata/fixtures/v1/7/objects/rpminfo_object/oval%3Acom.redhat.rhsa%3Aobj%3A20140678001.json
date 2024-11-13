@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20140678001",
+	"version": "636",
+	"name": "kernel"
+}

@@ -1,0 +1,14 @@
+{
+	"id": "oval:com.redhat.rhsa:ste:20191619001",
+	"version": "636",
+	"arch": {
+		"text": "aarch64|ppc64|ppc64le|s390x|x86_64",
+		"datatype": "string",
+		"operation": "pattern match"
+	},
+	"evr": {
+		"text": "2:7.4.160-6.el7_6",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}

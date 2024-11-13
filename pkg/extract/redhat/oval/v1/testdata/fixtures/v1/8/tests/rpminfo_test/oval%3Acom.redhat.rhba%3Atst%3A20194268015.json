@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "ipa-idoverride-memberof-plugin is earlier than 0:0.0.4-6.module+el8.1.0+4098+f286395e",
+	"id": "oval:com.redhat.rhba:tst:20194268015",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20194268008"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20194268007"
+	}
+}

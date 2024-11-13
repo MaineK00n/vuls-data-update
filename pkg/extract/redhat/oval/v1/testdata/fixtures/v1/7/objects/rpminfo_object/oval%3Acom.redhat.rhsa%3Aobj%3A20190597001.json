@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20190597001",
+	"version": "637",
+	"name": "cloud-init"
+}
