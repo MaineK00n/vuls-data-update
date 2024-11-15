@@ -3,7 +3,7 @@ package ecosystem_test
 import (
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 func TestGetEcosystem(t *testing.T) {

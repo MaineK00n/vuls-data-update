@@ -16,7 +16,7 @@ type Data struct {
 	ID              string                             `json:"id,omitempty"`
 	Advisories      []advisoryTypes.Advisory           `json:"advisories,omitempty"`
 	Vulnerabilities []vulnerabilityTypes.Vulnerability `json:"vulnerabilities,omitempty"`
-	Detection       []detectionTypes.Detection         `json:"detection,omitempty"`
+	Detections      []detectionTypes.Detection         `json:"detections,omitempty"`
 	DataSource      sourceTypes.Source                 `json:"data_source,omitempty"`
 }
 
@@ -31,10 +31,10 @@ func (d *Data) Sort() {
 	}
 	slices.SortFunc(d.Vulnerabilities, vulnerabilityTypes.Compare)
 
-	for i := range d.Detection {
-		d.Detection[i].Sort()
+	for i := range d.Detections {
+		d.Detections[i].Sort()
 	}
-	slices.SortFunc(d.Detection, detectionTypes.Compare)
+	slices.SortFunc(d.Detections, detectionTypes.Compare)
 
 	d.DataSource.Sort()
 }
@@ -44,7 +44,7 @@ func Compare(x, y Data) int {
 		cmp.Compare(x.ID, y.ID),
 		slices.CompareFunc(x.Advisories, y.Advisories, advisoryTypes.Compare),
 		slices.CompareFunc(x.Vulnerabilities, y.Vulnerabilities, vulnerabilityTypes.Compare),
-		slices.CompareFunc(x.Detection, y.Detection, detectionTypes.Compare),
+		slices.CompareFunc(x.Detections, y.Detections, detectionTypes.Compare),
 		sourceTypes.Compare(x.DataSource, y.DataSource),
 	)
 }
@@ -56,36 +56,40 @@ func (d *Data) Merge(ds ...Data) {
 		}
 
 		as := d.Advisories
-		for i, da := range d.Advisories {
-			for _, ea := range e.Advisories {
-				switch advisoryContentTypes.Compare(da.Content, ea.Content) {
-				case 0:
-					as[i] = advisoryTypes.Advisory{
-						Content:    da.Content,
-						Ecosystems: append(da.Ecosystems, ea.Ecosystems...),
-					}
-				default:
-					as = append(as, ea)
+		for _, ea := range e.Advisories {
+			i := slices.IndexFunc(as, func(a advisoryTypes.Advisory) bool {
+				return advisoryContentTypes.Compare(a.Content, ea.Content) == 0
+			})
+			switch {
+			case i < 0:
+				as = append(as, ea)
+			default:
+				as[i] = advisoryTypes.Advisory{
+					Content:  as[i].Content,
+					Segments: append(as[i].Segments, ea.Segments...),
 				}
 			}
 		}
+		d.Advisories = as
 
 		vs := d.Vulnerabilities
-		for i, dv := range d.Vulnerabilities {
-			for _, ev := range e.Vulnerabilities {
-				switch vulnerabilityContentTypes.Compare(dv.Content, ev.Content) {
-				case 0:
-					vs[i] = vulnerabilityTypes.Vulnerability{
-						Content:    dv.Content,
-						Ecosystems: append(dv.Ecosystems, ev.Ecosystems...),
-					}
-				default:
-					vs = append(vs, ev)
+		for _, ev := range e.Vulnerabilities {
+			i := slices.IndexFunc(vs, func(v vulnerabilityTypes.Vulnerability) bool {
+				return vulnerabilityContentTypes.Compare(v.Content, ev.Content) == 0
+			})
+			switch {
+			case i < 0:
+				vs = append(vs, ev)
+			default:
+				vs[i] = vulnerabilityTypes.Vulnerability{
+					Content:  vs[i].Content,
+					Segments: append(vs[i].Segments, ev.Segments...),
 				}
 			}
 		}
+		d.Vulnerabilities = vs
 
-		d.Detection = append(d.Detection, e.Detection...)
+		d.Detections = append(d.Detections, e.Detections...)
 
 		for _, r := range e.DataSource.Raws {
 			if !slices.Contains(d.DataSource.Raws, r) {

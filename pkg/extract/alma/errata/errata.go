@@ -18,13 +18,15 @@ import (
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
-	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -172,7 +174,9 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 				Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
 				Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
 			},
-			Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver))},
+			Segments: []segmentTypes.Segment{{
+				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),
+			}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			m := map[string]vulnerabilityContentTypes.Content{}
@@ -193,13 +197,15 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(m))
 			for _, c := range m {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
-					Content:    c,
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver))},
+					Content: c,
+					Segments: []segmentTypes.Segment{{
+						Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),
+					}},
 				})
 			}
 			return vs
 		}(),
-		Detection: func() []detectionTypes.Detection {
+		Detections: func() []detectionTypes.Detection {
 			modules := map[string]string{}
 			for _, m := range fetched.Modules {
 				modules[fmt.Sprintf("%s:%s:%s:%s:%s", m.Name, m.Stream, m.Version, m.Context, m.Arch)] = fmt.Sprintf("%s:%s", m.Name, m.Stream)
@@ -243,10 +249,12 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 			}
 			return []detectionTypes.Detection{{
 				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),
-				Criteria: criteriaTypes.Criteria{
-					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: cs,
-				},
+				Conditions: []conditionTypes.Condition{{
+					Criteria: criteriaTypes.Criteria{
+						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: cs,
+					},
+				}},
 			}}
 		}(),
 		DataSource: sourceTypes.Source{
