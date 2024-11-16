@@ -88,23 +88,26 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "libtiff"
-								},
-								"affected": {
-									"type": "pacman",
-									"range": [
-										{
-											"lt": "4.0.8-2"
-										}
-									],
-									"fixed": [
-										"4.0.8-2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "libtiff"
+									},
+									"affected": {
+										"type": "pacman",
+										"range": [
+											{
+												"lt": "4.0.8-2"
+											}
+										],
+										"fixed": [
+											"4.0.8-2"
+										]
+									}
 								}
 							}
 						]

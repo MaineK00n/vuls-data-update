@@ -2,14 +2,50 @@ package metasploit_test
 
 import (
 	"testing"
+	"time"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/metasploit"
+	metasploitTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/metasploit"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 )
+
+func TestMetasploit_Sort(t *testing.T) {
+	type fields struct {
+		Type        string
+		Name        string
+		FullName    string
+		Description string
+		Rank        int
+		Published   *time.Time
+		Modified    *time.Time
+		References  []referenceTypes.Reference
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &metasploitTypes.Metasploit{
+				Type:        tt.fields.Type,
+				Name:        tt.fields.Name,
+				FullName:    tt.fields.FullName,
+				Description: tt.fields.Description,
+				Rank:        tt.fields.Rank,
+				Published:   tt.fields.Published,
+				Modified:    tt.fields.Modified,
+				References:  tt.fields.References,
+			}
+			m.Sort()
+		})
+	}
+}
 
 func TestCompare(t *testing.T) {
 	type args struct {
-		x metasploit.Metasploit
-		y metasploit.Metasploit
+		x metasploitTypes.Metasploit
+		y metasploitTypes.Metasploit
 	}
 	tests := []struct {
 		name string
@@ -19,12 +55,12 @@ func TestCompare(t *testing.T) {
 		{
 			name: "x == y",
 			args: args{
-				x: metasploit.Metasploit{
+				x: metasploitTypes.Metasploit{
 					Type:     "auxiliary",
 					Rank:     300,
 					FullName: "/modules/auxiliary/admin/2wire/xslt_password_reset.rb",
 				},
-				y: metasploit.Metasploit{
+				y: metasploitTypes.Metasploit{
 					Type:     "auxiliary",
 					Rank:     300,
 					FullName: "/modules/auxiliary/admin/2wire/xslt_password_reset.rb",
@@ -35,10 +71,10 @@ func TestCompare(t *testing.T) {
 		{
 			name: "x:type < y:type",
 			args: args{
-				x: metasploit.Metasploit{
+				x: metasploitTypes.Metasploit{
 					Type: "auxiliary",
 				},
-				y: metasploit.Metasploit{
+				y: metasploitTypes.Metasploit{
 					Type: "exploit",
 				},
 			},
@@ -47,11 +83,11 @@ func TestCompare(t *testing.T) {
 		{
 			name: "x:rank < y:rank",
 			args: args{
-				x: metasploit.Metasploit{
+				x: metasploitTypes.Metasploit{
 					Type: "exploit",
 					Rank: 500,
 				},
-				y: metasploit.Metasploit{
+				y: metasploitTypes.Metasploit{
 					Type: "exploit",
 					Rank: 600,
 				},
@@ -61,12 +97,12 @@ func TestCompare(t *testing.T) {
 		{
 			name: "x:fullname > y:fullname",
 			args: args{
-				x: metasploit.Metasploit{
+				x: metasploitTypes.Metasploit{
 					Type:     "exploit",
 					Rank:     600,
 					FullName: "exploit/aix/local/invscout_rpm_priv_esc",
 				},
-				y: metasploit.Metasploit{
+				y: metasploitTypes.Metasploit{
 					Type:     "exploit",
 					Rank:     600,
 					FullName: "exploit/aix/local/ibstat_path",
@@ -77,7 +113,7 @@ func TestCompare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := metasploit.Compare(tt.args.x, tt.args.y); got != tt.want {
+			if got := metasploitTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
 		})

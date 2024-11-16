@@ -68,23 +68,26 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "lib32-gdk-pixbuf2"
-								},
-								"affected": {
-									"type": "pacman",
-									"range": [
-										{
-											"lt": "2.36.0+2+ga7c869a-1"
-										}
-									],
-									"fixed": [
-										"2.36.0+2+ga7c869a-1"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "lib32-gdk-pixbuf2"
+									},
+									"affected": {
+										"type": "pacman",
+										"range": [
+											{
+												"lt": "2.36.0+2+ga7c869a-1"
+											}
+										],
+										"fixed": [
+											"2.36.0+2+ga7c869a-1"
+										]
+									}
 								}
 							}
 						]

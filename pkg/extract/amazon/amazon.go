@@ -16,10 +16,11 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -184,17 +185,20 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 					for n, evras := range pkgs {
 						for evr, as := range evras {
 							cs = append(cs, criterionTypes.Criterion{
-								Vulnerable: true,
-								FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-								Package: packageTypes.Package{
-									Name:          n,
-									Repositories:  repos,
-									Architectures: as,
-								},
-								Affected: &affectedTypes.Affected{
-									Type:  rangeTypes.RangeTypeRPM,
-									Range: []rangeTypes.Range{{LessThan: evr}},
-									Fixed: []string{evr},
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+									Package: packageTypes.Package{
+										Name:          n,
+										Repositories:  repos,
+										Architectures: as,
+									},
+									Affected: &affectedTypes.Affected{
+										Type:  rangeTypes.RangeTypeRPM,
+										Range: []rangeTypes.Range{{LessThan: evr}},
+										Fixed: []string{evr},
+									},
 								},
 							})
 						}

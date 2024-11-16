@@ -1,6 +1,8 @@
 package v31
 
 import (
+	"cmp"
+
 	gocvss31 "github.com/pandatix/go-cvss/31"
 	"github.com/pkg/errors"
 )
@@ -48,4 +50,13 @@ func Parse(vector string) (*CVSSv31, error) {
 	}
 
 	return &cvss, nil
+}
+
+func Compare(x, y CVSSv31) int {
+	return cmp.Or(
+		cmp.Compare(x.BaseScore, y.BaseScore),
+		cmp.Compare(x.TemporalScore, y.TemporalScore),
+		cmp.Compare(x.EnvironmentalScore, y.EnvironmentalScore),
+		cmp.Compare(x.Vector, y.Vector),
+	)
 }

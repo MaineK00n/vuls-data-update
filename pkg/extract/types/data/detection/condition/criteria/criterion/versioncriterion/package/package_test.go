@@ -3,8 +3,36 @@ package criterionpackage_test
 import (
 	"testing"
 
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 )
+
+func TestPackage_Sort(t *testing.T) {
+	type fields struct {
+		Name          string
+		CPE           string
+		Architectures []string
+		Repositories  []string
+		Functions     []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &criterionpackageTypes.Package{
+				Name:          tt.fields.Name,
+				CPE:           tt.fields.CPE,
+				Architectures: tt.fields.Architectures,
+				Repositories:  tt.fields.Repositories,
+				Functions:     tt.fields.Functions,
+			}
+			p.Sort()
+		})
+	}
+}
 
 func TestCompare(t *testing.T) {
 	type args struct {

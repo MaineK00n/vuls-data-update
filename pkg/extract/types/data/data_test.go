@@ -8,10 +8,61 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 )
+
+func TestData_Sort(t *testing.T) {
+	type fields struct {
+		ID              dataTypes.RootID
+		Advisories      []advisoryTypes.Advisory
+		Vulnerabilities []vulnerabilityTypes.Vulnerability
+		Detection       []detectionTypes.Detection
+		DataSource      sourceTypes.Source
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := &dataTypes.Data{
+				ID:              tt.fields.ID,
+				Advisories:      tt.fields.Advisories,
+				Vulnerabilities: tt.fields.Vulnerabilities,
+				Detections:      tt.fields.Detection,
+				DataSource:      tt.fields.DataSource,
+			}
+			d.Sort()
+		})
+	}
+}
+
+func TestCompare(t *testing.T) {
+	type args struct {
+		x dataTypes.Data
+		y dataTypes.Data
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := dataTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
+				t.Errorf("Compare() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 func TestData_Merge(t *testing.T) {
 	type args struct {
@@ -327,7 +378,7 @@ func TestData_Merge(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			(&tt.fields).Merge(tt.args.ds...)
 			if diff := cmp.Diff(tt.expected, tt.fields); diff != "" {
-				t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+				t.Errorf("Merge(). (-expected +got):\n%s", diff)
 			}
 		})
 	}

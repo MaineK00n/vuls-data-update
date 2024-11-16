@@ -65,7 +65,7 @@ func (t RangeType) String() string {
 	case RangeTypeUnknown:
 		return "unknown"
 	default:
-		return "version"
+		return "unknown"
 	}
 }
 

@@ -7,9 +7,34 @@ import (
 
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
+
+func TestCriteria_Sort(t *testing.T) {
+	type fields struct {
+		Operator   criteriaTypes.CriteriaOperatorType
+		Criterias  []criteriaTypes.Criteria
+		Criterions []criterionTypes.Criterion
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &criteriaTypes.Criteria{
+				Operator:   tt.fields.Operator,
+				Criterias:  tt.fields.Criterias,
+				Criterions: tt.fields.Criterions,
+			}
+			c.Sort()
+		})
+	}
+}
 
 func TestCompare(t *testing.T) {
 	type args struct {
@@ -39,8 +64,7 @@ func TestCriteria_Contains(t *testing.T) {
 		Criterions []criterionTypes.Criterion
 	}
 	type args struct {
-		ecosystem ecosystemTypes.Ecosystem
-		query     criterionTypes.Query
+		query criterionTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -55,16 +79,21 @@ func TestCriteria_Contains(t *testing.T) {
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								Name: "package1",
+							},
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Package: &criterionTypes.QueryPackage{Name: "package1"},
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
 			want: true,
@@ -75,25 +104,33 @@ func TestCriteria_Contains(t *testing.T) {
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package2",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								Name: "package2",
+							},
 						},
 					},
 					{
-						Vulnerable: false,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: false,
+							Package: criterionpackageTypes.Package{
+								Name: "package1",
+							},
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Package: &criterionTypes.QueryPackage{Name: "package1"},
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
-			want: false,
+			want: true,
 		},
 		{
 			name: "criterion 3",
@@ -101,22 +138,31 @@ func TestCriteria_Contains(t *testing.T) {
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								Name: "package1",
+							},
 						},
 					},
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+							},
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+					Version: []vcTypes.Query{{
+						Ecosystem: ecosystemTypes.EcosystemTypeCPE,
+						CPE:       func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+					}},
 				},
 			},
 			want: true,
@@ -130,9 +176,12 @@ func TestCriteria_Contains(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package2",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package2",
+									},
 								},
 							},
 						},
@@ -140,16 +189,21 @@ func TestCriteria_Contains(t *testing.T) {
 				},
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								Name: "package1",
+							},
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Package: &criterionTypes.QueryPackage{Name: "package1"},
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
 			want: true,
@@ -163,9 +217,12 @@ func TestCriteria_Contains(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package1",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package1",
+									},
 								},
 							},
 						},
@@ -173,16 +230,21 @@ func TestCriteria_Contains(t *testing.T) {
 				},
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package2",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								Name: "package2",
+							},
 						},
 					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Package: &criterionTypes.QueryPackage{Name: "package1"},
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
 			want: true,
@@ -196,9 +258,12 @@ func TestCriteria_Contains(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package1",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package1",
+									},
 								},
 							},
 						},
@@ -207,9 +272,12 @@ func TestCriteria_Contains(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package2",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package2",
+									},
 								},
 							},
 						},
@@ -218,7 +286,9 @@ func TestCriteria_Contains(t *testing.T) {
 			},
 			args: args{
 				query: criterionTypes.Query{
-					Package: &criterionTypes.QueryPackage{Name: "package1"},
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
 			want: true,
@@ -231,7 +301,7 @@ func TestCriteria_Contains(t *testing.T) {
 				Criterias:  tt.fields.Criterias,
 				Criterions: tt.fields.Criterions,
 			}
-			got, err := c.Contains(tt.args.ecosystem, tt.args.query)
+			got, err := c.Contains(tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criteria.Contains() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -250,8 +320,7 @@ func TestCriteria_Accept(t *testing.T) {
 		Criterions []criterionTypes.Criterion
 	}
 	type args struct {
-		ecosystem ecosystemTypes.Ecosystem
-		queries   []criterionTypes.Query
+		query criterionTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -266,31 +335,37 @@ func TestCriteria_Accept(t *testing.T) {
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
-						},
-					},
-				},
-			},
-			args: args{
-				queries: []criterionTypes.Query{
-					{
-						Package: &criterionTypes.QueryPackage{Name: "package1"},
-					},
-				},
-			},
-			want: criteriaTypes.FilteredCriteria{
-				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-				Criterions: []criteriaTypes.FilteredCriterion{
-					{
-						Criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
 							Vulnerable: true,
 							Package: criterionpackageTypes.Package{
 								Name: "package1",
 							},
 						},
-						Accepts: []int{0},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
+							},
+						},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -301,31 +376,8 @@ func TestCriteria_Accept(t *testing.T) {
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package2",
-						},
-					},
-					{
-						Vulnerable: false,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
-						},
-					},
-				},
-			},
-			args: args{
-				queries: []criterionTypes.Query{
-					{
-						Package: &criterionTypes.QueryPackage{Name: "package1"},
-					},
-				},
-			},
-			want: criteriaTypes.FilteredCriteria{
-				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-				Criterions: []criteriaTypes.FilteredCriterion{
-					{
-						Criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
 							Vulnerable: true,
 							Package: criterionpackageTypes.Package{
 								Name: "package2",
@@ -333,12 +385,48 @@ func TestCriteria_Accept(t *testing.T) {
 						},
 					},
 					{
-						Criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
 							Vulnerable: false,
 							Package: criterionpackageTypes.Package{
 								Name: "package1",
 							},
 						},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package2",
+								},
+							},
+						},
+					},
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: false,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
+							},
+						},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -349,31 +437,8 @@ func TestCriteria_Accept(t *testing.T) {
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
-						},
-					},
-					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
-						},
-					},
-				},
-			},
-			args: args{
-				queries: []criterionTypes.Query{
-					{
-						CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-					},
-				},
-			},
-			want: criteriaTypes.FilteredCriteria{
-				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-				Criterions: []criteriaTypes.FilteredCriterion{
-					{
-						Criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
 							Vulnerable: true,
 							Package: criterionpackageTypes.Package{
 								Name: "package1",
@@ -381,13 +446,49 @@ func TestCriteria_Accept(t *testing.T) {
 						},
 					},
 					{
-						Criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
 							Vulnerable: true,
 							Package: criterionpackageTypes.Package{
 								CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
 							},
 						},
-						Accepts: []int{0},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Ecosystem: ecosystemTypes.EcosystemTypeCPE,
+						CPE:       func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+					}},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
+							},
+						},
+					},
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+								},
+							},
+						},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -401,38 +502,8 @@ func TestCriteria_Accept(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package2",
-								},
-							},
-						},
-					},
-				},
-				Criterions: []criterionTypes.Criterion{
-					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package1",
-						},
-					},
-				},
-			},
-			args: args{
-				queries: []criterionTypes.Query{
-					{
-						Package: &criterionTypes.QueryPackage{Name: "package1"},
-					},
-				},
-			},
-			want: criteriaTypes.FilteredCriteria{
-				Operator: criteriaTypes.CriteriaOperatorTypeAND,
-				Criterias: []criteriaTypes.FilteredCriteria{
-					{
-						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
-							{
-								Criterion: criterionTypes.Criterion{
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
 									Vulnerable: true,
 									Package: criterionpackageTypes.Package{
 										Name: "package2",
@@ -442,15 +513,57 @@ func TestCriteria_Accept(t *testing.T) {
 						},
 					},
 				},
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.Criterion{
 					{
-						Criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
 							Vulnerable: true,
 							Package: criterionpackageTypes.Package{
 								Name: "package1",
 							},
 						},
-						Accepts: []int{0},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeAND,
+				Criterias: []criteriaTypes.FilteredCriteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: []criterionTypes.FilteredCriterion{
+							{
+								Criterion: criterionTypes.Criterion{
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package2",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
+							},
+						},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -464,9 +577,12 @@ func TestCriteria_Accept(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package1",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package1",
+									},
 								},
 							},
 						},
@@ -474,18 +590,21 @@ func TestCriteria_Accept(t *testing.T) {
 				},
 				Criterions: []criterionTypes.Criterion{
 					{
-						Vulnerable: true,
-						Package: criterionpackageTypes.Package{
-							Name: "package2",
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: criterionpackageTypes.Package{
+								Name: "package2",
+							},
 						},
 					},
 				},
 			},
 			args: args{
-				queries: []criterionTypes.Query{
-					{
-						Package: &criterionTypes.QueryPackage{Name: "package1"},
-					},
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
 			want: criteriaTypes.FilteredCriteria{
@@ -493,25 +612,31 @@ func TestCriteria_Accept(t *testing.T) {
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package1",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package1",
+										},
 									},
 								},
-								Accepts: []int{0},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 							},
 						},
 					},
 				},
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package2",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package2",
+								},
 							},
 						},
 					},
@@ -527,9 +652,12 @@ func TestCriteria_Accept(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package1",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package1",
+									},
 								},
 							},
 						},
@@ -538,9 +666,12 @@ func TestCriteria_Accept(t *testing.T) {
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.Criterion{
 							{
-								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Name: "package2",
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: criterionpackageTypes.Package{
+										Name: "package2",
+									},
 								},
 							},
 						},
@@ -548,10 +679,10 @@ func TestCriteria_Accept(t *testing.T) {
 				},
 			},
 			args: args{
-				queries: []criterionTypes.Query{
-					{
-						Package: &criterionTypes.QueryPackage{Name: "package1"},
-					},
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Package: &vcTypes.QueryPackage{Name: "package1"},
+					}},
 				},
 			},
 			want: criteriaTypes.FilteredCriteria{
@@ -559,26 +690,32 @@ func TestCriteria_Accept(t *testing.T) {
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package1",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package1",
+										},
 									},
 								},
-								Accepts: []int{0},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 							},
 						},
 					},
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package2",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
 							},
@@ -595,7 +732,7 @@ func TestCriteria_Accept(t *testing.T) {
 				Criterias:  tt.fields.Criterias,
 				Criterions: tt.fields.Criterions,
 			}
-			got, err := c.Accept(tt.args.ecosystem, tt.args.queries)
+			got, err := c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criteria.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -611,7 +748,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 	type fields struct {
 		Operator   criteriaTypes.CriteriaOperatorType
 		Criterias  []criteriaTypes.FilteredCriteria
-		Criterions []criteriaTypes.FilteredCriterion
+		Criterions []criterionTypes.FilteredCriterion
 	}
 	tests := []struct {
 		name    string
@@ -623,15 +760,18 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			name: "criterion 1",
 			fields: fields{
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
-						Accepts: []int{0},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -641,15 +781,18 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			name: "criterion 2",
 			fields: fields{
 				Operator: criteriaTypes.CriteriaOperatorTypeAND,
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
-						Accepts: []int{0},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -659,20 +802,26 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			name: "criterion 3",
 			fields: fields{
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package2",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package2",
+								},
 							},
 						},
 					},
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: false,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: false,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
 					},
@@ -684,23 +833,29 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			name: "criterion 4",
 			fields: fields{
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
 					},
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+								},
 							},
 						},
-						Accepts: []int{0},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -710,23 +865,29 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 			name: "criterion 5",
 			fields: fields{
 				Operator: criteriaTypes.CriteriaOperatorTypeAND,
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
 					},
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+								},
 							},
 						},
-						Accepts: []int{0},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -739,28 +900,34 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package2",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
-								Accepts: []int{1},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
 							},
 						},
 					},
 				},
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
-						Accepts: []int{0},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -773,27 +940,33 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package2",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
 							},
 						},
 					},
 				},
-				Criterions: []criteriaTypes.FilteredCriterion{
+				Criterions: []criterionTypes.FilteredCriterion{
 					{
 						Criterion: criterionTypes.Criterion{
-							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Name: "package1",
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: criterionpackageTypes.Package{
+									Name: "package1",
+								},
 							},
 						},
-						Accepts: []int{0},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 					},
 				},
 			},
@@ -806,29 +979,35 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package1",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package1",
+										},
 									},
 								},
-								Accepts: []int{0},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 							},
 						},
 					},
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package2",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
-								Accepts: []int{1},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
 							},
 						},
 					},
@@ -843,26 +1022,32 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package1",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package1",
+										},
 									},
 								},
-								Accepts: []int{0},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 							},
 						},
 					},
 					{
 						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criteriaTypes.FilteredCriterion{
+						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
-									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Name: "package2",
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: criterionpackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
 							},
