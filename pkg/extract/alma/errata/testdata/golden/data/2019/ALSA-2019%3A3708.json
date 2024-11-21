@@ -70,8 +70,10 @@
 				"published": "2019-11-06T04:53:43+09:00",
 				"modified": "2022-04-28T19:46:58+09:00"
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		}
 	],
@@ -86,8 +88,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -100,8 +104,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -114,8 +120,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -128,8 +136,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -142,8 +152,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -156,8 +168,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -170,8 +184,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -184,8 +200,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -198,8 +216,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -212,8 +232,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -226,8 +248,10 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		},
 		{
@@ -240,158 +264,164 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"alma:8"
+			"segments": [
+				{
+					"ecosystem": "alma:8"
+				}
 			]
 		}
 	],
-	"detection": [
+	"detections": [
 		{
 			"ecosystem": "alma:8",
-			"criteria": {
-				"operator": "OR",
-				"criterions": [
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "fixed"
-						},
-						"package": {
-							"name": "mariadb-devel:10.3::Judy",
-							"architectures": [
-								"i686"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "fixed"
+								},
+								"package": {
+									"name": "mariadb-devel:10.3::Judy",
+									"architectures": [
+										"i686"
+									]
+								},
+								"affected": {
+									"type": "rpm",
+									"range": [
+										{
+											"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+										}
+									],
+									"fixed": [
+										"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+									]
 								}
-							],
-							"fixed": [
-								"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "fixed"
-						},
-						"package": {
-							"name": "mariadb-devel:10.3::Judy-devel",
-							"architectures": [
-								"i686",
-								"x86_64"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "fixed"
+								},
+								"package": {
+									"name": "mariadb-devel:10.3::Judy-devel",
+									"architectures": [
+										"i686",
+										"x86_64"
+									]
+								},
+								"affected": {
+									"type": "rpm",
+									"range": [
+										{
+											"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+										}
+									],
+									"fixed": [
+										"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+									]
 								}
-							],
-							"fixed": [
-								"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "fixed"
-						},
-						"package": {
-							"name": "mariadb-devel:10.3::Judy-devel",
-							"architectures": [
-								"ppc64le"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "fixed"
+								},
+								"package": {
+									"name": "mariadb-devel:10.3::Judy-devel",
+									"architectures": [
+										"ppc64le"
+									]
+								},
+								"affected": {
+									"type": "rpm",
+									"range": [
+										{
+											"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+										}
+									],
+									"fixed": [
+										"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+									]
 								}
-							],
-							"fixed": [
-								"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "fixed"
-						},
-						"package": {
-							"name": "mariadb:10.3::Judy",
-							"architectures": [
-								"ppc64le"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "fixed"
+								},
+								"package": {
+									"name": "mariadb:10.3::Judy",
+									"architectures": [
+										"ppc64le"
+									]
+								},
+								"affected": {
+									"type": "rpm",
+									"range": [
+										{
+											"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+										}
+									],
+									"fixed": [
+										"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+									]
 								}
-							],
-							"fixed": [
-								"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "fixed"
-						},
-						"package": {
-							"name": "mariadb:10.3::Judy",
-							"architectures": [
-								"x86_64"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0.5-18.module_el8.5.0+2632+14ced695"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "fixed"
+								},
+								"package": {
+									"name": "mariadb:10.3::Judy",
+									"architectures": [
+										"x86_64"
+									]
+								},
+								"affected": {
+									"type": "rpm",
+									"range": [
+										{
+											"lt": "0:1.0.5-18.module_el8.5.0+2632+14ced695"
+										}
+									],
+									"fixed": [
+										"0:1.0.5-18.module_el8.5.0+2632+14ced695"
+									]
 								}
-							],
-							"fixed": [
-								"0:1.0.5-18.module_el8.5.0+2632+14ced695"
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "fixed"
-						},
-						"package": {
-							"name": "mariadb:10.5::Judy",
-							"architectures": [
-								"aarch64"
-							]
-						},
-						"affected": {
-							"type": "rpm",
-							"range": [
-								{
-									"lt": "0:1.0.5-18.module_el8.6.0+2761+593e5e59"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "fixed"
+								},
+								"package": {
+									"name": "mariadb:10.5::Judy",
+									"architectures": [
+										"aarch64"
+									]
+								},
+								"affected": {
+									"type": "rpm",
+									"range": [
+										{
+											"lt": "0:1.0.5-18.module_el8.6.0+2761+593e5e59"
+										}
+									],
+									"fixed": [
+										"0:1.0.5-18.module_el8.6.0+2761+593e5e59"
+									]
 								}
-							],
-							"fixed": [
-								"0:1.0.5-18.module_el8.6.0+2761+593e5e59"
-							]
-						}
+							}
+						]
 					}
-				]
-			}
+				}
+			]
 		}
 	],
 	"data_source": {

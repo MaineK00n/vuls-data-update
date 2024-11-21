@@ -19,13 +19,15 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
 	detectionType "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
-	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
+	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
@@ -197,8 +199,10 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 		case 0:
 			return nil, nil
 		default:
-			rootCriteria := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
-			rootCriteria.Criterias = make([]criteriaTypes.Criteria, 0, len(fetched.Configurations))
+			rootCriteria := criteriaTypes.Criteria{
+				Operator:  criteriaTypes.CriteriaOperatorTypeOR,
+				Criterias: make([]criteriaTypes.Criteria, 0, len(fetched.Configurations)),
+			}
 			for _, c := range fetched.Configurations {
 				ca, err := e.configurationToCriteria(c)
 				if err != nil {
@@ -208,7 +212,9 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 			}
 			return []detectionType.Detection{{
 				Ecosystem: ecosystemTypes.EcosystemTypeCPE,
-				Criteria:  rootCriteria,
+				Conditions: []conditionTypes.Condition{{
+					Criteria: rootCriteria,
+				}},
 			}}, nil
 		}
 	}()
@@ -316,10 +322,10 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 					Published: utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.Published),
 					Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05.000"}, fetched.LastModified),
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.EcosystemTypeCPE},
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeCPE}},
 			},
 		},
-		Detection: ds,
+		Detections: ds,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.NVDAPICVE,
 			Raws: e.r.Paths(),

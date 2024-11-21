@@ -13,13 +13,15 @@ import (
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
-	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
@@ -220,7 +222,7 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 				Published: utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Entry),
 				Modified:  utiltime.Parse([]string{"2006-01-02"}, fetched.Dates.Modified),
 			},
-			Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD)},
+			Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD)}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(fetched.References.Cvename))
@@ -233,43 +235,45 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD)},
+					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD)}},
 				})
 			}
 			return vs
 		}(),
-		Detection: []detectionTypes.Detection{
+		Detections: []detectionTypes.Detection{
 			{
 				Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeFreeBSD),
-				Criteria: criteriaTypes.Criteria{
-					Operator: criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: func() []criterionTypes.Criterion {
-						cs := make([]criterionTypes.Criterion, 0, func() int {
-							cap := 0
-							for _, a := range fetched.Affects {
-								cap += len(a.Name)
-							}
-							return cap
-						}())
-						for _, a := range fetched.Affects {
-							for _, n := range a.Name {
-								rs := make([]rangeTypes.Range, 0, len(a.Range))
-								for _, r := range a.Range {
-									rs = append(rs, rangeTypes.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
+				Conditions: []conditionTypes.Condition{{
+					Criteria: criteriaTypes.Criteria{
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: func() []criterionTypes.Criterion {
+							cs := make([]criterionTypes.Criterion, 0, func() int {
+								cap := 0
+								for _, a := range fetched.Affects {
+									cap += len(a.Name)
 								}
-								cs = append(cs, criterionTypes.Criterion{
-									Vulnerable: true,
-									FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-									Package:    packageTypes.Package{Name: n},
-									Affected: &affectedTypes.Affected{
-										Type:  rangeTypes.RangeTypeFreeBSDPkg,
-										Range: rs,
-									},
-								})
+								return cap
+							}())
+							for _, a := range fetched.Affects {
+								for _, n := range a.Name {
+									rs := make([]rangeTypes.Range, 0, len(a.Range))
+									for _, r := range a.Range {
+										rs = append(rs, rangeTypes.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
+									}
+									cs = append(cs, criterionTypes.Criterion{
+										Vulnerable: true,
+										FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+										Package:    packageTypes.Package{Name: n},
+										Affected: &affectedTypes.Affected{
+											Type:  rangeTypes.RangeTypeFreeBSDPkg,
+											Range: rs,
+										},
+									})
+								}
 							}
-						}
-						return cs
-					}(),
+							return cs
+						}(),
+					}},
 				},
 			},
 		},

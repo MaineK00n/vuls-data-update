@@ -3,7 +3,7 @@ package criterionpackage_test
 import (
 	"testing"
 
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
+	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
 )
 
 func TestCompare(t *testing.T) {

@@ -19,8 +19,10 @@
 				"published": "2024-03-11T00:00:00Z",
 				"modified": "2024-03-26T00:00:00Z"
 			},
-			"ecosystems": [
-				"freebsd"
+			"segments": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
@@ -35,70 +37,76 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"freebsd"
+			"segments": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
-	"detection": [
+	"detections": [
 		{
 			"ecosystem": "freebsd",
-			"criteria": {
-				"operator": "OR",
-				"criterions": [
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "unknown"
-						},
-						"package": {
-							"name": "grafana"
-						},
-						"affected": {
-							"type": "freebsd-pkg",
-							"range": [
-								{
-									"lt": "10.0.12",
-									"ge": "10.0.0"
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "unknown"
 								},
-								{
-									"lt": "10.1.8",
-									"ge": "10.1.0"
+								"package": {
+									"name": "grafana"
 								},
-								{
-									"lt": "10.2.5",
-									"ge": "10.2.0"
-								},
-								{
-									"lt": "10.3.4",
-									"ge": "10.3.0"
-								},
-								{
-									"lt": "9.5.17",
-									"ge": "8.5.0"
+								"affected": {
+									"type": "freebsd-pkg",
+									"range": [
+										{
+											"lt": "10.0.12",
+											"ge": "10.0.0"
+										},
+										{
+											"lt": "10.1.8",
+											"ge": "10.1.0"
+										},
+										{
+											"lt": "10.2.5",
+											"ge": "10.2.0"
+										},
+										{
+											"lt": "10.3.4",
+											"ge": "10.3.0"
+										},
+										{
+											"lt": "9.5.17",
+											"ge": "8.5.0"
+										}
+									]
 								}
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "unknown"
-						},
-						"package": {
-							"name": "grafana9"
-						},
-						"affected": {
-							"type": "freebsd-pkg",
-							"range": [
-								{
-									"lt": "9.5.17"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "unknown"
+								},
+								"package": {
+									"name": "grafana9"
+								},
+								"affected": {
+									"type": "freebsd-pkg",
+									"range": [
+										{
+											"lt": "9.5.17"
+										}
+									]
 								}
-							]
-						}
+							}
+						]
 					}
-				]
-			}
+				}
+			]
 		}
 	],
 	"data_source": {

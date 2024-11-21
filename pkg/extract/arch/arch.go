@@ -13,13 +13,15 @@ import (
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
-	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -154,7 +156,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 						return rs
 					}(),
 				},
-				Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)}},
 			}}
 
 			for _, a := range fetched.Advisories {
@@ -166,7 +168,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)}},
 				})
 			}
 
@@ -183,12 +185,12 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),
 						}},
 					},
-					Ecosystems: []ecosystemTypes.Ecosystem{ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)},
+					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch)}},
 				})
 			}
 			return vs
 		}(),
-		Detection: func() []detectionTypes.Detection {
+		Detections: func() []detectionTypes.Detection {
 			cs := make([]criterionTypes.Criterion, 0, len(fetched.Packages))
 			for _, p := range fetched.Packages {
 				cs = append(cs, criterionTypes.Criterion{
@@ -226,10 +228,12 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 
 			return []detectionTypes.Detection{{
 				Ecosystem: ecosystemTypes.Ecosystem(ecosystemTypes.EcosystemTypeArch),
-				Criteria: criteriaTypes.Criteria{
-					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: cs,
-				},
+				Conditions: []conditionTypes.Condition{{
+					Criteria: criteriaTypes.Criteria{
+						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: cs,
+					},
+				}},
 			}}
 		}(),
 		DataSource: sourceTypes.Source{

@@ -3,7 +3,7 @@ package eol
 import (
 	"time"
 
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 )
 

@@ -13,13 +13,15 @@ import (
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria"
-	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/criteria/criterion/package"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/ecosystem"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
@@ -141,64 +143,66 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 				return "1"
 			}
 		}())),
-		Criteria: criteriaTypes.Criteria{
-			Operator: criteriaTypes.CriteriaOperatorTypeOR,
-			Criterions: func() []criterionTypes.Criterion {
-				pkgs := map[string]map[string][]string{}
-				for _, p := range fetched.Pkglist.Collection.Package {
-					if pkgs[p.Name] == nil {
-						pkgs[p.Name] = map[string][]string{}
-					}
-					pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
-				}
-
-				cs := make([]criterionTypes.Criterion, 0, func() int {
-					cap := 0
-					for _, evras := range pkgs {
-						cap += len(evras)
-					}
-					return cap
-				}())
-
-				repos := func() []string {
-					switch {
-					case strings.HasPrefix(fetched.ID, "ALAS2023"):
-						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
-							return []string{repo}
+		Conditions: []conditionTypes.Condition{{
+			Criteria: criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: func() []criterionTypes.Criterion {
+					pkgs := make(map[string]map[string][]string)
+					for _, p := range fetched.Pkglist.Collection.Package {
+						if pkgs[p.Name] == nil {
+							pkgs[p.Name] = map[string][]string{}
 						}
-						return []string{"amazonlinux"}
-					case strings.HasPrefix(fetched.ID, "ALAS2022"):
-						return []string{"amazonlinux"}
-					case strings.HasPrefix(fetched.ID, "ALAS2"):
-						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
-							return []string{fmt.Sprintf("amzn2extra-%s", repo)}
-						}
-						return []string{"amzn2-core"}
-					default:
-						return []string{"amzn-main", "amzn-updates"}
+						pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
 					}
-				}()
-				for n, evras := range pkgs {
-					for evr, as := range evras {
-						cs = append(cs, criterionTypes.Criterion{
-							Vulnerable: true,
-							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-							Package: packageTypes.Package{
-								Name:          n,
-								Repositories:  repos,
-								Architectures: as,
-							},
-							Affected: &affectedTypes.Affected{
-								Type:  rangeTypes.RangeTypeRPM,
-								Range: []rangeTypes.Range{{LessThan: evr}},
-								Fixed: []string{evr},
-							},
-						})
-					}
-				}
 
-				return cs
-			}(),
+					cs := make([]criterionTypes.Criterion, 0, func() int {
+						cap := 0
+						for _, evras := range pkgs {
+							cap += len(evras)
+						}
+						return cap
+					}())
+
+					repos := func() []string {
+						switch {
+						case strings.HasPrefix(fetched.ID, "ALAS2023"):
+							if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
+								return []string{repo}
+							}
+							return []string{"amazonlinux"}
+						case strings.HasPrefix(fetched.ID, "ALAS2022"):
+							return []string{"amazonlinux"}
+						case strings.HasPrefix(fetched.ID, "ALAS2"):
+							if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
+								return []string{fmt.Sprintf("amzn2extra-%s", repo)}
+							}
+							return []string{"amzn2-core"}
+						default:
+							return []string{"amzn-main", "amzn-updates"}
+						}
+					}()
+					for n, evras := range pkgs {
+						for evr, as := range evras {
+							cs = append(cs, criterionTypes.Criterion{
+								Vulnerable: true,
+								FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+								Package: packageTypes.Package{
+									Name:          n,
+									Repositories:  repos,
+									Architectures: as,
+								},
+								Affected: &affectedTypes.Affected{
+									Type:  rangeTypes.RangeTypeRPM,
+									Range: []rangeTypes.Range{{LessThan: evr}},
+									Fixed: []string{evr},
+								},
+							})
+						}
+					}
+
+					return cs
+				}(),
+			}},
 		},
 	}
 
@@ -241,7 +245,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
 				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
 			},
-			Ecosystems: []ecosystemTypes.Ecosystem{ds.Ecosystem},
+			Segments: []segmentTypes.Segment{{Ecosystem: ds.Ecosystem}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			var vs []vulnerabilityTypes.Vulnerability
@@ -255,13 +259,13 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 								URL:    r.Href,
 							}},
 						},
-						Ecosystems: []ecosystemTypes.Ecosystem{ds.Ecosystem},
+						Segments: []segmentTypes.Segment{{Ecosystem: ds.Ecosystem}},
 					})
 				}
 			}
 			return vs
 		}(),
-		Detection: []detectionTypes.Detection{ds},
+		Detections: []detectionTypes.Detection{ds},
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.Amazon,
 			Raws: raws,

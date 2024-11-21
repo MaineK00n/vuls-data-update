@@ -23,8 +23,10 @@
 				"published": "2003-12-12T00:00:00Z",
 				"modified": "2004-05-05T00:00:00Z"
 			},
-			"ecosystems": [
-				"freebsd"
+			"segments": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
@@ -39,86 +41,92 @@
 					}
 				]
 			},
-			"ecosystems": [
-				"freebsd"
+			"segments": [
+				{
+					"ecosystem": "freebsd"
+				}
 			]
 		}
 	],
-	"detection": [
+	"detections": [
 		{
 			"ecosystem": "freebsd",
-			"criteria": {
-				"operator": "OR",
-				"criterions": [
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "unknown"
-						},
-						"package": {
-							"name": "FreeBSD"
-						},
-						"affected": {
-							"type": "freebsd-pkg",
-							"range": [
-								{
-									"lt": "4.4_47"
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "unknown"
 								},
-								{
-									"lt": "4.5_37",
-									"ge": "4.5"
+								"package": {
+									"name": "FreeBSD"
 								},
-								{
-									"lt": "4.6.2_27",
-									"ge": "4.6"
-								},
-								{
-									"lt": "4.7_24",
-									"ge": "4.7"
-								},
-								{
-									"lt": "4.8_14",
-									"ge": "4.8"
-								},
-								{
-									"lt": "4.9_1",
-									"ge": "4.9"
-								},
-								{
-									"lt": "5.0_19",
-									"ge": "5.0"
-								},
-								{
-									"lt": "5.1_11",
-									"ge": "5.1"
+								"affected": {
+									"type": "freebsd-pkg",
+									"range": [
+										{
+											"lt": "4.4_47"
+										},
+										{
+											"lt": "4.5_37",
+											"ge": "4.5"
+										},
+										{
+											"lt": "4.6.2_27",
+											"ge": "4.6"
+										},
+										{
+											"lt": "4.7_24",
+											"ge": "4.7"
+										},
+										{
+											"lt": "4.8_14",
+											"ge": "4.8"
+										},
+										{
+											"lt": "4.9_1",
+											"ge": "4.9"
+										},
+										{
+											"lt": "5.0_19",
+											"ge": "5.0"
+										},
+										{
+											"lt": "5.1_11",
+											"ge": "5.1"
+										}
+									]
 								}
-							]
-						}
-					},
-					{
-						"vulnerable": true,
-						"fix_status": {
-							"class": "unknown"
-						},
-						"package": {
-							"name": "bind"
-						},
-						"affected": {
-							"type": "freebsd-pkg",
-							"range": [
-								{
-									"lt": "8.3.7",
-									"ge": "8.3"
+							},
+							{
+								"vulnerable": true,
+								"fix_status": {
+									"class": "unknown"
 								},
-								{
-									"lt": "8.4.3",
-									"ge": "8.4"
+								"package": {
+									"name": "bind"
+								},
+								"affected": {
+									"type": "freebsd-pkg",
+									"range": [
+										{
+											"lt": "8.3.7",
+											"ge": "8.3"
+										},
+										{
+											"lt": "8.4.3",
+											"ge": "8.4"
+										}
+									]
 								}
-							]
-						}
+							}
+						]
 					}
-				]
-			}
+				}
+			]
 		}
 	],
 	"data_source": {

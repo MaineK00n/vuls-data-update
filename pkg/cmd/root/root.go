@@ -4,9 +4,9 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 
+	diffCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/diff"
 	extractCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/extract"
 	fetchCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/fetch"
-	diffCmd "github.com/MaineK00n/vuls-data-update/pkg/cmd/diff"
 )
 
 func NewCmdRoot() *cobra.Command {
