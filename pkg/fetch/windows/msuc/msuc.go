@@ -106,7 +106,7 @@ func Fetch(queries []string, opts ...Option) error {
 		return errors.Wrap(err, "search")
 	}
 
-	uidmap := map[string]struct{}{}
+	uidmap := make(map[string]struct{})
 	for {
 		if len(uids) == 0 {
 			break

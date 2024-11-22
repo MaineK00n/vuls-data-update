@@ -137,7 +137,7 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
-	m := map[string][]criterionTypes.Criterion{}
+	m := make(map[string][]criterionTypes.Criterion)
 	for _, pkg := range fetched.Packages {
 		for v, ids := range pkg.Pkg.Secfixes {
 			for _, id := range ids {

@@ -773,9 +773,9 @@ func parseConfig(r io.Reader) (archives []string, releases []string, err error) 
 
 func (opts *options) fetchSource(codename string, archived bool) (map[string]map[string]map[string]textproto.MIMEHeader, error) {
 	m := map[string]map[string]map[string]textproto.MIMEHeader{
-		"main":     {},
-		"security": {},
-		"backport": {},
+		"main":     make(map[string]map[string]textproto.MIMEHeader),
+		"security": make(map[string]map[string]textproto.MIMEHeader),
+		"backport": make(map[string]map[string]textproto.MIMEHeader),
 	}
 
 	mainURL := opts.mirror.ReleaseMain
@@ -937,7 +937,7 @@ func fetchSource(c *utilhttp.Client, sourceURL string) (map[string]textproto.MIM
 }
 
 func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
-	m := map[string]textproto.MIMEHeader{}
+	m := make(map[string]textproto.MIMEHeader)
 
 	s := bufio.NewScanner(r)
 	buf := new(bytes.Buffer)

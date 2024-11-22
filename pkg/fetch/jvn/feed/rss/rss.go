@@ -116,7 +116,7 @@ func Fetch(opts ...Option) error {
 		return 0
 	})
 
-	advisories := map[string]Item{}
+	advisories := make(map[string]Item)
 	for _, c := range filtered {
 		log.Printf("[INFO] Fetch JVNDB RSS Feed %s", c.Filename)
 

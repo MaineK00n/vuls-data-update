@@ -85,7 +85,7 @@ func Fetch(opts ...Option) error {
 		return errors.Errorf("error request response with status code %d", resp.StatusCode)
 	}
 
-	ms := map[string]module{}
+	var ms map[string]module
 	if err := json.NewDecoder(resp.Body).Decode(&ms); err != nil {
 		return errors.Wrap(err, "decode json")
 	}

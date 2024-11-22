@@ -220,7 +220,7 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 		return nil, errors.Wrapf(err, "eval criteria")
 	}
 
-	m := map[ovalPackage][]string{}
+	m := make(map[ovalPackage][]string)
 	for _, p := range pkgs {
 		m[ovalPackage{
 			major:           p.major,
@@ -236,7 +236,7 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 	}
 
 	// major version -> criterion
-	mm := map[string][]criterionTypes.Criterion{}
+	mm := make(map[string][]criterionTypes.Criterion)
 	for p, as := range m {
 		mm[p.major] = append(mm[p.major], criterionTypes.Criterion{
 			Vulnerable: true,

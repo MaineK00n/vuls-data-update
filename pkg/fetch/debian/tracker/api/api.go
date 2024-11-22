@@ -91,7 +91,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode json")
 	}
 
-	m := map[string]map[string]Advisory{}
+	m := make(map[string]map[string]Advisory)
 	for pkg, cves := range as {
 		for id, cve := range cves {
 			for code, release := range cve.Release {
