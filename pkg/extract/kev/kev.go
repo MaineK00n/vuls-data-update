@@ -109,10 +109,10 @@ func Extract(args string, opts ...Option) error {
 
 func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 	return dataTypes.Data{
-		ID: fetched.CveID,
+		ID: dataTypes.RootID(fetched.CveID),
 		Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
 			Content: vulnerabilityContentTypes.Content{
-				ID:          fetched.CveID,
+				ID:          vulnerabilityContentTypes.VulnerabilityID(fetched.CveID),
 				Title:       fetched.VulnerabilityName,
 				Description: fetched.ShortDescription,
 				CWE: func() []cweTypes.CWE {

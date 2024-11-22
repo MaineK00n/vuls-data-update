@@ -274,11 +274,11 @@ func (e extractor) buildData(fetched cveTypes.CVE) (dataTypes.Data, error) {
 	}
 
 	return dataTypes.Data{
-		ID: fetched.ID,
+		ID: dataTypes.RootID(fetched.ID),
 		Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 			{
 				Content: vulnerabilityContentTypes.Content{
-					ID: fetched.ID,
+					ID: vulnerabilityContentTypes.VulnerabilityID(fetched.ID),
 					Description: func() string {
 						for _, d := range fetched.Descriptions {
 							if d.Lang == "en" {

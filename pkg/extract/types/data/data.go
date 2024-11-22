@@ -13,12 +13,14 @@ import (
 )
 
 type Data struct {
-	ID              string                             `json:"id,omitempty"`
+	ID              RootID                             `json:"id,omitempty"`
 	Advisories      []advisoryTypes.Advisory           `json:"advisories,omitempty"`
 	Vulnerabilities []vulnerabilityTypes.Vulnerability `json:"vulnerabilities,omitempty"`
 	Detections      []detectionTypes.Detection         `json:"detections,omitempty"`
 	DataSource      sourceTypes.Source                 `json:"data_source,omitempty"`
 }
+
+type RootID string
 
 func (d *Data) Sort() {
 	for i := range d.Advisories {

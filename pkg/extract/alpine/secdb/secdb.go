@@ -162,10 +162,10 @@ func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 	ds := make([]dataTypes.Data, 0, len(m))
 	for id, cs := range m {
 		ds = append(ds, dataTypes.Data{
-			ID: id,
+			ID: dataTypes.RootID(id),
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
 				Content: vulnerabilityContentTypes.Content{
-					ID: id,
+					ID: vulnerabilityContentTypes.VulnerabilityID(id),
 					References: []referenceTypes.Reference{{
 						Source: "security.alpinelinux.org",
 						URL:    fmt.Sprintf("https://security.alpinelinux.org/vuln/%s", id),

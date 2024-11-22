@@ -123,7 +123,7 @@ func Extract(args string, opts ...Option) error {
 func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 	if fetched.Cancelled != nil {
 		return dataTypes.Data{
-			ID: fetched.Vid,
+			ID: dataTypes.RootID(fetched.Vid),
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.FreeBSD,
 				Raws: raws,
@@ -132,10 +132,10 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 	}
 
 	return dataTypes.Data{
-		ID: fetched.Vid,
+		ID: dataTypes.RootID(fetched.Vid),
 		Advisories: []advisoryTypes.Advisory{{
 			Content: advisoryContentTypes.Content{
-				ID:          fetched.Vid,
+				ID:          advisoryContentTypes.AdvisoryID(fetched.Vid),
 				Title:       fetched.Topic,
 				Description: fetched.Description.Text,
 				References: func() []referenceTypes.Reference {
@@ -229,7 +229,7 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 			for _, c := range fetched.References.Cvename {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content: vulnerabilityContentTypes.Content{
-						ID: c,
+						ID: vulnerabilityContentTypes.VulnerabilityID(c),
 						References: []referenceTypes.Reference{{
 							Source: "vuxml.freebsd.org",
 							URL:    fmt.Sprintf("https://www.cve.org/CVERecord?id=%s", c),

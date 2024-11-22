@@ -101,10 +101,10 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		data := dataTypes.Data{
-			ID: d.ID,
+			ID: dataTypes.RootID(d.ID),
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
 				Content: vulnerabilityContentTypes.Content{
-					ID: d.ID,
+					ID: vulnerabilityContentTypes.VulnerabilityID(d.ID),
 					EPSS: &epssTypes.EPSS{
 						Model:      fetched.Model,
 						ScoreDate:  latest,

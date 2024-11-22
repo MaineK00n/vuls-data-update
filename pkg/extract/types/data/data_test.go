@@ -27,17 +27,17 @@ func TestData_Merge(t *testing.T) {
 		{
 			name: "receiver's advisory is empty",
 			fields: dataTypes.Data{
-				ID:         "id",
+				ID:         dataTypes.RootID("id"),
 				Advisories: nil,
 			},
 			args: args{
 				ds: []dataTypes.Data{
 					{
-						ID: "id",
+						ID: dataTypes.RootID("id"),
 						Advisories: []advisoryTypes.Advisory{
 							{
 								Content: advisoryContentTypes.Content{
-									ID: "ADV-001",
+									ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 								},
 								Segments: []segmentTypes.Segment{
 									{Ecosystem: "ecosystem:1"},
@@ -48,11 +48,11 @@ func TestData_Merge(t *testing.T) {
 				},
 			},
 			expected: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Advisories: []advisoryTypes.Advisory{
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-001",
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1"},
@@ -64,11 +64,11 @@ func TestData_Merge(t *testing.T) {
 		{
 			name: "args' advisory is empty",
 			fields: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Advisories: []advisoryTypes.Advisory{
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-001",
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1"},
@@ -79,17 +79,17 @@ func TestData_Merge(t *testing.T) {
 			args: args{
 				ds: []dataTypes.Data{
 					{
-						ID:         "id",
+						ID:         dataTypes.RootID("id"),
 						Advisories: nil,
 					},
 				},
 			},
 			expected: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Advisories: []advisoryTypes.Advisory{
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-001",
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1"},
@@ -101,11 +101,11 @@ func TestData_Merge(t *testing.T) {
 		{
 			name: "merge advisories",
 			fields: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Advisories: []advisoryTypes.Advisory{
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-001",
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.1"},
@@ -113,7 +113,7 @@ func TestData_Merge(t *testing.T) {
 					},
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-101",
+							ID: advisoryContentTypes.AdvisoryID("ADV-101"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.2"},
@@ -124,11 +124,11 @@ func TestData_Merge(t *testing.T) {
 			args: args{
 				ds: []dataTypes.Data{
 					{
-						ID: "id",
+						ID: dataTypes.RootID("id"),
 						Advisories: []advisoryTypes.Advisory{
 							{
 								Content: advisoryContentTypes.Content{
-									ID: "ADV-201",
+									ID: advisoryContentTypes.AdvisoryID("ADV-201"),
 								},
 								Segments: []segmentTypes.Segment{
 									{Ecosystem: "ecosystem:2.1"},
@@ -136,7 +136,7 @@ func TestData_Merge(t *testing.T) {
 							},
 							{
 								Content: advisoryContentTypes.Content{
-									ID: "ADV-001",
+									ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 								},
 								Segments: []segmentTypes.Segment{
 									{Ecosystem: "ecosystem:2.2"},
@@ -147,11 +147,11 @@ func TestData_Merge(t *testing.T) {
 				},
 			},
 			expected: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Advisories: []advisoryTypes.Advisory{
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-001",
+							ID: advisoryContentTypes.AdvisoryID("ADV-001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.1"},
@@ -160,7 +160,7 @@ func TestData_Merge(t *testing.T) {
 					},
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-101",
+							ID: advisoryContentTypes.AdvisoryID("ADV-101"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.2"},
@@ -168,7 +168,7 @@ func TestData_Merge(t *testing.T) {
 					},
 					{
 						Content: advisoryContentTypes.Content{
-							ID: "ADV-201",
+							ID: advisoryContentTypes.AdvisoryID("ADV-201"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:2.1"},
@@ -181,16 +181,16 @@ func TestData_Merge(t *testing.T) {
 		{
 			name: "receiver's vulnerability is empty",
 			fields: dataTypes.Data{
-				ID:              "id",
+				ID:              dataTypes.RootID("id"),
 				Vulnerabilities: nil,
 			},
 			args: args{
 				ds: []dataTypes.Data{{
-					ID: "id",
+					ID: dataTypes.RootID("id"),
 					Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 						{
 							Content: vulnerabilityContentTypes.Content{
-								ID: "CVE-2024-0001",
+								ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 							},
 							Segments: []segmentTypes.Segment{
 								{Ecosystem: "ecosystem:1"},
@@ -199,11 +199,11 @@ func TestData_Merge(t *testing.T) {
 					},
 				}}},
 			expected: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-0001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1"},
@@ -215,11 +215,11 @@ func TestData_Merge(t *testing.T) {
 		{
 			name: "args' vulnerability is empty",
 			fields: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-0001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1"},
@@ -229,15 +229,15 @@ func TestData_Merge(t *testing.T) {
 			},
 			args: args{
 				ds: []dataTypes.Data{{
-					ID:              "id",
+					ID:              dataTypes.RootID("id"),
 					Vulnerabilities: nil,
 				}}},
 			expected: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-0001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1"},
@@ -249,11 +249,11 @@ func TestData_Merge(t *testing.T) {
 		{
 			name: "different vulnerabilities",
 			fields: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-0001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.1"},
@@ -261,7 +261,7 @@ func TestData_Merge(t *testing.T) {
 					},
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-1001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-1001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.2"},
@@ -271,11 +271,11 @@ func TestData_Merge(t *testing.T) {
 			},
 			args: args{
 				ds: []dataTypes.Data{{
-					ID: "id",
+					ID: dataTypes.RootID("id"),
 					Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 						{
 							Content: vulnerabilityContentTypes.Content{
-								ID: "CVE-2024-2001",
+								ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-2001"),
 							},
 							Segments: []segmentTypes.Segment{
 								{Ecosystem: "ecosystem:2.1"},
@@ -283,7 +283,7 @@ func TestData_Merge(t *testing.T) {
 						},
 						{
 							Content: vulnerabilityContentTypes.Content{
-								ID: "CVE-2024-0001",
+								ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 							},
 							Segments: []segmentTypes.Segment{
 								{Ecosystem: "ecosystem:2.2"},
@@ -292,11 +292,11 @@ func TestData_Merge(t *testing.T) {
 					},
 				}}},
 			expected: dataTypes.Data{
-				ID: "id",
+				ID: dataTypes.RootID("id"),
 				Vulnerabilities: []vulnerabilityTypes.Vulnerability{
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-0001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-0001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.1"},
@@ -305,7 +305,7 @@ func TestData_Merge(t *testing.T) {
 					},
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-1001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-1001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:1.2"},
@@ -313,7 +313,7 @@ func TestData_Merge(t *testing.T) {
 					},
 					{
 						Content: vulnerabilityContentTypes.Content{
-							ID: "CVE-2024-2001",
+							ID: vulnerabilityContentTypes.VulnerabilityID("CVE-2024-2001"),
 						},
 						Segments: []segmentTypes.Segment{
 							{Ecosystem: "ecosystem:2.1"},
