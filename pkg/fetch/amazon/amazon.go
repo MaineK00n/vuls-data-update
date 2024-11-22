@@ -98,7 +98,7 @@ func Fetch(opts ...Option) error {
 
 	for v := range options.mirrorURLs {
 		log.Printf("[INFO] Fetch Amazon Linux %s", v)
-		advs := map[string][]Update{}
+		advs := make(map[string][]Update)
 		switch v {
 		case "1", "2022":
 			us, err := options.fetch(options.mirrorURLs[v].Core)

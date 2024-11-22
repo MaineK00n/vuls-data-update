@@ -138,7 +138,8 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						return ""
 					}(),
 					Severity: func() []severityTypes.Severity {
-						m := map[string][]v5.Metric{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.Metrics}
+						m := make(map[string][]v5.Metric)
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = fetched.Containers.CNA.Metrics
 						for _, c := range fetched.Containers.ADP {
 							m[getSource(c.ProviderMetadata)] = c.Metrics
 						}
@@ -199,7 +200,8 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						return ss
 					}(),
 					CWE: func() []cweTypes.CWE {
-						m := map[string][]v5.ProblemType{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.ProblemTypes}
+						m := make(map[string][]v5.ProblemType)
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = fetched.Containers.CNA.ProblemTypes
 						for _, c := range fetched.Containers.ADP {
 							m[getSource(c.ProviderMetadata)] = c.ProblemTypes
 						}
@@ -225,7 +227,8 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						return cwes
 					}(),
 					References: func() []referenceTypes.Reference {
-						m := map[string][]v5.Reference{getSource(fetched.Containers.CNA.ProviderMetadata): fetched.Containers.CNA.References}
+						m := make(map[string][]v5.Reference)
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = fetched.Containers.CNA.References
 						for _, c := range fetched.Containers.ADP {
 							m[getSource(c.ProviderMetadata)] = c.References
 						}

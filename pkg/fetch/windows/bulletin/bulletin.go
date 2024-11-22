@@ -79,7 +79,7 @@ func Fetch(opts ...Option) error {
 
 	log.Println("[INFO] Fetch Windows Bulletin")
 
-	bulletins := map[string][]Bulletin{}
+	bulletins := make(map[string][]Bulletin)
 	for _, u := range options.dataURLs {
 		if err := func() error {
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)

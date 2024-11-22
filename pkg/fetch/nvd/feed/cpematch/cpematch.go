@@ -104,7 +104,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (opts options) fetch() (map[string][]CpeMatchItem, error) {
-	cpes := map[string][]CpeMatchItem{}
+	cpes := make(map[string][]CpeMatchItem)
 
 	log.Printf(`[INFO] Fetch NVD CPE Match`)
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)

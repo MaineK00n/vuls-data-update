@@ -111,7 +111,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
-	exRefs := map[string]ExternalReference{}
+	exRefs := make(map[string]ExternalReference)
 	for _, ref := range catalog.ExternalReferences {
 		exRefs[ref.ReferenceID] = ref
 	}

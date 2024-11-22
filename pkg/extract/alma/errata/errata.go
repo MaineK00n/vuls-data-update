@@ -159,10 +159,11 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 					Vendor: &fetched.Severity,
 				}},
 				References: func() []referenceTypes.Reference {
-					m := map[referenceTypes.Reference]struct{}{{
+					m := make(map[referenceTypes.Reference]struct{})
+					m[referenceTypes.Reference{
 						Source: "errata.almalinux.org",
 						URL:    fmt.Sprintf("https://errata.almalinux.org/%s/%s.html", osver, strings.ReplaceAll(fetched.ID, ":", "-")),
-					}: {}}
+					}] = struct{}{}
 					for _, r := range fetched.References {
 						m[referenceTypes.Reference{
 							Source: "errata.almalinux.org",
@@ -179,7 +180,7 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 			}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
-			m := map[string]vulnerabilityContentTypes.Content{}
+			m := make(map[string]vulnerabilityContentTypes.Content)
 			for _, r := range fetched.References {
 				if r.Type == "cve" {
 					base, ok := m[r.ID]
@@ -206,19 +207,19 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 			return vs
 		}(),
 		Detections: func() []detectionTypes.Detection {
-			modules := map[string]string{}
+			modules := make(map[string]string)
 			for _, m := range fetched.Modules {
 				modules[fmt.Sprintf("%s:%s:%s:%s:%s", m.Name, m.Stream, m.Version, m.Context, m.Arch)] = fmt.Sprintf("%s:%s", m.Name, m.Stream)
 			}
 
-			packages := map[string]map[string][]string{}
+			packages := make(map[string]map[string][]string)
 			for _, p := range fetched.Packages {
 				n := p.Name
 				if prefix, ok := modules[p.Module]; ok {
 					n = fmt.Sprintf("%s::%s", prefix, n)
 				}
 				if packages[n] == nil {
-					packages[n] = map[string][]string{}
+					packages[n] = make(map[string][]string)
 				}
 				packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(packages[n][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)], p.Arch)
 			}

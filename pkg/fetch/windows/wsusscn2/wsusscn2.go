@@ -108,7 +108,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode package.xml")
 	}
 
-	rIDtoUID := map[string]string{}
+	rIDtoUID := make(map[string]string)
 	for _, u := range pkg.Updates.Update {
 		if u.IsBundle != "true" || u.IsSoftware == "false" {
 			continue

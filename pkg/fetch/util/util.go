@@ -21,7 +21,7 @@ func CacheDir() string {
 }
 
 func Unique[T comparable](s []T) []T {
-	m := map[T]struct{}{}
+	m := make(map[T]struct{})
 	for _, v := range s {
 		m[v] = struct{}{}
 	}

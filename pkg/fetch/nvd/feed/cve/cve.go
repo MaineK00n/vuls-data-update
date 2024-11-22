@@ -96,7 +96,7 @@ func Fetch(opts ...Option) error {
 		return cmp.Compare(strings.TrimSuffix(strings.TrimPrefix(path.Base(b), "nvdcve-1.1-"), ".json.gz"), strings.TrimSuffix(strings.TrimPrefix(path.Base(a), "nvdcve-1.1-"), ".json.gz"))
 	})
 
-	cves := map[string]map[string]CVEItem{}
+	cves := make(map[string]map[string]CVEItem)
 	for _, u := range options.baseURLs {
 		uu, err := url.Parse(u)
 		if err != nil {
@@ -179,7 +179,7 @@ func (opts options) fetch(feedURL string, cves map[string]map[string]CVEItem) er
 			}
 		}
 		if _, ok := cves[y]; !ok {
-			cves[y] = map[string]CVEItem{}
+			cves[y] = make(map[string]CVEItem)
 		}
 		cves[y][e.Cve.CVEDataMeta.ID] = item
 	}

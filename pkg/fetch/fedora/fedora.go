@@ -249,7 +249,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 	}
 	close(respChan)
 
-	m := map[string][]string{}
+	m := make(map[string][]string)
 	for rs := range respChan {
 		for _, r := range rs {
 			m[r.State] = append(m[r.State], r.Name)
@@ -428,7 +428,7 @@ func (opts options) packages(client *utilhttp.Client, build Build) (map[string][
 			return nil, errors.Wrap(err, "listRPMs")
 		}
 
-		m := map[string][]Package{}
+		m := make(map[string][]Package)
 		for _, p := range ps {
 			m[p.Arch] = append(m[p.Arch], p)
 		}
@@ -445,7 +445,7 @@ func (opts options) packages(client *utilhttp.Client, build Build) (map[string][
 			return nil, errors.Wrap(err, "listArchives")
 		}
 
-		m := map[string][]Package{}
+		m := make(map[string][]Package)
 		for _, a := range as {
 			ps, err := listRPMs(client, opts.dataURL.Package, nil, &a.ID)
 			if err != nil {

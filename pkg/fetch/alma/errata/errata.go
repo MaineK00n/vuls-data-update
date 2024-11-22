@@ -61,7 +61,7 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	urls := map[string]string{}
+	urls := make(map[string]string)
 	for _, v := range versions {
 		urls[v] = fmt.Sprintf(urlFormat, v)
 	}

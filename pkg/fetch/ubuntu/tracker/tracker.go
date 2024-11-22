@@ -258,7 +258,7 @@ func build(a advisory) Advisory {
 		CRD:               a.CRD,
 	}
 
-	notes := map[string][]string{}
+	notes := make(map[string][]string)
 	var author string
 	for _, l := range a.Notes {
 		lhs, rhs, found := strings.Cut(l, ">")
