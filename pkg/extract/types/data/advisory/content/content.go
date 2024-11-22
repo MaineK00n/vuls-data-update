@@ -11,7 +11,7 @@ import (
 )
 
 type Content struct {
-	ID          string                     `json:"id,omitempty"`
+	ID          AdvisoryID                 `json:"id,omitempty"`
 	Title       string                     `json:"title,omitempty"`
 	Description string                     `json:"description,omitempty"`
 	Severity    []severityTypes.Severity   `json:"severity,omitempty"`
@@ -21,6 +21,8 @@ type Content struct {
 	Modified    *time.Time                 `json:"modified,omitempty"`
 	Optional    map[string]interface{}     `json:"optional,omitempty"`
 }
+
+type AdvisoryID string
 
 func (c *Content) Sort() {
 	slices.SortFunc(c.Severity, severityTypes.Compare)

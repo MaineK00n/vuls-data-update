@@ -98,7 +98,7 @@ func Extract(inputDir string, opts ...Option) error {
 			return errors.Wrapf(err, "extract %s", path)
 		}
 
-		ss := strings.Split(data.ID, "-")
+		ss := strings.Split(string(data.ID), "-")
 		if len(ss) < 3 || ss[0] != "ELSA" {
 			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ELSA-<year>-<ID>", data.ID)
 		}
@@ -158,10 +158,10 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 	}()
 
 	return dataTypes.Data{
-		ID: id,
+		ID: dataTypes.RootID(id),
 		Advisories: []advisoryTypes.Advisory{{
 			Content: advisoryContentTypes.Content{
-				ID:          id,
+				ID:          advisoryContentTypes.AdvisoryID(id),
 				Title:       strings.TrimSpace(def.Metadata.Title),
 				Description: strings.TrimSpace(def.Metadata.Description),
 				Severity: []severityTypes.Severity{{
@@ -187,7 +187,7 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 			for _, cve := range def.Metadata.Advisory.Cve {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content: vulnerabilityContentTypes.Content{
-						ID: cve.Text,
+						ID: vulnerabilityContentTypes.VulnerabilityID(cve.Text),
 						References: []referenceTypes.Reference{{
 							Source: "linux.oracle.com/security",
 							URL:    cve.Href,

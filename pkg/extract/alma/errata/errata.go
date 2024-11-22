@@ -147,10 +147,10 @@ func Extract(args string, opts ...Option) error {
 
 func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data {
 	return dataTypes.Data{
-		ID: fetched.ID,
+		ID: dataTypes.RootID(fetched.ID),
 		Advisories: []advisoryTypes.Advisory{{
 			Content: advisoryContentTypes.Content{
-				ID:          fetched.ID,
+				ID:          advisoryContentTypes.AdvisoryID(fetched.ID),
 				Title:       fetched.Title,
 				Description: fetched.Description,
 				Severity: []severityTypes.Severity{{
@@ -184,7 +184,7 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 				if r.Type == "cve" {
 					base, ok := m[r.ID]
 					if !ok {
-						base.ID = r.ID
+						base.ID = vulnerabilityContentTypes.VulnerabilityID(r.ID)
 					}
 					base.References = append(base.References, referenceTypes.Reference{
 						Source: "errata.almalinux.org",

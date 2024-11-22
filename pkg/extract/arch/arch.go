@@ -130,11 +130,11 @@ func Extract(args string, opts ...Option) error {
 
 func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 	return dataTypes.Data{
-		ID: fetched.Name,
+		ID: dataTypes.RootID(fetched.Name),
 		Advisories: func() []advisoryTypes.Advisory {
 			as := []advisoryTypes.Advisory{{
 				Content: advisoryContentTypes.Content{
-					ID: fetched.Name,
+					ID: advisoryContentTypes.AdvisoryID(fetched.Name),
 					Severity: []severityTypes.Severity{{
 						Type:   severityTypes.SeverityTypeVendor,
 						Source: "security.archlinux.org",
@@ -162,7 +162,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 			for _, a := range fetched.Advisories {
 				as = append(as, advisoryTypes.Advisory{
 					Content: advisoryContentTypes.Content{
-						ID: a,
+						ID: advisoryContentTypes.AdvisoryID(a),
 						References: []referenceTypes.Reference{{
 							Source: "security.archlinux.org",
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", a),
@@ -179,7 +179,7 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 			for _, i := range fetched.Issues {
 				vs = append(vs, vulnerabilityTypes.Vulnerability{
 					Content: vulnerabilityContentTypes.Content{
-						ID: i,
+						ID: vulnerabilityContentTypes.VulnerabilityID(i),
 						References: []referenceTypes.Reference{{
 							Source: "security.archlinux.org",
 							URL:    fmt.Sprintf("https://security.archlinux.org/%s", i),

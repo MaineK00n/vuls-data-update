@@ -207,10 +207,10 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 	}
 
 	return dataTypes.Data{
-		ID: fetched.ID,
+		ID: dataTypes.RootID(fetched.ID),
 		Advisories: []advisoryTypes.Advisory{{
 			Content: advisoryContentTypes.Content{
-				ID:          fetched.ID,
+				ID:          advisoryContentTypes.AdvisoryID(fetched.ID),
 				Title:       fetched.Title,
 				Description: fetched.Description,
 				Severity: []severityTypes.Severity{{
@@ -253,7 +253,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 				if r.Type == "cve" {
 					vs = append(vs, vulnerabilityTypes.Vulnerability{
 						Content: vulnerabilityContentTypes.Content{
-							ID: r.ID,
+							ID: vulnerabilityContentTypes.VulnerabilityID(r.ID),
 							References: []referenceTypes.Reference{{
 								Source: fetched.Author,
 								URL:    r.Href,

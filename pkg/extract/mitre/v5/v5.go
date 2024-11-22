@@ -119,10 +119,10 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 	switch fetched.CVEMetadata.State {
 	case "PUBLISHED":
 		return dataTypes.Data{
-			ID: fetched.CVEMetadata.CVEID,
+			ID: dataTypes.RootID(fetched.CVEMetadata.CVEID),
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
 				Content: vulnerabilityContentTypes.Content{
-					ID: fetched.CVEMetadata.CVEID,
+					ID: vulnerabilityContentTypes.VulnerabilityID(fetched.CVEMetadata.CVEID),
 					Title: func() string {
 						if fetched.Containers.CNA.Title != nil {
 							return *fetched.Containers.CNA.Title
@@ -262,10 +262,10 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 		}, nil
 	case "REJECTED":
 		return dataTypes.Data{
-			ID: fetched.CVEMetadata.CVEID,
+			ID: dataTypes.RootID(fetched.CVEMetadata.CVEID),
 			Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
 				Content: vulnerabilityContentTypes.Content{
-					ID: fetched.CVEMetadata.CVEID,
+					ID: vulnerabilityContentTypes.VulnerabilityID(fetched.CVEMetadata.CVEID),
 					Title: func() string {
 						if fetched.Containers.CNA.Title != nil {
 							return *fetched.Containers.CNA.Title
