@@ -138,20 +138,11 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: vulsio
-          repositories: "vuls-data-raw-${{ matrix.target }}"
-
       - name: Check out fetch data repository
         uses: actions/checkout@v4
         with:
           repository: vulsio/vuls-data-raw-${{ matrix.target }}
           path: vuls-data-raw-${{ matrix.target }}
-          token: ${{ steps.app-token.outputs.token }}
 
       - name: install cabextract for windows-wsusscn2
         if: ${{ matrix.target == 'windows-wsusscn2' }}
@@ -163,6 +154,14 @@ jobs:
       - name: Split Large Files
         run: find vuls-data-raw-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
 
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-raw-${{ matrix.target }}"
+
       - name: set Git config
         run: |
           git config --global user.email "action@github.com"
@@ -171,6 +170,7 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-${{ matrix.target }}
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-${{ matrix.target }}.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -209,20 +209,11 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: vulsio
-          repositories: "vuls-data-raw-${{ matrix.target }}"
-
       - name: Check out fetch data repository
         uses: actions/checkout@v4
         with:
           repository: vulsio/vuls-data-raw-${{ matrix.target }}
           path: vuls-data-raw-${{ matrix.target }}
-          token: ${{ steps.app-token.outputs.token }}
 
       - name: Fetch all
         run: vuls-data-update fetch ${{ matrix.target }} --dir vuls-data-raw-${{ matrix.target }} --api-key ${{ secrets.NVD_API_KEY }} --concurrency 5 --wait 0
@@ -232,6 +223,14 @@ jobs:
 
       - name: Split Large Files
         run: find vuls-data-raw-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-raw-${{ matrix.target }}"
 
       - name: set Git config
         run: |
@@ -249,6 +248,7 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-${{ matrix.target }}
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-${{ matrix.target }}.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -363,20 +363,11 @@ jobs:
           remove-codeql: "true"
           remove-docker-images: "true"
 
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: vulsio
-          repositories: "vuls-data-raw-windows-msuc"
-
       - name: Check out fetch data repository
         uses: actions/checkout@v4
         with:
           repository: vulsio/vuls-data-raw-windows-msuc
           path: vuls-data-raw-windows-msuc
-          token: ${{ steps.app-token.outputs.token }}
 
       - name: restore cache
         uses: actions/cache/restore@v4
@@ -389,6 +380,14 @@ jobs:
       - name: Merge
         run: mv -f vuls-data-raw-windows-msuc.${{ matrix.cid }}/* vuls-data-raw-windows-msuc
 
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-raw-windows-msuc"
+
       - name: set Git config
         run: |
           git config --global user.email "action@github.com"
@@ -397,6 +396,7 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-windows-msuc
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-windows-msuc.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -445,6 +445,18 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
+      - name: Check out fetch data repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-fedora
+          path: vuls-data-raw-fedora
+
+      - name: Fetch
+        run: vuls-data-update fetch fedora --dir vuls-data-raw-fedora ${{ matrix.release }} --retry 10
+
+      - name: Split Large Files
+        run: find vuls-data-raw-fedora -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
@@ -452,19 +464,6 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
           owner: vulsio
           repositories: "vuls-data-raw-fedora"
-
-      - name: Check out fetch data repository
-        uses: actions/checkout@v4
-        with:
-          repository: vulsio/vuls-data-raw-fedora
-          path: vuls-data-raw-fedora
-          token: ${{ steps.app-token.outputs.token }}
-
-      - name: Fetch
-        run: vuls-data-update fetch fedora --dir vuls-data-raw-fedora ${{ matrix.release }} --retry 10
-
-      - name: Split Large Files
-        run: find vuls-data-raw-fedora -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
 
       - name: set Git config
         run: |
@@ -493,6 +492,7 @@ jobs:
             git pull --rebase
           command: |
             cd vuls-data-raw-fedora
+            git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-fedora.git
             git push
 
   fetch-epss:
@@ -520,6 +520,18 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
+      - name: Check out fetch data repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-epss
+          path: vuls-data-raw-epss
+
+      - name: Fetch
+        run: vuls-data-update fetch epss --dir vuls-data-raw-epss $(date --utc -d "-1 days" "+%Y-%m-%d")
+
+      - name: Split Large Files
+        run: find vuls-data-raw-epss -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
@@ -527,19 +539,6 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
           owner: vulsio
           repositories: "vuls-data-raw-epss"
-
-      - name: Check out fetch data repository
-        uses: actions/checkout@v4
-        with:
-          repository: vulsio/vuls-data-raw-epss
-          path: vuls-data-raw-epss
-          token: ${{ steps.app-token.outputs.token }}
-
-      - name: Fetch
-        run: vuls-data-update fetch epss --dir vuls-data-raw-epss $(date --utc -d "-1 days" "+%Y-%m-%d")
-
-      - name: Split Large Files
-        run: find vuls-data-raw-epss -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
 
       - name: set Git config
         run: |
@@ -557,6 +556,7 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-epss
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-epss.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update $(date --utc -d "-1 days" "+%Y-%m-%d")"
@@ -588,20 +588,11 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-          owner: vulsio
-          repositories: "vuls-data-raw-fortinet-cvrf"
-
       - name: Check out fetch data repository
         uses: actions/checkout@v4
         with:
           repository: vulsio/vuls-data-raw-fortinet-cvrf
           path: vuls-data-raw-fortinet-cvrf
-          token: ${{ steps.app-token.outputs.token }}
 
       - name: List advisory in ir.xml
         id: list
@@ -616,6 +607,14 @@ jobs:
       - name: Split Large Files
         if: ${{ steps.list.outputs.advisory != '' }}
         run: find vuls-data-raw-fortinet-cvrf -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-raw-fortinet-cvrf"
 
       - name: set Git config
         if: ${{ steps.list.outputs.advisory != '' }}
@@ -636,6 +635,7 @@ jobs:
         if: ${{ steps.list.outputs.advisory != '' }}
         run: |
           cd vuls-data-raw-fortinet-cvrf
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-fortinet-cvrf.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -672,6 +672,18 @@ jobs:
       - name: go install
         run: go install ./cmd/vuls-data-update
 
+      - name: Check out fetch data repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-${{ matrix.target }}
+          path: vuls-data-raw-${{ matrix.target }}
+
+      - name: Fetch
+        run: vuls-data-update fetch ${{ matrix.target }} --dir vuls-data-raw-${{ matrix.target }} ${{ secrets.VULNCHECK_API_KEY }}
+
+      - name: Split Large Files
+        run: find vuls-data-raw-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
@@ -679,19 +691,6 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
           owner: vulsio
           repositories: "vuls-data-raw-${{ matrix.target }}"
-
-      - name: Check out fetch data repository
-        uses: actions/checkout@v4
-        with:
-          repository: vulsio/vuls-data-raw-${{ matrix.target }}
-          path: vuls-data-raw-${{ matrix.target }}
-          token: ${{ steps.app-token.outputs.token }}
-
-      - name: Fetch
-        run: vuls-data-update fetch ${{ matrix.target }} --dir vuls-data-raw-${{ matrix.target }} ${{ secrets.VULNCHECK_API_KEY }}
-
-      - name: Split Large Files
-        run: find vuls-data-raw-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
 
       - name: set Git config
         run: |
@@ -701,6 +700,7 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-${{ matrix.target }}
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-${{ matrix.target }}.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
