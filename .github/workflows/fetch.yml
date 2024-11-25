@@ -164,13 +164,13 @@ jobs:
 
       - name: set Git config
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-${{ matrix.target }} config user.email "action@github.com"
+          git -C vuls-data-raw-${{ matrix.target }} config user.name "GitHub Action"
+          git -C vuls-data-raw-${{ matrix.target }} config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       - name: Push
         run: |
           cd vuls-data-raw-${{ matrix.target }}
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-${{ matrix.target }}.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -234,8 +234,9 @@ jobs:
 
       - name: set Git config
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-${{ matrix.target }} config user.email "action@github.com"
+          git -C vuls-data-raw-${{ matrix.target }} config user.name "GitHub Action"
+          git -C vuls-data-raw-${{ matrix.target }} config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       # - name: Restore
       #   run: |
@@ -248,7 +249,6 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-${{ matrix.target }}
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-${{ matrix.target }}.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -390,13 +390,13 @@ jobs:
 
       - name: set Git config
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-windows-msuc config user.email "action@github.com"
+          git -C vuls-data-raw-windows-msuc config user.name "GitHub Action"
+          git -C vuls-data-raw-windows-msuc config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       - name: Push
         run: |
           cd vuls-data-raw-windows-msuc
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-windows-msuc.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -467,8 +467,9 @@ jobs:
 
       - name: set Git config
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-fedora config user.email "action@github.com"
+          git -C vuls-data-raw-fedora config user.name "GitHub Action"
+          git -C vuls-data-raw-fedora config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       - name: Commit
         run: |
@@ -492,7 +493,6 @@ jobs:
             git pull --rebase
           command: |
             cd vuls-data-raw-fedora
-            git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-fedora.git
             git push
 
   fetch-epss:
@@ -542,8 +542,9 @@ jobs:
 
       - name: set Git config
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-epss config user.email "action@github.com"
+          git -C vuls-data-raw-epss config user.name "GitHub Action"
+          git -C vuls-data-raw-epss config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       - name: Restore
         run: |
@@ -556,7 +557,6 @@ jobs:
       - name: Push
         run: |
           cd vuls-data-raw-epss
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-epss.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update $(date --utc -d "-1 days" "+%Y-%m-%d")"
@@ -619,8 +619,9 @@ jobs:
       - name: set Git config
         if: ${{ steps.list.outputs.advisory != '' }}
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-fortinet-cvrf config user.email "action@github.com"
+          git -C vuls-data-raw-fortinet-cvrf config user.name "GitHub Action"
+          git -C vuls-data-raw-fortinet-cvrf config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       - name: Restore
         if: ${{ steps.list.outputs.advisory != '' }}
@@ -635,7 +636,6 @@ jobs:
         if: ${{ steps.list.outputs.advisory != '' }}
         run: |
           cd vuls-data-raw-fortinet-cvrf
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-fortinet-cvrf.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
@@ -694,13 +694,13 @@ jobs:
 
       - name: set Git config
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git -C vuls-data-raw-${{ matrix.target }} config user.email "action@github.com"
+          git -C vuls-data-raw-${{ matrix.target }} config user.name "GitHub Action"
+          git -C vuls-data-raw-${{ matrix.target }} config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${{ steps.app-token.outputs.token }}" | base64)"
 
       - name: Push
         run: |
           cd vuls-data-raw-${{ matrix.target }}
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}/vulsio/vuls-data-raw-${{ matrix.target }}.git
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "update"
