@@ -78,549 +78,612 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-crypto",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-crypto",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-crypto-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-crypto-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-debugsource",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-debugsource",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-doc",
-									"architectures": [
-										"noarch"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-doc",
+										"architectures": [
+											"noarch"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-elasticsearch",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-elasticsearch",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-elasticsearch-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-elasticsearch-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-logrotate",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-logrotate",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmaudit",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmaudit",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmaudit-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmaudit-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmfields",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmfields",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmfields-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmfields-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmjsonparse",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmjsonparse",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmjsonparse-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmjsonparse-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmkubernetes",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmkubernetes",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmkubernetes-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmkubernetes-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmnormalize",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmnormalize",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-mmnormalize-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-mmnormalize-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-openssl",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-openssl",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "rsyslog-openssl-debuginfo",
-									"architectures": [
-										"aarch64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:8.2204.0-3.amzn2023.0.2"
-										}
-									],
-									"fixed": [
-										"0:8.2204.0-3.amzn2023.0.2"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "rsyslog-openssl-debuginfo",
+										"architectures": [
+											"aarch64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.2204.0-3.amzn2023.0.2"
+											}
+										],
+										"fixed": [
+											"0:8.2204.0-3.amzn2023.0.2"
+										]
+									}
 								}
 							}
 						]

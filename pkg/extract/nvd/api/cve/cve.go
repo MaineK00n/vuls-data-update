@@ -22,10 +22,11 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -378,30 +379,33 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 		}
 		rangeType := decideRangeType(match)
 		cn := criterionTypes.Criterion{
-			Vulnerable: match.Vulnerable,
-			FixStatus: func() *fixstatusTypes.FixStatus {
-				if match.Vulnerable {
-					return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-				}
-				return nil
-			}(),
-			Package: criterionpackageTypes.Package{CPE: match.Criteria},
-			Affected: func() *affectedTypes.Affected {
-				if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
-					match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
+			Type: criterionTypes.CriterionTypeVersion,
+			Version: &vcTypes.Criterion{
+				Vulnerable: match.Vulnerable,
+				FixStatus: func() *fixstatusTypes.FixStatus {
+					if match.Vulnerable {
+						return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
+					}
 					return nil
-				}
-				a := affectedTypes.Affected{
-					Type: rangeType,
-					Range: []rangeTypes.Range{{
-						GreaterEqual: match.VersionStartIncluding,
-						GreaterThan:  match.VersionStartExcluding,
-						LessEqual:    match.VersionEndIncluding,
-						LessThan:     match.VersionEndExcluding,
-					}},
-				}
-				return &a
-			}(),
+				}(),
+				Package: criterionpackageTypes.Package{CPE: match.Criteria},
+				Affected: func() *affectedTypes.Affected {
+					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
+						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
+						return nil
+					}
+					a := affectedTypes.Affected{
+						Type: rangeType,
+						Range: []rangeTypes.Range{{
+							GreaterEqual: match.VersionStartIncluding,
+							GreaterThan:  match.VersionStartExcluding,
+							LessEqual:    match.VersionEndIncluding,
+							LessThan:     match.VersionEndExcluding,
+						}},
+					}
+					return &a
+				}(),
+			},
 		}
 
 		cns := []criterionTypes.Criterion{cn}
@@ -414,14 +418,17 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 			cns = slices.Grow(cns, 1+len(ns))
 			for _, n := range ns {
 				cns = append(cns, criterionTypes.Criterion{
-					Vulnerable: match.Vulnerable,
-					FixStatus: func() *fixstatusTypes.FixStatus {
-						if match.Vulnerable {
-							return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
-						}
-						return nil
-					}(),
-					Package: criterionpackageTypes.Package{CPE: n},
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: match.Vulnerable,
+						FixStatus: func() *fixstatusTypes.FixStatus {
+							if match.Vulnerable {
+								return &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown}
+							}
+							return nil
+						}(),
+						Package: criterionpackageTypes.Package{CPE: n},
+					},
 				})
 			}
 		}

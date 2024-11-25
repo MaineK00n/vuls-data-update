@@ -1,6 +1,8 @@
 package v2
 
 import (
+	"cmp"
+
 	gocvss20 "github.com/pandatix/go-cvss/20"
 	"github.com/pkg/errors"
 )
@@ -61,4 +63,13 @@ func rating(score float64) (string, error) {
 		return "MEDIUM", nil
 	}
 	return "LOW", nil
+}
+
+func Compare(x, y CVSSv2) int {
+	return cmp.Or(
+		cmp.Compare(x.BaseScore, y.BaseScore),
+		cmp.Compare(x.TemporalScore, y.TemporalScore),
+		cmp.Compare(x.EnvironmentalScore, y.EnvironmentalScore),
+		cmp.Compare(x.Vector, y.Vector),
+	)
 }

@@ -118,55 +118,61 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "vim-X11-debuginfo",
-									"architectures": [
-										"x86_64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "2:8.2.3512-1.amzn2022"
-										}
-									],
-									"fixed": [
-										"2:8.2.3512-1.amzn2022"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "vim-X11-debuginfo",
+										"architectures": [
+											"x86_64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "vim-common-debuginfo",
-									"architectures": [
-										"x86_64"
-									],
-									"repositories": [
-										"amazonlinux"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "2:8.2.3512-1.amzn2022"
-										}
-									],
-									"fixed": [
-										"2:8.2.3512-1.amzn2022"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "vim-common-debuginfo",
+										"architectures": [
+											"x86_64"
+										],
+										"repositories": [
+											"amazonlinux"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
 								}
 							}
 						]

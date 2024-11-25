@@ -17,10 +17,11 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -239,23 +240,26 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 	mm := make(map[string][]criterionTypes.Criterion)
 	for p, as := range m {
 		mm[p.major] = append(mm[p.major], criterionTypes.Criterion{
-			Vulnerable: true,
-			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-			Package: packageTypes.Package{
-				Name: func() string {
-					switch p.modularityLabel {
-					case "":
-						return p.name
-					default:
-						return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
-					}
-				}(),
-				Architectures: as,
-			},
-			Affected: &affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypeRPM,
-				Range: []rangeTypes.Range{{LessThan: p.fixedVersion}},
-				Fixed: []string{p.fixedVersion},
+			Type: criterionTypes.CriterionTypeVersion,
+			Version: &vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: packageTypes.Package{
+					Name: func() string {
+						switch p.modularityLabel {
+						case "":
+							return p.name
+						default:
+							return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
+						}
+					}(),
+					Architectures: as,
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: p.fixedVersion}},
+					Fixed: []string{p.fixedVersion},
+				},
 			},
 		})
 	}

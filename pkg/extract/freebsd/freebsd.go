@@ -16,10 +16,11 @@ import (
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
-	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
-	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/fixstatus"
-	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/package"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -261,12 +262,15 @@ func extract(fetched freebsd.Vuln, raws []string) dataTypes.Data {
 										rs = append(rs, rangeTypes.Range{Equal: r.Eq, LessThan: r.Lt, LessEqual: r.Le, GreaterThan: r.Gt, GreaterEqual: r.Ge})
 									}
 									cs = append(cs, criterionTypes.Criterion{
-										Vulnerable: true,
-										FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
-										Package:    packageTypes.Package{Name: n},
-										Affected: &affectedTypes.Affected{
-											Type:  rangeTypes.RangeTypeFreeBSDPkg,
-											Range: rs,
+										Type: criterionTypes.CriterionTypeVersion,
+										Version: &vcTypes.Criterion{
+											Vulnerable: true,
+											FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+											Package:    packageTypes.Package{Name: n},
+											Affected: &affectedTypes.Affected{
+												Type:  rangeTypes.RangeTypeFreeBSDPkg,
+												Range: rs,
+											},
 										},
 									})
 								}

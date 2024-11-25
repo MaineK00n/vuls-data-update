@@ -3,13 +3,35 @@ package cwe_test
 import (
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
+	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
 )
+
+func TestCWE_Sort(t *testing.T) {
+	type fields struct {
+		Source string
+		CWE    []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &cweTypes.CWE{
+				Source: tt.fields.Source,
+				CWE:    tt.fields.CWE,
+			}
+			c.Sort()
+		})
+	}
+}
 
 func TestCompare(t *testing.T) {
 	type args struct {
-		x cwe.CWE
-		y cwe.CWE
+		x cweTypes.CWE
+		y cweTypes.CWE
 	}
 	tests := []struct {
 		name string
@@ -20,7 +42,7 @@ func TestCompare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cwe.Compare(tt.args.x, tt.args.y); got != tt.want {
+			if got := cweTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
 		})

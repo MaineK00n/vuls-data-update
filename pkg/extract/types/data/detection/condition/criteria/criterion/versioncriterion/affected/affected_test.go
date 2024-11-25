@@ -3,15 +3,39 @@ package affected_test
 import (
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected"
-	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/affected/range"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
+func TestAffected_Sort(t *testing.T) {
+	type fields struct {
+		Type  affectedrangeTypes.RangeType
+		Range []affectedrangeTypes.Range
+		Fixed []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &affectedTypes.Affected{
+				Type:  tt.fields.Type,
+				Range: tt.fields.Range,
+				Fixed: tt.fields.Fixed,
+			}
+			a.Sort()
+		})
+	}
+}
+
 func TestCompare(t *testing.T) {
 	type args struct {
-		x affected.Affected
-		y affected.Affected
+		x affectedTypes.Affected
+		y affectedTypes.Affected
 	}
 	tests := []struct {
 		name string
@@ -22,7 +46,7 @@ func TestCompare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := affected.Compare(tt.args.x, tt.args.y); got != tt.want {
+			if got := affectedTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
 		})
@@ -178,7 +202,7 @@ func TestAffected_Accept(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := (affected.Affected{
+			got, err := (affectedTypes.Affected{
 				Type:  tt.fields.Type,
 				Range: tt.fields.Range,
 				Fixed: tt.fields.Fixed,

@@ -9,14 +9,7 @@ import (
 	"github.com/pkg/errors"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
-
-type Criteria struct {
-	Operator   CriteriaOperatorType       `json:"operator,omitempty"`
-	Criterias  []Criteria                 `json:"criterias,omitempty"`
-	Criterions []criterionTypes.Criterion `json:"criterions,omitempty"`
-}
 
 type CriteriaOperatorType int
 
@@ -60,6 +53,12 @@ func (t *CriteriaOperatorType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type Criteria struct {
+	Operator   CriteriaOperatorType       `json:"operator,omitempty"`
+	Criterias  []Criteria                 `json:"criterias,omitempty"`
+	Criterions []criterionTypes.Criterion `json:"criterions,omitempty"`
+}
+
 func (c *Criteria) Sort() {
 	for i := range c.Criterions {
 		(&c.Criterions[i]).Sort()
@@ -80,41 +79,36 @@ func Compare(x, y Criteria) int {
 	)
 }
 
-type FilteredCriteria struct {
-	Operator   CriteriaOperatorType `json:"operator,omitempty"`
-	Criterias  []FilteredCriteria   `json:"criterias,omitempty"`
-	Criterions []FilteredCriterion  `json:"criterions,omitempty"`
-}
-
-type FilteredCriterion struct {
-	Criterion criterionTypes.Criterion
-	Accepts   []int
-}
-
-func (c Criteria) Contains(ecosystem ecosystemTypes.Ecosystem, query criterionTypes.Query) (bool, error) {
+func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 	for _, ca := range c.Criterias {
-		isAccepted, err := ca.Contains(ecosystem, query)
+		isContained, err := ca.Contains(query)
 		if err != nil {
 			return false, errors.Wrap(err, "criteria contains")
 		}
-		if isAccepted {
+		if isContained {
 			return true, nil
 		}
 	}
 
 	for _, cn := range c.Criterions {
-		isAccepted, err := cn.Accept(ecosystem, query)
+		isContained, err := cn.Contains(query)
 		if err != nil {
 			return false, errors.Wrap(err, "criterion accept")
 		}
-		if isAccepted {
+		if isContained {
 			return true, nil
 		}
 	}
 	return false, nil
 }
 
-func (c Criteria) Accept(ecosystem ecosystemTypes.Ecosystem, queries []criterionTypes.Query) (FilteredCriteria, error) {
+type FilteredCriteria struct {
+	Operator   CriteriaOperatorType               `json:"operator,omitempty"`
+	Criterias  []FilteredCriteria                 `json:"criterias,omitempty"`
+	Criterions []criterionTypes.FilteredCriterion `json:"criterions,omitempty"`
+}
+
+func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
 	filtered := FilteredCriteria{
 		Operator: c.Operator,
 		Criterias: func() []FilteredCriteria {
@@ -123,16 +117,16 @@ func (c Criteria) Accept(ecosystem ecosystemTypes.Ecosystem, queries []criterion
 			}
 			return nil
 		}(),
-		Criterions: func() []FilteredCriterion {
+		Criterions: func() []criterionTypes.FilteredCriterion {
 			if len(c.Criterions) > 0 {
-				return make([]FilteredCriterion, 0, len(c.Criterions))
+				return make([]criterionTypes.FilteredCriterion, 0, len(c.Criterions))
 			}
 			return nil
 		}(),
 	}
 
 	for _, ca := range c.Criterias {
-		fca, err := ca.Accept(ecosystem, queries)
+		fca, err := ca.Accept(query)
 		if err != nil {
 			return FilteredCriteria{}, errors.Wrap(err, "criteria accept")
 		}
@@ -140,20 +134,11 @@ func (c Criteria) Accept(ecosystem ecosystemTypes.Ecosystem, queries []criterion
 	}
 
 	for _, cn := range c.Criterions {
-		var is []int
-		for i, q := range queries {
-			isAccepted, err := cn.Accept(ecosystem, q)
-			if err != nil {
-				return FilteredCriteria{}, errors.Wrap(err, "criterion accept")
-			}
-			if isAccepted {
-				is = append(is, i)
-			}
+		fcn, err := cn.Accept(query)
+		if err != nil {
+			return FilteredCriteria{}, errors.Wrap(err, "criterion accept")
 		}
-		filtered.Criterions = append(filtered.Criterions, FilteredCriterion{
-			Criterion: cn,
-			Accepts:   is,
-		})
+		filtered.Criterions = append(filtered.Criterions, fcn)
 	}
 
 	return filtered, nil
@@ -173,7 +158,11 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		}
 
 		for _, cn := range c.Criterions {
-			if cn.Criterion.Vulnerable && len(cn.Accepts) == 0 {
+			isAffected, err := cn.Affected()
+			if err != nil {
+				return false, errors.Wrap(err, "criterion affected")
+			}
+			if !isAffected {
 				return false, nil
 			}
 		}
@@ -190,7 +179,11 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		}
 
 		for _, cn := range c.Criterions {
-			if cn.Criterion.Vulnerable && len(cn.Accepts) > 0 {
+			isAffected, err := cn.Affected()
+			if err != nil {
+				return false, errors.Wrap(err, "criterion affected")
+			}
+			if isAffected {
 				return true, nil
 			}
 		}

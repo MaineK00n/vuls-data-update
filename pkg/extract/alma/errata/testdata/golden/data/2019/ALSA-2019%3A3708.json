@@ -280,142 +280,160 @@
 						"operator": "OR",
 						"criterions": [
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "mariadb-devel:10.3::Judy",
-									"architectures": [
-										"i686"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
-										}
-									],
-									"fixed": [
-										"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "mariadb-devel:10.3::Judy",
+										"architectures": [
+											"i686"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+											}
+										],
+										"fixed": [
+											"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "mariadb-devel:10.3::Judy-devel",
-									"architectures": [
-										"i686",
-										"x86_64"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
-										}
-									],
-									"fixed": [
-										"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "mariadb-devel:10.3::Judy-devel",
+										"architectures": [
+											"i686",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+											}
+										],
+										"fixed": [
+											"0:1.0.5-18.module_el8.3.0+2028+5e3224e9"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "mariadb-devel:10.3::Judy-devel",
-									"architectures": [
-										"ppc64le"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
-										}
-									],
-									"fixed": [
-										"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "mariadb-devel:10.3::Judy-devel",
+										"architectures": [
+											"ppc64le"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+											}
+										],
+										"fixed": [
+											"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "mariadb:10.3::Judy",
-									"architectures": [
-										"ppc64le"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
-										}
-									],
-									"fixed": [
-										"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "mariadb:10.3::Judy",
+										"architectures": [
+											"ppc64le"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+											}
+										],
+										"fixed": [
+											"0:1.0.5-18.module_el8.6.0+2867+72759d2f"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "mariadb:10.3::Judy",
-									"architectures": [
-										"x86_64"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:1.0.5-18.module_el8.5.0+2632+14ced695"
-										}
-									],
-									"fixed": [
-										"0:1.0.5-18.module_el8.5.0+2632+14ced695"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "mariadb:10.3::Judy",
+										"architectures": [
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.5-18.module_el8.5.0+2632+14ced695"
+											}
+										],
+										"fixed": [
+											"0:1.0.5-18.module_el8.5.0+2632+14ced695"
+										]
+									}
 								}
 							},
 							{
-								"vulnerable": true,
-								"fix_status": {
-									"class": "fixed"
-								},
-								"package": {
-									"name": "mariadb:10.5::Judy",
-									"architectures": [
-										"aarch64"
-									]
-								},
-								"affected": {
-									"type": "rpm",
-									"range": [
-										{
-											"lt": "0:1.0.5-18.module_el8.6.0+2761+593e5e59"
-										}
-									],
-									"fixed": [
-										"0:1.0.5-18.module_el8.6.0+2761+593e5e59"
-									]
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "mariadb:10.5::Judy",
+										"architectures": [
+											"aarch64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.5-18.module_el8.6.0+2761+593e5e59"
+											}
+										],
+										"fixed": [
+											"0:1.0.5-18.module_el8.6.0+2761+593e5e59"
+										]
+									}
 								}
 							}
 						]
