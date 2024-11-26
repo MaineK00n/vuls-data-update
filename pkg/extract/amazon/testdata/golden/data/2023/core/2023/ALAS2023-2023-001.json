@@ -87,7 +87,9 @@
 									"package": {
 										"name": "rsyslog",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -116,7 +118,9 @@
 									"package": {
 										"name": "rsyslog-crypto",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -145,7 +149,9 @@
 									"package": {
 										"name": "rsyslog-crypto-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -174,7 +180,9 @@
 									"package": {
 										"name": "rsyslog-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -203,7 +211,9 @@
 									"package": {
 										"name": "rsyslog-debugsource",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -261,7 +271,9 @@
 									"package": {
 										"name": "rsyslog-elasticsearch",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -290,7 +302,9 @@
 									"package": {
 										"name": "rsyslog-elasticsearch-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -319,7 +333,9 @@
 									"package": {
 										"name": "rsyslog-logrotate",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -348,7 +364,9 @@
 									"package": {
 										"name": "rsyslog-mmaudit",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -377,7 +395,9 @@
 									"package": {
 										"name": "rsyslog-mmaudit-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -406,7 +426,9 @@
 									"package": {
 										"name": "rsyslog-mmfields",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -435,7 +457,9 @@
 									"package": {
 										"name": "rsyslog-mmfields-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -464,7 +488,9 @@
 									"package": {
 										"name": "rsyslog-mmjsonparse",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -493,7 +519,9 @@
 									"package": {
 										"name": "rsyslog-mmjsonparse-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -522,7 +550,9 @@
 									"package": {
 										"name": "rsyslog-mmkubernetes",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -551,7 +581,9 @@
 									"package": {
 										"name": "rsyslog-mmkubernetes-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -580,7 +612,9 @@
 									"package": {
 										"name": "rsyslog-mmnormalize",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -609,7 +643,9 @@
 									"package": {
 										"name": "rsyslog-mmnormalize-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -638,7 +674,9 @@
 									"package": {
 										"name": "rsyslog-openssl",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"
@@ -667,7 +705,9 @@
 									"package": {
 										"name": "rsyslog-openssl-debuginfo",
 										"architectures": [
-											"aarch64"
+											"aarch64",
+											"i686",
+											"x86_64"
 										],
 										"repositories": [
 											"amazonlinux"

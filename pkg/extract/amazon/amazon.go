@@ -151,9 +151,9 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 					pkgs := make(map[string]map[string][]string)
 					for _, p := range fetched.Pkglist.Collection.Package {
 						if pkgs[p.Name] == nil {
-							pkgs[p.Name] = map[string][]string{}
+							pkgs[p.Name] = make(map[string][]string)
 						}
-						pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Name, p.Release)], p.Arch)
+						pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)] = append(pkgs[p.Name][fmt.Sprintf("%s:%s-%s", p.Epoch, p.Version, p.Release)], p.Arch)
 					}
 
 					cs := make([]criterionTypes.Criterion, 0, func() int {
