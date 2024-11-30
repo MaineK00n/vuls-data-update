@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.elsa:tst:202312342004",
+	"version": "501",
+	"comment": "hivex is earlier than 0:1.3.18-21.module+el8.7.0+21037+8ee66348",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:202312342002"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:202312342005"
+	}
+}

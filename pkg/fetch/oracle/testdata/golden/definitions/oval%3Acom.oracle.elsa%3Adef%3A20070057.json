@@ -37,13 +37,18 @@
 			"cve": [
 				{
 					"text": "CVE-2007-0493",
-					"href": "https://linux.oracle.com/cve/CVE-2007-0493.html"
+					"href": "https://linux.oracle.com/cve/CVE-2007-0493.html",
+					"cvss2": "7.8/AV:N/AC:L/Au:N/C:N/I:N/A:C",
+					"public": "20070125"
 				},
 				{
 					"text": "CVE-2007-0494",
-					"href": "https://linux.oracle.com/cve/CVE-2007-0494.html"
+					"href": "https://linux.oracle.com/cve/CVE-2007-0494.html",
+					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P",
+					"public": "20070125"
 				}
-			]
+			],
+			"affected_cpe_list": {}
 		}
 	},
 	"criteria": {

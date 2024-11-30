@@ -26,6 +26,9 @@ import (
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	cvssV2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
+	cvssV30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
+	cvssV31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
@@ -150,13 +153,82 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Wrapf(err, "collectPackages, definition: %s", def.ID)
 	}
 
-	ss := func() []segmentTypes.Segment {
+	segs := func() []segmentTypes.Segment {
 		ss := make([]segmentTypes.Segment, 0, len(ds))
 		for _, d := range ds {
 			ss = append(ss, segmentTypes.Segment{Ecosystem: d.Ecosystem})
 		}
 		return ss
 	}()
+
+	vs, err := func() ([]vulnerabilityTypes.Vulnerability, error) {
+		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
+		for _, cve := range def.Metadata.Advisory.Cve {
+			var ss []severityTypes.Severity
+			if cve.CVSS2 != "" {
+				_, rhs, _ := strings.Cut(cve.CVSS2, "/")
+				v2, err := cvssV2Types.Parse(rhs)
+				if err != nil {
+					if !strings.Contains(rhs, "AC:N") { // e.g. AV:N/AC:N/Au:N/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20100046 CVE-2009-2910
+						return nil, errors.Wrap(err, "parse cvss2")
+					}
+				} else {
+					ss = append(ss, severityTypes.Severity{
+						Type:   severityTypes.SeverityTypeCVSSv2,
+						Source: "linux.oracle.com/security",
+						CVSSv2: v2,
+					})
+				}
+			}
+			if cve.CVSS3 != "" {
+				_, rhs, _ := strings.Cut(cve.CVSS3, "/")
+				switch {
+				case strings.HasPrefix(rhs, "CVSS:3.0"):
+					v30, err := cvssV30Types.Parse(rhs)
+					if err != nil {
+						if !strings.Contains(rhs, "AC:N") { // e.g. CVSS:3.0/AV:N/AC:N/PR:N/UI:N/S:U/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20130727 CVE-2013-1798
+							return nil, errors.Wrap(err, "parse cvss3")
+						}
+					} else {
+						ss = append(ss, severityTypes.Severity{
+							Type:    severityTypes.SeverityTypeCVSSv30,
+							Source:  "linux.oracle.com/security",
+							CVSSv30: v30,
+						})
+					}
+				case strings.HasPrefix(rhs, "CVSS:3.1"):
+					v31, err := cvssV31Types.Parse(rhs)
+					if err != nil {
+						return nil, errors.Wrap(err, "parse cvss3")
+					}
+					ss = append(ss, severityTypes.Severity{
+						Type:    severityTypes.SeverityTypeCVSSv31,
+						Source:  "linux.oracle.com/security",
+						CVSSv31: v31,
+					})
+				default:
+					return nil, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", cve.CVSS3)
+				}
+			}
+
+			vs = append(vs, vulnerabilityTypes.Vulnerability{
+				Content: vulnerabilityContentTypes.Content{
+					ID:       vulnerabilityContentTypes.VulnerabilityID(cve.Text),
+					Severity: ss,
+					References: []referenceTypes.Reference{{
+						Source: "linux.oracle.com/security",
+						URL:    cve.Href,
+					}},
+					Published: utiltime.Parse([]string{"20060102"}, cve.Public),
+				},
+				Segments: segs,
+			})
+		}
+		return vs, nil
+	}()
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "walk vulnerability")
+	}
 
 	return dataTypes.Data{
 		ID: dataTypes.RootID(id),
@@ -181,25 +253,10 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 				}(),
 				Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
 			},
-			Segments: ss,
+			Segments: segs,
 		}},
-		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
-			vs := make([]vulnerabilityTypes.Vulnerability, 0, len(def.Metadata.Advisory.Cve))
-			for _, cve := range def.Metadata.Advisory.Cve {
-				vs = append(vs, vulnerabilityTypes.Vulnerability{
-					Content: vulnerabilityContentTypes.Content{
-						ID: vulnerabilityContentTypes.VulnerabilityID(cve.Text),
-						References: []referenceTypes.Reference{{
-							Source: "linux.oracle.com/security",
-							URL:    cve.Href,
-						}},
-					},
-					Segments: ss,
-				})
-			}
-			return vs
-		}(),
-		Detections: ds,
+		Vulnerabilities: vs,
+		Detections:      ds,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.Oracle,
 			Raws: e.r.Paths(),
@@ -314,7 +371,7 @@ func (e extractor) evalCriteria(criteria oracle.Criteria) ([]ovalPackage, error)
 
 func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criterion) error {
 	for _, c := range criterions {
-		test, err := e.readTest("rpminfo_test", c.TestRef)
+		test, err := e.readRpminfoTest(c.TestRef)
 		if err != nil && !errors.Is(err, os.ErrNotExist) {
 			return errors.Wrapf(err, "read rpminfo_test file. ref: %s", c.TestRef)
 		}
@@ -364,7 +421,7 @@ func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criter
 				}
 			}
 		} else {
-			test, err := e.readTest("textfilecontent54_test", c.TestRef)
+			test, err := e.readTextfilecontent54Test(c.TestRef)
 			if err != nil {
 				return errors.Wrapf(err, "read textfilecontent54_test. ref: %s", c.TestRef)
 			}
@@ -423,11 +480,20 @@ func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criter
 	return nil
 }
 
-func (e extractor) readTest(testType, id string) (oracle.Test, error) {
-	path := filepath.Join(e.inputDir, "tests", testType, fmt.Sprintf("%s.json", id))
-	var test oracle.Test
+func (e extractor) readRpminfoTest(id string) (oracle.RpminfoTest, error) {
+	path := filepath.Join(e.inputDir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", id))
+	var test oracle.RpminfoTest
 	if err := e.r.Read(path, e.inputDir, &test); err != nil {
-		return oracle.Test{}, errors.Wrapf(err, "read %s json. path: %s", testType, path)
+		return oracle.RpminfoTest{}, errors.Wrapf(err, "read rpminfo_test json. path: %s", path)
+	}
+	return test, nil
+}
+
+func (e extractor) readTextfilecontent54Test(id string) (oracle.Textfilecontent54Test, error) {
+	path := filepath.Join(e.inputDir, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", id))
+	var test oracle.Textfilecontent54Test
+	if err := e.r.Read(path, e.inputDir, &test); err != nil {
+		return oracle.Textfilecontent54Test{}, errors.Wrapf(err, "read textfilecontent54_test json. path: %s", path)
 	}
 	return test, nil
 }

@@ -1,0 +1,12 @@
+{
+	"id": "oval:com.oracle.elsa:tst:202312342003",
+	"version": "501",
+	"comment": "Module virt:kvm_utils is enabled",
+	"check": "all",
+	"object": {
+		"object_ref": "oval:com.oracle.elsa:obj:202312342105"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.elsa:ste:202312342002"
+	}
+}

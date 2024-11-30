@@ -39,9 +39,15 @@ type Definition struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
 			} `xml:"issued" json:"issued,omitempty"`
 			Cve []struct {
-				Text string `xml:",chardata" json:"text,omitempty"`
-				Href string `xml:"href,attr" json:"href,omitempty"`
+				Text   string `xml:",chardata" json:"text,omitempty"`
+				Href   string `xml:"href,attr" json:"href,omitempty"`
+				CVSS2  string `xml:"cvss2,attr" json:"cvss2,omitempty"`
+				CVSS3  string `xml:"cvss3,attr" json:"cvss3,omitempty"`
+				Public string `xml:"public,attr" json:"public,omitempty"`
 			} `xml:"cve" json:"cve,omitempty"`
+			AffectedCpeList struct {
+				Cpe []string `xml:"cpe" json:"cpe,omitempty"`
+			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitempty"`
 		} `xml:"advisory" json:"advisory,omitempty"`
 	} `xml:"metadata" json:"metadata,omitempty"`
 	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
@@ -58,7 +64,7 @@ type Criterion struct {
 	Comment string `xml:"comment,attr" json:"comment,omitempty"`
 }
 
-type Test struct {
+type RpminfoTest struct {
 	ID      string `xml:"id,attr" json:"id,omitempty"`
 	Version string `xml:"version,attr" json:"version,omitempty"`
 	Comment string `xml:"comment,attr" json:"comment,omitempty"`
@@ -72,9 +78,22 @@ type Test struct {
 	} `xml:"state" json:"state,omitempty"`
 }
 
+type Textfilecontent54Test struct {
+	ID      string `xml:"id,attr" json:"id,omitempty"`
+	Version string `xml:"version,attr" json:"version,omitempty"`
+	Comment string `xml:"comment,attr" json:"comment,omitempty"`
+	Check   string `xml:"check,attr" json:"check,omitempty"`
+	Object  struct {
+		ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+	} `xml:"object" json:"object,omitempty"`
+	State struct {
+		StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+	} `xml:"state" json:"state,omitempty"`
+}
+
 type Tests struct {
-	RpminfoTest           []Test `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
-	Textfilecontent54Test []Test `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitempty"`
+	RpminfoTest           []RpminfoTest           `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
+	Textfilecontent54Test []Textfilecontent54Test `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitempty"`
 }
 
 type RpminfoObject struct {
