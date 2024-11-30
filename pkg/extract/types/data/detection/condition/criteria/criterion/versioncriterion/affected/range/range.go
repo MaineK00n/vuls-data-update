@@ -196,6 +196,11 @@ func (t RangeType) Compare(ecosystem ecosystemTypes.Ecosystem, v1, v2 string) (i
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
 		switch {
+		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeRocky):
+			if strings.Contains(v1, ".cloud") != strings.Contains(v2, ".cloud") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("Rocky Linux package and Rocky Linux SIG Cloud package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeOracle):
 			if extractOracleKsplice(v1) != extractOracleKsplice(v2) {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", v1, v2)}}

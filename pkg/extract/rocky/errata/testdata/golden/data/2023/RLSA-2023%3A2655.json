@@ -1,0 +1,459 @@
+{
+	"id": "RLSA-2023:2655",
+	"advisories": [
+		{
+			"content": {
+				"id": "RLSA-2023:2655",
+				"title": "Moderate: nodejs and nodejs-nodemon security, bug fix, and enhancement update",
+				"description": "Node.js is a software development platform for building fast and scalable network applications in the JavaScript programming language. \n\nThe following packages have been upgraded to a later upstream version: nodejs (16.19.1), nodejs-nodemon (2.0.20).\n\nSecurity Fix(es):\n\n* c-ares: buffer overflow in config_sortlist() due to missing string length check (CVE-2022-4904)\n\n* http-cache-semantics: Regular Expression Denial of Service (ReDoS) vulnerability (CVE-2022-25881)\n\n* Node.js: Permissions policies can be bypassed via process.mainModule (CVE-2023-23918)\n\n* Node.js: Fetch API did not protect against CRLF injection in host headers (CVE-2023-23936)\n\n* Node.js: insecure loading of ICU data through ICU_DATA environment variable (CVE-2023-23920)\n\n* Node.js: Regular Expression Denial of Service in Headers fetch API (CVE-2023-24807)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "errata.rockylinux.org",
+						"vendor": "MODERATE"
+					}
+				],
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-25881"
+					},
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-4904"
+					},
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23918"
+					},
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23920"
+					},
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23936"
+					},
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24807"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2165824"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2168631"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2171935"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2172190"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2172204"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2172217"
+					},
+					{
+						"source": "Red Hat",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178076"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://errata.rockylinux.org/RLSA-2023:2655"
+					}
+				],
+				"published": "2023-05-25T19:53:09.847906Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-25881",
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-25881"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-4904",
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-4904"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2023-23918",
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23918"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2023-23920",
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23920"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2023-23936",
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23936"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2023-24807",
+				"references": [
+					{
+						"source": "MITRE",
+						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24807"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "rocky:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"src",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-debuginfo",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-debugsource",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-docs",
+										"architectures": [
+											"noarch"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-full-i18n",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-libs",
+										"architectures": [
+											"aarch64",
+											"i686",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-libs-debuginfo",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:16.19.1-1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:16.19.1-1.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "nodejs-nodemon",
+										"architectures": [
+											"noarch",
+											"src"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.0.20-3.el9_2"
+											}
+										],
+										"fixed": [
+											"0:2.0.20-3.el9_2"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "npm",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:8.19.3-1.16.19.1.1.el9_2"
+											}
+										],
+										"fixed": [
+											"1:8.19.3-1.16.19.1.1.el9_2"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "rocky-errata",
+		"raws": [
+			"fixtures/2023/RLSA-2023%3A2655.json"
+		]
+	}
+}

@@ -1,6 +1,7 @@
 package affectedrange_test
 
 import (
+	"fmt"
 	"testing"
 
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
@@ -42,10 +43,40 @@ func TestRangeType_Compare(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name: "rocky v1: rocky, v2: rocky",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.el9",
+			},
+			want: 0,
+		},
+		{
+			name: "rocky v1: rocky sig cloud, v2: rocky",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, "9")),
+				v1:        "0.0.1-0.0.1.el9.cloud.0",
+				v2:        "0.0.1-0.0.1.el9",
+			},
+			wantErr: true,
+		},
+		{
+			name: "rocky v1: rocky sig cloud, v2: rocky sig cloud",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, "9")),
+				v1:        "0.0.1-0.0.1.el9.cloud.0",
+				v2:        "0.0.1-0.0.1.el9.cloud.0.1",
+			},
+			want: -1,
+		},
+		{
 			name: "oracle v1: not ksplice, v2: not ksplice",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				ecosystem: ecosystemTypes.EcosystemTypeOracle,
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, "9")),
 				v1:        "0.0.1-0.0.1.el9",
 				v2:        "0.0.1-0.0.1.el9",
 			},
@@ -55,7 +86,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "oracle v1: not ksplice, v2: ksplice1",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				ecosystem: ecosystemTypes.EcosystemTypeOracle,
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, "9")),
 				v1:        "0.0.1-0.0.1.el9",
 				v2:        "0.0.1-0.0.1.ksplice1.el9",
 			},
@@ -65,7 +96,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "oracle v1: ksplice1, v2: ksplice1",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				ecosystem: ecosystemTypes.EcosystemTypeOracle,
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, "9")),
 				v1:        "0.0.1-0.0.1.ksplice1.el9",
 				v2:        "0.0.1-0.0.1.ksplice1.el9",
 			},
@@ -75,7 +106,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "oracle v1: ksplice1, v2: ksplice2",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				ecosystem: ecosystemTypes.EcosystemTypeOracle,
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, "9")),
 				v1:        "0.0.1-0.0.1.ksplice1.el9",
 				v2:        "0.0.1-0.0.1.ksplice2.el9",
 			},

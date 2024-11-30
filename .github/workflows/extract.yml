@@ -100,7 +100,7 @@ jobs:
           # - "redhat-ovalv2"
           # - "redhat-vex"
           # - "redhat-osv"
-          # - "rocky-errata"
+          - "rocky-errata"
           # - "rocky-osv"
           # - "rubygems-ghsa"
           # - "rubygems-glsa"
