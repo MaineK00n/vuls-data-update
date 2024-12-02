@@ -3,16 +3,20 @@ package criterionpackage_test
 import (
 	"testing"
 
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
+	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 )
 
 func TestPackage_Sort(t *testing.T) {
 	type fields struct {
-		Name          string
-		CPE           string
-		Architectures []string
-		Repositories  []string
-		Functions     []string
+		Type     packageTypes.PackageType
+		Binary   *binaryTypes.Package
+		Source   *sourceTypes.Package
+		CPE      *cpeTypes.CPE
+		Language *languageTypes.Package
 	}
 	tests := []struct {
 		name   string
@@ -22,12 +26,12 @@ func TestPackage_Sort(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &criterionpackageTypes.Package{
-				Name:          tt.fields.Name,
-				CPE:           tt.fields.CPE,
-				Architectures: tt.fields.Architectures,
-				Repositories:  tt.fields.Repositories,
-				Functions:     tt.fields.Functions,
+			p := &packageTypes.Package{
+				Type:     tt.fields.Type,
+				Binary:   tt.fields.Binary,
+				Source:   tt.fields.Source,
+				CPE:      tt.fields.CPE,
+				Language: tt.fields.Language,
 			}
 			p.Sort()
 		})
@@ -36,8 +40,8 @@ func TestPackage_Sort(t *testing.T) {
 
 func TestCompare(t *testing.T) {
 	type args struct {
-		x criterionpackageTypes.Package
-		y criterionpackageTypes.Package
+		x packageTypes.Package
+		y packageTypes.Package
 	}
 	tests := []struct {
 		name string
@@ -48,7 +52,7 @@ func TestCompare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := criterionpackageTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
+			if got := packageTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
 		})
@@ -57,14 +61,14 @@ func TestCompare(t *testing.T) {
 
 func TestPackage_Accept(t *testing.T) {
 	type fields struct {
-		Name          string
-		CPE           string
-		Architectures []string
-		Repositories  []string
-		Functions     []string
+		Type     packageTypes.PackageType
+		Binary   *binaryTypes.Package
+		Source   *sourceTypes.Package
+		CPE      *cpeTypes.CPE
+		Language *languageTypes.Package
 	}
 	type args struct {
-		query criterionpackageTypes.Query
+		query packageTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -74,105 +78,73 @@ func TestPackage_Accept(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "package 1",
+			name: "binary",
 			fields: fields{
-				Name:          "package",
-				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repository"},
-				Functions:     []string{"function1", "function2"},
+				Type:   packageTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{Name: "name"},
 			},
-			args: args{query: criterionpackageTypes.Query{
-				Package: &criterionpackageTypes.QueryPackage{
-					Name: "package",
+			args: args{
+				query: packageTypes.Query{
+					Binary: &binaryTypes.Query{Name: "name"},
+					Source: &sourceTypes.Query{Name: "name"},
 				},
-			}},
+			},
 			want: true,
 		},
 		{
-			name: "package 2",
+			name: "source",
 			fields: fields{
-				Name:          "package",
-				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repository"},
-				Functions:     []string{"function1", "function2"},
+				Type:   packageTypes.PackageTypeSource,
+				Source: &sourceTypes.Package{Name: "name"},
 			},
-			args: args{query: criterionpackageTypes.Query{
-				Package: &criterionpackageTypes.QueryPackage{
-					Name:       "package",
-					Arch:       "x86_64",
-					Repository: "repository",
-					Functions:  []string{"function1"},
+			args: args{
+				query: packageTypes.Query{
+					Binary: &binaryTypes.Query{Name: "name"},
+					Source: &sourceTypes.Query{Name: "name"},
 				},
-			}},
+			},
 			want: true,
 		},
 		{
-			name: "package 3",
+			name: "cpe",
 			fields: fields{
-				Name: "package",
+				Type: packageTypes.PackageTypeCPE,
+				CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 			},
-			args: args{query: criterionpackageTypes.Query{
-				Package: &criterionpackageTypes.QueryPackage{
-					Name:       "package",
-					Arch:       "x86_64",
-					Repository: "repository",
-					Functions:  []string{"function1"},
+			args: args{
+				query: packageTypes.Query{
+					CPE: func() *cpeTypes.Query { s := cpeTypes.Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 				},
-			}},
+			},
 			want: true,
 		},
 		{
-			name: "package 4",
+			name: "language",
 			fields: fields{
-				Name:          "package",
-				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repository"},
-				Functions:     []string{"function1", "function2"},
+				Type:     packageTypes.PackageTypeLanguage,
+				Language: &languageTypes.Package{Name: "name"},
 			},
-			args: args{query: criterionpackageTypes.Query{
-				CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
-			want: false,
-		},
-		{
-			name: "cpe 1",
-			fields: fields{
-				CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*",
+			args: args{
+				query: packageTypes.Query{
+					Language: &languageTypes.Query{Name: "name"},
+				},
 			},
-			args: args{query: criterionpackageTypes.Query{
-				CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
 			want: true,
 		},
 		{
-			name: "cpe 2",
-			fields: fields{
-				CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*",
-			},
-			args: args{query: criterionpackageTypes.Query{
-				CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
-			want: true,
-		},
-		{
-			name: "cpe 3",
-			fields: fields{
-				Name: "package",
-			},
-			args: args{query: criterionpackageTypes.Query{
-				CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
-			want: false,
+			name:    "unknown",
+			fields:  fields{Type: packageTypes.PackageTypeUnknown},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := criterionpackageTypes.Package{
-				Name:          tt.fields.Name,
-				CPE:           tt.fields.CPE,
-				Architectures: tt.fields.Architectures,
-				Repositories:  tt.fields.Repositories,
-				Functions:     tt.fields.Functions,
+			p := packageTypes.Package{
+				Type:     tt.fields.Type,
+				Binary:   tt.fields.Binary,
+				Source:   tt.fields.Source,
+				CPE:      tt.fields.CPE,
+				Language: tt.fields.Language,
 			}
 			got, err := p.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {

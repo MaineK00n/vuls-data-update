@@ -21,6 +21,7 @@ import (
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -209,7 +210,8 @@ func extract(fetched arch.VulnerabilityGroup, raws []string) dataTypes.Data {
 							}(),
 						},
 						Package: packageTypes.Package{
-							Name: p,
+							Type:   packageTypes.PackageTypeBinary,
+							Binary: &binaryPackageTypes.Package{Name: p},
 						},
 						Affected: func() *affectedTypes.Affected {
 							switch fetched.Fixed {

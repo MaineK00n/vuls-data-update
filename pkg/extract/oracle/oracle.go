@@ -22,6 +22,7 @@ import (
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -302,15 +303,18 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 				Package: packageTypes.Package{
-					Name: func() string {
-						switch p.modularityLabel {
-						case "":
-							return p.name
-						default:
-							return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
-						}
-					}(),
-					Architectures: as,
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryPackageTypes.Package{
+						Name: func() string {
+							switch p.modularityLabel {
+							case "":
+								return p.name
+							default:
+								return fmt.Sprintf("%s::%s", p.modularityLabel, p.name)
+							}
+						}(),
+						Architectures: as,
+					},
 				},
 				Affected: &affectedTypes.Affected{
 					Type:  rangeTypes.RangeTypeRPM,

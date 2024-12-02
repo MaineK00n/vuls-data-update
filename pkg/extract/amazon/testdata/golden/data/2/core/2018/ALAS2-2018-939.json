@@ -85,13 +85,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel",
-										"architectures": [
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2-core"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2-core"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",

@@ -5,6 +5,7 @@ import (
 
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 func TestAffected_Sort(t *testing.T) {
@@ -59,7 +60,7 @@ func TestAffected_Accept(t *testing.T) {
 		Fixed []string
 	}
 	type args struct {
-		family string
+		family ecosystemTypes.Ecosystem
 		v      string
 	}
 	tests := []struct {

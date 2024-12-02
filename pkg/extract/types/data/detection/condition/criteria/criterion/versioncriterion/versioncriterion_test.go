@@ -1,7 +1,6 @@
 package versoncriterion_test
 
 import (
-	"reflect"
 	"testing"
 
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
@@ -9,6 +8,10 @@ import (
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
+	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -62,6 +65,7 @@ func TestCompare(t *testing.T) {
 func TestCriterion_Accept(t *testing.T) {
 	type fields struct {
 		Vulnerable bool
+		FixStatus  *fixstatusTypes.FixStatus
 		Package    packageTypes.Package
 		Affected   *affectedTypes.Affected
 	}
@@ -76,246 +80,227 @@ func TestCriterion_Accept(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "vulnerable false",
-			fields: fields{
-				Vulnerable: false,
-				Package:    packageTypes.Package{Name: "name"},
-			},
-			args: args{query: vcTypes.Query{Package: &vcTypes.QueryPackage{Name: "name"}}},
-			want: true,
-		},
-		{
-			name: "package 1",
+			name: "binary fixed",
 			fields: fields{
 				Vulnerable: true,
-				Package:    packageTypes.Package{Name: "name"},
-			},
-			args: args{query: vcTypes.Query{Package: &vcTypes.QueryPackage{Name: "name"}}},
-			want: true,
-		},
-		{
-			name: "package 2",
-			fields: fields{
-				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 				Package: packageTypes.Package{
-					Name:          "name",
-					Architectures: []string{"x86_64"},
-					Repositories:  []string{"repository"},
-					Functions:     []string{"function1", "function2"},
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64", "aarch64"},
+						Repositories:  []string{"repo1", "repo2"},
+					},
 				},
 				Affected: &affectedTypes.Affected{
-					Type:  affectedrangeTypes.RangeTypeDPKG,
-					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
+					Type:  affectedrangeTypes.RangeTypeRPM,
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1-0.0.1.el9"}},
+					Fixed: []string{"0.0.1-0.0.1.el9"},
 				},
 			},
 			args: args{
 				query: vcTypes.Query{
-					Package: &vcTypes.QueryPackage{
+					Binary: &vcTypes.QueryBinary{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
 						Name:       "name",
-						Version:    "0.0.0",
+						Version:    "0.0.1-0.0.0.el9",
 						Arch:       "x86_64",
-						Repository: "repository",
-						Functions:  []string{"function1", "function3"},
+						Repository: "repo1",
 					},
-				},
-			},
-			want: true,
-		},
-		{
-			name: "package 3",
-			fields: fields{
-				Vulnerable: true,
-				Package: packageTypes.Package{
-					Name:          "name",
-					Architectures: []string{"x86_64"},
-					Repositories:  []string{"repository"},
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  affectedrangeTypes.RangeTypeDPKG,
-					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
-				},
-			},
-			args: args{
-				query: vcTypes.Query{
-					Package: &vcTypes.QueryPackage{
+					Source: &vcTypes.QuerySource{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
 						Name:       "name",
-						Version:    "0.0.2",
-						Arch:       "x86_64",
-						Repository: "repository",
+						Version:    "0.0.1-0.0.0.el9",
+						Repository: "repo1",
 					},
 				},
 			},
-			want: false,
+			want: true,
 		},
 		{
-			name: "package 4",
+			name: "binary unfixed",
 			fields: fields{
 				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
 				Package: packageTypes.Package{
-					Name: "name",
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  affectedrangeTypes.RangeTypeDPKG,
-					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64", "aarch64"},
+						Repositories:  []string{"repo1", "repo2"},
+					},
 				},
 			},
 			args: args{
 				query: vcTypes.Query{
-					Package: &vcTypes.QueryPackage{
+					Binary: &vcTypes.QueryBinary{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
 						Name:       "name",
-						Version:    "0.0.0",
+						Version:    "0.0.1-0.0.0.el9",
 						Arch:       "x86_64",
-						Repository: "repository",
-						Functions:  []string{"function1"},
+						Repository: "repo1",
+					},
+					Source: &vcTypes.QuerySource{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
+						Name:       "name",
+						Version:    "0.0.1-0.0.0.el9",
+						Repository: "repo1",
 					},
 				},
 			},
 			want: true,
 		},
 		{
-			name: "package 5",
+			name: "source fixed",
 			fields: fields{
 				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 				Package: packageTypes.Package{
-					Name:          "name",
-					Architectures: []string{"src"},
+					Type: packageTypes.PackageTypeSource,
+					Source: &sourceTypes.Package{
+						Name:         "name",
+						Repositories: []string{"repo1", "repo2"},
+					},
 				},
 				Affected: &affectedTypes.Affected{
-					Type:  affectedrangeTypes.RangeTypeDPKG,
-					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
+					Type:  affectedrangeTypes.RangeTypeRPM,
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1-0.0.1.el9"}},
+					Fixed: []string{"0.0.1-0.0.1.el9"},
 				},
 			},
 			args: args{
 				query: vcTypes.Query{
-					Package: &vcTypes.QueryPackage{
-						SrcName:    "name",
-						SrcVersion: "0.0.0",
+					Binary: &vcTypes.QueryBinary{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
+						Name:       "name",
+						Version:    "0.0.1-0.0.0.el9",
+						Arch:       "x86_64",
+						Repository: "repo1",
+					},
+					Source: &vcTypes.QuerySource{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
+						Name:       "name",
+						Version:    "0.0.1-0.0.0.el9",
+						Repository: "repo1",
 					},
 				},
 			},
 			want: true,
 		},
 		{
-			name: "package 6",
+			name: "source unfixed",
 			fields: fields{
 				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
 				Package: packageTypes.Package{
-					Name:          "name",
-					Architectures: []string{"src"},
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  affectedrangeTypes.RangeTypeDPKG,
-					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
+					Type: packageTypes.PackageTypeSource,
+					Source: &sourceTypes.Package{
+						Name:         "name",
+						Repositories: []string{"repo1", "repo2"},
+					},
 				},
 			},
 			args: args{
 				query: vcTypes.Query{
-					Package: &vcTypes.QueryPackage{
-						Name:    "name",
-						Version: "0.0.0",
-						Arch:    "x86_64",
+					Binary: &vcTypes.QueryBinary{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
+						Name:       "name",
+						Version:    "0.0.1-0.0.0.el9",
+						Arch:       "x86_64",
+						Repository: "repo1",
+					},
+					Source: &vcTypes.QuerySource{
+						Family:     ecosystemTypes.EcosystemTypeRedHat,
+						Name:       "name",
+						Version:    "0.0.1-0.0.0.el9",
+						Repository: "repo1",
 					},
 				},
 			},
-			want: false,
-		},
-		{
-			name: "cpe 1",
-			fields: fields{
-				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
-			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
 			want: true,
 		},
 		{
-			name: "cpe 2",
+			name: "cpe",
 			fields: fields{
 				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+				},
 				Affected: &affectedTypes.Affected{
 					Type:  affectedrangeTypes.RangeTypeSEMVER,
-					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.2"}},
 				},
 			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
+			args: args{
+				query: vcTypes.Query{
+					CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"; return &s }(),
+				},
+			},
 			want: true,
 		},
 		{
-			name: "cpe 3",
+			name: "language fixed",
 			fields: fields{
 				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"},
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeLanguage,
+					Language: &languageTypes.Package{
+						Name:      "name",
+						Functions: []string{"func1", "func2"},
+					},
+				},
 				Affected: &affectedTypes.Affected{
-					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Type:  affectedrangeTypes.RangeTypeNPM,
 					Range: []affectedrangeTypes.Range{{LessThan: "0.0.1"}},
+					Fixed: []string{"0.0.1"},
 				},
 			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.2:*:*:*:*:*:*:*"; return &s }(),
-			}},
-			want: false,
-		},
-		{
-			name: "cpe 4",
-			fields: fields{
-				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+			args: args{
+				query: vcTypes.Query{
+					Language: &vcTypes.QueryLanguage{
+						Ecosystem: ecosystemTypes.EcosystemTypeNpm,
+						Name:      "name",
+						Version:   "0.0.0",
+						Functions: []string{"func1"},
+					},
+				},
 			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"; return &s }(),
-			}},
 			want: true,
 		},
 		{
-			name: "cpe 5",
+			name: "language unfixed",
 			fields: fields{
 				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"},
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeLanguage,
+					Language: &languageTypes.Package{
+						Name:      "name",
+						Functions: []string{"func1", "func2"},
+					},
+				},
 			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
-			want: false,
-		},
-		{
-			name: "cpe 6",
-			fields: fields{
-				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"},
+			args: args{
+				query: vcTypes.Query{
+					Language: &vcTypes.QueryLanguage{
+						Ecosystem: ecosystemTypes.EcosystemTypeNpm,
+						Name:      "name",
+						Version:   "0.0.0",
+						Functions: []string{"func1"},
+					},
+				},
 			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
-			}},
 			want: true,
-		},
-		{
-			name: "cpe 7",
-			fields: fields{
-				Vulnerable: true,
-				Package:    packageTypes.Package{CPE: "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"},
-			},
-			args: args{query: vcTypes.Query{
-				Family: ecosystemTypes.EcosystemTypeCPE,
-				CPE:    func() *string { s := "cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"; return &s }(),
-			}},
-			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := vcTypes.Criterion{
 				Vulnerable: tt.fields.Vulnerable,
+				FixStatus:  tt.fields.FixStatus,
 				Package:    tt.fields.Package,
 				Affected:   tt.fields.Affected,
 			}
@@ -324,7 +309,7 @@ func TestCriterion_Accept(t *testing.T) {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got != tt.want {
 				t.Errorf("Criterion.Accept() = %v, want %v", got, tt.want)
 			}
 		})

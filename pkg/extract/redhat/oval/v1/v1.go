@@ -26,6 +26,7 @@ import (
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -732,14 +733,17 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 						Vulnerable: true,
 						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 						Package: packageTypes.Package{
-							Name: o.Name,
-							Architectures: func() []string {
-								if s.Arch == nil {
-									return nil
-								}
-								return strings.Split(s.Arch.Text, "|")
-							}(),
-							Repositories: affectedRepositories,
+							Type: packageTypes.PackageTypeBinary,
+							Binary: &binaryPackageTypes.Package{
+								Name: o.Name,
+								Architectures: func() []string {
+									if s.Arch == nil {
+										return nil
+									}
+									return strings.Split(s.Arch.Text, "|")
+								}(),
+								Repositories: affectedRepositories,
+							},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  rangeTypes.RangeTypeRPM,
@@ -772,14 +776,17 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 					Version: &vecTypes.Criterion{
 						Vulnerable: false,
 						Package: packageTypes.Package{
-							Name: o.Name,
-							Architectures: func() []string {
-								if s.Arch == nil {
-									return nil
-								}
-								return strings.Split(s.Arch.Text, "|")
-							}(),
-							Repositories: affectedRepositories,
+							Type: packageTypes.PackageTypeBinary,
+							Binary: &binaryPackageTypes.Package{
+								Name: o.Name,
+								Architectures: func() []string {
+									if s.Arch == nil {
+										return nil
+									}
+									return strings.Split(s.Arch.Text, "|")
+								}(),
+								Repositories: affectedRepositories,
+							},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  rangeTypes.RangeTypeRPM,
@@ -894,7 +901,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 					for i := range ca.Criterions {
 						switch ca.Criterions[i].Type {
 						case criterionTypes.CriterionTypeVersion:
-							ca.Criterions[i].Version.Package.Name = fmt.Sprintf("%s::%s", modularitylabel, ca.Criterions[i].Version.Package.Name)
+							ca.Criterions[i].Version.Package.Binary.Name = fmt.Sprintf("%s::%s", modularitylabel, ca.Criterions[i].Version.Package.Binary.Name)
 						case criterionTypes.CriterionTypeNoneExist:
 							ca.Criterions[i].NoneExist.Name = fmt.Sprintf("%s::%s", modularitylabel, ca.Criterions[i].NoneExist.Name)
 						default:
