@@ -65,13 +65,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-livepatch-6.1.12-19.43",
-										"architectures": [
-											"x86_64"
-										],
-										"repositories": [
-											"kernel-livepatch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-livepatch-6.1.12-19.43",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"kernel-livepatch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",

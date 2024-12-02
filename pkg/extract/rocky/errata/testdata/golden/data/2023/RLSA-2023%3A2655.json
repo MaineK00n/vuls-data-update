@@ -194,13 +194,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -223,13 +226,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-debuginfo",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-debuginfo",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -252,13 +258,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-debugsource",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-debugsource",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -281,10 +290,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-docs",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-docs",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -307,13 +319,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-full-i18n",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-full-i18n",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -336,14 +351,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-libs",
-										"architectures": [
-											"aarch64",
-											"i686",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-libs",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -366,13 +384,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-libs-debuginfo",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-libs-debuginfo",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -395,10 +416,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "nodejs-nodemon",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "nodejs-nodemon",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -421,13 +445,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "npm",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "npm",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -451,7 +478,7 @@
 	"data_source": {
 		"id": "rocky-errata",
 		"raws": [
-			"fixtures/2023/RLSA-2023%3A2655.json"
+			"fixtures/2023/RLSA-2023:2655.json"
 		]
 	}
 }

@@ -41,7 +41,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "zeek"
+										"type": "binary",
+										"binary": {
+											"name": "zeek"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",

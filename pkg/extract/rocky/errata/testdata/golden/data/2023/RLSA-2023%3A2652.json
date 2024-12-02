@@ -126,13 +126,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "pcs",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "pcs",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -155,13 +158,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "pcs-snmp",
-										"architectures": [
-											"aarch64",
-											"ppc64le",
-											"s390x",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "pcs-snmp",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -185,7 +191,7 @@
 	"data_source": {
 		"id": "rocky-errata",
 		"raws": [
-			"fixtures/2023/RLSA-2023%3A2652.json"
+			"fixtures/2023/RLSA-2023:2652.json"
 		]
 	}
 }

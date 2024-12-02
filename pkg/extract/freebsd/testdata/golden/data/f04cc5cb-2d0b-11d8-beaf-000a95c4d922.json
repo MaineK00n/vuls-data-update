@@ -64,7 +64,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "FreeBSD"
+										"type": "binary",
+										"binary": {
+											"name": "FreeBSD"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -112,7 +115,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "bind"
+										"type": "binary",
+										"binary": {
+											"name": "bind"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",

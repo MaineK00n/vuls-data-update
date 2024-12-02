@@ -96,7 +96,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "FreeBSD"
+										"type": "binary",
+										"binary": {
+											"name": "FreeBSD"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -121,7 +124,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "bind9-devel"
+										"type": "binary",
+										"binary": {
+											"name": "bind9-devel"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -141,7 +147,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "bind916"
+										"type": "binary",
+										"binary": {
+											"name": "bind916"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -161,7 +170,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "bind918"
+										"type": "binary",
+										"binary": {
+											"name": "bind918"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -181,7 +193,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "dnsmasq"
+										"type": "binary",
+										"binary": {
+											"name": "dnsmasq"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -201,7 +216,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "dnsmasq-devel"
+										"type": "binary",
+										"binary": {
+											"name": "dnsmasq-devel"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -221,7 +239,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "powerdns-recursor"
+										"type": "binary",
+										"binary": {
+											"name": "powerdns-recursor"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -241,7 +262,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "unbound"
+										"type": "binary",
+										"binary": {
+											"name": "unbound"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",

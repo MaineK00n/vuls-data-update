@@ -75,7 +75,10 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "lib32-gdk-pixbuf2"
+										"type": "binary",
+										"binary": {
+											"name": "lib32-gdk-pixbuf2"
+										}
 									},
 									"affected": {
 										"type": "pacman",
