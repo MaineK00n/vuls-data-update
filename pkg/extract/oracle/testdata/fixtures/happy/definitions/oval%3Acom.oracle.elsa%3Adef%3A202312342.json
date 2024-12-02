@@ -1,0 +1,118 @@
+{
+	"id": "oval:com.oracle.elsa:def:202312342",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nELSA-2023-12342:  virt:kvm_utils security update (IMPORTANT)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 8"
+			]
+		},
+		"reference": [
+			{
+				"source": "elsa",
+				"ref_id": "ELSA-2023-12342",
+				"ref_url": "https://linux.oracle.com/errata/ELSA-2023-12342.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2023-0664",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2023-0664.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2022-4144",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2022-4144.html"
+			}
+		],
+		"description": "\nhivex\nlibguestfs\nlibguestfs-winsupport\nlibiscsi\nlibnbd\nlibvirt\n[5.7.0-40]\n- build: change dependency to allow post install erasing of /usr/bin/nc (Wim ten Have) [Orabug: 35289777]\n- util: Make virFileClose() quiet on success (Andrea Bolognani) [Orabug: 35090886]\n\n[5.7.0-39]\n- exadata: update maxvcpus for vNUMA only (Shaleen Bathla) [Orabug: 34863357]\n\nlibvirt-dbus\nlibvirt-python\n[5.7.0-40]\n- Bump version number to 5.7.0-40 to match libvirt (Karl Heubaum)\n\n[5.7.0-39]\n- Bump version number to 5.7.0-39 to match libvirt (Karl Heubaum)\n\nnbdkit\nnetcf\nperl-Sys-Virt\nqemu-kvm\n[4.2.1-26]\n- migration: check magic value for deciding the mapping of channels (Manish Mishra) [Orabug: 34735462]\n- io: Add support for MSG_PEEK for socket channel (Manish Mishra) [Orabug: 34735462]\n- migration: Move channel setup out of postcopy_try_recover() (Peter Xu) [Orabug: 34735462]\n- vdpa: commit all host notifier MRs in a single MR transaction (Mike Longpeng) [Orabug: 35252234]\n- vhost: configure all host notifiers in a single MR transaction (Mike Longpeng) [Orabug: 35252234]\n- vhost: simplify vhost_dev_enable_notifiers (Mike Longpeng) [Orabug: 35252234]\n- pcie: Do not update hotplugged device power in RUN_STATE_INMIGRATE state (Annie Li) [Orabug: 35055290]\n- qga/win32: Use rundll for VSS installation (Konstantin Kostiuk) [Orabug: 35206108] {CVE-2023-0664}\n- qga/win32: Remove change action from MSI installer (Konstantin Kostiuk) [Orabug: 35206108] {CVE-2023-0664}\n- hw/display/qxl: Assert memory slot fits in preallocated MemoryRegion (Philippe Mathieu-Daude) [Orabug: 34846087]\n- hw/display/qxl: Avoid buffer overrun in qxl_phys2virt (CVE-2022-4144) (Philippe Mathieu-Daude) [Orabug: 34846087] {CVE-2022-4144}\n- hw/display/qxl: Pass requested buffer size to qxl_phys2virt() (Philippe Mathieu-Daude) [Orabug: 34846087]\n- hw/display/qxl: Document qxl_phys2virt() (Philippe Mathieu-Daude) [Orabug: 34846087]\n- hw/display/qxl: Have qxl_log_command Return early if no log_cmd handler (Philippe Mathieu-Daude) [Orabug: 34846087]\n- virtio-blk: On restart, process queued requests in the proper context (Sergio Lopez) [Orabug: 35060530]\n- virtio-blk: Refactor the code that processes queued requests (Sergio Lopez) [Orabug: 35060530]\n- hw/intc/ioapic: Update KVM routes before redelivering IRQ, on RTE update (David Woodhouse) [Orabug: 35219223]\n- modules: load modules from /var/run/qemu/ directory firstly (Siddhi Katage) [Orabug: 34867783]\n- qemu.spec: Add post-install script for block storage modules (Siddhi Katage) [Orabug: 34867783]\n- qemu.spec: Enable '-module-upgrades' for OL7 (Siddhi Katage) [Orabug: 34867783]\n- module: increase dirs array size by one (Bruce Rogers) [Orabug: 34867783]\n- modules: load modules from versioned /var/run dir (Christian Ehrhardt) [Orabug: 34867783]\n- blockjob: Fix crash with IOthread when block commit after snapshot (Michael Qiu) [Orabug: 35118668]\n\n[4.2.1-25]\n- target/i386/kvm: get and put AMD pmu registers (Dongli Zhang) [Orabug: 34641255]\n- i386/kvm: fix a use-after-free when vcpu plug/unplug (Pan Nengyuan) [Orabug: 34859902]\n- memory: batch allocate ioeventfds[] in address_space_update_ioeventfds() (Stefan Hajnoczi) [Orabug: 34538900]\n- virtio-blk: Fix clean up of host notifiers for single MR transaction (Mark Mielke) [Orabug: 34538900]\n- virtio-scsi: Configure all host notifiers in a single MR transaction (Greg Kurz) [Orabug: 34538900]\n- virtio-scsi: Set host notifiers and callbacks separately (Greg Kurz) [Orabug: 34538900]\n- virtio-blk: Configure all host notifiers in a single MR transaction (Greg Kurz) [Orabug: 34538900]\n- virtio-blk: Fix rollback path in virtio_blk_data_plane_start() (Greg Kurz) [Orabug: 34538900]\n- event_notifier: Set ->initialized earlier in event_notifier_init() (Greg Kurz) [Orabug: 34538900]\n- virtio-scsi: don't process IO on fenced dataplane (Maxim Levitsky) [Orabug: 34538900]\n- virtio-scsi: don't uninitialize queues that we didn't initialize (Maxim Levitsky) [Orabug: 34538900]\n- hw/arm/virt: build SMBIOS 19 table (Mihai Carabas)\n\nseabios\nsgabios\nsupermin\n\n",
+		"advisory": {
+			"severity": "IMPORTANT",
+			"rights": "Copyright 2023 Oracle, Inc.",
+			"issued": {
+				"date": "2023-05-15"
+			},
+			"cve": [
+				{
+					"text": "CVE-2023-0664",
+					"href": "https://linux.oracle.com/cve/CVE-2023-0664.html",
+					"cvss3": "7.8/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+					"public": "20230220"
+				},
+				{
+					"text": "CVE-2022-4144",
+					"href": "https://linux.oracle.com/cve/CVE-2022-4144.html",
+					"cvss3": "6.5/CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H",
+					"public": "20221129"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:oracle:exadata_dbserver:23.1.5.0.0::ol8",
+					"cpe:/a:oracle:exadata_dbserver:23.1.3.0.0::ol8",
+					"cpe:/a:oracle:exadata_dbserver:23.1.4.0.0::ol8",
+					"cpe:/a:oracle:linux:8::kvm_appstream",
+					"cpe:/a:oracle:exadata_dbserver:23.1.2.0.0::ol8"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterias": [
+					{
+						"operator": "AND",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterias": [
+											{
+												"operator": "AND",
+												"criterions": [
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202312342004",
+														"comment": "hivex is earlier than 0:1.3.18-21.module+el8.7.0+21037+8ee66348"
+													},
+													{
+														"test_ref": "oval:com.oracle.elsa:tst:202312342005",
+														"comment": "hivex is signed with the Oracle Linux 8 key"
+													}
+												]
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.elsa:tst:202312342003",
+										"comment": "Module virt:kvm_utils is enabled"
+									}
+								]
+							}
+						],
+						"criterions": [
+							{
+								"test_ref": "oval:com.oracle.elsa:tst:202312342002",
+								"comment": "Oracle Linux arch is aarch64"
+							}
+						]
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.oracle.elsa:tst:202312342001",
+				"comment": "Oracle Linux 8 is installed"
+			}
+		]
+	}
+}
