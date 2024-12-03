@@ -96,8 +96,6 @@ jobs:
           # - "redhat-cve"
           # - "redhat-csaf"
           # - "redhat-cvrf"
-          # - "redhat-ovalv1"
-          # - "redhat-ovalv2"
           # - "redhat-vex"
           # - "redhat-osv"
           - "rocky-errata"
@@ -169,6 +167,84 @@ jobs:
 
       - name: Extract
         run: vuls-data-update extract ${{ matrix.target }} --dir vuls-data-extracted-${{ matrix.target }} vuls-data-raw-${{ matrix.target }}
+
+      - name: Split Large Files
+        run: find vuls-data-extracted-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
+
+      - name: set Git config
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Push
+        run: |
+          cd vuls-data-extracted-${{ matrix.target }}
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "update"
+            git push
+          fi
+
+  extract-redhat-oval:
+    name: extract vuls-data-extracted-${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - "redhat-ovalv1"
+          # - "redhat-ovalv2"
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v10
+        with:
+          root-reserve-mb: 32768
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: go install
+        run: go install ./cmd/vuls-data-update
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: vulsio
+          repositories: "vuls-data-extracted-${{ matrix.target }}"
+
+      - name: Check out vulsio/vuls-data-raw-${{ matrix.target }} repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-${{ matrix.target }}
+          path: vuls-data-raw-${{ matrix.target }}
+
+      - name: Check out vulsio/vuls-data-raw-redhat-oval-repository-to-cpe repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-raw-redhat-oval-repository-to-cpe
+          path: vuls-data-raw-redhat-oval-repository-to-cpe
+
+      - name: Check out extracted repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/vuls-data-extracted-${{ matrix.target }}
+          path: vuls-data-extracted-${{ matrix.target }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Extract
+        run: vuls-data-update extract ${{ matrix.target }} --dir vuls-data-extracted-${{ matrix.target }} vuls-data-raw-${{ matrix.target }} vuls-data-raw-redhat-oval-repository-to-cpe
 
       - name: Split Large Files
         run: find vuls-data-extracted-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"

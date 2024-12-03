@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "vim-enhanced is earlier than 2:8.0.1763-11.el8_0",
+	"id": "oval:com.redhat.rhsa:tst:20191619014",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20191619003"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20191619004"
+	}
+}

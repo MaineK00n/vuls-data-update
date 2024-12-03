@@ -1,0 +1,12 @@
+{
+	"check": "all",
+	"comment": "Module idm:DL1 is enabled",
+	"id": "oval:com.redhat.rhba:tst:20194268055",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20194268028"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20194268016"
+	}
+}

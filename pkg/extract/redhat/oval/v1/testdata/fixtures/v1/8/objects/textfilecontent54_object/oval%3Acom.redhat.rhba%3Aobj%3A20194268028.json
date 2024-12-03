@@ -1,0 +1,16 @@
+{
+	"id": "oval:com.redhat.rhba:obj:20194268028",
+	"version": "635",
+	"filepath": {
+		"text": "/etc/dnf/modules.d/idm.module",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "\\[idm\\][\\w\\W]*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}

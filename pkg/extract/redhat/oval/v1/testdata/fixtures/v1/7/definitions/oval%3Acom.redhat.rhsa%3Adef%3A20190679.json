@@ -1,0 +1,184 @@
+{
+	"class": "patch",
+	"id": "oval:com.redhat.rhsa:def:20190679",
+	"version": "635",
+	"metadata": {
+		"title": "RHSA-2019:0679: libssh2 security update (Important)",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 7"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "RHSA-2019:0679",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2019:0679",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2019-3855",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-3855",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2019-3856",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-3856",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2019-3857",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-3857",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2019-3863",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-3863",
+				"source": "CVE"
+			}
+		],
+		"description": "The libssh2 packages provide a library that implements the SSH2 protocol.\n\nSecurity Fix(es):\n\n* libssh2: Integer overflow in transport read resulting in out of bounds write (CVE-2019-3855)\n\n* libssh2: Integer overflow in keyboard interactive handling resulting in out of bounds write (CVE-2019-3856)\n\n* libssh2: Integer overflow in SSH packet processing channel resulting in out of bounds write (CVE-2019-3857)\n\n* libssh2: Integer overflow in user authenticate keyboard interactive allows out-of-bounds writes (CVE-2019-3863)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"rights": "Copyright 2019 Red Hat, Inc.",
+			"issued": {
+				"date": "2019-03-28"
+			},
+			"updated": {
+				"date": "2019-03-28"
+			},
+			"cve": [
+				{
+					"text": "CVE-2019-3855",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-3855",
+					"impact": "important",
+					"public": "20190313",
+					"cwe": "CWE-190->CWE-787",
+					"cvss_3": "7.5/CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2019-3856",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-3856",
+					"impact": "important",
+					"public": "20190313",
+					"cwe": "CWE-190->CWE-787",
+					"cvss_3": "7.5/CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2019-3857",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-3857",
+					"impact": "important",
+					"public": "20190313",
+					"cwe": "CWE-190->CWE-787",
+					"cvss_3": "7.5/CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2019-3863",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-3863",
+					"impact": "important",
+					"public": "20190313",
+					"cwe": "CWE-190->CWE-787",
+					"cvss_3": "7.5/CVSS:3.0/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "CVE-2019-3855 libssh2: Integer overflow in transport read resulting in out of bounds write",
+					"href": "https://bugzilla.redhat.com/1687303",
+					"id": "1687303"
+				},
+				{
+					"text": "CVE-2019-3856 libssh2: Integer overflow in keyboard interactive handling resulting in out of bounds write",
+					"href": "https://bugzilla.redhat.com/1687304",
+					"id": "1687304"
+				},
+				{
+					"text": "CVE-2019-3857 libssh2: Integer overflow in SSH packet processing channel resulting in out of bounds write",
+					"href": "https://bugzilla.redhat.com/1687305",
+					"id": "1687305"
+				},
+				{
+					"text": "CVE-2019-3863 libssh2: Integer overflow in user authenticate keyboard interactive allows out-of-bounds writes",
+					"href": "https://bugzilla.redhat.com/1687313",
+					"id": "1687313"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:redhat:enterprise_linux:7",
+					"cpe:/o:redhat:enterprise_linux:7::client",
+					"cpe:/o:redhat:enterprise_linux:7::computenode",
+					"cpe:/o:redhat:enterprise_linux:7::server",
+					"cpe:/o:redhat:enterprise_linux:7::workstation"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20190679001",
+										"comment": "libssh2 is earlier than 0:1.4.3-12.el7_6.2"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152140002",
+										"comment": "libssh2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20190679003",
+										"comment": "libssh2-devel is earlier than 0:1.4.3-12.el7_6.2"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152140004",
+										"comment": "libssh2-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20190679005",
+										"comment": "libssh2-docs is earlier than 0:1.4.3-12.el7_6.2"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20152140006",
+										"comment": "libssh2-docs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20150364027",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20150364028",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

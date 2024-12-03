@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "slapi-nis is earlier than 0:0.56.3-2.module+el8.1.0+4098+f286395e",
+	"id": "oval:com.redhat.rhba:tst:20194268049",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20194268025"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20194268014"
+	}
+}

@@ -20,6 +20,15 @@ func NewJSONReader() *JSONReader {
 	return &JSONReader{paths: make(map[string]struct{})}
 }
 
+// Copy returns a deep copied JSONReader.
+func (j JSONReader) Copy() *JSONReader {
+	return &JSONReader{paths: func() map[string]struct{} {
+		m := make(map[string]struct{})
+		maps.Copy(m, j.paths)
+		return m
+	}()}
+}
+
 // Read reads JSON file specified by path and umarhsal it to v.
 // 3rd argument v MUST be of non-nil pointer type.
 func (j *JSONReader) Read(path, prefix string, v any) error {

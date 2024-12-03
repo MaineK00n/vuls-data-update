@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20162972005",
+	"version": "640",
+	"name": "vim-minimal"
+}

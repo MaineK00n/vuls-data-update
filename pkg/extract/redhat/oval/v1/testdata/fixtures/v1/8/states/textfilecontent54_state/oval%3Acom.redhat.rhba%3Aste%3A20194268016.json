@@ -1,0 +1,8 @@
+{
+	"id": "oval:com.redhat.rhba:ste:20194268016",
+	"version": "635",
+	"text": {
+		"text": "\\nstream\\s*=\\s*DL1\\b[\\w\\W]*\\nstate\\s*=\\s*(enabled|1|true)|\\nstate\\s*=\\s*(enabled|1|true)[\\w\\W]*\\nstream\\s*=\\s*DL1\\b",
+		"operation": "pattern match"
+	}
+}

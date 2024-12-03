@@ -1,0 +1,1630 @@
+{
+	"id": "RHBA-2019:4268",
+	"advisories": [
+		{
+			"content": {
+				"id": "RHBA-2019:4268",
+				"title": "RHBA-2019:4268: idm:DL1 bug fix update (Important)",
+				"description": "Bug Fix(es):\n\n* IPA upgrade fails for latest ipa package when adtrust is installed (BZ#1773516)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/errata/RHBA-2019:4268"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-10195"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-14867"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1726223"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1766920"
+					}
+				],
+				"published": "2019-12-17T00:00:00Z",
+				"modified": "2019-12-17T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2019-10195",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "moderate"
+					},
+					{
+						"type": "cvss_v30",
+						"source": "secalert@redhat.com",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:N/A:N",
+							"base_score": 5.7,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.7,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.7,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"CWE-532->CWE-200"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-10195"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1726223"
+					}
+				],
+				"published": "2019-11-26T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2019-14867",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "important"
+					},
+					{
+						"type": "cvss_v30",
+						"source": "secalert@redhat.com",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+							"base_score": 8.8,
+							"base_severity": "HIGH",
+							"temporal_score": 8.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"(CWE-94|CWE-400)"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-14867"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1766920"
+					}
+				],
+				"published": "2019-08-26T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "redhat:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::bind-dyndb-ldap",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:11.1-14.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:11.1-14.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::custodia",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.6.0-3.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.6.0-3.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-client",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-client-common",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-client-samba",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-common",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-healthcheck",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.3-4.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.3-4.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-idoverride-memberof-plugin",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.0.4-6.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.0.4-6.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-python-compat",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-server",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-server-common",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-server-dns",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::ipa-server-trust-ad",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::opendnssec",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:1.4.14-1.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:1.4.14-1.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-custodia",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.6.0-3.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.6.0-3.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-ipaclient",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-ipalib",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-ipaserver",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+													}
+												],
+												"fixed": [
+													"0:4.8.0-13.module+el8.1.0+4923+c6efe041"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-jwcrypto",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.5.0-1.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.5.0-1.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-kdcproxy",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.4-3.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.4-3.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-pyusb",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:1.0.0-9.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:1.0.0-9.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-qrcode",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:5.1-12.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:5.1-12.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-qrcode-core",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:5.1-12.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:5.1-12.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::python3-yubico",
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:1.3.2-9.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:1.3.2-9.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::slapi-nis",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:0.56.3-2.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:0.56.3-2.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::softhsm",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:2.4.0-2.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:2.4.0-2.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "idm:DL1::softhsm-devel",
+												"architectures": [
+													"aarch64",
+													"ppc64le",
+													"s390x",
+													"x86_64"
+												],
+												"repositories": [
+													"rhel-8-for-aarch64-appstream-debug-rpms",
+													"rhel-8-for-aarch64-appstream-rpms",
+													"rhel-8-for-aarch64-appstream-source-rpms",
+													"rhel-8-for-ppc64le-appstream-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-rpms",
+													"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+													"rhel-8-for-ppc64le-appstream-rpms",
+													"rhel-8-for-ppc64le-appstream-source-rpms",
+													"rhel-8-for-s390x-appstream-debug-rpms",
+													"rhel-8-for-s390x-appstream-rpms",
+													"rhel-8-for-s390x-appstream-source-rpms",
+													"rhel-8-for-x86_64-appstream-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-rpms",
+													"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+													"rhel-8-for-x86_64-appstream-rpms",
+													"rhel-8-for-x86_64-appstream-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:2.4.0-2.module+el8.1.0+4098+f286395e"
+													}
+												],
+												"fixed": [
+													"0:2.4.0-2.module+el8.1.0+4098+f286395e"
+												]
+											}
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "8"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "redhat-ovalv1",
+		"raws": [
+			"repository2cpe/repository-to-cpe.json",
+			"v1/8/definitions/oval:com.redhat.rhba:def:20194268.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268001.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268002.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268003.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268004.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268005.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268006.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268007.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268008.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268009.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268010.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268011.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268012.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268013.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268014.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268015.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268016.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268017.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268018.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268019.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268020.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268021.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268022.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268023.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268024.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268025.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268026.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhba:obj:20194268027.json",
+			"v1/8/objects/textfilecontent54_object/oval:com.redhat.rhba:obj:20194268028.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268001.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268003.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268004.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268005.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268006.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268007.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268008.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268009.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268010.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268011.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268012.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268013.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268014.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhba:ste:20194268015.json",
+			"v1/8/states/textfilecontent54_state/oval:com.redhat.rhba:ste:20194268016.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268001.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268002.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268003.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268004.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268005.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268006.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268007.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268008.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268009.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268010.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268011.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268012.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268013.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268014.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268015.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268016.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268017.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268018.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268019.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268020.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268021.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268022.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268023.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268024.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268025.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268026.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268027.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268028.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268029.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268030.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268031.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268032.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268033.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268034.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268035.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268036.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268037.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268038.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268039.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268040.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268041.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268042.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268043.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268044.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268045.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268046.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268047.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268048.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268049.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268050.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268051.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268052.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268053.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhba:tst:20194268054.json",
+			"v1/8/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20191992003.json",
+			"v1/8/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20191992004.json",
+			"v1/8/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20191992005.json",
+			"v1/8/tests/textfilecontent54_test/oval:com.redhat.rhba:tst:20194268055.json"
+		]
+	}
+}

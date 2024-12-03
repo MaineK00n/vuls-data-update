@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "python3-qrcode is earlier than 0:5.1-12.module+el8.1.0+4098+f286395e",
+	"id": "oval:com.redhat.rhba:tst:20194268043",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20194268022"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20194268012"
+	}
+}

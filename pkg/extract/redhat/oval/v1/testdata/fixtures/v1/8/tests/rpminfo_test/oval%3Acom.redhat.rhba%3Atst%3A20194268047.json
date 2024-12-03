@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "python3-yubico is earlier than 0:1.3.2-9.module+el8.1.0+4098+f286395e",
+	"id": "oval:com.redhat.rhba:tst:20194268047",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20194268024"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20194268013"
+	}
+}

@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhba:obj:20194268004",
+	"version": "635",
+	"name": "ipa-client-common"
+}

@@ -1,0 +1,9 @@
+{
+	"id": "oval:com.redhat.rhsa:ste:20190679003",
+	"version": "635",
+	"evr": {
+		"text": "0:1.4.3-12.el7_6.2",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}

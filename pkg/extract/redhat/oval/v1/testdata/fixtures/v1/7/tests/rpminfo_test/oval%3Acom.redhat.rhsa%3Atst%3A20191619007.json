@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "vim-filesystem is earlier than 2:7.4.160-6.el7_6",
+	"id": "oval:com.redhat.rhsa:tst:20191619007",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20162972004"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20191619001"
+	}
+}

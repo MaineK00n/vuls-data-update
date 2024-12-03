@@ -21,8 +21,8 @@ func (r *Condition) Sort() {
 
 func Compare(x, y Condition) int {
 	return cmp.Compare(
-		criteriaTypes.Compare(x.Criteria, y.Criteria),
 		cmp.Compare(x.Tag, y.Tag),
+		criteriaTypes.Compare(x.Criteria, y.Criteria),
 	)
 }
 

@@ -1,0 +1,249 @@
+{
+	"class": "patch",
+	"id": "oval:com.redhat.rhsa:def:20191619",
+	"version": "636",
+	"metadata": {
+		"title": "RHSA-2019:1619: vim security update (Important)",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat Enterprise Linux 7",
+				"Red Hat Enterprise Linux 8"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "RHSA-2019:1619",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2019:1619",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2019-12735",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2019-12735",
+				"source": "CVE"
+			}
+		],
+		"description": "Vim (Vi IMproved) is an updated and improved version of the vi editor.\n\nSecurity Fix(es):\n\n* vim/neovim: ':source!' command allows arbitrary command execution via modelines (CVE-2019-12735)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"rights": "Copyright 2019 Red Hat, Inc.",
+			"issued": {
+				"date": "2019-06-27"
+			},
+			"updated": {
+				"date": "2019-06-27"
+			},
+			"cve": [
+				{
+					"text": "CVE-2019-12735",
+					"href": "https://access.redhat.com/security/cve/CVE-2019-12735",
+					"impact": "important",
+					"public": "20190605",
+					"cwe": "CWE-94",
+					"cvss_3": "5.3/CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:L"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "CVE-2019-12735 vim/neovim: ':source!' command allows arbitrary command execution via modelines",
+					"href": "https://bugzilla.redhat.com/1718308",
+					"id": "1718308"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:8",
+					"cpe:/a:redhat:enterprise_linux:8::appstream",
+					"cpe:/o:redhat:enterprise_linux:7",
+					"cpe:/o:redhat:enterprise_linux:7::client",
+					"cpe:/o:redhat:enterprise_linux:7::computenode",
+					"cpe:/o:redhat:enterprise_linux:7::server",
+					"cpe:/o:redhat:enterprise_linux:7::workstation",
+					"cpe:/o:redhat:enterprise_linux:8",
+					"cpe:/o:redhat:enterprise_linux:8::baseos"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619001",
+										"comment": "vim-X11 is earlier than 2:7.4.160-6.el7_6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972002",
+										"comment": "vim-X11 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619003",
+										"comment": "vim-common is earlier than 2:7.4.160-6.el7_6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972004",
+										"comment": "vim-common is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619005",
+										"comment": "vim-enhanced is earlier than 2:7.4.160-6.el7_6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972006",
+										"comment": "vim-enhanced is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619007",
+										"comment": "vim-filesystem is earlier than 2:7.4.160-6.el7_6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972008",
+										"comment": "vim-filesystem is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619009",
+										"comment": "vim-minimal is earlier than 2:7.4.160-6.el7_6"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972010",
+										"comment": "vim-minimal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhba:tst:20150364027",
+						"comment": "Red Hat Enterprise Linux 7 is installed"
+					}
+				]
+			},
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20191619017",
+								"comment": "Red Hat Enterprise Linux 8 is installed"
+							},
+							{
+								"test_ref": "oval:com.redhat.rhsa:tst:20191619018",
+								"comment": "Red Hat CoreOS 4 is installed"
+							}
+						]
+					},
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619012",
+										"comment": "vim-X11 is earlier than 2:8.0.1763-11.el8_0"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972002",
+										"comment": "vim-X11 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619013",
+										"comment": "vim-common is earlier than 2:8.0.1763-11.el8_0"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972004",
+										"comment": "vim-common is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619014",
+										"comment": "vim-enhanced is earlier than 2:8.0.1763-11.el8_0"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972006",
+										"comment": "vim-enhanced is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619015",
+										"comment": "vim-filesystem is earlier than 2:8.0.1763-11.el8_0"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972008",
+										"comment": "vim-filesystem is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20191619016",
+										"comment": "vim-minimal is earlier than 2:8.0.1763-11.el8_0"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20162972010",
+										"comment": "vim-minimal is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhba:tst:20150364028",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}
