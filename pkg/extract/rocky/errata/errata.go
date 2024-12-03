@@ -193,15 +193,17 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 				return nil, errors.Wrap(err, "walk nvras")
 			}
 
-			ds = append(ds, detectionTypes.Detection{
-				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, strings.TrimPrefix(strings.TrimPrefix(product, "Rocky Linux "), "SIG Cloud "))),
-				Conditions: []conditionTypes.Condition{{
-					Criteria: criteriaTypes.Criteria{
-						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: cs,
-					},
-				}},
-			})
+			if len(cs) > 0 {
+				ds = append(ds, detectionTypes.Detection{
+					Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, strings.TrimPrefix(strings.TrimPrefix(product, "Rocky Linux "), "SIG Cloud "))),
+					Conditions: []conditionTypes.Condition{{
+						Criteria: criteriaTypes.Criteria{
+							Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+							Criterions: cs,
+						},
+					}},
+				})
+			}
 		}
 		return ds, nil
 	}()
