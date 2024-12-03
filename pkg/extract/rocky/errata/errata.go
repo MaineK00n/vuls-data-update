@@ -154,6 +154,10 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 					name := strings.Join(nvr[:len(nvr)-2], "-")
 					ver := fmt.Sprintf("%s-%s", nvr[len(nvr)-2], strings.Join(ra[:len(ra)-1], "."))
 					arch := ra[len(ra)-1]
+					// If it is detected in the source package, it will cause false positives in the binary package of the unaffected arch, so do not add it.
+					if arch == "src" {
+						continue
+					}
 
 					if _, ok := m[name]; !ok {
 						m[name] = make(map[string][]string)

@@ -199,7 +199,6 @@
 											"aarch64",
 											"ppc64le",
 											"s390x",
-											"src",
 											"x86_64"
 										]
 									},
@@ -398,8 +397,7 @@
 									"package": {
 										"name": "nodejs-nodemon",
 										"architectures": [
-											"noarch",
-											"src"
+											"noarch"
 										]
 									},
 									"affected": {
