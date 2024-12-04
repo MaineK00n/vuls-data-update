@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "wget is signed with Red Hat redhatrelease2 key",
+	"id": "oval:com.redhat.rhsa:tst:20190983002",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20190983001"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhba:ste:20191992002"
+	}
+}

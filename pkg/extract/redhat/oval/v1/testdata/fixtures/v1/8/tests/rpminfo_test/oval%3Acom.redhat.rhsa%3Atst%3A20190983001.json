@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "wget is earlier than 0:1.19.5-7.el8_0.1",
+	"id": "oval:com.redhat.rhsa:tst:20190983001",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20190983001"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20190983001"
+	}
+}

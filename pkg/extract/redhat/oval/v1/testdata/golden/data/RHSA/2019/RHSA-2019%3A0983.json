@@ -1,0 +1,171 @@
+{
+	"id": "RHSA-2019:0983",
+	"advisories": [
+		{
+			"content": {
+				"id": "RHSA-2019:0983",
+				"title": "RHSA-2019:0983: wget security update (Important)",
+				"description": "The wget packages provide the GNU Wget file retrieval utility for HTTP, HTTPS, and FTP protocols.\n\nSecurity Fix(es):\n\n* wget: do_conversion() heap-based buffer overflow vulnerability (CVE-2019-5953)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/errata/RHSA-2019:0983"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-5953"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1695679"
+					}
+				],
+				"published": "2019-05-07T00:00:00Z",
+				"modified": "2019-05-07T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2019-5953",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "important"
+					},
+					{
+						"type": "cvss_v30",
+						"source": "secalert@redhat.com",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+							"base_score": 8.8,
+							"base_severity": "HIGH",
+							"temporal_score": 8.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"CWE-119"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2019-5953"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/1695679"
+					}
+				],
+				"published": "2019-04-03T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "redhat:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "AND",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"name": "wget",
+										"architectures": [
+											"aarch64",
+											"ppc64le",
+											"s390x",
+											"x86_64"
+										],
+										"repositories": [
+											"rhel-8-for-aarch64-appstream-debug-rpms",
+											"rhel-8-for-aarch64-appstream-rpms",
+											"rhel-8-for-aarch64-appstream-source-rpms",
+											"rhel-8-for-ppc64le-appstream-debug-rpms",
+											"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+											"rhel-8-for-ppc64le-appstream-e4s-rpms",
+											"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+											"rhel-8-for-ppc64le-appstream-rpms",
+											"rhel-8-for-ppc64le-appstream-source-rpms",
+											"rhel-8-for-s390x-appstream-debug-rpms",
+											"rhel-8-for-s390x-appstream-rpms",
+											"rhel-8-for-s390x-appstream-source-rpms",
+											"rhel-8-for-x86_64-appstream-debug-rpms",
+											"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+											"rhel-8-for-x86_64-appstream-e4s-rpms",
+											"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+											"rhel-8-for-x86_64-appstream-rpms",
+											"rhel-8-for-x86_64-appstream-source-rpms"
+										]
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.5-7.el8_0.1"
+											}
+										],
+										"fixed": [
+											"0:1.19.5-7.el8_0.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "8"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "redhat-ovalv1",
+		"raws": [
+			"repository2cpe/repository-to-cpe.json",
+			"v1/8/definitions/oval:com.redhat.rhsa:def:20190983.json",
+			"v1/8/objects/rpminfo_object/oval:com.redhat.rhsa:obj:20190983001.json",
+			"v1/8/states/rpminfo_state/oval:com.redhat.rhsa:ste:20190983001.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20190983001.json",
+			"v1/8/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20190983002.json",
+			"v1/8/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20191992003.json",
+			"v1/8/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20191992004.json",
+			"v1/8/tests/rpmverifyfile_test/oval:com.redhat.rhba:tst:20191992005.json"
+		]
+	}
+}

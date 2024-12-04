@@ -407,132 +407,35 @@ func (e extractor) prewalkCriteria(m map[string]v1.Criteria, name string, parent
 		return nil, errors.Wrap(err, "prewalk criterion")
 	}
 	if v != "" {
-		if len(criteria.Criterias) == 0 {
-			if len(parent.Criterions) == 0 {
-				// pattern: ca{cns: [{Red Hat Enterprise Linux must be installed}], cas: [{cas: [{cns: <major>}]}]}
-				// e.g. 1
-				// "criteria": {
-				// 	"operator": "OR",
-				// 	"criterias": [
-				// 		{
-				// 			"operator": "AND",
-				// 			"criterias": [
-				// 				{
-				// 					"operator": "OR",
-				// 					"criterions": [
-				// 						{
-				// 							"comment": "Red Hat Enterprise Linux 8 is installed"
-				// 						},
-				// 						{
-				// 							"comment": "Red Hat CoreOS 4 is installed"
-				// 						}
-				// 					]
-				// 				}
-				// 			],
-				// 			"criterions": [
-				// 				{
-				// 					"comment": "WALinuxAgent is earlier than 0:2.2.32-1.el8_0.1"
-				// 				},
-				// 				{
-				// 					"comment": "WALinuxAgent is signed with Red Hat redhatrelease2 key"
-				// 				}
-				// 			]
-				// 		}
-				// 	],
-				// 	"criterions": [
-				// 		{
-				// 			"comment": "Red Hat Enterprise Linux must be installed"
-				// 		}
-				// 	]
-				// }
-				// e.g. 2
-				// "criteria": {
-				// 	"operator": "OR",
-				// 	"criterias": [
-				// 	    {
-				// 	        "operator": "AND",
-				// 	        "criterias": [
-				// 	            {
-				// 	                "operator": "OR",
-				// 	                "criterions": [
-				// 	                    {
-				// 	                        "comment": "Red Hat Enterprise Linux 8 is installed"
-				// 	                    },
-				// 	                    {
-				// 	                        "comment": "Red Hat CoreOS 4 is installed"
-				// 	                    }
-				// 	                ]
-				// 	            },
-				// 	            {
-				// 	                "operator": "OR",
-				// 	                "criterias": [
-				// 	                    {
-				// 	                        "operator": "AND",
-				// 	                        "criterias": [
-				// 	                            {
-				// 	                                "operator": "OR",
-				// 	                                "criterias": [
-				// 	                                    {
-				// 	                                        "operator": "AND",
-				// 	                                        "criterions": [
-				// 	                                            {
-				// 	                                                "comment": "bind-dyndb-ldap is earlier than 0:11.1-14.module+el8.1.0+4098+f286395e"
-				// 	                                            },
-				// 	                                        ]
-				// 	                                    }
-				// 	                                ]
-				// 	                            }
-				// 	                        ],
-				// 	                        "criterions": [
-				// 	                            {
-				// 	                                "comment": "Module idm:DL1 is enabled"
-				// 	                            }
-				// 	                        ]
-				// 	                    }
-				// 	                ]
-				// 	            }
-				// 	        ]
-				// 	    }
-				// 	],
-				// 	"criterions": [
-				// 	    {
-				// 	        "comment": "Red Hat Enterprise Linux must be installed"
-				// 	    }
-				// 	]
-				// }
-				m[v] = parent
-			} else {
-				// pattern: ca{cns: [{Red Hat Enterprise Linux must be installed}], cas: [{cns: [<major>]}]}
-				// e.g.
-				// "criteria": {
-				//     "operator": "OR",
-				//     "criterias": [
-				//         {
-				//             "operator": "AND",
-				//             "criterions": [
-				//                 {
-				//                     "comment": "Red Hat Enterprise Linux 4 is installed"
-				//                 },
-				//                 {
-				//                     "comment": "gzip is earlier than 0:1.3.3-16.rhel4"
-				//                 },
-				//                 {
-				//                     "comment": "gzip is signed with Red Hat redhatrelease2 key"
-				//                 }
-				//             ]
-				//         }
-				//     ],
-				//     "criterions": [
-				//         {
-				//             "comment": "Red Hat Enterprise Linux must be installed"
-				//         }
-				//     ]
-				// }
-				m[v] = criteria
-			}
-		} else {
-			// pattern: ca{cns: [{Red Hat Enterprise Linux must be installed}], cas: [{cns: [<major>], cas: [{}]}]}
-			// e.g.
+		switch {
+		case criteria.Operator == "AND" && parent.Operator == "OR":
+			// e.g. 1
+			// "criteria": {
+			//     "operator": "OR",
+			//     "criterias": [
+			//         {
+			//             "operator": "AND",
+			//             "criterions": [
+			//                 {
+			//                     "comment": "Red Hat Enterprise Linux 4 is installed"
+			//                 },
+			//                 {
+			//                     "comment": "gzip is earlier than 0:1.3.3-16.rhel4"
+			//                 },
+			//                 {
+			//                     "comment": "gzip is signed with Red Hat redhatrelease2 key"
+			//                 }
+			//             ]
+			//         }
+			//     ],
+			//     "criterions": [
+			//         {
+			//             "comment": "Red Hat Enterprise Linux must be installed"
+			//         }
+			//     ]
+			// }
+
+			// e.g. 2
 			// "criteria": {
 			//     "operator": "OR",
 			//     "criterias": [
@@ -574,10 +477,107 @@ func (e extractor) prewalkCriteria(m map[string]v1.Criteria, name string, parent
 			//         }
 			//     ]
 			// }
-			m[v] = criteria
-		}
 
-		return m, nil
+			m[v] = criteria
+			return m, nil
+		case criteria.Operator == "OR" && parent.Operator == "AND":
+			// e.g. 1
+			// "criteria": {
+			// 	"operator": "OR",
+			// 	"criterias": [
+			// 		{
+			// 			"operator": "AND",
+			// 			"criterias": [
+			// 				{
+			// 					"operator": "OR",
+			// 					"criterions": [
+			// 						{
+			// 							"comment": "Red Hat Enterprise Linux 8 is installed"
+			// 						},
+			// 						{
+			// 							"comment": "Red Hat CoreOS 4 is installed"
+			// 						}
+			// 					]
+			// 				}
+			// 			],
+			// 			"criterions": [
+			// 				{
+			// 					"comment": "WALinuxAgent is earlier than 0:2.2.32-1.el8_0.1"
+			// 				},
+			// 				{
+			// 					"comment": "WALinuxAgent is signed with Red Hat redhatrelease2 key"
+			// 				}
+			// 			]
+			// 		}
+			// 	],
+			// 	"criterions": [
+			// 		{
+			// 			"comment": "Red Hat Enterprise Linux must be installed"
+			// 		}
+			// 	]
+			// }
+
+			// e.g. 2
+			// "criteria": {
+			// 	"operator": "OR",
+			// 	"criterias": [
+			// 	    {
+			// 	        "operator": "AND",
+			// 	        "criterias": [
+			// 	            {
+			// 	                "operator": "OR",
+			// 	                "criterions": [
+			// 	                    {
+			// 	                        "comment": "Red Hat Enterprise Linux 8 is installed"
+			// 	                    },
+			// 	                    {
+			// 	                        "comment": "Red Hat CoreOS 4 is installed"
+			// 	                    }
+			// 	                ]
+			// 	            },
+			// 	            {
+			// 	                "operator": "OR",
+			// 	                "criterias": [
+			// 	                    {
+			// 	                        "operator": "AND",
+			// 	                        "criterias": [
+			// 	                            {
+			// 	                                "operator": "OR",
+			// 	                                "criterias": [
+			// 	                                    {
+			// 	                                        "operator": "AND",
+			// 	                                        "criterions": [
+			// 	                                            {
+			// 	                                                "comment": "bind-dyndb-ldap is earlier than 0:11.1-14.module+el8.1.0+4098+f286395e"
+			// 	                                            },
+			// 	                                        ]
+			// 	                                    }
+			// 	                                ]
+			// 	                            }
+			// 	                        ],
+			// 	                        "criterions": [
+			// 	                            {
+			// 	                                "comment": "Module idm:DL1 is enabled"
+			// 	                            }
+			// 	                        ]
+			// 	                    }
+			// 	                ]
+			// 	            }
+			// 	        ]
+			// 	    }
+			// 	],
+			// 	"criterions": [
+			// 	    {
+			// 	        "comment": "Red Hat Enterprise Linux must be installed"
+			// 	    }
+			// 	]
+			// }
+
+			m[v] = parent
+			return m, nil
+		default:
+			return nil, errors.New("unexpected criteria tree")
+		}
 	}
 
 	for _, ovalCa := range criteria.Criterias {
