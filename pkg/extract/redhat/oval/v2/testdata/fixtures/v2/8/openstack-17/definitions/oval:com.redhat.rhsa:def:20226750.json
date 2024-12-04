@@ -1,0 +1,141 @@
+{
+	"id": "oval:com.redhat.rhsa:def:20226750",
+	"version": "634",
+	"class": "patch",
+	"metadata": {
+		"title": "RHSA-2022:6750: Red Hat OpenStack Platform (openstack-barbican) security update (Important)",
+		"reference": [
+			{
+				"ref_id": "RHSA-2022:6750",
+				"ref_url": "https://access.redhat.com/errata/RHSA-2022:6750",
+				"source": "RHSA"
+			},
+			{
+				"ref_id": "CVE-2022-3100",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2022-3100",
+				"source": "CVE"
+			}
+		],
+		"description": "Barbican is a ReST API designed for the secure storage, provisioning and\nmanagement of secrets, including in OpenStack environments.\n\nSecurity Fix(es):\n\n* openstack-barbican: access policy bypass via query string injection (CVE-2022-3100)\n\nFor more details about the security issue(s), including the impact, a CVSS\nscore, acknowledgments, and other related information, refer to the CVE\npage listed in the References section.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Important",
+			"updated": {
+				"date": "2022-09-29"
+			},
+			"cve": [
+				{
+					"text": "CVE-2022-3100",
+					"cvss3": "7.1/CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:L/A:N",
+					"cwe": "CWE-305",
+					"href": "https://access.redhat.com/security/cve/CVE-2022-3100",
+					"impact": "important",
+					"public": "20220928:1700"
+				}
+			],
+			"affected": {},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:openstack:17.0",
+					"cpe:/a:redhat:openstack:17.0::el9"
+				]
+			},
+			"rights": "Copyright 2022 Red Hat, Inc.",
+			"issued": {
+				"date": "2022-09-29"
+			},
+			"bugzilla": [
+				{
+					"text": "CVE-2022-3100 openstack-barbican: access policy bypass via query string injection",
+					"href": "https://bugzilla.redhat.com/2125404",
+					"id": "2125404"
+				}
+			]
+		},
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Red Hat OpenStack Platform 17.0"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750001",
+										"comment": "openstack-barbican is earlier than 0:12.0.1-0.20220614210405.486e607.el9ost"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750002",
+										"comment": "openstack-barbican is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750003",
+										"comment": "openstack-barbican-api is earlier than 0:12.0.1-0.20220614210405.486e607.el9ost"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750004",
+										"comment": "openstack-barbican-api is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750005",
+										"comment": "openstack-barbican-common is earlier than 0:12.0.1-0.20220614210405.486e607.el9ost"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750006",
+										"comment": "openstack-barbican-common is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750007",
+										"comment": "python3-barbican is earlier than 0:12.0.1-0.20220614210405.486e607.el9ost"
+									},
+									{
+										"test_ref": "oval:com.redhat.rhsa:tst:20226750008",
+										"comment": "python3-barbican is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.rhsa:tst:20226750009",
+						"comment": "Red Hat Enterprise Linux 9 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.rhsa:tst:20226750010",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

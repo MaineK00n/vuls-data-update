@@ -1,0 +1,12 @@
+{
+	"id": "oval:com.redhat.rhsa:ste:20226750003",
+	"attr_version": "634",
+	"name": {
+		"text": "^redhat-release",
+		"operation": "pattern match"
+	},
+	"version": {
+		"text": "^9[^\\d]",
+		"operation": "pattern match"
+	}
+}

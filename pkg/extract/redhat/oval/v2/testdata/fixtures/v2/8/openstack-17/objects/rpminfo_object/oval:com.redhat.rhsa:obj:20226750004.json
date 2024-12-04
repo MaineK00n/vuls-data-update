@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20226750004",
+	"version": "634",
+	"Name": "python3-barbican"
+}
