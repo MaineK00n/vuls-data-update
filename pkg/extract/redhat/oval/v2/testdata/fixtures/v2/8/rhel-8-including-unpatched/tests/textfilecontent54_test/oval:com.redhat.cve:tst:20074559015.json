@@ -1,0 +1,12 @@
+{
+	"check": "all",
+	"comment": "Module python27:2.7 is enabled",
+	"id": "oval:com.redhat.cve:tst:20074559015",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:20074559008"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.cve:ste:20074559002"
+	}
+}

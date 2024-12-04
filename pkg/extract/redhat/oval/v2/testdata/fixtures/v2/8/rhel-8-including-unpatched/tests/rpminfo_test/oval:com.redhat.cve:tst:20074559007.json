@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "python2-libs is installed",
+	"id": "oval:com.redhat.cve:tst:20074559007",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:20074559004"
+	},
+	"state": {}
+}

@@ -272,7 +272,12 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 		m := make(map[string]string)
 		for _, r := range def.Metadata.Advisory.Affected.Resolution {
 			for _, c := range r.Component {
-				m[c] = r.State
+				name := c
+				// convert modular pakcage; OVALv2: <module name>:<module stream>/<package name> -> vuls-data-update: <module name>:<module stream>::<package name>
+				if strings.Contains(c, "/") && strings.Contains(c, ":") {
+					name = strings.ReplaceAll(c, "/", "::")
+				}
+				m[name] = r.State
 			}
 		}
 
@@ -465,11 +470,42 @@ func (e extractor) collectPackages(major, stream string, criteria v2.Criteria, a
 		return criteriaTypes.Criteria{}, errors.Errorf("unexpected criteria tree format. not match major version found in OVALv2 criteria tree.")
 	}
 
-	ca, err := e.walkCriteria(major, stream, m[major], affectedRepositories, affectedResolutions)
+	ca, err := e.walkCriteria(major, stream, m[major], affectedRepositories)
 	if err != nil {
 		return criteriaTypes.Criteria{}, errors.Wrap(err, "walk criteria")
 	}
-	return e.postWalkCriteria(ca), nil
+
+	ca = e.postWalkCriteria(ca)
+
+	var f func(ca criteriaTypes.Criteria, affectedResolutions map[string]string) error
+	f = func(ca criteriaTypes.Criteria, affectedResolutions map[string]string) error {
+		for i := range ca.Criterias {
+			if err := f(ca.Criterias[i], affectedResolutions); err != nil {
+				return errors.Wrap(err, "add affected resolution in criteria")
+			}
+		}
+		for i := range ca.Criterions {
+			switch ca.Criterions[i].Type {
+			case criterionTypes.CriterionTypeVersion:
+				if ca.Criterions[i].Version.FixStatus.Class == fixstatusTypes.ClassUnfixed {
+					state, ok := affectedResolutions[ca.Criterions[i].Version.Package.Name]
+					if !ok {
+						return errors.Errorf("%s is not in affected resolution", ca.Criterions[i].Version.Package.Name)
+					}
+					ca.Criterions[i].Version.FixStatus.Vendor = state
+				}
+			case criterionTypes.CriterionTypeNoneExist:
+			default:
+				return errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []criterionTypes.CriterionType{criterionTypes.CriterionTypeVersion, criterionTypes.CriterionTypeNoneExist}, ca.Criterions[i].Type)
+			}
+		}
+		return nil
+	}
+	if err := f(ca, affectedResolutions); err != nil {
+		return criteriaTypes.Criteria{}, errors.Wrap(err, "add affected resolution")
+	}
+
+	return ca, nil
 }
 
 func (e extractor) prewalkCriteria(m map[string]v2.Criteria, major, stream string, parent, criteria v2.Criteria) (map[string]v2.Criteria, error) {
@@ -736,7 +772,7 @@ func (e extractor) prewalkCriterion(name, stream string, ovalCns []v2.Criterion)
 	}
 }
 
-func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affectedRepositories []string, affectedResolutions map[string]string) (criteriaTypes.Criteria, error) {
+func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affectedRepositories []string) (criteriaTypes.Criteria, error) {
 	var ca criteriaTypes.Criteria
 	switch criteria.Operator {
 	case "OR":
@@ -748,7 +784,7 @@ func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affec
 	}
 
 	for _, ovalCa := range criteria.Criterias {
-		cca, err := e.walkCriteria(name, stream, ovalCa, affectedRepositories, affectedResolutions)
+		cca, err := e.walkCriteria(name, stream, ovalCa, affectedRepositories)
 		if err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrap(err, "walk criteria")
 		}
@@ -759,14 +795,14 @@ func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affec
 		}
 	}
 
-	cca, err := e.walkCriterions(ca, name, stream, criteria.Criterions, affectedRepositories, affectedResolutions)
+	cca, err := e.walkCriterions(ca, name, stream, criteria.Criterions, affectedRepositories)
 	if err != nil {
 		return criteriaTypes.Criteria{}, errors.Wrap(err, "walk criterions")
 	}
 	return cca, nil
 }
 
-func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string, ovalCns []v2.Criterion, affectedRepositories []string, affectedResolutions map[string]string) (criteriaTypes.Criteria, error) {
+func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string, ovalCns []v2.Criterion, affectedRepositories []string) (criteriaTypes.Criteria, error) {
 	var next []v2.Criterion
 
 	for _, ovalCn := range ovalCns {
@@ -864,19 +900,11 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "read %s", filepath.Join("objects", "rpminfo_object", t1.Object.ObjectRef))
 			}
 
-			state, ok := affectedResolutions[o.Name]
-			if !ok {
-				return criteriaTypes.Criteria{}, errors.Errorf("%s is not in affected resolution", o.Name)
-			}
-
 			ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeVersion,
 				Version: &vecTypes.Criterion{
 					Vulnerable: true,
-					FixStatus: &fixstatusTypes.FixStatus{
-						Class:  fixstatusTypes.ClassUnfixed,
-						Vendor: state,
-					},
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
 					Package: packageTypes.Package{
 						Name:         o.Name,
 						Repositories: affectedRepositories,

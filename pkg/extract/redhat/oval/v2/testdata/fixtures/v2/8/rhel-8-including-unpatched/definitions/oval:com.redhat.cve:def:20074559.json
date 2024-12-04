@@ -1,0 +1,189 @@
+{
+	"id": "oval:com.redhat.cve:def:20074559",
+	"version": "636",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "python: tarfile module directory traversal (moderate)",
+		"reference": [
+			{
+				"ref_id": "CVE-2007-4559",
+				"ref_url": "https://access.redhat.com/security/cve/CVE-2007-4559",
+				"source": "CVE"
+			}
+		],
+		"description": "DOCUMENTATION: A flaw was found in the Python tarfile module. Extracting a crafted TAR archive with the tarfile.extract or tarfile.extractall functions could lead to a directory traversal vulnerability, resulting in overwrite of arbitrary files. \n            STATEMENT: The Red Hat Product Security has rated this issue as having a Moderate security impact, a future update may address this flaw. More information regarding issue severity can be found here: https://access.redhat.com/security/updates/classification.\n\nVersions of `python36:3.6/python36` as shipped with Red Hat Enterprise Linux 8 are marked as 'Not affected' as they just provide \"symlinks\" to the main `python3` component, which provides the actual interpreter of the Python programming language.\n            MITIGATION: Do not extract archives from untrusted sources with the Python tarfile module. Users of the module should add sanity checks when calling the tarfile.extract or tarfile.extractall functions.",
+		"advisory": {
+			"from": "secalert@redhat.com",
+			"severity": "Moderate",
+			"updated": {
+				"date": "2024-07-23"
+			},
+			"cve": [
+				{
+					"text": "CVE-2007-4559",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+					"cwe": "CWE-22",
+					"href": "https://access.redhat.com/security/cve/CVE-2007-4559",
+					"impact": "moderate",
+					"public": "20070824"
+				}
+			],
+			"affected": {
+				"resolution": [
+					{
+						"state": "Will not fix",
+						"component": [
+							"python27:2.7/python2",
+							"python27:2.7/python2-debug",
+							"python27:2.7/python2-devel",
+							"python27:2.7/python2-libs",
+							"python27:2.7/python2-test",
+							"python27:2.7/python2-tkinter",
+							"python27:2.7/python2-tools"
+						]
+					}
+				]
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:redhat:enterprise_linux:8",
+					"cpe:/a:redhat:enterprise_linux:8::appstream",
+					"cpe:/a:redhat:enterprise_linux:8::crb",
+					"cpe:/a:redhat:enterprise_linux:8::highavailability",
+					"cpe:/a:redhat:enterprise_linux:8::nfv",
+					"cpe:/a:redhat:enterprise_linux:8::realtime",
+					"cpe:/a:redhat:enterprise_linux:8::resilientstorage",
+					"cpe:/a:redhat:enterprise_linux:8::sap",
+					"cpe:/a:redhat:enterprise_linux:8::sap_hana",
+					"cpe:/a:redhat:enterprise_linux:8::supplementary",
+					"cpe:/o:redhat:enterprise_linux:8",
+					"cpe:/o:redhat:enterprise_linux:8::baseos"
+				]
+			},
+			"issued": {}
+		},
+		"affected": {}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559001",
+										"comment": "python2-test is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559002",
+										"comment": "python2-test is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559003",
+										"comment": "python2-devel is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559004",
+										"comment": "python2-devel is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559005",
+										"comment": "python2-debug is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559006",
+										"comment": "python2-debug is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559007",
+										"comment": "python2-libs is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559008",
+										"comment": "python2-libs is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559009",
+										"comment": "python2 is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559010",
+										"comment": "python2 is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559011",
+										"comment": "python2-tkinter is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559012",
+										"comment": "python2-tkinter is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559013",
+										"comment": "python2-tools is installed"
+									},
+									{
+										"test_ref": "oval:com.redhat.cve:tst:20074559014",
+										"comment": "python2-tools is signed with Red Hat redhatrelease2 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20052541003",
+						"comment": "Red Hat Enterprise Linux 8 is installed"
+					},
+					{
+						"test_ref": "oval:com.redhat.cve:tst:20074559015",
+						"comment": "Module python27:2.7 is enabled"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.redhat.cve:tst:20052541004",
+				"comment": "Red Hat Enterprise Linux must be installed"
+			}
+		]
+	}
+}

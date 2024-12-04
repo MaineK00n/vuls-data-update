@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "python2-tkinter is installed",
+	"id": "oval:com.redhat.cve:tst:20074559011",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:20074559006"
+	},
+	"state": {}
+}
