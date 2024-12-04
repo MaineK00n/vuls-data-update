@@ -293,6 +293,19 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 		return dataTypes.Data{}, errors.Wrap(err, "walk detections")
 	}
 
+	segs := func() []segmentTypes.Segment {
+		var ss []segmentTypes.Segment
+		for _, d := range ds {
+			for _, c := range d.Conditions {
+				ss = append(ss, segmentTypes.Segment{
+					Ecosystem: d.Ecosystem,
+					Tag:       c.Tag,
+				})
+			}
+		}
+		return ss
+	}()
+
 	vs, err := func() ([]vulnerabilityTypes.Vulnerability, error) {
 		m := make(map[string]vulnerabilityContentTypes.Content)
 		for _, cve := range def.Metadata.Advisory.Cve {
@@ -384,11 +397,8 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 		vs := make([]vulnerabilityTypes.Vulnerability, 0, len(m))
 		for _, content := range m {
 			vs = append(vs, vulnerabilityTypes.Vulnerability{
-				Content: content,
-				Segments: []segmentTypes.Segment{{
-					Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
-					Tag:       segmentTypes.DetectionTag(stream),
-				}},
+				Content:  content,
+				Segments: segs,
 			})
 		}
 		return vs, nil
@@ -431,10 +441,7 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 					Published: utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
 					Modified:  utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Updated.Date),
 				},
-				Segments: []segmentTypes.Segment{{
-					Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
-					Tag:       segmentTypes.DetectionTag(stream),
-				}},
+				Segments: segs,
 			}}
 		}(),
 		Vulnerabilities: vs,
