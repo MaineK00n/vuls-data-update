@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
@@ -47,7 +49,8 @@ import (
 )
 
 type options struct {
-	dir string
+	dir         string
+	concurrency int
 }
 
 type Option interface {
@@ -62,6 +65,16 @@ func (d dirOption) apply(opts *options) {
 
 func WithDir(dir string) Option {
 	return dirOption(dir)
+}
+
+type concurrencyOption int
+
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
 }
 
 type extractor struct {
@@ -110,81 +123,102 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 		}
 
 		for _, streamEntry := range streamEntries {
-			if err := filepath.WalkDir(filepath.Join(ovalDir, majorEntry.Name(), streamEntry.Name(), "definitions"), func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
+			major, stream := majorEntry.Name(), streamEntry.Name()
 
-				if d.IsDir() || filepath.Ext(path) != ".json" {
-					return nil
-				}
+			g, ctx := errgroup.WithContext(context.TODO())
+			g.SetLimit(options.concurrency)
 
-				e := extractor{
-					ovalDir: ovalDir,
-					r:       br.Copy(),
-				}
-
-				var def v2.Definition
-				if err := e.r.Read(path, e.ovalDir, &def); err != nil {
-					return errors.Wrapf(err, "read %s", path)
-				}
-
-				switch def.Class {
-				case "patch", "vulnerability":
-					extracted, err := e.extract(majorEntry.Name(), streamEntry.Name(), def, cpe2repository)
+			reqChan := make(chan string)
+			g.Go(func() error {
+				defer close(reqChan)
+				if err := filepath.WalkDir(filepath.Join(ovalDir, major, stream, "definitions"), func(path string, d fs.DirEntry, err error) error {
 					if err != nil {
-						return errors.Wrapf(err, "extract %s", path)
+						return err
 					}
 
-					prefix, y, err := func() (string, string, error) {
-						switch {
-						case strings.HasPrefix(string(extracted.ID), "RHSA"), strings.HasPrefix(string(extracted.ID), "RHBA"), strings.HasPrefix(string(extracted.ID), "RHEA"):
-							ss, err := util.Split(string(extracted.ID), "-", ":")
+					if d.IsDir() || filepath.Ext(path) != ".json" {
+						return nil
+					}
+
+					select {
+					case reqChan <- path:
+					case <-ctx.Done():
+						return ctx.Err()
+					}
+					return nil
+				}); err != nil {
+					return errors.Wrapf(err, "walk %s", filepath.Join(ovalDir, major, stream, "definitions"))
+				}
+				return nil
+			})
+
+			for i := 0; i < options.concurrency; i++ {
+				g.Go(func() error {
+					for path := range reqChan {
+						e := extractor{
+							ovalDir: ovalDir,
+							r:       br.Copy(),
+						}
+
+						var def v2.Definition
+						if err := e.r.Read(path, e.ovalDir, &def); err != nil {
+							return errors.Wrapf(err, "read %s", path)
+						}
+
+						switch def.Class {
+						case "patch", "vulnerability":
+							extracted, err := e.extract(major, stream, def, cpe2repository)
 							if err != nil {
-								return "", "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RHSA|RHBA|RHEA)-<year>:<ID>", extracted.ID)
+								return errors.Wrapf(err, "extract %s", path)
 							}
-							return ss[0], ss[1], nil
-						case strings.HasPrefix(string(extracted.ID), "CVE"):
-							ss, err := util.Split(string(extracted.ID), "-", "-")
+
+							prefix, y, err := func() (string, string, error) {
+								switch {
+								case strings.HasPrefix(string(extracted.ID), "RHSA"), strings.HasPrefix(string(extracted.ID), "RHBA"), strings.HasPrefix(string(extracted.ID), "RHEA"):
+									ss, err := util.Split(string(extracted.ID), "-", ":")
+									if err != nil {
+										return "", "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RHSA|RHBA|RHEA)-<year>:<ID>", extracted.ID)
+									}
+									return ss[0], ss[1], nil
+								case strings.HasPrefix(string(extracted.ID), "CVE"):
+									ss, err := util.Split(string(extracted.ID), "-", "-")
+									if err != nil {
+										return "", "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-<year>-<ID>", extracted.ID)
+									}
+									return ss[0], ss[1], nil
+								default:
+									return "", "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "((RHSA|RHBA|RHEA)-<year>:<ID>|CVE-<year>-<ID>)", extracted.ID)
+								}
+							}()
 							if err != nil {
-								return "", "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-<year>-<ID>", extracted.ID)
+								return errors.Wrap(err, "parse id")
 							}
-							return ss[0], ss[1], nil
+
+							if _, err := os.Stat(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
+								f, err := os.Open(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+								if err != nil {
+									return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+								}
+								defer f.Close()
+
+								var base dataTypes.Data
+								if err := json.NewDecoder(f).Decode(&base); err != nil {
+									return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+								}
+
+								extracted.Merge(base)
+							}
+
+							if err := util.Write(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+								return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
+							}
+						case "miscellaneous":
 						default:
-							return "", "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "((RHSA|RHBA|RHEA)-<year>:<ID>|CVE-<year>-<ID>)", extracted.ID)
+							return errors.Errorf("unexpected oval definition class. expected: %q, actual: %q", []string{"patch", "vulnerability", "miscellaneous"}, def.Class)
 						}
-					}()
-					if err != nil {
-						return errors.Wrap(err, "parse id")
 					}
-
-					if _, err := os.Stat(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
-						f, err := os.Open(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
-						if err != nil {
-							return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
-						}
-						defer f.Close()
-
-						var base dataTypes.Data
-						if err := json.NewDecoder(f).Decode(&base); err != nil {
-							return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
-						}
-
-						extracted.Merge(base)
-					}
-
-					if err := util.Write(filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
-					}
-
 					return nil
-				case "miscellaneous":
-					return nil
-				default:
-					return errors.Errorf("unexpected oval definition class. expected: %q, actual: %q", []string{"patch", "vulnerability", "miscellaneous"}, def.Class)
-				}
-			}); err != nil {
-				return errors.Wrapf(err, "walk %s", filepath.Join(ovalDir, majorEntry.Name(), streamEntry.Name(), "definitions"))
+				})
 			}
 		}
 	}

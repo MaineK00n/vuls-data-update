@@ -2253,8 +2253,14 @@ func newCmdRedHatOVALv1() *cobra.Command {
 }
 
 func newCmdRedHatOVALv2() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "oval", "v2"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "redhat", "oval", "v2"),
+		},
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
@@ -2265,7 +2271,7 @@ func newCmdRedHatOVALv2() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := redhatOVALv2.Extract(args[0], args[1], redhatOVALv2.WithDir(options.dir)); err != nil {
+			if err := redhatOVALv2.Extract(args[0], args[1], redhatOVALv2.WithDir(options.dir), redhatOVALv2.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to extract redhat ovalv2")
 			}
 			return nil
@@ -2273,6 +2279,7 @@ func newCmdRedHatOVALv2() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "oval", "v2"), "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
 
 	return cmd
 }
