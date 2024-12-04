@@ -21,15 +21,15 @@ func TestExtract(t *testing.T) {
 		{
 			name: "happy",
 			args: args{
-				oval:           "./testdata/fixtures",
-				repository2cpe: "./testdata/fixtures",
+				oval:           "./testdata/fixtures/v2",
+				repository2cpe: "./testdata/fixtures/repository2cpe",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := v2.Extract(tt.args.oval, tt.args.repository2cpe, v2.WithDir(dir))
+			err := v2.Extract(utiltest.QueryUnescapeFileTree(t, tt.args.oval), tt.args.repository2cpe, v2.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

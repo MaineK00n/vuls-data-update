@@ -17,7 +17,7 @@ import (
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
@@ -130,7 +130,7 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 
 			ss, err := util.Split(string(extracted.ID), "-", ":")
 			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RHSA|RHBA|RHEA)-<year>-<ID>", extracted.ID)
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RHSA|RHBA|RHEA)-<year>:<ID>", extracted.ID)
 			}
 
 			if _, err := os.Stat(filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID))); err == nil {
@@ -154,58 +154,62 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 
 			return nil
 		}); err != nil {
-			return errors.Wrapf(err, "walk %s", ovalDir)
+			return errors.Wrapf(err, "walk %s", filepath.Join(ovalDir, entry.Name(), "definitions"))
 		}
+	}
 
-		if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-			ID:   sourceTypes.RedHatOVALv1,
-			Name: func() *string { t := "RedHat Enterprise Linux OVALv1"; return &t }(),
-			Raw: func() []repositoryTypes.Repository {
-				var rs []repositoryTypes.Repository
-				r1, _ := utilgit.GetDataSourceRepository(ovalDir)
-				if r1 != nil {
-					rs = append(rs, *r1)
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.RedHatOVALv1,
+		Name: func() *string { t := "RedHat Enterprise Linux OVALv1"; return &t }(),
+		Raw: func() []repositoryTypes.Repository {
+			var rs []repositoryTypes.Repository
+			r1, _ := utilgit.GetDataSourceRepository(ovalDir)
+			if r1 != nil {
+				rs = append(rs, *r1)
+			}
+			r2, _ := utilgit.GetDataSourceRepository(repository2cpeDir)
+			if r2 != nil {
+				rs = append(rs, *r2)
+			}
+			return rs
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
 				}
-				r2, _ := utilgit.GetDataSourceRepository(repository2cpeDir)
-				if r2 != nil {
-					rs = append(rs, *r2)
-				}
-				return rs
-			}(),
-			Extracted: func() *repositoryTypes.Repository {
-				if u, err := utilgit.GetOrigin(options.dir); err == nil {
-					return &repositoryTypes.Repository{
-						URL: u,
-					}
-				}
-				return nil
-			}(),
-		}, false); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
-		}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
 	}
 
 	return nil
 }
 
 func (e extractor) extract(name string, def v1.Definition, c2r map[string][]string) (dataTypes.Data, error) {
-	lhs, rhs, ok := strings.Cut(strings.TrimPrefix(def.ID, "oval:com.redhat."), ":def:")
-	if !ok {
-		return dataTypes.Data{}, errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<id>", def.ID)
-	}
+	id, err := func() (string, error) {
+		lhs, rhs, ok := strings.Cut(strings.TrimPrefix(def.ID, "oval:com.redhat."), ":def:")
+		if !ok {
+			return "", errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<id>", def.ID)
+		}
 
-	var id string
-	switch lhs {
-	case "rhsa", "rhba", "rhea":
-		if len(rhs) < 8 {
-			return dataTypes.Data{}, errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<year><id>", def.ID)
+		switch lhs {
+		case "rhsa", "rhba", "rhea":
+			if len(rhs) < 8 {
+				return "", errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<year><id>", def.ID)
+			}
+			if _, err := time.Parse("2006", rhs[:4]); err != nil {
+				return "", errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<year><id>", def.ID)
+			}
+			return fmt.Sprintf("%s-%s:%s", strings.ToUpper(lhs), rhs[:4], rhs[4:]), nil
+		default:
+			return "", errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<id>", def.ID)
 		}
-		if _, err := time.Parse("2006", rhs[:4]); err != nil {
-			return dataTypes.Data{}, errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<year><id>", def.ID)
-		}
-		id = fmt.Sprintf("%s-%s:%s", strings.ToUpper(lhs), rhs[:4], rhs[4:])
-	default:
-		return dataTypes.Data{}, errors.Errorf("unexpected definition id format. expected: %q, actual: %q", "oval:com.redhat.(rhsa|rhba|rhea):def:<id>", def.ID)
+	}()
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "parse definition id")
 	}
 
 	var rs []string
@@ -215,7 +219,7 @@ func (e extractor) extract(name string, def v1.Definition, c2r map[string][]stri
 
 	ds, err := e.collectPackages(name, def.Criteria, rs)
 	if err != nil {
-		return dataTypes.Data{}, errors.Wrap(err, "walk criteria")
+		return dataTypes.Data{}, errors.Wrap(err, "collect packages")
 	}
 
 	segs := func() []segmentTypes.Segment {
@@ -349,7 +353,7 @@ func (e extractor) extract(name string, def v1.Definition, c2r map[string][]stri
 					Source: "secalert@redhat.com",
 					Vendor: &def.Metadata.Advisory.Severity}},
 				References: func() []referenceTypes.Reference {
-					refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference)|len(def.Metadata.Advisory.Bugzilla))
+					refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference)+len(def.Metadata.Advisory.Bugzilla))
 					for _, r := range def.Metadata.Reference {
 						refs = append(refs, referenceTypes.Reference{
 							Source: "secalert@redhat.com",
@@ -392,7 +396,7 @@ func (e extractor) collectPackages(name string, criteria v1.Criteria, affectedRe
 		}
 		ds = append(ds, detectionTypes.Detection{
 			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
-			Conditions: []condition.Condition{{
+			Conditions: []conditionTypes.Condition{{
 				Criteria: e.postWalkCriteria(ca),
 				Tag:      segmentTypes.DetectionTag(name),
 			}},
@@ -801,7 +805,14 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 		case strings.Contains(t1.Comment, " is signed with Red Hat redhatrelease key"):
 		case strings.Contains(t1.Comment, " is signed with Red Hat redhatrelease2 key"):
 		default:
-			return criteriaTypes.Criteria{}, errors.Errorf("unexpected comment format. expected: %q, actual: %q", []string{"<package> is earlier than <version>", "<package> version equals <version>", "<package> not installed for <version>", "<package> is signed with Red Hat master key", "<package> is signed with Red Hat redhatrelease key", "<package> is signed with Red Hat redhatrelease2 key"}, t1.Comment)
+			return criteriaTypes.Criteria{}, errors.Errorf("unexpected comment format. expected: %q, actual: %q", []string{
+				"<package> is earlier than <version>",
+				"<package> version equals <version>",
+				"<package> not installed for <version>",
+				"<package> is signed with Red Hat master key",
+				"<package> is signed with Red Hat redhatrelease key",
+				"<package> is signed with Red Hat redhatrelease2 key",
+			}, t1.Comment)
 		}
 	}
 	ovalCns = next
@@ -946,7 +957,7 @@ func (e extractor) postWalkCriteria(ca criteriaTypes.Criteria) criteriaTypes.Cri
 	return e.postWalkCriteria(ca.Criterias[0])
 }
 
-func (e extractor) read(osver string, class, family, id string, v any) error {
+func (e extractor) read(osver, class, family, id string, v any) error {
 	if err := e.r.Read(filepath.Join(e.ovalDir, osver, class, family, fmt.Sprintf("%s.json", id)), e.ovalDir, v); err != nil {
 		return errors.Wrapf(err, "read %s %s", class, family)
 	}

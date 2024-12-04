@@ -2236,7 +2236,7 @@ func newCmdRedHatOVALv1() *cobra.Command {
 		Use:   "redhat-ovalv1 <Raw RedHat OVALv1 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
 		Short: "Extract RedHat OVALv1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-ovalv1 vuls-data-raw-redhat-ovalv1
+			$ vuls-data-update extract redhat-ovalv1 vuls-data-raw-redhat-ovalv1 vuls-data-raw-redhat-oval-repository-to-cpe
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -2258,10 +2258,10 @@ func newCmdRedHatOVALv2() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv2 <Raw RedHat OVALv1 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-ovalv2 <Raw RedHat OVALv2 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
 		Short: "Extract RedHat OVALv2 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-ovalv2 vuls-data-raw-redhat-ovalv2
+			$ vuls-data-update extract redhat-ovalv2 vuls-data-raw-redhat-ovalv2 vuls-data-raw-redhat-oval-repository-to-cpe
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
