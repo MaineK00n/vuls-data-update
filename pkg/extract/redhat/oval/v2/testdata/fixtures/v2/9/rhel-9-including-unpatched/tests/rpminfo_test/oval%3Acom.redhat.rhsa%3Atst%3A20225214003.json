@@ -1,0 +1,11 @@
+{
+	"check": "at least one",
+	"comment": "kpatch-patch not installed for 0:5.14.0-70.13.1.el9_0",
+	"id": "oval:com.redhat.rhsa:tst:20225214003",
+	"version": "635",
+	"check_existence": "none_exist",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20225214002"
+	},
+	"state": {}
+}
