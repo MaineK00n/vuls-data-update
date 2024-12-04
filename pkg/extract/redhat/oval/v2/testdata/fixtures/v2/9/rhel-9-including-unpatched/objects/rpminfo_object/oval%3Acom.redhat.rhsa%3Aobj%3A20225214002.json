@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20225214002",
+	"version": "635",
+	"Name": "kpatch-patch-5_14_0-70_13_1"
+}

@@ -1,0 +1,12 @@
+{
+	"check": "all",
+	"comment": "kernel version 0:5.14.0-70.13.1.el9_0 is set to boot up on next boot",
+	"id": "oval:com.redhat.rhsa:tst:20225214007",
+	"version": "635",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20225214005"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20225214005"
+	}
+}
