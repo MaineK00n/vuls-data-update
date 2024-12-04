@@ -1,7 +1,6 @@
 {
 	"id": "oval:com.redhat.rhsa:ste:20224765001",
 	"version": "635",
-	"signature_keyid": {},
 	"evr": {
 		"text": "0:91.9.1-1.el9_0",
 		"datatype": "evr_string",
