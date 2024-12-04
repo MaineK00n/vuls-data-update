@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20226750002",
+	"version": "634",
+	"Name": "openstack-barbican-api"
+}

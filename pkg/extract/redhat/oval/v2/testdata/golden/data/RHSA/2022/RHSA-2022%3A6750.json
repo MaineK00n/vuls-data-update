@@ -1,0 +1,297 @@
+{
+	"id": "RHSA-2022:6750",
+	"advisories": [
+		{
+			"content": {
+				"id": "RHSA-2022:6750",
+				"title": "RHSA-2022:6750: Red Hat OpenStack Platform (openstack-barbican) security update (Important)",
+				"description": "Barbican is a ReST API designed for the secure storage, provisioning and\nmanagement of secrets, including in OpenStack environments.\n\nSecurity Fix(es):\n\n* openstack-barbican: access policy bypass via query string injection (CVE-2022-3100)\n\nFor more details about the security issue(s), including the impact, a CVSS\nscore, acknowledgments, and other related information, refer to the CVE\npage listed in the References section.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/errata/RHSA-2022:6750"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2022-3100"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/2125404"
+					}
+				],
+				"published": "2022-09-29T00:00:00Z",
+				"modified": "2022-09-29T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:9",
+					"tag": "openstack-17"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-3100",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "important"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "secalert@redhat.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:L/A:N",
+							"base_score": 7.1,
+							"base_severity": "HIGH",
+							"temporal_score": 7.1,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.1,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"CWE-305"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2022-3100"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/2125404"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:9",
+					"tag": "openstack-17"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "redhat:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "openstack-barbican",
+												"repositories": [
+													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-for-rhel-9-x86_64-rpms",
+													"openstack-17-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:12.0.1-0.20220614210405.486e607.el9ost"
+													}
+												],
+												"fixed": [
+													"0:12.0.1-0.20220614210405.486e607.el9ost"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "openstack-barbican-api",
+												"repositories": [
+													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-for-rhel-9-x86_64-rpms",
+													"openstack-17-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:12.0.1-0.20220614210405.486e607.el9ost"
+													}
+												],
+												"fixed": [
+													"0:12.0.1-0.20220614210405.486e607.el9ost"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "openstack-barbican-common",
+												"repositories": [
+													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-for-rhel-9-x86_64-rpms",
+													"openstack-17-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:12.0.1-0.20220614210405.486e607.el9ost"
+													}
+												],
+												"fixed": [
+													"0:12.0.1-0.20220614210405.486e607.el9ost"
+												]
+											}
+										}
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": true,
+											"fix_status": {
+												"class": "fixed"
+											},
+											"package": {
+												"name": "python3-barbican",
+												"repositories": [
+													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-for-rhel-9-x86_64-rpms",
+													"openstack-17-for-rhel-9-x86_64-source-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-rpms",
+													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+												]
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"lt": "0:12.0.1-0.20220614210405.486e607.el9ost"
+													}
+												],
+												"fixed": [
+													"0:12.0.1-0.20220614210405.486e607.el9ost"
+												]
+											}
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "openstack-17"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "redhat-ovalv2",
+		"raws": [
+			"repository2cpe/repository-to-cpe.json",
+			"v2/8/openstack-17/definitions/oval:com.redhat.rhsa:def:20226750.json",
+			"v2/8/openstack-17/objects/rpminfo_object/oval:com.redhat.rhsa:obj:20226750001.json",
+			"v2/8/openstack-17/objects/rpminfo_object/oval:com.redhat.rhsa:obj:20226750002.json",
+			"v2/8/openstack-17/objects/rpminfo_object/oval:com.redhat.rhsa:obj:20226750003.json",
+			"v2/8/openstack-17/objects/rpminfo_object/oval:com.redhat.rhsa:obj:20226750004.json",
+			"v2/8/openstack-17/states/rpminfo_state/oval:com.redhat.rhsa:ste:20226750001.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750001.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750002.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750003.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750004.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750005.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750006.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750007.json",
+			"v2/8/openstack-17/tests/rpminfo_test/oval:com.redhat.rhsa:tst:20226750008.json",
+			"v2/8/openstack-17/tests/rpmverifyfile_test/oval:com.redhat.rhsa:tst:20226750009.json",
+			"v2/8/openstack-17/tests/rpmverifyfile_test/oval:com.redhat.rhsa:tst:20226750010.json"
+		]
+	}
+}

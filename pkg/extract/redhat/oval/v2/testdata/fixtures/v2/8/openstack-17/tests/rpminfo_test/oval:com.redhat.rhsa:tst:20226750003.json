@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "openstack-barbican-api is earlier than 0:12.0.1-0.20220614210405.486e607.el9ost",
+	"id": "oval:com.redhat.rhsa:tst:20226750003",
+	"version": "634",
+	"object": {
+		"object_ref": "oval:com.redhat.rhsa:obj:20226750002"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20226750001"
+	}
+}

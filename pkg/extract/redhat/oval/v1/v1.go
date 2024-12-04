@@ -770,8 +770,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 				ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeVersion,
 					Version: &vecTypes.Criterion{
-						Vulnerable: true,
-						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						Vulnerable: false,
 						Package: packageTypes.Package{
 							Name: o.Name,
 							Architectures: func() []string {

@@ -281,18 +281,11 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 			}
 		}
 
-		ca, err := e.collectPackages(major, stream, def.Criteria, rs, m)
+		ds, err := e.collectPackages(major, stream, def.Criteria, rs, m)
 		if err != nil {
 			return nil, errors.Wrap(err, "collect packages")
 		}
-
-		return []detectionTypes.Detection{{
-			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
-			Conditions: []conditionTypes.Condition{{
-				Criteria: ca,
-				Tag:      segmentTypes.DetectionTag(stream),
-			}},
-		}}, nil
+		return ds, nil
 	}()
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk detections")
@@ -458,24 +451,11 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 	}, nil
 }
 
-func (e extractor) collectPackages(major, stream string, criteria v2.Criteria, affectedRepositories []string, affectedResolutions map[string]string) (criteriaTypes.Criteria, error) {
-	m, err := e.prewalkCriteria(make(map[string]v2.Criteria), major, stream, criteria, criteria)
+func (e extractor) collectPackages(majorDir, streamDir string, criteria v2.Criteria, affectedRepositories []string, affectedResolutions map[string]string) ([]detectionTypes.Detection, error) {
+	m, err := e.prewalkCriteria(make(map[string]v2.Criteria), majorDir, streamDir, criteria, criteria)
 	if err != nil {
-		return criteriaTypes.Criteria{}, errors.Wrap(err, "prewalk criteria")
+		return nil, errors.Wrap(err, "prewalk criteria")
 	}
-	if len(m) != 1 {
-		return criteriaTypes.Criteria{}, errors.Errorf("unexpected criteria tree format. Only one OS version should be found in OVALv2 criteria tree.")
-	}
-	if _, ok := m[major]; !ok {
-		return criteriaTypes.Criteria{}, errors.Errorf("unexpected criteria tree format. not match major version found in OVALv2 criteria tree.")
-	}
-
-	ca, err := e.walkCriteria(major, stream, m[major], affectedRepositories)
-	if err != nil {
-		return criteriaTypes.Criteria{}, errors.Wrap(err, "walk criteria")
-	}
-
-	ca = e.postWalkCriteria(ca)
 
 	var f func(ca criteriaTypes.Criteria, affectedResolutions map[string]string) error
 	f = func(ca criteriaTypes.Criteria, affectedResolutions map[string]string) error {
@@ -501,11 +481,28 @@ func (e extractor) collectPackages(major, stream string, criteria v2.Criteria, a
 		}
 		return nil
 	}
-	if err := f(ca, affectedResolutions); err != nil {
-		return criteriaTypes.Criteria{}, errors.Wrap(err, "add affected resolution")
-	}
 
-	return ca, nil
+	ds := make([]detectionTypes.Detection, 0, len(m))
+	for major, rootCa := range m {
+		ca, err := e.walkCriteria(majorDir, streamDir, rootCa, affectedRepositories)
+		if err != nil {
+			return nil, errors.Wrap(err, "walk criteria")
+		}
+		ca = e.postWalkCriteria(ca)
+
+		if err := f(ca, affectedResolutions); err != nil {
+			return nil, errors.Wrap(err, "add affected resolution")
+		}
+
+		ds = append(ds, detectionTypes.Detection{
+			Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
+			Conditions: []conditionTypes.Condition{{
+				Criteria: e.postWalkCriteria(ca),
+				Tag:      segmentTypes.DetectionTag(streamDir),
+			}},
+		})
+	}
+	return ds, nil
 }
 
 func (e extractor) prewalkCriteria(m map[string]v2.Criteria, major, stream string, parent, criteria v2.Criteria) (map[string]v2.Criteria, error) {
@@ -873,8 +870,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 				ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeVersion,
 					Version: &vecTypes.Criterion{
-						Vulnerable: true,
-						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+						Vulnerable: false,
 						Package: packageTypes.Package{
 							Name: o.Name,
 							Architectures: func() []string {
