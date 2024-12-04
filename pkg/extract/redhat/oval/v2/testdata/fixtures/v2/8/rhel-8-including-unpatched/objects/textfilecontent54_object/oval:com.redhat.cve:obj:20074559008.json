@@ -1,0 +1,16 @@
+{
+	"id": "oval:com.redhat.cve:obj:20074559008",
+	"version": "636",
+	"filepath": {
+		"text": "/etc/dnf/modules.d/python27.module",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "\\[python27\\][\\w\\W]*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}
