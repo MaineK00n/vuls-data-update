@@ -96,8 +96,12 @@
 	"product_tree": {
 		"branches": [
 			{
+				"category": "vendor",
+				"name": "Red Hat",
 				"branches": [
 					{
+						"category": "product_family",
+						"name": "Red Hat OpenStack Platform",
 						"branches": [
 							{
 								"category": "product_name",
@@ -110,11 +114,11 @@
 									}
 								}
 							}
-						],
-						"category": "product_family",
-						"name": "Red Hat OpenStack Platform"
+						]
 					},
 					{
+						"category": "architecture",
+						"name": "src",
 						"branches": [
 							{
 								"category": "product_version",
@@ -127,11 +131,11 @@
 									}
 								}
 							}
-						],
-						"category": "architecture",
-						"name": "src"
+						]
 					},
 					{
+						"category": "architecture",
+						"name": "x86_64",
 						"branches": [
 							{
 								"category": "product_version",
@@ -166,13 +170,9 @@
 									}
 								}
 							}
-						],
-						"category": "architecture",
-						"name": "x86_64"
+						]
 					}
-				],
-				"category": "vendor",
-				"name": "Red Hat"
+				]
 			}
 		],
 		"relationships": [
