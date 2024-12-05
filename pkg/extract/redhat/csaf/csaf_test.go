@@ -9,20 +9,27 @@ import (
 )
 
 func TestExtract(t *testing.T) {
+	type args struct {
+		csaf           string
+		repository2cpe string
+	}
 	tests := []struct {
 		name     string
-		args     string
+		args     args
 		hasError bool
 	}{
 		{
 			name: "happy",
-			args: "./testdata/fixtures",
+			args: args{
+				csaf:           "./testdata/fixtures/csaf",
+				repository2cpe: "./testdata/fixtures/repository2cpe",
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := csaf.Extract(tt.args, csaf.WithDir(dir))
+			err := csaf.Extract(utiltest.QueryUnescapeFileTree(t, tt.args.csaf), tt.args.repository2cpe, csaf.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
