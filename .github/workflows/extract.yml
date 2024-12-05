@@ -448,6 +448,10 @@ jobs:
           repository: vulsio/vuls-data-raw-redhat-oval-repository-to-cpe
           path: vuls-data-raw-redhat-oval-repository-to-cpe
 
+      - name: replace empty repository-to-cpe data
+        run: |
+          echo "{}" > vuls-data-raw-redhat-oval-repository-to-cpe/repository-to-cpe.json
+
       - name: Check out extracted repository
         uses: actions/checkout@v4
         with:
