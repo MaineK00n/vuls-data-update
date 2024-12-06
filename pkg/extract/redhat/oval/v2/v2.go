@@ -362,7 +362,19 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 			}
 
 			m[cve.Text] = vulnerabilityContentTypes.Content{
-				ID:       vulnerabilityContentTypes.VulnerabilityID(cve.Text),
+				ID: vulnerabilityContentTypes.VulnerabilityID(cve.Text),
+				Title: func() string {
+					if strings.HasPrefix(def.ID, "oval:com.redhat.cve:def:") || strings.HasPrefix(def.ID, "oval:com.redhat.unaffected:def:") {
+						return def.Metadata.Title
+					}
+					return ""
+				}(),
+				Description: func() string {
+					if strings.HasPrefix(def.ID, "oval:com.redhat.cve:def:") || strings.HasPrefix(def.ID, "oval:com.redhat.unaffected:def:") {
+						return def.Metadata.Description
+					}
+					return ""
+				}(),
 				Severity: ss,
 				CWE: func() []cweTypes.CWE {
 					if cve.Cwe == "" {
