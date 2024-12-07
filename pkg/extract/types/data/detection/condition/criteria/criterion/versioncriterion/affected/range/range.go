@@ -196,17 +196,36 @@ func (t RangeType) Compare(ecosystem ecosystemTypes.Ecosystem, v1, v2 string) (i
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
 		switch {
+		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeAlma):
+			if strings.Contains(v1, ".module_el") != strings.Contains(v2, ".module_el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeRocky):
 			if strings.Contains(v1, ".cloud") != strings.Contains(v2, ".cloud") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("Rocky Linux package and Rocky Linux SIG Cloud package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
+			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeOracle):
 			if extractOracleKsplice(v1) != extractOracleKsplice(v2) {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", v1, v2)}}
 			}
+			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
+			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
+		case strings.HasPrefix(string(ecosystem), ecosystemTypes.EcosystemTypeFedora):
+			if strings.Contains(v1, ".module_f") != strings.Contains(v2, ".module_f") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		default:
+			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		}
 	case RangeTypeDPKG:
