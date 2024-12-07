@@ -43,6 +43,36 @@ func TestRangeType_Compare(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name: "alma v1: non modular package, v2: non modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.el9",
+			},
+			want: 0,
+		},
+		{
+			name: "alma v1: non modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.module_el9",
+			},
+			wantErr: true,
+		},
+		{
+			name: "alma v1: modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, "9")),
+				v1:        "0.0.1-0.0.1.module_el9",
+				v2:        "0.0.1-0.0.1.module_el9",
+			},
+			want: 0,
+		},
+		{
 			name: "rocky v1: rocky, v2: rocky",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
@@ -71,6 +101,26 @@ func TestRangeType_Compare(t *testing.T) {
 				v2:        "0.0.1-0.0.1.el9.cloud.0.1",
 			},
 			want: -1,
+		},
+		{
+			name: "rocky v1: non modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.module+el9",
+			},
+			wantErr: true,
+		},
+		{
+			name: "rocky v1: modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRocky, "9")),
+				v1:        "0.0.1-0.0.1.module+el9",
+				v2:        "0.0.1-0.0.1.module+el9",
+			},
+			want: 0,
 		},
 		{
 			name: "oracle v1: not ksplice, v2: not ksplice",
@@ -111,6 +161,86 @@ func TestRangeType_Compare(t *testing.T) {
 				v2:        "0.0.1-0.0.1.ksplice2.el9",
 			},
 			wantErr: true,
+		},
+		{
+			name: "oracle v1: non modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.module+el9",
+			},
+			wantErr: true,
+		},
+		{
+			name: "oracle v1: modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOracle, "9")),
+				v1:        "0.0.1-0.0.1.module+el9",
+				v2:        "0.0.1-0.0.1.module+el9",
+			},
+			want: 0,
+		},
+		{
+			name: "fedora v1: non modular package, v2: non modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeFedora, "35")),
+				v1:        "0.0.1-0.0.1.fc35",
+				v2:        "0.0.1-0.0.1.fc35",
+			},
+			want: 0,
+		},
+		{
+			name: "fedora v1: non modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeFedora, "35")),
+				v1:        "0.0.1-0.0.1.fc35",
+				v2:        "0.0.1-0.0.1.module_f35",
+			},
+			wantErr: true,
+		},
+		{
+			name: "fedora v1: modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeFedora, "35")),
+				v1:        "0.0.1-0.0.1.module_f35",
+				v2:        "0.0.1-0.0.1.module_f35",
+			},
+			want: 0,
+		},
+		{
+			name: "redhat v1: non modular package, v2: non modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.el9",
+			},
+			want: 0,
+		},
+		{
+			name: "redhat v1: non modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, "9")),
+				v1:        "0.0.1-0.0.1.el9",
+				v2:        "0.0.1-0.0.1.module+el9",
+			},
+			wantErr: true,
+		},
+		{
+			name: "redhat v1: modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, "9")),
+				v1:        "0.0.1-0.0.1.module+el9",
+				v2:        "0.0.1-0.0.1.module+el9",
+			},
+			want: 0,
 		},
 		{
 			name: "unknown type",
