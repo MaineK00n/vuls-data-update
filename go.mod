@@ -26,7 +26,7 @@ require (
 	github.com/tealeg/xlsx v1.0.5
 	github.com/ulikunitz/xz v0.5.12
 	golang.org/x/net v0.31.0
-	golang.org/x/sync v0.9.0
+	golang.org/x/sync v0.10.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.34.1
 )
