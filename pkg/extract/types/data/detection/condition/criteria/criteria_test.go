@@ -160,8 +160,8 @@ func TestCriteria_Contains(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
-						Ecosystem: ecosystemTypes.EcosystemTypeCPE,
-						CPE:       func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+						Family: ecosystemTypes.EcosystemTypeCPE,
+						CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
 					}},
 				},
 			},
@@ -459,8 +459,8 @@ func TestCriteria_Accept(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
-						Ecosystem: ecosystemTypes.EcosystemTypeCPE,
-						CPE:       func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+						Family: ecosystemTypes.EcosystemTypeCPE,
+						CPE:    func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
 					}},
 				},
 			},

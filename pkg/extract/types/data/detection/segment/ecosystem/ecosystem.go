@@ -14,6 +14,7 @@ const (
 	EcosystemTypeAlpine      = "alpine"
 	EcosystemTypeAmazon      = "amazon"
 	EcosystemTypeArch        = "arch"
+	EcosytemCentOS           = "centos"
 	EcosystemTypeDebian      = "debian"
 	EcosystemTypeEPEL        = "epel"
 	EcosystemTypeFedora      = "fedora"
@@ -64,6 +65,8 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeArch:
 		return Ecosystem(family), nil
+	case EcosytemCentOS:
+		return Ecosystem(fmt.Sprintf("%s:%s", EcosystemTypeRedHat, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeDebian:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeEPEL:

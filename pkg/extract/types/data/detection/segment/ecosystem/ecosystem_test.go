@@ -18,6 +18,14 @@ func TestGetEcosystem(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name: "centos 8.0",
+			args: args{
+				family:  "centos",
+				release: "8.0",
+			},
+			want: ecosystem.Ecosystem("redhat:8"),
+		},
+		{
 			name: "oracle 9",
 			args: args{
 				family:  "oracle",
