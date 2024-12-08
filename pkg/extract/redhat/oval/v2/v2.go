@@ -390,6 +390,12 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 					URL:    cve.Href,
 				}},
 				Published: utiltime.Parse([]string{"20060102"}, cve.Public),
+				Modified: func() *time.Time {
+					if strings.HasPrefix(def.ID, "oval:com.redhat.cve:def:") || strings.HasPrefix(def.ID, "oval:com.redhat.unaffected:def:") {
+						return utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Updated.Date)
+					}
+					return nil
+				}(),
 			}
 		}
 
