@@ -1,7 +1,7 @@
 name: Archive-Raw
 on:
   workflow_run:
-    workflows: [Extract]
+    workflows: [Extract(Nightly)]
     types:
       - completed
   workflow_dispatch:
