@@ -129,6 +129,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -200,6 +202,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -311,6 +315,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -436,6 +442,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -511,6 +519,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -579,6 +589,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -663,6 +675,8 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
