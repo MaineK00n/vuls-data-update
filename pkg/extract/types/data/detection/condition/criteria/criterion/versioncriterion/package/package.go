@@ -2,84 +2,194 @@ package criterionpackage
 
 import (
 	"cmp"
-	"slices"
+	"encoding/json"
+	"fmt"
 
-	"github.com/knqyf263/go-cpe/matching"
-	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
+
+	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
+	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 )
 
+type PackageType int
+
+const (
+	_ PackageType = iota
+	PackageTypeBinary
+	PackageTypeSource
+	PackageTypeCPE
+	PackageTypeLanguage
+
+	PackageTypeUnknown
+)
+
+func (t PackageType) String() string {
+	switch t {
+	case PackageTypeBinary:
+		return "binary"
+	case PackageTypeSource:
+		return "source"
+	case PackageTypeCPE:
+		return "cpe"
+	case PackageTypeLanguage:
+		return "launguage"
+	default:
+		return "unknown"
+	}
+}
+
+func (t PackageType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.String())
+}
+
+func (t *PackageType) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("data should be a string, got %s", data)
+	}
+
+	var pt PackageType
+	switch s {
+	case "binary":
+		pt = PackageTypeBinary
+	case "source":
+		pt = PackageTypeSource
+	case "cpe":
+		pt = PackageTypeCPE
+	case "unknown":
+		pt = PackageTypeUnknown
+	default:
+		return fmt.Errorf("invalid PackageType %s", s)
+	}
+	*t = pt
+	return nil
+}
+
 type Package struct {
-	Name          string   `json:"name,omitempty"`
-	CPE           string   `json:"cpe,omitempty"`
-	Architectures []string `json:"architectures,omitempty"`
-	Repositories  []string `json:"repositories,omitempty"`
-	Functions     []string `json:"functions,omitempty"`
+	Type     PackageType            `json:"type,omitempty"`
+	Binary   *binaryTypes.Package   `json:"binary,omitempty"`
+	Source   *sourceTypes.Package   `json:"source,omitempty"`
+	CPE      *cpeTypes.CPE          `json:"cpe,omitempty"`
+	Language *languageTypes.Package `json:"language,omitempty"`
 }
 
 func (p *Package) Sort() {
-	slices.Sort(p.Architectures)
-	slices.Sort(p.Repositories)
-	slices.Sort(p.Functions)
+	switch p.Type {
+	case PackageTypeBinary:
+		p.Binary.Sort()
+	case PackageTypeSource:
+		p.Source.Sort()
+	case PackageTypeCPE:
+	case PackageTypeLanguage:
+		p.Language.Sort()
+	default:
+	}
 }
 
 func Compare(x, y Package) int {
 	return cmp.Or(
-		cmp.Compare(x.Name, y.Name),
-		cmp.Compare(x.CPE, y.CPE),
-		slices.Compare(x.Architectures, y.Architectures),
-		slices.Compare(x.Repositories, y.Repositories),
-		slices.Compare(x.Functions, y.Functions),
+		cmp.Compare(x.Type, y.Type),
+		func() int {
+			switch x.Type {
+			case PackageTypeBinary:
+				switch {
+				case x.Binary == nil && y.Binary == nil:
+					return 0
+				case x.Binary == nil && y.Binary != nil:
+					return -1
+				case x.Binary != nil && y.Binary == nil:
+					return +1
+				default:
+					return binaryTypes.Compare(*x.Binary, *y.Binary)
+				}
+			case PackageTypeSource:
+				switch {
+				case x.Source == nil && y.Source == nil:
+					return 0
+				case x.Source == nil && y.Source != nil:
+					return -1
+				case x.Source != nil && y.Source == nil:
+					return +1
+				default:
+					return sourceTypes.Compare(*x.Source, *y.Source)
+				}
+			case PackageTypeCPE:
+				switch {
+				case x.CPE == nil && y.CPE == nil:
+					return 0
+				case x.CPE == nil && y.CPE != nil:
+					return -1
+				case x.CPE != nil && y.CPE == nil:
+					return +1
+				default:
+					return cmp.Compare(*x.CPE, *y.CPE)
+				}
+			case PackageTypeLanguage:
+				switch {
+				case x.Language == nil && y.Language == nil:
+					return 0
+				case x.Language == nil && y.Language != nil:
+					return -1
+				case x.Language != nil && y.Language == nil:
+					return +1
+				default:
+					return languageTypes.Compare(*x.Language, *y.Language)
+				}
+			default:
+				return 0
+			}
+		}(),
 	)
 }
 
 type Query struct {
-	Package *QueryPackage
-	CPE     *string
-}
-
-type QueryPackage struct {
-	Name       string
-	Arch       string
-	Repository string
-	Functions  []string
+	Binary   *binaryTypes.Query
+	Source   *sourceTypes.Query
+	CPE      *cpeTypes.Query
+	Language *languageTypes.Query
 }
 
 func (p Package) Accept(query Query) (bool, error) {
-	switch {
-	case query.Package != nil:
-		if query.Package.Name != p.Name {
-			return false, nil
+	switch p.Type {
+	case PackageTypeBinary:
+		if query.Binary == nil {
+			return false, errors.New("query is not set for Binary Package")
 		}
-
-		if query.Package.Arch != "" && len(p.Architectures) > 0 && !slices.Contains(p.Architectures, query.Package.Arch) {
-			return false, nil
-		}
-
-		if query.Package.Repository != "" && len(p.Repositories) > 0 && !slices.Contains(p.Repositories, query.Package.Repository) {
-			return false, nil
-		}
-
-		if len(query.Package.Functions) > 0 && len(p.Functions) > 0 && !slices.ContainsFunc(p.Functions, func(e string) bool {
-			return slices.Contains(query.Package.Functions, e)
-		}) {
-			return false, nil
-		}
-
-		return true, nil
-	case query.CPE != nil:
-		wfn1, err := naming.UnbindFS(*query.CPE)
+		isAccepted, err := p.Binary.Accept(*query.Binary)
 		if err != nil {
-			return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
+			return false, errors.Wrap(err, "binary package accept")
 		}
-
-		wfn2, err := naming.UnbindFS(p.CPE)
+		return isAccepted, nil
+	case PackageTypeSource:
+		if query.Source == nil {
+			return false, errors.New("query is not set for Source Package")
+		}
+		isAccepted, err := p.Source.Accept(*query.Source)
 		if err != nil {
-			return false, nil
+			return false, errors.Wrap(err, "source package accept")
 		}
-
-		return matching.IsSubset(wfn1, wfn2), nil
+		return isAccepted, nil
+	case PackageTypeCPE:
+		if query.CPE == nil {
+			return false, errors.New("query is not set for CPE")
+		}
+		isAccepted, err := p.CPE.Accept(*query.CPE)
+		if err != nil {
+			return false, errors.Wrap(err, "cpe accept")
+		}
+		return isAccepted, nil
+	case PackageTypeLanguage:
+		if query.Language == nil {
+			return false, errors.New("query is not set for Language Package")
+		}
+		isAccepted, err := p.Language.Accept(*query.Language)
+		if err != nil {
+			return false, errors.Wrap(err, "language package accept")
+		}
+		return isAccepted, nil
 	default:
-		return false, errors.Errorf("query must be set to Package or CPE")
+		return false, errors.Errorf("unexpected package type. expected: %q, actual: %q", []PackageType{PackageTypeBinary, PackageTypeSource, PackageTypeCPE, PackageTypeLanguage}, p.Type)
 	}
 }

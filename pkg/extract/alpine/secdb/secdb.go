@@ -21,6 +21,7 @@ import (
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	sourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -148,9 +149,11 @@ func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 						Vulnerable: true,
 						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 						Package: packageTypes.Package{
-							Name:          pkg.Pkg.Name,
-							Repositories:  []string{fetched.Reponame},
-							Architectures: fetched.Archs,
+							Type: packageTypes.PackageTypeSource,
+							Source: &sourcePackageTypes.Package{
+								Name:         pkg.Pkg.Name,
+								Repositories: []string{fetched.Reponame},
+							},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  rangeTypes.RangeTypeAPK,

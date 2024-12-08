@@ -118,10 +118,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "virt:kvm_utils::hivex",
-										"architectures": [
-											"aarch64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "virt:kvm_utils::hivex",
+											"architectures": [
+												"aarch64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",

@@ -30,7 +30,7 @@ func TestCompare(t *testing.T) {
 
 func TestRangeType_Compare(t *testing.T) {
 	type args struct {
-		family string
+		family ecosystemTypes.Ecosystem
 		v1     string
 		v2     string
 	}
@@ -41,6 +41,46 @@ func TestRangeType_Compare(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
+		{
+			name: "centos v1: non centos package, v2: non centos package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.el8",
+				v2:     "0.0.1-0.0.1.el8",
+			},
+			want: 0,
+		},
+		{
+			name: "centos v1: centos package, v2: non centos package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.el8.centos",
+				v2:     "0.0.1-0.0.1.el8",
+			},
+			wantErr: true,
+		},
+		{
+			name: "centos v1: non modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.el8",
+				v2:     "0.0.1-0.0.1.module_el8",
+			},
+			wantErr: true,
+		},
+		{
+			name: "centos v1: modular package, v2: modular package",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.module_el8",
+				v2:     "0.0.1-0.0.1.module_el8",
+			},
+			want: 0,
+		},
 		{
 			name: "alma v1: non modular package, v2: non modular package",
 			rt:   affectedrangeTypes.RangeTypeRPM,

@@ -2,7 +2,6 @@ package versoncriterion
 
 import (
 	"cmp"
-	"slices"
 	"strings"
 
 	"github.com/knqyf263/go-cpe/common"
@@ -12,6 +11,10 @@ import (
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
+	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -70,40 +73,108 @@ func Compare(x, y Criterion) int {
 }
 
 type Query struct {
-	Family  string
-	Package *QueryPackage
-	CPE     *string
+	Binary   *QueryBinary
+	Source   *QuerySource
+	CPE      *string
+	Language *QueryLanguage
 }
 
-type QueryPackage struct {
+type QueryBinary struct {
+	Family     ecosystemTypes.Ecosystem
 	Name       string
 	Version    string
-	SrcName    string
-	SrcVersion string
 	Arch       string
 	Repository string
-	Functions  []string
+}
+
+type QuerySource struct {
+	Family     ecosystemTypes.Ecosystem
+	Name       string
+	Version    string
+	Repository string
+}
+
+type QueryLanguage struct {
+	Ecosystem ecosystemTypes.Ecosystem
+	Name      string
+	Version   string
+	Arch      string
+	Functions []string
 }
 
 func (c Criterion) Accept(query Query) (bool, error) {
-	switch query.Family {
-	case ecosystemTypes.EcosystemTypeCPE:
-		if query.CPE == nil {
-			return false, errors.New("query is not set for CPE criterion")
+	switch c.Package.Type {
+	case packageTypes.PackageTypeBinary:
+		if query.Binary == nil {
+			return false, nil
 		}
-
-		isAccepted, err := c.Package.Accept(packageTypes.Query{CPE: query.CPE})
+		isAccepted, err := c.Package.Accept(packageTypes.Query{
+			Binary: &binaryTypes.Query{
+				Name:       query.Binary.Name,
+				Arch:       query.Binary.Arch,
+				Repository: query.Binary.Repository,
+			},
+		})
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}
-
 		if !isAccepted {
 			return false, nil
 		}
 
-		wfn1, err := naming.UnbindFS(c.Package.CPE)
+		if c.Affected == nil {
+			return true, nil
+		}
+		isAccepted, err = c.Affected.Accept(query.Binary.Family, query.Binary.Version)
 		if err != nil {
-			return false, errors.Wrapf(err, "unbind %q to WFN", c.Package.CPE)
+			return false, errors.Wrap(err, "affected accept")
+		}
+		return isAccepted, nil
+	case packageTypes.PackageTypeSource:
+		if query.Source == nil {
+			return false, nil
+		}
+		isAccepted, err := c.Package.Accept(packageTypes.Query{
+			Source: &sourceTypes.Query{
+				Name:       query.Source.Name,
+				Repository: query.Source.Repository,
+			},
+		})
+		if err != nil {
+			return false, errors.Wrap(err, "package accept")
+		}
+		if !isAccepted {
+			return false, nil
+		}
+
+		if c.Affected == nil {
+			return true, nil
+		}
+		isAccepted, err = c.Affected.Accept(query.Source.Family, query.Source.Version)
+		if err != nil {
+			return false, errors.Wrap(err, "affected accept")
+		}
+		return isAccepted, nil
+	case packageTypes.PackageTypeCPE:
+		if query.CPE == nil {
+			return false, nil
+		}
+		isAccepted, err := c.Package.Accept(packageTypes.Query{
+			CPE: func() *cpeTypes.Query {
+				q := cpeTypes.Query(*query.CPE)
+				return &q
+			}(),
+		})
+		if err != nil {
+			return false, errors.Wrap(err, "package accept")
+		}
+		if !isAccepted {
+			return false, nil
+		}
+
+		wfn1, err := naming.UnbindFS(string(*c.Package.CPE))
+		if err != nil {
+			return false, errors.Wrapf(err, "unbind %q to WFN", string(*c.Package.CPE))
 		}
 
 		switch wfn1.GetString(common.AttributeVersion) {
@@ -117,7 +188,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			isAccepted, err := c.Affected.Accept(query.Family, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
+			isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
 			if err != nil {
 				return false, errors.Wrap(err, "affected accpet")
 			}
@@ -128,26 +199,20 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		default:
 			return true, nil
 		}
-	default:
-		if query.Package == nil {
-			return false, errors.New("query is not set for Package criterion")
+	case packageTypes.PackageTypeLanguage:
+		if query.Language == nil {
+			return false, nil
 		}
-
-		name, version, arch := query.Package.Name, query.Package.Version, query.Package.Arch
-		if slices.Contains(c.Package.Architectures, "src") {
-			name, version, arch = query.Package.SrcName, query.Package.SrcVersion, "src"
-		}
-
-		isAccepted, err := c.Package.Accept(packageTypes.Query{Package: &packageTypes.QueryPackage{
-			Name:       name,
-			Arch:       arch,
-			Repository: query.Package.Repository,
-			Functions:  query.Package.Functions,
-		}})
+		isAccepted, err := c.Package.Accept(packageTypes.Query{
+			Language: &languageTypes.Query{
+				Name:      query.Language.Name,
+				Arch:      query.Language.Arch,
+				Functions: query.Language.Functions,
+			},
+		})
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}
-
 		if !isAccepted {
 			return false, nil
 		}
@@ -155,12 +220,12 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if c.Affected == nil {
 			return true, nil
 		}
-
-		isAccepted, err = c.Affected.Accept(query.Family, version)
+		isAccepted, err = c.Affected.Accept(query.Language.Ecosystem, query.Language.Version)
 		if err != nil {
 			return false, errors.Wrap(err, "affected accept")
 		}
-
 		return isAccepted, nil
+	default:
+		return false, errors.Errorf("unexpected version criterion package type. expected: %q, actual: %q", []packageTypes.PackageType{packageTypes.PackageTypeBinary, packageTypes.PackageTypeSource, packageTypes.PackageTypeCPE, packageTypes.PackageTypeLanguage}, c.Package.Type)
 	}
 }

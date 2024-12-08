@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 type Affected struct {
@@ -28,7 +29,7 @@ func Compare(x, y Affected) int {
 	)
 }
 
-func (a Affected) Accept(family string, v string) (bool, error) {
+func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error) {
 	for _, r := range a.Range {
 		if r.Equal != "" {
 			n, err := a.Type.Compare(family, r.Equal, v)

@@ -108,21 +108,24 @@
 												"class": "fixed"
 											},
 											"package": {
-												"name": "openstack-barbican",
-												"repositories": [
-													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-for-rhel-9-x86_64-rpms",
-													"openstack-17-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
-												]
+												"type": "binary",
+												"binary": {
+													"name": "openstack-barbican",
+													"repositories": [
+														"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-for-rhel-9-x86_64-rpms",
+														"openstack-17-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+													]
+												}
 											},
 											"affected": {
 												"type": "rpm",
@@ -150,21 +153,24 @@
 												"class": "fixed"
 											},
 											"package": {
-												"name": "openstack-barbican-api",
-												"repositories": [
-													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-for-rhel-9-x86_64-rpms",
-													"openstack-17-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
-												]
+												"type": "binary",
+												"binary": {
+													"name": "openstack-barbican-api",
+													"repositories": [
+														"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-for-rhel-9-x86_64-rpms",
+														"openstack-17-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+													]
+												}
 											},
 											"affected": {
 												"type": "rpm",
@@ -192,21 +198,24 @@
 												"class": "fixed"
 											},
 											"package": {
-												"name": "openstack-barbican-common",
-												"repositories": [
-													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-for-rhel-9-x86_64-rpms",
-													"openstack-17-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
-												]
+												"type": "binary",
+												"binary": {
+													"name": "openstack-barbican-common",
+													"repositories": [
+														"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-for-rhel-9-x86_64-rpms",
+														"openstack-17-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+													]
+												}
 											},
 											"affected": {
 												"type": "rpm",
@@ -234,21 +243,24 @@
 												"class": "fixed"
 											},
 											"package": {
-												"name": "python3-barbican",
-												"repositories": [
-													"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
-													"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-for-rhel-9-x86_64-rpms",
-													"openstack-17-for-rhel-9-x86_64-source-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-rpms",
-													"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
-												]
+												"type": "binary",
+												"binary": {
+													"name": "python3-barbican",
+													"repositories": [
+														"openstack-17-cinderlib-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-rpms",
+														"openstack-17-cinderlib-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-deployment-tools-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-for-rhel-9-x86_64-rpms",
+														"openstack-17-for-rhel-9-x86_64-source-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-debug-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-rpms",
+														"openstack-17-tools-for-rhel-9-x86_64-source-rpms"
+													]
+												}
 											},
 											"affected": {
 												"type": "rpm",
