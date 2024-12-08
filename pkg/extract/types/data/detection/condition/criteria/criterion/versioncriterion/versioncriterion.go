@@ -70,9 +70,9 @@ func Compare(x, y Criterion) int {
 }
 
 type Query struct {
-	Ecosystem ecosystemTypes.Ecosystem
-	Package   *QueryPackage
-	CPE       *string
+	Family  string
+	Package *QueryPackage
+	CPE     *string
 }
 
 type QueryPackage struct {
@@ -86,7 +86,7 @@ type QueryPackage struct {
 }
 
 func (c Criterion) Accept(query Query) (bool, error) {
-	switch query.Ecosystem {
+	switch query.Family {
 	case ecosystemTypes.EcosystemTypeCPE:
 		if query.CPE == nil {
 			return false, errors.New("query is not set for CPE criterion")
@@ -117,7 +117,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			isAccepted, err := c.Affected.Accept(query.Ecosystem, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
+			isAccepted, err := c.Affected.Accept(query.Family, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
 			if err != nil {
 				return false, errors.Wrap(err, "affected accpet")
 			}
@@ -156,7 +156,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 			return true, nil
 		}
 
-		isAccepted, err = c.Affected.Accept(query.Ecosystem, version)
+		isAccepted, err = c.Affected.Accept(query.Family, version)
 		if err != nil {
 			return false, errors.Wrap(err, "affected accept")
 		}

@@ -7,7 +7,6 @@ import (
 	"github.com/pkg/errors"
 
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 type Affected struct {
@@ -29,10 +28,10 @@ func Compare(x, y Affected) int {
 	)
 }
 
-func (a Affected) Accept(ecosystem ecosystemTypes.Ecosystem, v string) (bool, error) {
+func (a Affected) Accept(family string, v string) (bool, error) {
 	for _, r := range a.Range {
 		if r.Equal != "" {
-			n, err := a.Type.Compare(ecosystem, r.Equal, v)
+			n, err := a.Type.Compare(family, r.Equal, v)
 			if err != nil {
 				var compareErr *rangeTypes.CompareError
 				if errors.As(err, &compareErr) {
@@ -45,7 +44,7 @@ func (a Affected) Accept(ecosystem ecosystemTypes.Ecosystem, v string) (bool, er
 			}
 		}
 		if r.GreaterEqual != "" {
-			n, err := a.Type.Compare(ecosystem, r.GreaterEqual, v)
+			n, err := a.Type.Compare(family, r.GreaterEqual, v)
 			if err != nil {
 				var compareErr *rangeTypes.CompareError
 				if errors.As(err, &compareErr) {
@@ -58,7 +57,7 @@ func (a Affected) Accept(ecosystem ecosystemTypes.Ecosystem, v string) (bool, er
 			}
 		}
 		if r.GreaterThan != "" {
-			n, err := a.Type.Compare(ecosystem, r.GreaterThan, v)
+			n, err := a.Type.Compare(family, r.GreaterThan, v)
 			if err != nil {
 				var compareErr *rangeTypes.CompareError
 				if errors.As(err, &compareErr) {
@@ -71,7 +70,7 @@ func (a Affected) Accept(ecosystem ecosystemTypes.Ecosystem, v string) (bool, er
 			}
 		}
 		if r.LessEqual != "" {
-			n, err := a.Type.Compare(ecosystem, r.LessEqual, v)
+			n, err := a.Type.Compare(family, r.LessEqual, v)
 			if err != nil {
 				var compareErr *rangeTypes.CompareError
 				if errors.As(err, &compareErr) {
@@ -84,7 +83,7 @@ func (a Affected) Accept(ecosystem ecosystemTypes.Ecosystem, v string) (bool, er
 			}
 		}
 		if r.LessThan != "" {
-			n, err := a.Type.Compare(ecosystem, r.LessThan, v)
+			n, err := a.Type.Compare(family, r.LessThan, v)
 			if err != nil {
 				var compareErr *rangeTypes.CompareError
 				if errors.As(err, &compareErr) {
