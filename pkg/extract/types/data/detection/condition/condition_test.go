@@ -8,11 +8,13 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
+	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
+	necSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
-	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
@@ -88,9 +90,9 @@ func TestCondition_Contains(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -104,9 +106,9 @@ func TestCondition_Contains(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -138,9 +140,9 @@ func TestCondition_Contains(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -154,9 +156,9 @@ func TestCondition_Contains(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -222,9 +224,9 @@ func TestCondition_Accept(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -243,7 +245,10 @@ func TestCondition_Accept(t *testing.T) {
 								{
 									Type: criterionTypes.CriterionTypeNoneExist,
 									NoneExist: &necTypes.Criterion{
-										Name: "package2",
+										Type: necTypes.PackageTypeBinary,
+										Binary: &necBinaryPackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
 							},
@@ -262,8 +267,8 @@ func TestCondition_Accept(t *testing.T) {
 						},
 					}},
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"package1"},
-						Sources:  []string{"package1"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "package1"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "package1"}},
 					},
 				},
 			},
@@ -279,9 +284,9 @@ func TestCondition_Accept(t *testing.T) {
 										Type: criterionTypes.CriterionTypeVersion,
 										Version: &vcTypes.Criterion{
 											Vulnerable: true,
-											Package: criterionpackageTypes.Package{
-												Type: criterionpackageTypes.PackageTypeBinary,
-												Binary: &binaryTypes.Package{
+											Package: vcPackageTypes.Package{
+												Type: vcPackageTypes.PackageTypeBinary,
+												Binary: &vcBinaryPackageTypes.Package{
 													Name: "package1",
 												},
 											},
@@ -303,7 +308,10 @@ func TestCondition_Accept(t *testing.T) {
 									Criterion: criterionTypes.Criterion{
 										Type: criterionTypes.CriterionTypeNoneExist,
 										NoneExist: &necTypes.Criterion{
-											Name: "package2",
+											Type: necTypes.PackageTypeBinary,
+											Binary: &necBinaryPackageTypes.Package{
+												Name: "package2",
+											},
 										},
 									},
 									Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -359,9 +367,9 @@ func TestFilteredCondition_Affected(t *testing.T) {
 										Type: criterionTypes.CriterionTypeVersion,
 										Version: &vcTypes.Criterion{
 											Vulnerable: true,
-											Package: criterionpackageTypes.Package{
-												Type: criterionpackageTypes.PackageTypeBinary,
-												Binary: &binaryTypes.Package{
+											Package: vcPackageTypes.Package{
+												Type: vcPackageTypes.PackageTypeBinary,
+												Binary: &vcBinaryPackageTypes.Package{
 													Name: "package1",
 												},
 											},
@@ -383,7 +391,10 @@ func TestFilteredCondition_Affected(t *testing.T) {
 									Criterion: criterionTypes.Criterion{
 										Type: criterionTypes.CriterionTypeNoneExist,
 										NoneExist: &necTypes.Criterion{
-											Name: "package2",
+											Type: necTypes.PackageTypeBinary,
+											Binary: &necBinaryPackageTypes.Package{
+												Name: "package2",
+											},
 										},
 									},
 									Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -410,9 +421,9 @@ func TestFilteredCondition_Affected(t *testing.T) {
 										Type: criterionTypes.CriterionTypeVersion,
 										Version: &vcTypes.Criterion{
 											Vulnerable: true,
-											Package: criterionpackageTypes.Package{
-												Type: criterionpackageTypes.PackageTypeBinary,
-												Binary: &binaryTypes.Package{
+											Package: vcPackageTypes.Package{
+												Type: vcPackageTypes.PackageTypeBinary,
+												Binary: &vcBinaryPackageTypes.Package{
 													Name: "package1",
 												},
 											},
@@ -429,7 +440,10 @@ func TestFilteredCondition_Affected(t *testing.T) {
 									Criterion: criterionTypes.Criterion{
 										Type: criterionTypes.CriterionTypeNoneExist,
 										NoneExist: &necTypes.Criterion{
-											Name: "package1",
+											Type: necTypes.PackageTypeBinary,
+											Binary: &necBinaryPackageTypes.Package{
+												Name: "package1",
+											},
 										},
 									},
 									Accepts: criterionTypes.AcceptQueries{NoneExist: false},

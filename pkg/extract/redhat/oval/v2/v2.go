@@ -21,12 +21,13 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
+	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	vecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
-	binaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -848,7 +849,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 						Package: packageTypes.Package{
 							Type: packageTypes.PackageTypeBinary,
-							Binary: &binaryPackageTypes.Package{
+							Binary: &vcBinaryPackageTypes.Package{
 								Name: o.Name,
 								Architectures: func() []string {
 									if s.Arch == nil {
@@ -891,7 +892,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 						Vulnerable: false,
 						Package: packageTypes.Package{
 							Type: packageTypes.PackageTypeBinary,
-							Binary: &binaryPackageTypes.Package{
+							Binary: &vcBinaryPackageTypes.Package{
 								Name: o.Name,
 								Architectures: func() []string {
 									if s.Arch == nil {
@@ -924,7 +925,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
 					Package: packageTypes.Package{
 						Type: packageTypes.PackageTypeBinary,
-						Binary: &binaryPackageTypes.Package{
+						Binary: &vcBinaryPackageTypes.Package{
 							Name:         o.Name,
 							Repositories: affectedRepositories,
 						},
@@ -939,8 +940,14 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 			}
 
 			ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
-				Type:      criterionTypes.CriterionTypeNoneExist,
-				NoneExist: &necTypes.Criterion{Name: o.Name},
+				Type: criterionTypes.CriterionTypeNoneExist,
+				NoneExist: &necTypes.Criterion{
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:         o.Name,
+						Repositories: affectedRepositories,
+					},
+				},
 			})
 		case strings.Contains(t1.Comment, " is signed with Red Hat redhatrelease key"):
 		case strings.Contains(t1.Comment, " is signed with Red Hat redhatrelease2 key"):
@@ -1038,7 +1045,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 						case criterionTypes.CriterionTypeVersion:
 							ca.Criterions[i].Version.Package.Binary.Name = fmt.Sprintf("%s::%s", modularitylabel, ca.Criterions[i].Version.Package.Binary.Name)
 						case criterionTypes.CriterionTypeNoneExist:
-							ca.Criterions[i].NoneExist.Name = fmt.Sprintf("%s::%s", modularitylabel, ca.Criterions[i].NoneExist.Name)
+							ca.Criterions[i].NoneExist.Binary.Name = fmt.Sprintf("%s::%s", modularitylabel, ca.Criterions[i].NoneExist.Binary.Name)
 						default:
 							return errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []criterionTypes.CriterionType{criterionTypes.CriterionTypeVersion, criterionTypes.CriterionTypeNoneExist}, ca.Criterions[i].Type)
 						}
