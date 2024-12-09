@@ -59,7 +59,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py310-django32"
+										"type": "binary",
+										"binary": {
+											"name": "py310-django32"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -79,7 +82,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py310-django42"
+										"type": "binary",
+										"binary": {
+											"name": "py310-django42"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -99,7 +105,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py311-django32"
+										"type": "binary",
+										"binary": {
+											"name": "py311-django32"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -119,7 +128,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py311-django42"
+										"type": "binary",
+										"binary": {
+											"name": "py311-django42"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -139,7 +151,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py311-django50"
+										"type": "binary",
+										"binary": {
+											"name": "py311-django50"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -159,7 +174,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py39-django32"
+										"type": "binary",
+										"binary": {
+											"name": "py39-django32"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -179,7 +197,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py39-django42"
+										"type": "binary",
+										"binary": {
+											"name": "py39-django42"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",

@@ -166,11 +166,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -193,10 +196,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-all",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-all",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -219,11 +225,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-core",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-core",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -246,11 +255,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-core-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-core-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -273,10 +285,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-core-doc",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-core-doc",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -299,11 +314,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-credential-libsecret",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-credential-libsecret",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -326,11 +344,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-credential-libsecret-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-credential-libsecret-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -353,11 +374,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-daemon",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-daemon",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -380,11 +404,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-daemon-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-daemon-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -407,11 +434,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -434,11 +464,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-debugsource",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-debugsource",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -461,10 +494,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-email",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-email",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -487,10 +523,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-gui",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-gui",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -513,10 +552,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-instaweb",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-instaweb",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -539,11 +581,14 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-subtree",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-subtree",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -566,10 +611,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "git-svn",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "git-svn",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -592,10 +640,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "gitk",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "gitk",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -618,10 +669,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "gitweb",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "gitweb",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -644,10 +698,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "perl-Git",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "perl-Git",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -670,10 +727,13 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "perl-Git-SVN",
-										"architectures": [
-											"noarch"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "perl-Git-SVN",
+											"architectures": [
+												"noarch"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -697,7 +757,7 @@
 	"data_source": {
 		"id": "rocky-errata",
 		"raws": [
-			"fixtures/2023/RLSA-2023%3A3246.json"
+			"fixtures/2023/RLSA-2023:3246.json"
 		]
 	}
 }

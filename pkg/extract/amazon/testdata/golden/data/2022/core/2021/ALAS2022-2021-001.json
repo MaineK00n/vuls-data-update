@@ -125,13 +125,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "vim-X11-debuginfo",
-										"architectures": [
-											"x86_64"
-										],
-										"repositories": [
-											"amazonlinux"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "vim-X11-debuginfo",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"amazonlinux"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -154,13 +157,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "vim-common-debuginfo",
-										"architectures": [
-											"x86_64"
-										],
-										"repositories": [
-											"amazonlinux"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "vim-common-debuginfo",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"amazonlinux"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",

@@ -27,6 +27,7 @@ import (
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	cpePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -388,7 +389,10 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 					}
 					return nil
 				}(),
-				Package: criterionpackageTypes.Package{CPE: match.Criteria},
+				Package: criterionpackageTypes.Package{
+					Type: criterionpackageTypes.PackageTypeCPE,
+					CPE:  func() *cpePackageTypes.CPE { s := cpePackageTypes.CPE(match.Criteria); return &s }(),
+				},
 				Affected: func() *affectedTypes.Affected {
 					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
 						match.VersionEndIncluding == "" && match.VersionEndExcluding == "" {
@@ -427,7 +431,10 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 							}
 							return nil
 						}(),
-						Package: criterionpackageTypes.Package{CPE: n},
+						Package: criterionpackageTypes.Package{
+							Type: criterionpackageTypes.PackageTypeCPE,
+							CPE:  func() *cpePackageTypes.CPE { s := cpePackageTypes.CPE(n); return &s }(),
+						},
 					},
 				})
 			}

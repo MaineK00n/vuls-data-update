@@ -79,7 +79,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py310-matrix-synapse"
+										"type": "binary",
+										"binary": {
+											"name": "py310-matrix-synapse"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -99,7 +102,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py36-matrix-synapse"
+										"type": "binary",
+										"binary": {
+											"name": "py36-matrix-synapse"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -119,7 +125,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py37-matrix-synapse"
+										"type": "binary",
+										"binary": {
+											"name": "py37-matrix-synapse"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -139,7 +148,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py38-matrix-synapse"
+										"type": "binary",
+										"binary": {
+											"name": "py38-matrix-synapse"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",
@@ -159,7 +171,10 @@
 										"class": "unknown"
 									},
 									"package": {
-										"name": "py39-matrix-synapse"
+										"type": "binary",
+										"binary": {
+											"name": "py39-matrix-synapse"
+										}
 									},
 									"affected": {
 										"type": "freebsd-pkg",

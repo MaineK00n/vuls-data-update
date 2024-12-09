@@ -69,14 +69,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "httpd-devel",
-										"architectures": [
-											"i686"
-										],
-										"repositories": [
-											"amzn-main",
-											"amzn-updates"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "httpd-devel",
+											"architectures": [
+												"i686"
+											],
+											"repositories": [
+												"amzn-main",
+												"amzn-updates"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",

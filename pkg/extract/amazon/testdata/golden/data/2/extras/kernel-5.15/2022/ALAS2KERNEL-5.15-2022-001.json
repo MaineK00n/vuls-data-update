@@ -305,14 +305,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "bpftool",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "bpftool",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -335,14 +338,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "bpftool-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "bpftool-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -365,14 +371,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -395,14 +404,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -425,13 +437,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-debuginfo-common-aarch64",
-										"architectures": [
-											"aarch64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo-common-aarch64",
+											"architectures": [
+												"aarch64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -454,13 +469,16 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-debuginfo-common-x86_64",
-										"architectures": [
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo-common-x86_64",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -483,14 +501,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-devel",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-devel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -513,15 +534,18 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-headers",
-										"architectures": [
-											"aarch64",
-											"i686",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-headers",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -544,14 +568,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-livepatch-5.15.43-20.123",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-livepatch-5.15.43-20.123",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -574,14 +601,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-tools",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-tools",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -604,14 +634,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-tools-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-tools-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -634,14 +667,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "kernel-tools-devel",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "kernel-tools-devel",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -664,14 +700,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "perf",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "perf",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -694,14 +733,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "perf-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "perf-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -724,14 +766,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "python-perf",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "python-perf",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",
@@ -754,14 +799,17 @@
 										"class": "fixed"
 									},
 									"package": {
-										"name": "python-perf-debuginfo",
-										"architectures": [
-											"aarch64",
-											"x86_64"
-										],
-										"repositories": [
-											"amzn2extra-kernel-5.15"
-										]
+										"type": "binary",
+										"binary": {
+											"name": "python-perf-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											],
+											"repositories": [
+												"amzn2extra-kernel-5.15"
+											]
+										}
 									},
 									"affected": {
 										"type": "rpm",

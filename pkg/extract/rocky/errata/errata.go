@@ -23,6 +23,7 @@ import (
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -179,8 +180,11 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 								Vulnerable: true,
 								FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 								Package: packageTypes.Package{
-									Name:          name,
-									Architectures: as,
+									Type: packageTypes.PackageTypeBinary,
+									Binary: &binaryPackageTypes.Package{
+										Name:          name,
+										Architectures: as,
+									},
 								},
 								Affected: &affectedTypes.Affected{
 									Type:  affectedrangeTypes.RangeTypeRPM,

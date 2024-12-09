@@ -162,7 +162,7 @@ func (e *CannotCompareError) Error() string {
 
 var ErrRangeTypeUnknown = errors.New("unknown range type")
 
-func (t RangeType) Compare(family string, v1, v2 string) (int, error) {
+func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int, error) {
 	switch t {
 	case RangeTypeVersion:
 		va, err := version.NewVersion(v1)
