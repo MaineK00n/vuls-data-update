@@ -33,7 +33,6 @@
 					{
 						"state": "Will not fix",
 						"component": [
-							"python27:2.7/python2",
 							"python27:2.7/python2-debug",
 							"python27:2.7/python2-devel",
 							"python27:2.7/python2-libs",

@@ -487,11 +487,7 @@ func (e extractor) collectPackages(majorDir, streamDir string, criteria v2.Crite
 			switch ca.Criterions[i].Type {
 			case criterionTypes.CriterionTypeVersion:
 				if ca.Criterions[i].Version.FixStatus != nil && ca.Criterions[i].Version.FixStatus.Class == fixstatusTypes.ClassUnfixed {
-					state, ok := affectedResolutions[ca.Criterions[i].Version.Package.Binary.Name]
-					if !ok {
-						return errors.Errorf("%s is not in affected resolution", ca.Criterions[i].Version.Package.Binary.Name)
-					}
-					ca.Criterions[i].Version.FixStatus.Vendor = state
+					ca.Criterions[i].Version.FixStatus.Vendor = affectedResolutions[ca.Criterions[i].Version.Package.Binary.Name]
 				}
 			case criterionTypes.CriterionTypeNoneExist:
 			default:
