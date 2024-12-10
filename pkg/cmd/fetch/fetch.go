@@ -85,9 +85,9 @@ import (
 	redhatCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cve"
 	redhatCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cvrf"
 	redhatOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/osv"
-	redhatOVALRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/repository2cpe"
 	redhatOVALv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
+	redhatRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
 	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/osv"
@@ -2618,26 +2618,26 @@ func newCmdRedHatCVRF() *cobra.Command {
 
 func newCmdRedHatOVALRepositoryToCPE() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "repository-to-cpe"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-oval-repository-to-cpe",
+		Use:   "redhat-repository-to-cpe",
 		Short: "Fetch RedHat Enterprise Linux Repository-to-CPE data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-oval-repository-to-cpe
+			$ vuls-data-update fetch redhat-repository-to-cpe
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatOVALRepositoryToCPE.Fetch(redhatOVALRepositoryToCPE.WithDir(options.dir), redhatOVALRepositoryToCPE.WithRetry(options.retry)); err != nil {
+			if err := redhatRepositoryToCPE.Fetch(redhatRepositoryToCPE.WithDir(options.dir), redhatRepositoryToCPE.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat oval repository-to-cpe")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "oval", "repository-to-cpe"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "repository-to-cpe"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd

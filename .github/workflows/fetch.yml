@@ -89,7 +89,7 @@ jobs:
           - "redhat-cve"
           - "redhat-csaf"
           # - "redhat-cvrf"
-          - "redhat-oval-repository-to-cpe"
+          - "redhat-repository-to-cpe"
           # - "redhat-ovalv1"
           - "redhat-ovalv2"
           - "redhat-vex"

@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/repository2cpe"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
 )
 
 func TestFetch(t *testing.T) {
