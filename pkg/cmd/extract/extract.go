@@ -2333,14 +2333,14 @@ func newCmdRedHatCSAF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-csaf <Raw RedHat CSAF Repository PATH>",
+		Use:   "redhat-csaf <Raw RedHat CSAF Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
 		Short: "Extract RedHat CSAF data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-csaf vuls-data-raw-redhat-csaf
+			$ vuls-data-update extract redhat-csaf vuls-data-raw-redhat-csaf vuls-data-raw-redhat-repository-to-cpe
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := redhatCSAF.Extract(args[0], redhatCSAF.WithDir(options.dir)); err != nil {
+			if err := redhatCSAF.Extract(args[0], args[1], redhatCSAF.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract redhat csaf")
 			}
 			return nil

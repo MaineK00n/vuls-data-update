@@ -96,8 +96,12 @@
 	"product_tree": {
 		"branches": [
 			{
+				"category": "vendor",
+				"name": "Red Hat",
 				"branches": [
 					{
+						"category": "product_family",
+						"name": "Red Hat Enterprise Linux",
 						"branches": [
 							{
 								"category": "product_name",
@@ -132,11 +136,11 @@
 									}
 								}
 							}
-						],
-						"category": "product_family",
-						"name": "Red Hat Enterprise Linux"
+						]
 					},
 					{
+						"category": "architecture",
+						"name": "src",
 						"branches": [
 							{
 								"category": "product_version",
@@ -149,11 +153,11 @@
 									}
 								}
 							}
-						],
-						"category": "architecture",
-						"name": "src"
+						]
 					},
 					{
+						"category": "architecture",
+						"name": "x86_64",
 						"branches": [
 							{
 								"category": "product_version",
@@ -254,11 +258,11 @@
 									}
 								}
 							}
-						],
-						"category": "architecture",
-						"name": "x86_64"
+						]
 					},
 					{
+						"category": "architecture",
+						"name": "noarch",
 						"branches": [
 							{
 								"category": "product_version",
@@ -293,11 +297,11 @@
 									}
 								}
 							}
-						],
-						"category": "architecture",
-						"name": "noarch"
+						]
 					},
 					{
+						"category": "architecture",
+						"name": "ppc64le",
 						"branches": [
 							{
 								"category": "product_version",
@@ -398,13 +402,9 @@
 									}
 								}
 							}
-						],
-						"category": "architecture",
-						"name": "ppc64le"
+						]
 					}
-				],
-				"category": "vendor",
-				"name": "Red Hat"
+				]
 			}
 		],
 		"relationships": [

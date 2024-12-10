@@ -15,12 +15,8 @@ type CSAF struct {
 				URL   string `json:"url"`
 			} `json:"tlp"`
 		} `json:"distribution"`
-		Lang  string `json:"lang"`
-		Notes []struct {
-			Category string `json:"category"`
-			Text     string `json:"text"`
-			Title    string `json:"title"`
-		} `json:"notes"`
+		Lang       string            `json:"lang"`
+		Notes      []Note            `json:"notes"`
 		Publisher  map[string]string `json:"publisher"`
 		References []struct {
 			Category string `json:"category"`
@@ -48,44 +44,7 @@ type CSAF struct {
 			Version string `json:"version"`
 		} `json:"tracking"`
 	} `json:"document"`
-	ProductTree struct {
-		Branches []struct {
-			Branches []struct {
-				Branches []struct {
-					Category string `json:"category"`
-					Name     string `json:"name"`
-					Product  struct {
-						Name                        string `json:"name"`
-						ProductID                   string `json:"product_id"`
-						ProductIdentificationHelper struct {
-							Cpe  *string `json:"cpe,omitempty"`
-							Purl *string `json:"purl,omitempty"`
-						} `json:"product_identification_helper"`
-					} `json:"product"`
-				} `json:"branches,omitempty"`
-				Category string `json:"category"`
-				Name     string `json:"name"`
-				Product  *struct {
-					Name                        string `json:"name"`
-					ProductID                   string `json:"product_id"`
-					ProductIdentificationHelper *struct {
-						Cpe string `json:"cpe"`
-					} `json:"product_identification_helper,omitempty"`
-				} `json:"product,omitempty"`
-			} `json:"branches"`
-			Category string `json:"category"`
-			Name     string `json:"name"`
-		} `json:"branches"`
-		Relationships []struct {
-			Category        string `json:"category"`
-			FullProductName struct {
-				Name      string `json:"name"`
-				ProductID string `json:"product_id"`
-			} `json:"full_product_name"`
-			ProductReference          string `json:"product_reference"`
-			RelatesToProductReference string `json:"relates_to_product_reference"`
-		} `json:"relationships,omitempty"`
-	} `json:"product_tree"`
+	ProductTree     ProductTree `json:"product_tree"`
 	Vulnerabilities []struct {
 		Acknowledgments []struct {
 			Names        []string `json:"names,omitempty"`
@@ -171,4 +130,37 @@ type CSAF struct {
 		} `json:"threats,omitempty"`
 		Title string `json:"title"`
 	} `json:"vulnerabilities,omitempty"`
+}
+
+type Note struct {
+	Category string `json:"category"`
+	Text     string `json:"text"`
+	Title    string `json:"title"`
+}
+
+type ProductTree struct {
+	Branches      []Branch `json:"branches,omitempty"`
+	Relationships []struct {
+		Category        string `json:"category,omitempty"`
+		FullProductName struct {
+			Name      string `json:"name,omitempty"`
+			ProductID string `json:"product_id,omitempty"`
+		} `json:"full_product_name,omitempty"`
+		ProductReference          string `json:"product_reference,omitempty"`
+		RelatesToProductReference string `json:"relates_to_product_reference,omitempty"`
+	} `json:"relationships,omitempty"`
+}
+
+type Branch struct {
+	Category string `json:"category,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Product  *struct {
+		Name                        string `json:"name,omitempty"`
+		ProductID                   string `json:"product_id,omitempty"`
+		ProductIdentificationHelper *struct {
+			Cpe  *string `json:"cpe,omitempty"`
+			Purl *string `json:"purl,omitempty"`
+		} `json:"product_identification_helper,omitempty"`
+	} `json:"product,omitempty"`
+	Branches []Branch `json:"branches,omitempty"`
 }
