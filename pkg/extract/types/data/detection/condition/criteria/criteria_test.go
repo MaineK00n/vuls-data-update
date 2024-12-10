@@ -8,11 +8,13 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
+	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
+	necSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
-	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
-	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
@@ -87,9 +89,9 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -115,9 +117,9 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package2",
 								},
 							},
@@ -127,9 +129,9 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: false,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -155,9 +157,9 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -167,8 +169,8 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeCPE,
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeCPE,
 								CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 							},
 						},
@@ -192,8 +194,11 @@ func TestCriteria_Contains(t *testing.T) {
 					{
 						Type: criterionTypes.CriterionTypeNoneExist,
 						NoneExist: &necTypes.Criterion{
-							Name: "name",
-							Arch: "x86_64",
+							Type: necTypes.PackageTypeBinary,
+							Binary: &necBinaryPackageTypes.Package{
+								Name:          "name",
+								Architectures: []string{"x86_64"},
+							},
 						},
 					},
 				},
@@ -201,8 +206,8 @@ func TestCriteria_Contains(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name2"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name2"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -216,8 +221,11 @@ func TestCriteria_Contains(t *testing.T) {
 					{
 						Type: criterionTypes.CriterionTypeNoneExist,
 						NoneExist: &necTypes.Criterion{
-							Name: "name",
-							Arch: "x86_64",
+							Type: necTypes.PackageTypeBinary,
+							Binary: &necBinaryPackageTypes.Package{
+								Name:          "name",
+								Architectures: []string{"x86_64"},
+							},
 						},
 					},
 				},
@@ -225,8 +233,8 @@ func TestCriteria_Contains(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -244,9 +252,9 @@ func TestCriteria_Contains(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package2",
 										},
 									},
@@ -260,9 +268,9 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -291,9 +299,9 @@ func TestCriteria_Contains(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package1",
 										},
 									},
@@ -307,9 +315,9 @@ func TestCriteria_Contains(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package2",
 								},
 							},
@@ -338,9 +346,9 @@ func TestCriteria_Contains(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package1",
 										},
 									},
@@ -355,9 +363,9 @@ func TestCriteria_Contains(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package2",
 										},
 									},
@@ -388,9 +396,9 @@ func TestCriteria_Contains(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package1",
 										},
 									},
@@ -409,7 +417,10 @@ func TestCriteria_Contains(t *testing.T) {
 							{
 								Type: criterionTypes.CriterionTypeNoneExist,
 								NoneExist: &necTypes.Criterion{
-									Name: "package2",
+									Type: necTypes.PackageTypeBinary,
+									Binary: &necBinaryPackageTypes.Package{
+										Name: "package2",
+									},
 								},
 							},
 						},
@@ -426,8 +437,8 @@ func TestCriteria_Contains(t *testing.T) {
 						},
 					}},
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"package1"},
-						Sources:  []string{"package1"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "package1"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "package1"}},
 					},
 				},
 			},
@@ -478,9 +489,9 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -503,9 +514,9 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -525,9 +536,9 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package2",
 								},
 							},
@@ -537,9 +548,9 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: false,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -562,9 +573,9 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package2",
 									},
 								},
@@ -576,9 +587,9 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: false,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -598,9 +609,9 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -610,8 +621,8 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeCPE,
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeCPE,
 								CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 							},
 						},
@@ -633,9 +644,9 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -647,8 +658,8 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeCPE,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeCPE,
 									CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 								},
 							},
@@ -666,8 +677,11 @@ func TestCriteria_Accept(t *testing.T) {
 					{
 						Type: criterionTypes.CriterionTypeNoneExist,
 						NoneExist: &necTypes.Criterion{
-							Name: "name",
-							Arch: "x86_64",
+							Type: necTypes.PackageTypeBinary,
+							Binary: &necBinaryPackageTypes.Package{
+								Name:          "name",
+								Architectures: []string{"x86_64"},
+							},
 						},
 					},
 				},
@@ -675,8 +689,8 @@ func TestCriteria_Accept(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name2"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name2"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -687,8 +701,11 @@ func TestCriteria_Accept(t *testing.T) {
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeNoneExist,
 							NoneExist: &necTypes.Criterion{
-								Name: "name",
-								Arch: "x86_64",
+								Type: necTypes.PackageTypeBinary,
+								Binary: &necBinaryPackageTypes.Package{
+									Name:          "name",
+									Architectures: []string{"x86_64"},
+								},
 							},
 						},
 						Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -704,8 +721,11 @@ func TestCriteria_Accept(t *testing.T) {
 					{
 						Type: criterionTypes.CriterionTypeNoneExist,
 						NoneExist: &necTypes.Criterion{
-							Name: "name",
-							Arch: "x86_64",
+							Type: necTypes.PackageTypeBinary,
+							Binary: &necBinaryPackageTypes.Package{
+								Name:          "name",
+								Architectures: []string{"x86_64"},
+							},
 						},
 					},
 				},
@@ -713,8 +733,8 @@ func TestCriteria_Accept(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -725,8 +745,11 @@ func TestCriteria_Accept(t *testing.T) {
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeNoneExist,
 							NoneExist: &necTypes.Criterion{
-								Name: "name",
-								Arch: "x86_64",
+								Type: necTypes.PackageTypeBinary,
+								Binary: &necBinaryPackageTypes.Package{
+									Name:          "name",
+									Architectures: []string{"x86_64"},
+								},
 							},
 						},
 						Accepts: criterionTypes.AcceptQueries{NoneExist: false},
@@ -746,9 +769,9 @@ func TestCriteria_Accept(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package2",
 										},
 									},
@@ -762,9 +785,9 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package1",
 								},
 							},
@@ -790,9 +813,9 @@ func TestCriteria_Accept(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -808,9 +831,9 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -833,9 +856,9 @@ func TestCriteria_Accept(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package1",
 										},
 									},
@@ -849,9 +872,9 @@ func TestCriteria_Accept(t *testing.T) {
 						Type: criterionTypes.CriterionTypeVersion,
 						Version: &vcTypes.Criterion{
 							Vulnerable: true,
-							Package: criterionpackageTypes.Package{
-								Type: criterionpackageTypes.PackageTypeBinary,
-								Binary: &binaryTypes.Package{
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
 									Name: "package2",
 								},
 							},
@@ -877,9 +900,9 @@ func TestCriteria_Accept(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -896,9 +919,9 @@ func TestCriteria_Accept(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package2",
 									},
 								},
@@ -920,9 +943,9 @@ func TestCriteria_Accept(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package1",
 										},
 									},
@@ -937,9 +960,9 @@ func TestCriteria_Accept(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package2",
 										},
 									},
@@ -967,9 +990,9 @@ func TestCriteria_Accept(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -987,9 +1010,9 @@ func TestCriteria_Accept(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -1013,9 +1036,9 @@ func TestCriteria_Accept(t *testing.T) {
 								Type: criterionTypes.CriterionTypeVersion,
 								Version: &vcTypes.Criterion{
 									Vulnerable: true,
-									Package: criterionpackageTypes.Package{
-										Type: criterionpackageTypes.PackageTypeBinary,
-										Binary: &binaryTypes.Package{
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
 											Name: "package1",
 										},
 									},
@@ -1034,7 +1057,10 @@ func TestCriteria_Accept(t *testing.T) {
 							{
 								Type: criterionTypes.CriterionTypeNoneExist,
 								NoneExist: &necTypes.Criterion{
-									Name: "package2",
+									Type: necTypes.PackageTypeBinary,
+									Binary: &necBinaryPackageTypes.Package{
+										Name: "package2",
+									},
 								},
 							},
 						},
@@ -1051,8 +1077,8 @@ func TestCriteria_Accept(t *testing.T) {
 						},
 					}},
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"package1"},
-						Sources:  []string{"package1"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "package1"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "package1"}},
 					},
 				},
 			},
@@ -1067,9 +1093,9 @@ func TestCriteria_Accept(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -1091,7 +1117,10 @@ func TestCriteria_Accept(t *testing.T) {
 								Criterion: criterionTypes.Criterion{
 									Type: criterionTypes.CriterionTypeNoneExist,
 									NoneExist: &necTypes.Criterion{
-										Name: "package2",
+										Type: necTypes.PackageTypeBinary,
+										Binary: &necBinaryPackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
 								Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -1143,9 +1172,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1167,9 +1196,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1191,9 +1220,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package2",
 									},
 								},
@@ -1205,9 +1234,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: false,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1228,9 +1257,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1242,8 +1271,8 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeCPE,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeCPE,
 									CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 								},
 							},
@@ -1264,9 +1293,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1278,8 +1307,8 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeCPE,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeCPE,
 									CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 								},
 							},
@@ -1299,8 +1328,11 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeNoneExist,
 							NoneExist: &necTypes.Criterion{
-								Name: "name",
-								Arch: "x86_64",
+								Type: necTypes.PackageTypeBinary,
+								Binary: &necBinaryPackageTypes.Package{
+									Name:          "name",
+									Architectures: []string{"x86_64"},
+								},
 							},
 						},
 						Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -1318,8 +1350,11 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 						Criterion: criterionTypes.Criterion{
 							Type: criterionTypes.CriterionTypeNoneExist,
 							NoneExist: &necTypes.Criterion{
-								Name: "name",
-								Arch: "x86_64",
+								Type: necTypes.PackageTypeBinary,
+								Binary: &necBinaryPackageTypes.Package{
+									Name:          "name",
+									Architectures: []string{"x86_64"},
+								},
 							},
 						},
 						Accepts: criterionTypes.AcceptQueries{NoneExist: false},
@@ -1341,9 +1376,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -1360,9 +1395,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1387,9 +1422,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -1405,9 +1440,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
 								Vulnerable: true,
-								Package: criterionpackageTypes.Package{
-									Type: criterionpackageTypes.PackageTypeBinary,
-									Binary: &binaryTypes.Package{
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
 										Name: "package1",
 									},
 								},
@@ -1432,9 +1467,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -1452,9 +1487,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -1481,9 +1516,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -1501,9 +1536,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package2",
 											},
 										},
@@ -1529,9 +1564,9 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									Type: criterionTypes.CriterionTypeVersion,
 									Version: &vcTypes.Criterion{
 										Vulnerable: true,
-										Package: criterionpackageTypes.Package{
-											Type: criterionpackageTypes.PackageTypeBinary,
-											Binary: &binaryTypes.Package{
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
 												Name: "package1",
 											},
 										},
@@ -1553,7 +1588,10 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 								Criterion: criterionTypes.Criterion{
 									Type: criterionTypes.CriterionTypeNoneExist,
 									NoneExist: &necTypes.Criterion{
-										Name: "package2",
+										Type: necTypes.PackageTypeBinary,
+										Binary: &necBinaryPackageTypes.Package{
+											Name: "package2",
+										},
 									},
 								},
 								Accepts: criterionTypes.AcceptQueries{NoneExist: true},

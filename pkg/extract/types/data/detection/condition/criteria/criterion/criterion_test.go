@@ -6,12 +6,14 @@ import (
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
+	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
+	necSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	affectedrangeType "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusType "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
-	binaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
@@ -85,7 +87,7 @@ func TestCriterion_Contains(t *testing.T) {
 					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 					Package: vcPackageTypes.Package{
 						Type:   vcPackageTypes.PackageTypeBinary,
-						Binary: &binaryPackageTypes.Package{Name: "name"},
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeType.RangeTypeRPM,
@@ -124,7 +126,7 @@ func TestCriterion_Contains(t *testing.T) {
 					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 					Package: vcPackageTypes.Package{
 						Type:   vcPackageTypes.PackageTypeBinary,
-						Binary: &binaryPackageTypes.Package{Name: "name"},
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeType.RangeTypeRPM,
@@ -159,15 +161,18 @@ func TestCriterion_Contains(t *testing.T) {
 			fields: fields{
 				Type: criterionTypes.CriterionTypeNoneExist,
 				NoneExist: &necTypes.Criterion{
-					Name: "name",
-					Arch: "x86_64",
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name2"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name2"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -178,15 +183,18 @@ func TestCriterion_Contains(t *testing.T) {
 			fields: fields{
 				Type: criterionTypes.CriterionTypeNoneExist,
 				NoneExist: &necTypes.Criterion{
-					Name: "name",
-					Arch: "x86_64",
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -237,7 +245,7 @@ func TestCriterion_Accept(t *testing.T) {
 					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 					Package: vcPackageTypes.Package{
 						Type:   vcPackageTypes.PackageTypeBinary,
-						Binary: &binaryPackageTypes.Package{Name: "name"},
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeType.RangeTypeRPM,
@@ -273,7 +281,7 @@ func TestCriterion_Accept(t *testing.T) {
 						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 						Package: vcPackageTypes.Package{
 							Type:   vcPackageTypes.PackageTypeBinary,
-							Binary: &binaryPackageTypes.Package{Name: "name"},
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  affectedrangeType.RangeTypeRPM,
@@ -294,7 +302,7 @@ func TestCriterion_Accept(t *testing.T) {
 					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 					Package: vcPackageTypes.Package{
 						Type:   vcPackageTypes.PackageTypeBinary,
-						Binary: &binaryPackageTypes.Package{Name: "name"},
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 					},
 					Affected: &affectedTypes.Affected{
 						Type:  affectedrangeType.RangeTypeRPM,
@@ -330,7 +338,7 @@ func TestCriterion_Accept(t *testing.T) {
 						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 						Package: vcPackageTypes.Package{
 							Type:   vcPackageTypes.PackageTypeBinary,
-							Binary: &binaryPackageTypes.Package{Name: "name"},
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  affectedrangeType.RangeTypeRPM,
@@ -347,15 +355,18 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Type: criterionTypes.CriterionTypeNoneExist,
 				NoneExist: &necTypes.Criterion{
-					Name: "name",
-					Arch: "x86_64",
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name2"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name2"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -363,8 +374,11 @@ func TestCriterion_Accept(t *testing.T) {
 				Criterion: criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeNoneExist,
 					NoneExist: &necTypes.Criterion{
-						Name: "name",
-						Arch: "x86_64",
+						Type: necTypes.PackageTypeBinary,
+						Binary: &necBinaryPackageTypes.Package{
+							Name:          "name",
+							Architectures: []string{"x86_64"},
+						},
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -375,15 +389,18 @@ func TestCriterion_Accept(t *testing.T) {
 			fields: fields{
 				Type: criterionTypes.CriterionTypeNoneExist,
 				NoneExist: &necTypes.Criterion{
-					Name: "name",
-					Arch: "x86_64",
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
 				},
 			},
 			args: args{
 				query: criterionTypes.Query{
 					NoneExist: &necTypes.Query{
-						Binaries: []string{"name"},
-						Sources:  []string{"name"},
+						Binaries: []necBinaryPackageTypes.Query{{Name: "name"}},
+						Sources:  []necSourcePackageTypes.Query{{Name: "name"}},
 					},
 				},
 			},
@@ -391,8 +408,11 @@ func TestCriterion_Accept(t *testing.T) {
 				Criterion: criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeNoneExist,
 					NoneExist: &necTypes.Criterion{
-						Name: "name",
-						Arch: "x86_64",
+						Type: necTypes.PackageTypeBinary,
+						Binary: &necBinaryPackageTypes.Package{
+							Name:          "name",
+							Architectures: []string{"x86_64"},
+						},
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{NoneExist: false},
@@ -439,7 +459,7 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 						Package: vcPackageTypes.Package{
 							Type:   vcPackageTypes.PackageTypeBinary,
-							Binary: &binaryPackageTypes.Package{Name: "name"},
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  affectedrangeType.RangeTypeRPM,
@@ -462,7 +482,7 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
 						Package: vcPackageTypes.Package{
 							Type:   vcPackageTypes.PackageTypeBinary,
-							Binary: &binaryPackageTypes.Package{Name: "name"},
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
 						},
 						Affected: &affectedTypes.Affected{
 							Type:  affectedrangeType.RangeTypeRPM,
@@ -481,8 +501,11 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 				Criterion: criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeNoneExist,
 					NoneExist: &necTypes.Criterion{
-						Name: "name",
-						Arch: "x86_64",
+						Type: necTypes.PackageTypeBinary,
+						Binary: &necBinaryPackageTypes.Package{
+							Name:          "name",
+							Architectures: []string{"x86_64"},
+						},
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{NoneExist: true},
@@ -495,8 +518,11 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 				Criterion: criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeNoneExist,
 					NoneExist: &necTypes.Criterion{
-						Name: "name",
-						Arch: "x86_64",
+						Type: necTypes.PackageTypeBinary,
+						Binary: &necBinaryPackageTypes.Package{
+							Name:          "name",
+							Architectures: []string{"x86_64"},
+						},
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{NoneExist: false},

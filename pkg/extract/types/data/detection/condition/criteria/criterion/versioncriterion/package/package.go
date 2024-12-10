@@ -34,7 +34,7 @@ func (t PackageType) String() string {
 	case PackageTypeCPE:
 		return "cpe"
 	case PackageTypeLanguage:
-		return "launguage"
+		return "language"
 	default:
 		return "unknown"
 	}
@@ -58,6 +58,8 @@ func (t *PackageType) UnmarshalJSON(data []byte) error {
 		pt = PackageTypeSource
 	case "cpe":
 		pt = PackageTypeCPE
+	case "language":
+		pt = PackageTypeLanguage
 	case "unknown":
 		pt = PackageTypeUnknown
 	default:
