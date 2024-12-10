@@ -44,8 +44,8 @@ import (
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/repository2cpe"
 	v1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
 )
 
 type options struct {

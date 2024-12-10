@@ -235,11 +235,11 @@ jobs:
           repository: vulsio/vuls-data-raw-${{ matrix.target }}
           path: vuls-data-raw-${{ matrix.target }}
 
-      - name: Check out vulsio/vuls-data-raw-redhat-oval-repository-to-cpe repository
+      - name: Check out vulsio/vuls-data-raw-redhat-repository-to-cpe repository
         uses: actions/checkout@v4
         with:
-          repository: vulsio/vuls-data-raw-redhat-oval-repository-to-cpe
-          path: vuls-data-raw-redhat-oval-repository-to-cpe
+          repository: vulsio/vuls-data-raw-redhat-repository-to-cpe
+          path: vuls-data-raw-redhat-repository-to-cpe
 
       - name: Check out extracted repository
         uses: actions/checkout@v4
@@ -250,7 +250,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Extract
-        run: vuls-data-update extract ${{ matrix.target }} --dir vuls-data-extracted-${{ matrix.target }} vuls-data-raw-${{ matrix.target }} vuls-data-raw-redhat-oval-repository-to-cpe
+        run: vuls-data-update extract ${{ matrix.target }} --dir vuls-data-extracted-${{ matrix.target }} vuls-data-raw-${{ matrix.target }} vuls-data-raw-redhat-repository-to-cpe
 
       - name: Split Large Files
         run: find vuls-data-extracted-${{ matrix.target }} -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
@@ -456,15 +456,15 @@ jobs:
           find vuls-data-raw-redhat-ovalv2/8 -mindepth 1 -maxdepth 1 ! -name 'rhel-8-including-unpatched' | xargs rm -rf
           find vuls-data-raw-redhat-ovalv2/9 -mindepth 1 -maxdepth 1 ! -name 'rhel-9-including-unpatched' | xargs rm -rf
 
-      - name: Check out vulsio/vuls-data-raw-redhat-oval-repository-to-cpe repository
+      - name: Check out vulsio/vuls-data-raw-redhat-repository-to-cpe repository
         uses: actions/checkout@v4
         with:
-          repository: vulsio/vuls-data-raw-redhat-oval-repository-to-cpe
-          path: vuls-data-raw-redhat-oval-repository-to-cpe
+          repository: vulsio/vuls-data-raw-redhat-repository-to-cpe
+          path: vuls-data-raw-redhat-repository-to-cpe
 
       - name: replace empty repository-to-cpe data
         run: |
-          echo "{}" > vuls-data-raw-redhat-oval-repository-to-cpe/repository-to-cpe.json
+          echo "{}" > vuls-data-raw-redhat-repository-to-cpe/repository-to-cpe.json
 
       - name: Check out extracted repository
         uses: actions/checkout@v4
@@ -475,7 +475,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Extract
-        run: vuls-data-update extract redhat-ovalv2 --dir vuls-data-extracted-redhat-ovalv2-rhel vuls-data-raw-redhat-ovalv2 vuls-data-raw-redhat-oval-repository-to-cpe
+        run: vuls-data-update extract redhat-ovalv2 --dir vuls-data-extracted-redhat-ovalv2-rhel vuls-data-raw-redhat-ovalv2 vuls-data-raw-redhat-repository-to-cpe
 
       - name: Split Large Files
         run: find vuls-data-extracted-redhat-ovalv2-rhel -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
