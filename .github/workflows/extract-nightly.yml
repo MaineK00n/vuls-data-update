@@ -94,9 +94,7 @@ jobs:
           # - "pub-osv"
           # - "r-osv"
           # - "redhat-cve"
-          # - "redhat-csaf"
           # - "redhat-cvrf"
-          # - "redhat-vex"
           # - "redhat-osv"
           - "rocky-errata"
           # - "rocky-osv"
@@ -197,6 +195,8 @@ jobs:
         target:
           - "redhat-ovalv1"
           - "redhat-ovalv2"
+          - "redhat-csaf"
+          # - "redhat-vex"
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10

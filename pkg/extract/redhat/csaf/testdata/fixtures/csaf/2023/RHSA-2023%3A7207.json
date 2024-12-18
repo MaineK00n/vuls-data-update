@@ -1,0 +1,924 @@
+{
+	"document": {
+		"aggregate_severity": {
+			"namespace": "https://access.redhat.com/security/updates/classification/",
+			"text": "Moderate"
+		},
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"text": "Copyright © Red Hat, Inc. All rights reserved.",
+			"tlp": {
+				"label": "WHITE",
+				"url": "https://www.first.org/tlp/"
+			}
+		},
+		"lang": "en",
+		"notes": [
+			{
+				"category": "summary",
+				"text": "An update for c-ares is now available for Red Hat Enterprise Linux 8.\n\nRed Hat Product Security has rated this update as having a security impact of Moderate. A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE link(s) in the References section.",
+				"title": "Topic"
+			},
+			{
+				"category": "general",
+				"text": "The c-ares C library defines asynchronous DNS (Domain Name System) requests and provides name resolving API.\n\nSecurity Fix(es):\n\n* c-ares: Heap buffer over read in ares_parse_soa_reply (CVE-2020-22217)\n\n* c-ares: Buffer Underwrite in ares_inet_net_pton() (CVE-2023-31130)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"title": "Details"
+			},
+			{
+				"category": "legal_disclaimer",
+				"text": "This content is licensed under the Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/). If you distribute this content, or a modified version of it, you must provide attribution to Red Hat Inc. and provide a link to the original.",
+				"title": "Terms of Use"
+			}
+		],
+		"publisher": {
+			"category": "vendor",
+			"contact_details": "https://access.redhat.com/security/team/contact/",
+			"issuing_authority": "Red Hat Product Security is responsible for vulnerability handling across all Red Hat products and services.",
+			"name": "Red Hat Product Security",
+			"namespace": "https://www.redhat.com"
+		},
+		"references": [
+			{
+				"category": "self",
+				"summary": "https://access.redhat.com/errata/RHSA-2023:7207",
+				"url": "https://access.redhat.com/errata/RHSA-2023:7207"
+			},
+			{
+				"category": "external",
+				"summary": "https://access.redhat.com/security/updates/classification/#moderate",
+				"url": "https://access.redhat.com/security/updates/classification/#moderate"
+			},
+			{
+				"category": "external",
+				"summary": "2209497",
+				"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209497"
+			},
+			{
+				"category": "external",
+				"summary": "2235527",
+				"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2235527"
+			},
+			{
+				"category": "self",
+				"summary": "Canonical URL",
+				"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2023/rhsa-2023_7207.json"
+			}
+		],
+		"title": "Red Hat Security Advisory: c-ares security update",
+		"tracking": {
+			"current_release_date": "2024-11-23T01:01:10+00:00",
+			"generator": {
+				"date": "2024-11-23T01:01:10+00:00",
+				"engine": {
+					"name": "Red Hat SDEngine",
+					"version": "4.2.1"
+				}
+			},
+			"id": "RHSA-2023:7207",
+			"initial_release_date": "2023-11-14T17:00:58+00:00",
+			"revision_history": [
+				{
+					"date": "2023-11-14T17:00:58+00:00",
+					"number": "1",
+					"summary": "Initial version"
+				},
+				{
+					"date": "2023-11-14T17:00:58+00:00",
+					"number": "2",
+					"summary": "Last updated version"
+				},
+				{
+					"date": "2024-11-23T01:01:10+00:00",
+					"number": "3",
+					"summary": "Last generated version"
+				}
+			],
+			"status": "final",
+			"version": "3"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_name",
+								"name": "Red Hat Enterprise Linux BaseOS (v. 8)",
+								"product": {
+									"name": "Red Hat Enterprise Linux BaseOS (v. 8)",
+									"product_id": "BaseOS-8.9.0.Z.MAIN",
+									"product_identification_helper": {
+										"cpe": "cpe:/o:redhat:enterprise_linux:8::baseos"
+									}
+								}
+							}
+						],
+						"category": "product_family",
+						"name": "Red Hat Enterprise Linux"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "c-ares-0:1.13.0-9.el8_9.1.src",
+								"product": {
+									"name": "c-ares-0:1.13.0-9.el8_9.1.src",
+									"product_id": "c-ares-0:1.13.0-9.el8_9.1.src",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares@1.13.0-9.el8_9.1?arch=src"
+									}
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "src"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "c-ares-0:1.13.0-9.el8_9.1.aarch64",
+								"product": {
+									"name": "c-ares-0:1.13.0-9.el8_9.1.aarch64",
+									"product_id": "c-ares-0:1.13.0-9.el8_9.1.aarch64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares@1.13.0-9.el8_9.1?arch=aarch64"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+								"product": {
+									"name": "c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+									"product_id": "c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-devel@1.13.0-9.el8_9.1?arch=aarch64"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+								"product": {
+									"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+									"product_id": "c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debugsource@1.13.0-9.el8_9.1?arch=aarch64"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+								"product": {
+									"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+									"product_id": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debuginfo@1.13.0-9.el8_9.1?arch=aarch64"
+									}
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "aarch64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+								"product": {
+									"name": "c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_id": "c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares@1.13.0-9.el8_9.1?arch=ppc64le"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+								"product": {
+									"name": "c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_id": "c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-devel@1.13.0-9.el8_9.1?arch=ppc64le"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+								"product": {
+									"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_id": "c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debugsource@1.13.0-9.el8_9.1?arch=ppc64le"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+								"product": {
+									"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_id": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debuginfo@1.13.0-9.el8_9.1?arch=ppc64le"
+									}
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "ppc64le"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "c-ares-0:1.13.0-9.el8_9.1.i686",
+								"product": {
+									"name": "c-ares-0:1.13.0-9.el8_9.1.i686",
+									"product_id": "c-ares-0:1.13.0-9.el8_9.1.i686",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares@1.13.0-9.el8_9.1?arch=i686"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+								"product": {
+									"name": "c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+									"product_id": "c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-devel@1.13.0-9.el8_9.1?arch=i686"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+								"product": {
+									"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+									"product_id": "c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debugsource@1.13.0-9.el8_9.1?arch=i686"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+								"product": {
+									"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+									"product_id": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debuginfo@1.13.0-9.el8_9.1?arch=i686"
+									}
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "i686"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "c-ares-0:1.13.0-9.el8_9.1.x86_64",
+								"product": {
+									"name": "c-ares-0:1.13.0-9.el8_9.1.x86_64",
+									"product_id": "c-ares-0:1.13.0-9.el8_9.1.x86_64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares@1.13.0-9.el8_9.1?arch=x86_64"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-devel-0:1.13.0-9.el8_9.1.x86_64",
+								"product": {
+									"name": "c-ares-devel-0:1.13.0-9.el8_9.1.x86_64",
+									"product_id": "c-ares-devel-0:1.13.0-9.el8_9.1.x86_64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-devel@1.13.0-9.el8_9.1?arch=x86_64"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+								"product": {
+									"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+									"product_id": "c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debugsource@1.13.0-9.el8_9.1?arch=x86_64"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+								"product": {
+									"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+									"product_id": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debuginfo@1.13.0-9.el8_9.1?arch=x86_64"
+									}
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "x86_64"
+					},
+					{
+						"branches": [
+							{
+								"category": "product_version",
+								"name": "c-ares-0:1.13.0-9.el8_9.1.s390x",
+								"product": {
+									"name": "c-ares-0:1.13.0-9.el8_9.1.s390x",
+									"product_id": "c-ares-0:1.13.0-9.el8_9.1.s390x",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares@1.13.0-9.el8_9.1?arch=s390x"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+								"product": {
+									"name": "c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+									"product_id": "c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-devel@1.13.0-9.el8_9.1?arch=s390x"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+								"product": {
+									"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+									"product_id": "c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debugsource@1.13.0-9.el8_9.1?arch=s390x"
+									}
+								}
+							},
+							{
+								"category": "product_version",
+								"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+								"product": {
+									"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+									"product_id": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+									"product_identification_helper": {
+										"purl": "pkg:rpm/redhat/c-ares-debuginfo@1.13.0-9.el8_9.1?arch=s390x"
+									}
+								}
+							}
+						],
+						"category": "architecture",
+						"name": "s390x"
+					}
+				],
+				"category": "vendor",
+				"name": "Red Hat"
+			}
+		],
+		"relationships": [
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-0:1.13.0-9.el8_9.1.aarch64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				"product_reference": "c-ares-0:1.13.0-9.el8_9.1.aarch64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-0:1.13.0-9.el8_9.1.i686 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686"
+				},
+				"product_reference": "c-ares-0:1.13.0-9.el8_9.1.i686",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-0:1.13.0-9.el8_9.1.ppc64le as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				"product_reference": "c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-0:1.13.0-9.el8_9.1.s390x as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x"
+				},
+				"product_reference": "c-ares-0:1.13.0-9.el8_9.1.s390x",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-0:1.13.0-9.el8_9.1.src as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src"
+				},
+				"product_reference": "c-ares-0:1.13.0-9.el8_9.1.src",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-0:1.13.0-9.el8_9.1.x86_64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				"product_reference": "c-ares-0:1.13.0-9.el8_9.1.x86_64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				"product_reference": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686"
+				},
+				"product_reference": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				"product_reference": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x"
+				},
+				"product_reference": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				"product_reference": "c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				"product_reference": "c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.i686 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686"
+				},
+				"product_reference": "c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				"product_reference": "c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x"
+				},
+				"product_reference": "c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				"product_reference": "c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-devel-0:1.13.0-9.el8_9.1.aarch64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				"product_reference": "c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-devel-0:1.13.0-9.el8_9.1.i686 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686"
+				},
+				"product_reference": "c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				"product_reference": "c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-devel-0:1.13.0-9.el8_9.1.s390x as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x"
+				},
+				"product_reference": "c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			},
+			{
+				"category": "default_component_of",
+				"full_product_name": {
+					"name": "c-ares-devel-0:1.13.0-9.el8_9.1.x86_64 as a component of Red Hat Enterprise Linux BaseOS (v. 8)",
+					"product_id": "BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				"product_reference": "c-ares-devel-0:1.13.0-9.el8_9.1.x86_64",
+				"relates_to_product_reference": "BaseOS-8.9.0.Z.MAIN"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2020-22217",
+			"cwe": {
+				"id": "CWE-126",
+				"name": "Buffer Over-read"
+			},
+			"discovery_date": "2023-08-28T00:00:00+00:00",
+			"ids": [
+				{
+					"system_name": "Red Hat Bugzilla ID",
+					"text": "2235527"
+				}
+			],
+			"notes": [
+				{
+					"category": "description",
+					"text": "A heap buffer over-read flaw was found in c-ares via the ares_parse_soa_reply function in ares_parse_soa_reply.c.",
+					"title": "Vulnerability description"
+				},
+				{
+					"category": "summary",
+					"text": "c-ares: Heap buffer over read in ares_parse_soa_reply",
+					"title": "Vulnerability summary"
+				},
+				{
+					"category": "other",
+					"text": "The attack vector for this flaw initiates from a malicious server (a SOA reply to a client query) which requires a attacker set up a server a make it to be queried by a victim through cache poisoning or MITM, raising the Attack Complexity to High. \n\nThis being a out of bounds reads does not bring a risk of memory corruption, which makes it of none impact to Integrity. Also the read limitis 2 bytes (16bit, unsigned short int) from the DNS_QUERY_TYPE MACRO[1] return and the read value would be ignored and not propagated anywhere since the subsequent check would also fail making the confidentiality impact as none.\n\n[1] https://github.com/c-ares/c-ares/blob/4d4fb34075c90d8f2f9ff81890152ab60f65e48e/include/ares_dns.h#L95\n[2] https://github.com/c-ares/c-ares/issues/333",
+					"title": "Statement"
+				},
+				{
+					"category": "general",
+					"text": "The CVSS score(s) listed for this vulnerability do not reflect the associated product's status, and are included for informational purposes to better understand the severity of this vulnerability.",
+					"title": "CVSS score applicability"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "self",
+					"summary": "Canonical URL",
+					"url": "https://access.redhat.com/security/cve/CVE-2020-22217"
+				},
+				{
+					"category": "external",
+					"summary": "RHBZ#2235527",
+					"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2235527"
+				},
+				{
+					"category": "external",
+					"summary": "https://www.cve.org/CVERecord?id=CVE-2020-22217",
+					"url": "https://www.cve.org/CVERecord?id=CVE-2020-22217"
+				},
+				{
+					"category": "external",
+					"summary": "https://nvd.nist.gov/vuln/detail/CVE-2020-22217",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2020-22217"
+				},
+				{
+					"category": "external",
+					"summary": "https://github.com/c-ares/c-ares/issues/333",
+					"url": "https://github.com/c-ares/c-ares/issues/333"
+				},
+				{
+					"category": "external",
+					"summary": "https://github.com/c-ares/c-ares/pull/332",
+					"url": "https://github.com/c-ares/c-ares/pull/332"
+				}
+			],
+			"release_date": "2023-08-22T00:00:00+00:00",
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "For details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258",
+					"product_ids": [
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+					],
+					"restart_required": {
+						"category": "none"
+					},
+					"url": "https://access.redhat.com/errata/RHSA-2023:7207"
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "HIGH",
+						"attackVector": "NETWORK",
+						"availabilityImpact": "HIGH",
+						"baseScore": 5.9,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "NONE",
+						"integrityImpact": "NONE",
+						"privilegesRequired": "NONE",
+						"scope": "UNCHANGED",
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+						"version": "3.1"
+					},
+					"products": [
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Moderate"
+				}
+			],
+			"title": "c-ares: Heap buffer over read in ares_parse_soa_reply"
+		},
+		{
+			"cve": "CVE-2023-31130",
+			"discovery_date": "2023-05-24T00:00:00+00:00",
+			"ids": [
+				{
+					"system_name": "Red Hat Bugzilla ID",
+					"text": "2209497"
+				}
+			],
+			"notes": [
+				{
+					"category": "description",
+					"text": "A vulnerability was found in c-ares. This issue occurs in the ares_inet_net_pton() function, which is vulnerable to a buffer underflow for certain ipv6 addresses. \"0::00:00:00/2\" in particular was found to cause an issue. C-ares only uses this function internally for configuration purposes, which would require an administrator to configure such an address via ares_set_sortlist().",
+					"title": "Vulnerability description"
+				},
+				{
+					"category": "summary",
+					"text": "c-ares: Buffer Underwrite in ares_inet_net_pton()",
+					"title": "Vulnerability summary"
+				},
+				{
+					"category": "general",
+					"text": "The CVSS score(s) listed for this vulnerability do not reflect the associated product's status, and are included for informational purposes to better understand the severity of this vulnerability.",
+					"title": "CVSS score applicability"
+				}
+			],
+			"product_status": {
+				"fixed": [
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+					"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+				]
+			},
+			"references": [
+				{
+					"category": "self",
+					"summary": "Canonical URL",
+					"url": "https://access.redhat.com/security/cve/CVE-2023-31130"
+				},
+				{
+					"category": "external",
+					"summary": "RHBZ#2209497",
+					"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209497"
+				},
+				{
+					"category": "external",
+					"summary": "https://www.cve.org/CVERecord?id=CVE-2023-31130",
+					"url": "https://www.cve.org/CVERecord?id=CVE-2023-31130"
+				},
+				{
+					"category": "external",
+					"summary": "https://nvd.nist.gov/vuln/detail/CVE-2023-31130",
+					"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-31130"
+				},
+				{
+					"category": "external",
+					"summary": "https://github.com/c-ares/c-ares/security/advisories/GHSA-x6mf-cxr9-8q6v",
+					"url": "https://github.com/c-ares/c-ares/security/advisories/GHSA-x6mf-cxr9-8q6v"
+				}
+			],
+			"release_date": "2023-05-22T00:00:00+00:00",
+			"remediations": [
+				{
+					"category": "vendor_fix",
+					"details": "For details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258",
+					"product_ids": [
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+					],
+					"restart_required": {
+						"category": "none"
+					},
+					"url": "https://access.redhat.com/errata/RHSA-2023:7207"
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"attackComplexity": "HIGH",
+						"attackVector": "LOCAL",
+						"availabilityImpact": "HIGH",
+						"baseScore": 5.7,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "NONE",
+						"integrityImpact": "HIGH",
+						"privilegesRequired": "HIGH",
+						"scope": "UNCHANGED",
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:U/C:N/I:H/A:H",
+						"version": "3.1"
+					},
+					"products": [
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.src",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x",
+						"BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
+					]
+				}
+			],
+			"threats": [
+				{
+					"category": "impact",
+					"details": "Moderate"
+				}
+			],
+			"title": "c-ares: Buffer Underwrite in ares_inet_net_pton()"
+		}
+	]
+}

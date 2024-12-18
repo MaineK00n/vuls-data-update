@@ -22,7 +22,7 @@ import (
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
-	vecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	rangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
@@ -730,7 +730,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 			case "less than":
 				ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeVersion,
-					Version: &vecTypes.Criterion{
+					Version: &vcTypes.Criterion{
 						Vulnerable: true,
 						FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
 						Package: packageTypes.Package{
@@ -774,7 +774,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 			case "equals":
 				ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
 					Type: criterionTypes.CriterionTypeVersion,
-					Version: &vecTypes.Criterion{
+					Version: &vcTypes.Criterion{
 						Vulnerable: false,
 						Package: packageTypes.Package{
 							Type: packageTypes.PackageTypeBinary,
@@ -839,7 +839,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 		}
 
 		switch {
-		case strings.Contains(t2.Comment, " is currently running"):
+		case strings.Contains(t2.Comment, " is currently running"): // TODO
 		default:
 			return criteriaTypes.Criteria{}, errors.Errorf("unexpected comment format. expected: %q, actual: %q", []string{"<package> (version|earlier than) <version> is currently running"}, t2.Comment)
 		}
@@ -855,7 +855,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 		}
 
 		switch {
-		case strings.Contains(t3.Comment, " is set to boot up on next boot"):
+		case strings.Contains(t3.Comment, " is set to boot up on next boot"): // TODO
 		case strings.HasPrefix(t3.Comment, "Module ") && strings.HasSuffix(t3.Comment, " is enabled"):
 			var o v1.Textfilecontent54Object
 			if err := e.read(name, "objects", "textfilecontent54_object", t3.Object.ObjectRef, &o); err != nil {

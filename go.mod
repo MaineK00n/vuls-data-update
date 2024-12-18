@@ -20,6 +20,7 @@ require (
 	github.com/knqyf263/go-deb-version v0.0.0-20230223133812-3ed183d23422
 	github.com/knqyf263/go-rpm-version v0.0.0-20220614171824-631e686d1075
 	github.com/masahiro331/go-mvn-version v0.0.0-20210429150710-d3157d602a08
+	github.com/package-url/packageurl-go v0.1.3
 	github.com/pandatix/go-cvss v0.6.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.8.1
