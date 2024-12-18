@@ -196,7 +196,7 @@ jobs:
           - "redhat-ovalv1"
           - "redhat-ovalv2"
           - "redhat-csaf"
-          # - "redhat-vex"
+          - "redhat-vex"
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v10
