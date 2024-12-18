@@ -2358,14 +2358,14 @@ func newCmdRedHatVEX() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-vex <Raw RedHat VEX Repository PATH>",
+		Use:   "redhat-vex <Raw RedHat VEX Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
 		Short: "Extract RedHat VEX data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-vex vuls-data-raw-redhat-vex
+			$ vuls-data-update extract redhat-vex vuls-data-raw-redhat-vex vuls-data-raw-redhat-repository-to-cpe
 		`),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := redhatVEX.Extract(args[0], redhatVEX.WithDir(options.dir)); err != nil {
+			if err := redhatVEX.Extract(args[0], args[1], redhatVEX.WithDir(options.dir)); err != nil {
 				return errors.Wrap(err, "failed to extract redhat vex")
 			}
 			return nil

@@ -353,11 +353,18 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 						if err != nil {
 							return nil, errors.Wrapf(err, "parse %q", fpn.ProductIdentificationHelper.PURL)
 						}
-						p.modularitylabel = fmt.Sprintf("%s:%s", instance.Name, strings.Split(instance.Version, ":")[0])
-					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:oci/"):
+						switch instance.Version {
+						case "":
+							p.name = instance.Name
+							p.arch = "src"
+							p.modularitylabel = strings.TrimPrefix(instance.Namespace, "redhat/")
+						default:
+							p.modularitylabel = fmt.Sprintf("%s:%s", instance.Name, strings.Split(instance.Version, ":")[0])
+						}
+					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:oci/"), strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:maven/"):
 						return nil, nil
 					default:
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:rpmmod/...", "pkg:oci/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:rpmmod/...", "pkg:oci/...", "pkg:maven/..."}, fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
