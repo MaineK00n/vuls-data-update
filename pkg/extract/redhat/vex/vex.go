@@ -665,9 +665,24 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 	}, nil
 }
 
-func buildDataComponents(doc vex.Document, baseVulnerabilities vulnerabilityContentTypes.Content, pm map[vex.ProductID][]product, assm map[vex.ProductID]ass) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
-	baseVulnerabilities.Published = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.InitialReleaseDate)
-	baseVulnerabilities.Modified = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.CurrentReleaseDate)
+type product2 struct {
+	name            string
+	version         string
+	modularitylabel string
+	cpe             string
+	src             bool
+	repositories    []string
+	archs           []string
+}
+
+type productsWithMaxPid struct {
+	maxPid vex.ProductID
+	p2s    []product2
+}
+
+func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[vex.ProductID][]product, assm map[vex.ProductID]ass) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
+	baseVulnerability.Published = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.InitialReleaseDate)
+	baseVulnerability.Modified = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.CurrentReleaseDate)
 	for pid, ass := range assm {
 		if ass.severity.impact == "" {
 			ass.severity.impact = doc.AggregateSeverity.Text
@@ -675,218 +690,271 @@ func buildDataComponents(doc vex.Document, baseVulnerabilities vulnerabilityCont
 		}
 	}
 
-	pvm := make(map[vex.ProductID]map[string]vcTypes.Criterion)
+	// major -> ass -> productWithMaxPid
+	apmm := make(map[string]map[ass]productsWithMaxPid)
 	for pid, ps := range pm {
-		pvm[pid] = make(map[string]vcTypes.Criterion)
-
 		for _, p := range ps {
-			vc, err := func() (*vcTypes.Criterion, error) {
-				switch assm[pid].status.product_status {
-				case "fixed":
-					if p.name == "" && p.version == "" {
-						return nil, nil
-					}
-
-					switch p.arch {
-					case "src":
-						return nil, nil
-					default:
-						return &vcTypes.Criterion{
-							Vulnerable: true,
-							FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-							Package: vcPackageTypes.Package{
-								Type: vcPackageTypes.PackageTypeBinary,
-								Binary: &vcBinaryPackageTypes.Package{
-									Name: func() string {
-										if p.modularitylabel != "" {
-											return fmt.Sprintf("%s::%s", p.modularitylabel, p.name)
-										}
-										return p.name
-									}(),
-									Architectures: []string{p.arch},
-									Repositories:  p.repositories,
-								},
-							},
-							Affected: &affectedTypes.Affected{
-								Type:  rangeTypes.RangeTypeRPM,
-								Range: []rangeTypes.Range{{LessThan: p.version}},
-								Fixed: []string{p.version},
-							},
-						}, nil
-					}
-				case "affected":
-					if p.name == "" {
-						log.Printf("[WARN] package name of %q in %q cannot be found", pid, string(baseVulnerabilities.ID))
-						return nil, nil
-					}
-
-					switch p.arch {
-					case "src":
-						return &vcTypes.Criterion{
-							Vulnerable: true,
-							FixStatus: &fixstatusTypes.FixStatus{
-								Class:  fixstatusTypes.ClassUnfixed,
-								Vendor: assm[pid].status.affected_status,
-							},
-							Package: vcPackageTypes.Package{
-								Type: vcPackageTypes.PackageTypeSource,
-								Source: &vcSourcePackageTypes.Package{
-									Name: func() string {
-										if p.modularitylabel != "" {
-											return fmt.Sprintf("%s::%s", p.modularitylabel, p.name)
-										}
-										return p.name
-									}(),
-									Repositories: p.repositories,
-								},
-							},
-						}, nil
-					default:
-						return nil, errors.Errorf("unexpected affected pkg arch. expected: %q, actual: %q", "src", p.arch)
-					}
-				case "unaffected":
-					return nil, nil
-				default:
-					return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "affected", "unaffected"}, assm[pid].status.product_status)
-				}
-			}()
-			if err != nil {
-				return nil, nil, nil, errors.Wrap(err, "build version criterion")
+			if p.name == "" {
+				log.Printf("[WARN] package name of %q in %q cannot be found", pid, string(baseVulnerability.ID))
+				continue
 			}
-			if vc != nil {
-				pvm[pid][p.major] = *vc
-			}
-		}
-	}
 
-	cm := make(map[string][]conditionTypes.Condition)
-	for pid, vm := range pvm {
-		for v, vc := range vm {
-			cm[v] = append(cm[v], conditionTypes.Condition{
-				Criteria: criteriaTypes.Criteria{
-					Operator: criteriaTypes.CriteriaOperatorTypeOR,
-					Criterions: []criterionTypes.Criterion{{
-						Type:    criterionTypes.CriterionTypeVersion,
-						Version: &vc,
+			apm, found := apmm[p.major]
+			if !found {
+				apm = map[ass]productsWithMaxPid{}
+			}
+			ass, found := assm[pid]
+			if !found {
+				// FIXME: what to do?
+				log.Printf("[WARN] advisory/severity/status not found for pid: %s", pid)
+				continue
+			}
+
+			pmax, found := apm[ass]
+			if !found {
+				pmax = productsWithMaxPid{
+					maxPid: pid,
+					p2s: []product2{{
+						name:            p.name,
+						version:         p.version,
+						modularitylabel: p.modularitylabel,
+						cpe:             p.cpe,
+						src:             (p.arch == "src"),
+						archs:           []string{p.arch},
+						repositories:    p.repositories,
 					}},
-				},
-				Tag: segmentTypes.DetectionTag(fmt.Sprintf("%s:%s", baseVulnerabilities.ID, pid)),
-			})
-		}
-	}
-
-	ds := make([]detectionTypes.Detection, 0, len(cm))
-	for v, cs := range cm {
-		ds = append(ds, detectionTypes.Detection{
-			Ecosystem:  ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, v)),
-			Conditions: cs,
-		})
-	}
-
-	am := make(map[advisory][]vex.ProductID)
-	for pid, ass := range assm {
-		am[ass.advisory] = append(am[ass.advisory], pid)
-	}
-
-	as := make([]advisoryTypes.Advisory, 0, len(am))
-	for a, ps := range am {
-		if a.id == "" {
-			continue
-		}
-		as = append(as, advisoryTypes.Advisory{
-			Content: advisoryContentTypes.Content{
-				ID: advisoryContentTypes.AdvisoryID(a.id),
-				References: []referenceTypes.Reference{{
-					Source: "secalert@redhat.com",
-					URL:    fmt.Sprintf("https://access.redhat.com/errata/%s", a.id),
-				}},
-				Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, a.date),
-			},
-			Segments: func() []segmentTypes.Segment {
-				ss := make([]segmentTypes.Segment, 0, len(ps))
-				for _, pid := range ps {
-					for v := range pvm[pid] {
-						ss = append(ss, segmentTypes.Segment{
-							Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, v)),
-							Tag:       segmentTypes.DetectionTag(fmt.Sprintf("%s:%s", baseVulnerabilities.ID, pid)),
-						})
+				}
+			} else {
+				added := false
+				pmax.maxPid = vex.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
+				for _, p2 := range pmax.p2s {
+					if p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel &&
+						p2.cpe == p.cpe && slices.Compare(p2.repositories, p.repositories) == 0 {
+						added = true
+						p2.archs = append(p2.archs, p.arch)
+						break
 					}
 				}
-				return ss
-			}(),
-		})
+				if !added {
+					pmax.p2s = append(pmax.p2s, product2{
+						name:            p.name,
+						version:         p.version,
+						modularitylabel: p.modularitylabel,
+						cpe:             p.cpe,
+						src:             (p.arch == "src"),
+						archs:           []string{p.arch},
+						repositories:    p.repositories,
+					})
+				}
+			}
+			apm[ass] = pmax
+			apmm[p.major] = apm
+		}
 	}
 
+	var ds []detectionTypes.Detection
 	var vs []vulnerabilityTypes.Vulnerability
-	for pid, ass := range assm {
-		ss, err := func() ([]severityTypes.Severity, error) {
-			var ss []severityTypes.Severity
-			if ass.severity.cvss2 != "" {
-				v2, err := cvssV2Types.Parse(ass.severity.cvss2)
+	var as []advisoryTypes.Advisory
+
+	for major, apm := range apmm {
+		var conds []conditionTypes.Condition
+		es := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major))
+		for ass, pmax := range apm {
+			tag := segmentTypes.DetectionTag(pmax.maxPid)
+			ss := []segmentTypes.Segment{{
+				Ecosystem: es,
+				Tag:       tag,
+			}}
+			ca := criteriaTypes.Criteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+			}
+
+			for _, p2 := range pmax.p2s {
+				vc, err := buildVersionCriterion(p2, ass)
 				if err != nil {
-					return nil, errors.Wrapf(err, "parse cvss2")
+					return nil, nil, nil, errors.Wrap(err, "build version criterion")
 				}
-				ss = append(ss, severityTypes.Severity{
-					Type:   severityTypes.SeverityTypeCVSSv2,
-					Source: "secalert@redhat.com",
-					CVSSv2: v2,
-				})
-			}
-			if ass.severity.cvss3 != "" {
-				switch {
-				case strings.HasPrefix(ass.severity.cvss3, "CVSS:3.0"):
-					v30, err := cvssV30Types.Parse(ass.severity.cvss3)
-					if err != nil {
-						return nil, errors.Wrap(err, "parse cvss3")
-					}
-					ss = append(ss, severityTypes.Severity{
-						Type:    severityTypes.SeverityTypeCVSSv30,
-						Source:  "secalert@redhat.com",
-						CVSSv30: v30,
+				if vc != nil {
+					ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
+						Type:    criterionTypes.CriterionTypeVersion,
+						Version: vc,
 					})
-				case strings.HasPrefix(ass.severity.cvss3, "CVSS:3.1"):
-					v31, err := cvssV31Types.Parse(ass.severity.cvss3)
-					if err != nil {
-						return nil, errors.Wrap(err, "parse cvss3")
-					}
-					ss = append(ss, severityTypes.Severity{
-						Type:    severityTypes.SeverityTypeCVSSv31,
-						Source:  "secalert@redhat.com",
-						CVSSv31: v31,
-					})
-				default:
-					return nil, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", ass.severity.cvss3)
 				}
 			}
-			if ass.severity.impact != "" {
-				ss = append(ss, severityTypes.Severity{
-					Type:   severityTypes.SeverityTypeVendor,
-					Source: "secalert@redhat.com",
-					Vendor: &ass.severity.impact,
+			if len(ca.Criterions) > 0 {
+				conds = append(conds, conditionTypes.Condition{
+					Criteria: ca,
+					Tag:      tag,
 				})
 			}
-			return ss, nil
-		}()
-		if err != nil {
-			return nil, nil, nil, errors.Wrap(err, "walk severity")
+
+			v, err := buildVulnerability(baseVulnerability, ass)
+			if err != nil {
+				return nil, nil, nil, errors.Wrap(err, "build vulnerability")
+			}
+			vs = append(vs, vulnerabilityTypes.Vulnerability{
+				Content:  v,
+				Segments: ss,
+			})
+
+			a, err := buildAdvisory(ass)
+			if err != nil {
+				return nil, nil, nil, errors.Wrap(err, "build advisory")
+			}
+			if a != nil {
+				as = append(as, advisoryTypes.Advisory{
+					Content: *a,
+					Segments: []segmentTypes.Segment{{
+						Ecosystem: es,
+						Tag:       tag,
+					}},
+				})
+			}
 		}
-		baseVulnerabilities.Severity = ss
 
-		vs = append(vs, vulnerabilityTypes.Vulnerability{
-			Content: baseVulnerabilities,
-			Segments: func() []segmentTypes.Segment {
-				var ss []segmentTypes.Segment
-				for v := range pvm[pid] {
-					ss = append(ss, segmentTypes.Segment{
-						Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, v)),
-						Tag:       segmentTypes.DetectionTag(fmt.Sprintf("%s:%s", baseVulnerabilities.ID, pid)),
-					})
-				}
-				return ss
-			}(),
+		ds = append(ds, detectionTypes.Detection{
+			Ecosystem:  es,
+			Conditions: conds,
 		})
-
 	}
 
 	return as, vs, ds, nil
+}
+
+func buildVersionCriterion(p2 product2, ass ass) (*vcTypes.Criterion, error) {
+	switch ass.status.product_status {
+	case "fixed":
+		if p2.name == "" && p2.version == "" {
+			return nil, nil
+		}
+
+		switch p2.src {
+		case true:
+			return nil, nil
+		default:
+			return &vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeBinary,
+					Binary: &vcBinaryPackageTypes.Package{
+						Name: func() string {
+							if p2.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
+							}
+							return p2.name
+						}(),
+						Architectures: p2.archs,
+						Repositories:  p2.repositories,
+					},
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: p2.version}},
+					Fixed: []string{p2.version},
+				},
+			}, nil
+		}
+	case "affected":
+		switch p2.src {
+		case true:
+			return &vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus: &fixstatusTypes.FixStatus{
+					Class:  fixstatusTypes.ClassUnfixed,
+					Vendor: ass.status.affected_status,
+				},
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeSource,
+					Source: &vcSourcePackageTypes.Package{
+						Name: func() string {
+							if p2.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
+							}
+							return p2.name
+						}(),
+						Repositories: p2.repositories,
+					},
+				},
+			}, nil
+		default:
+			return nil, errors.Errorf("unexpected affected pkg arch. expected: %q, actual: %q", "src", p2.archs)
+		}
+	case "unaffected":
+		return nil, nil
+	default:
+		return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "affected", "unaffected"}, ass.status.product_status)
+	}
+
+}
+
+func buildVulnerability(baseVulnerability vulnerabilityContentTypes.Content, ass ass) (vulnerabilityContentTypes.Content, error) {
+	ss, err := func() ([]severityTypes.Severity, error) {
+		var ss []severityTypes.Severity
+		if ass.severity.cvss2 != "" {
+			v2, err := cvssV2Types.Parse(ass.severity.cvss2)
+			if err != nil {
+				return nil, errors.Wrapf(err, "parse cvss2")
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:   severityTypes.SeverityTypeCVSSv2,
+				Source: "secalert@redhat.com",
+				CVSSv2: v2,
+			})
+		}
+		if ass.severity.cvss3 != "" {
+			switch {
+			case strings.HasPrefix(ass.severity.cvss3, "CVSS:3.0"):
+				v30, err := cvssV30Types.Parse(ass.severity.cvss3)
+				if err != nil {
+					return nil, errors.Wrap(err, "parse cvss3")
+				}
+				ss = append(ss, severityTypes.Severity{
+					Type:    severityTypes.SeverityTypeCVSSv30,
+					Source:  "secalert@redhat.com",
+					CVSSv30: v30,
+				})
+			case strings.HasPrefix(ass.severity.cvss3, "CVSS:3.1"):
+				v31, err := cvssV31Types.Parse(ass.severity.cvss3)
+				if err != nil {
+					return nil, errors.Wrap(err, "parse cvss3")
+				}
+				ss = append(ss, severityTypes.Severity{
+					Type:    severityTypes.SeverityTypeCVSSv31,
+					Source:  "secalert@redhat.com",
+					CVSSv31: v31,
+				})
+			default:
+				return nil, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", ass.severity.cvss3)
+			}
+		}
+		if ass.severity.impact != "" {
+			ss = append(ss, severityTypes.Severity{
+				Type:   severityTypes.SeverityTypeVendor,
+				Source: "secalert@redhat.com",
+				Vendor: &ass.severity.impact,
+			})
+		}
+		return ss, nil
+	}()
+	if err != nil {
+		return vulnerabilityContentTypes.Content{}, errors.Wrap(err, "walk severity")
+	}
+	baseVulnerability.Severity = ss
+	return baseVulnerability, nil
+}
+
+func buildAdvisory(ass ass) (*advisoryContentTypes.Content, error) {
+	if ass.advisory.id == "" {
+		return nil, nil
+	}
+	a := advisoryContentTypes.Content{
+		ID: advisoryContentTypes.AdvisoryID(ass.advisory.id),
+		References: []referenceTypes.Reference{{
+			Source: "secalert@redhat.com",
+			URL:    fmt.Sprintf("https://access.redhat.com/errata/%s", ass.advisory.id),
+		}},
+		Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, ass.advisory.date),
+	}
+	return &a, nil
 }
