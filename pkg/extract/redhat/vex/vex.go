@@ -518,7 +518,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 			base := assm[p]
 			base.status = status{
 				product_status:  "affected",
-				affected_status: "under investigation",
+				affected_status: "Under investigation",
 			}
 			assm[p] = base
 		}

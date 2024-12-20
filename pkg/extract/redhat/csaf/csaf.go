@@ -537,7 +537,7 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 				base := vassm[v.CVE][p]
 				base.status = status{
 					product_status:  "affected",
-					affected_status: "under investigation",
+					affected_status: "Under investigation",
 				}
 				vassm[v.CVE][p] = base
 			}
