@@ -186,7 +186,7 @@ jobs:
             git push
           fi
 
-  extract-redhat-oval:
+  extract-redhat:
     name: extract vuls-data-extracted-${{ matrix.target }}
     runs-on: ubuntu-latest
     strategy:
