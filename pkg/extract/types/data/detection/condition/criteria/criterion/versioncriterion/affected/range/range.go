@@ -203,6 +203,9 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			if strings.Contains(v1, ".module_el") != strings.Contains(v2, ".module_el") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
+			if extractRedHatMajorVersion(v1) != extractRedHatMajorVersion(v2) {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("different major versions cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		case ecosystemTypes.EcosystemTypeAlma:
 			if strings.Contains(v1, ".module_el") != strings.Contains(v2, ".module_el") {
@@ -221,6 +224,9 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			if extractOracleKsplice(v1) != extractOracleKsplice(v2) {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("v1: %q and v2: %q do not match ksplice number", v1, v2)}}
 			}
+			if strings.HasSuffix(v1, "_fips") != strings.HasSuffix(v2, "_fips") {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non fips package and fips package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
 			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
@@ -233,6 +239,9 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 		default:
 			if strings.Contains(v1, ".module+el") != strings.Contains(v2, ".module+el") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non modular package and modular package cannot be compared. v1: %q, v2: %q", v1, v2)}}
+			}
+			if extractRedHatMajorVersion(v1) != extractRedHatMajorVersion(v2) {
+				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("different major versions cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		}
@@ -293,11 +302,24 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 	}
 }
 
+func extractRedHatMajorVersion(v string) string {
+	_, rhs, ok := strings.Cut(v, ".el")
+	if ok {
+		return strings.Split(rhs, "_")[0]
+	}
+
+	_, rhs, ok = strings.Cut(v, ".module+el")
+	if ok {
+		return strings.Split(rhs, "_")[0]
+	}
+
+	return ""
+}
+
 func extractOracleKsplice(v string) string {
-	for _, s := range strings.Split(v, ".") {
-		if strings.HasPrefix(s, "ksplice") {
-			return s
-		}
+	_, rhs, ok := strings.Cut(v, ".ksplice")
+	if ok {
+		return strings.Split(rhs, ".")[0]
 	}
 	return ""
 }

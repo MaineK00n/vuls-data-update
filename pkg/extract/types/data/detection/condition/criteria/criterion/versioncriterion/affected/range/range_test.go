@@ -82,6 +82,36 @@ func TestRangeType_Compare(t *testing.T) {
 			want: 0,
 		},
 		{
+			name: "centos v1: el7, v2: el8",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.el7",
+				v2:     "0.0.1-0.0.1.el8",
+			},
+			wantErr: true,
+		},
+		{
+			name: "centos v1: el8, v2: el8_10",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.el8",
+				v2:     "0.0.1-0.0.1.el8_10",
+			},
+			want: -1,
+		},
+		{
+			name: "centos v1: module+el8, v2: module+el8_10",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosytemCentOS,
+				v1:     "0.0.1-0.0.1.module+el8",
+				v2:     "0.0.1-0.0.1.module+el8_10",
+			},
+			want: -1,
+		},
+		{
 			name: "alma v1: non modular package, v2: non modular package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
@@ -202,6 +232,26 @@ func TestRangeType_Compare(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "oracle v1: non fips, v2: fips",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0.0.1-0.0.1.el9",
+				v2:     "0.0.1-0.0.1.el9_fips",
+			},
+			wantErr: true,
+		},
+		{
+			name: "oracle v1: fips, v2: fips",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeOracle,
+				v1:     "0.0.1-0.0.1.el9_fips",
+				v2:     "0.0.1-0.0.1.el9_fips",
+			},
+			want: 0,
+		},
+		{
 			name: "oracle v1: non modular package, v2: modular package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
@@ -280,6 +330,36 @@ func TestRangeType_Compare(t *testing.T) {
 				v2:     "0.0.1-0.0.1.module+el9",
 			},
 			want: 0,
+		},
+		{
+			name: "redhat v1: el7, v2: el8",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v1:     "0.0.1-0.0.1.el7",
+				v2:     "0.0.1-0.0.1.el8",
+			},
+			wantErr: true,
+		},
+		{
+			name: "redhat v1: el8, v2: el8_10",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v1:     "0.0.1-0.0.1.el8",
+				v2:     "0.0.1-0.0.1.el8_10",
+			},
+			want: -1,
+		},
+		{
+			name: "redhat v1: module+el8, v2: module+el8_10",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v1:     "0.0.1-0.0.1.module+el8",
+				v2:     "0.0.1-0.0.1.module+el8_10",
+			},
+			want: -1,
 		},
 		{
 			name: "unknown type",
