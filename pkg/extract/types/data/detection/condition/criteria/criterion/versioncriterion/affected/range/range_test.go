@@ -352,6 +352,16 @@ func TestRangeType_Compare(t *testing.T) {
 			want: -1,
 		},
 		{
+			name: "redhat v1: el8, v2: el8_10",
+			rt:   affectedrangeTypes.RangeTypeRPM,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
+				v1:     "0.0.1-0.0.2.el8_0",
+				v2:     "0.0.1-0.0.1.el8.1",
+			},
+			want: +1,
+		},
+		{
 			name: "redhat v1: module+el8, v2: module+el8_10",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
