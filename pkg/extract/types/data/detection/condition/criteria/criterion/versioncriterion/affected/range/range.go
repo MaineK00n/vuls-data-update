@@ -305,12 +305,12 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 func extractRedHatMajorVersion(v string) string {
 	_, rhs, ok := strings.Cut(v, ".el")
 	if ok {
-		return strings.Split(rhs, "_")[0]
+		return strings.Split(strings.Split(rhs, ".")[0], "_")[0]
 	}
 
 	_, rhs, ok = strings.Cut(v, ".module+el")
 	if ok {
-		return strings.Split(rhs, "_")[0]
+		return strings.Split(strings.Split(rhs, ".")[0], "_")[0]
 	}
 
 	return ""
