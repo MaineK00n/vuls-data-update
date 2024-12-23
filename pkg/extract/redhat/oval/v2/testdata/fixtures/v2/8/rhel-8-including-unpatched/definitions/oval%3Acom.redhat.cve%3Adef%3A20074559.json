@@ -31,6 +31,12 @@
 			"affected": {
 				"resolution": [
 					{
+						"state": "Affected",
+						"component": [
+							"python27:2.7/python2-debug"
+						]
+					},
+					{
 						"state": "Will not fix",
 						"component": [
 							"python27:2.7/python2-debug",

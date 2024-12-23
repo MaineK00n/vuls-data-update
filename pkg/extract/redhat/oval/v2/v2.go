@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -70,6 +71,9 @@ type extractor struct {
 	ovalDir string
 	r       *utiljson.JSONReader
 }
+
+// priority: Out of support scope < Will not fix < Under investigation < Affected < Fix deferred
+var affectedResolutions = []string{"Out of support scope", "Will not fix", "Under investigation", "Affected", "Fix deferred"}
 
 func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 	options := &options{
@@ -279,7 +283,14 @@ func (e extractor) extract(major, stream string, def v2.Definition, c2r map[stri
 				if strings.Contains(c, "/") && strings.Contains(c, ":") {
 					name = strings.ReplaceAll(c, "/", "::")
 				}
-				m[name] = r.State
+
+				state := r.State
+				if s, ok := m[name]; ok {
+					if slices.Index(affectedResolutions, s) > slices.Index(affectedResolutions, state) {
+						state = s
+					}
+				}
+				m[name] = state
 			}
 		}
 
