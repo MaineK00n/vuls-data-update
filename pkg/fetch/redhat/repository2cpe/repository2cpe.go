@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	repositoryToCPEURL = "https://security.access.redhat.com/data/metrics/repository-to-cpe.json"
+	repositoryToCPEURL = "https://security.access.redhat.com/data/meta/v1/repository-to-cpe.json"
 )
 
 type options struct {
