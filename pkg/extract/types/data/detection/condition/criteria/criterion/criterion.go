@@ -68,6 +68,7 @@ func (c *Criterion) Sort() {
 	case CriterionTypeVersion:
 		c.Version.Sort()
 	case CriterionTypeNoneExist:
+		c.NoneExist.Sort()
 	default:
 	}
 }

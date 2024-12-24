@@ -2814,120 +2814,6 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "c-ares-debuginfo",
-											"architectures": [
-												"aarch64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debuginfo",
-											"architectures": [
-												"x86_64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "c-ares",
 											"architectures": [
 												"aarch64"
@@ -2987,6 +2873,120 @@
 										"binary": {
 											"name": "c-ares",
 											"architectures": [
+												"i686"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares",
+											"architectures": [
+												"ppc64le"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares",
+											"architectures": [
 												"s390x"
 											],
 											"repositories": [
@@ -3027,177 +3027,6 @@
 						]
 					},
 					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.s390x"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-devel",
-											"architectures": [
-												"i686"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-devel",
-											"architectures": [
-												"x86_64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"aarch64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64"
 				},
 				{
 					"criteria": {
@@ -3272,6 +3101,120 @@
 										"binary": {
 											"name": "c-ares-debuginfo",
 											"architectures": [
+												"aarch64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debuginfo",
+											"architectures": [
+												"i686"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debuginfo",
+											"architectures": [
 												"ppc64le"
 											],
 											"repositories": [
@@ -3312,6 +3255,291 @@
 						]
 					},
 					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debuginfo",
+											"architectures": [
+												"s390x"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debuginfo",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"aarch64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"i686"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"ppc64le"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le"
 				},
 				{
 					"criteria": {
@@ -3384,9 +3612,9 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "c-ares-debuginfo",
+											"name": "c-ares-debugsource",
 											"architectures": [
-												"i686"
+												"x86_64"
 											],
 											"repositories": [
 												"rhel-8-for-aarch64-baseos-debug-rpms",
@@ -3425,7 +3653,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686"
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64"
 				},
 				{
 					"criteria": {
@@ -3500,6 +3728,63 @@
 										"binary": {
 											"name": "c-ares-devel",
 											"architectures": [
+												"i686"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.i686"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-devel",
+											"architectures": [
 												"ppc64le"
 											],
 											"repositories": [
@@ -3540,63 +3825,6 @@
 						]
 					},
 					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debuginfo",
-											"architectures": [
-												"s390x"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.s390x"
 				},
 				{
 					"criteria": {
@@ -3669,7 +3897,7 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "c-ares-debugsource",
+											"name": "c-ares-devel",
 											"architectures": [
 												"x86_64"
 											],
@@ -3710,64 +3938,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"i686"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686"
+					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
 				},
 				{
 					"criteria": {
@@ -3784,177 +3955,6 @@
 										"type": "binary",
 										"binary": {
 											"name": "c-ares",
-											"architectures": [
-												"ppc64le"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.ppc64le"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"ppc64le"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares",
-											"architectures": [
-												"i686"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2020-22217:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
 											"architectures": [
 												"aarch64"
 											],
@@ -3995,7 +3995,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64"
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64"
 				},
 				{
 					"criteria": {
@@ -4053,291 +4053,6 @@
 						]
 					},
 					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.i686"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-devel",
-											"architectures": [
-												"aarch64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"s390x"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"x86_64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"i686"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-devel",
-											"architectures": [
-												"x86_64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
 				},
 				{
 					"criteria": {
@@ -4467,63 +4182,6 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "c-ares-debugsource",
-											"architectures": [
-												"ppc64le"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "c-ares",
 											"architectures": [
 												"x86_64"
@@ -4566,120 +4224,6 @@
 						]
 					},
 					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.x86_64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares",
-											"architectures": [
-												"aarch64"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-0:1.13.0-9.el8_9.1.aarch64"
-				},
-				{
-					"criteria": {
-						"operator": "OR",
-						"criterions": [
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "c-ares-devel",
-											"architectures": [
-												"ppc64le"
-											],
-											"repositories": [
-												"rhel-8-for-aarch64-baseos-debug-rpms",
-												"rhel-8-for-aarch64-baseos-rpms",
-												"rhel-8-for-aarch64-baseos-source-rpms",
-												"rhel-8-for-ppc64le-baseos-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-rpms",
-												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
-												"rhel-8-for-ppc64le-baseos-rpms",
-												"rhel-8-for-ppc64le-baseos-source-rpms",
-												"rhel-8-for-s390x-baseos-debug-rpms",
-												"rhel-8-for-s390x-baseos-rpms",
-												"rhel-8-for-s390x-baseos-source-rpms",
-												"rhel-8-for-x86_64-baseos-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-rpms",
-												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
-												"rhel-8-for-x86_64-baseos-rpms",
-												"rhel-8-for-x86_64-baseos-source-rpms"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.13.0-9.el8_9.1"
-											}
-										],
-										"fixed": [
-											"0:1.13.0-9.el8_9.1"
-										]
-									}
-								}
-							}
-						]
-					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le"
 				},
 				{
 					"criteria": {
@@ -4754,7 +4298,7 @@
 										"binary": {
 											"name": "c-ares-debuginfo",
 											"architectures": [
-												"x86_64"
+												"i686"
 											],
 											"repositories": [
 												"rhel-8-for-aarch64-baseos-debug-rpms",
@@ -4793,7 +4337,7 @@
 							}
 						]
 					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64"
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686"
 				},
 				{
 					"criteria": {
@@ -4923,7 +4467,235 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "c-ares-devel",
+											"name": "c-ares-debuginfo",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"aarch64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.aarch64"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"i686"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.i686"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"ppc64le"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
 											"architectures": [
 												"s390x"
 											],
@@ -4964,7 +4736,121 @@
 							}
 						]
 					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x"
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.s390x"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-debugsource",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debugsource-0:1.13.0-9.el8_9.1.x86_64"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-devel",
+											"architectures": [
+												"aarch64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.aarch64"
 				},
 				{
 					"criteria": {
@@ -5037,9 +4923,9 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "c-ares-debuginfo",
+											"name": "c-ares-devel",
 											"architectures": [
-												"i686"
+												"ppc64le"
 											],
 											"repositories": [
 												"rhel-8-for-aarch64-baseos-debug-rpms",
@@ -5078,7 +4964,121 @@
 							}
 						]
 					},
-					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-debuginfo-0:1.13.0-9.el8_9.1.i686"
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.ppc64le"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-devel",
+											"architectures": [
+												"s390x"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.s390x"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "c-ares-devel",
+											"architectures": [
+												"x86_64"
+											],
+											"repositories": [
+												"rhel-8-for-aarch64-baseos-debug-rpms",
+												"rhel-8-for-aarch64-baseos-rpms",
+												"rhel-8-for-aarch64-baseos-source-rpms",
+												"rhel-8-for-ppc64le-baseos-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-rpms",
+												"rhel-8-for-ppc64le-baseos-e4s-source-rpms",
+												"rhel-8-for-ppc64le-baseos-rpms",
+												"rhel-8-for-ppc64le-baseos-source-rpms",
+												"rhel-8-for-s390x-baseos-debug-rpms",
+												"rhel-8-for-s390x-baseos-rpms",
+												"rhel-8-for-s390x-baseos-source-rpms",
+												"rhel-8-for-x86_64-baseos-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-debug-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-rpms",
+												"rhel-8-for-x86_64-baseos-e4s-source-rpms",
+												"rhel-8-for-x86_64-baseos-rpms",
+												"rhel-8-for-x86_64-baseos-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.13.0-9.el8_9.1"
+											}
+										],
+										"fixed": [
+											"0:1.13.0-9.el8_9.1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "CVE-2023-31130:BaseOS-8.9.0.Z.MAIN:c-ares-devel-0:1.13.0-9.el8_9.1.x86_64"
 				}
 			]
 		}
