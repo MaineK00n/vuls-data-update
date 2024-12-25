@@ -534,12 +534,6 @@ jobs:
           path: vuls-data-extracted-${{ matrix.target }}
           ref: nightly
 
-      - name: Check out vulsio/vuls-data-raw-redhat-repository-to-cpe repository
-        uses: actions/checkout@v4
-        with:
-          repository: vulsio/vuls-data-raw-redhat-repository-to-cpe
-          path: vuls-data-raw-redhat-repository-to-cpe
-
       - name: Check out extracted repository
         uses: actions/checkout@v4
         with:
@@ -548,7 +542,7 @@ jobs:
           ref: nightly
 
       - name: Filter
-        run: go run main.go vuls-data-extracted-${{ matrix.target }} vuls-data-raw-redhat-repository-to-cpe affected_cpe_list.json vuls-data-extracted-${{ matrix.target }}-rhel
+        run: go run main.go vuls-data-extracted-${{ matrix.target }} affected_repository_list.json vuls-data-extracted-${{ matrix.target }}-rhel
 
       - name: Split Large Files
         run: find vuls-data-extracted-${{ matrix.target }}-rhel -name "*.json" -size +50M | xargs -I {} sh -c "split -a 3 -d -b 50m {} {}. && rm {}"
