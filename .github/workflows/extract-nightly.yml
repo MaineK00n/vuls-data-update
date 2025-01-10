@@ -158,6 +158,9 @@ jobs:
           repository: vulsio/vuls-data-raw-${{ matrix.target }}
           path: vuls-data-raw-${{ matrix.target }}
 
+      - name: Merge Split Files
+        run: find vuls-data-raw-${{ matrix.target }} -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
+
       - name: Check out extracted repository
         uses: actions/checkout@v4
         with:
@@ -227,11 +230,17 @@ jobs:
           repository: vulsio/vuls-data-raw-${{ matrix.target }}
           path: vuls-data-raw-${{ matrix.target }}
 
+      - name: Merge Split Files
+        run: find vuls-data-raw-${{ matrix.target }} -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
+
       - name: Check out vulsio/vuls-data-raw-redhat-repository-to-cpe repository
         uses: actions/checkout@v4
         with:
           repository: vulsio/vuls-data-raw-redhat-repository-to-cpe
           path: vuls-data-raw-redhat-repository-to-cpe
+
+      - name: Merge Split Files
+        run: find vuls-data-raw-redhat-repository-to-cpe -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
 
       - name: Check out extracted repository
         uses: actions/checkout@v4
@@ -310,11 +319,17 @@ jobs:
           repository: vulsio/vuls-data-raw-nvd-api-cve
           path: vuls-data-raw-nvd-api-cve
 
+      - name: Merge Split Files
+        run: find vuls-data-raw-nvd-api-cve -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
+
       - name: Check out raw repository, CPEMATCH
         uses: actions/checkout@v4
         with:
           repository: vulsio/vuls-data-raw-nvd-api-cpematch
           path: vuls-data-raw-nvd-api-cpematch
+
+      - name: Merge Split Files
+        run: find vuls-data-raw-nvd-api-cpematch -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
 
       - name: Check out extracted repository
         uses: actions/checkout@v4
@@ -448,6 +463,9 @@ jobs:
           repository: vulsio/vuls-data-raw-redhat-ovalv2
           path: vuls-data-raw-redhat-ovalv2
 
+      - name: Merge Split Files
+        run: find vuls-data-raw-redhat-ovalv2 -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
+
       - name: remove unnecessary streams
         run: |
           rm -rf vuls-data-raw-redhat-ovalv2/5
@@ -461,6 +479,9 @@ jobs:
         with:
           repository: vulsio/vuls-data-raw-redhat-repository-to-cpe
           path: vuls-data-raw-redhat-repository-to-cpe
+
+      - name: Merge Split Files
+        run: find vuls-data-raw-redhat-repository-to-cpe -name "*.json.*" | sed -r 's/(.*)\.json\.[0-9]+/\1.json/' | sort -u | while read -r base; do cat "$base".* > "$base" && rm -f "$base".*; done
 
       - name: replace empty repository-to-cpe data
         run: |
