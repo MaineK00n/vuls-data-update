@@ -150,6 +150,13 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if c.Affected == nil {
 			return true, nil
 		}
+
+		// Workaround for RHEL oval v2 -> vex transition. Ideally, query.Source.Version MUST NOT be empty.
+		// This MUST BE REMOVED soon.
+		if query.Source.Version == "" {
+			return true, nil
+		}
+
 		isAccepted, err = c.Affected.Accept(query.Source.Family, query.Source.Version)
 		if err != nil {
 			return false, errors.Wrap(err, "affected accept")
