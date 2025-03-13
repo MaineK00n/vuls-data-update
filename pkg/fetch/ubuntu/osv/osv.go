@@ -137,8 +137,17 @@ func Fetch(opts ...Option) error {
 			if err := util.Write(filepath.Join(options.dir, "USN", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.ID)), a); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "USN", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.ID)))
 			}
+		case strings.HasPrefix(a.ID, "LSN-"):
+			t, err := time.Parse(time.RFC3339Nano, a.Published)
+			if err != nil {
+				return errors.Errorf("unexpected published format. expected: %q, actual: %q", time.RFC3339Nano, a.Published)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, "LSN", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "LSN", fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.ID)))
+			}
 		default:
-			return errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"UBUNTU-CVE-", "USN-"}, a.ID)
+			return errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"UBUNTU-CVE-", "USN-", "LSN-"}, a.ID)
 		}
 	}
 
