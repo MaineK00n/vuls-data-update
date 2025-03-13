@@ -341,10 +341,10 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 						default:
 							p.modularitylabel = fmt.Sprintf("%s:%s", instance.Name, strings.Split(instance.Version, ":")[0])
 						}
-					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:oci/"), strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:maven/"):
+					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:oci/"), strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:maven/"), strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:koji/"):
 						return nil, nil
 					default:
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:rpmmod/...", "pkg:oci/...", "pkg:maven/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:rpmmod/...", "pkg:oci/...", "pkg:maven/...", "pkg:koji/..."}, fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
@@ -685,7 +685,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 	baseVulnerability.Published = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.InitialReleaseDate)
 	baseVulnerability.Modified = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.CurrentReleaseDate)
 	for pid, ass := range assm {
-		if ass.severity.impact == "" {
+		if ass.severity.impact == "" && doc.AggregateSeverity != nil {
 			ass.severity.impact = doc.AggregateSeverity.Text
 			assm[pid] = ass
 		}
