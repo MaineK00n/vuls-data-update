@@ -1,0 +1,29 @@
+{
+	"advisoryID": "cisco-sa-anyconnect-mac-priv-esc-VqST2nrT",
+	"advisoryTitle": "MacOS Local Privilege Escalation Exploitable through Cisco AnyConnect Secure Mobility Client",
+	"bugIDs": [
+		"NA"
+	],
+	"csafURL": "NA",
+	"cves": [
+		"NA"
+	],
+	"cvrfURL": "NA",
+	"cvssBaseScore": "NA",
+	"cwe": [
+		"NA"
+	],
+	"firstPublished": "2021-05-05T16:00:00",
+	"ipsSignatures": [
+		"NA"
+	],
+	"lastUpdated": "2021-05-11T13:40:11",
+	"productNames": [
+		"NA"
+	],
+	"publicationURL": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-anyconnect-mac-priv-esc-VqST2nrT",
+	"sir": "Informational",
+	"status": "Final",
+	"summary": "<p>On May 26, 2020, Apple released a security update for MacOS Catalina, Mojave, and High Sierra. Part of this update addressed a local privilege escalation vulnerability (CVE-2020-9817).</p>\r\n<p>Cisco&nbsp;has determined that Cisco&nbsp;AnyConnect Secure Mobility Client releases 4.10.00093 and earlier could be used to exploit this vulnerability.</p>\r\n<p>This advisory is available at the following link:<br><a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-anyconnect-mac-priv-esc-VqST2nrT\" target=\"_blank\" rel=\"noopener\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-anyconnect-mac-priv-esc-VqST2nrT</a></p>",
+	"version": "1.1"
+}

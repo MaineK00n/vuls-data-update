@@ -22,6 +22,9 @@ import (
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
+	ciscoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/csaf"
+	ciscoCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/cvrf"
+	ciscoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/json"
 	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/ghsa"
 	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/glsa"
 	composerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/osv"
@@ -144,6 +147,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardOSV(),
+		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
 		newCmdCWE(),
@@ -591,6 +595,107 @@ func newCmdChainguardOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "chainguard", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCiscoJSON() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "json"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisco-json <Cisco Client Key> <Cisco Client Secret>",
+		Short: "Fetch Cisco JSON data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisco-json client_key client_secret
+		`),
+		Args: cobra.ExactArgs(2),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := ciscoJSON.Fetch(args[0], args[1], ciscoJSON.WithDir(options.dir), ciscoJSON.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisco json")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCiscoCVRF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "cvrf"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisco-cvrf [<Cisco Security Advisory ID>]",
+		Short: "Fetch Cisco CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisco-cvrf cisco-sa-xwork-xss-KCcg7WwU cisco-sa-tms-xss-vuln-WbTcYwxG
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := ciscoCVRF.Fetch(args, ciscoCVRF.WithDir(options.dir), ciscoCVRF.WithRetry(options.retry), ciscoCVRF.WithConcurrency(options.concurrency), ciscoCVRF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisco cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdCiscoCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "csaf"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisco-csaf [<Cisco Security Advisory ID>]",
+		Short: "Fetch Cisco CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisco-csaf cisco-sa-xwork-xss-KCcg7WwU cisco-sa-tms-xss-vuln-WbTcYwxG
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := ciscoCSAF.Fetch(args, ciscoCSAF.WithDir(options.dir), ciscoCSAF.WithRetry(options.retry), ciscoCSAF.WithConcurrency(options.concurrency), ciscoCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisco csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
