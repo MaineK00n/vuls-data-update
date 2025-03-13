@@ -22,6 +22,7 @@ import (
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco"
 	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/ghsa"
 	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/glsa"
 	composerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/osv"
@@ -143,6 +144,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardOSV(),
+		newCmdCisco(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
 		newCmdCWE(),
@@ -589,6 +591,33 @@ func newCmdChainguardOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "chainguard", "osv"), "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCisco() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cisco"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisco <CISCO Client Key> <CISCO Client Secret>",
+		Short: "Fetch Cisco data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisco client_key client_secret
+		`),
+		Args: cobra.ExactArgs(2),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := cisco.Fetch(args[0], args[1], cisco.WithDir(options.dir), cisco.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisco")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cisco"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
