@@ -685,7 +685,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 	baseVulnerability.Published = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.InitialReleaseDate)
 	baseVulnerability.Modified = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.CurrentReleaseDate)
 	for pid, ass := range assm {
-		if ass.severity.impact == "" {
+		if ass.severity.impact == "" && doc.AggregateSeverity != nil {
 			ass.severity.impact = doc.AggregateSeverity.Text
 			assm[pid] = ass
 		}
