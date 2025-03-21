@@ -1,7 +1,10 @@
 package csaf
 
 import (
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"hash/fnv"
 	"io/fs"
 	"log"
 	"maps"
@@ -171,9 +174,14 @@ func (e extractor) extract(adv csaf.CSAF, c2r map[string][]string) (dataTypes.Da
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
 	}
 
-	vassm, vcs, err := walkVulnerabilities(adv.Vulnerabilities, slices.Collect(maps.Keys(pm)))
+	vassm, vm, err := walkVulnerabilities(adv.Vulnerabilities, slices.Collect(maps.Keys(pm)))
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk vulnerabilities")
+	}
+
+	vassGroupToPids, err := invertVassGroup(vassm, pm)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrap(err, "inverse pids")
 	}
 
 	as, vs, ds, err := buildDataComponents(advisoryContentTypes.Content{
@@ -204,7 +212,8 @@ func (e extractor) extract(adv csaf.CSAF, c2r map[string][]string) (dataTypes.Da
 		}(),
 		Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, adv.Document.Tracking.InitialReleaseDate),
 		Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, adv.Document.Tracking.CurrentReleaseDate),
-	}, vcs, pm, vassm)
+	}, vm, pm, vassGroupToPids)
+
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "build data components")
 	}
@@ -231,19 +240,19 @@ type product struct {
 	repositories    []string
 }
 
-type ass struct {
-	advisory string
-	severity severity
-	status   status
+type ASS struct {
+	Advisory string
+	Severity Severity
+	Status   Status
 }
-type severity struct {
-	cvss2  string
-	cvss3  string
-	impact string
+type Severity struct {
+	Cvss2  string
+	Cvss3  string
+	Impact string
 }
-type status struct {
-	product_status  string
-	affected_status string
+type Status struct {
+	ProductStatus  string
+	AffectedStatus string
 }
 
 func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.ProductID][]product, error) {
@@ -507,11 +516,11 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 	return pm, nil
 }
 
-func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map[string]map[csaf.ProductID]ass, []vulnerabilityContentTypes.Content, error) {
-	vassm := make(map[string]map[csaf.ProductID]ass)
-	vs := make([]vulnerabilityContentTypes.Content, 0, len(vulns))
+func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map[string]map[csaf.ProductID]ASS, map[string]vulnerabilityContentTypes.Content, error) {
+	vassm := make(map[string]map[csaf.ProductID]ASS)
+	vm := make(map[string]vulnerabilityContentTypes.Content)
 	for _, v := range vulns {
-		vassm[v.CVE] = make(map[csaf.ProductID]ass)
+		vassm[v.CVE] = make(map[csaf.ProductID]ASS)
 
 		if err := func() error {
 			if len(v.ProductStatus.FirstAffected) > 0 || len(v.ProductStatus.FirstFixed) > 0 || len(v.ProductStatus.LastAffected) > 0 || len(v.ProductStatus.Recommended) > 0 {
@@ -520,24 +529,24 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 
 			for _, p := range v.ProductStatus.Fixed {
 				base := vassm[v.CVE][p]
-				base.status = status{product_status: "fixed"}
+				base.Status = Status{ProductStatus: "fixed"}
 				vassm[v.CVE][p] = base
 			}
 			for _, p := range v.ProductStatus.KnownAffected {
 				base := vassm[v.CVE][p]
-				base.status = status{product_status: "affected"}
+				base.Status = Status{ProductStatus: "affected"}
 				vassm[v.CVE][p] = base
 			}
 			for _, p := range v.ProductStatus.KnownNotAffected {
 				base := vassm[v.CVE][p]
-				base.status = status{product_status: "unaffected"}
+				base.Status = Status{ProductStatus: "unaffected"}
 				vassm[v.CVE][p] = base
 			}
 			for _, p := range v.ProductStatus.UnderInvestigation {
 				base := vassm[v.CVE][p]
-				base.status = status{
-					product_status:  "affected",
-					affected_status: "Under investigation",
+				base.Status = Status{
+					ProductStatus:  "affected",
+					AffectedStatus: "Under investigation",
 				}
 				vassm[v.CVE][p] = base
 			}
@@ -556,15 +565,15 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 					return pids
 				}() {
 
-					switch base := vassm[v.CVE][p]; base.status.product_status {
+					switch base := vassm[v.CVE][p]; base.Status.ProductStatus {
 					case "unaffected":
-						if base.status.affected_status != "" {
+						if base.Status.AffectedStatus != "" {
 							return errors.New("already set affected_status")
 						}
-						base.status.affected_status = f.Label
+						base.Status.AffectedStatus = f.Label
 						vassm[v.CVE][p] = base
 					default:
-						return errors.Errorf("%q is not set for %q", f.Label, base.status.product_status)
+						return errors.Errorf("%q is not set for %q", f.Label, base.Status.ProductStatus)
 					}
 				}
 			}
@@ -586,20 +595,20 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 						// TODO:
 					case "no_fix_planned", "none_available":
 						base := vassm[v.CVE][p]
-						if base.status.affected_status != "" {
+						if base.Status.AffectedStatus != "" {
 							return errors.New("already set affected_status")
 						}
-						base.status.affected_status = r.Details
+						base.Status.AffectedStatus = r.Details
 						vassm[v.CVE][p] = base
 					case "vendor_fix":
 						base := vassm[v.CVE][p]
-						if base.advisory != "" {
+						if base.Advisory != "" {
 							return errors.New("already set advisory id")
 						}
-						base.advisory = strings.TrimPrefix(r.URL, "https://access.redhat.com/errata/")
+						base.Advisory = strings.TrimPrefix(r.URL, "https://access.redhat.com/errata/")
 						vassm[v.CVE][p] = base
 					default:
-						return errors.Errorf("unexpected remedation category. expected: %q, actual: %q", []string{"mitigation", "no_fix_planned", "none_available", "vendor_fix", "workaround"}, r.Category)
+						return errors.Errorf("unexpected remediation category. expected: %q, actual: %q", []string{"mitigation", "no_fix_planned", "none_available", "vendor_fix", "workaround"}, r.Category)
 					}
 				}
 			}
@@ -614,10 +623,10 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 				for _, p := range s.Products {
 					base := vassm[v.CVE][p]
 					if s.CvssV2 != nil {
-						base.severity.cvss2 = s.CvssV2.VectorString
+						base.Severity.Cvss2 = s.CvssV2.VectorString
 					}
 					if s.CvssV3 != nil {
-						base.severity.cvss3 = s.CvssV3.VectorString
+						base.Severity.Cvss3 = s.CvssV3.VectorString
 					}
 					vassm[v.CVE][p] = base
 				}
@@ -636,11 +645,11 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 					case "exploit_status":
 					case "impact":
 						base := vassm[v.CVE][p]
-						base.severity.impact = t.Details
+						base.Severity.Impact = t.Details
 						vassm[v.CVE][p] = base
 					case "target_set":
 					default:
-						return errors.Errorf("unexpected remedation category. expected: %q, actual: %q", []string{"exploit_status", "impact", "target_set"}, t.Category)
+						return errors.Errorf("unexpected threat category. expected: %q, actual: %q", []string{"exploit_status", "impact", "target_set"}, t.Category)
 					}
 				}
 			}
@@ -649,7 +658,7 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 			return nil, nil, errors.Wrap(err, "walk threats")
 		}
 
-		vs = append(vs, vulnerabilityContentTypes.Content{
+		vm[v.CVE] = vulnerabilityContentTypes.Content{
 			ID:    vulnerabilityContentTypes.VulnerabilityID(v.CVE),
 			Title: v.Title,
 			Description: func() string {
@@ -680,216 +689,330 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 				return rs
 			}(),
 			Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, v.ReleaseDate),
-		})
+		}
 	}
-	return vassm, vs, nil
+	return vassm, vm, nil
 }
 
-func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerabilities []vulnerabilityContentTypes.Content, pm map[csaf.ProductID][]product, vassm map[string]map[csaf.ProductID]ass) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
-	vpvm := make(map[string]map[csaf.ProductID]map[string]vcTypes.Criterion)
-	for pid, ps := range pm {
-		for cve, assm := range vassm {
-			if vpvm[cve] == nil {
-				vpvm[cve] = make(map[csaf.ProductID]map[string]vcTypes.Criterion)
-			}
-			if vpvm[cve][pid] == nil {
-				vpvm[cve][pid] = make(map[string]vcTypes.Criterion)
+func invertVassGroup(vassm map[string]map[csaf.ProductID]ASS, pm map[csaf.ProductID][]product) (map[string][]csaf.ProductID, error) {
+	pidToVassGroup := make(map[csaf.ProductID]map[string]ASS)
+
+	for cveID, assm := range vassm {
+		for pid, ass := range assm {
+			if !slices.ContainsFunc(pm[pid], func(p product) bool { return p.arch != "" }) {
+				// Ignore ass with no arches because it does not included in detections.
+				continue
 			}
 
-			for _, p := range ps {
-				vc, err := func() (*vcTypes.Criterion, error) {
-					switch assm[pid].status.product_status {
-					case "fixed":
-						if p.name == "" && p.version == "" {
-							return nil, nil
-						}
-
-						switch p.arch {
-						case "src":
-							return nil, nil
-						default:
-							return &vcTypes.Criterion{
-								Vulnerable: true,
-								FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-								Package: vcPackageTypes.Package{
-									Type: vcPackageTypes.PackageTypeBinary,
-									Binary: &vcBinaryPackageTypes.Package{
-										Name: func() string {
-											if p.modularitylabel != "" {
-												return fmt.Sprintf("%s::%s", p.modularitylabel, p.name)
-											}
-											return p.name
-										}(),
-										Architectures: []string{p.arch},
-										Repositories:  p.repositories,
-									},
-								},
-								Affected: &affectedTypes.Affected{
-									Type:  rangeTypes.RangeTypeRPM,
-									Range: []rangeTypes.Range{{LessThan: p.version}},
-									Fixed: []string{p.version},
-								},
-							}, nil
-						}
-					case "affected":
-						if p.name == "" {
-							return nil, errors.New("name is empty")
-						}
-
-						switch p.arch {
-						case "src":
-							return &vcTypes.Criterion{
-								Vulnerable: true,
-								FixStatus: &fixstatusTypes.FixStatus{
-									Class:  fixstatusTypes.ClassUnfixed,
-									Vendor: assm[pid].status.affected_status,
-								},
-								Package: vcPackageTypes.Package{
-									Type: vcPackageTypes.PackageTypeSource,
-									Source: &vcSourcePackageTypes.Package{
-										Name: func() string {
-											if p.modularitylabel != "" {
-												return fmt.Sprintf("%s::%s", p.modularitylabel, p.name)
-											}
-											return p.name
-										}(),
-										Repositories: p.repositories,
-									},
-								},
-							}, nil
-						default:
-							return nil, errors.Errorf("unexpected affected pkg arch. expected: %q, actual: %q", "src", p.arch)
-						}
-					case "unaffected":
-						return nil, nil
-					default:
-						return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "affected", "unaffected"}, assm[pid].status.product_status)
-					}
-				}()
-				if err != nil {
-					return nil, nil, nil, errors.Wrap(err, "build version criterion")
-				}
-				if vc != nil {
-					vpvm[cve][pid][p.major] = *vc
-				}
+			vassGroup, found := pidToVassGroup[pid]
+			if !found {
+				vassGroup = make(map[string]ASS)
 			}
+			vassGroup[cveID] = ass
+			pidToVassGroup[pid] = vassGroup
 		}
 	}
+
+	vassGroupToPids := make(map[string][]csaf.ProductID)
+
+	for pid, vassGroup := range pidToVassGroup {
+		bs, err := json.Marshal(vassGroup)
+		if err != nil {
+			return nil, errors.Wrap(err, "json marshal")
+		}
+		vassGroupToPids[string(bs)] = append(vassGroupToPids[string(bs)], pid)
+	}
+
+	return vassGroupToPids, nil
+}
+
+func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerabilities map[string]vulnerabilityContentTypes.Content, pm map[csaf.ProductID][]product, vassGroupToPids map[string][]csaf.ProductID) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
 
 	cm := make(map[string][]conditionTypes.Condition)
-	for cve, pvm := range vpvm {
-		for pid, vm := range pvm {
-			for v, vc := range vm {
-				cm[v] = append(cm[v], conditionTypes.Condition{
-					Criteria: criteriaTypes.Criteria{
-						Operator: criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: []criterionTypes.Criterion{{
-							Type:    criterionTypes.CriterionTypeVersion,
-							Version: &vc,
-						}},
-					},
-					Tag: segmentTypes.DetectionTag(fmt.Sprintf("%s:%s", cve, pid)),
-				})
-			}
-		}
-	}
-
-	ds := make([]detectionTypes.Detection, 0, len(cm))
-	for v, cs := range cm {
-		ds = append(ds, detectionTypes.Detection{
-			Ecosystem:  ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, v)),
-			Conditions: cs,
-		})
-	}
-
-	as := []advisoryTypes.Advisory{{
+	var vs []vulnerabilityTypes.Vulnerability
+	adv := advisoryTypes.Advisory{
 		Content: baseAdvisory,
-		Segments: func() []segmentTypes.Segment {
-			var ss []segmentTypes.Segment
-			for _, d := range ds {
-				for _, c := range d.Conditions {
-					ss = append(ss, segmentTypes.Segment{
-						Ecosystem: d.Ecosystem,
-						Tag:       c.Tag,
-					})
+	}
+
+	for vassGroupString, pids := range vassGroupToPids {
+		var vassGroup map[string]ASS
+		if err := json.Unmarshal([]byte(vassGroupString), &vassGroup); err != nil {
+			return nil, nil, nil, errors.Wrap(err, "json unmarshal")
+		}
+
+		for _, status := range func() []Status {
+			var ss []Status
+			for _, ass := range vassGroup {
+				if !slices.Contains(ss, ass.Status) {
+					ss = append(ss, ass.Status)
 				}
 			}
 			return ss
-		}(),
-	}}
-
-	var vs []vulnerabilityTypes.Vulnerability
-	for _, vuln := range baseVulnerabilities {
-		for pid, ass := range vassm[string(vuln.ID)] {
-			ss, err := func() ([]severityTypes.Severity, error) {
-				var ss []severityTypes.Severity
-				if ass.severity.cvss2 != "" {
-					v2, err := cvssV2Types.Parse(ass.severity.cvss2)
-					if err != nil {
-						return nil, errors.Wrapf(err, "parse cvss2")
-					}
-					ss = append(ss, severityTypes.Severity{
-						Type:   severityTypes.SeverityTypeCVSSv2,
-						Source: "secalert@redhat.com",
-						CVSSv2: v2,
-					})
-				}
-				if ass.severity.cvss3 != "" {
-					switch {
-					case strings.HasPrefix(ass.severity.cvss3, "CVSS:3.0"):
-						v30, err := cvssV30Types.Parse(ass.severity.cvss3)
-						if err != nil {
-							return nil, errors.Wrap(err, "parse cvss3")
-						}
-						ss = append(ss, severityTypes.Severity{
-							Type:    severityTypes.SeverityTypeCVSSv30,
-							Source:  "secalert@redhat.com",
-							CVSSv30: v30,
-						})
-					case strings.HasPrefix(ass.severity.cvss3, "CVSS:3.1"):
-						v31, err := cvssV31Types.Parse(ass.severity.cvss3)
-						if err != nil {
-							return nil, errors.Wrap(err, "parse cvss3")
-						}
-						ss = append(ss, severityTypes.Severity{
-							Type:    severityTypes.SeverityTypeCVSSv31,
-							Source:  "secalert@redhat.com",
-							CVSSv31: v31,
-						})
-					default:
-						return nil, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", ass.severity.cvss3)
+		}() {
+			// To include major in the input of calculateTag(), summarize per major.
+			// Including major is not mandatory, but it will be helpful when plain-old-grep'ping by tag string.
+			pidsm := make(map[string][]csaf.ProductID)
+			for _, pid := range pids {
+				for _, p := range pm[pid] {
+					if !slices.Contains(pidsm[p.major], pid) {
+						pidsm[p.major] = append(pidsm[p.major], pid)
 					}
 				}
-				if ass.severity.impact != "" {
-					ss = append(ss, severityTypes.Severity{
-						Type:   severityTypes.SeverityTypeVendor,
-						Source: "secalert@redhat.com",
-						Vendor: &ass.severity.impact,
-					})
-				}
-				return ss, nil
-			}()
-			if err != nil {
-				return nil, nil, nil, errors.Wrap(err, "walk severity")
 			}
-			vuln.Severity = ss
 
-			vs = append(vs, vulnerabilityTypes.Vulnerability{
-				Content: vuln,
-				Segments: func() []segmentTypes.Segment {
-					var ss []segmentTypes.Segment
-					for v := range vpvm[string(vuln.ID)][pid] {
-						ss = append(ss, segmentTypes.Segment{
-							Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, v)),
-							Tag:       segmentTypes.DetectionTag(fmt.Sprintf("%s:%s", string(vuln.ID), pid)),
-						})
+			for major, pidsPerMajor := range pidsm {
+				tag := calculateTag(major, pidsPerMajor, status)
+				segment := segmentTypes.Segment{
+					Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
+					Tag:       tag,
+				}
+
+				adv.Segments = append(adv.Segments, segment)
+
+				for cveID, ass := range vassGroup {
+					if ass.Status != status {
+						continue
 					}
-					return ss
-				}(),
-			})
+					baseV, found := baseVulnerabilities[cveID]
+					if !found {
+						return nil, nil, nil, errors.Errorf("no base vulnerability found for %s", cveID)
+					}
 
+					sevs, err := buildSeverities(ass.Severity)
+					if err != nil {
+						return nil, nil, nil, errors.Wrap(err, "build severities")
+					}
+					baseV.Severity = sevs
+					baseV.Sort()
+
+					index := slices.IndexFunc(vs, func(v vulnerabilityTypes.Vulnerability) bool {
+						return vulnerabilityContentTypes.Compare(v.Content, baseV) == 0
+					})
+					if index < 0 {
+						vs = append(vs, vulnerabilityTypes.Vulnerability{
+							Content:  baseV,
+							Segments: []segmentTypes.Segment{segment},
+						})
+					} else {
+						vs[index].Segments = append(vs[index].Segments, segment)
+					}
+				}
+
+				var cs1 []criterionTypes.Criterion
+				for _, pid := range pidsPerMajor {
+					for _, p := range pm[pid] {
+						if p.arch == "src" {
+							continue
+						}
+
+						vc, err := buildVersionCriterion(p, status)
+						if err != nil {
+							return nil, nil, nil, errors.Wrap(err, "build version criterion")
+						}
+						if vc == nil {
+							continue
+						}
+
+						index := slices.IndexFunc(cs1, func(c criterionTypes.Criterion) bool {
+							// compare by identity except architectures
+							return c.Version.Vulnerable == vc.Vulnerable &&
+								fixstatusTypes.Compare(*c.Version.FixStatus, *vc.FixStatus) == 0 &&
+								c.Version.Package.Binary.Name == vc.Package.Binary.Name &&
+								slices.Compare(c.Version.Package.Binary.Repositories, vc.Package.Binary.Repositories) == 0 &&
+								affectedTypes.Compare(*c.Version.Affected, *vc.Affected) == 0
+						})
+
+						if index < 0 {
+							vc.Package.Binary.Architectures = []string{p.arch}
+							cs1 = append(cs1, criterionTypes.Criterion{
+								Type:    criterionTypes.CriterionTypeVersion,
+								Version: vc,
+							})
+						} else {
+							if !slices.Contains(cs1[index].Version.Package.Binary.Architectures, p.arch) {
+								cs1[index].Version.Package.Binary.Architectures = append(cs1[index].Version.Package.Binary.Architectures, p.arch)
+							}
+						}
+					}
+				}
+
+				// consolidate repositories
+				var cs2 []criterionTypes.Criterion
+				for _, c := range cs1 {
+					index := slices.IndexFunc(cs2, func(c2 criterionTypes.Criterion) bool {
+						// compare by identity excpept repositories
+						return c.Version.Vulnerable == c2.Version.Vulnerable &&
+							fixstatusTypes.Compare(*c.Version.FixStatus, *c2.Version.FixStatus) == 0 &&
+							c.Version.Package.Binary.Name == c2.Version.Package.Binary.Name &&
+							slices.Compare(c.Version.Package.Binary.Architectures, c2.Version.Package.Binary.Architectures) == 0 &&
+							affectedTypes.Compare(*c.Version.Affected, *c2.Version.Affected) == 0
+					})
+					if index < 0 {
+						cs2 = append(cs2, c)
+					} else {
+						repos := append(cs2[index].Version.Package.Binary.Repositories, c.Version.Package.Binary.Repositories...)
+						slices.Sort(repos)
+						cs2[index].Version.Package.Binary.Repositories = slices.Compact(repos)
+					}
+				}
+
+				if len(cs2) > 0 {
+					cm[major] = append(cm[major], conditionTypes.Condition{
+						Criteria: criteriaTypes.Criteria{
+							Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+							Criterions: cs2,
+						},
+						Tag: tag,
+					})
+				}
+			}
 		}
 	}
 
-	return as, vs, ds, nil
+	var ds []detectionTypes.Detection
+	for major, conds := range cm {
+		ds = append(ds, detectionTypes.Detection{
+			Ecosystem:  ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
+			Conditions: conds,
+		})
+	}
+
+	return []advisoryTypes.Advisory{adv}, vs, ds, nil
+}
+
+func buildVersionCriterion(p product, status Status) (*vcTypes.Criterion, error) {
+	switch status.ProductStatus {
+	case "fixed":
+		if p.name == "" && p.version == "" {
+			return nil, nil
+		}
+
+		if p.arch == "src" {
+			return nil, nil
+		}
+
+		return &vcTypes.Criterion{
+			Vulnerable: true,
+			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+			Package: vcPackageTypes.Package{
+				Type: vcPackageTypes.PackageTypeBinary,
+				Binary: &vcBinaryPackageTypes.Package{
+					Name: func() string {
+						if p.modularitylabel != "" {
+							return fmt.Sprintf("%s::%s", p.modularitylabel, p.name)
+						}
+						return p.name
+					}(),
+					Architectures: []string{p.arch},
+					Repositories:  p.repositories,
+				},
+			},
+			Affected: &affectedTypes.Affected{
+				Type:  rangeTypes.RangeTypeRPM,
+				Range: []rangeTypes.Range{{LessThan: p.version}},
+				Fixed: []string{p.version},
+			},
+		}, nil
+	case "affected":
+		if p.name == "" {
+			return nil, errors.New("name is empty")
+		}
+
+		if p.arch == "src" {
+			return nil, errors.Errorf("unexpected affected pkg arch. expected: %q, actual: %q", "src", p.arch)
+		}
+
+		return &vcTypes.Criterion{
+			Vulnerable: true,
+			FixStatus: &fixstatusTypes.FixStatus{
+				Class:  fixstatusTypes.ClassUnfixed,
+				Vendor: status.AffectedStatus,
+			},
+			Package: vcPackageTypes.Package{
+				Type: vcPackageTypes.PackageTypeSource,
+				Source: &vcSourcePackageTypes.Package{
+					Name: func() string {
+						if p.modularitylabel != "" {
+							return fmt.Sprintf("%s::%s", p.modularitylabel, p.name)
+						}
+						return p.name
+					}(),
+					Repositories: p.repositories,
+				},
+			},
+		}, nil
+	case "unaffected":
+		return nil, nil
+	default:
+		return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "affected", "unaffected"}, status.ProductStatus)
+	}
+}
+
+func buildSeverities(sev Severity) ([]severityTypes.Severity, error) {
+	var ss []severityTypes.Severity
+	if sev.Cvss2 != "" {
+		v2, err := cvssV2Types.Parse(sev.Cvss2)
+		if err != nil {
+			return nil, errors.Wrapf(err, "parse cvss2")
+		}
+		ss = append(ss, severityTypes.Severity{
+			Type:   severityTypes.SeverityTypeCVSSv2,
+			Source: "secalert@redhat.com",
+			CVSSv2: v2,
+		})
+	}
+	if sev.Cvss3 != "" {
+		switch {
+		case strings.HasPrefix(sev.Cvss3, "CVSS:3.0"):
+			v30, err := cvssV30Types.Parse(sev.Cvss3)
+			if err != nil {
+				return nil, errors.Wrap(err, "parse cvss3")
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv30,
+				Source:  "secalert@redhat.com",
+				CVSSv30: v30,
+			})
+		case strings.HasPrefix(sev.Cvss3, "CVSS:3.1"):
+			v31, err := cvssV31Types.Parse(sev.Cvss3)
+			if err != nil {
+				return nil, errors.Wrap(err, "parse cvss3")
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv31,
+				Source:  "secalert@redhat.com",
+				CVSSv31: v31,
+			})
+		default:
+			return nil, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", sev.Cvss3)
+		}
+	}
+	if sev.Impact != "" {
+		ss = append(ss, severityTypes.Severity{
+			Type:   severityTypes.SeverityTypeVendor,
+			Source: "secalert@redhat.com",
+			Vendor: &sev.Impact,
+		})
+	}
+	return ss, nil
+}
+
+func calculateTag(major string, pids []csaf.ProductID, status Status) segmentTypes.DetectionTag {
+	maxPid := func() []byte {
+		if len(pids) == 0 {
+			return nil
+		}
+		return []byte(slices.Max(pids))
+	}()
+	h := fnv.New64()
+	h.Write(maxPid)
+	dst := make([]byte, 18)
+	hashed := h.Sum(nil)
+	hex.Encode(dst, hashed[:4])
+	dst[8] = '-'
+	hex.Encode(dst[9:13], hashed[4:6])
+	dst[13] = '-'
+	hex.Encode(dst[14:], hashed[6:])
+
+	return segmentTypes.DetectionTag(fmt.Sprintf("%s-%s-%s-%s", major, status.ProductStatus, status.AffectedStatus, dst))
 }
