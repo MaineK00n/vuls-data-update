@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -119,17 +118,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "read %s", zf.Name)
 		}
 
-		ss := strings.Split(a.ID, "-")
-		if len(ss) < 3 {
-			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "(CURL-CVE|CVE|PSF|PSF-CVE|PYSEC)-yyyy-\\d+", a.ID)
-		}
-		if _, err := time.Parse("2006", ss[len(ss)-2]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyyy-\\d+", a.ID)
-			continue
+		t, err := time.Parse(time.RFC3339, a.Published)
+		if err != nil {
+			return errors.Wrapf(err, "unexpected published format. expected: %q, actual: %q", time.RFC3339, a.Published)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, ss[0], ss[len(ss)-2], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, ss[0], ss[len(ss)-2], fmt.Sprintf("%s.json", a.ID)))
+		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%d", t.Month()), fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%d", t.Month()), fmt.Sprintf("%s.json", a.ID)))
 		}
 	}
 
