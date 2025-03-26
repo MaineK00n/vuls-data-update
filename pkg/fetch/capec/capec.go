@@ -68,6 +68,10 @@ func Fetch(opts ...Option) error {
 		o.apply(options)
 	}
 
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
+	}
+
 	log.Printf("[INFO] Fetch Common Attack Pattern Enumerations and Classifications: CAPEC")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
