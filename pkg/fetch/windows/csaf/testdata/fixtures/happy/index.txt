@@ -1,0 +1,2 @@
+2025/msrc_cve-2025-29806.json
+2025/msrc_cve-2025-29795.json

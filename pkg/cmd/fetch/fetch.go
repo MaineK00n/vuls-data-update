@@ -108,6 +108,7 @@ import (
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
+	windowsCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/csaf"
 	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
 	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
 	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
@@ -182,7 +183,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuOSV(),
 		newCmdVulnCheckKEV(),
-		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
+		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiOSV(),
 	)
 
@@ -3333,6 +3334,43 @@ func newCmdWindowsCVRF() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdWindowsCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "csaf"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-csaf",
+		Short: "Fetch Windows CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsCSAF.Fetch(windowsCSAF.WithDir(options.dir), windowsCSAF.WithRetry(options.retry), windowsCSAF.WithConcurrency(options.concurrency), windowsCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch windows csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
