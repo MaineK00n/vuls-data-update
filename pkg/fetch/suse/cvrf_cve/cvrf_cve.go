@@ -2,7 +2,9 @@ package cvrf_cve
 
 import (
 	"archive/tar"
+	"bytes"
 	"compress/bzip2"
+	"context"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -11,6 +13,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -75,7 +78,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch SUSE CVRF CVE")
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch suse cvrf cve")
 	}
@@ -125,4 +128,43 @@ func Fetch(opts ...Option) error {
 	}
 
 	return nil
+}
+
+func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
+		return shouldRetry, errors.Wrap(err, "retry policy")
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false, errors.Wrap(err, "read all response body")
+	}
+
+	tr := tar.NewReader(bzip2.NewReader(bytes.NewReader(body)))
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return false, errors.Wrap(err, "next tar reader")
+		}
+
+		if hdr.FileInfo().IsDir() || filepath.Ext(hdr.Name) != ".xml" {
+			continue
+		}
+
+		var adv CVRF
+		if err := xml.NewDecoder(tr).Decode(&adv); err != nil {
+			if errors.Is(err, io.ErrUnexpectedEOF) {
+				return true, errors.Wrap(err, "read all response body")
+			}
+			return false, errors.Wrap(err, "decode xml")
+		}
+	}
+
+	_ = resp.Body.Close()
+	resp.Body = io.NopCloser(bytes.NewBuffer(body))
+
+	return false, nil
 }
