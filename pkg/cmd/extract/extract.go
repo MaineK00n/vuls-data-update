@@ -133,7 +133,7 @@ func NewCmdExtract() *cobra.Command {
 		Use:   "extract <data source>",
 		Short: "Extract data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract vuls-data-raw-debian-security-tracker-salsa
+			$ vuls-data-update extract debian-security-tracker-salsa vuls-data-raw-debian-security-tracker-salsa
 		`),
 	}
 
