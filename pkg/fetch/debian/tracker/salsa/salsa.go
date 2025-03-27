@@ -166,7 +166,7 @@ func Fetch(opts ...Option) error {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	gr, err := gzip.NewReader(resp.Body)
@@ -855,7 +855,7 @@ func fetchRelease(c *utilhttp.Client, releaseURL string) ([]string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("[WARN] fetch %s error: %s", releaseURL, errors.Errorf("error request response with status code %d", resp.StatusCode))
+		log.Printf("[WARN] fetch %s error: %s", releaseURL, errors.Errorf("error response with status code %d", resp.StatusCode))
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, nil
 	}

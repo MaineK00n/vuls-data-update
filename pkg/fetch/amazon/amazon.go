@@ -115,7 +115,7 @@ func Fetch(opts ...Option) error {
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return errors.Errorf("error request response with status code %d", resp.StatusCode)
+				return errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
 			var c catalog
@@ -216,7 +216,7 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var mirrors []string
@@ -266,7 +266,7 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return "", errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return "", errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var repomd repomd
@@ -296,7 +296,7 @@ func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	gr, err := gzip.NewReader(resp.Body)

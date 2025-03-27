@@ -124,7 +124,7 @@ func Fetch(args []string, opts ...Option) error {
 				log.Printf("[WARN] %s is not found", resp.Request.URL)
 				return nil
 			}
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 
 		t, err := time.Parse("2006-01-02", strings.TrimSuffix(strings.TrimPrefix(path.Base(resp.Request.URL.Path), "epss_scores-"), ".csv.gz"))

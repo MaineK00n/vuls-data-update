@@ -147,7 +147,7 @@ func (opts options) fetch(feedURL string, cves map[string]map[string]CVEItem) er
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	r, err := gzip.NewReader(resp.Body)
