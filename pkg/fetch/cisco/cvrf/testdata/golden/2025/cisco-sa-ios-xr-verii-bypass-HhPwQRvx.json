@@ -1,0 +1,190 @@
+{
+	"xml_name": {
+		"Space": "http://docs.oasis-open.org/csaf/ns/csaf-cvrf/v1.2/cvrf",
+		"Local": "cvrfdoc"
+	},
+	"document_title": "Cisco IOS XR Software Image Verification Bypass Vulnerability",
+	"document_type": "Cisco Security Advisory",
+	"document_publisher": {
+		"type": "Vendor",
+		"contact_details": "Emergency Support:\n+1 877 228 7302 (toll-free within North America)\n+1 408 525 6532 (International direct-dial)\nNon-emergency Support:\nEmail: psirt@cisco.com\nSupport requests that are received via e-mail are typically acknowledged within 48 hours.",
+		"issuing_authority": "Cisco product security incident response is the responsibility of the Cisco Product Security Incident Response Team (PSIRT). The Cisco PSIRT is a dedicated, global team that manages the receipt, investigation, and public reporting of security vulnerability information that is related to Cisco products and networks. The on-call Cisco PSIRT works 24x7 with Cisco customers, independent security researchers, consultants, industry organizations, and other vendors to identify possible security issues with Cisco products and networks.\nMore information can be found in Cisco Security Vulnerability Policy available at http://www.cisco.com/web/about/security/psirt/security_vulnerability_policy.html"
+	},
+	"document_tracking": {
+		"identification": {
+			"id": "cisco-sa-ios-xr-verii-bypass-HhPwQRvx"
+		},
+		"status": "Final",
+		"version": "1.0",
+		"revisionhistory": {
+			"revision": [
+				{
+					"number": "1.0",
+					"date": "2025-03-12T15:54:42",
+					"description": "Initial public release."
+				}
+			]
+		},
+		"initial_release_date": "2025-03-12T16:00:00",
+		"current_release_date": "2025-03-12T16:00:00",
+		"generator": {
+			"engine": "TVCE",
+			"date": "2025-03-12T15:55:18.0427763Z"
+		}
+	},
+	"document_notes": {
+		"note": [
+			{
+				"type": "Summary",
+				"ordinal": 1,
+				"title": "Summary",
+				"text": "A vulnerability in the boot process of Cisco IOS XR Software could allow an authenticated, local attacker to bypass Cisco IOS XR image signature verification and load unverified software on an affected device. To exploit this vulnerability, the attacker must have root-system privileges on the affected device.\n\nThis vulnerability is due to incomplete validation of files in the boot verification process. An attacker could exploit this vulnerability by manipulating the system configuration options to bypass some of the integrity checks that are performed during the boot process. A successful exploit could allow the attacker to control the boot configuration, which could enable them to bypass the requirement to run Cisco-signed images or alter the security properties of the running system.\n\nNote: Because exploitation of this vulnerability could result in the attacker bypassing Cisco image verification, Cisco has raised the Security Impact Rating (SIR) of this advisory from Medium to High.\n\nCisco has released software updates that address this vulnerability. There are no workarounds that address this vulnerability.\n\nThis advisory is available at the following link:\nhttps://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx [\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx\"]\n\nThis advisory is part of the March 2025 release of the Cisco IOS XR Software Security Advisory Bundled Publication. For a complete list of the advisories and links to them, see Cisco Event Response: March 2025 Semiannual Cisco IOS XR Software Security Advisory Bundled Publication [\"https://sec.cloudapps.cisco.com/security/center/viewErp.x?alertId=ERP-75548\"]."
+			},
+			{
+				"type": "General",
+				"ordinal": 2,
+				"title": "Vulnerable Products",
+				"text": "This vulnerability affects the following Cisco products if they are running a vulnerable release of Cisco IOS XR Software, regardless of device configuration:\n\n8000 Series Routers\nNetwork Convergence System (NCS) 540 Series Routers that are running NCS540L images\nNCS 1010\nNCS 1014\nNCS 5700 Series Fixed-Port Routers that are running NCS5700 images\n\nFor information about which Cisco software releases are vulnerable, see the Fixed Software [\"#fs\"] section of this advisory."
+			},
+			{
+				"type": "General",
+				"ordinal": 3,
+				"title": "Products Confirmed Not Vulnerable",
+				"text": "Only products listed in the Vulnerable Products [\"#vp\"] section of this advisory are known to be affected by these vulnerabilities.\n\nCisco has confirmed that this vulnerability does not affect the following Cisco products if they are running Cisco IOS XR Software:\n\nASR 9000 Series Routers\nIOS XRd vRouter\nIOS XRv 9000 Routers\nNCS 540 Series Routers NCS540-ACC-SYS and NCS 540-24Z8Q2C-SYS\nNCS 5500 Series Routers\nNCS 5700 Series Fixed-Port Routers NCS-57C3-MOD-S and NCS-57C3-MOD-SE-S\n\nCisco has also confirmed that these vulnerabilities do not affect the following Cisco products:\n\nIOS Software\nIOS XE Software\nNX-OS Software"
+			},
+			{
+				"type": "General",
+				"ordinal": 4,
+				"title": "Workarounds",
+				"text": "There are no workarounds that address this vulnerability."
+			},
+			{
+				"type": "General",
+				"ordinal": 5,
+				"title": "Fixed Software",
+				"text": "Cisco has released free software updates [\"https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html#ssu\"] that address the vulnerability described in this advisory. Customers with service contracts that entitle them to regular software updates should obtain security fixes through their usual update channels.\n\nCustomers may only install and expect support for software versions and feature sets for which they have purchased a license. By installing, downloading, accessing, or otherwise using such software upgrades, customers agree to follow the terms of the Cisco software license:\nhttps://www.cisco.com/c/en/us/products/end-user-license-agreement.html [\"https://www.cisco.com/c/en/us/products/end-user-license-agreement.html\"]\n\nAdditionally, customers may only download software for which they have a valid license, procured from Cisco directly, or through a Cisco authorized reseller or partner. In most cases this will be a maintenance upgrade to software that was previously purchased. Free security software updates do not entitle customers to a new software license, additional software feature sets, or major revision upgrades.\n\nThe Cisco Support and Downloads page [\"https://www.cisco.com/c/en/us/support/index.html\"] on Cisco.com provides information about licensing and downloads. This page can also display customer device support coverage for customers who use the My Devices tool.\n\nWhen considering software upgrades [\"https://sec.cloudapps.cisco.com/security/center/resources/security_vulnerability_policy.html#fixes\"], customers are advised to regularly consult the advisories for Cisco products, which are available from the Cisco Security Advisories page [\"https://www.cisco.com/go/psirt\"], to determine exposure and a complete upgrade solution.\n\nIn all cases, customers should ensure that the devices to be upgraded contain sufficient memory and confirm that current hardware and software configurations will continue to be supported properly by the new release. If the information is not clear, customers are advised to contact the Cisco Technical Assistance Center (TAC) or their contracted maintenance providers.\n  Customers Without Service Contracts\nCustomers who purchase directly from Cisco but do not hold a Cisco service contract and customers who make purchases through third-party vendors but are unsuccessful in obtaining fixed software through their point of sale should obtain upgrades by contacting the Cisco TAC: https://www.cisco.com/c/en/us/support/web/tsd-cisco-worldwide-contacts.html [\"https://www.cisco.com/c/en/us/support/web/tsd-cisco-worldwide-contacts.html\"]\n\nCustomers should have the product serial number available and be prepared to provide the URL of this advisory as evidence of entitlement to a free upgrade.\n      Fixed Releases\nIn the following table, the left column lists Cisco software releases or trains. The right column indicates whether a release (train) is affected by the vulnerability that is described in this advisory and the first release that includes the fix for this vulnerability.\n          Cisco IOS XR Software Release  First Fixed Release          7.10 and earlier  Migrate to a fixed release.      7.11  7.11.21      24.2  24.2.2      24.3  24.3.2      24.4  24.4.1\nNote: Cisco will not release SMUs to address this vulnerability.\n\nThe Cisco Product Security Incident Response Team (PSIRT) validates only the affected and fixed release information that is documented in this advisory."
+			},
+			{
+				"type": "General",
+				"ordinal": 6,
+				"title": "Vulnerability Policy",
+				"text": "To learn about Cisco security vulnerability disclosure policies and publications, see the Security Vulnerability Policy [\"http://www.cisco.com/web/about/security/psirt/security_vulnerability_policy.html\"]. This document also contains instructions for obtaining fixed software and receiving security vulnerability information from Cisco."
+			},
+			{
+				"type": "General",
+				"ordinal": 7,
+				"title": "Exploitation and Public Announcements",
+				"text": "The Cisco PSIRT is not aware of any public announcements or malicious use of the vulnerability that is described in this advisory."
+			},
+			{
+				"type": "General",
+				"ordinal": 8,
+				"title": "Source",
+				"text": "This vulnerability was found during internal security testing."
+			},
+			{
+				"type": "Legal Disclaimer",
+				"ordinal": 9,
+				"title": "Legal Disclaimer",
+				"text": "THIS DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS AND DOES NOT IMPLY ANY KIND OF GUARANTEE OR WARRANTY, INCLUDING THE WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR USE. YOUR USE OF THE INFORMATION ON THE DOCUMENT OR MATERIALS LINKED FROM THE DOCUMENT IS AT YOUR OWN RISK. CISCO RESERVES THE RIGHT TO CHANGE OR UPDATE THIS DOCUMENT AT ANY TIME.\n\nA standalone copy or paraphrase of the text of this document that omits the distribution URL is an uncontrolled copy and may lack important information or contain factual errors. The information in this document is intended for end users of Cisco products."
+			}
+		]
+	},
+	"document_references": {
+		"reference": [
+			{
+				"type": "Self",
+				"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx",
+				"description": {
+					"text": "Cisco IOS XR Software Image Verification Bypass Vulnerability"
+				}
+			},
+			{
+				"type": "",
+				"url": "https://sec.cloudapps.cisco.com/security/center/viewErp.x?alertId=ERP-75548",
+				"description": {
+					"text": "Cisco Event Response: March 2025 Semiannual Cisco IOS XR Software Security Advisory Bundled Publication"
+				}
+			}
+		]
+	},
+	"product_tree": {
+		"branch": [
+			{
+				"type": "Vendor",
+				"name": "Cisco",
+				"branch": [
+					{
+						"type": "Product Name",
+						"name": "Cisco IOS XR Software",
+						"full_product_name": {
+							"product_id": "CVRFPID-5834",
+							"text": "Cisco IOS XR Software "
+						}
+					}
+				]
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"ordinal": 1,
+			"title": "Cisco IOS XR Software Image Verification Bypass Vulnerability",
+			"id": "CSCwk67262",
+			"notes": {
+				"note": [
+					{
+						"type": "Other",
+						"ordinal": 1,
+						"title": "Cisco Bug IDs",
+						"text": "CSCwk67262"
+					},
+					{
+						"type": "Other",
+						"ordinal": 2,
+						"title": "Affected Product Comprehensiveness",
+						"text": "Complete."
+					}
+				]
+			},
+			"cve": "CVE-2025-20177",
+			"product_statuses": {
+				"status": [
+					{
+						"type": "Known Affected",
+						"product_id": [
+							"CVRFPID-5834"
+						]
+					}
+				]
+			},
+			"cvss_score_sets": {
+				"score_set_v3": [
+					{
+						"base_score_v3": "6.7",
+						"vector_v3": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H"
+					}
+				]
+			},
+			"remediations": {
+				"remediation": [
+					{
+						"type": "Workaround",
+						"description": "There are no workarounds that address this vulnerability."
+					}
+				]
+			},
+			"references": {
+				"reference": [
+					{
+						"type": "Self",
+						"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx",
+						"description": {
+							"text": "Cisco IOS XR Software Image Verification Bypass Vulnerability"
+						}
+					}
+				]
+			}
+		}
+	]
+}
