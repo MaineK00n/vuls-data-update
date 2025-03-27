@@ -123,10 +123,10 @@ type ProductTree struct {
 		ProductIDs []ProductID    `json:"product_ids"`
 		Summary    string         `json:"summary,omitempty"`
 	} `json:"product_groups,omitempty"`
-	Relationships []RelationShip `json:"relationships,omitempty"`
+	Relationships []Relationship `json:"relationships,omitempty"`
 }
 
-type RelationShip struct {
+type Relationship struct {
 	Category                  string          `json:"category"` // enum: default_component_of, external_component_of, installed_on, installed_with, optional_component_of
 	FullProductName           FullProductName `json:"full_product_name"`
 	ProductReference          ProductID       `json:"product_reference"`
