@@ -210,7 +210,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var p releasePage
@@ -234,7 +234,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 
 		var p releasePage
@@ -282,7 +282,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var p advisoryPage
@@ -306,7 +306,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 
 		var p advisoryPage
@@ -483,7 +483,7 @@ func findBuildID(client *utilhttp.Client, url, nvr string) (int, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return 0, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return 0, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	bs, err = io.ReadAll(resp.Body)
@@ -521,7 +521,7 @@ func listArchives(client *utilhttp.Client, url string, buildID int) ([]archive, 
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	bs, err = io.ReadAll(resp.Body)
@@ -559,7 +559,7 @@ func listRPMs(client *utilhttp.Client, url string, buildID, imageID *int) ([]Pac
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	bs, err = io.ReadAll(resp.Body)
@@ -584,7 +584,7 @@ func (opts options) bugzilla(client *utilhttp.Client, url string) (*Bugzilla, er
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var b bugzilla

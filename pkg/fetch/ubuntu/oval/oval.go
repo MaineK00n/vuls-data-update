@@ -106,7 +106,7 @@ func Fetch(opts ...Option) error {
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+				return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
 			var root cveroot
@@ -192,7 +192,7 @@ func Fetch(opts ...Option) error {
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+				return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
 			var root pkgroot
@@ -273,7 +273,7 @@ func Fetch(opts ...Option) error {
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+				return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
 			var root usnroot
@@ -350,7 +350,7 @@ func (opts options) walkIndexOf() (ovals, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return ovals{}, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return ovals{}, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	d, err := goquery.NewDocumentFromReader(resp.Body)

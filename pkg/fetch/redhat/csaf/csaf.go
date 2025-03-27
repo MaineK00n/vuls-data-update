@@ -143,7 +143,7 @@ func (o options) fetchArchiveDate(client *utilhttp.Client) (time.Time, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return time.Time{}, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return time.Time{}, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	bs, err := io.ReadAll(resp.Body)
@@ -178,7 +178,7 @@ func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	d, err := zstd.NewReader(resp.Body)
@@ -242,7 +242,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	var urls []string
@@ -303,7 +303,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 			return nil
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 	}); err != nil {
 		return errors.Wrap(err, "pipeline get")
@@ -326,7 +326,7 @@ func (o options) fetchDeletions(client *utilhttp.Client, archived time.Time) err
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	r := csv.NewReader(resp.Body)

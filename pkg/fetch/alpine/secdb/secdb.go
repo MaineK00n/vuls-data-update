@@ -100,7 +100,7 @@ func Fetch(opts ...Option) error {
 
 				if resp.StatusCode != http.StatusOK {
 					_, _ = io.Copy(io.Discard, resp.Body)
-					return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+					return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 				}
 
 				var a Advisory
@@ -131,7 +131,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	d, err := goquery.NewDocumentFromReader(resp.Body)
@@ -164,7 +164,7 @@ func (opts options) walkDistroVersion(release string) ([]string, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error request response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	d, err := goquery.NewDocumentFromReader(resp.Body)

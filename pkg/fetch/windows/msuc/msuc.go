@@ -126,7 +126,7 @@ func Fetch(queries []string, opts ...Option) error {
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return errors.Errorf("error request response with status code %d", resp.StatusCode)
+				return errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
 			v, err := parseView(resp.Body, resp.Request.URL.Query().Get("updateid"))
@@ -190,7 +190,7 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error request response with status code %d", resp.StatusCode)
+			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
