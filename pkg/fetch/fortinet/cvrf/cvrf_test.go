@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -30,12 +31,26 @@ func TestFetch(t *testing.T) {
 			args:     []string{"FG-IR-12-001"},
 			hasError: true,
 		},
+		{
+			name:     "text/html",
+			args:     []string{"FG-IR-24-259"},
+			hasError: true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.xml", strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))))
+				switch path.Base(r.URL.Path) {
+				case "FG-IR-24-259":
+					w.Header().Set("Content-Type", "text/html")
+					w.WriteHeader(http.StatusOK)
+					if _, err := w.Write([]byte("<html><body>Too Many Requests</body></html>")); err != nil {
+						t.Errorf("unexpected error: %v", err)
+					}
+				default:
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.xml", strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))))
+				}
 			}))
 			defer ts.Close()
 

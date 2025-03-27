@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime"
 	"net/http"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -110,6 +112,16 @@ func Fetch(args []string, opts ...Option) error {
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
 			return errors.Errorf("error response with status code %d", resp.StatusCode)
+		}
+
+		mediaType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return errors.Wrapf(err, "parse media type %q", resp.Header.Get("Content-Type"))
+		}
+
+		if !slices.Contains([]string{"application/xml", "text/xml"}, mediaType) {
+			bs, _ := io.ReadAll(resp.Body)
+			return errors.Errorf("unexpected media type %q. response body: %q", mediaType, string(bs))
 		}
 
 		var a CVRF
