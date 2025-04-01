@@ -79,7 +79,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch cwe data")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -104,7 +104,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "open file")
 	}
-	defer f.Close()
+	defer f.Close() //nolint:errcheck
 
 	var catalog weaknessCatalog
 	if err := xml.NewDecoder(f).Decode(&catalog); err != nil {

@@ -37,7 +37,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, testdata)
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			urls := make([]string, 0, len(tt.testdata))
 			for _, c := range tt.testdata {

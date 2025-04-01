@@ -96,31 +96,31 @@ func TestFetch(t *testing.T) {
 				case strings.HasSuffix(r.URL.Path, "/mirror.list"):
 					switch {
 					case strings.HasPrefix(r.URL.Path, "/2018.03/"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2018.03/updates/2778354585d0/x86_64", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/2018.03/updates/2778354585d0/x86_64", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/2/core/"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2/core/2.0/x86_64/5454bdaaf3e2fa8d3aac354bd0b9f21079f8efbfc8b04fb40db462ed434f9f04", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/2/core/latest/x86_64/5454bdaaf3e2fa8d3aac354bd0b9f21079f8efbfc8b04", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/2/extras/emacs"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2/extras/emacs/25.3/x86_64/1254dd71e49d635ee063d8842db13fcde9283d5756b7d365860a6985c1c94358", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/2/extras/emacs/25.3/x86_64/1254dd71e49d635ee063d8842db13fcde9283d5756b7d365860a6985c1c94358", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/2/extras/kernel-5.15"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/2/extras/kernel-5.15/stable/x86_64/3cea6107e9fffdc60f8ca99c7dac421b427d2ea06003cf5eb970344e4c2e18f4", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/2/extras/kernel-5.15/stable/x86_64/3cea6107e9fffdc60f8ca99c7dac421b427d2ea06003cf5eb970344e4c2e18f4", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/al2022"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/al2022/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/al2022/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/al2023/core"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/al2023/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/al2023/core/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					case strings.HasPrefix(r.URL.Path, "/al2023/kernel-livepatch"):
-						if _, err := w.Write([]byte(fmt.Sprintf("http://%s/al2023/kernel-livepatch/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host))); err != nil {
+						if _, err := fmt.Fprintf(w, "http://%s/al2023/kernel-livepatch/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
 					}
@@ -159,7 +159,7 @@ func TestFetch(t *testing.T) {
 					}
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := amazon.Fetch(

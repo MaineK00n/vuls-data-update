@@ -36,7 +36,7 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			u, err := url.JoinPath(ts.URL, tt.testdata)
 			if err != nil {

@@ -39,7 +39,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := freebsd.Fetch(freebsd.WithDataURL(ts.URL), freebsd.WithDir(dir), freebsd.WithRetry(0))

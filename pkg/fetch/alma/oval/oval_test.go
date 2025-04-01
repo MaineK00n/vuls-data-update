@@ -42,7 +42,7 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := oval.Fetch(oval.WithBaseURL(ts.URL), oval.WithDir(dir), oval.WithRetry(0))

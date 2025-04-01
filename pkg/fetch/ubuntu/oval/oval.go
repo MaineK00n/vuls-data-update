@@ -102,7 +102,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch oval")
 			}
-			defer resp.Body.Close()
+			defer resp.Body.Close() //nolint:errcheck
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
@@ -188,7 +188,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch oval")
 			}
-			defer resp.Body.Close()
+			defer resp.Body.Close() //nolint:errcheck
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
@@ -269,7 +269,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch oval")
 			}
-			defer resp.Body.Close()
+			defer resp.Body.Close() //nolint:errcheck
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
@@ -346,7 +346,7 @@ func (opts options) walkIndexOf() (ovals, error) {
 	if err != nil {
 		return ovals{}, errors.Wrap(err, "fetch index of")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

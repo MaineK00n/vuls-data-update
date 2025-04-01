@@ -103,7 +103,7 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			u, err := url.JoinPath(ts.URL, "vulncheck-kev")
 			if err != nil {

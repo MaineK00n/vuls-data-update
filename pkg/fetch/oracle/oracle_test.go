@@ -51,7 +51,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := oracle.Fetch(oracle.WithAdvisoryURL(ts.URL), oracle.WithDir(dir), oracle.WithRetry(0))

@@ -86,7 +86,7 @@ func Extract(args string, opts ...Option) error {
 		if err != nil {
 			return errors.Wrapf(err, "open %s", path)
 		}
-		defer f.Close()
+		defer f.Close() //nolint:errcheck
 
 		r := utiljson.NewJSONReader()
 		var fetched arch.VulnerabilityGroup

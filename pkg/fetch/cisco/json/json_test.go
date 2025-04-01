@@ -57,7 +57,7 @@ func TestFetch(t *testing.T) {
 				case "/oauth2/default/v1/token":
 					if err := r.ParseForm(); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
-						if _, err := w.Write([]byte(fmt.Sprintf(`{"error": %s}`, err))); err != nil {
+						if _, err := fmt.Fprintf(w, `{"error": %s}`, err); err != nil {
 							t.Errorf("unexpected error: %v", err)
 						}
 						return
@@ -65,7 +65,7 @@ func TestFetch(t *testing.T) {
 
 					if id := r.PostFormValue("client_id"); id != "id" {
 						w.WriteHeader(http.StatusBadRequest)
-						if _, err := w.Write([]byte(fmt.Sprintf(`{"errorCode":"invalid_client","errorSummary":"Invalid value for 'client_id' parameter.","errorLink":"invalid_client","errorId":"%s","errorCauses":[]}`, id))); err != nil {
+						if _, err := fmt.Fprintf(w, `{"errorCode":"invalid_client","errorSummary":"Invalid value for 'client_id' parameter.","errorLink":"invalid_client","errorId":"%s","errorCauses":[]}`, id); err != nil {
 							t.Errorf("unexpected error: %v", err)
 						}
 						return
@@ -73,21 +73,21 @@ func TestFetch(t *testing.T) {
 
 					if secret := r.PostFormValue("client_secret"); secret != "secret" {
 						w.WriteHeader(http.StatusUnauthorized)
-						if _, err := w.Write([]byte(`{"error":"invalid_client","error_description":"The client secret supplied for a confidential client is invalid."}`)); err != nil {
+						if _, err := fmt.Fprintf(w, `{"error":"invalid_client","error_description":"The client secret supplied for a confidential client is invalid."}`); err != nil {
 							t.Errorf("unexpected error: %v", err)
 						}
 						return
 					}
 
 					w.WriteHeader(http.StatusOK)
-					if _, err := w.Write([]byte(`{"token_type":"Bearer","expires_in":3600,"access_token":"token","scope":"customscope"}`)); err != nil {
+					if _, err := fmt.Fprintf(w, `{"token_type":"Bearer","expires_in":3600,"access_token":"token","scope":"customscope"}`); err != nil {
 						t.Errorf("unexpected error: %v", err)
 					}
 				case "/security/advisories/v2/all":
 					auth := r.Header.Get("Authorization")
 					if auth == "" {
 						w.WriteHeader(http.StatusForbidden)
-						if _, err := w.Write([]byte("<h1>Authorization Header is either empty or not found in request</h1>")); err != nil {
+						if _, err := fmt.Fprintf(w, "<h1>Authorization Header is either empty or not found in request</h1>"); err != nil {
 							t.Errorf("unexpected error: %v", err)
 						}
 						return
@@ -95,7 +95,7 @@ func TestFetch(t *testing.T) {
 
 					if auth != "Bearer token" {
 						w.WriteHeader(http.StatusForbidden)
-						if _, err := w.Write([]byte("<h1>Token expired</h1>")); err != nil {
+						if _, err := fmt.Fprintf(w, "<h1>Token expired</h1>"); err != nil {
 							t.Errorf("unexpected error: %v", err)
 						}
 						return
@@ -106,7 +106,7 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := json.Fetch(tt.args.id, tt.args.secret, json.WithAccessTokenURL(fmt.Sprintf("%s/oauth2/default/v1/token", ts.URL)), json.WithAPIURL(fmt.Sprintf("%s/security/advisories/v2/all", ts.URL)), json.WithDir(dir), json.WithRetry(0))

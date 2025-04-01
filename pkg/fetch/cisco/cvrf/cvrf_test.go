@@ -59,7 +59,7 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := cvrf.Fetch(tt.args.ids, cvrf.WithDataURL(fmt.Sprintf("%s/security/center/contentxml/CiscoSecurityAdvisory/%%s/cvrf/%%s_cvrf.xml", ts.URL)), cvrf.WithDir(dir), cvrf.WithRetry(1))

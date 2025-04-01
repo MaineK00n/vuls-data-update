@@ -36,7 +36,7 @@ func (j *JSONReader) Read(path, prefix string, v any) error {
 	if err != nil {
 		return errors.Wrapf(err, "open %s", path)
 	}
-	defer f.Close()
+	defer f.Close() //nolint:errcheck
 
 	if err := json.NewDecoder(f).Decode(v); err != nil {
 		return errors.Wrapf(err, "decode %s", path)

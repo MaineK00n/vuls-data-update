@@ -80,7 +80,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch osv data")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -107,7 +107,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return nil, errors.Wrapf(err, "open %s", zf.Name)
 			}
-			defer f.Close()
+			defer f.Close() //nolint:errcheck
 
 			var a OSV
 			if err := json.NewDecoder(f).Decode(&a); err != nil {

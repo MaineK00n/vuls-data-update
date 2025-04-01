@@ -450,7 +450,9 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 
 func (e extractor) cpeNamesFromCpematch(wfn common.WellFormedName, matchCriteriaId string) ([]string, error) {
 	h := fnv.New32()
-	h.Write([]byte(fmt.Sprintf("%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct))))
+	if _, err := fmt.Fprintf(h, "%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct)); err != nil {
+		return nil, errors.Wrap(err, "print vendor and product")
+	}
 	path := filepath.Join(e.cpematchDir, fmt.Sprintf("%x", h.Sum32()), fmt.Sprintf("%s.json", matchCriteriaId))
 
 	var cpeMatch cpematch.MatchCriteria

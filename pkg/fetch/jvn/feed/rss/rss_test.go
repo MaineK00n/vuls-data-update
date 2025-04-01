@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 					if err != nil {
 						http.NotFound(w, r)
 					}
-					defer f.Close()
+					defer f.Close() //nolint:errcheck
 
 					bs, err := io.ReadAll(f)
 					if err != nil {
@@ -59,7 +59,7 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, testdata)
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			u, err := url.JoinPath(ts.URL, tt.testdata)
 			if err != nil {

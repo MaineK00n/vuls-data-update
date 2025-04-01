@@ -107,11 +107,7 @@ func Fetch(queries []string, opts ...Option) error {
 	}
 
 	uidmap := make(map[string]struct{})
-	for {
-		if len(uids) == 0 {
-			break
-		}
-
+	for len(uids) > 0 {
 		log.Printf("[INFO] Search %d Update IDs", len(uids))
 
 		var us []string
@@ -122,7 +118,7 @@ func Fetch(queries []string, opts ...Option) error {
 
 		uidChan := make(chan []string, len(us))
 		if err := client.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-			defer resp.Body.Close()
+			defer resp.Body.Close() //nolint:errcheck
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
@@ -186,7 +182,7 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 
 	uidChan := make(chan []string, len(reqs))
 	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)

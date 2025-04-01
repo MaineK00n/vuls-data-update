@@ -88,7 +88,7 @@ func TestFetch(t *testing.T) {
 					if err != nil {
 						http.Error(w, fmt.Sprintf("Internal Server Error. err: %s", err), http.StatusInternalServerError)
 					}
-					defer f.Close()
+					defer f.Close() //nolint:errcheck
 
 					var base struct {
 						ResultsPerPage  int    `json:"resultsPerPage"`
@@ -150,7 +150,7 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.fixturePrefix, fmt.Sprintf("%s-%s.json", startIndex, resultsPerPage)))
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			u, err := url.JoinPath(ts.URL, "/rest/json/cves/2.0")
 			if err != nil {
