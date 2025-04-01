@@ -154,10 +154,16 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 			continue
 		}
 
+		bs, err := io.ReadAll(tr)
+		if err != nil {
+			return false, errors.Wrap(err, "read all tar reader")
+		}
+
 		var adv CVRF
-		if err := xml.NewDecoder(tr).Decode(&adv); err != nil {
-			if errors.Is(err, io.ErrUnexpectedEOF) {
-				return true, errors.Wrap(err, "read all response body")
+		if err := xml.Unmarshal(bs, &adv); err != nil {
+			var syntaxErr *xml.SyntaxError
+			if errors.As(err, &syntaxErr) {
+				return true, errors.Wrapf(syntaxErr, "decode xml. file: %q, body: %q", hdr.Name, string(bs))
 			}
 			return false, errors.Wrap(err, "decode xml")
 		}

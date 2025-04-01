@@ -23,7 +23,12 @@ func TestFetch(t *testing.T) {
 	}{
 		{
 			name:     "happy path",
-			testdata: "testdata/fixtures/cvrf-cve.tar.bz2",
+			testdata: "testdata/fixtures/happy/cvrf-cve.tar.bz2",
+		},
+		{
+			name:     "unexpected EOF",
+			testdata: "testdata/fixtures/unexpected-eof/cvrf-cve.tar.bz2",
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
