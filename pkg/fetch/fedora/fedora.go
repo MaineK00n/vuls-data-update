@@ -206,7 +206,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Release, 1, 1))
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -230,7 +230,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 
 	respChan := make(chan []release, len(urls))
 	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -278,7 +278,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Advisory, release, 1))
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -302,7 +302,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 
 	respChan := make(chan []Advisory, len(urls))
 	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -479,7 +479,7 @@ func findBuildID(client *utilhttp.Client, url, nvr string) (int, error) {
 	if err != nil {
 		return 0, errors.Wrapf(err, "fetch %#v", req)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -517,7 +517,7 @@ func listArchives(client *utilhttp.Client, url string, buildID int) ([]archive, 
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %#v", req)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -555,7 +555,7 @@ func listRPMs(client *utilhttp.Client, url string, buildID, imageID *int) ([]Pac
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %#v", req)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -580,7 +580,7 @@ func (opts options) bugzilla(client *utilhttp.Client, url string) (*Bugzilla, er
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", url)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

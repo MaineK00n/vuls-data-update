@@ -111,7 +111,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Extra)
 			}
-			defer resp.Body.Close()
+			defer resp.Body.Close() //nolint:errcheck
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)
@@ -212,7 +212,7 @@ func (opts options) fetch(mirror string) ([]Update, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch mirror list")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -262,7 +262,7 @@ func (opts options) fetchUpdateInfoPath(repomdURL string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "fetch repomd")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -292,7 +292,7 @@ func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch updateinfo")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -303,7 +303,7 @@ func (opts options) fetchUpdateInfo(updateinfoURL string) ([]Update, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "open updateinfo as gzip")
 	}
-	defer gr.Close()
+	defer gr.Close() //nolint:errcheck
 
 	var us updates
 	if err := xml.NewDecoder(gr).Decode(&us); err != nil {

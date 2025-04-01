@@ -55,7 +55,7 @@ func TestFetch(t *testing.T) {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 						return
 					}
-					defer f.Close()
+					defer f.Close() //nolint:errcheck
 
 					var p releasePage
 					if err := json.NewDecoder(f).Decode(&p); err != nil {
@@ -119,7 +119,7 @@ func TestFetch(t *testing.T) {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 						return
 					}
-					defer f.Close()
+					defer f.Close() //nolint:errcheck
 
 					var us []any
 					if err := json.NewDecoder(f).Decode(&us); err != nil {
@@ -262,7 +262,7 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := fedora.Fetch([]string{"__current__", "__pending__", "__archived__"},

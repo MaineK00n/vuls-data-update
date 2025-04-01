@@ -162,7 +162,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch salsa repository")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -173,7 +173,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "create gzip reader")
 	}
-	defer gr.Close()
+	defer gr.Close() //nolint:errcheck
 
 	tr := tar.NewReader(gr)
 	for {
@@ -852,7 +852,7 @@ func fetchRelease(c *utilhttp.Client, releaseURL string) ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "get %s", releaseURL)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("[WARN] fetch %s error: %s", releaseURL, errors.Errorf("error response with status code %d", resp.StatusCode))
@@ -897,7 +897,7 @@ func fetchSource(c *utilhttp.Client, sourceURL string) (map[string]textproto.MIM
 					if err != nil {
 						return nil, errors.Wrap(err, "create gzip reader")
 					}
-					defer r.Close()
+					defer r.Close() //nolint:errcheck
 
 					sources, err := parseSource(r)
 					if err != nil {
@@ -943,7 +943,9 @@ func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
 	buf := new(bytes.Buffer)
 	for s.Scan() {
 		line := s.Text()
-		buf.WriteString(fmt.Sprintf("%s\n", line))
+		if _, err := fmt.Fprintf(buf, "%s\n", line); err != nil {
+			return nil, errors.Wrap(err, "write buffer")
+		}
 		if line != "" {
 			continue
 		}

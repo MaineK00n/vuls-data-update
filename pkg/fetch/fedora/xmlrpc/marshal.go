@@ -14,10 +14,10 @@ import (
 
 func Marshal(method string, args ...interface{}) ([]byte, error) {
 	buf := new(bytes.Buffer)
-	if _, err := buf.WriteString("<?xml version='1.0' encoding='UTF-8'?>"); err != nil {
+	if _, err := fmt.Fprintf(buf, "<?xml version='1.0' encoding='UTF-8'?>"); err != nil {
 		return nil, errors.Wrap(err, "write string to buffer")
 	}
-	if _, err := buf.WriteString(fmt.Sprintf("<methodCall><methodName>%s</methodName>", method)); err != nil {
+	if _, err := fmt.Fprintf(buf, "<methodCall><methodName>%s</methodName>", method); err != nil {
 		return nil, errors.Wrap(err, "write string to buffer")
 	}
 
@@ -25,11 +25,11 @@ func Marshal(method string, args ...interface{}) ([]byte, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "marshal args: %v", args)
 	}
-	if _, err := buf.Write(params); err != nil {
-		return nil, errors.Wrap(err, "write bytes to buffer")
+	if _, err := fmt.Fprintf(buf, "%s", params); err != nil {
+		return nil, errors.Wrap(err, "write string to buffer")
 	}
 
-	if _, err := buf.WriteString("</methodCall>"); err != nil {
+	if _, err := fmt.Fprintf(buf, "</methodCall>"); err != nil {
 		return nil, errors.Wrap(err, "write string to buffer")
 	}
 
@@ -38,11 +38,11 @@ func Marshal(method string, args ...interface{}) ([]byte, error) {
 
 func marshalArgs(args ...interface{}) ([]byte, error) {
 	buf := new(bytes.Buffer)
-	if _, err := buf.WriteString("<params>"); err != nil {
+	if _, err := fmt.Fprintf(buf, "<params>"); err != nil {
 		return nil, errors.Wrap(err, "write string to buffer")
 	}
 	for _, arg := range args {
-		if _, err := buf.WriteString("<param>"); err != nil {
+		if _, err := fmt.Fprintf(buf, "<param>"); err != nil {
 			return nil, errors.Wrap(err, "write string to buffer")
 		}
 
@@ -50,16 +50,16 @@ func marshalArgs(args ...interface{}) ([]byte, error) {
 		if err != nil {
 			return nil, errors.Wrapf(err, "marshal value: %v", arg)
 		}
-		if _, err := buf.Write(value); err != nil {
+		if _, err := fmt.Fprintf(buf, "%s", value); err != nil {
 			return nil, errors.Wrap(err, "write bytes to buffer")
 		}
 
-		if _, err := buf.WriteString("</param>"); err != nil {
+		if _, err := fmt.Fprintf(buf, "</param>"); err != nil {
 			return nil, errors.Wrap(err, "write string to buffer")
 		}
 	}
 
-	if _, err := buf.WriteString("</params>"); err != nil {
+	if _, err := fmt.Fprintf(buf, "</params>"); err != nil {
 		return nil, errors.Wrap(err, "write string to buffer")
 	}
 
@@ -103,7 +103,7 @@ func marshalData(value interface{}) ([]byte, error) {
 			return []byte(fmt.Sprintf("<base64>%s</base64>", base64.StdEncoding.EncodeToString(value))), nil
 		default:
 			buf := new(bytes.Buffer)
-			if _, err := buf.WriteString("<array><data>"); err != nil {
+			if _, err := fmt.Fprintf(buf, "<array><data>"); err != nil {
 				return nil, errors.Wrap(err, "write string to buffer")
 			}
 			for i := 0; i < valueOf.Len(); i++ {
@@ -111,11 +111,11 @@ func marshalData(value interface{}) ([]byte, error) {
 				if err != nil {
 					return nil, errors.Wrapf(err, "marshal value: %v", valueOf.Index(i).Interface())
 				}
-				if _, err := buf.Write(bs); err != nil {
+				if _, err := fmt.Fprintf(buf, "%s", bs); err != nil {
 					return nil, errors.Wrap(err, "write bytes to buffer")
 				}
 			}
-			if _, err := buf.WriteString("</data></array>"); err != nil {
+			if _, err := fmt.Fprintf(buf, "</data></array>"); err != nil {
 				return nil, errors.Wrap(err, "write string to buffer")
 			}
 			return buf.Bytes(), nil
@@ -126,7 +126,7 @@ func marshalData(value interface{}) ([]byte, error) {
 			return []byte(fmt.Sprintf("<dateTime.iso8601>%s</dateTime.iso8601>", value.Format(time.RFC3339))), nil
 		default:
 			buf := new(bytes.Buffer)
-			if _, err := buf.WriteString("<struct>"); err != nil {
+			if _, err := fmt.Fprintf(buf, "<struct>"); err != nil {
 				return nil, errors.Wrap(err, "write string to buffer")
 			}
 
@@ -155,11 +155,11 @@ func marshalData(value interface{}) ([]byte, error) {
 					return nil, errors.Wrapf(err, "marshal value: %v", field.Interface())
 				}
 
-				if _, err := buf.WriteString(fmt.Sprintf("<member><name>%s</name>%s</member>", name, bs)); err != nil {
+				if _, err := fmt.Fprintf(buf, "<member><name>%s</name>%s</member>", name, bs); err != nil {
 					return nil, errors.Wrap(err, "write string to buffer")
 				}
 			}
-			if _, err := buf.WriteString("</struct>"); err != nil {
+			if _, err := fmt.Fprintf(buf, "</struct>"); err != nil {
 				return nil, errors.Wrap(err, "write string to buffer")
 			}
 			return buf.Bytes(), nil

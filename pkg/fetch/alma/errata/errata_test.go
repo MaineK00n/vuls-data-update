@@ -49,7 +49,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := errata.Fetch(errata.WithURLs(map[string]string{tt.version: ts.URL}), errata.WithDir(dir), errata.WithRetry(0))

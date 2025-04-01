@@ -118,7 +118,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -155,7 +155,7 @@ func Fetch(opts ...Option) error {
 		if err != nil {
 			return errors.Wrap(err, "open oval as gzip")
 		}
-		defer r.Close()
+		defer r.Close() //nolint:errcheck
 
 		var root root
 		if err := xml.NewDecoder(r).Decode(&root); err != nil {
@@ -199,7 +199,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -217,13 +217,13 @@ func (opts options) walkIndexOf() ([]string, error) {
 		if !strings.HasSuffix(txt, ".xml.gz") {
 			return
 		}
-		if !(strings.HasPrefix(txt, "opensuse") ||
-			strings.HasPrefix(txt, "opensuse.leap") ||
-			strings.HasPrefix(txt, "opensuse.leap.micro") ||
-			strings.HasPrefix(txt, "opensuse.tumbleweed") ||
-			strings.HasPrefix(txt, "suse.linux.enterprise.desktop") ||
-			strings.HasPrefix(txt, "suse.linux.enterprise.server") ||
-			strings.HasPrefix(txt, "suse.linux.enterprise.micro")) {
+		if !strings.HasPrefix(txt, "opensuse") &&
+			!strings.HasPrefix(txt, "opensuse.leap") &&
+			!strings.HasPrefix(txt, "opensuse.leap.micro") &&
+			!strings.HasPrefix(txt, "opensuse.tumbleweed") &&
+			!strings.HasPrefix(txt, "suse.linux.enterprise.desktop") &&
+			!strings.HasPrefix(txt, "suse.linux.enterprise.server") &&
+			!strings.HasPrefix(txt, "suse.linux.enterprise.micro") {
 			return
 		}
 

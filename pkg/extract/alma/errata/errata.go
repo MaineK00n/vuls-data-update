@@ -103,7 +103,7 @@ func Extract(args string, opts ...Option) error {
 			if err != nil {
 				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
 			}
-			defer f.Close()
+			defer f.Close() //nolint:errcheck
 
 			var base dataTypes.Data
 			if err := json.NewDecoder(f).Decode(&base); err != nil {

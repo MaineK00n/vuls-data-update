@@ -24,7 +24,7 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return false, errors.Wrap(err, "read all response body")
 	}
 
-	_ = resp.Body.Close()
+	_ = resp.Body.Close() //nolint:errcheck
 	resp.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	return false, nil

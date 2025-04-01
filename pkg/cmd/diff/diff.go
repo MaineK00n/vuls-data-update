@@ -84,7 +84,7 @@ func run(cmd *cobra.Command, datasource, rootID, old, new string, opts *option) 
 		if err != nil {
 			return errors.Wrapf(err, "open %s", filename)
 		}
-		defer f.Close()
+		defer f.Close() //nolint:errcheck
 		writer = f
 	}
 
@@ -106,12 +106,18 @@ func output(whole diff.WholeDiff, format string, writer io.Writer) error {
 		}
 		return nil
 	case "md":
-		fmt.Fprintf(writer, "# Root ID: %s\n\n", whole.RootID)
+		if _, err := fmt.Fprintf(writer, "# Root ID: %s\n\n", whole.RootID); err != nil {
+			return errors.Wrap(err, "print root ID")
+		}
 		for n, e := range whole.Extracted {
-			formatRepo("extracted", n, e, writer)
+			if err := formatRepo("extracted", n, e, writer); err != nil {
+				return errors.Wrap(err, "format extracted repo")
+			}
 		}
 		for n, r := range whole.Raw {
-			formatRepo("raw", n, r, writer)
+			if err := formatRepo("raw", n, r, writer); err != nil {
+				return errors.Wrap(err, "format raw repo")
+			}
 		}
 		return nil
 	default:
@@ -119,37 +125,68 @@ func output(whole diff.WholeDiff, format string, writer io.Writer) error {
 	}
 }
 
-func formatRepo(kind, name string, r diff.Repository, writer io.Writer) {
-	fmt.Fprintf(writer, "## %s\n\n", name)
-	fmt.Fprintf(writer, "- kind: %s\n", kind)
-	fmt.Fprintf(writer, "- old commit: %s\n", r.Commits.Old)
-	fmt.Fprintf(writer, "- new commit: %s\n", r.Commits.New)
-	fmt.Fprintf(writer, "- compare URL: %s\n", r.Commits.CompareURL)
-	fmt.Fprintf(writer, "\n")
+func formatRepo(kind, name string, r diff.Repository, writer io.Writer) error {
+	if _, err := fmt.Fprintf(writer, "## %s\n\n", name); err != nil {
+		return errors.Wrap(err, "print repo name")
+	}
+	if _, err := fmt.Fprintf(writer, "- kind: %s\n", kind); err != nil {
+		return errors.Wrap(err, "print repo kind")
+	}
+	if _, err := fmt.Fprintf(writer, "- old commit: %s\n", r.Commits.Old); err != nil {
+		return errors.Wrap(err, "print old commit")
+	}
+	if _, err := fmt.Fprintf(writer, "- new commit: %s\n", r.Commits.New); err != nil {
+		return errors.Wrap(err, "print new commit")
+	}
+	if _, err := fmt.Fprintf(writer, "- compare URL: %s\n", r.Commits.CompareURL); err != nil {
+		return errors.Wrap(err, "print compare URL")
+	}
+	if _, err := fmt.Fprintf(writer, "\n"); err != nil {
+		return errors.Wrap(err, "print newline")
+	}
 	for _, c := range r.Files {
-		fmt.Fprintf(writer, "### %s\n\n", func() string {
+		if _, err := fmt.Fprintf(writer, "### %s\n\n", func() string {
 			if c.Path.New != "" {
 				return c.Path.New
 			}
 			return c.Path.Old
-		}())
-		fmt.Fprintf(writer, "- old commit: %s\n", func() string {
+		}()); err != nil {
+			return errors.Wrap(err, "print path")
+		}
+		if _, err := fmt.Fprintf(writer, "- old commit: %s\n", func() string {
 			if c.Path.Old != "" {
 				return r.Commits.Old
 			}
 			return ""
-		}())
-		fmt.Fprintf(writer, "- new commit: %s\n", func() string {
+		}()); err != nil {
+			return errors.Wrap(err, "print old commit")
+		}
+		if _, err := fmt.Fprintf(writer, "- new commit: %s\n", func() string {
 			if c.Path.New != "" {
 				return r.Commits.New
 			}
 			return ""
-		}())
-		fmt.Fprintf(writer, "- old URL: %s\n", c.URL.Old)
-		fmt.Fprintf(writer, "- new URL: %s\n\n", c.URL.New)
-		fmt.Fprintf(writer, "```diff\n")
-		fmt.Fprintf(writer, "%s\n", c.Diff)
-		fmt.Fprintf(writer, "```\n")
-		fmt.Fprintf(writer, "\n")
+		}()); err != nil {
+			return errors.Wrap(err, "print new commit")
+		}
+		if _, err := fmt.Fprintf(writer, "- old URL: %s\n", c.URL.Old); err != nil {
+			return errors.Wrap(err, "print old url")
+		}
+		if _, err := fmt.Fprintf(writer, "- new URL: %s\n\n", c.URL.New); err != nil {
+			return errors.Wrap(err, "print new url")
+		}
+		if _, err := fmt.Fprintf(writer, "```diff\n"); err != nil {
+			return errors.Wrap(err, "print diff header")
+		}
+		if _, err := fmt.Fprintf(writer, "%s\n", c.Diff); err != nil {
+			return errors.Wrap(err, "print diff")
+		}
+		if _, err := fmt.Fprintf(writer, "```\n"); err != nil {
+			return errors.Wrap(err, "print diff footer")
+		}
+		if _, err := fmt.Fprintf(writer, "\n"); err != nil {
+			return errors.Wrap(err, "print newline")
+		}
 	}
+	return nil
 }

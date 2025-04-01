@@ -116,7 +116,7 @@ func Fetch(args []string, opts ...Option) error {
 	}
 
 	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(urls, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -136,7 +136,7 @@ func Fetch(args []string, opts ...Option) error {
 		if err != nil {
 			return errors.Wrap(err, "read csv.gz")
 		}
-		defer gr.Close()
+		defer gr.Close() //nolint:errcheck
 
 		var root EPSS
 		cr := csv.NewReader(gr)

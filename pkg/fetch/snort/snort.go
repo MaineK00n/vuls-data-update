@@ -101,7 +101,7 @@ func (opts options) fetch() ([]Rule, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch file")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -112,7 +112,7 @@ func (opts options) fetch() ([]Rule, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "create gzip reader")
 	}
-	defer gr.Close()
+	defer gr.Close() //nolint:errcheck
 
 	tr := tar.NewReader(gr)
 	for {

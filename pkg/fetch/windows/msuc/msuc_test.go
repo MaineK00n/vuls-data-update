@@ -38,7 +38,7 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close()
+			defer ts.Close() //nolint:errcheck
 
 			dir := t.TempDir()
 			err := msuc.Fetch([]string{"KB5025239"}, msuc.WithMSUCURL(ts.URL), msuc.WithDir(dir), msuc.WithRetry(0))

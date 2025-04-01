@@ -112,7 +112,7 @@ func Fetch(id, secret string, opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch cisco api")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -155,7 +155,7 @@ func fetchAccessToken(client *utilhttp.Client, baseURL, clientID, clientSecret s
 	if err != nil {
 		return "", errors.Wrap(err, "fetch cisco access token")
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

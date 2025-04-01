@@ -116,7 +116,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	if err := client.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -155,7 +155,7 @@ func (o options) fetchIndex(client *utilhttp.Client) ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

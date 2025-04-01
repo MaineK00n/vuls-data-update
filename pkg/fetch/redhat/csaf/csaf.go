@@ -139,7 +139,7 @@ func (o options) fetchArchiveDate(client *utilhttp.Client) (time.Time, error) {
 	if err != nil {
 		return time.Time{}, errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -174,7 +174,7 @@ func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error
 	if err != nil {
 		return errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -185,7 +185,7 @@ func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error
 	if err != nil {
 		return errors.Wrap(err, "new zstd reader")
 	}
-	defer d.Close()
+	defer d.Close() //nolint:errcheck
 
 	tr := tar.NewReader(d)
 	for {
@@ -238,7 +238,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 	if err != nil {
 		return errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -274,7 +274,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 	}
 
 	if err := client.PipelineGet(urls, o.concurrency, o.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 
 		switch resp.StatusCode {
 		case http.StatusOK:
@@ -322,7 +322,7 @@ func (o options) fetchDeletions(client *utilhttp.Client, archived time.Time) err
 	if err != nil {
 		return errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

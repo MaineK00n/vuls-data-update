@@ -140,7 +140,7 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 				if err != nil {
 					return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", ss[0], ss[1], fmt.Sprintf("%s.json", extracted.ID)))
 				}
-				defer f.Close()
+				defer f.Close() //nolint:errcheck
 
 				var base dataTypes.Data
 				if err := json.NewDecoder(f).Decode(&base); err != nil {
@@ -964,7 +964,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name string, ovalCn
 }
 
 func (e extractor) postWalkCriteria(ca criteriaTypes.Criteria) criteriaTypes.Criteria {
-	if !(len(ca.Criterias) == 1 && len(ca.Criterions) == 0) {
+	if len(ca.Criterias) != 1 || len(ca.Criterions) != 0 {
 		return ca
 	}
 	return e.postWalkCriteria(ca.Criterias[0])
