@@ -78,6 +78,9 @@ import (
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/oss-fuzz/osv"
+	paloaltoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
+	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/json"
+	paloaltoList "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/list"
 	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/ghsa"
 	pipGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/glsa"
 	pipOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/osv"
@@ -176,6 +179,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
 		newCmdOracle(),
 		newCmdOSSFuzzOSV(),
+		newCmdPaloAltoList(), newCmdPaloAltoJSON(), newCmdPaloAltoCSAF(),
 		newCmdPerlDB(),
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
@@ -2402,6 +2406,107 @@ func newCmdOSSFuzzOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "oss-fuzz", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdPaloAltoList() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "list"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "paloalto-list",
+		Short: "Fetch Palo Alto List data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch paloalto-list
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := paloaltoList.Fetch(paloaltoList.WithDir(options.dir), paloaltoList.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch paloalto list")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdPaloAltoJSON() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "json"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "paloalto-json [<Palo Alto Networks Security Advisory ID>]",
+		Short: "Fetch Palo Alto JSON data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch paloalto-json CVE-2025-0114 PAN-SA-2025-0007
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := paloaltoJSON.Fetch(args, paloaltoJSON.WithDir(options.dir), paloaltoJSON.WithRetry(options.retry), paloaltoJSON.WithConcurrency(options.concurrency), paloaltoJSON.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch paloalto json")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdPaloAltoCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "csaf"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "paloalto-csaf [<Palo Alto Networks Security Advisory ID>]",
+		Short: "Fetch Palo Alto CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch paloalto-csaf CVE-2025-0114 PAN-SA-2025-0007
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := paloaltoCSAF.Fetch(args, paloaltoCSAF.WithDir(options.dir), paloaltoCSAF.WithRetry(options.retry), paloaltoCSAF.WithConcurrency(options.concurrency), paloaltoCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch paloalto csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }

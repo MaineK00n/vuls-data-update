@@ -1,4 +1,4 @@
-package v5
+package json
 
 type CVE struct {
 	DataType    string      `json:"dataType"`
@@ -76,13 +76,15 @@ type ProviderMetadata struct {
 }
 
 type Description struct {
-	Lang            string `json:"lang"`
-	Value           string `json:"value"`
-	SupportingMedia []struct {
-		Type   string `json:"type"`
-		Base64 *bool  `json:"base64,omitempty"`
-		Value  string `json:"value"`
-	} `json:"supportingMedia,omitempty"`
+	Lang            string      `json:"lang"`
+	Value           string      `json:"value"`
+	SupportingMedia interface{} `json:"supportingMedia,omitempty"` // SupportingMedia|[]SupportingMedia
+}
+
+type SupportingMedia struct {
+	Type   string      `json:"type"`
+	Base64 interface{} `json:"base64,omitempty"` // bool|string
+	Value  string      `json:"value"`
 }
 
 type Product struct {
@@ -332,6 +334,12 @@ type Credits []struct {
 	Lang  string  `json:"lang"`
 	User  *string `json:"user,omitempty"`
 	Value string  `json:"value"`
+}
+
+type Source struct {
+	Advisory  *string  `json:"advisory,omitempty"`
+	Defect    []string `json:"defect,omitempty"`
+	Discovery string   `json:"discovery"`
 }
 
 type TaxonomyMappings []struct {
