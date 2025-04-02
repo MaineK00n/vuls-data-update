@@ -1,0 +1,21 @@
+{
+	"id": "dac8dd15-0000-0000-e929-00001ec70c87",
+	"articleName": "3147461",
+	"articleUrl": "https://support.microsoft.com/kb/3147461",
+	"downloadName": "Security Update",
+	"downloadUrl": "https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB3147461",
+	"impact": "Remote Code Execution",
+	"impactId": 100000005,
+	"ordinal": 1,
+	"platformId": 0,
+	"product": "Windows 10 for 32-bit Systems",
+	"productFamily": "Windows",
+	"productFamilyId": 100000010,
+	"productId": 10729,
+	"rebootRequired": "Yes",
+	"releaseDate": "2002-04-12T07:00:00Z",
+	"releaseNumber": "2002-Apr",
+	"severity": "Critical",
+	"severityId": 100000000,
+	"supercedence": "3140745"
+}

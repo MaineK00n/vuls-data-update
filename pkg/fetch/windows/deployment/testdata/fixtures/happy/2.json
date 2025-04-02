@@ -1,0 +1,27 @@
+{
+	"@odata.context": "https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/$metadata#deployment",
+	"@odata.count": 3,
+	"value": [
+		{
+			"articleName": "3118310",
+			"articleUrl": "https://support.microsoft.com/kb/3118310",
+			"downloadName": "Security Update",
+			"downloadUrl": "https://www.microsoft.com/downloads/details.aspx?familyid=9946008d-a9a6-49a3-9dda-ac2f722a7da0",
+			"id": "da58f9dc-0000-0000-1a29-000018b11f03",
+			"impact": "Remote Code Execution",
+			"impactId": 100000005,
+			"ordinal": 1,
+			"platformId": 0,
+			"product": "Microsoft Office 2010 Service Pack 2 (64-bit editions)",
+			"productFamily": "Microsoft Office",
+			"productFamilyId": 100000007,
+			"productId": 10522,
+			"rebootRequired": "Maybe",
+			"releaseDate": "2017-05-09T07:00:00Z",
+			"releaseNumber": "2017-May",
+			"severity": "Important",
+			"severityId": 100000001,
+			"supercedence": "3114400"
+		}
+	]
+}
