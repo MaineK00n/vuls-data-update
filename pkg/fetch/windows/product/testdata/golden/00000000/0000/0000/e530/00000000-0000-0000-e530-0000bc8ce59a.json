@@ -1,0 +1,42 @@
+{
+	"id": "00000000-0000-0000-e530-0000bc8ce59a",
+	"architectureId": 0,
+	"baseProductName": "Azure Playwright",
+	"baseProductVersion": "1.0",
+	"baseScore": "8.1",
+	"cpe": "cpe:2.3:a:microsoft:azure_playwright:*:*:*:*:*:*:*:*",
+	"customerActionRequired": false,
+	"cveNumber": "CVE-2025-26683",
+	"cweDetailsList": [
+		{
+			"keys": [
+				"cwe",
+				"cweUrl"
+			],
+			"values": [
+				"CWE-285: Improper Authorization",
+				"https://cwe.mitre.org/data/definitions/285.html"
+			]
+		}
+	],
+	"cweList": [
+		"CWE-285: Improper Authorization"
+	],
+	"impact": "Elevation of Privilege",
+	"impactId": 100000002,
+	"initialReleaseDate": "2025-03-31T07:00:00Z",
+	"isMariner": false,
+	"issuingCna": "Microsoft",
+	"kbArticles": [],
+	"platformId": 0,
+	"product": "Azure Playwright",
+	"productFamily": "Azure",
+	"productFamilyId": 100000005,
+	"productId": 12517,
+	"releaseDate": "2025-03-31T07:00:00Z",
+	"releaseNumber": "2025-Mar",
+	"severity": "Critical",
+	"severityId": 100000000,
+	"temporalScore": "7.1",
+	"vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C"
+}
