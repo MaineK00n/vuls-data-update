@@ -131,7 +131,7 @@ func NewCmdFetch() *cobra.Command {
 		Use:   "fetch <data source>",
 		Short: "Fetch data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch debian-security-tracker
+			$ vuls-data-update fetch debian-security-tracker-salsa
 			$ vuls-data-update fetch cargo-db
 			$ vuls-data-update fetch nvd-feed-cve
 		`),

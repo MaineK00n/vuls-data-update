@@ -2,26 +2,25 @@
 
 ## Usage
 ```console
-$ go run cmd/vuls-data-update/main.go -h
-Fetch and Build data source
+$ go install github.com/MaineK00n/vuls-data-update/cmd/vuls-data-update@nightly
+
+$ vuls-data-update --help
+Fetch and Extract data source, Operate vuls-data-* dotgit
 
 Usage:
   vuls-data-update [command]
 
 Examples:
-$ vuls-data-update fetch os
-$ vuls-data-update fetch os debian
-$ vuls-data-update fetch library
-$ vuls-data-update fetch library cargo
-$ vuls-data-update fetch other
-$ vuls-data-update fetch other nvd
-$ vuls-data-update build
-$ vuls-data-update build nvd ubuntu
+$ vuls-data-update fetch debian-security-tracker-salsa
+$ vuls-data-update extract debian-security-tracker-salsa vuls-data-raw-debian-security-tracker-salsa
+$ vuls-data-update dotgit pull ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-salsa
 
 
 Available Commands:
-  build       Build data source
   completion  Generate the autocompletion script for the specified shell
+  diff        Show diff information
+  dotgit      Operate vuls-data-* dotgit
+  extract     Extract data source
   fetch       Fetch data source
   help        Help about any command
 

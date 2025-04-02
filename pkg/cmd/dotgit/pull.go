@@ -1,0 +1,42 @@
+package dotgit
+
+import (
+	"path/filepath"
+
+	"github.com/MakeNowJust/heredoc"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/pull"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
+)
+
+func newCmdPull() *cobra.Command {
+	options := &struct {
+		dir     string
+		restore bool
+	}{
+		dir:     filepath.Join(util.CacheDir(), "dotgit"),
+		restore: false,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "pull <repository>",
+		Short: "Pull vuls-data-* dotgit from repository",
+		Example: heredoc.Doc(`
+			$ vuls-data-update dotgit pull ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := pull.Pull(args[0], pull.WithDir(options.dir), pull.WithRestore(options.restore)); err != nil {
+				return errors.Wrap(err, "failed to dotgit pull")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "pull repository dotgit under the specified directory")
+	cmd.Flags().BoolVarP(&options.restore, "restore", "", options.restore, "do restore")
+
+	return cmd
+}
