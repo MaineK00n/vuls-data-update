@@ -1,0 +1,69 @@
+{
+	"notices": [
+		{
+			"cves": [
+				{
+					"id": "CVE-2004-0955",
+					"notices_ids": [
+						"USN-1-1"
+					]
+				}
+			],
+			"cves_ids": [
+				"CVE-2004-0955"
+			],
+			"description": "Several integer overflow vulnerabilities were discovered in the PNG library.\nThese vulnerabilities could be exploited by an attacker by providing a\nspecially crafted PNG image which, when processed by the PNG library, could\nresult in the execution of program code provided by the attacker.\n\nThe PNG library is used by a variety of software packages for different\npurposes, so the exact nature of the exposure will vary depending on the\nsoftware involved.",
+			"id": "USN-1-1",
+			"instructions": "In general, a standard system update will make all the necessary changes.",
+			"is_hidden": false,
+			"published": "2004-10-23T01:17:50",
+			"references": [],
+			"related_notices": [],
+			"release_packages": {
+				"warty": [
+					{
+						"is_source": false,
+						"name": "libpng10-0",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "libpng12-dev",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "libpng12-0",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "libpng10-dev",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					}
+				]
+			},
+			"releases": [
+				{
+					"codename": "warty",
+					"support_tag": "",
+					"version": "4.10"
+				}
+			],
+			"summary": "PNG library vulnerabilities",
+			"title": "PNG library vulnerabilities",
+			"type": "USN"
+		}
+	],
+	"limit": 1,
+	"offset": 0,
+	"total_results": 21
+}
