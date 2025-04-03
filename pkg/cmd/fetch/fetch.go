@@ -109,6 +109,8 @@ import (
 	suseOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
 	swiftGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/ghsa"
 	swiftOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/swift/osv"
+	ubuntuCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/cve"
+	ubuntuNotice "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/notice"
 	ubuntuOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/osv"
 	ubuntuOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/oval"
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
@@ -193,7 +195,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSnort(),
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
-		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
+		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(), newCmdUbuntuCVE(), newCmdUbuntuNotice(),
 		newCmdVulnCheckKEV(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiOSV(),
@@ -3521,6 +3523,80 @@ func newCmdUbuntuVEX() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdUbuntuCVE() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "cve"),
+			retry: 10,
+		},
+		concurrency: 10,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "ubuntu-cve",
+		Short: "Fetch Ubuntu CVE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch ubuntu-cve
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := ubuntuCVE.Fetch(ubuntuCVE.WithDir(options.dir), ubuntuCVE.WithRetry(options.retry), ubuntuCVE.WithConcurrency(options.concurrency), ubuntuCVE.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch ubuntu cve")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdUbuntuNotice() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "notice"),
+			retry: 10,
+		},
+		concurrency: 10,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "ubuntu-notice",
+		Short: "Fetch Ubuntu Notice data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch ubuntu-notice
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := ubuntuNotice.Fetch(ubuntuNotice.WithDir(options.dir), ubuntuNotice.WithRetry(options.retry), ubuntuNotice.WithConcurrency(options.concurrency), ubuntuNotice.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch ubuntu notice")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }

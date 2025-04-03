@@ -1,0 +1,127 @@
+{
+	"notices": [
+		{
+			"cves": [
+				{
+					"id": "CVE-2004-0955",
+					"notices_ids": [
+						"USN-1-1"
+					]
+				}
+			],
+			"cves_ids": [
+				"CVE-2004-0955"
+			],
+			"description": "Several integer overflow vulnerabilities were discovered in the PNG library.\nThese vulnerabilities could be exploited by an attacker by providing a\nspecially crafted PNG image which, when processed by the PNG library, could\nresult in the execution of program code provided by the attacker.\n\nThe PNG library is used by a variety of software packages for different\npurposes, so the exact nature of the exposure will vary depending on the\nsoftware involved.",
+			"id": "USN-1-1",
+			"instructions": "In general, a standard system update will make all the necessary changes.",
+			"is_hidden": false,
+			"published": "2004-10-23T01:17:50",
+			"references": [],
+			"related_notices": [],
+			"release_packages": {
+				"warty": [
+					{
+						"is_source": false,
+						"name": "libpng10-0",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "libpng12-dev",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "libpng12-0",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "libpng10-dev",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					}
+				]
+			},
+			"releases": [
+				{
+					"codename": "warty",
+					"support_tag": "",
+					"version": "4.10"
+				}
+			],
+			"summary": "PNG library vulnerabilities",
+			"title": "PNG library vulnerabilities",
+			"type": "USN"
+		},
+		{
+			"cves": [
+				{
+					"id": "CVE-2004-0889",
+					"notices_ids": [
+						"USN-14-1",
+						"USN-2-1"
+					]
+				}
+			],
+			"cves_ids": [
+				"CVE-2004-0889"
+			],
+			"description": "Chris Evans discovered several integer overflow vulnerabilities in xpdf, a\nviewer for PDF files.  The Common UNIX Printing System (CUPS) also uses the\nsame code to print PDF files.  In either case, these vulnerabilities could\nbe exploited by an attacker by providing a specially crafted PDF file which,\nwhen processed by CUPS or xpdf, could result in abnormal program termination\nor the execution of program code supplied by the attacker.\n\nIn the case of CUPS, this bug could be exploited to gain the privileges of\nthe CUPS print server (by default, user cupsys).\n\nIn the case of xpdf, this bug could be exploited to gain the privileges of\nthe user invoking xpdf.",
+			"id": "USN-2-1",
+			"instructions": "In general, a standard system update will make all the necessary changes.",
+			"is_hidden": false,
+			"published": "2004-10-23T02:11:46",
+			"references": [],
+			"related_notices": [
+				"USN-14-1"
+			],
+			"release_packages": {
+				"warty": [
+					{
+						"is_source": false,
+						"name": "cupsys",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "xpdf-utils",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					},
+					{
+						"is_source": false,
+						"name": "xpdf-reader",
+						"source_link": "",
+						"version": "",
+						"version_link": ""
+					}
+				]
+			},
+			"releases": [
+				{
+					"codename": "warty",
+					"support_tag": "",
+					"version": "4.10"
+				}
+			],
+			"summary": "xpdf vulnerabilities",
+			"title": "xpdf vulnerabilities",
+			"type": "USN"
+		}
+	],
+	"limit": 20,
+	"offset": 0,
+	"total_results": 21
+}
