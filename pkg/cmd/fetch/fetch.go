@@ -118,6 +118,7 @@ import (
 	windowsCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/csaf"
 	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
 	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
+	windowsVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/vulnerability"
 	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
 	wolfiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/osv"
 
@@ -192,7 +193,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
 		newCmdVulnCheckKEV(),
-		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
+		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsVulnerability(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiOSV(),
 	)
 
@@ -3646,6 +3647,33 @@ func newCmdWindowsMSUC() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdWindowsVulnerability() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "vulnerability"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-vulnerability",
+		Short: "Fetch Microsoft Vulnerability data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-vulnerability
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsVulnerability.Fetch(windowsVulnerability.WithDir(options.dir), windowsVulnerability.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch windows vulnerability")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
