@@ -1,0 +1,34 @@
+{
+	"cves": [
+		{
+			"id": "CVE-2004-0889",
+			"notices_ids": [
+				"USN-14-1",
+				"USN-2-1"
+			]
+		}
+	],
+	"cves_ids": [
+		"CVE-2004-0889"
+	],
+	"description": "Chris Evans discovered several integer overflow vulnerabilities in xpdf, a\nviewer for PDF files.  The Common UNIX Printing System (CUPS) also uses the\nsame code to print PDF files.  In either case, these vulnerabilities could\nbe exploited by an attacker by providing a specially crafted PDF file which,\nwhen processed by CUPS or xpdf, could result in abnormal program termination\nor the execution of program code supplied by the attacker.\n\nIn the case of CUPS, this bug could be exploited to gain the privileges of\nthe CUPS print server (by default, user cupsys).\n\nIn the case of xpdf, this bug could be exploited to gain the privileges of\nthe user invoking xpdf.",
+	"id": "USN-2-1",
+	"instructions": "In general, a standard system update will make all the necessary changes.",
+	"is_hidden": false,
+	"published": "2004-10-23T02:11:46",
+	"references": [],
+	"related_notices": [
+		"USN-14-1"
+	],
+	"ReleasePackages": null,
+	"releases": [
+		{
+			"codename": "warty",
+			"support_tag": "",
+			"version": "4.10"
+		}
+	],
+	"summary": "xpdf vulnerabilities",
+	"title": "xpdf vulnerabilities",
+	"type": "USN"
+}
