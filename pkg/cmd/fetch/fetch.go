@@ -56,6 +56,7 @@ import (
 	jvnFeedRSS "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/rss"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
 	linuxOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/linux/osv"
+	mageiaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/mageia/osv"
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
 	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/glsa"
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
@@ -170,6 +171,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdKEV(),
 		newCmdLinuxOSV(),
+		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -1647,6 +1649,33 @@ func newCmdLinuxOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "linux", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMageiaOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mageia", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mageia-osv",
+		Short: "Fetch Mageia Open Source Vulnerabilities Database data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch mageia-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := mageiaOSV.Fetch(mageiaOSV.WithDir(options.dir), mageiaOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch mageia osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
