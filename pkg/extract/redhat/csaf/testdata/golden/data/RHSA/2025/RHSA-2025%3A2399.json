@@ -1,0 +1,546 @@
+{
+	"id": "RHSA-2025:2399",
+	"advisories": [
+		{
+			"content": {
+				"id": "RHSA-2025:2399",
+				"title": "Red Hat Security Advisory: Satellite 6.16.3 Async Update",
+				"description": "Red Hat Satellite is a system management solution that allows organizations\nto configure and maintain their systems without the necessity to provide\npublic Internet access to their servers or other client systems. It\nperforms provisioning and configuration management of predefined standard\noperating environments.\n\nSecurity Fix(es):\n\n* python-jinja2: Jinja has a sandbox breakout through indirect reference to format method (CVE-2024-56326)\n\n* python-django: potential denial-of-service vulnerability in IPv6 validation (CVE-2024-56374)\n\nUsers of Red Hat Satellite are advised to upgrade to these updated\npackages, which fix these bugs.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Moderate"
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/documentation/en-us/red_hat_satellite/6.16/html/updating_red_hat_satellite/index"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/errata/RHSA-2025:2399"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/updates/classification/#moderate"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2333856"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2337996"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30027"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30099"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30256"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30283"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30293"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30294"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30918"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30934"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30936"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30937"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30938"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30939"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30940"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30941"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30942"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30954"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://issues.redhat.com/browse/SAT-30955"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://security.access.redhat.com/data/csaf/v2/advisories/2025/rhsa-2025_2399.json"
+					}
+				],
+				"published": "2025-03-05T14:29:44Z",
+				"modified": "2025-03-15T00:59:34Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-fixed--608a79bb-2e34-1163"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-fixed--bbae5af6-d574-14b7"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-608a79bb-2e34-1163"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-bbae5af6-d574-14b7"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-29c2fe94-cbbe-85ff"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-6f5c40c1-dc0e-2369"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-56326",
+				"title": "jinja2: Jinja has a sandbox breakout through indirect reference to format method",
+				"description": "A flaw was found in the Jinja package. In affected versions of Jinja, an oversight in how the Jinja sandboxed environment detects calls to str.format allows an attacker that controls the content of a template to execute arbitrary Python code. To exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications that execute untrusted templates. Jinja's sandbox does catch calls to str.format and ensures they don't escape the sandbox. However, storing a reference to a malicious string's format method is possible, then passing that to a filter that calls it. No such filters are built into Jinja but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Moderate"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "secalert@redhat.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:H/I:H/A:H",
+							"base_score": 6.3,
+							"base_severity": "MEDIUM",
+							"temporal_score": 6.3,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 6.3,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"CWE-693"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-56326"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2333856"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://github.com/pallets/jinja/commit/48b0687e05a5466a91cd5812d604fa37ad0943b4"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://github.com/pallets/jinja/releases/tag/3.1.5"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://github.com/pallets/jinja/security/advisories/GHSA-q2x7-8rv6-6q7h"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-56326"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-56326"
+					}
+				],
+				"published": "2024-12-23T15:43:49.4Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-fixed--bbae5af6-d574-14b7"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-608a79bb-2e34-1163"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-29c2fe94-cbbe-85ff"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-56374",
+				"title": "django: potential denial-of-service vulnerability in IPv6 validation",
+				"description": "A flaw was found in the Django framework. Lack of upper bound limit enforcement in strings passed when performing IPv6 validation could lead to a potential denial of service attack. The undocumented and private functions `clean_ipv6_address` and `is_valid_ipv6_address` were vulnerable, as was the `django.forms.GenericIPAddressField` form field, which has now been updated to define a `max_length` of 39 characters.",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "secalert@redhat.com",
+						"vendor": "Moderate"
+					},
+					{
+						"type": "cvss_v31",
+						"source": "secalert@redhat.com",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:L",
+							"base_score": 5.8,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.8,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.8,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "secalert@redhat.com",
+						"cwe": [
+							"CWE-770"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "secalert@redhat.com",
+						"url": "http://www.openwall.com/lists/oss-security/2025/01/14/2"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://access.redhat.com/security/cve/CVE-2024-56374"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2337996"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://docs.djangoproject.com/en/dev/releases/security/"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://groups.google.com/g/django-announce"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2024-56374"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-56374"
+					},
+					{
+						"source": "secalert@redhat.com",
+						"url": "https://www.djangoproject.com/weblog/2025/jan/14/security-releases/"
+					}
+				],
+				"published": "2025-01-14T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-fixed--608a79bb-2e34-1163"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-bbae5af6-d574-14b7"
+				},
+				{
+					"ecosystem": "redhat:8",
+					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-6f5c40c1-dc0e-2369"
+				},
+				{
+					"ecosystem": "redhat:9",
+					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "redhat:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3.11-django",
+											"architectures": [
+												"noarch"
+											],
+											"repositories": [
+												"satellite-6.16-for-rhel-8-x86_64-debug-rpms",
+												"satellite-6.16-for-rhel-8-x86_64-rpms",
+												"satellite-6.16-for-rhel-8-x86_64-source-rpms",
+												"satellite-capsule-6.16-for-rhel-8-x86_64-debug-rpms",
+												"satellite-capsule-6.16-for-rhel-8-x86_64-rpms",
+												"satellite-capsule-6.16-for-rhel-8-x86_64-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.2.19-1.el8pc"
+											}
+										],
+										"fixed": [
+											"0:4.2.19-1.el8pc"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "8-fixed--608a79bb-2e34-1163"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3.11-jinja2",
+											"architectures": [
+												"noarch"
+											],
+											"repositories": [
+												"satellite-6.16-for-rhel-8-x86_64-debug-rpms",
+												"satellite-6.16-for-rhel-8-x86_64-rpms",
+												"satellite-6.16-for-rhel-8-x86_64-source-rpms",
+												"satellite-capsule-6.16-for-rhel-8-x86_64-debug-rpms",
+												"satellite-capsule-6.16-for-rhel-8-x86_64-rpms",
+												"satellite-capsule-6.16-for-rhel-8-x86_64-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.5-1.el8pc"
+											}
+										],
+										"fixed": [
+											"0:3.1.5-1.el8pc"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "8-fixed--bbae5af6-d574-14b7"
+				}
+			]
+		},
+		{
+			"ecosystem": "redhat:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3.11-django",
+											"architectures": [
+												"noarch"
+											],
+											"repositories": [
+												"satellite-6.16-for-rhel-9-x86_64-debug-rpms",
+												"satellite-6.16-for-rhel-9-x86_64-rpms",
+												"satellite-6.16-for-rhel-9-x86_64-source-rpms",
+												"satellite-capsule-6.16-for-rhel-9-x86_64-debug-rpms",
+												"satellite-capsule-6.16-for-rhel-9-x86_64-rpms",
+												"satellite-capsule-6.16-for-rhel-9-x86_64-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.2.19-1.el9pc"
+											}
+										],
+										"fixed": [
+											"0:4.2.19-1.el9pc"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3.11-jinja2",
+											"architectures": [
+												"noarch"
+											],
+											"repositories": [
+												"satellite-6.16-for-rhel-9-x86_64-debug-rpms",
+												"satellite-6.16-for-rhel-9-x86_64-rpms",
+												"satellite-6.16-for-rhel-9-x86_64-source-rpms",
+												"satellite-capsule-6.16-for-rhel-9-x86_64-debug-rpms",
+												"satellite-capsule-6.16-for-rhel-9-x86_64-rpms",
+												"satellite-capsule-6.16-for-rhel-9-x86_64-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.5-1.el9pc"
+											}
+										],
+										"fixed": [
+											"0:3.1.5-1.el9pc"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "redhat-csaf",
+		"raws": [
+			"csaf/2025/RHSA-2025:2399.json",
+			"repository2cpe/repository-to-cpe.json"
+		]
+	}
+}
