@@ -1,0 +1,3 @@
+2023/csaf-openeuler-cve-2023-52920.json
+2024/csaf-openeuler-cve-2024-50187.json
+2025/csaf-openeuler-cve-2025-30346.json
