@@ -1,0 +1,62 @@
+{
+	"schema_version": "1.6.0",
+	"id": "MGASA-2025-0124",
+	"modified": "2025-04-03T22:50:17Z",
+	"published": "2025-04-03T22:52:14Z",
+	"related": [
+		"CVE-2024-56161"
+	],
+	"summary": "Updated microcode packages fix security vulnerability",
+	"details": "Improper signature verification in AMD CPU ROM microcode patch loader\nmay allow an attacker with local administrator privilege to load\nmalicious CPU microcode resulting in loss of confidentiality and\nintegrity of a confidential guest running under AMD SEV-SNP.\n(CVE-2024-56161)\n",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Mageia:9",
+				"name": "microcode",
+				"purl": "pkg:rpm/mageia/microcode?distro=mageia-9"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0.20250211-2.mga9.nonfree"
+						}
+					]
+				}
+			],
+			"ecosystem_specific": {
+				"section": "nonfree"
+			},
+			"database_specific": {
+				"source": "https://advisories.mageia.org/MGASA-2025-0124.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://advisories.mageia.org/MGASA-2025-0124.html"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugs.mageia.org/show_bug.cgi?id=34149"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://lists.debian.org/debian-lts-announce/2025/03/msg00024.html"
+		}
+	],
+	"credits": [
+		{
+			"name": "Mageia",
+			"contact": [
+				"https://wiki.mageia.org/en/Packages_Security_Team"
+			],
+			"type": "COORDINATOR"
+		}
+	]
+}
