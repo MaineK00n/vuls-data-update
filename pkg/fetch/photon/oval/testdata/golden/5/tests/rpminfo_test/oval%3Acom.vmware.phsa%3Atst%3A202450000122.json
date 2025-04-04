@@ -1,0 +1,13 @@
+{
+	"check": "at least one",
+	"comment": "ansible-devel is earlier than 0:2.14.12-1.ph5",
+	"id": "oval:com.vmware.phsa:tst:202450000122",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.vmware.phsa:obj:202450000121"
+	},
+	"state": {
+		"state_ref": "oval:com.vmware.phsa:ste:202450000122"
+	}
+}

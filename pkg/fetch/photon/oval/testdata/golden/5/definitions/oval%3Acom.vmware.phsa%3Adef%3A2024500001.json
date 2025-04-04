@@ -1,0 +1,83 @@
+{
+	"class": "patch",
+	"id": "oval:com.vmware.phsa:def:2024500001",
+	"version": "1",
+	"metadata": {
+		"Title": "PHSA-2024:00001 ansible Security Update. (Important)",
+		"affected": {
+			"family": "unix",
+			"Platform": "Photon 5"
+		},
+		"reference": [
+			{
+				"ref_id": "PHSA:00001:5.0:184",
+				"ref_url": "https://github.com/vmware/photon/wiki/Security-Updates-5.0-184",
+				"source": "PHSA"
+			},
+			{
+				"ref_id": "CVE:00001:CVE-2023-5115",
+				"ref_url": "https://nvd.nist.gov/vuln/detail?vulnId=CVE-2023-5115",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE:00001:CVE-2023-5764",
+				"ref_url": "https://nvd.nist.gov/vuln/detail?vulnId=CVE-2023-5764",
+				"source": "CVE"
+			}
+		],
+		"Description": "This update upgrade ansible to 2.14.12-1.ph5 #Fixes {'CVE-2023-5115', 'CVE-2023-5764'}",
+		"advisory": {
+			"from": "photon_security@vmware.com",
+			"Severity": "Important",
+			"Rights": "Copyright 2024 VMware Inc.",
+			"issued": {
+				"date": "2024-01-04"
+			},
+			"updated": {
+				"date": "2024-01-04"
+			},
+			"Cve": [
+				"CVE-2023-5115",
+				"CVE-2023-5764"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterion": {
+			"comment": "Photon OS 5 is installed",
+			"test_ref": "oval:com.vmware.phsa:tst:20245000011"
+		},
+		"criteria": {
+			"operator": "OR",
+			"criteria": [
+				{
+					"operator": "AND",
+					"criterion": [
+						{
+							"comment": "ansible is earlier than 0:2.14.12-1.ph5",
+							"test_ref": "oval:com.vmware.phsa:tst:202450000112"
+						},
+						{
+							"comment": "ansible is signed with VMware key",
+							"test_ref": "oval:com.vmware.phsa:tst:202450000113"
+						}
+					]
+				},
+				{
+					"operator": "AND",
+					"criterion": [
+						{
+							"comment": "ansible-devel is earlier than 0:2.14.12-1.ph5",
+							"test_ref": "oval:com.vmware.phsa:tst:202450000122"
+						},
+						{
+							"comment": "ansible-devel is signed with VMware key",
+							"test_ref": "oval:com.vmware.phsa:tst:202450000123"
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,6 @@
+{
+	"id": "oval:com.vmware.phsa:obj:202410000111",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"Name": "dracut"
+}

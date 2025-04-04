@@ -1,0 +1,13 @@
+{
+	"check": "at least one",
+	"comment": "Photon OS 1 is installed",
+	"id": "oval:com.vmware.phsa:tst:20241000011",
+	"version": "635",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.vmware.phsa:obj:20241000011"
+	},
+	"state": {
+		"state_ref": "oval:com.vmware.phsa:ste:20241000011"
+	}
+}

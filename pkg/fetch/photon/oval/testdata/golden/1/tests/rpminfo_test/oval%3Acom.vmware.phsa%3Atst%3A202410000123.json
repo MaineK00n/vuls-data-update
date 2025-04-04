@@ -1,0 +1,13 @@
+{
+	"check": "at least one",
+	"comment": "dracut-tools is signed with VMware key",
+	"id": "oval:com.vmware.phsa:tst:202410000123",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.vmware.phsa:obj:202410000121"
+	},
+	"state": {
+		"state_ref": "oval:com.vmware.phsa:ste:202410000123"
+	}
+}
