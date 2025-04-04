@@ -76,6 +76,8 @@ import (
 	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe"
 	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
 	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
+	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
+	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/oss-fuzz/osv"
 	paloaltoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
@@ -177,6 +179,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
+		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
 		newCmdOracle(),
 		newCmdOSSFuzzOSV(),
 		newCmdPaloAltoList(), newCmdPaloAltoJSON(), newCmdPaloAltoCSAF(),
@@ -2352,6 +2355,80 @@ func newCmdNVDFeedCPEMatch() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdOpenEulerCVRF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "cvrf"),
+			retry: 5,
+		},
+		concurrency: 20,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "openeuler-cvrf",
+		Short: "Fetch openEuler CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch openeuler-cvrf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := openeulerCVRF.Fetch(openeulerCVRF.WithDir(options.dir), openeulerCVRF.WithRetry(options.retry), openeulerCVRF.WithConcurrency(options.concurrency), openeulerCVRF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch openeuler cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdOpenEulerCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "csaf"),
+			retry: 5,
+		},
+		concurrency: 20,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "openeuler-csaf",
+		Short: "Fetch openEuler CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch openeuler-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := openeulerCSAF.Fetch(openeulerCSAF.WithDir(options.dir), openeulerCSAF.WithRetry(options.retry), openeulerCSAF.WithConcurrency(options.concurrency), openeulerCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch openeuler csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
