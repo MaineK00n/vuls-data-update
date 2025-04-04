@@ -1,0 +1,228 @@
+{
+	"xml_name": {
+		"Space": "http://www.icasi.org/CVRF/schema/cvrf/1.1",
+		"Local": "cvrfdoc"
+	},
+	"document_title": "An update for firefox is now available for openEuler-22.03-LTS-SP3",
+	"document_type": "Security Advisory",
+	"document_publisher": {
+		"type": "Vendor",
+		"contact_details": "openeuler-security@openeuler.org",
+		"issuing_authority": "openEuler security committee"
+	},
+	"document_tracking": {
+		"identification": {
+			"id": "openEuler-SA-2025-1379"
+		},
+		"status": "Final",
+		"version": "1.0",
+		"revisionhistory": {
+			"revision": [
+				{
+					"number": "1.0",
+					"date": "2025-04-03",
+					"description": "Initial"
+				}
+			]
+		},
+		"initial_release_date": "2025-04-03",
+		"current_release_date": "2025-04-03",
+		"generator": {
+			"engine": "openEuler SA Tool V1.0",
+			"date": "2025-04-03"
+		}
+	},
+	"document_notes": {
+		"note": [
+			{
+				"type": "General",
+				"ordinal": 1,
+				"title": "Synopsis",
+				"text": "firefox security update"
+			},
+			{
+				"type": "General",
+				"ordinal": 2,
+				"title": "Summary",
+				"text": "An update for firefox is now available for openEuler-22.03-LTS-SP3"
+			},
+			{
+				"type": "General",
+				"ordinal": 3,
+				"title": "Description",
+				"text": "Mozilla Firefox is an open-source web browser, designed for standards compliance, performance and portability.\n\nSecurity Fix(es):\n\nMemory safety  bugs present in Firefox 112. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. This vulnerability affects Firefox < 113.\n\n(CVE-2023-32216)\n\nIncreasing the resolution of video frames, while performing a multi-threaded encode, can result in a heap overflow in av1_loop_restoration_dealloc().\n\n(CVE-2023-6879)"
+			},
+			{
+				"type": "General",
+				"ordinal": 4,
+				"title": "Topic",
+				"text": "An update for firefox is now available for openEuler-20.03-LTS-SP4/openEuler-22.03-LTS-SP3.\n\nopenEuler Security has rated this update as having a security impact of critical. A Common Vunlnerability Scoring System(CVSS)base score,which gives a detailed severity rating, is available for each vulnerability from the CVElink(s) in the References section."
+			},
+			{
+				"type": "General",
+				"ordinal": 5,
+				"title": "Severity",
+				"text": "Critical"
+			},
+			{
+				"type": "General",
+				"ordinal": 6,
+				"title": "Affected Component",
+				"text": "firefox"
+			}
+		]
+	},
+	"document_references": {
+		"reference": [
+			{
+				"type": "Self",
+				"url": "https://www.openeuler.org/zh/security/security-bulletins/detail/?id=openEuler-SA-2025-1379",
+				"description": {
+					"text": ""
+				}
+			},
+			{
+				"type": "openEuler CVE",
+				"url": "https://www.openeuler.org/en/security/cve/detail/?cveId=CVE-2023-6879",
+				"description": {
+					"text": ""
+				}
+			},
+			{
+				"type": "Other",
+				"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-6879",
+				"description": {
+					"text": ""
+				}
+			}
+		]
+	},
+	"product_tree": {
+		"branch": [
+			{
+				"type": "Product Name",
+				"name": "openEuler",
+				"full_product_name": {
+					"product_id": "openEuler-22.03-LTS-SP3",
+					"cpe": "cpe:/a:openEuler:openEuler:22.03-LTS-SP3",
+					"text": "openEuler-22.03-LTS-SP3"
+				}
+			},
+			{
+				"type": "Package Arch",
+				"name": "aarch64",
+				"full_product_name": {
+					"product_id": "firefox-debugsource-128.8.0-1",
+					"cpe": "cpe:/a:openEuler:openEuler:22.03-LTS-SP3",
+					"text": "firefox-debugsource-128.8.0-1.oe2203sp3.aarch64.rpm"
+				}
+			},
+			{
+				"type": "Package Arch",
+				"name": "src",
+				"full_product_name": {
+					"product_id": "firefox-128.8.0-1",
+					"cpe": "cpe:/a:openEuler:openEuler:22.03-LTS-SP3",
+					"text": "firefox-128.8.0-1.oe2203sp3.src.rpm"
+				}
+			},
+			{
+				"type": "Package Arch",
+				"name": "x86_64",
+				"full_product_name": {
+					"product_id": "firefox-debugsource-128.8.0-1",
+					"cpe": "cpe:/a:openEuler:openEuler:22.03-LTS-SP3",
+					"text": "firefox-debugsource-128.8.0-1.oe2203sp3.x86_64.rpm"
+				}
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"ordinal": 1,
+			"notes": {
+				"note": [
+					{
+						"type": "General",
+						"ordinal": 1,
+						"title": "Vulnerability Description",
+						"text": "Memory safety  bugs present in Firefox 112. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. This vulnerability affects Firefox < 113.\n\n"
+					}
+				]
+			},
+			"release_date": "2025-04-03",
+			"cve": "CVE-2023-32216",
+			"product_statuses": {
+				"status": [
+					{
+						"type": "Fixed",
+						"product_id": [
+							"openEuler-22.03-LTS-SP3"
+						]
+					}
+				]
+			},
+			"threats": {
+				"threat": [
+					{
+						"type": "Impact",
+						"description": "Critical"
+					}
+				]
+			},
+			"cvss_score_sets": {},
+			"remediations": {
+				"remediation": [
+					{
+						"type": "Vendor Fix",
+						"description": "firefox security update",
+						"url": "https://www.openeuler.org/zh/security/security-bulletins/detail/?id=openEuler-SA-2025-1379"
+					}
+				]
+			}
+		},
+		{
+			"ordinal": 2,
+			"notes": {
+				"note": [
+					{
+						"type": "General",
+						"ordinal": 1,
+						"title": "Vulnerability Description",
+						"text": "Increasing the resolution of video frames, while performing a multi-threaded encode, can result in a heap overflow in av1_loop_restoration_dealloc().\n\n"
+					}
+				]
+			},
+			"release_date": "2025-04-03",
+			"cve": "CVE-2023-6879",
+			"product_statuses": {
+				"status": [
+					{
+						"type": "Fixed",
+						"product_id": [
+							"openEuler-22.03-LTS-SP3"
+						]
+					}
+				]
+			},
+			"threats": {
+				"threat": [
+					{
+						"type": "Impact",
+						"description": "Critical"
+					}
+				]
+			},
+			"cvss_score_sets": {},
+			"remediations": {
+				"remediation": [
+					{
+						"type": "Vendor Fix",
+						"description": "firefox security update",
+						"url": "https://www.openeuler.org/zh/security/security-bulletins/detail/?id=openEuler-SA-2025-1379"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+	<DocumentTitle xml:lang="en">An update for firefox is now available for openEuler-22.03-LTS-SP3</DocumentTitle>
+	<DocumentType>Security Advisory</DocumentType>
+	<DocumentPublisher Type="Vendor">
+		<ContactDetails>openeuler-security@openeuler.org</ContactDetails>
+		<IssuingAuthority>openEuler security committee</IssuingAuthority>
+	</DocumentPublisher>
+	<DocumentTracking>
+		<Identification>
+			<ID>openEuler-SA-2025-1379</ID>
+		</Identification>
+		<Status>Final</Status>
+		<Version>1.0</Version>
+		<RevisionHistory>
+			<Revision>
+				<Number>1.0</Number>
+				<Date>2025-04-03</Date>
+				<Description>Initial</Description>
+			</Revision>
+		</RevisionHistory>
+		<InitialReleaseDate>2025-04-03</InitialReleaseDate>
+		<CurrentReleaseDate>2025-04-03</CurrentReleaseDate>
+		<Generator>
+			<Engine>openEuler SA Tool V1.0</Engine>
+			<Date>2025-04-03</Date>
+		</Generator>
+	</DocumentTracking>
+	<DocumentNotes>
+		<Note Title="Synopsis" Type="General" Ordinal="1" xml:lang="en">firefox security update</Note>
+		<Note Title="Summary" Type="General" Ordinal="2" xml:lang="en">An update for firefox is now available for openEuler-22.03-LTS-SP3</Note>
+		<Note Title="Description" Type="General" Ordinal="3" xml:lang="en">Mozilla Firefox is an open-source web browser, designed for standards compliance, performance and portability.
+
+Security Fix(es):
+
+Memory safety  bugs present in Firefox 112. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. This vulnerability affects Firefox &lt; 113.
+
+(CVE-2023-32216)
+
+Increasing the resolution of video frames, while performing a multi-threaded encode, can result in a heap overflow in av1_loop_restoration_dealloc().
+
+(CVE-2023-6879)</Note>
+		<Note Title="Topic" Type="General" Ordinal="4" xml:lang="en">An update for firefox is now available for openEuler-20.03-LTS-SP4/openEuler-22.03-LTS-SP3.
+
+openEuler Security has rated this update as having a security impact of critical. A Common Vunlnerability Scoring System(CVSS)base score,which gives a detailed severity rating, is available for each vulnerability from the CVElink(s) in the References section.</Note>
+		<Note Title="Severity" Type="General" Ordinal="5" xml:lang="en">Critical</Note>
+		<Note Title="Affected Component" Type="General" Ordinal="6" xml:lang="en">firefox</Note>
+	</DocumentNotes>
+	<DocumentReferences>
+		<Reference Type="Self">
+			<URL>https://www.openeuler.org/zh/security/security-bulletins/detail/?id=openEuler-SA-2025-1379</URL>
+		</Reference>
+		<Reference Type="openEuler CVE">
+			<URL>https://www.openeuler.org/en/security/cve/detail/?cveId=CVE-2023-32216</URL>
+			<URL>https://www.openeuler.org/en/security/cve/detail/?cveId=CVE-2023-6879</URL>
+		</Reference>
+		<Reference Type="Other">
+			<URL>https://nvd.nist.gov/vuln/detail/CVE-2023-32216</URL>
+			<URL>https://nvd.nist.gov/vuln/detail/CVE-2023-6879</URL>
+		</Reference>
+	</DocumentReferences>
+	<ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
+		<Branch Type="Product Name" Name="openEuler">
+			<FullProductName ProductID="openEuler-22.03-LTS-SP3" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">openEuler-22.03-LTS-SP3</FullProductName>
+		</Branch>
+		<Branch Type="Package Arch" Name="aarch64">
+			<FullProductName ProductID="firefox-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-128.8.0-1.oe2203sp3.aarch64.rpm</FullProductName>
+			<FullProductName ProductID="firefox-debuginfo-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-debuginfo-128.8.0-1.oe2203sp3.aarch64.rpm</FullProductName>
+			<FullProductName ProductID="firefox-debugsource-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-debugsource-128.8.0-1.oe2203sp3.aarch64.rpm</FullProductName>
+		</Branch>
+		<Branch Type="Package Arch" Name="src">
+			<FullProductName ProductID="firefox-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-128.8.0-1.oe2203sp3.src.rpm</FullProductName>
+		</Branch>
+		<Branch Type="Package Arch" Name="x86_64">
+			<FullProductName ProductID="firefox-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-128.8.0-1.oe2203sp3.x86_64.rpm</FullProductName>
+			<FullProductName ProductID="firefox-debuginfo-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-debuginfo-128.8.0-1.oe2203sp3.x86_64.rpm</FullProductName>
+			<FullProductName ProductID="firefox-debugsource-128.8.0-1" CPE="cpe:/a:openEuler:openEuler:22.03-LTS-SP3">firefox-debugsource-128.8.0-1.oe2203sp3.x86_64.rpm</FullProductName>
+		</Branch>
+	</ProductTree>
+	<Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+		<Notes>
+			<Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">Memory safety  bugs present in Firefox 112. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. This vulnerability affects Firefox &lt; 113.
+
+</Note>
+		</Notes>
+		<ReleaseDate>2025-04-03</ReleaseDate>
+		<CVE>CVE-2023-32216</CVE>
+		<ProductStatuses>
+			<Status Type="Fixed">
+				<ProductID>openEuler-22.03-LTS-SP3</ProductID>
+			</Status>
+		</ProductStatuses>
+		<Threats>
+			<Threat Type="Impact">
+				<Description>Critical</Description>
+			</Threat>
+		</Threats>
+		<CVSSScoreSets>
+			<ScoreSet>
+				<BaseScore>9.8</BaseScore>
+				<Vector>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</Vector>
+			</ScoreSet>
+		</CVSSScoreSets>
+		<Remediations>
+			<Remediation Type="Vendor Fix">
+				<Description>firefox security update</Description>
+				<DATE>2025-04-03</DATE>
+				<URL>https://www.openeuler.org/zh/security/security-bulletins/detail/?id=openEuler-SA-2025-1379</URL>
+			</Remediation>
+		</Remediations>
+	</Vulnerability>
+	<Vulnerability Ordinal="2" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+		<Notes>
+			<Note Title="Vulnerability Description" Type="General" Ordinal="1" xml:lang="en">Increasing the resolution of video frames, while performing a multi-threaded encode, can result in a heap overflow in av1_loop_restoration_dealloc().
+
+</Note>
+		</Notes>
+		<ReleaseDate>2025-04-03</ReleaseDate>
+		<CVE>CVE-2023-6879</CVE>
+		<ProductStatuses>
+			<Status Type="Fixed">
+				<ProductID>openEuler-22.03-LTS-SP3</ProductID>
+			</Status>
+		</ProductStatuses>
+		<Threats>
+			<Threat Type="Impact">
+				<Description>Critical</Description>
+			</Threat>
+		</Threats>
+		<CVSSScoreSets>
+			<ScoreSet>
+				<BaseScore>9.8</BaseScore>
+				<Vector>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</Vector>
+			</ScoreSet>
+		</CVSSScoreSets>
+		<Remediations>
+			<Remediation Type="Vendor Fix">
+				<Description>firefox security update</Description>
+				<DATE>2025-04-03</DATE>
+				<URL>https://www.openeuler.org/zh/security/security-bulletins/detail/?id=openEuler-SA-2025-1379</URL>
+			</Remediation>
+		</Remediations>
+	</Vulnerability>
+</cvrfdoc>
