@@ -1,0 +1,77 @@
+{
+	"class": "patch",
+	"id": "oval:com.vmware.phsa:def:2024100001",
+	"version": "1",
+	"metadata": {
+		"Title": "PHSA-2024:00001 dracut Security Update. (Important)",
+		"affected": {
+			"family": "unix",
+			"Platform": "Photon 1"
+		},
+		"reference": [
+			{
+				"ref_id": "PHSA:00001:1.0:248",
+				"ref_url": "https://github.com/vmware/photon/wiki/Security-Updates-1.0-248",
+				"source": "PHSA"
+			},
+			{
+				"ref_id": "CVE:00001:CVE-2016-8637",
+				"ref_url": "https://nvd.nist.gov/vuln/detail?vulnId=CVE-2016-8637",
+				"source": "CVE"
+			}
+		],
+		"Description": "This update upgrade dracut to 044-4.ph1 #Fixes {'CVE-2016-8637'}",
+		"advisory": {
+			"from": "photon_security@vmware.com",
+			"Severity": "Important",
+			"Rights": "Copyright 2024 VMware Inc.",
+			"issued": {
+				"date": "2019-08-19"
+			},
+			"updated": {
+				"date": "2019-08-19"
+			},
+			"Cve": [
+				"CVE-2016-8637"
+			]
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterion": {
+			"comment": "Photon OS 1 is installed",
+			"test_ref": "oval:com.vmware.phsa:tst:20241000011"
+		},
+		"criteria": {
+			"operator": "OR",
+			"criteria": [
+				{
+					"operator": "AND",
+					"criterion": [
+						{
+							"comment": "dracut is earlier than 0:044-4.ph1",
+							"test_ref": "oval:com.vmware.phsa:tst:202410000112"
+						},
+						{
+							"comment": "dracut is signed with VMware key",
+							"test_ref": "oval:com.vmware.phsa:tst:202410000113"
+						}
+					]
+				},
+				{
+					"operator": "AND",
+					"criterion": [
+						{
+							"comment": "dracut-tools is earlier than 0:044-4.ph1",
+							"test_ref": "oval:com.vmware.phsa:tst:202410000122"
+						},
+						{
+							"comment": "dracut-tools is signed with VMware key",
+							"test_ref": "oval:com.vmware.phsa:tst:202410000123"
+						}
+					]
+				}
+			]
+		}
+	}
+}

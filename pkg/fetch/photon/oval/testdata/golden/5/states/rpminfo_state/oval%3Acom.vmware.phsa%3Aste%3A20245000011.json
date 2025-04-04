@@ -1,0 +1,11 @@
+{
+	"id": "oval:com.vmware.phsa:ste:20245000011",
+	"attr_version": "633",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"version": {
+		"text": "^5[^\\d]",
+		"operation": "pattern match"
+	},
+	"evr": {},
+	"signature_keyid": {}
+}
