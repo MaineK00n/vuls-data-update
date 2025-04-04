@@ -1,0 +1,9 @@
+{
+	"id": "oval:com.microsoft.cbl-mariner:ste:58877002",
+	"version": "0",
+	"evr": {
+		"text": "0:5.15.176.3-3.cm2",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}
