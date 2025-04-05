@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-64k is installed",
+	"id": "oval:com.redhat.cve:tst:201916089095",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201916089048"
+	},
+	"state": {}
+}

@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-ipaclones-internal is installed",
+	"id": "oval:com.redhat.cve:tst:201925162011",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162006"
+	},
+	"state": {}
+}

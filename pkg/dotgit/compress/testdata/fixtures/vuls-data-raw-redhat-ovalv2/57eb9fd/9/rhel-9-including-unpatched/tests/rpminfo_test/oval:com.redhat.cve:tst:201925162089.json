@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-debug-modules-internal is installed",
+	"id": "oval:com.redhat.cve:tst:201925162089",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162045"
+	},
+	"state": {}
+}

@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "libperf is installed",
+	"id": "oval:com.redhat.cve:tst:201925162031",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162016"
+	},
+	"state": {}
+}

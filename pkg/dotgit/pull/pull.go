@@ -1,17 +1,13 @@
 package pull
 
 import (
-	"archive/tar"
 	"context"
 	"encoding/json"
-	"io"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
-	"github.com/klauspost/compress/zstd"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
@@ -104,54 +100,8 @@ func Pull(repository string, opts ...Option) error {
 	}
 	defer r.Close() //nolint:errcheck
 
-	zr, err := zstd.NewReader(r)
-	if err != nil {
-		return errors.Wrap(err, "new zstd reader")
-	}
-	defer zr.Close() //nolint:errcheck
-
-	tr := tar.NewReader(zr)
-	for {
-		hdr, err := tr.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return errors.Wrap(err, "next tar reader")
-		}
-
-		ss := strings.Split(hdr.Name, string(os.PathSeparator))
-		if len(ss) < 2 {
-			return errors.Errorf("unexpected tar header name. expected: %q, actual: %q", "<dir>/(...)", hdr.Name)
-		}
-		p := filepath.Join(options.dir, repo.Reference.Reference, filepath.Join(ss[1:]...))
-
-		switch hdr.Typeflag {
-		case tar.TypeDir:
-			if err := os.MkdirAll(p, 0755); err != nil {
-				return errors.Wrapf(err, "mkdir %s", p)
-			}
-		case tar.TypeReg:
-			if err := os.MkdirAll(filepath.Dir(p), 0755); err != nil {
-				return errors.Wrapf(err, "mkdir %s", filepath.Dir(p))
-			}
-
-			if err := func() error {
-				f, err := os.Create(p)
-				if err != nil {
-					return errors.Wrapf(err, "create %s", p)
-				}
-				defer f.Close() //nolint:errcheck
-
-				if _, err := io.Copy(f, tr); err != nil {
-					return errors.Wrapf(err, "copy to %s", p)
-				}
-
-				return nil
-			}(); err != nil {
-				return errors.Wrapf(err, "create %s", p)
-			}
-		}
+	if err := util.ExtractDotgitTarZst(r, filepath.Join(options.dir, repo.Reference.Reference)); err != nil {
+		return errors.Wrapf(err, "extract to %s", filepath.Join(options.dir, repo.Reference.Reference))
 	}
 
 	if options.restore {

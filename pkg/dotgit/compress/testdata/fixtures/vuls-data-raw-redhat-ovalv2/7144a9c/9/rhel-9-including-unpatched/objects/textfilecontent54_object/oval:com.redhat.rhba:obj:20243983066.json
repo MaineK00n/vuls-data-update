@@ -1,0 +1,16 @@
+{
+	"id": "oval:com.redhat.rhba:obj:20243983066",
+	"version": "637",
+	"filepath": {
+		"text": "/boot/grub2/grubenv",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "(?<=^saved_entry=).*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}

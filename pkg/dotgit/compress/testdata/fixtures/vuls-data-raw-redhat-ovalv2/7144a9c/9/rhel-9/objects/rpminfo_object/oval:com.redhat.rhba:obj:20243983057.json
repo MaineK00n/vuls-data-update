@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhba:obj:20243983057",
+	"version": "637",
+	"Name": "kernel-zfcpdump-modules"
+}

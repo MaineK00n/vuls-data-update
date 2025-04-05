@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-rt-debug-devel is installed",
+	"id": "oval:com.redhat.cve:tst:201925162109",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162055"
+	},
+	"state": {}
+}

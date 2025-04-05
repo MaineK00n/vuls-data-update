@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-rt-selftests-internal is installed",
+	"id": "oval:com.redhat.cve:tst:201925162001",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162001"
+	},
+	"state": {}
+}

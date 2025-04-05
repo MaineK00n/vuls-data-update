@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.cve:obj:202010135007",
+	"version": "636",
+	"Name": "kernel-zfcpdump-modules-partner"
+}

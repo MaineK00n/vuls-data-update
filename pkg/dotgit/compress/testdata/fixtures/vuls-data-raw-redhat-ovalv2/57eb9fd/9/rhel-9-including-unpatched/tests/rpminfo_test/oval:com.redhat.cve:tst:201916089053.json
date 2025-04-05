@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-tools-libs is installed",
+	"id": "oval:com.redhat.cve:tst:201916089053",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201916089027"
+	},
+	"state": {}
+}

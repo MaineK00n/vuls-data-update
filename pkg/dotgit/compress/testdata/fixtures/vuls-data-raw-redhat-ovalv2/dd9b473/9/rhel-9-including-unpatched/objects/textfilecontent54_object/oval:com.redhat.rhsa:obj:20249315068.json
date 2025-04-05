@@ -1,0 +1,16 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:20249315068",
+	"version": "648",
+	"filepath": {
+		"text": "/boot/grub2/grub.cfg",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "^menuentry.*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"datatype": "int",
+		"var_ref": "oval:com.redhat.rhsa:var:20225214001"
+	}
+}

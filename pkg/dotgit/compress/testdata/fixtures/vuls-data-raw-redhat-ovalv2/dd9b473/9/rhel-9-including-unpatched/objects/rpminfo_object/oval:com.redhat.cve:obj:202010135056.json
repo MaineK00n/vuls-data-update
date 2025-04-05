@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.cve:obj:202010135056",
+	"version": "636",
+	"Name": "kernel-64k-debug-modules-internal"
+}

@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "rv is installed",
+	"id": "oval:com.redhat.cve:tst:202010135025",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:202010135013"
+	},
+	"state": {}
+}

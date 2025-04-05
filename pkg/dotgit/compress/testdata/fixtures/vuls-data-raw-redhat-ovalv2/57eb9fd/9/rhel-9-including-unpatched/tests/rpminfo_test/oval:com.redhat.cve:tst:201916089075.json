@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-tools is installed",
+	"id": "oval:com.redhat.cve:tst:201916089075",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201916089038"
+	},
+	"state": {}
+}
