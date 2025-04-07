@@ -234,8 +234,8 @@ type product struct {
 	major           string
 	name            string
 	version         string
-	modularitylabel string
 	arch            string
+	modularitylabel string
 	cpe             string
 	repositories    []string
 }
