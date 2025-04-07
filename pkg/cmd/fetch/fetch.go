@@ -112,6 +112,7 @@ import (
 	ubuntuOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/osv"
 	ubuntuOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/oval"
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
+	ubuntuUSNDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/usndb"
 	ubuntuVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/vex"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
@@ -190,7 +191,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSnort(),
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
-		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
+		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
 		newCmdVulnCheckKEV(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiOSV(),
@@ -3437,6 +3438,33 @@ func newCmdUbuntuCVETracker() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "ubuntu", "ubuntu-cve-tracker"), "output fetch results to specified directory")
+
+	return cmd
+}
+
+func newCmdUbuntuUSNDB() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "usndb"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "ubuntu-usndb",
+		Short: "Fetch Ubuntu USN DB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch ubuntu-usndb
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := ubuntuUSNDB.Fetch(ubuntuUSNDB.WithDir(options.dir), ubuntuUSNDB.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch ubuntu usndb")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
