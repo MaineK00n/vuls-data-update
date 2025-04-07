@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/klauspost/compress/zstd"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
@@ -119,7 +120,11 @@ func Pull(repository string, opts ...Option) error {
 			return errors.Wrap(err, "next tar reader")
 		}
 
-		p := filepath.Join(options.dir, hdr.Name)
+		ss := strings.Split(hdr.Name, string(os.PathSeparator))
+		if len(ss) < 2 {
+			return errors.Errorf("unexpected tar header name. expected: %q, actual: %q", "<dir>/(...)", hdr.Name)
+		}
+		p := filepath.Join(options.dir, repo.Reference.Reference, filepath.Join(ss[1:]...))
 
 		switch hdr.Typeflag {
 		case tar.TypeDir:

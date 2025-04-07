@@ -14,13 +14,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/pull"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/klauspost/compress/zstd"
 	"github.com/opencontainers/go-digest"
 	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/pull"
 )
 
 func generateDescriptor(mediaType string, blob []byte) (desc ocispec.Descriptor) {
@@ -47,29 +48,44 @@ func TestPull(t *testing.T) {
 		restore bool
 	}
 	tests := []struct {
-		name     string
-		args     args
-		hasError bool
+		name      string
+		args      args
+		layerBlob string
+		golden    string
+		hasError  bool
 	}{
 		{
-			name: "restore: false",
+			name: "vuls-data-raw-test restore: false",
 			args: args{
 				tag: "vuls-data-raw-test",
 			},
+			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			golden:    "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "restore: true",
+			name: "vuls-data-raw-test restore: true",
 			args: args{
 				tag:     "vuls-data-raw-test",
 				restore: true,
 			},
+			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			golden:    "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test-archive-1 restore: false",
+			args: args{
+				tag:     "vuls-data-raw-test-archive-1",
+				restore: false,
+			},
+			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			golden:    "testdata/golden/vuls-data-raw-test-archive-1.tar.zst",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			layerBlob, err := os.ReadFile(filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", tt.args.tag)))
+			layerBlob, err := os.ReadFile(tt.layerBlob)
 			if err != nil {
-				t.Errorf("read %s. err: %v", filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.tar.zst", tt.args.tag)), err)
+				t.Errorf("read %s. err: %v", tt.layerBlob, err)
 			}
 			layerDesc := generateDescriptor("application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd", layerBlob)
 			configBlob := []byte("{}")
@@ -98,8 +114,8 @@ func TestPull(t *testing.T) {
 						t.Errorf("write manifest. err: %v", err)
 					}
 				case strings.Contains(r.URL.Path, "/blobs/") && (r.Method == "HEAD" || r.Method == "GET"):
-					arr := strings.Split(r.URL.Path, "/")
-					digest := arr[len(arr)-1]
+					ss := strings.Split(r.URL.Path, "/")
+					digest := ss[len(ss)-1]
 					var desc ocispec.Descriptor
 					var content []byte
 					switch digest {
@@ -163,15 +179,9 @@ func TestPull(t *testing.T) {
 				}
 
 				var want []string
-				gp := filepath.Join("testdata", "golden", fmt.Sprintf("%s%s.tar.zst", tt.args.tag, func() string {
-					if tt.args.restore {
-						return "-restored"
-					}
-					return ""
-				}()))
-				f, err := os.Open(gp)
+				f, err := os.Open(tt.golden)
 				if err != nil {
-					t.Errorf("open %s. err: %v", gp, err)
+					t.Errorf("open %s. err: %v", tt.golden, err)
 				}
 				defer f.Close() //nolint:errcheck
 
