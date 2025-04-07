@@ -14,7 +14,10 @@ func NewCmdDotGit() *cobra.Command {
 		`),
 	}
 
-	cmd.AddCommand(newCmdPull(), newCmdCompress())
+	cmd.AddCommand(
+		newCmdPull(), newCmdCompress(),
+		newCmdContains(),
+	)
 
 	return cmd
 }
