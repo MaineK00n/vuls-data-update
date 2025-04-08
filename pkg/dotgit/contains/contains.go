@@ -26,7 +26,12 @@ func Contains(repository, commit string) error {
 		return errors.Wrapf(err, "open %s", repository)
 	}
 
-	if _, err := r.CommitObject(plumbing.NewHash(commit)); err != nil {
+	hash, err := r.ResolveRevision(plumbing.Revision(commit))
+	if err != nil {
+		return errors.Wrapf(err, "resolve %s", commit)
+	}
+
+	if _, err := r.CommitObject(*hash); err != nil {
 		if errors.Is(err, plumbing.ErrObjectNotFound) {
 			return &CommitNotFoundError{
 				Repository: repository,
