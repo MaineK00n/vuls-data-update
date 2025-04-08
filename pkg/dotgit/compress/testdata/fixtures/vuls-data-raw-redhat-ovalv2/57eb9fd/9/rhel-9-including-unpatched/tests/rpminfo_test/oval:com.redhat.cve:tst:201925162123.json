@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-64k-modules-partner is installed",
+	"id": "oval:com.redhat.cve:tst:201925162123",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162062"
+	},
+	"state": {}
+}

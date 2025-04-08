@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "kernel-debug-devel-matched is earlier than 0:5.14.0-503.11.1.el9_5",
+	"id": "oval:com.redhat.rhsa:tst:20249315045",
+	"version": "648",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201916089043"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20249315003"
+	}
+}

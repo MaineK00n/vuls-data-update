@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.cve:obj:201925162081",
+	"version": "636",
+	"Name": "kernel-64k-modules-internal"
+}

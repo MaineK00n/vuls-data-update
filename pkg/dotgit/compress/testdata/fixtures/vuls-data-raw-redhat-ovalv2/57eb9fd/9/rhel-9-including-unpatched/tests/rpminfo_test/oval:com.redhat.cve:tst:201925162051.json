@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-debug-modules-partner is installed",
+	"id": "oval:com.redhat.cve:tst:201925162051",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162026"
+	},
+	"state": {}
+}

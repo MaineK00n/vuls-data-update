@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-64k-debug-devel-matched is installed",
+	"id": "oval:com.redhat.cve:tst:201916089067",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201916089034"
+	},
+	"state": {}
+}

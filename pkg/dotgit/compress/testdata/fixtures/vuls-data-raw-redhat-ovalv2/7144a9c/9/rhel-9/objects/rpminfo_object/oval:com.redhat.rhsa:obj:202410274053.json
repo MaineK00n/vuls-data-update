@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.rhsa:obj:202410274053",
+	"version": "637",
+	"Name": "kernel-uki-virt-addons"
+}

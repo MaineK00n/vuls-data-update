@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-zfcpdump-devel is installed",
+	"id": "oval:com.redhat.cve:tst:201916089013",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201916089007"
+	},
+	"state": {}
+}

@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "kernel-64k-core is earlier than 0:5.14.0-503.11.1.el9_5",
+	"id": "oval:com.redhat.rhsa:tst:20249315007",
+	"version": "649",
+	"object": {
+		"object_ref": "oval:com.redhat.rhba:obj:20243983004"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.rhsa:ste:20249315004"
+	}
+}

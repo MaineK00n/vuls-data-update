@@ -1,0 +1,10 @@
+{
+	"check": "at least one",
+	"comment": "kernel-rt-devel is installed",
+	"id": "oval:com.redhat.cve:tst:201925162057",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162029"
+	},
+	"state": {}
+}

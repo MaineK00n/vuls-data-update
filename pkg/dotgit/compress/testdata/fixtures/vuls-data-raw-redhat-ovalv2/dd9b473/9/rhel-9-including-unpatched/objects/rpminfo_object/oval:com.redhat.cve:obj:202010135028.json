@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.cve:obj:202010135028",
+	"version": "636",
+	"Name": "kernel-modules-internal"
+}

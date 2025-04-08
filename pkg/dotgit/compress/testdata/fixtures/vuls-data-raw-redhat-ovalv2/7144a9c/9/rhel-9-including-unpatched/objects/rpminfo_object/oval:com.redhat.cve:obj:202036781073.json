@@ -1,0 +1,5 @@
+{
+	"id": "oval:com.redhat.cve:obj:202036781073",
+	"version": "636",
+	"Name": "kernel-uki-virt-addons"
+}

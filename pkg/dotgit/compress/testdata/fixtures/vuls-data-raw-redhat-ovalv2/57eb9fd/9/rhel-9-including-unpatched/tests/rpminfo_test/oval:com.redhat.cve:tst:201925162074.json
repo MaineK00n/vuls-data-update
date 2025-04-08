@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "kernel-rt-modules-internal is signed with Red Hat redhatrelease2 key",
+	"id": "oval:com.redhat.cve:tst:201925162074",
+	"version": "636",
+	"object": {
+		"object_ref": "oval:com.redhat.cve:obj:201925162037"
+	},
+	"state": {
+		"state_ref": "oval:com.redhat.cve:ste:20052541001"
+	}
+}
