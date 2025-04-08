@@ -564,7 +564,6 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 					}
 					return pids
 				}() {
-
 					switch base := vassm[v.CVE][p]; base.Status.ProductStatus {
 					case "unaffected":
 						if base.Status.AffectedStatus != "" {
