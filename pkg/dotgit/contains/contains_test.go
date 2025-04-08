@@ -23,14 +23,21 @@ func TestContains(t *testing.T) {
 		wantErr interface{}
 	}{
 		{
-			name:   "contains commit",
+			name:   "contains full commit hash",
 			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 			args: args{
 				commit: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
 			},
 		},
 		{
-			name:   "not contains commit",
+			name:   "contains short commit hash",
+			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			args: args{
+				commit: "9d3d5d48",
+			},
+		},
+		{
+			name:   "not contains commit hash",
 			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 			args: args{
 				commit: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
