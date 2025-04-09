@@ -122,6 +122,7 @@ import (
 	ubuntuUSNDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/usndb"
 	ubuntuVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/vex"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
+	windowsAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/advisory"
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
 	windowsCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/csaf"
 	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
@@ -206,7 +207,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
 		newCmdVulnCheckKEV(),
-		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsWSUSSCN2(),
+		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiOSV(),
 	)
 
@@ -3896,6 +3897,33 @@ func newCmdWindowsMSUC() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+
+	return cmd
+}
+
+func newCmdWindowsAdvisory() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "advisory"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-advisory",
+		Short: "Fetch Microsoft Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-advisory
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsAdvisory.Fetch(windowsAdvisory.WithDir(options.dir), windowsAdvisory.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch windows advisory")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
