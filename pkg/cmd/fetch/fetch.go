@@ -126,6 +126,7 @@ import (
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
 	windowsCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/csaf"
 	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
+	windowsDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/deployment"
 	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
 	windowsProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/product"
 	windowsVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/vulnerability"
@@ -208,7 +209,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
 		newCmdVulnCheckKEV(),
-		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsWSUSSCN2(),
+		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsDeployment(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiSecDB(), newCmdWolfiOSV(),
 	)
 
@@ -3972,6 +3973,33 @@ func newCmdWindowsProduct() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := windowsProduct.Fetch(windowsProduct.WithDir(options.dir), windowsProduct.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch windows product")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdWindowsDeployment() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "deployment"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "windows-deployment",
+		Short: "Fetch Microsoft Deployment data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch windows-deployment
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := windowsDeployment.Fetch(windowsDeployment.WithDir(options.dir), windowsDeployment.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch windows deployment")
 			}
 			return nil
 		},
