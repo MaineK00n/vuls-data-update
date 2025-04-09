@@ -23,6 +23,7 @@ import (
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
+	chainguardSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/secdb"
 	ciscoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/csaf"
 	ciscoCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/cvrf"
 	ciscoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/json"
@@ -160,7 +161,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdBitnamiOSV(),
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
-		newCmdChainguardOSV(),
+		newCmdChainguardSecDB(), newCmdChainguardOSV(),
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
@@ -613,6 +614,33 @@ func newCmdCargoOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdChainguardSecDB() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "chainguard", "secdb"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "chainguard-secdb",
+		Short: "Fetch Chainguard SecDB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch chainguard-secdb
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := chainguardSecDB.Fetch(chainguardSecDB.WithDir(options.dir), chainguardSecDB.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch chainguard secdb")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
