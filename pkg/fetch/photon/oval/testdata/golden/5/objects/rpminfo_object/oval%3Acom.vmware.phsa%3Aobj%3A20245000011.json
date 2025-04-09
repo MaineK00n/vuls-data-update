@@ -1,0 +1,6 @@
+{
+	"id": "oval:com.vmware.phsa:obj:20245000011",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"Name": "photon-release"
+}

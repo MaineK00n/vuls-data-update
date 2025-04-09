@@ -84,6 +84,8 @@ import (
 	paloaltoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/json"
 	paloaltoList "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/list"
+	photonCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/photon/cve"
+	photonOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/photon/oval"
 	pipGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/ghsa"
 	pipGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/glsa"
 	pipOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pip/osv"
@@ -189,6 +191,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdOSSFuzzOSV(),
 		newCmdPaloAltoList(), newCmdPaloAltoJSON(), newCmdPaloAltoCSAF(),
 		newCmdPerlDB(),
+		newCmdPhotonCVE(), newCmdPhotonOVAL(),
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
@@ -2643,6 +2646,60 @@ func newCmdPerlDB() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "perl", "db"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdPhotonCVE() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "photon", "cve"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "photon-cve",
+		Short: "Fetch Photon CVE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch photon-cve
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := photonCVE.Fetch(photonCVE.WithDir(options.dir), photonCVE.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch photon cve")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdPhotonOVAL() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "photon", "oval"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "photon-oval",
+		Short: "Fetch Photon OVAL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch photon-oval
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := photonOVAL.Fetch(photonOVAL.WithDir(options.dir), photonOVAL.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch photon oval")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
