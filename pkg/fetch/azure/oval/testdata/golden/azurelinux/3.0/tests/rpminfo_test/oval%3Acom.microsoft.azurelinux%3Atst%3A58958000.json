@@ -1,0 +1,12 @@
+{
+	"check": "at least one",
+	"comment": "Package qtbase is earlier than 6.6.3-3, affected by CVE-2025-30348",
+	"id": "oval:com.microsoft.azurelinux:tst:58958000",
+	"version": "0",
+	"object": {
+		"object_ref": "oval:com.microsoft.azurelinux:obj:58958001"
+	},
+	"state": {
+		"state_ref": "oval:com.microsoft.azurelinux:ste:58958002"
+	}
+}
