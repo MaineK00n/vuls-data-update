@@ -12,6 +12,12 @@ import (
 )
 
 func newCmdDiff() *cobra.Command {
+	options := &struct {
+		color bool
+	}{
+		color: false,
+	}
+
 	cmd := &cobra.Command{
 		Use:   "diff <repository> <MINUS_FILE:<treeish:path>> <PLUS_FILE:<treeish:path>>",
 		Short: "Diff files in the specified treeish",
@@ -20,7 +26,7 @@ func newCmdDiff() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(3),
 		RunE: func(_ *cobra.Command, args []string) error {
-			content, err := diff.Diff(args[0], args[1], args[2])
+			content, err := diff.Diff(args[0], args[1], args[2], diff.WithColor(options.color))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit diff")
 			}
@@ -34,6 +40,8 @@ func newCmdDiff() *cobra.Command {
 			return nil
 		},
 	}
+
+	cmd.Flags().BoolVarP(&options.color, "color", "", options.color, "color the diff")
 
 	return cmd
 }

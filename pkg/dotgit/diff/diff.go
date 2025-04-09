@@ -1,15 +1,43 @@
 package diff
 
 import (
+	"bytes"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	gitdiff "github.com/go-git/go-git/v5/plumbing/format/diff"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 )
 
-func Diff(repository, minus, plus string) (string, error) {
+type options struct {
+	color bool
+}
+
+type Option interface {
+	apply(*options)
+}
+
+type colorOption bool
+
+func (c colorOption) apply(opts *options) {
+	opts.color = bool(c)
+}
+
+func WithColor(c bool) Option {
+	return colorOption(c)
+}
+
+func Diff(repository, minus, plus string, opts ...Option) (string, error) {
+	options := &options{
+		color: false,
+	}
+
+	for _, opt := range opts {
+		opt.apply(options)
+	}
+
 	r, err := git.PlainOpen(repository)
 	if err != nil {
 		return "", errors.Wrapf(err, "open %s", repository)
@@ -43,7 +71,16 @@ func Diff(repository, minus, plus string) (string, error) {
 		return "", errors.Wrap(err, "get patch")
 	}
 
-	return patch.String(), nil
+	buf := bytes.NewBuffer(nil)
+	ue := gitdiff.NewUnifiedEncoder(buf, gitdiff.DefaultContextLines)
+	if options.color {
+		ue.SetColor(gitdiff.NewColorConfig())
+	}
+	if err := ue.Encode(patch); err != nil {
+		return "", errors.Wrap(err, "encode patch")
+	}
+
+	return buf.String(), nil
 }
 
 func getChangeEntry(repository *git.Repository, path, treeish string) (object.ChangeEntry, error) {
