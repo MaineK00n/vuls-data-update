@@ -131,6 +131,7 @@ import (
 	windowsVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/vulnerability"
 	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
 	wolfiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/osv"
+	wolfiSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/secdb"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -208,7 +209,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(),
 		newCmdVulnCheckKEV(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsWSUSSCN2(),
-		newCmdWolfiOSV(),
+		newCmdWolfiSecDB(), newCmdWolfiOSV(),
 	)
 
 	return cmd
@@ -4012,6 +4013,33 @@ func newCmdWindowsWSUSSCN2() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 2, "number of concurrency cabextract")
+
+	return cmd
+}
+
+func newCmdWolfiSecDB() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "wolfi", "secdb"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "wolfi-secdb",
+		Short: "Fetch Wolfi SecDB data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch wolfi-secdb
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := wolfiSecDB.Fetch(wolfiSecDB.WithDir(options.dir), wolfiSecDB.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch wolfi secdb")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
