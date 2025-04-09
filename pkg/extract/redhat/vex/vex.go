@@ -583,7 +583,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 					}
 					assm[p] = base
 				default:
-					return errors.Errorf("unexpected remedation category. expected: %q, actual: %q", []string{"mitigation", "no_fix_planned", "none_available", "vendor_fix", "workaround"}, r.Category)
+					return errors.Errorf("unexpected remediation category. expected: %q, actual: %q", []string{"mitigation", "no_fix_planned", "none_available", "vendor_fix", "workaround"}, r.Category)
 				}
 			}
 		}
@@ -624,7 +624,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 					assm[p] = base
 				case "target_set":
 				default:
-					return errors.Errorf("unexpected remedation category. expected: %q, actual: %q", []string{"exploit_status", "impact", "target_set"}, t.Category)
+					return errors.Errorf("unexpected threat category. expected: %q, actual: %q", []string{"exploit_status", "impact", "target_set"}, t.Category)
 				}
 			}
 		}
