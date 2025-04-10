@@ -1,0 +1,198 @@
+{
+	"cves": [
+		{
+			"bugs": [
+				""
+			],
+			"codename": null,
+			"cvss3": null,
+			"description": "\nPotential denial-of-service vulnerability in LoginView, LogoutView, and\nset_language() on Windows",
+			"id": "CVE-2025-27556",
+			"impact": null,
+			"mitigation": "",
+			"notes": [
+				{
+					"author": "mdeslaur",
+					"note": "Windows specific issue"
+				}
+			],
+			"notices": [],
+			"notices_ids": [],
+			"packages": [
+				{
+					"debian": "https://tracker.debian.org/pkg/python-django",
+					"name": "python-django",
+					"source": "https://ubuntu.com/security/cve?package=python-django",
+					"statuses": [
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "bionic",
+							"status": "not-affected"
+						},
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "focal",
+							"status": "not-affected"
+						},
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "jammy",
+							"status": "not-affected"
+						},
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "noble",
+							"status": "not-affected"
+						},
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "oracular",
+							"status": "not-affected"
+						},
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "trusty",
+							"status": "not-affected"
+						},
+						{
+							"component": null,
+							"description": "5.0.14,5.1.8",
+							"pocket": "security",
+							"release_codename": "upstream",
+							"status": "released"
+						},
+						{
+							"component": null,
+							"description": "windows specific",
+							"pocket": "security",
+							"release_codename": "xenial",
+							"status": "not-affected"
+						}
+					],
+					"ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=python-django"
+				}
+			],
+			"patches": {
+				"python-django": []
+			},
+			"priority": "medium",
+			"published": "2025-04-02T10:00:00",
+			"references": [
+				"https://www.cve.org/CVERecord?id=CVE-2025-27556",
+				"https://www.djangoproject.com/weblog/2025/apr/02/security-releases/"
+			],
+			"status": "active",
+			"tags": {},
+			"ubuntu_description": "",
+			"updated_at": "2025-04-02T19:59:15.332794+00:00"
+		},
+		{
+			"bugs": [
+				""
+			],
+			"codename": null,
+			"cvss3": null,
+			"description": "\nZabbix server is vulnerable to a DoS vulnerability due to uncontrolled\nresource exhaustion. An attacker can send specially crafted requests to the\nserver, which will cause the server to allocate an excessive amount of\nmemory and perform CPU-intensive decompression operations, ultimately\nleading to a service crash.",
+			"id": "CVE-2024-45700",
+			"impact": null,
+			"mitigation": "",
+			"notes": [],
+			"notices": [],
+			"notices_ids": [],
+			"packages": [
+				{
+					"debian": "https://tracker.debian.org/pkg/zabbix",
+					"name": "zabbix",
+					"source": "https://ubuntu.com/security/cve?package=zabbix",
+					"statuses": [
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "bionic",
+							"status": "needs-triage"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "focal",
+							"status": "needs-triage"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "jammy",
+							"status": "needs-triage"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "noble",
+							"status": "DNE"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "oracular",
+							"status": "needs-triage"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "trusty",
+							"status": "needs-triage"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "upstream",
+							"status": "needs-triage"
+						},
+						{
+							"component": null,
+							"description": "",
+							"pocket": "security",
+							"release_codename": "xenial",
+							"status": "needs-triage"
+						}
+					],
+					"ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=zabbix"
+				}
+			],
+			"patches": {
+				"zabbix": []
+			},
+			"priority": "medium",
+			"published": "2025-04-02T07:15:00",
+			"references": [
+				"https://www.cve.org/CVERecord?id=CVE-2024-45700",
+				"https://support.zabbix.com/browse/ZBX-26253"
+			],
+			"status": "active",
+			"tags": {},
+			"ubuntu_description": "",
+			"updated_at": "2025-04-02T17:33:08.394838+00:00"
+		}
+	],
+	"limit": 20,
+	"offset": 0,
+	"total_results": 21
+}
