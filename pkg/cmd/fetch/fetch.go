@@ -70,6 +70,7 @@ import (
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/ghsa"
 	npmGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/glsa"
 	npmOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/osv"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/nuclei"
 	nugetGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/ghsa"
 	nugetGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/glsa"
 	nugetOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/osv"
@@ -192,6 +193,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdMSF(),
 		newCmdNetBSD(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
+		newCmdNuclei(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
@@ -2071,6 +2073,33 @@ func newCmdNpmOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNuclei() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nuclei"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nuclei",
+		Short: "Fetch Nuclei Templates data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nuclei
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nuclei.Fetch(nuclei.WithDir(options.dir), nuclei.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nuclei")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
