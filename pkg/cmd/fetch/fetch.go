@@ -36,6 +36,7 @@ import (
 	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
+	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
 	erlangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/osv"
@@ -172,6 +173,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdConanGLSA(),
 		newCmdCWE(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
+		newCmdEndOfLifeDateAPI(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
@@ -1044,6 +1046,43 @@ func newCmdDebianOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdEndOfLifeDateAPI() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "endoflife-date", "api"),
+			retry: 3,
+		},
+		concurrency: 3,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "endoflife-date-api",
+		Short: "Fetch endoflife.date API data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch endoflife-date-api
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := endOfLifeDateAPI.Fetch(endOfLifeDateAPI.WithDir(options.dir), endOfLifeDateAPI.WithRetry(options.retry), endOfLifeDateAPI.WithConcurrency(options.concurrency), endOfLifeDateAPI.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch endoflife-date api")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
