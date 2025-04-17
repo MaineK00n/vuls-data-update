@@ -1,0 +1,505 @@
+{
+	"title": "Ubuntu",
+	"category": "os",
+	"tags": "linux-distribution",
+	"permalink": "/ubuntu",
+	"version_command": "cat /etc/os-release",
+	"release_policy_link": "https://wiki.ubuntu.com/Releases",
+	"identifiers": [
+		{
+			"cpe": "cpe:2.3:o:canonical:ubuntu_linux"
+		},
+		{
+			"cpe": "cpe:/o:canonical:ubuntu_linux"
+		}
+	],
+	"auto": {
+		"methods": [
+			{
+				"distrowatch": "ubuntu",
+				"regex": "^Distribution Releases?: Ubuntu( Linux)? (?P<v1>\\d+\\.\\d+\\.?\\d+)(, (?P<v2>\\d+\\.\\d+\\.?\\d+))?(LTS|, Kubuntu.*)?$",
+				"template": "{{v1}}{%if v2%}\n{{v2}}{%endif%}"
+			}
+		]
+	},
+	"releases": [
+		{
+			"release_cycle": "24.10",
+			"eol": "2025-07-11T00:00:00Z",
+			"eoas": "2025-07-11T00:00:00Z",
+			"release_date": "2024-10-10",
+			"latest": "24.10",
+			"latest_release_date": "2024-10-10",
+			"extras": {
+				"codename": "Oracular Oriole",
+				"lts": false
+			}
+		},
+		{
+			"release_cycle": "24.04",
+			"eol": "2029-04-25T00:00:00Z",
+			"eoas": "2029-04-25T00:00:00Z",
+			"eoes": "2036-04-25T00:00:00Z",
+			"release_date": "2024-04-25",
+			"latest": "24.04.2",
+			"latest_release_date": "2025-02-20",
+			"extras": {
+				"codename": "Noble Numbat",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "23.10",
+			"eol": "2024-07-11T00:00:00Z",
+			"eoas": "2024-07-11T00:00:00Z",
+			"release_date": "2023-10-12",
+			"latest": "23.10",
+			"latest_release_date": "2023-10-12",
+			"extras": {
+				"codename": "Mantic Minotaur"
+			}
+		},
+		{
+			"release_cycle": "23.04",
+			"eol": "2024-01-20T00:00:00Z",
+			"eoas": "2024-01-20T00:00:00Z",
+			"release_date": "2023-04-20",
+			"latest": "23.04",
+			"latest_release_date": "2023-04-20",
+			"extras": {
+				"codename": "Lunar Lobster"
+			}
+		},
+		{
+			"release_cycle": "22.10",
+			"eol": "2023-07-20T00:00:00Z",
+			"eoas": "2023-07-20T00:00:00Z",
+			"release_date": "2022-10-20",
+			"latest": "22.10",
+			"latest_release_date": "2022-10-20",
+			"extras": {
+				"codename": "Kinetic Kudu"
+			}
+		},
+		{
+			"release_cycle": "22.04",
+			"eol": "2027-04-01T00:00:00Z",
+			"eoas": "2024-09-30T00:00:00Z",
+			"eoes": "2032-04-09T00:00:00Z",
+			"release_date": "2022-04-21",
+			"latest": "22.04.5",
+			"latest_release_date": "2024-09-12",
+			"extras": {
+				"codename": "Jammy Jellyfish",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "21.10",
+			"eol": "2022-07-14T00:00:00Z",
+			"eoas": "2022-07-14T00:00:00Z",
+			"release_date": "2021-10-14",
+			"latest": "21.10",
+			"latest_release_date": "2021-10-14",
+			"extras": {
+				"codename": "Impish Indri"
+			}
+		},
+		{
+			"release_cycle": "21.04",
+			"eol": "2022-01-20T00:00:00Z",
+			"eoas": "2022-01-20T00:00:00Z",
+			"release_date": "2021-04-22",
+			"latest": "21.04",
+			"latest_release_date": "2021-04-22",
+			"extras": {
+				"codename": "Hirsute Hippo"
+			}
+		},
+		{
+			"release_cycle": "20.10",
+			"eol": "2021-07-22T00:00:00Z",
+			"eoas": "2021-07-22T00:00:00Z",
+			"release_date": "2020-10-22",
+			"latest": "20.10",
+			"latest_release_date": "2020-10-22",
+			"extras": {
+				"codename": "Groovy Gorilla"
+			}
+		},
+		{
+			"release_cycle": "20.04",
+			"eol": "2025-05-31T00:00:00Z",
+			"eoas": "2022-10-01T00:00:00Z",
+			"eoes": "2030-04-02T00:00:00Z",
+			"release_date": "2020-04-23",
+			"latest": "20.04.6",
+			"latest_release_date": "2023-03-23",
+			"extras": {
+				"codename": "Focal Fossa",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "19.10",
+			"eol": "2020-07-06T00:00:00Z",
+			"eoas": "2020-07-06T00:00:00Z",
+			"release_date": "2019-10-17",
+			"latest": "19.10",
+			"latest_release_date": "2019-10-17",
+			"extras": {
+				"codename": "Eoan Ermine"
+			}
+		},
+		{
+			"release_cycle": "19.04",
+			"eol": "2020-01-23T00:00:00Z",
+			"eoas": "2020-01-23T00:00:00Z",
+			"release_date": "2019-04-18",
+			"latest": "19.04",
+			"latest_release_date": "2019-04-18",
+			"extras": {
+				"codename": "Disco Dingo"
+			}
+		},
+		{
+			"release_cycle": "18.10",
+			"eol": "2019-07-18T00:00:00Z",
+			"eoas": "2019-07-18T00:00:00Z",
+			"release_date": "2018-10-18",
+			"latest": "18.10",
+			"latest_release_date": "2018-10-18",
+			"extras": {
+				"codename": "Cosmic Cuttlefish"
+			}
+		},
+		{
+			"release_cycle": "18.04",
+			"eol": "2023-05-31T00:00:00Z",
+			"eoas": "2023-05-31T00:00:00Z",
+			"eoes": "2028-04-01T00:00:00Z",
+			"release_date": "2018-04-26",
+			"latest": "18.04.6",
+			"latest_release_date": "2021-09-17",
+			"extras": {
+				"codename": "Bionic Beaver",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "17.10",
+			"eol": "2018-07-19T00:00:00Z",
+			"eoas": "2018-07-19T00:00:00Z",
+			"release_date": "2017-10-19",
+			"latest": "17.10",
+			"latest_release_date": "2017-10-19",
+			"extras": {
+				"codename": "Artful Aardvark"
+			}
+		},
+		{
+			"release_cycle": "17.04",
+			"eol": "2018-01-13T00:00:00Z",
+			"eoas": "2018-01-13T00:00:00Z",
+			"release_date": "2017-04-13",
+			"latest": "17.04",
+			"latest_release_date": "2017-04-13",
+			"extras": {
+				"codename": "Zesty Zapus"
+			}
+		},
+		{
+			"release_cycle": "16.10",
+			"eol": "2017-07-20T00:00:00Z",
+			"eoas": "2017-07-20T00:00:00Z",
+			"release_date": "2016-10-13",
+			"latest": "16.10",
+			"latest_release_date": "2016-10-13",
+			"extras": {
+				"codename": "Yakkety Yak"
+			}
+		},
+		{
+			"release_cycle": "16.04",
+			"eol": "2021-04-02T00:00:00Z",
+			"eoas": "2021-04-02T00:00:00Z",
+			"eoes": "2026-04-02T00:00:00Z",
+			"release_date": "2016-04-21",
+			"latest": "16.04.7",
+			"latest_release_date": "2020-08-13",
+			"extras": {
+				"codename": "Xenial Xerus",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "15.10",
+			"eol": "2016-07-28T00:00:00Z",
+			"eoas": "2016-07-28T00:00:00Z",
+			"release_date": "2015-10-22",
+			"latest": "15.10",
+			"latest_release_date": "2015-10-22",
+			"extras": {
+				"codename": "Wily Werewolf"
+			}
+		},
+		{
+			"release_cycle": "15.04",
+			"eol": "2016-02-04T00:00:00Z",
+			"eoas": "2016-02-04T00:00:00Z",
+			"release_date": "2015-04-23",
+			"latest": "15.04",
+			"latest_release_date": "2015-04-23",
+			"extras": {
+				"codename": "Vivid Vervet"
+			}
+		},
+		{
+			"release_cycle": "14.10",
+			"eol": "2015-07-23T00:00:00Z",
+			"eoas": "2015-07-23T00:00:00Z",
+			"release_date": "2014-10-23",
+			"latest": "14.10",
+			"latest_release_date": "2014-10-23",
+			"extras": {
+				"codename": "Utopic Unicorn"
+			}
+		},
+		{
+			"release_cycle": "14.04",
+			"eol": "2019-04-02T00:00:00Z",
+			"eoas": "2019-04-02T00:00:00Z",
+			"eoes": "2024-04-02T00:00:00Z",
+			"release_date": "2014-04-17",
+			"latest": "14.04.6",
+			"latest_release_date": "2019-03-07",
+			"extras": {
+				"codename": "Trusty Tahr",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "13.10",
+			"eol": "2014-07-17T00:00:00Z",
+			"eoas": "2014-07-17T00:00:00Z",
+			"release_date": "2013-10-17",
+			"latest": "13.10",
+			"latest_release_date": "2013-10-17",
+			"extras": {
+				"codename": "Saucy Salamander"
+			}
+		},
+		{
+			"release_cycle": "13.04",
+			"eol": "2014-01-27T00:00:00Z",
+			"eoas": "2014-01-27T00:00:00Z",
+			"release_date": "2013-04-25",
+			"latest": "13.04",
+			"latest_release_date": "2013-04-25",
+			"extras": {
+				"codename": "Raring Ringtail"
+			}
+		},
+		{
+			"release_cycle": "12.10",
+			"eol": "2014-05-16T00:00:00Z",
+			"eoas": "2014-05-16T00:00:00Z",
+			"release_date": "2012-10-18",
+			"latest": "12.10",
+			"latest_release_date": "2012-10-18",
+			"extras": {
+				"codename": "Quantal Quetzal"
+			}
+		},
+		{
+			"release_cycle": "12.04",
+			"eol": "2017-04-28T00:00:00Z",
+			"eoas": "2017-04-28T00:00:00Z",
+			"eoes": "2019-04-26T00:00:00Z",
+			"release_date": "2012-04-26",
+			"latest": "12.04.5",
+			"latest_release_date": "2014-08-08",
+			"extras": {
+				"codename": "Precise Pangolin",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "11.10",
+			"eol": "2013-05-09T00:00:00Z",
+			"eoas": "2013-05-09T00:00:00Z",
+			"release_date": "2011-10-13",
+			"latest": "11.10",
+			"latest_release_date": "2011-10-13",
+			"extras": {
+				"codename": "Oneiric Ocelot"
+			}
+		},
+		{
+			"release_cycle": "11.04",
+			"eol": "2012-10-28T00:00:00Z",
+			"eoas": "2012-10-28T00:00:00Z",
+			"release_date": "2011-04-28",
+			"latest": "11.04",
+			"latest_release_date": "2011-04-28",
+			"extras": {
+				"codename": "Natty Narwhal"
+			}
+		},
+		{
+			"release_cycle": "10.10",
+			"eol": "2012-04-10T00:00:00Z",
+			"eoas": "2012-04-10T00:00:00Z",
+			"release_date": "2010-10-10",
+			"latest": "10.10",
+			"latest_release_date": "2010-10-10",
+			"extras": {
+				"codename": "Maverick Meerkat"
+			}
+		},
+		{
+			"release_cycle": "10.04",
+			"eol": "2013-05-09T00:00:00Z",
+			"eoas": "2013-05-09T00:00:00Z",
+			"release_date": "2010-04-29",
+			"latest": "10.04.4",
+			"latest_release_date": "2012-02-16",
+			"extras": {
+				"codename": "Lucid Lynx",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "9.10",
+			"eol": "2011-04-30T00:00:00Z",
+			"eoas": "2011-04-30T00:00:00Z",
+			"release_date": "2009-10-29",
+			"latest": "9.10",
+			"latest_release_date": "2009-10-29",
+			"extras": {
+				"codename": "Karmic Koala"
+			}
+		},
+		{
+			"release_cycle": "9.04",
+			"eol": "2010-10-23T00:00:00Z",
+			"eoas": "2010-10-23T00:00:00Z",
+			"release_date": "2009-04-23",
+			"latest": "9.04",
+			"latest_release_date": "2009-04-23",
+			"extras": {
+				"codename": "Jaunty Jackalope"
+			}
+		},
+		{
+			"release_cycle": "8.10",
+			"eol": "2010-04-30T00:00:00Z",
+			"eoas": "2010-04-30T00:00:00Z",
+			"release_date": "2008-10-30",
+			"latest": "8.10",
+			"latest_release_date": "2008-10-30",
+			"extras": {
+				"codename": "Intrepid Ibex"
+			}
+		},
+		{
+			"release_cycle": "8.04",
+			"eol": "2013-05-09T00:00:00Z",
+			"eoas": "2013-05-09T00:00:00Z",
+			"release_date": "2008-04-24",
+			"latest": "8.04.4",
+			"latest_release_date": "2010-01-29",
+			"extras": {
+				"codename": "Hardy Heron",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "7.10",
+			"eol": "2009-04-18T00:00:00Z",
+			"eoas": "2009-04-18T00:00:00Z",
+			"release_date": "2007-10-18",
+			"latest": "7.10",
+			"latest_release_date": "2007-10-18",
+			"extras": {
+				"codename": "Gutsy Gibbon"
+			}
+		},
+		{
+			"release_cycle": "7.04",
+			"eol": "2008-10-19T00:00:00Z",
+			"eoas": "2008-10-19T00:00:00Z",
+			"release_date": "2007-04-19",
+			"latest": "7.04",
+			"latest_release_date": "2007-04-19",
+			"extras": {
+				"codename": "Feisty Fawn"
+			}
+		},
+		{
+			"release_cycle": "6.10",
+			"eol": "2008-04-26T00:00:00Z",
+			"eoas": "2006-10-26T00:00:00Z",
+			"release_date": "2006-10-26",
+			"latest": "6.10",
+			"latest_release_date": "2006-10-26",
+			"extras": {
+				"codename": "Edgy Eft"
+			}
+		},
+		{
+			"release_cycle": "6.06",
+			"eol": "2011-06-01T00:00:00Z",
+			"eoas": "2011-06-01T00:00:00Z",
+			"release_date": "2006-08-10",
+			"latest": "6.06.2",
+			"latest_release_date": "2008-01-22",
+			"extras": {
+				"codename": "Dapper Drake",
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "5.10",
+			"eol": "2007-04-13T00:00:00Z",
+			"eoas": "2007-04-13T00:00:00Z",
+			"release_date": "2005-10-13",
+			"latest": "5.10",
+			"latest_release_date": "2005-10-13",
+			"extras": {
+				"codename": "Breezy Badger"
+			}
+		},
+		{
+			"release_cycle": "5.04",
+			"eol": "2006-10-31T00:00:00Z",
+			"eoas": "2006-10-31T00:00:00Z",
+			"release_date": "2005-04-08",
+			"latest": "5.04",
+			"latest_release_date": "2005-04-08",
+			"extras": {
+				"codename": "Hoary Hedgehog"
+			}
+		},
+		{
+			"release_cycle": "4.10",
+			"eol": "2006-04-30T00:00:00Z",
+			"eoas": "2004-10-26T00:00:00Z",
+			"release_date": "2004-10-20",
+			"latest": "4.10",
+			"latest_release_date": "2004-10-20",
+			"extras": {
+				"codename": "Warty Warthog"
+			}
+		}
+	],
+	"extras": {
+		"changelogTemplate": "https://wiki.ubuntu.com/{{\"__CODENAME__\"|replace:' ',''}}/ReleaseNotes/",
+		"eoasColumn": "Hardware & Maintenance",
+		"eoesColumn": "Expanded Security Maintenance",
+		"eolColumn": "Maintenance & Security Support",
+		"iconSlug": "ubuntu",
+		"releaseImage": "https://github.com/endoflife-date/endoflife.date/assets/1423115/c1d812cd-9179-4ff6-9607-520dbf37fa3e",
+		"releaseLabel": "__RELEASE_CYCLE__ '__CODENAME__'"
+	}
+}

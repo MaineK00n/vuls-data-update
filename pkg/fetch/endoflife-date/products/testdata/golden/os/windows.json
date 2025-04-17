@@ -1,0 +1,433 @@
+{
+	"title": "Microsoft Windows",
+	"category": "os",
+	"tags": "microsoft windows",
+	"permalink": "/windows",
+	"version_command": "winver",
+	"release_policy_link": "https://learn.microsoft.com/lifecycle/products/?terms=Windows",
+	"identifiers": [
+		{
+			"cpe": "cpe:2.3:o:microsoft:windows"
+		},
+		{
+			"cpe": "cpe:/o:microsoft:windows"
+		}
+	],
+	"releases": [
+		{
+			"release_cycle": "11-24h2-iot-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information#enterprise-and-iot-enterprise-ltsc-editions",
+			"release_label": "11 24H2 IoT",
+			"eol": "2034-10-10T00:00:00Z",
+			"eoas": "2029-10-09T00:00:00Z",
+			"release_date": "2024-10-01",
+			"latest": "10.0.26100",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "11-24h2-e-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information#enterprise-and-iot-enterprise-ltsc-editions",
+			"release_label": "11 24H2 (E)",
+			"eol": "2029-10-09T00:00:00Z",
+			"eoas": "2029-10-09T00:00:00Z",
+			"release_date": "2024-10-01",
+			"latest": "10.0.26100",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "11-24h2-e",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 24H2 (E)",
+			"eol": "2027-10-12T00:00:00Z",
+			"eoas": "2027-10-12T00:00:00Z",
+			"release_date": "2024-10-01",
+			"latest": "10.0.26100"
+		},
+		{
+			"release_cycle": "11-24h2-w",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 24H2 (W)",
+			"eol": "2026-10-13T00:00:00Z",
+			"eoas": "2026-10-13T00:00:00Z",
+			"release_date": "2024-10-01",
+			"latest": "10.0.26100"
+		},
+		{
+			"release_cycle": "11-23h2-e",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 23H2 (E)",
+			"eol": "2026-11-10T00:00:00Z",
+			"eoas": "2026-11-10T00:00:00Z",
+			"release_date": "2023-10-31",
+			"latest": "10.0.22631"
+		},
+		{
+			"release_cycle": "11-23h2-w",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 23H2 (W)",
+			"eol": "2025-11-11T00:00:00Z",
+			"eoas": "2025-11-11T00:00:00Z",
+			"release_date": "2023-10-31",
+			"latest": "10.0.22631"
+		},
+		{
+			"release_cycle": "10-22h2",
+			"link": "https://learn.microsoft.com/windows/release-health/release-information",
+			"release_label": "10 22H2",
+			"eol": "2025-10-14T00:00:00Z",
+			"eoas": "2025-10-14T00:00:00Z",
+			"eoes": "2028-10-10T00:00:00Z",
+			"release_date": "2022-10-18",
+			"latest": "10.0.19045"
+		},
+		{
+			"release_cycle": "11-22h2-e",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 22H2 (E)",
+			"eol": "2025-10-14T00:00:00Z",
+			"eoas": "2025-10-14T00:00:00Z",
+			"release_date": "2022-09-20",
+			"latest": "10.0.22621"
+		},
+		{
+			"release_cycle": "11-22h2-w",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 22H2 (W)",
+			"eol": "2024-10-08T00:00:00Z",
+			"eoas": "2024-10-08T00:00:00Z",
+			"release_date": "2022-09-20",
+			"latest": "10.0.22621"
+		},
+		{
+			"release_cycle": "10-21h2-iot-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/release-information#enterprise-and-iot-enterprise-ltsbltsc-editions",
+			"release_label": "10 21H2 IoT",
+			"eol": "2032-01-13T00:00:00Z",
+			"eoas": "2027-01-12T00:00:00Z",
+			"release_date": "2021-11-16",
+			"latest": "10.0.19044",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "10-21h2-e-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/release-information#enterprise-and-iot-enterprise-ltsbltsc-editions",
+			"release_label": "10 21H2 (E)",
+			"eol": "2027-01-12T00:00:00Z",
+			"eoas": "2027-01-12T00:00:00Z",
+			"release_date": "2021-11-16",
+			"latest": "10.0.19044",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "10-21h2-e",
+			"link": "https://learn.microsoft.com/lifecycle/products/windows-10-enterprise-and-education",
+			"release_label": "10 21H2 (E)",
+			"eol": "2024-06-11T00:00:00Z",
+			"eoas": "2024-06-11T00:00:00Z",
+			"release_date": "2021-11-16",
+			"latest": "10.0.19044"
+		},
+		{
+			"release_cycle": "10-21h2-w",
+			"link": "https://learn.microsoft.com/windows/release-health/release-information",
+			"release_label": "10 21H2 (W)",
+			"eol": "2023-06-13T00:00:00Z",
+			"eoas": "2023-06-13T00:00:00Z",
+			"release_date": "2021-11-16",
+			"latest": "10.0.19044"
+		},
+		{
+			"release_cycle": "11-21h2-e",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 21H2 (E)",
+			"eol": "2024-10-08T00:00:00Z",
+			"eoas": "2024-10-08T00:00:00Z",
+			"release_date": "2021-10-04",
+			"latest": "10.0.22000"
+		},
+		{
+			"release_cycle": "11-21h2-w",
+			"link": "https://learn.microsoft.com/windows/release-health/windows11-release-information",
+			"release_label": "11 21H2 (W)",
+			"eol": "2023-10-10T00:00:00Z",
+			"eoas": "2023-10-10T00:00:00Z",
+			"release_date": "2021-10-04",
+			"latest": "10.0.22000"
+		},
+		{
+			"release_cycle": "10-21h1",
+			"link": "https://learn.microsoft.com/windows/release-health/status-windows-10-21h1",
+			"release_label": "10 21H1",
+			"eol": "2022-12-13T00:00:00Z",
+			"eoas": "2022-12-13T00:00:00Z",
+			"release_date": "2021-05-18",
+			"latest": "10.0.19043"
+		},
+		{
+			"release_cycle": "10-20h2-e",
+			"link": "https://learn.microsoft.com/windows/release-health/status-windows-10-20h2",
+			"release_label": "10 20H2 (E)",
+			"eol": "2023-05-09T00:00:00Z",
+			"eoas": "2023-05-09T00:00:00Z",
+			"release_date": "2020-10-20",
+			"latest": "10.0.19042"
+		},
+		{
+			"release_cycle": "10-20h2-w",
+			"link": "https://learn.microsoft.com/windows/release-health/status-windows-10-20h2",
+			"release_label": "10 20H2 (W)",
+			"eol": "2022-05-10T00:00:00Z",
+			"eoas": "2022-05-10T00:00:00Z",
+			"release_date": "2020-10-20",
+			"latest": "10.0.19042"
+		},
+		{
+			"release_cycle": "10-2004",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-version-2004-end-of-servicing",
+			"release_label": "10 2004",
+			"eol": "2021-12-14T00:00:00Z",
+			"eoas": "2021-12-14T00:00:00Z",
+			"release_date": "2020-05-27",
+			"latest": "10.0.19041"
+		},
+		{
+			"release_cycle": "10-1909-e",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1909-enterprise-education-eos",
+			"release_label": "10 1909 (E)",
+			"eol": "2022-05-10T00:00:00Z",
+			"eoas": "2022-05-10T00:00:00Z",
+			"release_date": "2019-11-12",
+			"latest": "10.0.18363"
+		},
+		{
+			"release_cycle": "10-1909-w",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1909-end-of-servicing",
+			"release_label": "10 1909 (W)",
+			"eol": "2021-05-11T00:00:00Z",
+			"eoas": "2021-05-11T00:00:00Z",
+			"release_date": "2019-11-12",
+			"latest": "10.0.18363"
+		},
+		{
+			"release_cycle": "10-1903",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1903-end-of-servicing",
+			"release_label": "10 1903",
+			"eol": "2020-12-08T00:00:00Z",
+			"eoas": "2020-12-08T00:00:00Z",
+			"release_date": "2019-05-21",
+			"latest": "10.0.18362"
+		},
+		{
+			"release_cycle": "10-1809-e-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/supported-versions-windows-client#enterprise-and-iot-enterprise-ltsbltsc-editions",
+			"release_label": "10 1809 (E)",
+			"eol": "2029-01-09T00:00:00Z",
+			"eoas": "2024-01-09T00:00:00Z",
+			"release_date": "2018-11-13",
+			"latest": "10.0.17763",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "10-1809-e",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1803-1809-end-of-servicing",
+			"release_label": "10 1809 (E)",
+			"eol": "2021-05-11T00:00:00Z",
+			"eoas": "2021-05-11T00:00:00Z",
+			"release_date": "2018-11-13",
+			"latest": "10.0.17763"
+		},
+		{
+			"release_cycle": "10-1809-w",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1809-end-of-servicing",
+			"release_label": "10 1809 (W)",
+			"eol": "2020-11-10T00:00:00Z",
+			"eoas": "2020-11-10T00:00:00Z",
+			"release_date": "2018-11-13",
+			"latest": "10.0.17763"
+		},
+		{
+			"release_cycle": "10-1803-e",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1803-1809-end-of-servicing",
+			"release_label": "10 1803 (E)",
+			"eol": "2021-05-11T00:00:00Z",
+			"eoas": "2020-05-11T00:00:00Z",
+			"release_date": "2018-04-30",
+			"latest": "10.0.17134"
+		},
+		{
+			"release_cycle": "10-1803-w",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1803-end-of-servicing",
+			"release_label": "10 1803 (W)",
+			"eol": "2019-11-12T00:00:00Z",
+			"eoas": "2019-11-12T00:00:00Z",
+			"release_date": "2018-04-30",
+			"latest": "10.0.17134"
+		},
+		{
+			"release_cycle": "10-1709-e",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1709-end-of-servicing",
+			"release_label": "10 1709 (E)",
+			"eol": "2020-10-13T00:00:00Z",
+			"eoas": "2020-10-13T00:00:00Z",
+			"release_date": "2017-10-17",
+			"latest": "10.0.16299"
+		},
+		{
+			"release_cycle": "10-1709-w",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1709-end-of-servicing",
+			"release_label": "10 1709 (W)",
+			"eol": "2019-04-09T00:00:00Z",
+			"eoas": "2019-04-09T00:00:00Z",
+			"release_date": "2017-10-17",
+			"latest": "10.0.16299"
+		},
+		{
+			"release_cycle": "10-1703-e",
+			"link": "https://techcommunity.microsoft.com/t5/windows-it-pro-blog/end-of-service-reminders-for-windows-10-versions-1703-and-1803/ba-p/903715",
+			"release_label": "10 1703 (E)",
+			"eol": "2019-10-08T00:00:00Z",
+			"eoas": "2019-10-08T00:00:00Z",
+			"release_date": "2017-04-11",
+			"latest": "10.0.15063"
+		},
+		{
+			"release_cycle": "10-1703-w",
+			"link": "https://techcommunity.microsoft.com/t5/windows-it-pro-blog/end-of-service-reminders-for-windows-10-versions-1703-and-1803/ba-p/903715",
+			"release_label": "10 1703 (W)",
+			"eol": "2018-10-09T00:00:00Z",
+			"eoas": "2018-10-09T00:00:00Z",
+			"release_date": "2017-04-11",
+			"latest": "10.0.15063"
+		},
+		{
+			"release_cycle": "10-1607-e-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/supported-versions-windows-client#enterprise-and-iot-enterprise-ltsbltsc-editions",
+			"release_label": "10 1607 (E)",
+			"eol": "2026-10-13T00:00:00Z",
+			"eoas": "2021-10-12T00:00:00Z",
+			"release_date": "2016-08-02",
+			"latest": "10.0.14393",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "10-1607-e",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1607-end-of-servicing",
+			"release_label": "10 1607 (E)",
+			"eol": "2019-04-09T00:00:00Z",
+			"eoas": "2019-04-09T00:00:00Z",
+			"release_date": "2016-08-02",
+			"latest": "10.0.14393"
+		},
+		{
+			"release_cycle": "10-1607-w",
+			"release_label": "10 1607 (W)",
+			"eol": "2018-04-10T00:00:00Z",
+			"eoas": "2018-04-10T00:00:00Z",
+			"release_date": "2016-08-02",
+			"latest": "10.0.14393"
+		},
+		{
+			"release_cycle": "10-1511",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1511-end-of-servicing",
+			"release_label": "10 1511",
+			"eol": "2017-10-10T00:00:00Z",
+			"eoas": "2017-10-10T00:00:00Z",
+			"release_date": "2015-11-10",
+			"latest": "10.0.10586"
+		},
+		{
+			"release_cycle": "10-1507-e-lts",
+			"link": "https://learn.microsoft.com/windows/release-health/supported-versions-windows-client#enterprise-and-iot-enterprise-ltsbltsc-editions",
+			"release_label": "10 1507 (E)",
+			"eol": "2025-10-14T00:00:00Z",
+			"eoas": "2020-10-13T00:00:00Z",
+			"release_date": "2015-07-29",
+			"latest": "10.0.10240",
+			"extras": {
+				"lts": true
+			}
+		},
+		{
+			"release_cycle": "10-1507",
+			"link": "https://learn.microsoft.com/lifecycle/announcements/windows-10-1507-cb-cbb-end-of-servicing",
+			"release_label": "10 1507",
+			"eol": "2017-05-09T00:00:00Z",
+			"eoas": "2017-05-09T00:00:00Z",
+			"release_date": "2015-07-29",
+			"latest": "10.0.10240"
+		},
+		{
+			"release_cycle": "10-1507-iot",
+			"link": "https://learn.microsoft.com/en-us/lifecycle/products/windows-10-iot-core",
+			"release_label": "10 1507 IOT",
+			"eol": "2020-11-10T00:00:00Z",
+			"eoas": "2020-11-10T00:00:00Z",
+			"release_date": "2015-04-29",
+			"latest": "10.0.10240",
+			"extras": {
+				"lts": false
+			}
+		},
+		{
+			"release_cycle": "8.1",
+			"link": "https://learn.microsoft.com/lifecycle/products/windows-81",
+			"release_label": "8.1",
+			"eol": "2023-01-10T00:00:00Z",
+			"eoas": "2018-01-09T00:00:00Z",
+			"release_date": "2013-11-13",
+			"latest": "6.3.9600"
+		},
+		{
+			"release_cycle": "8",
+			"link": "https://learn.microsoft.com/lifecycle/products/windows-8",
+			"release_label": "8",
+			"eol": "2016-01-12T00:00:00Z",
+			"eoas": "2016-01-12T00:00:00Z",
+			"release_date": "2012-10-30",
+			"latest": "6.2.9200"
+		},
+		{
+			"release_cycle": "7-sp1",
+			"link": "https://learn.microsoft.com/lifecycle/products/windows-7",
+			"release_label": "7 SP1",
+			"eol": "2020-01-14T00:00:00Z",
+			"eoas": "2015-01-13T00:00:00Z",
+			"release_date": "2011-02-22",
+			"latest": "6.1.7601"
+		},
+		{
+			"release_cycle": "6-sp2",
+			"link": "https://learn.microsoft.com/lifecycle/products/windows-vista",
+			"release_label": "Vista SP2",
+			"eol": "2017-04-11T00:00:00Z",
+			"eoas": "2012-04-10T00:00:00Z",
+			"release_date": "2009-04-29",
+			"latest": "6.0.6200"
+		},
+		{
+			"release_cycle": "5-sp3",
+			"link": "https://learn.microsoft.com/lifecycle/products/windows-xp",
+			"release_label": "XP SP3",
+			"eol": "2014-04-08T00:00:00Z",
+			"eoas": "2009-04-14T00:00:00Z",
+			"release_date": "2008-04-21",
+			"latest": "5.1.2600"
+		}
+	],
+	"extras": {
+		"eoasColumn": true,
+		"eoesColumn": "Extended Security Updates"
+	}
+}
