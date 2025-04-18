@@ -1070,17 +1070,17 @@ func newCmdEPSS() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := epss.Fetch(args, epss.WithDir(options.dir), epss.WithRetry(options.retry)); err != nil {
+			if err := epss.Fetch(args, epss.WithDir(options.dir), epss.WithRetry(options.retry), epss.WithConcurrency(options.concurrency), epss.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch epss")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "epss"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 4, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
