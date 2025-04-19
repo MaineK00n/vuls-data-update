@@ -1,0 +1,371 @@
+[
+	{
+		"cycle": "24.10",
+		"releaseDate": "2024-10-10",
+		"eol": "2025-07-11",
+		"latest": "24.10",
+		"lts": false,
+		"support": "2025-07-11",
+		"discontinued": null
+	},
+	{
+		"cycle": "24.04",
+		"releaseDate": "2024-04-25",
+		"eol": "2029-04-25",
+		"latest": "24.04.2",
+		"lts": true,
+		"support": "2029-04-25",
+		"discontinued": null
+	},
+	{
+		"cycle": "23.10",
+		"releaseDate": "2023-10-12",
+		"eol": "2024-07-11",
+		"latest": "23.10",
+		"lts": false,
+		"support": "2024-07-11",
+		"discontinued": null
+	},
+	{
+		"cycle": "23.04",
+		"releaseDate": "2023-04-20",
+		"eol": "2024-01-20",
+		"latest": "23.04",
+		"lts": false,
+		"support": "2024-01-20",
+		"discontinued": null
+	},
+	{
+		"cycle": "22.10",
+		"releaseDate": "2022-10-20",
+		"eol": "2023-07-20",
+		"latest": "22.10",
+		"lts": false,
+		"support": "2023-07-20",
+		"discontinued": null
+	},
+	{
+		"cycle": "22.04",
+		"releaseDate": "2022-04-21",
+		"eol": "2027-04-01",
+		"latest": "22.04.5",
+		"lts": true,
+		"support": "2024-09-30",
+		"discontinued": null
+	},
+	{
+		"cycle": "21.10",
+		"releaseDate": "2021-10-14",
+		"eol": "2022-07-14",
+		"latest": "21.10",
+		"lts": false,
+		"support": "2022-07-14",
+		"discontinued": null
+	},
+	{
+		"cycle": "21.04",
+		"releaseDate": "2021-04-22",
+		"eol": "2022-01-20",
+		"latest": "21.04",
+		"lts": false,
+		"support": "2022-01-20",
+		"discontinued": null
+	},
+	{
+		"cycle": "20.10",
+		"releaseDate": "2020-10-22",
+		"eol": "2021-07-22",
+		"latest": "20.10",
+		"lts": false,
+		"support": "2021-07-22",
+		"discontinued": null
+	},
+	{
+		"cycle": "20.04",
+		"releaseDate": "2020-04-23",
+		"eol": "2025-05-31",
+		"latest": "20.04.6",
+		"lts": true,
+		"support": "2022-10-01",
+		"discontinued": null
+	},
+	{
+		"cycle": "19.10",
+		"releaseDate": "2019-10-17",
+		"eol": "2020-07-06",
+		"latest": "19.10",
+		"lts": false,
+		"support": "2020-07-06",
+		"discontinued": null
+	},
+	{
+		"cycle": "19.04",
+		"releaseDate": "2019-04-18",
+		"eol": "2020-01-23",
+		"latest": "19.04",
+		"lts": false,
+		"support": "2020-01-23",
+		"discontinued": null
+	},
+	{
+		"cycle": "18.10",
+		"releaseDate": "2018-10-18",
+		"eol": "2019-07-18",
+		"latest": "18.10",
+		"lts": false,
+		"support": "2019-07-18",
+		"discontinued": null
+	},
+	{
+		"cycle": "18.04",
+		"releaseDate": "2018-04-26",
+		"eol": "2023-05-31",
+		"latest": "18.04.6",
+		"lts": true,
+		"support": "2023-05-31",
+		"discontinued": null
+	},
+	{
+		"cycle": "17.10",
+		"releaseDate": "2017-10-19",
+		"eol": "2018-07-19",
+		"latest": "17.10",
+		"lts": false,
+		"support": "2018-07-19",
+		"discontinued": null
+	},
+	{
+		"cycle": "17.04",
+		"releaseDate": "2017-04-13",
+		"eol": "2018-01-13",
+		"latest": "17.04",
+		"lts": false,
+		"support": "2018-01-13",
+		"discontinued": null
+	},
+	{
+		"cycle": "16.10",
+		"releaseDate": "2016-10-13",
+		"eol": "2017-07-20",
+		"latest": "16.10",
+		"lts": false,
+		"support": "2017-07-20",
+		"discontinued": null
+	},
+	{
+		"cycle": "16.04",
+		"releaseDate": "2016-04-21",
+		"eol": "2021-04-02",
+		"latest": "16.04.7",
+		"lts": true,
+		"support": "2021-04-02",
+		"discontinued": null
+	},
+	{
+		"cycle": "15.10",
+		"releaseDate": "2015-10-22",
+		"eol": "2016-07-28",
+		"latest": "15.10",
+		"lts": false,
+		"support": "2016-07-28",
+		"discontinued": null
+	},
+	{
+		"cycle": "15.04",
+		"releaseDate": "2015-04-23",
+		"eol": "2016-02-04",
+		"latest": "15.04",
+		"lts": false,
+		"support": "2016-02-04",
+		"discontinued": null
+	},
+	{
+		"cycle": "14.10",
+		"releaseDate": "2014-10-23",
+		"eol": "2015-07-23",
+		"latest": "14.10",
+		"lts": false,
+		"support": "2015-07-23",
+		"discontinued": null
+	},
+	{
+		"cycle": "14.04",
+		"releaseDate": "2014-04-17",
+		"eol": "2019-04-02",
+		"latest": "14.04.6",
+		"lts": true,
+		"support": "2019-04-02",
+		"discontinued": null
+	},
+	{
+		"cycle": "13.10",
+		"releaseDate": "2013-10-17",
+		"eol": "2014-07-17",
+		"latest": "13.10",
+		"lts": false,
+		"support": "2014-07-17",
+		"discontinued": null
+	},
+	{
+		"cycle": "13.04",
+		"releaseDate": "2013-04-25",
+		"eol": "2014-01-27",
+		"latest": "13.04",
+		"lts": false,
+		"support": "2014-01-27",
+		"discontinued": null
+	},
+	{
+		"cycle": "12.10",
+		"releaseDate": "2012-10-18",
+		"eol": "2014-05-16",
+		"latest": "12.10",
+		"lts": false,
+		"support": "2014-05-16",
+		"discontinued": null
+	},
+	{
+		"cycle": "12.04",
+		"releaseDate": "2012-04-26",
+		"eol": "2017-04-28",
+		"latest": "12.04.5",
+		"lts": true,
+		"support": "2017-04-28",
+		"discontinued": null
+	},
+	{
+		"cycle": "11.10",
+		"releaseDate": "2011-10-13",
+		"eol": "2013-05-09",
+		"latest": "11.10",
+		"lts": false,
+		"support": "2013-05-09",
+		"discontinued": null
+	},
+	{
+		"cycle": "11.04",
+		"releaseDate": "2011-04-28",
+		"eol": "2012-10-28",
+		"latest": "11.04",
+		"lts": false,
+		"support": "2012-10-28",
+		"discontinued": null
+	},
+	{
+		"cycle": "10.10",
+		"releaseDate": "2010-10-10",
+		"eol": "2012-04-10",
+		"latest": "10.10",
+		"lts": false,
+		"support": "2012-04-10",
+		"discontinued": null
+	},
+	{
+		"cycle": "10.04",
+		"releaseDate": "2010-04-29",
+		"eol": "2013-05-09",
+		"latest": "10.04.4",
+		"lts": true,
+		"support": "2013-05-09",
+		"discontinued": null
+	},
+	{
+		"cycle": "9.10",
+		"releaseDate": "2009-10-29",
+		"eol": "2011-04-30",
+		"latest": "9.10",
+		"lts": false,
+		"support": "2011-04-30",
+		"discontinued": null
+	},
+	{
+		"cycle": "9.04",
+		"releaseDate": "2009-04-23",
+		"eol": "2010-10-23",
+		"latest": "9.04",
+		"lts": false,
+		"support": "2010-10-23",
+		"discontinued": null
+	},
+	{
+		"cycle": "8.10",
+		"releaseDate": "2008-10-30",
+		"eol": "2010-04-30",
+		"latest": "8.10",
+		"lts": false,
+		"support": "2010-04-30",
+		"discontinued": null
+	},
+	{
+		"cycle": "8.04",
+		"releaseDate": "2008-04-24",
+		"eol": "2013-05-09",
+		"latest": "8.04.4",
+		"lts": true,
+		"support": "2013-05-09",
+		"discontinued": null
+	},
+	{
+		"cycle": "7.10",
+		"releaseDate": "2007-10-18",
+		"eol": "2009-04-18",
+		"latest": "7.10",
+		"lts": false,
+		"support": "2009-04-18",
+		"discontinued": null
+	},
+	{
+		"cycle": "7.04",
+		"releaseDate": "2007-04-19",
+		"eol": "2008-10-19",
+		"latest": "7.04",
+		"lts": false,
+		"support": "2008-10-19",
+		"discontinued": null
+	},
+	{
+		"cycle": "6.10",
+		"releaseDate": "2006-10-26",
+		"eol": "2008-04-26",
+		"latest": "6.10",
+		"lts": false,
+		"support": "2006-10-26",
+		"discontinued": null
+	},
+	{
+		"cycle": "6.06",
+		"releaseDate": "2006-08-10",
+		"eol": "2011-06-01",
+		"latest": "6.06.2",
+		"lts": true,
+		"support": "2011-06-01",
+		"discontinued": null
+	},
+	{
+		"cycle": "5.10",
+		"releaseDate": "2005-10-13",
+		"eol": "2007-04-13",
+		"latest": "5.10",
+		"lts": false,
+		"support": "2007-04-13",
+		"discontinued": null
+	},
+	{
+		"cycle": "5.04",
+		"releaseDate": "2005-04-08",
+		"eol": "2006-10-31",
+		"latest": "5.04",
+		"lts": false,
+		"support": "2006-10-31",
+		"discontinued": null
+	},
+	{
+		"cycle": "4.10",
+		"releaseDate": "2004-10-20",
+		"eol": "2006-04-30",
+		"latest": "4.10",
+		"lts": false,
+		"support": "2004-10-26",
+		"discontinued": null
+	}
+]
