@@ -37,6 +37,7 @@ import (
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
+	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
 	erlangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/osv"
@@ -173,7 +174,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdConanGLSA(),
 		newCmdCWE(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
-		newCmdEndOfLifeDateAPI(),
+		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
@@ -1083,6 +1084,33 @@ func newCmdEndOfLifeDateAPI() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
 	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdEndOfLifeDateProducts() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "endoflife-date", "products"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "endoflife-date-products",
+		Short: "Fetch endoflife.date products data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch endoflife-date-products
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := endOfLifeDateProducts.Fetch(endOfLifeDateProducts.WithDir(options.dir), endOfLifeDateProducts.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch endoflife-date products")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
