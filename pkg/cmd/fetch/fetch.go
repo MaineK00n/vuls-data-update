@@ -142,6 +142,7 @@ import (
 	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
 	wolfiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/osv"
 	wolfiSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/secdb"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/wrlinux"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -226,6 +227,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdVulnCheckKEV(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsDeployment(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiSecDB(), newCmdWolfiOSV(),
+		newCmdWRLinux(),
 	)
 
 	return cmd
@@ -4383,6 +4385,33 @@ func newCmdWolfiOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "wolfi", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdWRLinux() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "wrlinux"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "wrlinux",
+		Short: "Fetch Wind River Linux data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch wrlinux
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := wrlinux.Fetch(wrlinux.WithDir(options.dir), wrlinux.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch wrlinux")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
