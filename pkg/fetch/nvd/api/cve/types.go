@@ -28,12 +28,18 @@ type CVE struct {
 	CISAActionDue         string          `json:"cisaActionDue,omitempty"`
 	CISARequiredAction    string          `json:"cisaRequiredAction,omitempty"`
 	CISAVulnerabilityName string          `json:"cisaVulnerabilityName,omitempty"`
+	CVETags               []CVETags       `json:"cveTags,omitempty"`
 	Descriptions          []LangString    `json:"descriptions"`
 	References            []Reference     `json:"references"`
 	Metrics               Metrics         `json:"metrics,omitempty"`
 	Weaknesses            []Weakness      `json:"weaknesses,omitempty"`
 	Configurations        []Config        `json:"configurations,omitempty"`
 	VendorComments        []VendorComment `json:"vendorComments,omitempty"`
+}
+
+type CVETags struct {
+	SourceIdentifier string   `json:"sourceIdentifier,omitempty"`
+	Tags             []string `json:"tags,omitempty"` // enum: unsupported-when-assigned, exclusively-hosted-service, disputed
 }
 
 type LangString struct {
