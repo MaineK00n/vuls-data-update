@@ -1,0 +1,9 @@
+{
+	"unix-def": "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix",
+	"id": "oval:org.opensuse.security:ste:2009172882",
+	"version": "1",
+	"os_release": {
+		"text": "tools-default",
+		"operation": "pattern match"
+	}
+}

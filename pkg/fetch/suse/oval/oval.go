@@ -125,30 +125,37 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 
-		oval := path.Base(resp.Request.URL.Path)
-
-		var osname, version string
-		switch {
-		case strings.HasPrefix(oval, "suse.linux.enterprise.desktop"):
-			osname = "suse.linux.enterprise.desktop"
-			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "suse.linux.enterprise.desktop.")
-		case strings.HasPrefix(oval, "suse.linux.enterprise.server"):
-			osname = "suse.linux.enterprise.server"
-			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "suse.linux.enterprise.server.")
-		case strings.HasPrefix(oval, "suse.linux.enterprise.micro"):
-			osname = "suse.linux.enterprise.micro"
-			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "suse.linux.enterprise.micro.")
-		case strings.HasPrefix(oval, "opensuse.leap"):
-			osname = "opensuse.leap"
-			if strings.HasPrefix(oval, "opensuse.leap.micro") {
-				osname = "opensuse.leap.micro"
+		ovaltype, osname, version, err := func() (string, string, string, error) {
+			lhs, rhs, _ := strings.Cut(strings.TrimSuffix(path.Base(resp.Request.URL.Path), ".xml.gz"), "-")
+			var ovaltype string
+			switch rhs {
+			case "affected", "":
+				ovaltype = "vulnerability"
+			case "patch":
+				ovaltype = "patch"
+			default:
+				return "", "", "", errors.Errorf("unexpected ovaltype. accepts: %q, received: %q", "<osname>.<version>(-<type>).xml.gz", path.Base(resp.Request.URL.Path))
 			}
-			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), fmt.Sprintf("%s.", osname))
-		case strings.HasPrefix(oval, "opensuse"):
-			osname = "opensuse"
-			version = strings.TrimPrefix(strings.TrimSuffix(strings.TrimSuffix(oval, ".xml.gz"), "-affected"), "opensuse.")
-		default:
-			return errors.Wrapf(err, `unexpected ovalname. accepts: "<osname>.<version>.xml.gz", received: "%s"`, oval)
+
+			switch {
+			case strings.HasPrefix(lhs, "suse.linux.enterprise.desktop"):
+				return ovaltype, "suse.linux.enterprise.desktop", strings.TrimPrefix(lhs, "suse.linux.enterprise.desktop."), nil
+			case strings.HasPrefix(lhs, "suse.linux.enterprise.server"):
+				return ovaltype, "suse.linux.enterprise.server", strings.TrimPrefix(lhs, "suse.linux.enterprise.server."), nil
+			case strings.HasPrefix(lhs, "suse.linux.enterprise.micro"):
+				return ovaltype, "suse.linux.enterprise.micro", strings.TrimPrefix(lhs, "suse.linux.enterprise.micro."), nil
+			case strings.HasPrefix(lhs, "opensuse.leap.micro"):
+				return ovaltype, "opensuse.leap.micro", strings.TrimPrefix(lhs, "opensuse.leap.micro."), nil
+			case strings.HasPrefix(lhs, "opensuse.leap"):
+				return ovaltype, "opensuse.leap", strings.TrimPrefix(lhs, "opensuse.leap."), nil
+			case strings.HasPrefix(lhs, "opensuse"):
+				return ovaltype, "opensuse", strings.TrimPrefix(lhs, "opensuse."), nil
+			default:
+				return "", "", "", errors.Errorf("unexpected ovalname. accepts: %q, received: %q", "<osname>.<version>", lhs)
+			}
+		}()
+		if err != nil {
+			return errors.Wrap(err, "parse oval name")
 		}
 
 		r, err := gzip.NewReader(resp.Body)
@@ -163,26 +170,41 @@ func Fetch(opts ...Option) error {
 		}
 
 		for _, def := range root.Definitions.Definition {
-			if err := util.Write(filepath.Join(options.dir, osname, version, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "definitions", fmt.Sprintf("%s.json", def.ID)))
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "definitions", fmt.Sprintf("%s.json", def.ID)))
 			}
 		}
 
 		for _, test := range root.Tests.RpminfoTest {
-			if err := util.Write(filepath.Join(options.dir, osname, version, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)))
+			}
+		}
+		for _, test := range root.Tests.UnameTest {
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "tests", "uname_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "tests", "uname_test", fmt.Sprintf("%s.json", test.ID)))
 			}
 		}
 
 		for _, object := range root.Objects.RpminfoObject {
-			if err := util.Write(filepath.Join(options.dir, osname, version, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)))
+			}
+		}
+		if root.Objects.UnameObject.ID != "" {
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)), root.Objects.UnameObject); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "objects", "uname_object", fmt.Sprintf("%s.json", root.Objects.UnameObject.ID)))
 			}
 		}
 
 		for _, state := range root.States.RpminfoState {
-			if err := util.Write(filepath.Join(options.dir, osname, version, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
+			}
+		}
+		for _, state := range root.States.UnameState {
+			if err := util.Write(filepath.Join(options.dir, osname, version, ovaltype, "states", "uname_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, osname, version, ovaltype, "states", "uname_state", fmt.Sprintf("%s.json", state.ID)))
 			}
 		}
 
@@ -231,6 +253,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 		case strings.Contains(txt, "-affected"):
 			ovals[strings.TrimSuffix(txt, "-affected.xml.gz")] = txt
 		case strings.Contains(txt, "-patch"):
+			ovals[strings.TrimSuffix(txt, ".xml.gz")] = txt
 		default:
 			if _, ok := ovals[strings.TrimSuffix(txt, ".xml.gz")]; !ok {
 				ovals[strings.TrimSuffix(txt, ".xml.gz")] = txt

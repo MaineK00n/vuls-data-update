@@ -1,0 +1,102 @@
+{
+	"id": "oval:org.opensuse.security:def:38763",
+	"version": "1",
+	"class": "patch",
+	"metadata": {
+		"title": "Security update for kernel-livepatch-tools (Important)",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"SUSE Linux Enterprise Live Patching 15"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "1099306",
+				"ref_url": "https://bugzilla.suse.com/1099306",
+				"source": "BUGZILLA"
+			},
+			{
+				"ref_id": "CVE-2018-3646",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-3646/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "SUSE-SU-2018:2426-1",
+				"ref_url": "https://lists.suse.com/pipermail/sle-security-updates/2018-August/004473.html",
+				"source": "SUSE-SU"
+			}
+		],
+		"description": "\nThis update for kernel-livepatch-tools fixes the following issues:\n\nAdd script for disabling SMT to help with the mitigation of the 'L1 Terminal Fault' issue (CVE-2018-3646 bsc#1099306)\n\nThe script is called 'klp-kvm-l1tf-ctrl-smt' and is used for enabling or disabling SMT to mitigate\nthe issue when this administrative decision is taken.\n\nDisabling SMT:\n\n        klp-kvm-l1tf-ctrl-smt -d\n\nEnabling SMT:\n\n        klp-kvm-l1tf-ctrl-smt -e\n\n\t\t",
+		"advisory": {
+			"from": "security@suse.de",
+			"severity": "Important",
+			"cve": [
+				{
+					"text": "CVE-2018-3646 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-3646/",
+					"impact": "medium",
+					"cvss3": "5.6/CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2018-3646 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-3646",
+					"impact": "medium",
+					"cvss3": "5.6/CVSS:3.0/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "SUSE bug 1099306",
+					"href": "https://bugzilla.suse.com/1099306"
+				}
+			],
+			"issued": {
+				"date": "2018-08-17"
+			},
+			"updated": {
+				"date": "2018-08-17"
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:suse:sle-module-live-patching:15"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009725190",
+								"comment": "kernel-livepatch-tools is not installed"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009497166",
+								"comment": "kernel-livepatch-tools-1.1-5.3.1 is installed"
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2009725189",
+						"comment": "kernel-default tools is running"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.opensuse.security:tst:2009228785",
+				"comment": "SUSE Linux Enterprise Live Patching 15 is installed"
+			}
+		]
+	}
+}

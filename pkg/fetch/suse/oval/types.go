@@ -38,6 +38,7 @@ type Definition struct {
 				Href   string `xml:"href,attr" json:"href,omitempty"`
 				Impact string `xml:"impact,attr" json:"impact,omitempty"`
 				Cvss3  string `xml:"cvss3,attr" json:"cvss3,omitempty"`
+				Cvss4  string `xml:"cvss4,attr" json:"cvss4,omitempty"`
 			} `xml:"cve" json:"cve,omitempty"`
 			Bugzilla []struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
@@ -82,6 +83,19 @@ type Tests struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
 		} `xml:"state" json:"state,omitempty"`
 	} `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
+	UnameTest []struct {
+		UnixDef string `xml:"unix-def,attr" json:"unix-def,omitempty"`
+		ID      string `xml:"id,attr" json:"id,omitempty"`
+		Version string `xml:"version,attr" json:"version,omitempty"`
+		Comment string `xml:"comment,attr" json:"comment,omitempty"`
+		Check   string `xml:"check,attr" json:"check,omitempty"`
+		Object  struct {
+			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
+		} `xml:"object" json:"object,omitempty"`
+		State struct {
+			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
+		} `xml:"state" json:"state,omitempty"`
+	} `xml:"uname_test" json:"uname_test,omitempty"`
 }
 
 type Objects struct {
@@ -91,6 +105,11 @@ type Objects struct {
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
 		Name    string `xml:"name" json:"name,omitempty"`
 	} `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
+	UnameObject struct {
+		UnixDef string `xml:"unix-def,attr" json:"unix-def,omitempty"`
+		ID      string `xml:"id,attr" json:"id,omitempty"`
+		Version string `xml:"version,attr" json:"version,omitempty"`
+	} `xml:"uname_object" json:"uname_object,omitempty"`
 }
 
 type States struct {
@@ -117,4 +136,13 @@ type States struct {
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
 		} `xml:"arch" json:"arch,omitempty"`
 	} `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
+	UnameState []struct {
+		UnixDef   string `xml:"unix-def,attr" json:"unix-def,omitempty"`
+		ID        string `xml:"id,attr" json:"id,omitempty"`
+		Version   string `xml:"version,attr" json:"version,omitempty"`
+		OSRelease struct {
+			Text      string `xml:",chardata" json:"text,omitempty"`
+			Operation string `xml:"operation,attr" json:"operation,omitempty"`
+		} `xml:"os_release" json:"os_release,omitempty"`
+	} `xml:"uname_state" json:"uname_state,omitempty"`
 }
