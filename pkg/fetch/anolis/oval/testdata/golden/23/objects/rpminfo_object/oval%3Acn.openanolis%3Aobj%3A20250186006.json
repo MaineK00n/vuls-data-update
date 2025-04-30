@@ -1,0 +1,6 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:cn.openanolis:obj:20250186006",
+	"version": "1",
+	"name": "bind-utils"
+}

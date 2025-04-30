@@ -1,0 +1,106 @@
+{
+	"id": "oval:cn.openanolis:def:20250186",
+	"version": "1",
+	"class": "patch",
+	"metadata": {
+		"title": "ANSA-2025:0186: security update bind (Important)",
+		"affected": {
+			"family": "unix",
+			"platform": "Anolis OS 23"
+		},
+		"reference": [
+			{
+				"ref_id": "ANSA-2025:0186",
+				"ref_url": "https://anas.openanolis.cn/errata/detail/ANSA-2025:0186",
+				"source": "ANSA"
+			}
+		],
+		"description": "Package updates are available for Anolis 23 that fix the following vulnerabilities:\n\nCVE-2024-11187:\nIt is possible to construct a zone such that some queries to it will generate responses containing numerous records in the Additional section. An attacker sending many such queries can cause either the authoritative server itself or an independent resolver to use disproportionate resources processing the queries. Zones will usually need to have been deliberately crafted to attack this exposure. This issue affects BIND 9 versions 9.11.0 through 9.11.37, 9.16.0 through 9.16.50, 9.18.0 through 9.18.32, 9.20.0 through 9.20.4, 9.21.0 through 9.21.3, 9.11.3-S1 through 9.11.37-S1, 9.16.8-S1 through 9.16.50-S1, and 9.18.11-S1 through 9.18.32-S1.\n\nCVE-2024-12705:\nClients using DNS-over-HTTPS (DoH) can exhaust a DNS resolver's CPU and/or memory by flooding it with crafted valid or invalid HTTP/2 traffic. This issue affects BIND 9 versions 9.18.0 through 9.18.32, 9.20.0 through 9.20.4, 9.21.0 through 9.21.3, and 9.18.11-S1 through 9.18.32-S1.",
+		"advisory": {
+			"from": "anas.openanolis.cn",
+			"severity": "Important",
+			"rights": "Copyright 2025 Openanolis",
+			"issued": {
+				"date": "2025-04-24"
+			},
+			"updated": {
+				"date": "2025-04-25"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-11187",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"impact": "Important",
+					"cwe": "CWE-400",
+					"href": "https://anas.openanolis.cn/cves/detail/CVE-2024-11187",
+					"public": "20250130"
+				},
+				{
+					"text": "CVE-2024-12705",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"impact": "Important",
+					"cwe": "CWE-400",
+					"href": "https://anas.openanolis.cn/cves/detail/CVE-2024-12705",
+					"public": "20250130"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:2.3:o:openanolis:anolis_os:23:*:*:*:*:*:*:* "
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186001",
+						"comment": "bind is earlier than 32:9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186002",
+						"comment": "bind-chroot is earlier than 32:chroot-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186003",
+						"comment": "bind-devel is earlier than 32:devel-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186004",
+						"comment": "bind-dnssec-utils is earlier than 32:dnssec-utils-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186005",
+						"comment": "bind-libs is earlier than 32:libs-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186006",
+						"comment": "bind-utils is earlier than 32:utils-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186007",
+						"comment": "bind-dnssec-doc is earlier than 32:dnssec-doc-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186008",
+						"comment": "bind-doc is earlier than 32:doc-9.18.34-1.an23"
+					},
+					{
+						"test_ref": "oval:cn.openanolis:tst:20250186009",
+						"comment": "bind-license is earlier than 32:license-9.18.34-1.an23"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:cn.openanolis:tst:1",
+				"comment": "Anolis OS 23 is installed"
+			}
+		]
+	}
+}

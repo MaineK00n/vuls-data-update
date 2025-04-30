@@ -1,0 +1,9 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent",
+	"id": "oval:cn.openanolis:ste:1",
+	"version": "1",
+	"text": {
+		"text": "23",
+		"operation": "pattern match"
+	}
+}

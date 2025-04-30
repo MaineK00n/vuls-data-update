@@ -1,0 +1,15 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent",
+	"id": "oval:cn.openanolis:obj:1",
+	"version": "1",
+	"path": "/etc",
+	"filename": "anolis-release",
+	"pattern": {
+		"text": "(Anolis OS release) \\d.*",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}

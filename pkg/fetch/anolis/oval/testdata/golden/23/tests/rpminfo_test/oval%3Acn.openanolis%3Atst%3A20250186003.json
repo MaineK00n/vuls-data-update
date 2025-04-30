@@ -1,0 +1,13 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"check": "all",
+	"comment": "bind-devel is earlier than 32:devel-9.18.34-1.an23",
+	"version": "1",
+	"id": "oval:cn.openanolis:tst:20250186003",
+	"object": {
+		"object_ref": "oval:cn.openanolis:obj:20250186003"
+	},
+	"state": {
+		"state_ref": "oval:cn.openanolis:ste:20250186003"
+	}
+}

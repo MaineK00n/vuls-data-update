@@ -1,0 +1,13 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent",
+	"check": "at least one",
+	"version": "1",
+	"comment": "Anolis OS 23 is installed",
+	"id": "oval:cn.openanolis:tst:1",
+	"object": {
+		"object_ref": "oval:cn.openanolis:obj:1"
+	},
+	"state": {
+		"state_ref": "oval:cn.openanolis:ste:1"
+	}
+}

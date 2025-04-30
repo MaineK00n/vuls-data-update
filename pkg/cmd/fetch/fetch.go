@@ -15,6 +15,7 @@ import (
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
+	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	azureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
@@ -163,6 +164,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAmazon(),
 		newCmdAndroidOSV(),
+		newCmdAnolisOVAL(),
 		newCmdArch(),
 		newCmdAttack(),
 		newCmdAzureOVAL(),
@@ -408,6 +410,33 @@ func newCmdAndroidOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "android", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdAnolisOVAL() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "anolis", "oval"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "anolis-oval",
+		Short: "Fetch Anolis OS OVAL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch anolis-oval
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := anolisOVAL.Fetch(anolisOVAL.WithDir(options.dir), anolisOVAL.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch anolis oval")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
