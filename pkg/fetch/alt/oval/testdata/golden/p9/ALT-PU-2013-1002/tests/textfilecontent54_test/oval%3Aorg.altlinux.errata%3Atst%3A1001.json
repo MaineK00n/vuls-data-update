@@ -1,0 +1,12 @@
+{
+	"id": "oval:org.altlinux.errata:tst:1001",
+	"version": "1",
+	"check": "all",
+	"comment": "ALT Linux based on branch 'p9' must be installed",
+	"object": {
+		"object_ref": "oval:org.altlinux.errata:obj:1001"
+	},
+	"state": {
+		"state_ref": "oval:org.altlinux.errata:ste:1001"
+	}
+}

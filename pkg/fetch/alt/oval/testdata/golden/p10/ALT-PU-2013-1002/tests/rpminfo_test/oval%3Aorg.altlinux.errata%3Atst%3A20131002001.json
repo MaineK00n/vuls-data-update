@@ -1,0 +1,12 @@
+{
+	"id": "oval:org.altlinux.errata:tst:20131002001",
+	"version": "1",
+	"check": "all",
+	"comment": "dovecot is earlier than 0:2.2.6-alt1",
+	"object": {
+		"object_ref": "oval:org.altlinux.errata:obj:20131002001"
+	},
+	"state": {
+		"state_ref": "oval:org.altlinux.errata:ste:20131002001"
+	}
+}

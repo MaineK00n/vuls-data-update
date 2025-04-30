@@ -1,0 +1,9 @@
+{
+	"id": "oval:org.altlinux.errata:obj:20131002001",
+	"version": "1",
+	"comment": "dovecot is installed",
+	"name": {
+		"text": "dovecot",
+		"datatype": "string"
+	}
+}

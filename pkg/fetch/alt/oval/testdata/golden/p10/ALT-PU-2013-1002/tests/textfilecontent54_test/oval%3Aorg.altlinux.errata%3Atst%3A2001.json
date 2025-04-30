@@ -1,0 +1,12 @@
+{
+	"id": "oval:org.altlinux.errata:tst:2001",
+	"version": "1",
+	"check": "all",
+	"comment": "ALT Linux based on branch 'p10' must be installed",
+	"object": {
+		"object_ref": "oval:org.altlinux.errata:obj:2001"
+	},
+	"state": {
+		"state_ref": "oval:org.altlinux.errata:ste:2001"
+	}
+}
