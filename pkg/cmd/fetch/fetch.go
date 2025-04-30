@@ -61,6 +61,7 @@ import (
 	jvnFeedProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/product"
 	jvnFeedRSS "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/rss"
 	k8sJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/k8s/json"
+	k8sOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/k8s/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
 	linuxOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/linux/osv"
 	mageiaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/mageia/osv"
@@ -194,7 +195,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangOSV(), newCmdGolangDB(), newCmdGolangVulnDB(),
 		newCmdHaskellOSV(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
-		newCmdK8sJSON(),
+		newCmdK8sJSON(), newCmdK8sOSV(),
 		newCmdKEV(),
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
@@ -1817,6 +1818,33 @@ func newCmdK8sJSON() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := k8sJSON.Fetch(k8sJSON.WithDir(options.dir), k8sJSON.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch k8s json")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdK8sOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "k8s", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "k8s-osv",
+		Short: "Fetch Kubernetes OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch k8s-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := k8sOSV.Fetch(k8sOSV.WithDir(options.dir), k8sOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch k8s osv")
 			}
 			return nil
 		},
