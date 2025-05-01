@@ -10,8 +10,6 @@ jobs:
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
@@ -26,12 +24,6 @@ jobs:
 
       - name: prepare for testing
         run: sudo apt-get update && sudo apt-get install -y cabextract
-
-      - name: unshallow diff-test submodules
-        run: |
-          git -C pkg/diff/testdata/fixtures/vuls-data-extracted-diff-test.git fetch --unshallow
-          git -C pkg/diff/testdata/fixtures/vuls-data-extracted-diff-test-archive-1.git fetch --unshallow
-          git -C pkg/diff/testdata/fixtures/vuls-data-raw-diff-test.git fetch --unshallow
 
       - name: testing
         run: go test -race ./...
