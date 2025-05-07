@@ -1,0 +1,11 @@
+[
+    {
+        "path": "data",
+        "msg": "[ GLSA 202504-01 ] XZ Utils: Use after free",
+        "author": {
+            "name": "GLSAMaker",
+            "email": "glsamaker@gentoo.org",
+            "when": "2025-04-05T00:42:34Z"
+        }
+    }
+]

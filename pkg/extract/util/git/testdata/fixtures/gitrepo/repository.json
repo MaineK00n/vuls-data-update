@@ -1,0 +1,27 @@
+{
+    "branches": [
+        {
+            "name": "main",
+            "remote": "origin"
+        }
+    ],
+    "remotes": [
+        {
+            "name": "origin",
+            "urls": [
+                "https://github.com/MaineK00n/vuls-data-update-utilgit.git"
+            ]
+        }
+    ],
+    "commits": [
+        {
+            "path": "data",
+            "msg": "update README.md",
+            "author": {
+                "name": "MaineK00n",
+                "email": "mainek00n.1229@gmail.com",
+                "when": "2024-07-10T23:06:05Z"
+            }
+        }
+    ]
+}

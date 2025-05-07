@@ -1,0 +1,20 @@
+[
+    {
+        "path": "57eb9fd",
+        "msg": "update",
+        "author": {
+            "name": "GitHub Actions",
+            "email": "action@github.com",
+            "when": "2025-01-01T00:00:00Z"
+        }
+    },
+    {
+        "path": "dd9b473",
+        "msg": "update",
+        "author": {
+            "name": "GitHub Actions",
+            "email": "action@github.com",
+            "when": "2025-01-02T00:00:00Z"
+        }
+    }
+]
