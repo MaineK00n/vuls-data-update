@@ -1,0 +1,9 @@
+{
+	"id": "oval:org.altlinux.errata:ste:1001",
+	"version": "1",
+	"comment": "verify distribution branch",
+	"subexpression": {
+		"text": "9",
+		"operation": "equals"
+	}
+}

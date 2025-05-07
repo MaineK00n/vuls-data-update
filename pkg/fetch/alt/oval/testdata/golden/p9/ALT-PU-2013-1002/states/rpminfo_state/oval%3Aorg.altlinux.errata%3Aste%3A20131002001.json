@@ -1,0 +1,10 @@
+{
+	"id": "oval:org.altlinux.errata:ste:20131002001",
+	"version": "1",
+	"comment": "package EVR is earlier than 0:2.2.6-alt1",
+	"evr": {
+		"text": "0:2.2.6-alt1",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}

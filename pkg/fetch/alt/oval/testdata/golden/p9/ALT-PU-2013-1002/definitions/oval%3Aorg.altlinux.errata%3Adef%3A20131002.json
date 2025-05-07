@@ -1,0 +1,104 @@
+{
+	"id": "oval:org.altlinux.errata:def:20131002",
+	"version": "oval:org.altlinux.errata:def:20131002",
+	"class": "patch",
+	"metadata": {
+		"title": "ALT-PU-2013-1002: package `dovecot` update to version 2.2.6-alt1",
+		"affected": {
+			"family": "unix",
+			"platform": "ALT Linux branch p9",
+			"product": [
+				"ALT Server",
+				"ALT Virtualization Server",
+				"ALT Workstation",
+				"ALT Workstation K",
+				"ALT Education",
+				"Simply Linux",
+				"Starterkit"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "ALT-PU-2013-1002",
+				"ref_url": "https://errata.altlinux.org/ALT-PU-2013-1002",
+				"source": "ALTPU"
+			},
+			{
+				"ref_id": "BDU:2015-00047",
+				"ref_url": "https://bdu.fstec.ru/vul/2015-00047",
+				"source": "BDU"
+			},
+			{
+				"ref_id": "CVE-2013-2111",
+				"ref_url": "https://nvd.nist.gov/vuln/detail/CVE-2013-2111",
+				"source": "CVE"
+			}
+		],
+		"description": "This update upgrades dovecot to version 2.2.6-alt1. \nSecurity Fix(es):\n\n * BDU:2015-00047: Уязвимость почтового сервера Dovecot, позволяющая удаленному злоумышленнику вызвать отказ в обслуживании\n\n * CVE-2013-2111: The IMAP functionality in Dovecot before 2.2.2 allows remote attackers to cause a denial of service (infinite loop and CPU consumption) via invalid APPEND parameters.",
+		"advisory": {
+			"from": "errata.altlinux.org",
+			"severity": "Low",
+			"rights": "Copyright 2025 BaseALT Ltd.",
+			"issued": {
+				"date": "2013-10-17"
+			},
+			"updated": {
+				"date": "2013-10-17"
+			},
+			"bdu": [
+				{
+					"text": "BDU:2015-00047",
+					"cvss": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+					"href": "https://bdu.fstec.ru/vul/2015-00047",
+					"impact": "Low",
+					"public": "20130506"
+				}
+			],
+			"cve": [
+				{
+					"text": "CVE-2013-2111",
+					"cvss": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+					"cwe": "CWE-20",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2013-2111",
+					"impact": "Low",
+					"public": "20140527"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:alt:kworkstation:9",
+					"cpe:/o:alt:workstation:9",
+					"cpe:/o:alt:server:9",
+					"cpe:/o:alt:server-v:9",
+					"cpe:/o:alt:education:9",
+					"cpe:/o:alt:slinux:9",
+					"cpe:/o:alt:starterkit:p9"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:org.altlinux.errata:tst:20131002001",
+						"comment": "dovecot is earlier than 0:2.2.6-alt1"
+					},
+					{
+						"test_ref": "oval:org.altlinux.errata:tst:20131002002",
+						"comment": "dovecot-devel is earlier than 0:2.2.6-alt1"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.altlinux.errata:tst:1001",
+				"comment": "ALT Linux must be installed"
+			}
+		]
+	}
+}

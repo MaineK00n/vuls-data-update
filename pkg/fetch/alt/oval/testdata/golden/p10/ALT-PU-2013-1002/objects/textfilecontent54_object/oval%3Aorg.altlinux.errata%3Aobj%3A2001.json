@@ -1,0 +1,22 @@
+{
+	"id": "oval:org.altlinux.errata:obj:2001",
+	"version": "1",
+	"comment": "Evaluate `/etc/os-release` file content",
+	"path": {
+		"text": "/etc",
+		"datatype": "string"
+	},
+	"filepath": {
+		"text": "os-release",
+		"datatype": "string"
+	},
+	"pattern": {
+		"text": "cpe:\\/o:alt:(?!sp)[a-z\\-]+:p?(\\d+)(?:\\.\\d)*",
+		"datatype": "string",
+		"operation": "pattern match"
+	},
+	"instance": {
+		"text": "1",
+		"datatype": "int"
+	}
+}
