@@ -1,0 +1,10 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:cn.openanolis:ste:20250186007",
+	"version": "1",
+	"evr": {
+		"text": "32:dnssec-doc-9.18.34-1.an23",
+		"datatype": "evr_string",
+		"operation": "less than"
+	}
+}

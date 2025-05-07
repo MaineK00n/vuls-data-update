@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<oval_definitions  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:product_name>Openanolis OVAL Generator</oval:product_name>
+    <oval:product_version>0.1</oval:product_version>
+    <oval:schema_version>5.11.2</oval:schema_version>
+    <oval:timestamp>2025-04-30T01:13:13</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="patch" id="oval:cn.openanolis:def:20250186" version="1">
+      <metadata>
+        <title>ANSA-2025:0186: security update bind (Important)</title>
+        <affected family="unix">
+          <platform>Anolis OS 23</platform>
+        </affected>
+        <reference ref_id="ANSA-2025:0186" ref_url="https://anas.openanolis.cn/errata/detail/ANSA-2025:0186" source="ANSA"/>
+        <description>Package updates are available for Anolis 23 that fix the following vulnerabilities:
+
+CVE-2024-11187:
+It is possible to construct a zone such that some queries to it will generate responses containing numerous records in the Additional section. An attacker sending many such queries can cause either the authoritative server itself or an independent resolver to use disproportionate resources processing the queries. Zones will usually need to have been deliberately crafted to attack this exposure. This issue affects BIND 9 versions 9.11.0 through 9.11.37, 9.16.0 through 9.16.50, 9.18.0 through 9.18.32, 9.20.0 through 9.20.4, 9.21.0 through 9.21.3, 9.11.3-S1 through 9.11.37-S1, 9.16.8-S1 through 9.16.50-S1, and 9.18.11-S1 through 9.18.32-S1.
+
+CVE-2024-12705:
+Clients using DNS-over-HTTPS (DoH) can exhaust a DNS resolver's CPU and/or memory by flooding it with crafted valid or invalid HTTP/2 traffic. This issue affects BIND 9 versions 9.18.0 through 9.18.32, 9.20.0 through 9.20.4, 9.21.0 through 9.21.3, and 9.18.11-S1 through 9.18.32-S1.</description>
+        <advisory from="anas.openanolis.cn">
+          <severity>Important</severity>
+          <rights>Copyright 2025 Openanolis</rights>
+          <issued date="2025-04-24"/>
+          <updated date="2025-04-25"/>
+          <cve cvss3="7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H" impact="Important" cwe="CWE-400" href="https://anas.openanolis.cn/cves/detail/CVE-2024-11187" public="20250130">CVE-2024-11187</cve>
+          <cve cvss3="7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H" impact="Important" cwe="CWE-400" href="https://anas.openanolis.cn/cves/detail/CVE-2024-12705" public="20250130">CVE-2024-12705</cve>
+          <affected_cpe_list>
+            <cpe>cpe:2.3:o:openanolis:anolis_os:23:*:*:*:*:*:*:* </cpe>
+          </affected_cpe_list>
+        </advisory>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Anolis OS 23 is installed" test_ref="oval:cn.openanolis:tst:1"/>
+        <criteria operator="OR">
+          <criterion comment="bind is earlier than 32:9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186001"/>
+          <criterion comment="bind-chroot is earlier than 32:chroot-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186002"/>
+          <criterion comment="bind-devel is earlier than 32:devel-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186003"/>
+          <criterion comment="bind-dnssec-utils is earlier than 32:dnssec-utils-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186004"/>
+          <criterion comment="bind-libs is earlier than 32:libs-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186005"/>
+          <criterion comment="bind-utils is earlier than 32:utils-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186006"/>
+          <criterion comment="bind-dnssec-doc is earlier than 32:dnssec-doc-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186007"/>
+          <criterion comment="bind-doc is earlier than 32:doc-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186008"/>
+          <criterion comment="bind-license is earlier than 32:license-9.18.34-1.an23" test_ref="oval:cn.openanolis:tst:20250186009"/>
+        </criteria>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="at least one" version="1" comment="Anolis OS 23 is installed" id="oval:cn.openanolis:tst:1">
+      <object object_ref="oval:cn.openanolis:obj:1"/>
+      <state state_ref="oval:cn.openanolis:ste:1"/>
+    </textfilecontent54_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind is earlier than 32:9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186001">
+      <object object_ref="oval:cn.openanolis:obj:20250186001"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186001"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-chroot is earlier than 32:chroot-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186002">
+      <object object_ref="oval:cn.openanolis:obj:20250186002"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186002"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-devel is earlier than 32:devel-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186003">
+      <object object_ref="oval:cn.openanolis:obj:20250186003"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186003"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-dnssec-utils is earlier than 32:dnssec-utils-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186004">
+      <object object_ref="oval:cn.openanolis:obj:20250186004"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186004"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-libs is earlier than 32:libs-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186005">
+      <object object_ref="oval:cn.openanolis:obj:20250186005"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186005"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-utils is earlier than 32:utils-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186006">
+      <object object_ref="oval:cn.openanolis:obj:20250186006"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186006"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-dnssec-doc is earlier than 32:dnssec-doc-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186007">
+      <object object_ref="oval:cn.openanolis:obj:20250186007"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186007"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-doc is earlier than 32:doc-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186008">
+      <object object_ref="oval:cn.openanolis:obj:20250186008"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186008"/>
+    </rpminfo_test>
+    <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" comment="bind-license is earlier than 32:license-9.18.34-1.an23" version="1" id="oval:cn.openanolis:tst:20250186009">
+      <object object_ref="oval:cn.openanolis:obj:20250186009"/>
+      <state state_ref="oval:cn.openanolis:ste:20250186009"/>
+    </rpminfo_test>
+  </tests>
+  <objects>
+    <textfilecontent54_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:cn.openanolis:obj:1" version="1">
+      <path>/etc</path>
+      <filename>anolis-release</filename>
+      <pattern operation="pattern match">(Anolis OS release) \d.*</pattern>
+      <instance datatype="int">1</instance>
+    </textfilecontent54_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186001" version="1">
+      <name>bind</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186002" version="1">
+      <name>bind-chroot</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186003" version="1">
+      <name>bind-devel</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186004" version="1">
+      <name>bind-dnssec-utils</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186005" version="1">
+      <name>bind-libs</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186006" version="1">
+      <name>bind-utils</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186007" version="1">
+      <name>bind-dnssec-doc</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186008" version="1">
+      <name>bind-doc</name>
+    </rpminfo_object>
+    <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:obj:20250186009" version="1">
+      <name>bind-license</name>
+    </rpminfo_object>
+  </objects>
+  <states>
+    <textfilecontent54_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:cn.openanolis:ste:1" version="1">
+      <text operation="pattern match">23</text>
+    </textfilecontent54_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186001" version="1">
+      <evr datatype="evr_string" operation="less than">32:9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186002" version="1">
+      <evr datatype="evr_string" operation="less than">32:chroot-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186003" version="1">
+      <evr datatype="evr_string" operation="less than">32:devel-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186004" version="1">
+      <evr datatype="evr_string" operation="less than">32:dnssec-utils-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186005" version="1">
+      <evr datatype="evr_string" operation="less than">32:libs-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186006" version="1">
+      <evr datatype="evr_string" operation="less than">32:utils-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186007" version="1">
+      <evr datatype="evr_string" operation="less than">32:dnssec-doc-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186008" version="1">
+      <evr datatype="evr_string" operation="less than">32:doc-9.18.34-1.an23</evr>
+    </rpminfo_state>
+    <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:cn.openanolis:ste:20250186009" version="1">
+      <evr datatype="evr_string" operation="less than">32:license-9.18.34-1.an23</evr>
+    </rpminfo_state>
+  </states>
+</oval_definitions >
