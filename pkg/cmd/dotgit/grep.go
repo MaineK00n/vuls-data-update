@@ -27,7 +27,7 @@ func newCmdGrep() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "grep <repository> [<pattern>]",
+		Use:   "grep <repository> <pattern>...",
 		Short: "Grep files in the specified treeish",
 		Example: heredoc.Doc(`
 			$ vuls-data-update dotgit grep vuls-data-raw-debian-security-tracker CVE-2025-0001

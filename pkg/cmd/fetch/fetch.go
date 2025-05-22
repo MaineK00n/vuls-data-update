@@ -789,7 +789,7 @@ func newCmdCiscoCVRF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "cisco-cvrf [<Cisco Security Advisory ID>]",
+		Use:   "cisco-cvrf <Cisco Security Advisory ID>...",
 		Short: "Fetch Cisco CVRF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch cisco-cvrf cisco-sa-xwork-xss-KCcg7WwU cisco-sa-tms-xss-vuln-WbTcYwxG
@@ -826,7 +826,7 @@ func newCmdCiscoCSAF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "cisco-csaf [<Cisco Security Advisory ID>]",
+		Use:   "cisco-csaf <Cisco Security Advisory ID>...",
 		Short: "Fetch Cisco CSAF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch cisco-csaf cisco-sa-xwork-xss-KCcg7WwU cisco-sa-tms-xss-vuln-WbTcYwxG
@@ -1197,10 +1197,10 @@ func newCmdEPSS() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "epss",
+		Use:   "epss <date>...",
 		Short: "Fetch EPSS data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch epss
+			$ vuls-data-update fetch epss 2025-01-01
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -1396,7 +1396,7 @@ func newCmdFedora() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fedora",
+		Use:   "fedora <release>...",
 		Short: "Fetch Fedora data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch fedora F39
@@ -1433,7 +1433,7 @@ func newCmdFortinetCVRF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fortinet-cvrf [Fortinet Advisory ID]",
+		Use:   "fortinet-cvrf <Fortinet Advisory ID>...",
 		Short: "Fetch Fortinet CVRF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch fortinet-cvrf FG-IR-24-371
@@ -2868,7 +2868,7 @@ func newCmdPaloAltoJSON() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "paloalto-json [<Palo Alto Networks Security Advisory ID>]",
+		Use:   "paloalto-json <Palo Alto Networks Security Advisory ID>...",
 		Short: "Fetch Palo Alto JSON data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch paloalto-json CVE-2025-0114 PAN-SA-2025-0007
@@ -2905,7 +2905,7 @@ func newCmdPaloAltoCSAF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "paloalto-csaf [<Palo Alto Networks Security Advisory ID>]",
+		Use:   "paloalto-csaf <Palo Alto Networks Security Advisory ID>...",
 		Short: "Fetch Palo Alto CSAF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch paloalto-csaf CVE-2025-0114 PAN-SA-2025-0007
@@ -4199,7 +4199,7 @@ func newCmdWindowsMSUC() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "windows-msuc [KBID]",
+		Use:   "windows-msuc <KBID>...",
 		Short: "Fetch Windows Microsoft Software Update Catalog data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update fetch windows-msuc "KB5019311", "KB5017389", "KB5018427", "KB5019509", "KB5018496", "KB5019980", "KB5020044", "KB5021255", "KB5022303", "KB5022360", "KB5022845"
