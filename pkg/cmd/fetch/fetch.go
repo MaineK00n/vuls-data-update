@@ -38,6 +38,7 @@ import (
 	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
 	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
 	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
@@ -183,6 +184,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdConanGLSA(),
 		newCmdCWE(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
+		newCmdEcho(),
 		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
@@ -1114,6 +1116,33 @@ func newCmdDebianOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdEcho() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "echo"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "echo",
+		Short: "Fetch Echo data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch echo
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := echo.Fetch(echo.WithDir(options.dir), echo.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch echo")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
