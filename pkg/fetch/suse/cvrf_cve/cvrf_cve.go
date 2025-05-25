@@ -82,7 +82,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch suse cvrf cve")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -169,7 +169,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		}
 	}
 
-	_ = resp.Body.Close() //nolint:errcheck
+	_ = resp.Body.Close()
 	resp.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	return false, nil

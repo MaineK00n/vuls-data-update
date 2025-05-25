@@ -121,7 +121,7 @@ func (o options) fetchCSAFIndex(client *utilhttp.Client, kind string) ([]string,
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -151,7 +151,7 @@ func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) er
 	}
 
 	if err := client.PipelineGet(us, o.concurrency, o.wait, func(resp *http.Response) error {
-		defer resp.Body.Close() //nolint:errcheck
+		defer resp.Body.Close()
 
 		switch resp.StatusCode {
 		case http.StatusOK:

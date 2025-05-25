@@ -107,7 +107,7 @@ func Fetch(ids []string, opts ...Option) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 	if err := client.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close() //nolint:errcheck
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -154,7 +154,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return false, errors.Wrap(err, "unmarshal xml")
 	}
 
-	_ = resp.Body.Close() //nolint:errcheck
+	_ = resp.Body.Close()
 	resp.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	return false, nil

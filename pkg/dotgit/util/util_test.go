@@ -38,7 +38,7 @@ func TestExtractDotgitTarZst(t *testing.T) {
 			if err != nil {
 				t.Errorf("open %s. err: %v", tt.fixture, err)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			err = ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.fixture), ".tar.zst")))
 			switch {

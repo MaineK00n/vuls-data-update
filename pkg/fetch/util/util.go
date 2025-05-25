@@ -59,7 +59,7 @@ func Write(path string, content any) error {
 	if err != nil {
 		return errors.Wrapf(err, "create %s", path)
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	e := json.NewEncoder(f)
 	e.SetEscapeHTML(false)

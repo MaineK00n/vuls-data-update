@@ -82,7 +82,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch deployment")
 			}
-			defer resp.Body.Close() //nolint:errcheck
+			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
 				_, _ = io.Copy(io.Discard, resp.Body)

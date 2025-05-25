@@ -205,7 +205,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -238,7 +238,7 @@ func (opts options) fetch(ovalname string) (*root, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

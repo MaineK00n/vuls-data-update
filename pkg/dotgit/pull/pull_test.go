@@ -183,13 +183,13 @@ func TestPull(t *testing.T) {
 				if err != nil {
 					t.Errorf("open %s. err: %v", tt.golden, err)
 				}
-				defer f.Close() //nolint:errcheck
+				defer f.Close()
 
 				r, err := zstd.NewReader(f)
 				if err != nil {
 					t.Errorf("new zstd reader. err: %v", err)
 				}
-				defer r.Close() //nolint:errcheck
+				defer r.Close()
 
 				tr := tar.NewReader(r)
 				for {

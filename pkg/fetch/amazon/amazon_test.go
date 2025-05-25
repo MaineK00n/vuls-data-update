@@ -159,7 +159,7 @@ func TestFetch(t *testing.T) {
 					}
 				}
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := amazon.Fetch(

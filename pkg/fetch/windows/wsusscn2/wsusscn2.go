@@ -95,13 +95,13 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch wsusscn2.cab")
 	}
-	defer os.RemoveAll(filepath.Dir(rootDir)) //nolint:errcheck
+	defer os.RemoveAll(filepath.Dir(rootDir))
 
 	f, err := os.Open(filepath.Join(rootDir, "package", "package.xml"))
 	if err != nil {
 		return errors.Wrapf(err, "open %s", filepath.Join(rootDir, "package", "package.xml"))
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	var pkg offlineSyncPackage
 	if err := xml.NewDecoder(f).Decode(&pkg); err != nil {
@@ -120,7 +120,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "open wsusscn2/index.xml")
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	var cabIndex index
 	if err := xml.NewDecoder(f).Decode(&cabIndex); err != nil {
@@ -189,7 +189,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return X{}, L{}, errors.Wrapf(err, "open wsusscn2/%s/x/%s", pname, u.RevisionID)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			var x X
 			if err := xml.NewDecoder(f).Decode(&x); err != nil {
@@ -200,7 +200,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return X{}, L{}, errors.Wrapf(err, "open wsusscn2/%s/l/%s/%s", pname, u.DefaultLanguage, u.RevisionID)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			var l L
 			if err := xml.NewDecoder(f).Decode(&l); err != nil {
@@ -242,13 +242,13 @@ func (opts options) fetch() (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "http get, url: %s", opts.dataURL)
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	f, err := os.Create(filepath.Join(dir, "wsusscn2.cab"))
 	if err != nil {
 		return "", errors.Wrapf(err, "create %s", filepath.Join(dir, "wsusscn2.cab"))
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	if _, err := io.Copy(f, resp.Body); err != nil {
 		return "", errors.Wrap(err, "copy to wsusscn2.cab from response body")
@@ -279,7 +279,7 @@ func (opts options) extract(tmpDir string) error {
 	if err != nil {
 		return errors.Wrap(err, "open wsusscn2/index.xml")
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	var cabIndex index
 	if err := xml.NewDecoder(f).Decode(&cabIndex); err != nil {

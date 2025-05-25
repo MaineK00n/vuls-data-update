@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 					if err != nil {
 						http.NotFound(w, r)
 					}
-					defer f.Close() //nolint:errcheck
+					defer f.Close()
 
 					var entries []any
 					if err := json.NewDecoder(f).Decode(&entries); err != nil {
@@ -102,7 +102,7 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, testdata)
 				}
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			u, err := url.JoinPath(ts.URL, tt.listfile)
 			if err != nil {

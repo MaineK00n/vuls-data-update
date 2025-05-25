@@ -59,7 +59,7 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 				}
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := csaf.Fetch(tt.args.ids, csaf.WithDataURL(fmt.Sprintf("%s/security/center/contentjson/CiscoSecurityAdvisory/%%s/csaf/%%s.json", ts.URL)), csaf.WithDir(dir), csaf.WithRetry(1))

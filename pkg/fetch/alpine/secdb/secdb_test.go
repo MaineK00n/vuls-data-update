@@ -52,7 +52,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, f)
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := secdb.Fetch(secdb.WithBaseURL(ts.URL), secdb.WithDir(dir), secdb.WithRetry(0))

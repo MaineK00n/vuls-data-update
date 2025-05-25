@@ -35,7 +35,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, filepath.Join(tt.testdata, fmt.Sprintf("page%s.json", p)))
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := errata.Fetch(errata.WithDataURL(fmt.Sprintf("%s/api/v2/advisories?filters.type=TYPE_SECURITY&page=%%d&limit=5", ts.URL)), errata.WithDir(dir), errata.WithRetry(0))

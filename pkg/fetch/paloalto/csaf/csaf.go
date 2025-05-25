@@ -105,7 +105,7 @@ func Fetch(ids []string, opts ...Option) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	if err := client.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close() //nolint:errcheck
+		defer resp.Body.Close()
 
 		switch resp.StatusCode {
 		case http.StatusOK:

@@ -30,7 +30,7 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s_%s.json", r.URL.Query().Get("offset"), r.URL.Query().Get("limit"))))
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := notice.Fetch(notice.WithBaseURL(fmt.Sprintf("%s/security/notices.json?limit=%%d&offset=%%d&order=oldest&show_hidden=true", ts.URL)), notice.WithDir(dir), notice.WithRetry(0), notice.WithConcurrency(1), notice.WithWait(0))

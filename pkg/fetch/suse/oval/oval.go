@@ -118,7 +118,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close() //nolint:errcheck
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -162,7 +162,7 @@ func Fetch(opts ...Option) error {
 		if err != nil {
 			return errors.Wrap(err, "open oval as gzip")
 		}
-		defer r.Close() //nolint:errcheck
+		defer r.Close()
 
 		var root root
 		if err := xml.NewDecoder(r).Decode(&root); err != nil {
@@ -221,7 +221,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

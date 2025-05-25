@@ -143,7 +143,7 @@ func (opts options) fetch(feedURL string, cves map[string]map[string]CVEItem) er
 	if err != nil {
 		return errors.Wrap(err, "fetch nvd cve feed")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -154,7 +154,7 @@ func (opts options) fetch(feedURL string, cves map[string]map[string]CVEItem) er
 	if err != nil {
 		return errors.Wrap(err, "open cve as gzip")
 	}
-	defer r.Close() //nolint:errcheck
+	defer r.Close()
 
 	var feed doc
 	if err := json.NewDecoder(r).Decode(&feed); err != nil {

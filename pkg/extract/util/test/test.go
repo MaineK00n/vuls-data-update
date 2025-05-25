@@ -47,13 +47,13 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 			if err != nil {
 				return err
 			}
-			defer ef.Close() //nolint:errcheck
+			defer ef.Close()
 
 			gf, err := os.Open(path)
 			if err != nil {
 				return err
 			}
-			defer gf.Close() //nolint:errcheck
+			defer gf.Close()
 
 			var diff string
 			switch name {

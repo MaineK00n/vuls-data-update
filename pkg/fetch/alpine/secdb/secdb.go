@@ -96,7 +96,7 @@ func Fetch(opts ...Option) error {
 				if err != nil {
 					return nil, errors.Wrapf(err, "fetch alpine linux %s %s", r, f)
 				}
-				defer resp.Body.Close() //nolint:errcheck
+				defer resp.Body.Close()
 
 				if resp.StatusCode != http.StatusOK {
 					_, _ = io.Copy(io.Discard, resp.Body)
@@ -127,7 +127,7 @@ func (opts options) walkIndexOf() ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -160,7 +160,7 @@ func (opts options) walkDistroVersion(release string) ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch alpine linux %s index of", release)
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
