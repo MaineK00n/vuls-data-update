@@ -17,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://security.paloaltonetworks.com/json/?page=%d&limit=100"
+const dataURL = "https://security.paloaltonetworks.com/json/?page=%d&limit=100&sort=doc"
 
 type options struct {
 	dataURL string
