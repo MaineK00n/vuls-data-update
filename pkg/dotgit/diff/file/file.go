@@ -1,4 +1,4 @@
-package diff
+package file
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	gitdiff "github.com/go-git/go-git/v5/plumbing/format/diff"
+	"github.com/go-git/go-git/v5/plumbing/format/diff"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 )
@@ -72,9 +72,9 @@ func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 	}
 
 	buf := bytes.NewBuffer(nil)
-	ue := gitdiff.NewUnifiedEncoder(buf, gitdiff.DefaultContextLines)
+	ue := diff.NewUnifiedEncoder(buf, diff.DefaultContextLines)
 	if options.color {
-		ue.SetColor(gitdiff.NewColorConfig())
+		ue.SetColor(diff.NewColorConfig())
 	}
 	if err := ue.Encode(patch); err != nil {
 		return "", errors.Wrap(err, "encode patch")

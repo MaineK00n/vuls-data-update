@@ -1,4 +1,4 @@
-package diff_test
+package file_test
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/diff"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/diff/file"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
@@ -1231,7 +1231,7 @@ index 321cb11fd6d4a6ddd6f6d2209828a70b1777475e..11d5d7549484e47231829a01eadd9cdb
 				t.Errorf("extract %s. err: %v", tt.dotgit, err)
 			}
 
-			got, err := diff.Diff(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst")), tt.args.minus, tt.args.plus)
+			got, err := file.Diff(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst")), tt.args.minus, tt.args.plus)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)
@@ -1239,7 +1239,7 @@ index 321cb11fd6d4a6ddd6f6d2209828a70b1777475e..11d5d7549484e47231829a01eadd9cdb
 				t.Error("expected error has not occurred")
 			default:
 				if diff := cmp.Diff(tt.want, got); diff != "" {
-					t.Errorf("Cat(). (-expected +got):\n%s", diff)
+					t.Errorf("Diff(). (-expected +got):\n%s", diff)
 				}
 			}
 		})
