@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/package-url/packageurl-go"
 	"github.com/pkg/errors"
@@ -426,6 +427,10 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 					if !slices.Contains(vs, "9") {
 						vs = append(vs, "9")
 					}
+				case strings.Contains(r, "rhel-10-"):
+					if !slices.Contains(vs, "10") {
+						vs = append(vs, "10")
+					}
 				default:
 				}
 			}
@@ -466,6 +471,9 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:9"),
 					strings.HasSuffix(p.cpe, "::el9"):
 					return []string{"9"}, nil
+				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:10"),
+					strings.HasSuffix(p.cpe, "::el10"):
+					return []string{"10"}, nil
 				default:
 					switch {
 					case strings.HasPrefix(string(root), "3AS-"), strings.HasPrefix(string(root), "3ES-"), strings.HasPrefix(string(root), "3WS-"):
@@ -478,23 +486,50 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 						if p.version != "" {
 							if p.modularitylabel != "" {
 								if _, rhs, ok := strings.Cut(p.version, ".module+el"); ok {
-									if len(rhs) < 1 {
+									var sb strings.Builder
+									for _, r := range rhs {
+										if !unicode.IsDigit(r) {
+											break
+										}
+										if _, err := sb.WriteRune(r); err != nil {
+											return nil, errors.Wrapf(err, "write rune %q", r)
+										}
+									}
+									if sb.Len() < 1 {
 										return nil, errors.Errorf("unexpected version format. expected: %q, actual: %q", ".*\\.module+el<major>.*", p.version)
 									}
-									return []string{rhs[0:1]}, nil
+									return []string{sb.String()}, nil
 								}
 							} else {
 								if _, rhs, ok := strings.Cut(p.version, ".el"); ok {
-									if len(rhs) < 1 {
+									var sb strings.Builder
+									for _, r := range rhs {
+										if !unicode.IsDigit(r) {
+											break
+										}
+										if _, err := sb.WriteRune(r); err != nil {
+											return nil, errors.Wrapf(err, "write rune %q", r)
+										}
+									}
+									if sb.Len() < 1 {
 										return nil, errors.Errorf("unexpected version format. expected: %q, actual: %q", ".*\\.el<major>.*", p.version)
 									}
-									return []string{rhs[0:1]}, nil
+									return []string{sb.String()}, nil
 								}
 								if _, rhs, ok := strings.Cut(p.version, ".RHEL"); ok {
-									if len(rhs) < 1 {
+									var sb strings.Builder
+									for _, r := range rhs {
+										if !unicode.IsDigit(r) {
+											break
+										}
+										if _, err := sb.WriteRune(r); err != nil {
+											return nil, errors.Wrapf(err, "write rune %q", r)
+										}
+									}
+									if sb.Len() < 1 {
 										return nil, errors.Errorf("unexpected version format. expected: %q, actual: %q", ".*\\.RHEL<major>.*", p.version)
 									}
-									return []string{rhs[0:1]}, nil
+									return []string{sb.String()}, nil
 								}
 							}
 						}
