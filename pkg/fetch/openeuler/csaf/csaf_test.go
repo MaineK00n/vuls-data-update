@@ -30,7 +30,7 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, strings.TrimPrefix(r.URL.Path, "/security/data/csaf/")))
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			u, err := url.JoinPath(ts.URL, "security/data/csaf/")
 			if err != nil {

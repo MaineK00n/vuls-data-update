@@ -87,7 +87,7 @@ func TestFind(t *testing.T) {
 			if err != nil {
 				t.Errorf("open %s. err: %v", tt.dotgit, err)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			dir := t.TempDir()
 			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst"))); err != nil {

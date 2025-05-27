@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 					http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 				}
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			u, err := url.JoinPath(ts.URL, tt.indexof.urlpath)
 			if err != nil {

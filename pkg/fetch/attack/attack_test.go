@@ -41,7 +41,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, testdata)
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			var urls attack.DataURL
 			u, err := url.JoinPath(ts.URL, tt.testdata.Enterprise)

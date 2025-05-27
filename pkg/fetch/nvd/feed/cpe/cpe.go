@@ -112,7 +112,7 @@ func (opts options) fetch() ([]CPEDictItem, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cpe dictionary feed")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -123,7 +123,7 @@ func (opts options) fetch() ([]CPEDictItem, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "open cpe dictionary as gzip")
 	}
-	defer r.Close() //nolint:errcheck
+	defer r.Close()
 
 	d := xml.NewDecoder(r)
 	for {

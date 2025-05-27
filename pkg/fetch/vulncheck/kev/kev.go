@@ -86,7 +86,7 @@ func Fetch(apiToken string, opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch vulncheck kev")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -112,7 +112,7 @@ func Fetch(apiToken string, opts ...Option) error {
 			if err != nil {
 				return nil, errors.Wrapf(err, "open %s", zf.Name)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			var ks []VulnCheckKEV
 			if err := json.NewDecoder(f).Decode(&ks); err != nil {
@@ -154,7 +154,7 @@ func fetchBackupURL(client *utilhttp.Client, baseURL, apiToken string) (string, 
 	if err != nil {
 		return "", errors.Wrap(err, "fetch vulncheck kev backup")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)

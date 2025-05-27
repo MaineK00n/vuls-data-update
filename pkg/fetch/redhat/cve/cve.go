@@ -110,7 +110,7 @@ func Fetch(opts ...Option) error {
 
 	log.Println("[INFO] Fetch RedHat CVEs")
 	if err := client.PipelineGet(urls, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close() //nolint:errcheck
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -172,7 +172,7 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 					if err != nil {
 						return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL, page, time.Date(y, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), time.Date(y+1, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")))
 					}
-					defer resp.Body.Close() //nolint:errcheck
+					defer resp.Body.Close()
 
 					if resp.StatusCode != http.StatusOK {
 						_, _ = io.Copy(io.Discard, resp.Body)

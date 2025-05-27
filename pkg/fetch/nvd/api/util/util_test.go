@@ -112,7 +112,7 @@ func TestCheckRetry(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeContent(w, r, "test.txt", time.Now(), bytes.NewReader([]byte("12345")))
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
 			resp, err := c.Get(ts.URL)
@@ -124,7 +124,7 @@ func TestCheckRetry(t *testing.T) {
 					t.Errorf("err is not expected error, got: %+v, want: %+v", err, tt.wantError)
 				}
 			} else {
-				defer resp.Body.Close() //nolint:errcheck
+				defer resp.Body.Close()
 
 				if tt.wantError != nil {
 					t.Fatal("expected error has not occurred")

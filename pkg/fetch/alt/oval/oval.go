@@ -102,7 +102,7 @@ func (opts options) fetchBranches() ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch branches")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -127,7 +127,7 @@ func (opts options) fetch(branch string) error {
 	if err != nil {
 		return errors.Wrapf(err, "fetch %s", u)
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -154,7 +154,7 @@ func (opts options) fetch(branch string) error {
 			if err != nil {
 				return nil, errors.Wrapf(err, "open %s", zf.Name)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			var r root
 			if err := xml.NewDecoder(f).Decode(&r); err != nil {

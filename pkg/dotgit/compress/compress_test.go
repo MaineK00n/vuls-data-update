@@ -53,7 +53,7 @@ func TestCompress(t *testing.T) {
 				if err != nil {
 					t.Errorf("read file. err: %v", err)
 				}
-				defer f.Close() //nolint:errcheck
+				defer f.Close()
 
 				if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, "got", tt.root)); err != nil {
 					t.Errorf("extract. err: %v", err)
@@ -68,7 +68,7 @@ func TestCompress(t *testing.T) {
 				if err != nil {
 					t.Errorf("read file. err: %v", err)
 				}
-				defer f.Close() //nolint:errcheck
+				defer f.Close()
 
 				if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, "want", tt.root)); err != nil {
 					t.Errorf("extract. err: %v", err)

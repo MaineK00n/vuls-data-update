@@ -1,1 +1,11 @@
 version: "2"
+
+linters:
+  exclusions:
+    rules:
+      - source: "defer .+\\.Close\\(\\)"
+        linters:
+          - errcheck
+      - source: "defer os.RemoveAll\\(.+\\)"
+        linters:
+          - errcheck

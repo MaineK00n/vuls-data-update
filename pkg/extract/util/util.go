@@ -68,7 +68,7 @@ func Write(path string, content any, doSort bool) error {
 	if err != nil {
 		return errors.Wrapf(err, "create %s", path)
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	if doSort {
 		switch v := content.(type) {

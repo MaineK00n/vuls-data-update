@@ -32,7 +32,7 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			urls := make([]string, 0, len(tt.testdata))
 			for _, datapath := range tt.testdata {

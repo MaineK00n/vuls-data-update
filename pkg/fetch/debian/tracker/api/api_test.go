@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, tt.testdata)
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := api.Fetch(api.WithAdvisoryURL(ts.URL), api.WithDir(dir), api.WithRetry(0))

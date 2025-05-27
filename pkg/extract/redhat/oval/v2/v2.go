@@ -169,7 +169,7 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 						if err != nil {
 							return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
 						}
-						defer f.Close() //nolint:errcheck
+						defer f.Close()
 
 						var base dataTypes.Data
 						if err := json.NewDecoder(f).Decode(&base); err != nil {

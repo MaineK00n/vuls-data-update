@@ -59,7 +59,7 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", fmt.Sprintf("%s.xml", strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))))
 				}
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			dir := t.TempDir()
 			err := cvrf.Fetch(tt.args, cvrf.WithDataURL(fmt.Sprintf("%s/%%s", ts.URL)), cvrf.WithDir(dir), cvrf.WithRetry(0), cvrf.WithConcurrency(1), cvrf.WithWait(0))

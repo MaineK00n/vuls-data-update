@@ -66,13 +66,13 @@ func TestRemoveAll(t *testing.T) {
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			f, err = os.Create(filepath.Join(d, "test.json"))
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			if err := util.RemoveAll(d); (err != nil) != tt.wantErr {
 				t.Errorf("RemoveAll() error = %v, wantErr %v", err, tt.wantErr)

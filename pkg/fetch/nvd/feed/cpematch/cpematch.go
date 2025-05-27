@@ -111,7 +111,7 @@ func (opts options) fetch() (map[string][]CpeMatchItem, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch cpe match feed")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -122,7 +122,7 @@ func (opts options) fetch() (map[string][]CpeMatchItem, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "open cpe match as gzip")
 	}
-	defer r.Close() //nolint:errcheck
+	defer r.Close()
 
 	d := json.NewDecoder(r)
 	if _, err := d.Token(); err != nil {

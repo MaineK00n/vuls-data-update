@@ -25,7 +25,7 @@ func ExtractDotgitTarZst(r io.Reader, dir string) error {
 	if err != nil {
 		return errors.Wrap(err, "new zstd reader")
 	}
-	defer zr.Close() //nolint:errcheck
+	defer zr.Close()
 
 	tr := tar.NewReader(zr)
 	for {
@@ -58,7 +58,7 @@ func ExtractDotgitTarZst(r io.Reader, dir string) error {
 				if err != nil {
 					return errors.Wrapf(err, "create %s", p)
 				}
-				defer f.Close() //nolint:errcheck
+				defer f.Close()
 
 				if _, err := io.Copy(f, tr); err != nil {
 					return errors.Wrapf(err, "copy to %s", p)

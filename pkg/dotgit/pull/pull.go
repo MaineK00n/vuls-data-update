@@ -75,7 +75,7 @@ func Pull(repository string, opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch manifest")
 	}
-	defer r.Close() //nolint:errcheck
+	defer r.Close()
 
 	var manifest ocispec.Manifest
 	if err := json.NewDecoder(r).Decode(&manifest); err != nil {
@@ -98,7 +98,7 @@ func Pull(repository string, opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch content")
 	}
-	defer r.Close() //nolint:errcheck
+	defer r.Close()
 
 	if err := util.ExtractDotgitTarZst(r, filepath.Join(options.dir, repo.Reference.Reference)); err != nil {
 		return errors.Wrapf(err, "extract to %s", filepath.Join(options.dir, repo.Reference.Reference))

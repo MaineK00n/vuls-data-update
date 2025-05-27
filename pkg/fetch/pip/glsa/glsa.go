@@ -79,7 +79,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "fetch repository")
 	}
-	defer resp.Body.Close() //nolint:errcheck
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -90,7 +90,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrap(err, "create gzip reader")
 	}
-	defer gr.Close() //nolint:errcheck
+	defer gr.Close()
 
 	tr := tar.NewReader(gr)
 	for {

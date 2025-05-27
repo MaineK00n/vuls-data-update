@@ -1224,7 +1224,7 @@ index 321cb11fd6d4a6ddd6f6d2209828a70b1777475e..11d5d7549484e47231829a01eadd9cdb
 			if err != nil {
 				t.Errorf("open %s. err: %v", tt.dotgit, err)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			dir := t.TempDir()
 			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst"))); err != nil {

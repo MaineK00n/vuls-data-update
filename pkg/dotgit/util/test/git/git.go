@@ -49,7 +49,7 @@ func Populate(dir, datapath string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "open %s", filepath.Join(datapath, "commits.json"))
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	var commits []commit
 	if err := json.NewDecoder(f).Decode(&commits); err != nil {
@@ -78,13 +78,13 @@ func Populate(dir, datapath string) (string, error) {
 				if err != nil {
 					return errors.Wrapf(err, "open %s", path)
 				}
-				defer src.Close() //nolint:errcheck
+				defer src.Close()
 
 				dst, err := os.Create(filepath.Join(dir, filepath.Base(datapath), rel))
 				if err != nil {
 					return errors.Wrapf(err, "create %s", filepath.Join(dir, filepath.Base(datapath), rel))
 				}
-				defer dst.Close() //nolint:errcheck
+				defer dst.Close()
 
 				if _, err := io.Copy(dst, src); err != nil {
 					return errors.Wrapf(err, "copy %s", path)

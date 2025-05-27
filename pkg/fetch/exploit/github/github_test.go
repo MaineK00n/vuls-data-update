@@ -36,7 +36,7 @@ func TestFetch(t *testing.T) {
 				}
 				http.ServeFile(w, r, datapath)
 			}))
-			defer ts.Close() //nolint:errcheck
+			defer ts.Close()
 
 			u, err := url.JoinPath(ts.URL, tt.testdata)
 			if err != nil {

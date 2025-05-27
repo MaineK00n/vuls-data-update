@@ -78,7 +78,7 @@ func Fetch(opts ...Option) error {
 	if err != nil {
 		return errors.Wrapf(err, "mkdir %s", cloneDir)
 	}
-	defer os.RemoveAll(cloneDir) //nolint:errcheck
+	defer os.RemoveAll(cloneDir)
 
 	if err := exec.Command("git", "clone", "--depth", "1", options.repoURL, cloneDir).Run(); err != nil {
 		return errors.Wrapf(err, "git clone --depth 1 %s %s", options.repoURL, cloneDir)
@@ -102,7 +102,7 @@ func Fetch(opts ...Option) error {
 			if err != nil {
 				return errors.Wrapf(err, "open %s", path)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			v, err := parse(f)
 			if err != nil {

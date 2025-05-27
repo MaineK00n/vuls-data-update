@@ -77,16 +77,16 @@ func (o options) compress(src, dst string) error {
 	if err != nil {
 		return errors.Wrapf(err, "create %s", dst)
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	zw, err := zstd.NewWriter(f, zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(o.level)))
 	if err != nil {
 		return errors.Wrap(err, "new zstd writer")
 	}
-	defer zw.Close() //nolint:errcheck
+	defer zw.Close()
 
 	tw := tar.NewWriter(zw)
-	defer tw.Close() //nolint:errcheck
+	defer tw.Close()
 
 	info, err := os.Stat(src)
 	if err != nil {
@@ -142,7 +142,7 @@ func (o options) compress(src, dst string) error {
 			if err != nil {
 				return errors.Wrapf(err, "open %s", path)
 			}
-			defer f.Close() //nolint:errcheck
+			defer f.Close()
 
 			if _, err := io.Copy(tw, f); err != nil {
 				return errors.Wrapf(err, "copy %s", path)
