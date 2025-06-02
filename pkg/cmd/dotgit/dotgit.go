@@ -19,6 +19,8 @@ func NewCmdDotGit() *cobra.Command {
 
 			$ vuls-data-update dotgit cat --treeish HEAD vuls-data-raw-debian-security-tracker bookworm/2025/CVE-2025-0001.json
 			$ vuls-data-update dotgit diff vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3:bookworm/2025/CVE-2025-0001.json main:bookworm/2025/CVE-2025-0001.json
+
+			$ vuls-data-update dotgit log vuls-data-raw-debian-security-tracker
 		`),
 	}
 
@@ -26,6 +28,7 @@ func NewCmdDotGit() *cobra.Command {
 		newCmdPull(), newCmdCompress(),
 		newCmdContains(), newCmdFind(), newCmdGrep(),
 		newCmdCat(), newCmdDiff(),
+		newCmdLog(),
 	)
 
 	return cmd
