@@ -8,10 +8,27 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/diff"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/diff/file"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/diff/tree"
 )
 
 func newCmdDiff() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "diff",
+		Short: "Diff file, tree in the specified treeish",
+		Example: heredoc.Doc(`
+			$ vuls-data-update dotgit diff file vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3:bookworm/2025/CVE-2025-0001.json main:bookworm/2025/CVE-2025-0001.json
+			$ vuls-data-update dotgit diff tree vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3 main
+			$ vuls-data-update dotgit diff tree --pathspec bookworm/2025/CVE-2025-0001.json vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3 main
+		`),
+	}
+
+	cmd.AddCommand(newCmdDiffFile(), newCmdDiffTree())
+
+	return cmd
+}
+
+func newCmdDiffFile() *cobra.Command {
 	options := &struct {
 		color bool
 	}{
@@ -19,21 +36,21 @@ func newCmdDiff() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "diff <repository> <MINUS_FILE:<treeish:path>> <PLUS_FILE:<treeish:path>>",
-		Short: "Diff files in the specified treeish",
+		Use:   "file <repository> <MINUS_FILE:<treeish:path>> <PLUS_FILE:<treeish:path>>",
+		Short: "Diff file in the specified treeish",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit diff vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3:bookworm/2025/CVE-2025-0001.json main:bookworm/2025/CVE-2025-0001.json
+			$ vuls-data-update dotgit diff file vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3:bookworm/2025/CVE-2025-0001.json main:bookworm/2025/CVE-2025-0001.json
 		`),
 		Args: cobra.ExactArgs(3),
 		RunE: func(_ *cobra.Command, args []string) error {
-			content, err := diff.Diff(args[0], args[1], args[2], diff.WithColor(options.color))
+			content, err := file.Diff(args[0], args[1], args[2], file.WithColor(options.color))
 			if err != nil {
-				return errors.Wrap(err, "failed to dotgit diff")
+				return errors.Wrap(err, "failed to dotgit diff file")
 			}
 
 			if content != "" {
 				if _, err := fmt.Fprintln(os.Stdout, content); err != nil {
-					return errors.Wrap(err, "failed to print diff")
+					return errors.Wrap(err, "failed to print diff file")
 				}
 			}
 
@@ -42,6 +59,47 @@ func newCmdDiff() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&options.color, "color", "", options.color, "color the diff")
+
+	return cmd
+}
+
+func newCmdDiffTree() *cobra.Command {
+	options := &struct {
+		color bool
+
+		pathspecs []string
+	}{
+		color: false,
+
+		pathspecs: nil,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "tree <repository> <minus treeish> <plus treeish>",
+		Short: "Diff tree in the specified treeish",
+		Example: heredoc.Doc(`
+			$ vuls-data-update dotgit diff tree vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3 main
+			$ vuls-data-update dotgit diff tree --pathspec bookworm/2025/CVE-2025-0001.json vuls-data-raw-debian-security-tracker 729c12ba5ff2dafacaf26b9311d8dcbea1d98bd3 main
+		`),
+		Args: cobra.ExactArgs(3),
+		RunE: func(_ *cobra.Command, args []string) error {
+			content, err := tree.Diff(args[0], args[1], args[2], tree.WithColor(options.color), tree.WithPathSpecs(options.pathspecs))
+			if err != nil {
+				return errors.Wrap(err, "failed to dotgit diff tree")
+			}
+
+			if content != "" {
+				if _, err := fmt.Fprintln(os.Stdout, content); err != nil {
+					return errors.Wrap(err, "failed to print diff tree")
+				}
+			}
+
+			return nil
+		},
+	}
+
+	cmd.Flags().BoolVarP(&options.color, "color", "", options.color, "color the diff")
+	cmd.Flags().StringArrayVarP(&options.pathspecs, "pathspec", "p", options.pathspecs, "grep in specified pathspec")
 
 	return cmd
 }
