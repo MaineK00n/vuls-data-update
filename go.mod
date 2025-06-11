@@ -9,7 +9,7 @@ require (
 	github.com/aquasecurity/go-npm-version v0.0.1
 	github.com/aquasecurity/go-pep440-version v0.0.1
 	github.com/cheggaaa/pb/v3 v3.1.7
-	github.com/go-git/go-git/v5 v5.16.0
+	github.com/go-git/go-git/v5 v5.16.2
 	github.com/google/go-cmp v0.7.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.7
