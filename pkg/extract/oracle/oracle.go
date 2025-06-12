@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -103,17 +104,25 @@ func Extract(inputDir string, opts ...Option) error {
 			return errors.Wrapf(err, "extract %s", path)
 		}
 
-		ss := strings.Split(string(data.ID), "-")
-		if len(ss) < 3 || ss[0] != "ELSA" {
-			return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ELSA-<year>-<ID>", data.ID)
-		}
-		year := ss[1]
-
-		if err := util.Write(filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)))
+		splitted, err := util.Split(string(data.ID), "-", "-")
+		if err != nil {
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ELSA|ELBA|ELEA)-<year>-<ID>", data.ID)
 		}
 
-		return nil
+		switch splitted[0] {
+		case "ELSA", "ELBA", "ELEA":
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ELSA|ELBA|ELEA)-<year>-<ID>", data.ID)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
+			}
+
+			return nil
+		default:
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(ELSA|ELBA|ELEA)-<year>-<ID>", data.ID)
+		}
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", inputDir)
 	}
