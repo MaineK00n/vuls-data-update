@@ -1,0 +1,6 @@
+{
+	"id": "oval:org.opensuse.security:obj:2009068170",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"name": "kernel-livepatch-6_4_0-150600_23_14-default"
+}
