@@ -372,6 +372,36 @@ func TestRangeType_Compare(t *testing.T) {
 			want: -1,
 		},
 		{
+			name: "rpm version only",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeSUSEServer,
+				v1:     "0.0.1",
+				v2:     "0.0.2",
+			},
+			want: -1,
+		},
+		{
+			name: "rpm version only",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeSUSEServer,
+				v1:     "0.0.1",
+				v2:     "0.0.1",
+			},
+			want: 0,
+		},
+		{
+			name: "rpm version only",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				family: ecosystemTypes.EcosystemTypeSUSEServer,
+				v1:     "0.0.2",
+				v2:     "0.0.1",
+			},
+			want: +1,
+		},
+		{
 			name: "unknown type",
 			rt:   affectedrangeTypes.RangeTypeUnknown,
 			args: args{
