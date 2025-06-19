@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
+	unameTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/unamecriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 )
 
@@ -17,6 +18,7 @@ const (
 	_ CriterionType = iota
 	CriterionTypeVersion
 	CriterionTypeNoneExist
+	CriterionTypeUname
 
 	CriterionTypeUnknown
 )
@@ -27,6 +29,8 @@ func (t CriterionType) String() string {
 		return "version"
 	case CriterionTypeNoneExist:
 		return "none-exist"
+	case CriterionTypeUname:
+		return "uname"
 	default:
 		return "unknown"
 	}
@@ -48,6 +52,8 @@ func (t *CriterionType) UnmarshalJSON(data []byte) error {
 		ct = CriterionTypeVersion
 	case "none-exist":
 		ct = CriterionTypeNoneExist
+	case "uname":
+		ct = CriterionTypeUname
 	case "unknown":
 		ct = CriterionTypeUnknown
 	default:
@@ -58,9 +64,10 @@ func (t *CriterionType) UnmarshalJSON(data []byte) error {
 }
 
 type Criterion struct {
-	Type      CriterionType       `json:"type,omitempty"`
-	Version   *vcTypes.Criterion  `json:"version,omitempty"`
-	NoneExist *necTypes.Criterion `json:"none_exist,omitempty"`
+	Type      CriterionType         `json:"type,omitempty"`
+	Version   *vcTypes.Criterion    `json:"version,omitempty"`
+	NoneExist *necTypes.Criterion   `json:"none_exist,omitempty"`
+	Uname     *unameTypes.Criterion `json:"uname,omitempty"`
 }
 
 func (c *Criterion) Sort() {
@@ -69,6 +76,8 @@ func (c *Criterion) Sort() {
 		c.Version.Sort()
 	case CriterionTypeNoneExist:
 		c.NoneExist.Sort()
+	case CriterionTypeUname:
+		c.Uname.Sort()
 	default:
 	}
 }
@@ -100,6 +109,18 @@ func Compare(x, y Criterion) int {
 				default:
 					return necTypes.Compare(*x.NoneExist, *y.NoneExist)
 				}
+			case CriterionTypeUname:
+				switch {
+				case x.Uname == nil && y.Uname == nil:
+					return 0
+				case x.Uname == nil && y.Uname != nil:
+					return -1
+				case x.Uname != nil && y.Uname == nil:
+					return +1
+				default:
+					return unameTypes.Compare(*x.Uname, *y.Uname)
+				}
+
 			default:
 				return 0
 			}
@@ -110,6 +131,7 @@ func Compare(x, y Criterion) int {
 type Query struct {
 	Version   []vcTypes.Query
 	NoneExist *necTypes.Query
+	Uname     *unameTypes.Query
 }
 
 func (c Criterion) Contains(query Query) (bool, error) {
@@ -135,6 +157,15 @@ func (c Criterion) Contains(query Query) (bool, error) {
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist)
 		if err != nil {
 			return false, errors.Wrap(err, "none exist criterion accept")
+		}
+		return isAccepted, nil
+	case CriterionTypeUname:
+		if query.Uname == nil {
+			return false, errors.New("query is not set for uname criterion")
+		}
+		isAccepted, err := c.Uname.Accept(*query.Uname)
+		if err != nil {
+			return false, errors.Wrap(err, "uname criterion accept")
 		}
 		return isAccepted, nil
 	default:
