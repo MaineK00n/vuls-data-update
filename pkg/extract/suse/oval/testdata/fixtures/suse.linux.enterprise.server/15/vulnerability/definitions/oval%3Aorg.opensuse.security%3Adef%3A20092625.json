@@ -1,0 +1,224 @@
+{
+	"id": "oval:org.opensuse.security:def:20092625",
+	"version": "1",
+	"class": "vulnerability",
+	"metadata": {
+		"title": "CVE-2009-2625",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"SUSE Enterprise Storage 6",
+				"SUSE Linux Enterprise Desktop 15",
+				"SUSE Linux Enterprise Desktop 15 SP1",
+				"SUSE Linux Enterprise High Performance Computing 15",
+				"SUSE Linux Enterprise High Performance Computing 15 SP1",
+				"SUSE Linux Enterprise Module for Basesystem 15",
+				"SUSE Linux Enterprise Module for Basesystem 15 SP1",
+				"SUSE Linux Enterprise Server 15",
+				"SUSE Linux Enterprise Server 15 SP1",
+				"SUSE Linux Enterprise Server 15 SP1-LTSS",
+				"SUSE Linux Enterprise Server for SAP Applications 15",
+				"SUSE Linux Enterprise Server for SAP Applications 15 SP1",
+				"SUSE Manager Proxy 4.0",
+				"SUSE Manager Retail Branch Server 4.0",
+				"SUSE Manager Server 4.0"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "Mitre CVE-2009-2625",
+				"ref_url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2625",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "SUSE CVE-2009-2625",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2009-2625",
+				"source": "SUSE CVE"
+			},
+			{
+				"ref_id": "SUSE-SA:2009:053",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/GXVSTLPUAV3GDYABYDPAJVPZORMSTZLN/#GXVSTLPUAV3GDYABYDPAJVPZORMSTZLN",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2009:014",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/VDHSIVGQYGW3CBIOMJ35OP3MSZVABWVX/#VDHSIVGQYGW3CBIOMJ35OP3MSZVABWVX",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2009:016",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/ONCZEJ2OSRDB5UJWYUEBLKJ7IUHPOR62/#ONCZEJ2OSRDB5UJWYUEBLKJ7IUHPOR62",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2009:017",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/WLEQAE5ZU7UH4KZNKCUCE2NOQYOZK7SM/#WLEQAE5ZU7UH4KZNKCUCE2NOQYOZK7SM",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2010:005",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/IS7CZRVYA2ZFFIEPWKNUUBFTNN3W5IWY/#IS7CZRVYA2ZFFIEPWKNUUBFTNN3W5IWY",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2010:011",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/ACBTGUNJ6CTYWLVUTLYEKQX3ERY3PSCW/#ACBTGUNJ6CTYWLVUTLYEKQX3ERY3PSCW",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2010:012",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/PUQOSBC25X4IKVDHCM3GPXJFE5G56PXU/#PUQOSBC25X4IKVDHCM3GPXJFE5G56PXU",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2010:013",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/EG3CTD3H4CUVHS6LF3NQBD3PCOQ7QQJ3/#EG3CTD3H4CUVHS6LF3NQBD3PCOQ7QQJ3",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2010:014",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/4IE7I5U4VU7ZSJNN3DHYMM3JYGTV67J6/#4IE7I5U4VU7ZSJNN3DHYMM3JYGTV67J6",
+				"source": "SUSE-SU"
+			},
+			{
+				"ref_id": "SUSE-SR:2010:015",
+				"ref_url": "https://lists.opensuse.org/archives/list/security-announce@lists.opensuse.org/thread/KILI6WO4HD4UVXOVYK2U6VA77TI7DFZT/#KILI6WO4HD4UVXOVYK2U6VA77TI7DFZT",
+				"source": "SUSE-SU"
+			}
+		],
+		"description": "\n    XMLScanner.java in Apache Xerces2 Java, as used in Sun Java Runtime Environment (JRE) in JDK and JRE 6 before Update 15 and JDK and JRE 5.0 before Update 20, and in other products, allows remote attackers to cause a denial of service (infinite loop and application hang) via malformed XML input, as demonstrated by the Codenomicon XML fuzzing framework.\n    ",
+		"advisory": {
+			"from": "security@suse.de",
+			"severity": "Important",
+			"cve": [
+				{
+					"text": "CVE-2009-2625 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2009-2625/"
+				},
+				{
+					"text": "CVE-2009-2625 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2009-2625"
+				}
+			],
+			"bugzilla": [
+				{
+					"text": "SUSE bug 525562",
+					"href": "https://bugzilla.suse.com/525562"
+				},
+				{
+					"text": "SUSE bug 530717",
+					"href": "https://bugzilla.suse.com/530717"
+				},
+				{
+					"text": "SUSE bug 534025",
+					"href": "https://bugzilla.suse.com/534025"
+				},
+				{
+					"text": "SUSE bug 534721",
+					"href": "https://bugzilla.suse.com/534721"
+				},
+				{
+					"text": "SUSE bug 537969",
+					"href": "https://bugzilla.suse.com/537969"
+				},
+				{
+					"text": "SUSE bug 540945",
+					"href": "https://bugzilla.suse.com/540945"
+				},
+				{
+					"text": "SUSE bug 548655",
+					"href": "https://bugzilla.suse.com/548655"
+				},
+				{
+					"text": "SUSE bug 550664",
+					"href": "https://bugzilla.suse.com/550664"
+				},
+				{
+					"text": "SUSE bug 553220",
+					"href": "https://bugzilla.suse.com/553220"
+				},
+				{
+					"text": "SUSE bug 558892",
+					"href": "https://bugzilla.suse.com/558892"
+				},
+				{
+					"text": "SUSE bug 581162",
+					"href": "https://bugzilla.suse.com/581162"
+				},
+				{
+					"text": "SUSE bug 581765",
+					"href": "https://bugzilla.suse.com/581765"
+				},
+				{
+					"text": "SUSE bug 610080",
+					"href": "https://bugzilla.suse.com/610080"
+				},
+				{
+					"text": "SUSE bug 611931",
+					"href": "https://bugzilla.suse.com/611931"
+				},
+				{
+					"text": "SUSE bug 611932",
+					"href": "https://bugzilla.suse.com/611932"
+				}
+			],
+			"issued": {
+				"date": "2022-05-20"
+			},
+			"updated": {
+				"date": "2024-09-01"
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:suse:ses:6",
+					"cpe:/o:suse:sle-module-basesystem:15",
+					"cpe:/o:suse:sle-module-basesystem:15:sp1",
+					"cpe:/o:suse:sle_hpc:15",
+					"cpe:/o:suse:sle_hpc:15:sp1",
+					"cpe:/o:suse:sled:15",
+					"cpe:/o:suse:sled:15:sp1",
+					"cpe:/o:suse:sles-ltss:15:sp1",
+					"cpe:/o:suse:sles:15",
+					"cpe:/o:suse:sles:15:sp1",
+					"cpe:/o:suse:sles_sap:15",
+					"cpe:/o:suse:sles_sap:15:sp1",
+					"cpe:/o:suse:suse-manager-proxy:4.0",
+					"cpe:/o:suse:suse-manager-retail-branch-server:4.0",
+					"cpe:/o:suse:suse-manager-server:4.0"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "OR",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009341508",
+								"comment": "SUSE Linux Enterprise Server 15 SP1-LTSS is installed"
+							},
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009341764",
+								"comment": "SUSE Linux Enterprise Server for SAP Applications 15 SP1 is installed"
+							}
+						]
+					},
+					{
+						"operator": "OR",
+						"criterions": [
+							{
+								"test_ref": "oval:org.opensuse.security:tst:2009334164",
+								"comment": "python is affected"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}
