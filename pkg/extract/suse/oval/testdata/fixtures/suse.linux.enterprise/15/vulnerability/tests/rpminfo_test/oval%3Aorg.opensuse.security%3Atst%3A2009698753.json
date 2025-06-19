@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009698753",
+	"version": "1",
+	"comment": "kernel-livepatch-5_3_18-24_93-default is >=9-150200.2.1",
+	"check": "none satisfy",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009058587"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009166538"
+	}
+}

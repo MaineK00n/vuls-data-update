@@ -958,9 +958,8 @@ var os = map[string]map[string]eolTypes.EOL{
 				"Standard": time.Date(2017, 1, 17, 23, 59, 59, 0, time.UTC),
 			},
 		},
-		"tumbleweed": {Ended: false},
 	},
-	"opensuse leap": {
+	ecosystemTypes.EcosystemTypeOpenSUSELeap: {
 		"42.1": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1016,7 +1015,10 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	ecosystemTypes.EcosystemTypeSUSEServer: {
+	ecosystemTypes.EcosystemTypeOpenSUSETumbleweed: {
+		"tumbleweed": {Ended: false},
+	},
+	ecosystemTypes.EcosystemTypeSUSEEnterpriseServer: {
 		"10": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1174,7 +1176,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	ecosystemTypes.EcosystemTypeSUSEDesktop: {
+	ecosystemTypes.EcosystemTypeSUSEEnterpriseDesktop: {
 		"11": {
 			Ended: true,
 			Date: map[string]time.Time{
