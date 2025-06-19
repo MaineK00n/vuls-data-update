@@ -1,0 +1,12 @@
+{
+	"id": "oval:org.opensuse.security:ste:2009202136",
+	"attr_version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"version": {
+		"text": "15.6",
+		"operation": "equals"
+	},
+	"evr": {},
+	"signature_keyid": {},
+	"arch": {}
+}
