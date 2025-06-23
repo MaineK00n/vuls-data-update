@@ -1,0 +1,17 @@
+{
+	"deprecated": false,
+	"cpeName": "cpe:2.3:a:3com:3cdaemon:-:*:*:*:*:*:*:*",
+	"cpeNameId": "BAE41D20-D4AF-4AF0-AA7D-3BD04DA402A7",
+	"created": "2007-08-23T21:05:57.937",
+	"lastModified": "2011-01-12T14:35:43.723",
+	"titles": [
+		{
+			"title": "3Com 3CDaemon",
+			"lang": "en"
+		},
+		{
+			"title": "スリーコム 3CDaemon",
+			"lang": "ja"
+		}
+	]
+}

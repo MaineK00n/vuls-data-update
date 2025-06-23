@@ -85,9 +85,12 @@ import (
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpe"
 	nvdAPICPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cpematch"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/api/cve"
-	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe"
-	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch"
-	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve"
+	nvdFeedCPEv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe/v1"
+	nvdFeedCPEv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpe/v2"
+	nvdFeedCPEMATCHv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch/v1"
+	nvdFeedCPEMATCHv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cpematch/v2"
+	nvdFeedCVEv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v1"
+	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
@@ -210,7 +213,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNucleiRepository(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
-		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
+		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
 		newCmdOracle(),
 		newCmdOSSFuzzOSV(),
@@ -2646,83 +2649,164 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 	return cmd
 }
 
-func newCmdNVDFeedCVE() *cobra.Command {
+func newCmdNVDFeedCVEv1() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve", "v1"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cve",
-		Short: "Fetch NVD CVE Feed data source",
+		Use:   "nvd-feed-cve-v1",
+		Short: "Fetch NVD CVE Feed v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch nvd-feed-cve
+			$ vuls-data-update fetch nvd-feed-cve-v1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdFeedCVE.Fetch(nvdFeedCVE.WithDir(options.dir), nvdFeedCVE.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch nvd feed cve")
+			if err := nvdFeedCVEv1.Fetch(nvdFeedCVEv1.WithDir(options.dir), nvdFeedCVEv1.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd cve feed v1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdNVDFeedCPE() *cobra.Command {
+func newCmdNVDFeedCPEv1() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe", "v1"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cpe",
-		Short: "Fetch NVD CPE Dictionary Feed data source",
+		Use:   "nvd-feed-cpe-v1",
+		Short: "Fetch NVD CPE Dictionary Feed v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch nvd-feed-cpe
+			$ vuls-data-update fetch nvd-feed-cpe-v1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdFeedCPE.Fetch(nvdFeedCPE.WithDir(options.dir), nvdFeedCPE.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch nvd feed cpe")
+			if err := nvdFeedCPEv1.Fetch(nvdFeedCPEv1.WithDir(options.dir), nvdFeedCPEv1.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd cpe feed v1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
 
-func newCmdNVDFeedCPEMatch() *cobra.Command {
+func newCmdNVDFeedCPEMATCHv1() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch", "v1"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cpematch",
-		Short: "Fetch NVD CPE Match Feed data source",
+		Use:   "nvd-feed-cpematch-v1",
+		Short: "Fetch NVD CPE Match Feed v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch nvd-feed-cpematch
+			$ vuls-data-update fetch nvd-feed-cpematch-v1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := nvdFeedCPEMatch.Fetch(nvdFeedCPEMatch.WithDir(options.dir), nvdFeedCPEMatch.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch nvd feed cpe")
+			if err := nvdFeedCPEMATCHv1.Fetch(nvdFeedCPEMATCHv1.WithDir(options.dir), nvdFeedCPEMATCHv1.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd cpematch feed v1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNVDFeedCVEv2() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cve", "v2"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed-cve-v2",
+		Short: "Fetch NVD CVE Feed v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-feed-cve-v2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nvdFeedCVEv2.Fetch(nvdFeedCVEv2.WithDir(options.dir), nvdFeedCVEv2.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd cve feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNVDFeedCPEv2() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpe", "v2"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed-cpe-v2",
+		Short: "Fetch NVD CPE Dictionary Feed v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-feed-cpe-v2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nvdFeedCPEv2.Fetch(nvdFeedCPEv2.WithDir(options.dir), nvdFeedCPEv2.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd cpe feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNVDFeedCPEMATCHv2() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "feed", "cpematch", "v2"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed-cpematch-v2",
+		Short: "Fetch NVD CPE Match Feed v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nvd-feed-cpematch-v2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := nvdFeedCPEMATCHv2.Fetch(nvdFeedCPEMATCHv2.WithDir(options.dir), nvdFeedCPEMATCHv2.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nvd cpematch feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
