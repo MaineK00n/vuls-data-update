@@ -10,6 +10,16 @@ import (
 	"github.com/pkg/errors"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
+	necBinaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
+	versoncriterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
+	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
+	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -171,6 +181,11 @@ func (e extractor) extract(def oval.Definition) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Errorf("unexpected class %s in definition %s (%s/%s)", def.Class, def.ID, e.osname, e.version)
 	}
 
+	_, err := e.walkCriteria(def.Criteria)
+	if err != nil {
+		return dataTypes.Data{}, errors.Wrapf(err, "eval criteria")
+	}
+
 	// TODO: SUSE固有のデータ抽出ロジックを実装
 	// - パッケージ情報の収集
 	// - 脆弱性情報の抽出
@@ -187,4 +202,228 @@ func (e extractor) extract(def oval.Definition) (dataTypes.Data, error) {
 			Raws: e.r.Paths(),
 		},
 	}, nil
+}
+
+type pkg struct {
+	name    string
+	fixedAt string
+}
+
+func (e extractor) walkCriteria(ovalParent oval.Criteria) (criteriaTypes.Criteria, error) {
+	op, err := func() (criteriaTypes.CriteriaOperatorType, error) {
+		switch ovalParent.Operator {
+		case "OR":
+			return criteriaTypes.CriteriaOperatorTypeOR, nil
+		case "AND":
+			return criteriaTypes.CriteriaOperatorTypeAND, nil
+		default:
+			return criteriaTypes.CriteriaOperatorType(0), errors.Errorf(`unexpected oval criteria operator. expected: ["OR", "AND"], actual: %s`, ovalParent.Operator)
+		}
+	}()
+	if err != nil {
+		return criteriaTypes.Criteria{}, errors.Wrapf(err, "parse criteria operator %s", ovalParent.Operator)
+	}
+
+	parent := criteriaTypes.Criteria{
+		Operator: op,
+	}
+
+	for _, oc := range ovalParent.Criterias {
+		c, err := e.walkCriteria(oc)
+		if err != nil {
+			return criteriaTypes.Criteria{}, errors.Wrapf(err, "walk criteria")
+		}
+		parent.Criterias = append(parent.Criterias, c)
+	}
+	for _, oc := range ovalParent.Criterions {
+		cn, ca, err := e.translateCriterion(oc)
+		if err != nil {
+			return criteriaTypes.Criteria{}, errors.Wrapf(err, "translace criterion")
+		}
+		if cn != nil {
+			parent.Criterions = append(parent.Criterions, *cn)
+		}
+		if ca != nil {
+			parent.Criterias = append(parent.Criterias, *ca)
+		}
+	}
+
+	return parent, nil
+}
+
+func (e extractor) translateCriterion(parent oval.Criterion) (*criterionTypes.Criterion, *criteriaTypes.Criteria, error) {
+	// FIXME items
+	// Suppose "AND" criteria, any of sub conditions are not satisfied, drop it.
+
+	var t oval.RpminfoTest
+	if err := e.r.Read(filepath.Join(e.baseDir, "tests", "rpminfo_test", parent.TestRef), e.baseDir, &t); err != nil {
+		return nil, nil, errors.Wrapf(err, "read rpminfo_test %s", filepath.Join(e.baseDir, "tests", "rpminfo_test", parent.TestRef))
+	}
+
+	var o oval.RpminfoObject
+	if err := e.r.Read(filepath.Join(e.baseDir, "objects", "rpminfo_object", t.Object.ObjectRef), e.baseDir, &o); err != nil {
+		return nil, nil, errors.Wrapf(err, "read rpminfo_object %s", filepath.Join(e.baseDir, "objects", "rpminfo_object", t.Object.ObjectRef))
+	}
+
+	var s oval.RpminfoState
+	if err := e.r.Read(filepath.Join(e.baseDir, "states", "rpminfo_state", t.State.StateRef), e.baseDir, &s); err != nil {
+		return nil, nil, errors.Wrapf(err, "read rpminfo_state %s", filepath.Join(e.baseDir, "states", "rpminfo_state", t.State.StateRef))
+	}
+
+	if o.Name == "" {
+		return nil, nil, errors.Errorf("unexpected rpminfo_object name. name: %q", o.Name)
+	}
+
+	if strings.HasSuffix(parent.Comment, "is not affected") {
+		if s.Version.Text == "0" && s.Version.Operation == "equals" {
+			return nil, nil, nil
+		}
+		return nil, nil, errors.Errorf(`unexpected rpminfo_state for "not affected". expected "equals" "0", actual: %q %q`, s.Version.Operation, s.Version.Text)
+	}
+
+	switch t.Check {
+	case "at least one":
+		// exactly one field must be set, others be empty
+		if (s.Version.Text != "" && s.Evr.Text != "") || (s.Version.Text != "" && s.Arch.Text != "") || (s.Evr.Text != "" && s.Arch.Text != "") {
+			return nil, nil, errors.Errorf("unexpected combination. rpminfo_test check: %s, rpminfo_state version: %q, evr: %q arch: %q", t.Check, s.Version.Text, s.Evr.Text, s.Arch.Text)
+		}
+	case "none satisfy":
+		// FIXME: paste raw XML text instead of this plain text
+		//
+		// Translate to "none exists criterion" OR "version criterion"
+		// cf. suse.linux.enterprise.server.15-affected.xml oval:org.opensuse.security:def:201825020
+		//            Criteria: AND
+		//                Criterion: kernel-default 4.12.14-150.66.1 is installed
+		//                  Test   Check:   "at least one"
+		//                  Object Name:    "kernel-default"
+		//                  Object Version: "1"
+		//                  State ID:       "oval:org.opensuse.security:ste:2009169927"
+		//                  State Version:  "" (op: "")
+		//                  State EVR:      "0:4.12.14-150.66.1" (op: "equals")
+		//                  State Arch:     "" (op: "")
+		//                Criterion: no kernel-livepatch-4_12_14-150_66-default is greater or equal than 14-2.2 <-- THIS criterion to translate here
+		//                  Test   Check:   "none satisfy"
+		//                  Object Name:    "kernel-livepatch-4_12_14-150_66-default"
+		//                  Object Version: "1"
+		//                  State ID:       "oval:org.opensuse.security:ste:2009169922"
+		//                  State Version:  "" (op: "")
+		//                  State EVR:      "0:14-2.2-0" (op: "greater than or equal")
+		//                  State Arch:     "" (op: "")
+		//  Translate to:
+		//  - criteria OR
+		//      - criterion noneexist: kernel-livepatch-4_12_14-150_66-default
+		//      - criterion version: kernel-livepatch-4_12_14-150_66-default less than 14-2.2
+		if s.Version.Text != "" || s.Arch.Text != "" {
+			return nil, nil, errors.Errorf("unexpected combination. rpminfo_test check: %s, rpminfo_state version: %q arch: %q", t.Check, s.Version.Text, s.Arch.Text)
+		}
+		if s.Evr.Text == "" || s.Evr.Operation != "greater than or equal" {
+			return nil, nil, errors.Errorf("unexpected combination. rpminfo_test check: %s, rpminfo_state evr: %q, operation: %q", t.Check, s.Evr.Text, s.Evr.Operation)
+		}
+
+		ca := criteriaTypes.Criteria{
+			Operator: criteriaTypes.CriteriaOperatorTypeOR,
+			Criterions: []criterionTypes.Criterion{
+				{
+					Type: criterionTypes.CriterionTypeNoneExist,
+					NoneExist: &noneexistcriterion.Criterion{
+						Type: noneexistcriterion.PackageTypeBinary,
+						Binary: &necBinaryTypes.Package{
+							Name: o.Name,
+						},
+					},
+				},
+				{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &versoncriterionTypes.Criterion{
+						Vulnerable: false,
+						Package: criterionpackageTypes.Package{
+							Type: criterionpackageTypes.PackageTypeBinary,
+							Binary: &binaryTypes.Package{
+								Name: o.Name,
+							},
+						},
+						Affected: &affectedTypes.Affected{
+							Type: affectedrangeTypes.RangeTypeRPM,
+							Range: []affectedrangeTypes.Range{
+								{LessThan: s.Evr.Text},
+							},
+						},
+					},
+				},
+			},
+		}
+		return nil, &ca, nil
+	case "all":
+		if s.Version.Text != "" {
+			return nil, nil, errors.Errorf("unexpected combination. rpminfo_test check: %s, rpminfo_state version: %q, evr: %q arch: %q", t.Check, s.Version.Text, s.Evr.Text, s.Arch.Text)
+		}
+	default:
+		return nil, nil, errors.Errorf(`unexpected rpminfo_test check. expected: ["at least one", "none satisfy", "all"], actural: %q`, t.Check)
+	}
+
+	archs, err := func() ([]string, error) {
+		if s.Arch.Text != "" && s.Arch.Operation != "pattern match" {
+			return nil, errors.Errorf("unexpected rpminfo_state arch. expected: \"pattern match\", actual: %s", s.Arch.Operation)
+		}
+		switch s.Arch.Text {
+		case "":
+			return nil, nil
+		default:
+			return strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|"), nil
+		}
+	}()
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "parse rpminfo_state arch")
+	}
+
+	affected, fixstatus, err := func() (*affectedTypes.Affected, *fixstatusTypes.FixStatus, error) {
+		if s.Evr.Text == "" {
+			return nil, nil, nil
+		}
+		switch s.Evr.Operation {
+		case "less than":
+			return &affectedTypes.Affected{
+					Type: affectedrangeTypes.RangeTypeRPM,
+					Range: []affectedrangeTypes.Range{
+						{LessThan: s.Evr.Text},
+					},
+				},
+				&fixstatusTypes.FixStatus{
+					Class: fixstatusTypes.ClassFixed,
+				}, nil
+		case "greater than":
+			return &affectedTypes.Affected{
+					Type: affectedrangeTypes.RangeTypeRPM,
+					Range: []affectedrangeTypes.Range{
+						{GreaterThan: s.Evr.Text},
+					},
+				},
+				&fixstatusTypes.FixStatus{
+					Class: fixstatusTypes.ClassUnfixed,
+				}, nil
+		default:
+			return nil, nil, errors.Errorf("unexpected rpminfo_state evr operation. expected: [\"less than\", \"greater than\"], actual: %s", s.Evr.Operation)
+		}
+	}()
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "translate rpminfo_state evr")
+	}
+
+	c := criterionTypes.Criterion{
+		Type: criterionTypes.CriterionTypeVersion,
+		Version: &versoncriterionTypes.Criterion{
+			Vulnerable: s.Evr.Text != "",
+			FixStatus:  fixstatus,
+			Package: criterionpackageTypes.Package{
+				Type: criterionpackageTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{
+					Name:          o.Name,
+					Architectures: archs,
+				},
+			},
+			Affected: affected,
+		},
+	}
+
+	return &c, nil, nil
 }
