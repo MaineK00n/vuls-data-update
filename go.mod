@@ -12,7 +12,7 @@ require (
 	github.com/go-git/go-git/v5 v5.16.2
 	github.com/google/go-cmp v0.7.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
-	github.com/hashicorp/go-retryablehttp v0.7.7
+	github.com/hashicorp/go-retryablehttp v0.7.8
 	github.com/hashicorp/go-version v1.7.0
 	github.com/klauspost/compress v1.18.0
 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f
