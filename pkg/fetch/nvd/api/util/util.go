@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -40,6 +41,52 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	resp.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	return false, nil
+}
+
+func Backoff(min, max time.Duration, attemptNum int, resp *http.Response) time.Duration {
+	if resp != nil {
+		switch resp.StatusCode {
+		case http.StatusForbidden, http.StatusTooManyRequests, http.StatusServiceUnavailable:
+			if sleep, ok := parseRetryAfterHeader(resp.Header["Retry-After"]); ok {
+				return sleep
+			}
+			return time.Second * 30
+		}
+	}
+
+	mult := math.Pow(2, float64(attemptNum)) * float64(min)
+	sleep := time.Duration(mult)
+	if float64(sleep) != mult || sleep > max {
+		sleep = max
+	}
+	return sleep
+}
+
+var timeNow = time.Now
+
+func parseRetryAfterHeader(headers []string) (time.Duration, bool) {
+	if len(headers) == 0 || headers[0] == "" {
+		return 0, false
+	}
+	header := headers[0]
+	// Retry-After: 120
+	if sleep, err := strconv.ParseInt(header, 10, 64); err == nil {
+		if sleep > 0 {
+			return time.Second * time.Duration(sleep), true
+		}
+		return time.Second * 30, true
+	}
+
+	// Retry-After: Fri, 31 Dec 1999 23:59:59 GMT
+	retryTime, err := time.Parse(time.RFC1123, header)
+	if err != nil {
+		return 0, false
+	}
+	if until := retryTime.Sub(timeNow()); until > 0 {
+		return until, true
+	}
+	// date is in the past
+	return 0, true
 }
 
 func FullURL(baseURL string, startIndex, resultsPerPage int, lastModStartDate, lastModEndDate *time.Time) (string, error) {
