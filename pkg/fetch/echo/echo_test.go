@@ -1,6 +1,7 @@
 package echo_test
 
 import (
+	"encoding/json"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
 )
@@ -44,35 +46,49 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
+			default:
+				fn := func(path string) (echo.Vulnerability, error) {
+					f, err := os.Open(path)
+					if err != nil {
+						return echo.Vulnerability{}, err
+					}
+					defer f.Close()
 
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
+					var v echo.Vulnerability
+					if err := json.NewDecoder(f).Decode(&v); err != nil {
+						return echo.Vulnerability{}, err
+					}
+					return v, nil
 				}
 
-				if d.IsDir() {
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
+
+					if d.IsDir() {
+						return nil
+					}
+
+					wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := fn(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
+					if err != nil {
+						return err
+					}
+
+					got, err := fn(path)
+					if err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got, cmpopts.SortSlices(func(a, b echo.Package) bool { return a.Name < b.Name })); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
+
 					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
 				}
-
-				wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
-				if err != nil {
-					return err
-				}
-
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
 			}
 		})
 	}
