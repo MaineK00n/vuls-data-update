@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/kev"
 )
 
 func TestFetch(t *testing.T) {

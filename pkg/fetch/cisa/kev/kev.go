@@ -61,7 +61,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "kev"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "cisa", "kev"),
 		retry:   3,
 	}
 
@@ -73,10 +73,10 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Known Exploited Vulnerabilities Catalog")
+	log.Printf("[INFO] Fetch CISA Known Exploited Vulnerabilities Catalog")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
-		return errors.Wrap(err, "fetch kev data")
+		return errors.Wrap(err, "fetch cisa kev data")
 	}
 	defer resp.Body.Close()
 

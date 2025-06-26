@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/kev"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/cisa/kev"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 

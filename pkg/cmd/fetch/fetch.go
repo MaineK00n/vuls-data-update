@@ -26,6 +26,7 @@ import (
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
 	chainguardSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/secdb"
+	cisaKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/kev"
 	ciscoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/csaf"
 	ciscoCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/cvrf"
 	ciscoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/json"
@@ -63,7 +64,6 @@ import (
 	jvnFeedRSS "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/rss"
 	k8sJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/k8s/json"
 	k8sOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/k8s/osv"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
 	linuxOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/linux/osv"
 	mageiaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/mageia/osv"
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
@@ -182,6 +182,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
+		newCmdCISAKEV(),
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
@@ -202,7 +203,6 @@ func NewCmdFetch() *cobra.Command {
 		newCmdHaskellOSV(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdK8sJSON(), newCmdK8sOSV(),
-		newCmdKEV(),
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
@@ -748,6 +748,33 @@ func newCmdChainguardOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "chainguard", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCISAKEV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cisa", "kev"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisa-kev",
+		Short: "Fetch CISA KEV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisa-kev
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := cisaKEV.Fetch(cisaKEV.WithDir(options.dir), cisaKEV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisa kev")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
@@ -1886,33 +1913,6 @@ func newCmdK8sOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdKEV() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "kev"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "kev",
-		Short: "Fetch KEV data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch kev
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := kev.Fetch(kev.WithDir(options.dir), kev.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch kev")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "kev"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
