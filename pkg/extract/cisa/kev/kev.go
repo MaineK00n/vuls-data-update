@@ -21,7 +21,7 @@ import (
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/kev"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/kev"
 )
 
 type options struct {
@@ -44,7 +44,7 @@ func WithDir(dir string) Option {
 
 func Extract(args string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "kev"),
+		dir: filepath.Join(util.CacheDir(), "extract", "cisa", "kev"),
 	}
 
 	for _, o := range opts {
@@ -55,7 +55,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Known Exploited Vulnerabilities Catalog")
+	log.Printf("[INFO] Extract CISA Known Exploited Vulnerabilities Catalog")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -83,7 +83,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-		ID:   sourceTypes.KEV,
+		ID:   sourceTypes.CISAKEV,
 		Name: func() *string { t := "CISA Catalog of Known Exploited Vulnerabilities"; return &t }(),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
@@ -146,7 +146,7 @@ func extract(fetched kev.Vulnerability, raws []string) dataTypes.Data {
 			},
 		}},
 		DataSource: sourceTypes.Source{
-			ID:   sourceTypes.KEV,
+			ID:   sourceTypes.CISAKEV,
 			Raws: raws,
 		},
 	}

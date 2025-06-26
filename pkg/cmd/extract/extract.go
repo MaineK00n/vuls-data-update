@@ -23,6 +23,7 @@ import (
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/chainguard/osv"
+	cisaKEV "github.com/MaineK00n/vuls-data-update/pkg/extract/cisa/kev"
 	composerDB "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/db"
 	composerGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/ghsa"
 	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/composer/glsa"
@@ -57,7 +58,6 @@ import (
 	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/extract/jvn/feed/detail"
 	jvnFeedProduct "github.com/MaineK00n/vuls-data-update/pkg/extract/jvn/feed/product"
 	jvnFeedRSS "github.com/MaineK00n/vuls-data-update/pkg/extract/jvn/feed/rss"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/kev"
 	linuxOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/linux/osv"
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/ghsa"
 	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/glsa"
@@ -151,6 +151,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardOSV(),
+		newCmdCISAKEV(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
 		newCmdCWE(),
@@ -168,7 +169,6 @@ func NewCmdExtract() *cobra.Command {
 		newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangOSV(), newCmdGolangDB(), newCmdGolangVulnDB(),
 		newCmdHaskellOSV(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
-		newCmdKEV(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
@@ -569,6 +569,31 @@ func newCmdChainguardOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "chainguard", "osv"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdCISAKEV() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "cisa", "kev"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisa-kev <Raw CISA KEV Repository PATH>",
+		Short: "Extract CISA KEV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract cisa-kev vuls-data-raw-cisa-kev
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := cisaKEV.Extract(args[0], cisaKEV.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract cisa kev")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1419,31 +1444,6 @@ func newCmdJVNFeedRSS() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "jvn", "feed", "rss"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdKEV() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "kev"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "kev <Raw KEV Repository PATH>",
-		Short: "Extract KEV data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract kev vuls-data-raw-kev
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := kev.Extract(args[0], kev.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract kev")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "kev"), "output extract results to specified directory")
 
 	return cmd
 }
