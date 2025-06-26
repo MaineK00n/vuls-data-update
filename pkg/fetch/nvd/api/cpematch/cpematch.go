@@ -167,6 +167,10 @@ func Fetch(opts ...Option) error {
 		apiKey:         "",
 		dir:            filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
 		retry:          20,
+		retryWaitMin:   6,
+		retryWaitMax:   30,
+		concurrency:    1,
+		wait:           6,
 		resultsPerPage: resultsPerPageMax,
 	}
 	for _, o := range opts {
@@ -179,7 +183,7 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch NVD CPE match API. dir: %s", options.dir)
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientRetryWaitMin(time.Duration(options.retryWaitMin)*time.Second), utilhttp.WithClientRetryWaitMax(time.Duration(options.retryWaitMax)*time.Second), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientBackoff(nvdutil.Backoff))
 
 	h := make(http.Header)
 	if options.apiKey != "" {

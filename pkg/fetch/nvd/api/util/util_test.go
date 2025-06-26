@@ -149,6 +149,102 @@ func TestCheckRetry(t *testing.T) {
 	}
 }
 
+func TestBackoff(t *testing.T) {
+	defer nvdutil.SetTimeNowFunc(func() time.Time {
+		return time.Date(1999, time.December, 31, 23, 59, 57, 0, time.UTC)
+	})()
+
+	type args struct {
+		min        time.Duration
+		max        time.Duration
+		attemptNum int
+		resp       *http.Response
+	}
+	tests := []struct {
+		name string
+		args args
+		want time.Duration
+	}{
+		{
+			name: "403 Forbidden",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusForbidden},
+			},
+			want: 30 * time.Second,
+		},
+		{
+			name: "429 Too Many Requests, no Retry-After",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusTooManyRequests},
+			},
+			want: 30 * time.Second,
+		},
+		{
+			name: "429 Too Many Requests, Retry-After 0s",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusTooManyRequests, Header: http.Header{"Retry-After": []string{"0"}}},
+			},
+			want: 30 * time.Second,
+		},
+		{
+			name: "429 Too Many Requests, Retry-After 5s",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusTooManyRequests, Header: http.Header{"Retry-After": []string{"5"}}},
+			},
+			want: 5 * time.Second,
+		},
+		{
+			name: "503 Service Unavailable, Retry-After Fri, 31 Dec 1999 23:59:59 GMT",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusServiceUnavailable, Header: http.Header{"Retry-After": []string{"Fri, 31 Dec 1999 23:59:59 GMT"}}},
+			},
+			want: 2 * time.Second,
+		},
+		{
+			name: "503 Service Unavailable, Retry-After Fri, 31 Dec 1999 23:59:56 GMT",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusServiceUnavailable, Header: http.Header{"Retry-After": []string{"Fri, 31 Dec 1999 23:59:56 GMT"}}},
+			},
+			want: 0 * time.Second,
+		},
+		{
+			name: "408 Request Timeout",
+			args: args{
+				min:        6 * time.Second,
+				max:        30 * time.Second,
+				attemptNum: 0,
+				resp:       &http.Response{StatusCode: http.StatusRequestTimeout},
+			},
+			want: 6 * time.Second,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := nvdutil.Backoff(tt.args.min, tt.args.max, tt.args.attemptNum, tt.args.resp); got != tt.want {
+				t.Errorf("Backoff() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFullURL(t *testing.T) {
 	type args struct {
 		baseURL          string
