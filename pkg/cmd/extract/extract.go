@@ -76,9 +76,12 @@ import (
 	nugetOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/nuget/osv"
 	nvdAPICPE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cpe"
 	nvdAPICVE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/api/cve"
-	nvdFeedCPE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpe"
-	nvdFeedCPEMatch "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch"
-	nvdFeedCVE "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve"
+	nvdFeedCPEv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpe/v1"
+	nvdFeedCPEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpe/v2"
+	nvdFeedCPEMATCHv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch/v1"
+	nvdFeedCPEMATCHv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch/v2"
+	nvdFeedCVEv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v1"
+	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v2"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/oss-fuzz/osv"
 	perlDB "github.com/MaineK00n/vuls-data-update/pkg/extract/perl/db"
@@ -173,7 +176,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdNetBSD(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
-		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVE(), newCmdNVDFeedCPE(), newCmdNVDFeedCPEMatch(),
+		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOracle(),
 		newCmdOSSFuzzOSV(),
 		newCmdPerlDB(),
@@ -1902,77 +1905,152 @@ func newCmdNVDAPICPE() *cobra.Command {
 	return cmd
 }
 
-func newCmdNVDFeedCVE() *cobra.Command {
+func newCmdNVDFeedCVEv1() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve"),
+		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v1"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cve <Raw NVD Feed CVE Repository PATH>",
-		Short: "Extract NVD Feed CVE data source",
+		Use:   "nvd-feed-cve-v1 <Raw NVD CVE Feed v1 Repository PATH>",
+		Short: "Extract NVD CVE Feed v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-feed-cve vuls-data-raw-nvd-feed-cve
+			$ vuls-data-update extract nvd-feed-cve-v1 vuls-data-raw-nvd-feed-cve-v1
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdFeedCVE.Extract(args[0], nvdFeedCVE.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract nvd feed cve")
+			if err := nvdFeedCVEv1.Extract(args[0], nvdFeedCVEv1.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nvd cve feed v1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
 
-func newCmdNVDFeedCPE() *cobra.Command {
+func newCmdNVDFeedCPEv1() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpe"),
+		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpe", "v1"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cpe <Raw NVD Feed CPE Repository PATH>",
-		Short: "Extract NVD Feed CPE data source",
+		Use:   "nvd-feed-cpe-v1 <Raw NVD CPE Feed v1 Repository PATH>",
+		Short: "Extract NVD CPE Feed v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-feed-cpe vuls-data-raw-nvd-feed-cpe
+			$ vuls-data-update extract nvd-feed-cpe-v1 vuls-data-raw-nvd-feed-cpe-v1
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdFeedCPE.Extract(args[0], nvdFeedCPE.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract nvd feed cpe")
+			if err := nvdFeedCPEv1.Extract(args[0], nvdFeedCPEv1.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nvd cpe feed v1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpe"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
 
-func newCmdNVDFeedCPEMatch() *cobra.Command {
+func newCmdNVDFeedCPEMATCHv1() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpematch"),
+		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpematch", "v1"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "nvd-feed-cpematch <Raw NVD Feed CPEMatch Repository PATH>",
-		Short: "Extract NVD Feed CPEMatch data source",
+		Use:   "nvd-feed-cpematch-v1 <Raw NVD CPEMatch Feed v1 Repository PATH>",
+		Short: "Extract NVD CPEMatch Feed v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract nvd-feed-cpematch vuls-data-raw-nvd-feed-cpematch
+			$ vuls-data-update extract nvd-feed-cpematch-v1 vuls-data-raw-nvd-feed-cpematch-v1
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := nvdFeedCPEMatch.Extract(args[0], nvdFeedCPEMatch.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract nvd feed cpematch")
+			if err := nvdFeedCPEMATCHv1.Extract(args[0], nvdFeedCPEMATCHv1.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nvd cpematch feed v1")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpematch"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdNVDFeedCVEv2() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cve", "v2"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed-cve-v2 <Raw NVD CVE Feed v2 Repository PATH>",
+		Short: "Extract NVD CVE Feed v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract nvd-feed-cve-v2 vuls-data-raw-nvd-feed-cve-v2
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := nvdFeedCVEv2.Extract(args[0], nvdFeedCVEv2.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nvd cve feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdNVDFeedCPEv2() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpe", "v2"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed-cpe-v2 <Raw NVD CPE Feed v2 Repository PATH>",
+		Short: "Extract NVD CPE Feed v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract nvd-feed-cpe-v2 vuls-data-raw-nvd-feed-cpe-v2
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := nvdFeedCPEv2.Extract(args[0], nvdFeedCPEv2.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nvd cpe feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdNVDFeedCPEMATCHv2() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "nvd", "feed", "cpematch", "v2"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nvd-feed-cpematch-v2 <Raw NVD CPEMatch Feed v2 Repository PATH>",
+		Short: "Extract NVD CPEMatch Feed v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract nvd-feed-cpematch-v2 vuls-data-raw-nvd-feed-cpematch-v2
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := nvdFeedCPEMATCHv2.Extract(args[0], nvdFeedCPEMATCHv2.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nvd cpematch feed v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
