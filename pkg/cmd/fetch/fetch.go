@@ -26,6 +26,7 @@ import (
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
 	chainguardSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/secdb"
+	cisaCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/csaf"
 	cisaKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/kev"
 	ciscoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/csaf"
 	ciscoCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/cvrf"
@@ -182,7 +183,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
-		newCmdCISAKEV(),
+		newCmdCISACSAF(), newCmdCISAKEV(),
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
@@ -748,6 +749,33 @@ func newCmdChainguardOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "chainguard", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCISACSAF() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cisa", "csaf"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisa-csaf",
+		Short: "Fetch CISA CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisa-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := cisaCSAF.Fetch(cisaCSAF.WithDir(options.dir), cisaCSAF.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisa csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
