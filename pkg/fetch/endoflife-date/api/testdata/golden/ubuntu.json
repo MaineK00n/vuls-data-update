@@ -1,371 +1,803 @@
-[
-	{
-		"cycle": "24.10",
-		"releaseDate": "2024-10-10",
-		"eol": "2025-07-11",
-		"latest": "24.10",
-		"lts": false,
-		"support": "2025-07-11",
-		"discontinued": null
+{
+	"name": "ubuntu",
+	"label": "Ubuntu",
+	"aliases": [],
+	"category": "os",
+	"tags": [
+		"linux-distribution",
+		"os"
+	],
+	"versionCommand": "cat /etc/os-release",
+	"identifiers": [
+		{
+			"id": "cpe:2.3:o:canonical:ubuntu_linux",
+			"type": "cpe"
+		},
+		{
+			"id": "cpe:/o:canonical:ubuntu_linux",
+			"type": "cpe"
+		}
+	],
+	"labels": {
+		"eoas": "Hardware & Maintenance",
+		"eol": "Maintenance & Security Support",
+		"eoes": "Expanded Security Maintenance"
 	},
-	{
-		"cycle": "24.04",
-		"releaseDate": "2024-04-25",
-		"eol": "2029-04-25",
-		"latest": "24.04.2",
-		"lts": true,
-		"support": "2029-04-25",
-		"discontinued": null
+	"links": {
+		"icon": "https://cdn.jsdelivr.net/npm/simple-icons/icons/ubuntu.svg",
+		"html": "https://endoflife.date/ubuntu",
+		"releasePolicy": "https://wiki.ubuntu.com/Releases"
 	},
-	{
-		"cycle": "23.10",
-		"releaseDate": "2023-10-12",
-		"eol": "2024-07-11",
-		"latest": "23.10",
-		"lts": false,
-		"support": "2024-07-11",
-		"discontinued": null
-	},
-	{
-		"cycle": "23.04",
-		"releaseDate": "2023-04-20",
-		"eol": "2024-01-20",
-		"latest": "23.04",
-		"lts": false,
-		"support": "2024-01-20",
-		"discontinued": null
-	},
-	{
-		"cycle": "22.10",
-		"releaseDate": "2022-10-20",
-		"eol": "2023-07-20",
-		"latest": "22.10",
-		"lts": false,
-		"support": "2023-07-20",
-		"discontinued": null
-	},
-	{
-		"cycle": "22.04",
-		"releaseDate": "2022-04-21",
-		"eol": "2027-04-01",
-		"latest": "22.04.5",
-		"lts": true,
-		"support": "2024-09-30",
-		"discontinued": null
-	},
-	{
-		"cycle": "21.10",
-		"releaseDate": "2021-10-14",
-		"eol": "2022-07-14",
-		"latest": "21.10",
-		"lts": false,
-		"support": "2022-07-14",
-		"discontinued": null
-	},
-	{
-		"cycle": "21.04",
-		"releaseDate": "2021-04-22",
-		"eol": "2022-01-20",
-		"latest": "21.04",
-		"lts": false,
-		"support": "2022-01-20",
-		"discontinued": null
-	},
-	{
-		"cycle": "20.10",
-		"releaseDate": "2020-10-22",
-		"eol": "2021-07-22",
-		"latest": "20.10",
-		"lts": false,
-		"support": "2021-07-22",
-		"discontinued": null
-	},
-	{
-		"cycle": "20.04",
-		"releaseDate": "2020-04-23",
-		"eol": "2025-05-31",
-		"latest": "20.04.6",
-		"lts": true,
-		"support": "2022-10-01",
-		"discontinued": null
-	},
-	{
-		"cycle": "19.10",
-		"releaseDate": "2019-10-17",
-		"eol": "2020-07-06",
-		"latest": "19.10",
-		"lts": false,
-		"support": "2020-07-06",
-		"discontinued": null
-	},
-	{
-		"cycle": "19.04",
-		"releaseDate": "2019-04-18",
-		"eol": "2020-01-23",
-		"latest": "19.04",
-		"lts": false,
-		"support": "2020-01-23",
-		"discontinued": null
-	},
-	{
-		"cycle": "18.10",
-		"releaseDate": "2018-10-18",
-		"eol": "2019-07-18",
-		"latest": "18.10",
-		"lts": false,
-		"support": "2019-07-18",
-		"discontinued": null
-	},
-	{
-		"cycle": "18.04",
-		"releaseDate": "2018-04-26",
-		"eol": "2023-05-31",
-		"latest": "18.04.6",
-		"lts": true,
-		"support": "2023-05-31",
-		"discontinued": null
-	},
-	{
-		"cycle": "17.10",
-		"releaseDate": "2017-10-19",
-		"eol": "2018-07-19",
-		"latest": "17.10",
-		"lts": false,
-		"support": "2018-07-19",
-		"discontinued": null
-	},
-	{
-		"cycle": "17.04",
-		"releaseDate": "2017-04-13",
-		"eol": "2018-01-13",
-		"latest": "17.04",
-		"lts": false,
-		"support": "2018-01-13",
-		"discontinued": null
-	},
-	{
-		"cycle": "16.10",
-		"releaseDate": "2016-10-13",
-		"eol": "2017-07-20",
-		"latest": "16.10",
-		"lts": false,
-		"support": "2017-07-20",
-		"discontinued": null
-	},
-	{
-		"cycle": "16.04",
-		"releaseDate": "2016-04-21",
-		"eol": "2021-04-02",
-		"latest": "16.04.7",
-		"lts": true,
-		"support": "2021-04-02",
-		"discontinued": null
-	},
-	{
-		"cycle": "15.10",
-		"releaseDate": "2015-10-22",
-		"eol": "2016-07-28",
-		"latest": "15.10",
-		"lts": false,
-		"support": "2016-07-28",
-		"discontinued": null
-	},
-	{
-		"cycle": "15.04",
-		"releaseDate": "2015-04-23",
-		"eol": "2016-02-04",
-		"latest": "15.04",
-		"lts": false,
-		"support": "2016-02-04",
-		"discontinued": null
-	},
-	{
-		"cycle": "14.10",
-		"releaseDate": "2014-10-23",
-		"eol": "2015-07-23",
-		"latest": "14.10",
-		"lts": false,
-		"support": "2015-07-23",
-		"discontinued": null
-	},
-	{
-		"cycle": "14.04",
-		"releaseDate": "2014-04-17",
-		"eol": "2019-04-02",
-		"latest": "14.04.6",
-		"lts": true,
-		"support": "2019-04-02",
-		"discontinued": null
-	},
-	{
-		"cycle": "13.10",
-		"releaseDate": "2013-10-17",
-		"eol": "2014-07-17",
-		"latest": "13.10",
-		"lts": false,
-		"support": "2014-07-17",
-		"discontinued": null
-	},
-	{
-		"cycle": "13.04",
-		"releaseDate": "2013-04-25",
-		"eol": "2014-01-27",
-		"latest": "13.04",
-		"lts": false,
-		"support": "2014-01-27",
-		"discontinued": null
-	},
-	{
-		"cycle": "12.10",
-		"releaseDate": "2012-10-18",
-		"eol": "2014-05-16",
-		"latest": "12.10",
-		"lts": false,
-		"support": "2014-05-16",
-		"discontinued": null
-	},
-	{
-		"cycle": "12.04",
-		"releaseDate": "2012-04-26",
-		"eol": "2017-04-28",
-		"latest": "12.04.5",
-		"lts": true,
-		"support": "2017-04-28",
-		"discontinued": null
-	},
-	{
-		"cycle": "11.10",
-		"releaseDate": "2011-10-13",
-		"eol": "2013-05-09",
-		"latest": "11.10",
-		"lts": false,
-		"support": "2013-05-09",
-		"discontinued": null
-	},
-	{
-		"cycle": "11.04",
-		"releaseDate": "2011-04-28",
-		"eol": "2012-10-28",
-		"latest": "11.04",
-		"lts": false,
-		"support": "2012-10-28",
-		"discontinued": null
-	},
-	{
-		"cycle": "10.10",
-		"releaseDate": "2010-10-10",
-		"eol": "2012-04-10",
-		"latest": "10.10",
-		"lts": false,
-		"support": "2012-04-10",
-		"discontinued": null
-	},
-	{
-		"cycle": "10.04",
-		"releaseDate": "2010-04-29",
-		"eol": "2013-05-09",
-		"latest": "10.04.4",
-		"lts": true,
-		"support": "2013-05-09",
-		"discontinued": null
-	},
-	{
-		"cycle": "9.10",
-		"releaseDate": "2009-10-29",
-		"eol": "2011-04-30",
-		"latest": "9.10",
-		"lts": false,
-		"support": "2011-04-30",
-		"discontinued": null
-	},
-	{
-		"cycle": "9.04",
-		"releaseDate": "2009-04-23",
-		"eol": "2010-10-23",
-		"latest": "9.04",
-		"lts": false,
-		"support": "2010-10-23",
-		"discontinued": null
-	},
-	{
-		"cycle": "8.10",
-		"releaseDate": "2008-10-30",
-		"eol": "2010-04-30",
-		"latest": "8.10",
-		"lts": false,
-		"support": "2010-04-30",
-		"discontinued": null
-	},
-	{
-		"cycle": "8.04",
-		"releaseDate": "2008-04-24",
-		"eol": "2013-05-09",
-		"latest": "8.04.4",
-		"lts": true,
-		"support": "2013-05-09",
-		"discontinued": null
-	},
-	{
-		"cycle": "7.10",
-		"releaseDate": "2007-10-18",
-		"eol": "2009-04-18",
-		"latest": "7.10",
-		"lts": false,
-		"support": "2009-04-18",
-		"discontinued": null
-	},
-	{
-		"cycle": "7.04",
-		"releaseDate": "2007-04-19",
-		"eol": "2008-10-19",
-		"latest": "7.04",
-		"lts": false,
-		"support": "2008-10-19",
-		"discontinued": null
-	},
-	{
-		"cycle": "6.10",
-		"releaseDate": "2006-10-26",
-		"eol": "2008-04-26",
-		"latest": "6.10",
-		"lts": false,
-		"support": "2006-10-26",
-		"discontinued": null
-	},
-	{
-		"cycle": "6.06",
-		"releaseDate": "2006-08-10",
-		"eol": "2011-06-01",
-		"latest": "6.06.2",
-		"lts": true,
-		"support": "2011-06-01",
-		"discontinued": null
-	},
-	{
-		"cycle": "5.10",
-		"releaseDate": "2005-10-13",
-		"eol": "2007-04-13",
-		"latest": "5.10",
-		"lts": false,
-		"support": "2007-04-13",
-		"discontinued": null
-	},
-	{
-		"cycle": "5.04",
-		"releaseDate": "2005-04-08",
-		"eol": "2006-10-31",
-		"latest": "5.04",
-		"lts": false,
-		"support": "2006-10-31",
-		"discontinued": null
-	},
-	{
-		"cycle": "4.10",
-		"releaseDate": "2004-10-20",
-		"eol": "2006-04-30",
-		"latest": "4.10",
-		"lts": false,
-		"support": "2004-10-26",
-		"discontinued": null
-	}
-]
+	"releases": [
+		{
+			"name": "25.04",
+			"codename": "Plucky Puffin",
+			"label": "25.04 'Plucky Puffin'",
+			"releaseDate": "2025-04-17",
+			"isLts": false,
+			"isEoas": false,
+			"eoasFrom": "2026-01-17",
+			"isEol": false,
+			"eolFrom": "2026-01-17",
+			"isDiscontinued": false,
+			"isMaintained": true,
+			"latest": {
+				"name": "25.04",
+				"date": "2025-04-17",
+				"link": "https://wiki.ubuntu.com/PluckyPuffin/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "24.10",
+			"codename": "Oracular Oriole",
+			"label": "24.10 'Oracular Oriole'",
+			"releaseDate": "2024-10-10",
+			"isLts": false,
+			"isEoas": false,
+			"eoasFrom": "2025-07-10",
+			"isEol": false,
+			"eolFrom": "2025-07-10",
+			"isDiscontinued": false,
+			"isMaintained": true,
+			"latest": {
+				"name": "24.10",
+				"date": "2024-10-10",
+				"link": "https://wiki.ubuntu.com/OracularOriole/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "24.04",
+			"codename": "Noble Numbat",
+			"label": "24.04 'Noble Numbat' (LTS)",
+			"releaseDate": "2024-04-25",
+			"isLts": true,
+			"isEoas": false,
+			"eoasFrom": "2029-04-25",
+			"isEol": false,
+			"eolFrom": "2029-04-25",
+			"isDiscontinued": false,
+			"isEoes": false,
+			"eoesFrom": "2036-04-25",
+			"isMaintained": true,
+			"latest": {
+				"name": "24.04.2",
+				"date": "2025-02-20",
+				"link": "https://wiki.ubuntu.com/NobleNumbat/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "23.10",
+			"codename": "Mantic Minotaur",
+			"label": "23.10 'Mantic Minotaur'",
+			"releaseDate": "2023-10-12",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2024-07-12",
+			"isEol": true,
+			"eolFrom": "2024-07-12",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "23.10",
+				"date": "2023-10-12",
+				"link": "https://wiki.ubuntu.com/ManticMinotaur/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "23.04",
+			"codename": "Lunar Lobster",
+			"label": "23.04 'Lunar Lobster'",
+			"releaseDate": "2023-04-20",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2024-01-20",
+			"isEol": true,
+			"eolFrom": "2024-01-20",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "23.04",
+				"date": "2023-04-20",
+				"link": "https://wiki.ubuntu.com/LunarLobster/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "22.10",
+			"codename": "Kinetic Kudu",
+			"label": "22.10 'Kinetic Kudu'",
+			"releaseDate": "2022-10-20",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2023-07-20",
+			"isEol": true,
+			"eolFrom": "2023-07-20",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "22.10",
+				"date": "2022-10-20",
+				"link": "https://wiki.ubuntu.com/KineticKudu/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "22.04",
+			"codename": "Jammy Jellyfish",
+			"label": "22.04 'Jammy Jellyfish' (LTS)",
+			"releaseDate": "2022-04-21",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2024-09-30",
+			"isEol": false,
+			"eolFrom": "2027-04-01",
+			"isDiscontinued": false,
+			"isEoes": false,
+			"eoesFrom": "2032-04-09",
+			"isMaintained": true,
+			"latest": {
+				"name": "22.04.5",
+				"date": "2024-09-12",
+				"link": "https://wiki.ubuntu.com/JammyJellyfish/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "21.10",
+			"codename": "Impish Indri",
+			"label": "21.10 'Impish Indri'",
+			"releaseDate": "2021-10-14",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2022-07-14",
+			"isEol": true,
+			"eolFrom": "2022-07-14",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "21.10",
+				"date": "2021-10-14",
+				"link": "https://wiki.ubuntu.com/ImpishIndri/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "21.04",
+			"codename": "Hirsute Hippo",
+			"label": "21.04 'Hirsute Hippo'",
+			"releaseDate": "2021-04-22",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2022-01-20",
+			"isEol": true,
+			"eolFrom": "2022-01-20",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "21.04",
+				"date": "2021-04-22",
+				"link": "https://wiki.ubuntu.com/HirsuteHippo/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "20.10",
+			"codename": "Groovy Gorilla",
+			"label": "20.10 'Groovy Gorilla'",
+			"releaseDate": "2020-10-22",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2021-07-22",
+			"isEol": true,
+			"eolFrom": "2021-07-22",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "20.10",
+				"date": "2020-10-22",
+				"link": "https://wiki.ubuntu.com/GroovyGorilla/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "20.04",
+			"codename": "Focal Fossa",
+			"label": "20.04 'Focal Fossa' (LTS)",
+			"releaseDate": "2020-04-23",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2022-10-01",
+			"isEol": true,
+			"eolFrom": "2025-05-31",
+			"isDiscontinued": false,
+			"isEoes": false,
+			"eoesFrom": "2030-04-02",
+			"isMaintained": true,
+			"latest": {
+				"name": "20.04.6",
+				"date": "2023-03-23",
+				"link": "https://wiki.ubuntu.com/FocalFossa/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "19.10",
+			"codename": "Eoan Ermine",
+			"label": "19.10 'Eoan Ermine'",
+			"releaseDate": "2019-10-17",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2020-07-06",
+			"isEol": true,
+			"eolFrom": "2020-07-06",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "19.10",
+				"date": "2019-10-17",
+				"link": "https://wiki.ubuntu.com/EoanErmine/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "19.04",
+			"codename": "Disco Dingo",
+			"label": "19.04 'Disco Dingo'",
+			"releaseDate": "2019-04-18",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2020-01-23",
+			"isEol": true,
+			"eolFrom": "2020-01-23",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "19.04",
+				"date": "2019-04-18",
+				"link": "https://wiki.ubuntu.com/DiscoDingo/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "18.10",
+			"codename": "Cosmic Cuttlefish",
+			"label": "18.10 'Cosmic Cuttlefish'",
+			"releaseDate": "2018-10-18",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2019-07-18",
+			"isEol": true,
+			"eolFrom": "2019-07-18",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "18.10",
+				"date": "2018-10-18",
+				"link": "https://wiki.ubuntu.com/CosmicCuttlefish/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "18.04",
+			"codename": "Bionic Beaver",
+			"label": "18.04 'Bionic Beaver' (LTS)",
+			"releaseDate": "2018-04-26",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2023-05-31",
+			"isEol": true,
+			"eolFrom": "2023-05-31",
+			"isDiscontinued": false,
+			"isEoes": false,
+			"eoesFrom": "2028-04-01",
+			"isMaintained": true,
+			"latest": {
+				"name": "18.04.6",
+				"date": "2021-09-17",
+				"link": "https://wiki.ubuntu.com/BionicBeaver/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "17.10",
+			"codename": "Artful Aardvark",
+			"label": "17.10 'Artful Aardvark'",
+			"releaseDate": "2017-10-19",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2018-07-19",
+			"isEol": true,
+			"eolFrom": "2018-07-19",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "17.10",
+				"date": "2017-10-19",
+				"link": "https://wiki.ubuntu.com/ArtfulAardvark/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "17.04",
+			"codename": "Zesty Zapus",
+			"label": "17.04 'Zesty Zapus'",
+			"releaseDate": "2017-04-13",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2018-01-13",
+			"isEol": true,
+			"eolFrom": "2018-01-13",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "17.04",
+				"date": "2017-04-13",
+				"link": "https://wiki.ubuntu.com/ZestyZapus/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "16.10",
+			"codename": "Yakkety Yak",
+			"label": "16.10 'Yakkety Yak'",
+			"releaseDate": "2016-10-13",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2017-07-20",
+			"isEol": true,
+			"eolFrom": "2017-07-20",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "16.10",
+				"date": "2016-10-13",
+				"link": "https://wiki.ubuntu.com/YakketyYak/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "16.04",
+			"codename": "Xenial Xerus",
+			"label": "16.04 'Xenial Xerus' (LTS)",
+			"releaseDate": "2016-04-21",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2021-04-02",
+			"isEol": true,
+			"eolFrom": "2021-04-02",
+			"isDiscontinued": false,
+			"isEoes": false,
+			"eoesFrom": "2026-04-02",
+			"isMaintained": true,
+			"latest": {
+				"name": "16.04.7",
+				"date": "2020-08-13",
+				"link": "https://wiki.ubuntu.com/XenialXerus/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "15.10",
+			"codename": "Wily Werewolf",
+			"label": "15.10 'Wily Werewolf'",
+			"releaseDate": "2015-10-22",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2016-07-28",
+			"isEol": true,
+			"eolFrom": "2016-07-28",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "15.10",
+				"date": "2015-10-22",
+				"link": "https://wiki.ubuntu.com/WilyWerewolf/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "15.04",
+			"codename": "Vivid Vervet",
+			"label": "15.04 'Vivid Vervet'",
+			"releaseDate": "2015-04-23",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2016-02-04",
+			"isEol": true,
+			"eolFrom": "2016-02-04",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "15.04",
+				"date": "2015-04-23",
+				"link": "https://wiki.ubuntu.com/VividVervet/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "14.10",
+			"codename": "Utopic Unicorn",
+			"label": "14.10 'Utopic Unicorn'",
+			"releaseDate": "2014-10-23",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2015-07-23",
+			"isEol": true,
+			"eolFrom": "2015-07-23",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "14.10",
+				"date": "2014-10-23",
+				"link": "https://wiki.ubuntu.com/UtopicUnicorn/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "14.04",
+			"codename": "Trusty Tahr",
+			"label": "14.04 'Trusty Tahr' (LTS)",
+			"releaseDate": "2014-04-17",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2019-04-02",
+			"isEol": true,
+			"eolFrom": "2019-04-02",
+			"isDiscontinued": false,
+			"isEoes": true,
+			"eoesFrom": "2024-04-02",
+			"isMaintained": false,
+			"latest": {
+				"name": "14.04.6",
+				"date": "2019-03-07",
+				"link": "https://wiki.ubuntu.com/TrustyTahr/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "13.10",
+			"codename": "Saucy Salamander",
+			"label": "13.10 'Saucy Salamander'",
+			"releaseDate": "2013-10-17",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2014-07-17",
+			"isEol": true,
+			"eolFrom": "2014-07-17",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "13.10",
+				"date": "2013-10-17",
+				"link": "https://wiki.ubuntu.com/SaucySalamander/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "13.04",
+			"codename": "Raring Ringtail",
+			"label": "13.04 'Raring Ringtail'",
+			"releaseDate": "2013-04-25",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2014-01-27",
+			"isEol": true,
+			"eolFrom": "2014-01-27",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "13.04",
+				"date": "2013-04-25",
+				"link": "https://wiki.ubuntu.com/RaringRingtail/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "12.10",
+			"codename": "Quantal Quetzal",
+			"label": "12.10 'Quantal Quetzal'",
+			"releaseDate": "2012-10-18",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2014-05-16",
+			"isEol": true,
+			"eolFrom": "2014-05-16",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "12.10",
+				"date": "2012-10-18",
+				"link": "https://wiki.ubuntu.com/QuantalQuetzal/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "12.04",
+			"codename": "Precise Pangolin",
+			"label": "12.04 'Precise Pangolin' (LTS)",
+			"releaseDate": "2012-04-26",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2017-04-28",
+			"isEol": true,
+			"eolFrom": "2017-04-28",
+			"isDiscontinued": false,
+			"isEoes": true,
+			"eoesFrom": "2019-04-26",
+			"isMaintained": false,
+			"latest": {
+				"name": "12.04.5",
+				"date": "2014-08-08",
+				"link": "https://wiki.ubuntu.com/PrecisePangolin/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "11.10",
+			"codename": "Oneiric Ocelot",
+			"label": "11.10 'Oneiric Ocelot'",
+			"releaseDate": "2011-10-13",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2013-05-09",
+			"isEol": true,
+			"eolFrom": "2013-05-09",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "11.10",
+				"date": "2011-10-13",
+				"link": "https://wiki.ubuntu.com/OneiricOcelot/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "11.04",
+			"codename": "Natty Narwhal",
+			"label": "11.04 'Natty Narwhal'",
+			"releaseDate": "2011-04-28",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2012-10-28",
+			"isEol": true,
+			"eolFrom": "2012-10-28",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "11.04",
+				"date": "2011-04-28",
+				"link": "https://wiki.ubuntu.com/NattyNarwhal/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "10.10",
+			"codename": "Maverick Meerkat",
+			"label": "10.10 'Maverick Meerkat'",
+			"releaseDate": "2010-10-10",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2012-04-10",
+			"isEol": true,
+			"eolFrom": "2012-04-10",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "10.10",
+				"date": "2010-10-10",
+				"link": "https://wiki.ubuntu.com/MaverickMeerkat/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "10.04",
+			"codename": "Lucid Lynx",
+			"label": "10.04 'Lucid Lynx' (LTS)",
+			"releaseDate": "2010-04-29",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2013-05-09",
+			"isEol": true,
+			"eolFrom": "2013-05-09",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "10.04.4",
+				"date": "2012-02-16",
+				"link": "https://wiki.ubuntu.com/LucidLynx/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "9.10",
+			"codename": "Karmic Koala",
+			"label": "9.10 'Karmic Koala'",
+			"releaseDate": "2009-10-29",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2011-04-30",
+			"isEol": true,
+			"eolFrom": "2011-04-30",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "9.10",
+				"date": "2009-10-29",
+				"link": "https://wiki.ubuntu.com/KarmicKoala/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "9.04",
+			"codename": "Jaunty Jackalope",
+			"label": "9.04 'Jaunty Jackalope'",
+			"releaseDate": "2009-04-23",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2010-10-23",
+			"isEol": true,
+			"eolFrom": "2010-10-23",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "9.04",
+				"date": "2009-04-23",
+				"link": "https://wiki.ubuntu.com/JauntyJackalope/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "8.10",
+			"codename": "Intrepid Ibex",
+			"label": "8.10 'Intrepid Ibex'",
+			"releaseDate": "2008-10-30",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2010-04-30",
+			"isEol": true,
+			"eolFrom": "2010-04-30",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "8.10",
+				"date": "2008-10-30",
+				"link": "https://wiki.ubuntu.com/IntrepidIbex/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "8.04",
+			"codename": "Hardy Heron",
+			"label": "8.04 'Hardy Heron' (LTS)",
+			"releaseDate": "2008-04-24",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2013-05-09",
+			"isEol": true,
+			"eolFrom": "2013-05-09",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "8.04.4",
+				"date": "2010-01-29",
+				"link": "https://wiki.ubuntu.com/HardyHeron/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "7.10",
+			"codename": "Gutsy Gibbon",
+			"label": "7.10 'Gutsy Gibbon'",
+			"releaseDate": "2007-10-18",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2009-04-18",
+			"isEol": true,
+			"eolFrom": "2009-04-18",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "7.10",
+				"date": "2007-10-18",
+				"link": "https://wiki.ubuntu.com/GutsyGibbon/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "7.04",
+			"codename": "Feisty Fawn",
+			"label": "7.04 'Feisty Fawn'",
+			"releaseDate": "2007-04-19",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2008-10-19",
+			"isEol": true,
+			"eolFrom": "2008-10-19",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "7.04",
+				"date": "2007-04-19",
+				"link": "https://wiki.ubuntu.com/FeistyFawn/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "6.10",
+			"codename": "Edgy Eft",
+			"label": "6.10 'Edgy Eft'",
+			"releaseDate": "2006-10-26",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2006-10-26",
+			"isEol": true,
+			"eolFrom": "2008-04-26",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "6.10",
+				"date": "2006-10-26",
+				"link": "https://wiki.ubuntu.com/EdgyEft/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "6.06",
+			"codename": "Dapper Drake",
+			"label": "6.06 'Dapper Drake' (LTS)",
+			"releaseDate": "2006-08-10",
+			"isLts": true,
+			"isEoas": true,
+			"eoasFrom": "2011-06-01",
+			"isEol": true,
+			"eolFrom": "2011-06-01",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "6.06.2",
+				"date": "2008-01-22",
+				"link": "https://wiki.ubuntu.com/DapperDrake/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "5.10",
+			"codename": "Breezy Badger",
+			"label": "5.10 'Breezy Badger'",
+			"releaseDate": "2005-10-13",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2007-04-13",
+			"isEol": true,
+			"eolFrom": "2007-04-13",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "5.10",
+				"date": "2005-10-13",
+				"link": "https://wiki.ubuntu.com/BreezyBadger/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "5.04",
+			"codename": "Hoary Hedgehog",
+			"label": "5.04 'Hoary Hedgehog'",
+			"releaseDate": "2005-04-08",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2006-10-31",
+			"isEol": true,
+			"eolFrom": "2006-10-31",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "5.04",
+				"date": "2005-04-08",
+				"link": "https://wiki.ubuntu.com/HoaryHedgehog/ReleaseNotes/"
+			}
+		},
+		{
+			"name": "4.10",
+			"codename": "Warty Warthog",
+			"label": "4.10 'Warty Warthog'",
+			"releaseDate": "2004-10-20",
+			"isLts": false,
+			"isEoas": true,
+			"eoasFrom": "2004-10-26",
+			"isEol": true,
+			"eolFrom": "2006-04-30",
+			"isDiscontinued": false,
+			"isMaintained": false,
+			"latest": {
+				"name": "4.10",
+				"date": "2004-10-20",
+				"link": "https://wiki.ubuntu.com/WartyWarthog/ReleaseNotes/"
+			}
+		}
+	]
+}
