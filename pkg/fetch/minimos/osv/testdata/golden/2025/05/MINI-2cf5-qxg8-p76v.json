@@ -1,0 +1,192 @@
+{
+	"schema_version": "1.6.0",
+	"id": "MINI-2cf5-qxg8-p76v",
+	"modified": "2025-05-29T01:14:42.432736Z",
+	"published": "2025-05-29T01:05:35.642269Z",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19",
+				"purl": "pkg:apk/minimos/openjdk-19"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-jre",
+				"purl": "pkg:apk/minimos/openjdk-19-jre"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-jre-base",
+				"purl": "pkg:apk/minimos/openjdk-19-jre-base"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-jmods",
+				"purl": "pkg:apk/minimos/openjdk-19-jmods"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-doc",
+				"purl": "pkg:apk/minimos/openjdk-19-doc"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-demos",
+				"purl": "pkg:apk/minimos/openjdk-19-demos"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-default-jvm",
+				"purl": "pkg:apk/minimos/openjdk-19-default-jvm"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "MinimOS",
+				"name": "openjdk-19-default-jdk",
+				"purl": "pkg:apk/minimos/openjdk-19-default-jdk"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "19.0.2.7-r1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://packages.mini.dev/advisories/osv/MINI-2cf5-qxg8-p76v.json"
+			}
+		}
+	]
+}
