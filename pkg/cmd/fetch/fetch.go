@@ -120,6 +120,7 @@ import (
 	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
 	rubygemsGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/glsa"
 	rubygemsOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/osv"
+	siemensCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/siemens/csaf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
 	suseCSAFVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf_vex"
@@ -227,6 +228,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
+		newCmdSiemensCSAF(),
 		newCmdSnort(),
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
@@ -3742,6 +3744,43 @@ func newCmdRubygemsOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdSiemensCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "siemens", "csaf"),
+			retry: 3,
+		},
+		concurrency: 1,
+		wait:        3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "siemens-csaf",
+		Short: "Fetch Siemens CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch siemens-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := siemensCSAF.Fetch(siemensCSAF.WithDir(options.dir), siemensCSAF.WithRetry(options.retry), siemensCSAF.WithConcurrency(options.concurrency), siemensCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch siemens csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
