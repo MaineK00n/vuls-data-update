@@ -6,18 +6,15 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
-	"path"
 	"path/filepath"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://endoflife.date/api/"
+const baseURL = "https://endoflife.date/api/v1/products/full"
 
 type options struct {
 	baseURL     string
@@ -99,84 +96,30 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch endoflife.date API")
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
-
-	ps, err := options.fetchAllProducts(client)
-	if err != nil {
-		return errors.Wrap(err, "fetch index")
-	}
-
 	header := make(http.Header)
 	header.Set("Accept", "application/json")
 
-	reqs := make([]*retryablehttp.Request, 0, len(ps))
-	for _, p := range ps {
-		u, err := url.JoinPath(options.baseURL, fmt.Sprintf("%s.json", p))
-		if err != nil {
-			return errors.Wrap(err, "url join")
-		}
-
-		req, err := utilhttp.NewRequest(http.MethodGet, u, utilhttp.WithRequestHeader(header))
-		if err != nil {
-			return errors.Wrap(err, "new request")
-		}
-		reqs = append(reqs, req)
-	}
-
-	if err := client.PipelineDo(reqs, options.concurrency, options.wait, func(resp *http.Response) error {
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error response with status code %d", resp.StatusCode)
-		}
-
-		var cycles []Cycle
-		if err := json.NewDecoder(resp.Body).Decode(&cycles); err != nil {
-			return errors.Wrap(err, "decode json")
-		}
-
-		if err := util.Write(filepath.Join(options.dir, path.Base(resp.Request.URL.Path)), cycles); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, path.Base(resp.Request.URL.Path)))
-		}
-
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "pipeline do")
-	}
-
-	return nil
-}
-
-func (o options) fetchAllProducts(client *utilhttp.Client) ([]string, error) {
-	u, err := url.JoinPath(o.baseURL, "all.json")
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL, utilhttp.WithRequestHeader(header))
 	if err != nil {
-		return nil, errors.Wrap(err, "url join")
-	}
-
-	header := make(http.Header)
-	header.Set("Accept", "application/json")
-
-	req, err := utilhttp.NewRequest(http.MethodGet, u, utilhttp.WithRequestHeader(header))
-	if err != nil {
-		return nil, errors.Wrap(err, "new request")
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %s", u)
+		return errors.Wrap(err, "fetch all products")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
-	var ps []string
-	if err := json.NewDecoder(resp.Body).Decode(&ps); err != nil {
-		return nil, errors.Wrap(err, "decode json")
+	var r response
+	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+		return errors.Wrap(err, "decode json")
 	}
 
-	return ps, nil
+	for _, p := range r.Result {
+		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", p.Name)), p); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", p.Name)))
+		}
+	}
+
+	return nil
 }
