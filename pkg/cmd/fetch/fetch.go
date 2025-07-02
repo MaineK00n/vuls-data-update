@@ -21,6 +21,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	azureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bitnami/osv"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/bottlerocket"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
@@ -181,6 +182,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAttack(),
 		newCmdAzureOVAL(),
 		newCmdBitnamiOSV(),
+		newCmdBottlerocket(),
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
@@ -589,6 +591,33 @@ func newCmdBitnamiOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "bitnami", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdBottlerocket() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "bottlerocket"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "bottlerocket",
+		Short: "Fetch Bottlerocket data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch bottlerocket
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := bottlerocket.Fetch(bottlerocket.WithDir(options.dir), bottlerocket.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch bottlerocket")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
