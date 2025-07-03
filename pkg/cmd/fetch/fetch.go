@@ -122,6 +122,7 @@ import (
 	rubygemsGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/ghsa"
 	rubygemsGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/glsa"
 	rubygemsOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rubygems/osv"
+	sickCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/sick/csaf"
 	siemensCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/siemens/csaf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/snort"
 	suseCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/csaf"
@@ -231,6 +232,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
+		newCmdSICKCSAF(),
 		newCmdSiemensCSAF(),
 		newCmdSnort(),
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
@@ -3801,6 +3803,43 @@ func newCmdRubygemsOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rubygems", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdSICKCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "sick", "csaf"),
+			retry: 3,
+		},
+		concurrency: 2,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "sick-csaf",
+		Short: "Fetch SICK CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch sick-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := sickCSAF.Fetch(sickCSAF.WithDir(options.dir), sickCSAF.WithRetry(options.retry), sickCSAF.WithConcurrency(options.concurrency), sickCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch sick csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
