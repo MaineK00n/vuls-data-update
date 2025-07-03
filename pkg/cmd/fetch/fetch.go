@@ -71,6 +71,7 @@ import (
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
 	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/glsa"
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
+	minimOSOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/osv"
 	minimOSSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/secdb"
 	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cvrf"
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v4"
@@ -210,7 +211,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMinimOSSecDB(),
+		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -2107,6 +2108,33 @@ func newCmdMavenOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "maven", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMinimOSOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "minimos", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "minimos-osv",
+		Short: "Fetch MinimOS OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch minimos-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := minimOSOSV.Fetch(minimOSOSV.WithDir(options.dir), minimOSOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch minimos osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
