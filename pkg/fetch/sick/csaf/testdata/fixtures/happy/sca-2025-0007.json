@@ -1,0 +1,1284 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "distribution": {
+      "tlp": {
+        "label": "WHITE",
+        "url": "https://www.first.org/tlp/"
+      }
+    },
+    "lang": "en-US",
+    "notes": [
+      {
+        "category": "summary",
+        "text": "SICK has found multiple vulnerabilities in the products SICK Field Analytics and SICK Media Server. The vulnerabilities could potentially affect the confidentiality, integrity an availability of the products. Therefore it is strongly recommended to apply general security practices when operating the products. Currently SICK is not aware of any public exploits.",
+        "title": "summary"
+      },
+      {
+        "category": "general",
+        "text": "As general security measures, SICK recommends to minimize network exposure of the devices, restrict network access and follow recommended security practices in order to run the devices in a protected IT environment.",
+        "title": "General Security Measures"
+      },
+      {
+        "category": "general",
+        "text": "SICK performs vulnerability classification by using the CVSS scoring system (*CVSS v3.1*). The environmental score is dependent on the customer’s environment and can affect the overall CVSS score. SICK recommends that customers individually evaluate the environmental score to achieve final scoring.",
+        "title": "Vulnerability Classification"
+      }
+    ],
+    "publisher": {
+      "category": "vendor",
+      "contact_details": "psirt@sick.de",
+      "issuing_authority": "SICK PSIRT is responsible for any vulnerabilities related to SICK products.",
+      "name": "SICK PSIRT",
+      "namespace": "https://www.sick.com/psirt"
+    },
+    "references": [
+      {
+        "summary": "SICK PSIRT Security Advisories",
+        "url": "https://sick.com/psirt"
+      },
+      {
+        "summary": "SICK Operating Guidelines",
+        "url": "https://cdn.sick.com/media/docs/1/11/411/Special_information_CYBERSECURITY_BY_SICK_en_IM0084411.PDF"
+      },
+      {
+        "summary": "ICS-CERT recommended practices on Industrial Security",
+        "url": "https://www.cisa.gov/resources-tools/resources/ics-recommended-practices"
+      },
+      {
+        "summary": "CVSS v3.1 Calculator",
+        "url": "https://www.first.org/cvss/calculator/3.1"
+      },
+      {
+        "category": "self",
+        "summary": "The canonical URL.",
+        "url": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.json"
+      }
+    ],
+    "title": "Multiple vulnerabilities in SICK Field Analytics and SICK Media Server",
+    "tracking": {
+      "current_release_date": "2025-06-12T13:00:00.000Z",
+      "generator": {
+        "date": "2025-06-12T12:05:52.309Z",
+        "engine": {
+          "name": "Secvisogram",
+          "version": "2.5.27"
+        }
+      },
+      "id": "SCA-2025-0007",
+      "initial_release_date": "2025-06-12T13:00:00.000Z",
+      "revision_history": [
+        {
+          "date": "2025-06-12T13:00:00.000Z",
+          "number": "1",
+          "summary": "Initial version"
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "vers:all/*",
+                "product": {
+                  "name": "SICK Field Analytics all versions",
+                  "product_id": "CSAFPID-0001",
+                  "product_identification_helper": {
+                    "skus": [
+                      "1613101"
+                    ]
+                  }
+                }
+              }
+            ],
+            "category": "product_name",
+            "name": "Field Analytics"
+          },
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "vers:all/*",
+                "product": {
+                  "name": "SICK Media Server all versions",
+                  "product_id": "CSAFPID-0002"
+                }
+              },
+              {
+                "category": "product_version_range",
+                "name": "<= 1.4",
+                "product": {
+                  "name": "SICK Media Server <= 1.4",
+                  "product_id": "CSAFPID-0003"
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "1.5",
+                "product": {
+                  "name": "SICK Media Server 1.5",
+                  "product_id": "CSAFPID-0004"
+                }
+              }
+            ],
+            "category": "product_name",
+            "name": "Media Server"
+          }
+        ],
+        "category": "vendor",
+        "name": "SICK AG"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cwe": {
+        "id": "CWE-862",
+        "name": "Missing Authorization"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "Due to missing authorization of an API endpoint, unauthorized users can send HTTP GET requests to gather sensitive information. An attacker could also send HTTP POST requests to modify the log files' root path as well as the TCP ports the service is running on, leading to a Denial of Service attack.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "mitigation",
+          "details": "It is possible to enable the authorization of the API endpoint via licence. Please contact your support to get a licence with API authorization enabled.",
+          "product_ids": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "HIGH",
+            "baseScore": 8.6,
+            "baseSeverity": "HIGH",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 8.6,
+            "environmentalSeverity": "HIGH",
+            "integrityImpact": "LOW",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 8.6,
+            "temporalSeverity": "HIGH",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:H",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "title": "Web Content - Configurations endpoint does not require authorization",
+      "cve": "CVE-2025-49181",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0002"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49182",
+      "cwe": {
+        "id": "CWE-540",
+        "name": "Inclusion of Sensitive Information in Source Code"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "Files in the source code contain login credentials for the admin user and the property configuration password, allowing an attacker to get full access to the application.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Users are strongly recommended to upgrade to the latest release of Media Server (>= 1.5). It is also advised to change the default passwords.",
+          "product_ids": [
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 7.5,
+            "baseSeverity": "HIGH",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 7.5,
+            "environmentalSeverity": "HIGH",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 7.5,
+            "temporalSeverity": "HIGH",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "title": "Web Content - Credential disclosure",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0003"
+        ],
+        "fixed": [
+          "CSAFPID-0004"
+        ],
+        "recommended": [
+          "CSAFPID-0004"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49183",
+      "cwe": {
+        "id": "CWE-319",
+        "name": "Cleartext Transmission of Sensitive Information"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "All communication with the REST API is unencrypted (HTTP), allowing an attacker to intercept traffic between an actor and the webserver. This leads to the possibility of information gathering and downloading media files.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 7.5,
+            "baseSeverity": "HIGH",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 7.5,
+            "environmentalSeverity": "HIGH",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 7.5,
+            "temporalSeverity": "HIGH",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "title": "Web Content - Unencrypted communication (HTTP)",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0002"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49184",
+      "cwe": {
+        "id": "CWE-200",
+        "name": "Exposure of Sensitive Information to an Unauthorized Actor"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "A remote unauthorized attacker may gather sensitive information of the application, due to missing authorization of configuration settings of the product.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 7.5,
+            "baseSeverity": "HIGH",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 7.5,
+            "environmentalSeverity": "HIGH",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 7.5,
+            "temporalSeverity": "HIGH",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Web Content - Information disclosure to unauthorized user",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49185",
+      "cwe": {
+        "id": "CWE-79",
+        "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The web application is susceptible to cross-site-scripting attacks. An attacker who can create new dashboard widgets can inject malicious JavaScript code into the Transform Function which will be executed when the widget receives data from its data source.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 5.5,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 5.5,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "LOW",
+            "privilegesRequired": "HIGH",
+            "scope": "CHANGED",
+            "temporalScore": 5.5,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:L/I:L/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Web Content - Stored Cross-Site-Script",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49186",
+      "cwe": {
+        "id": "CWE-307",
+        "name": "Improper Restriction of Excessive Authentication Attempts"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The product does not implement sufficient measures to prevent multiple failed authentication attempts within a short time frame, making it susceptible to brute-force attacks.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "It is highly recommended to use a strong password with a length of at least eight characters and a combination of letters, numbers, capital letters and symbols. Please make also sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001",
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 5.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 5.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 5.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001",
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "title": "Web Content - No brute-force protection",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001",
+          "CSAFPID-0002"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49187",
+      "cwe": {
+        "id": "CWE-204",
+        "name": "Observable Response Discrepancy"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "For failed login attempts, the application returns different error messages depending on whether the login failed due to an incorrect password or a non-existing username. This allows an attacker to guess usernames until they find an existing one.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "It is highly recommended to use a strong password with a length of at least eight characters and a combination of letters, numbers, capital letters and symbols. Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 5.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 5.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 5.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Web Content - User enumeration",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49188",
+      "cwe": {
+        "id": "CWE-598",
+        "name": "Use of GET Request Method With Sensitive Query Strings"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The application sends user credentials as URL parameters instead of POST bodies, making it vulnerable to information gathering.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 5.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 5.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 5.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Web Content - Sensitive Data in URL",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49189",
+      "cwe": {
+        "id": "CWE-1004",
+        "name": "Sensitive Cookie Without 'HttpOnly' Flag"
+      },
+      "notes": [
+        {
+          "category": "summary",
+          "text": "The HttpOnlyflag of the session cookie \"@@\" is set to false. Since this flag helps preventing access to cookies via client-side scripts, setting the flag to false can lead to a higher possibility of Cross-Side-Scripting attacks which target the stored cookies.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Users are strongly recommended to upgrade to the latest release of Media Server (>= 1.5).",
+          "product_ids": [
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 5.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 5.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 5.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "title": "Web Content - Cookie missing HttpOnly flag",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0003"
+        ],
+        "fixed": [
+          "CSAFPID-0004"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49190",
+      "cwe": {
+        "id": "CWE-918",
+        "name": "Server-Side Request Forgery (SSRF)"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The application is vulnerable to Server-Side Request Forgery (SSRF). An endpoint can be used to send server internal requests to other ports.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 4.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 4.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "LOW",
+            "scope": "UNCHANGED",
+            "temporalScore": 4.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Web Content - Server-Side Request Forgery",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49191",
+      "cwe": {
+        "id": "CWE-1021",
+        "name": "Improper Restriction of Rendered UI Layers or Frames"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "Linked URLs during the creation of iFrame widgets and dashboards are vulnerable to code execution. The URLs get embedded as iFrame widgets, making it possible to attack other users that access the dashboard by including malicious code. The attack is only possible if the attacker is authorized to create new dashboards or iFrame widgets.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 4.8,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 4.8,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "LOW",
+            "privilegesRequired": "HIGH",
+            "scope": "CHANGED",
+            "temporalScore": 4.8,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "REQUIRED",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:L/I:L/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Web Content - Dashboards and iFrames can link malicious web content",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49192",
+      "cwe": {
+        "id": "CWE-1021",
+        "name": "Improper Restriction of Rendered UI Layers or Frames"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The web application is vulnerable to clickjacking attacks. The site can be embedded into another frame, allowing an attacker to trick a user into clicking on something different from what the user perceives. This could potentially reveal confidential information or allow others to take control of their computer while clicking on seemingly innocuous objects.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Users are strongly recommended to upgrade to the latest release of Media Server (>= 1.5).",
+          "product_ids": [
+            "CSAFPID-0003"
+          ]
+        },
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 4.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "NONE",
+            "environmentalScore": 4.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "LOW",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 4.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "REQUIRED",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001",
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "title": "Web Content - Clickjacking",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001",
+          "CSAFPID-0003"
+        ],
+        "fixed": [
+          "CSAFPID-0004"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49193",
+      "cwe": {
+        "id": "CWE-693",
+        "name": "Protection Mechanism Failure"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The application fails to implement several security headers. These headers help increase the overall security level of the web application by e.g., preventing the application to be displayed in an iFrame (Clickjacking attacks) or not executing injected malicious JavaScript code (XSS attacks).",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "details": "Users are strongly recommended to upgrade to the latest release of Media Server (>= 1.5).",
+          "product_ids": [
+            "CSAFPID-0003"
+          ],
+          "category": "vendor_fix"
+        },
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "HIGH",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 4.2,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 4.2,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "LOW",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 4.2,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "REQUIRED",
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001",
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "title": "Web Content - Missing HTTP Security Headers",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001",
+          "CSAFPID-0003"
+        ],
+        "fixed": [
+          "CSAFPID-0004"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49194",
+      "cwe": {
+        "id": "CWE-319",
+        "name": "Cleartext Transmission of Sensitive Information"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The server supports authentication methods in which credentials are sent in plaintext over unencrypted channels. If an attacker were to intercept traffic between a client and this server, the credentials would be exposed.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 7.5,
+            "baseSeverity": "HIGH",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 7.5,
+            "environmentalSeverity": "HIGH",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 7.5,
+            "temporalSeverity": "HIGH",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "title": "FTP Server - Unencrypted communication",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0002"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49195",
+      "cwe": {
+        "id": "CWE-307",
+        "name": "Improper Restriction of Excessive Authentication Attempts"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The FTP server’s login mechanism does not restrict authentication attempts, allowing an attacker to brute-force user passwords and potentially compromising the FTP server.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "It is highly recommended to use a strong password with a length of at least eight characters and a combination of letters, numbers, capital letters and symbols. Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 5.3,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 5.3,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 5.3,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "title": "FTP Server - No protection against brute-force attacks",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0002"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49196",
+      "cwe": {
+        "id": "CWE-327",
+        "name": "Use of a Broken or Risky Cryptographic Algorithm"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "title": "Summary",
+          "text": "A service supports the use of a deprecated and unsafe TLS version. This could be exploited to expose sensitive information, modify data in unexpected ways or spoof identities of other users or devices, affecting the confidentiality and integrity of the device."
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "HIGH",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 6.5,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 6.5,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "LOW",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 6.5,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": " Cryptography - Deprecated TLS version supported",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49197",
+      "cwe": {
+        "id": "CWE-328",
+        "name": "Use of Weak Hash"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The application uses a weak password hash function, allowing an attacker to crack the weak password hash to gain access to an FTP user account.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "It is strongly recommended to upgrade to the latest version.",
+          "product_ids": [
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 6.5,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 6.5,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "LOW",
+            "scope": "UNCHANGED",
+            "temporalScore": 6.5,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "title": "Cryptography - Weak password hash",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0003"
+        ],
+        "fixed": [
+          "CSAFPID-0004"
+        ],
+        "recommended": [
+          "CSAFPID-0004"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49198",
+      "cwe": {
+        "id": "CWE-330",
+        "name": "Use of Insufficiently Random Values"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The Media Server’s authorization tokens have a poor quality of randomness. An attacker may be able to guess the token of an active user by computing plausible tokens.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "HIGH",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 3.1,
+            "baseSeverity": "LOW",
+            "confidentialityImpact": "LOW",
+            "environmentalScore": 3.1,
+            "environmentalSeverity": "LOW",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "NONE",
+            "scope": "UNCHANGED",
+            "temporalScore": 3.1,
+            "temporalSeverity": "LOW",
+            "userInteraction": "REQUIRED",
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0002"
+          ]
+        }
+      ],
+      "title": "Cryptography - Poor quality of randomness in authorization tokens",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0002"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49199",
+      "cwe": {
+        "id": "CWE-345",
+        "name": "Insufficient Verification of Data Authenticity"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The backup ZIPs are not signed by the application, leading to the possibility that an attacker can download a backup ZIP, modify and re-upload it. This allows the attacker to disrupt the application by configuring  the  services  in  a  way  that  they  are  unable  to  run,  making  the  application unusable. They can redirect traffic that is meant to be internal to their own hosted services and gathering information.",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "workaround",
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "HIGH",
+            "baseScore": 8.8,
+            "baseSeverity": "HIGH",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 8.8,
+            "environmentalSeverity": "HIGH",
+            "integrityImpact": "HIGH",
+            "privilegesRequired": "LOW",
+            "scope": "UNCHANGED",
+            "temporalScore": 8.8,
+            "temporalSeverity": "HIGH",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Backup - Backup files can be modified and uploaded",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    },
+    {
+      "cve": "CVE-2025-49200",
+      "cwe": {
+        "id": "CWE-200",
+        "name": "Exposure of Sensitive Information to an Unauthorized Actor"
+      },
+      "notes": [
+        {
+          "audience": "all",
+          "category": "summary",
+          "text": "The created backup files are unencrypted, making the application vulnerable for gathering sensitive information by downloading and decompressing the backup files. ",
+          "title": "Summary"
+        }
+      ],
+      "remediations": [
+        {
+          "details": "Please make sure that only trusted entities have access to the device. Furthermore, you should apply the following General Security Measures when operating the product to mitigate the associated security risk. The collected resources \"SICK Operating Guidelines\" and \"ICS-CERT recommended practices on Industrial Security\" could help to implement the general security practices.",
+          "product_ids": [
+            "CSAFPID-0001"
+          ],
+          "category": "workaround"
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "attackComplexity": "LOW",
+            "attackVector": "NETWORK",
+            "availabilityImpact": "NONE",
+            "baseScore": 6.5,
+            "baseSeverity": "MEDIUM",
+            "confidentialityImpact": "HIGH",
+            "environmentalScore": 6.5,
+            "environmentalSeverity": "MEDIUM",
+            "integrityImpact": "NONE",
+            "privilegesRequired": "LOW",
+            "scope": "UNCHANGED",
+            "temporalScore": 6.5,
+            "temporalSeverity": "MEDIUM",
+            "userInteraction": "NONE",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001"
+          ]
+        }
+      ],
+      "title": "Backup - Unencrypted backup contains sensitive information",
+      "product_status": {
+        "known_affected": [
+          "CSAFPID-0001"
+        ]
+      }
+    }
+  ]
+}

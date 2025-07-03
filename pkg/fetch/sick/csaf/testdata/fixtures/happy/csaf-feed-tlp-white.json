@@ -1,0 +1,73 @@
+{
+  "feed": {
+    "id": "csaf-feed-tlp-white",
+    "title": "CSAF feed (TLP:WHITE)",
+    "link": [
+      {
+        "rel": "self",
+        "href": "https://www.sick.com/.well-known/csaf/white/csaf-feed-tlp-white.json"
+      },
+      {
+        "rel": "service",
+        "href": "https://www.sick.com/.well-known/csaf/service.json"
+      }
+    ],
+    "category": [
+      {
+        "scheme": "urn:ietf:params:rolie:category:information-type",
+        "term": "csaf"
+      }
+    ],
+    "updated": "2025-06-12T14:07:01Z",
+    "entry": [
+      {
+        "id": "SCA-2025-0007",
+        "title": "Multiple vulnerabilities in SICK Field Analytics and SICK Media Server",
+        "link": [
+          {
+            "rel": "self",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.json"
+          },
+          {
+            "rel": "hash",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.json.sha256"
+          },
+          {
+            "rel": "hash",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.json.sha512"
+          },
+          {
+            "rel": "signature",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.json.asc"
+          },
+          {
+            "rel": "pdf",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.pdf"
+          },
+          {
+            "rel": "pdfsignature",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.pdf.asc"
+          },
+          {
+            "rel": "pdfhash",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.pdf.sha256"
+          },
+          {
+            "rel": "pdfhash",
+            "href": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.pdf.sha512"
+          }
+        ],
+        "published": "2025-06-12T13:00:00Z",
+        "updated": "2025-06-12T13:00:00Z",
+        "content": {
+          "type": "application/json",
+          "src": "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0007.json"
+        },
+        "format": {
+          "schema": "https://docs.oasis-open.org/csaf/csaf/v2.0/csaf_json_schema.json",
+          "version": "2.0"
+        }
+      }
+    ]
+  }
+}
