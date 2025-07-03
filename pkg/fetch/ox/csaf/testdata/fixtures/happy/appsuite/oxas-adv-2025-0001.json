@@ -1,0 +1,401 @@
+{
+  "document": {
+    "category": "csaf_security_advisory",
+    "csaf_version": "2.0",
+    "distribution": {
+      "text": "Copyright © Open-Xchange GmbH. All rights reserved.",
+      "tlp": {
+        "label": "GREEN",
+        "url": "https://www.first.org/tlp/"
+      }
+    },
+    "publisher": {
+      "category": "vendor",
+      "name": "Open-Xchange GmbH",
+      "namespace": "https://open-xchange.com/"
+    },
+    "title": "OX App Suite Security Advisory OXAS-ADV-2025-0001",
+    "tracking": {
+      "current_release_date": "2025-04-07T00:00:00+00:00",
+      "id": "OXAS-ADV-2025-0001",
+      "initial_release_date": "2025-01-27T00:00:00+01:00",
+      "revision_history": [
+        {
+          "date": "2025-01-27T00:00:00+01:00",
+          "number": "1",
+          "summary": "Initial release"
+        },
+        {
+          "date": "2025-04-07T00:00:00+00:00",
+          "number": "2",
+          "summary": "Public release"
+        }
+      ],
+      "status": "final",
+      "version": "2",
+      "generator": {
+        "date": "2025-04-07T06:54:13+00:00",
+        "engine": {
+          "version": "1.0.0",
+          "name": "OX CSAF"
+        }
+      }
+    },
+    "lang": "en-US",
+    "notes": [
+      {
+        "category": "legal_disclaimer",
+        "text": "This content is licensed under the Creative Commons Attribution-NoDerivatives 4.0 International License (https://creativecommons.org/licenses/by-nd/4.0/). If you distribute this content, you must provide attribution to Open-Xchange GmbH and provide a link to the original. You may not distribute a modified version of this content.",
+        "title": "Terms of Use"
+      }
+    ],
+    "references": [
+      {
+        "summary": "Release Notes",
+        "url": "https://software.open-xchange.com/products/appsuite/doc/Release_Notes_for_Patch_Release_6304_7.10.6_2025-02-03.pdf",
+        "category": "external"
+      },
+      {
+        "summary": "Canonical CSAF document",
+        "url": "https://documentation.open-xchange.com/appsuite/security/advisories/csaf/2025/oxas-adv-2025-0001.json",
+        "category": "self"
+      },
+      {
+        "summary": "Markdown representation",
+        "url": "https://documentation.open-xchange.com/appsuite/security/advisories/md/2025/oxas-adv-2025-0001.md",
+        "category": "self"
+      },
+      {
+        "summary": "HTML representation",
+        "url": "https://documentation.open-xchange.com/appsuite/security/advisories/html/2025/oxas-adv-2025-0001.html",
+        "category": "self"
+      },
+      {
+        "summary": "Plain-text representation",
+        "url": "https://documentation.open-xchange.com/appsuite/security/advisories/txt/2025/oxas-adv-2025-0001.txt",
+        "category": "self"
+      }
+    ],
+    "aggregate_severity": {
+      "text": "CRITICAL"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "category": "vendor",
+        "name": "Open-Xchange GmbH",
+        "branches": [
+          {
+            "category": "product_name",
+            "name": "OX App Suite frontend",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "7.10.6-rev49",
+                "product": {
+                  "product_id": "OXAS-FRONTEND_7.10.6-rev49",
+                  "name": "OX App Suite frontend 7.10.6-rev49",
+                  "product_identification_helper": {
+                    "cpe": "cpe:2.3:a:open-xchange:app_suite:7.10.6:rev49:*:*:*:*:*:*"
+                  }
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "7.10.6-rev50",
+                "product": {
+                  "product_id": "OXAS-FRONTEND_7.10.6-rev50",
+                  "name": "OX App Suite frontend 7.10.6-rev50",
+                  "product_identification_helper": {
+                    "x_generic_uris": [
+                      {
+                        "namespace": "https://documentation.open-xchange.com/appsuite/security/advisories/#urn-parsing",
+                        "uri": "urn:open-xchange:app_suite:patch-id:6304"
+                      }
+                    ],
+                    "cpe": "cpe:2.3:a:open-xchange:app_suite:7.10.6:rev50:*:*:*:*:*:*"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "category": "product_name",
+            "name": "OX App Suite office",
+            "branches": [
+              {
+                "category": "product_version",
+                "name": "7.10.6-rev15",
+                "product": {
+                  "product_id": "OXAS-OFFICE_7.10.6-rev15",
+                  "name": "OX App Suite office 7.10.6-rev15",
+                  "product_identification_helper": {
+                    "cpe": "cpe:2.3:a:open-xchange:office:7.10.6:rev15:*:*:*:*:*:*"
+                  }
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "7.10.6-rev16",
+                "product": {
+                  "product_id": "OXAS-OFFICE_7.10.6-rev16",
+                  "name": "OX App Suite office 7.10.6-rev16",
+                  "product_identification_helper": {
+                    "x_generic_uris": [
+                      {
+                        "namespace": "https://documentation.open-xchange.com/appsuite/security/advisories/#urn-parsing",
+                        "uri": "urn:open-xchange:app_suite:patch-id:6304"
+                      }
+                    ],
+                    "cpe": "cpe:2.3:a:open-xchange:office:7.10.6:rev16:*:*:*:*:*:*"
+                  }
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "7.10.6-rev11",
+                "product": {
+                  "product_id": "OXAS-OFFICE_7.10.6-rev11",
+                  "name": "OX App Suite office 7.10.6-rev11",
+                  "product_identification_helper": {
+                    "cpe": "cpe:2.3:a:open-xchange:office:7.10.6:rev11:*:*:*:*:*:*"
+                  }
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "7.10.6-rev12",
+                "product": {
+                  "product_id": "OXAS-OFFICE_7.10.6-rev12",
+                  "name": "OX App Suite office 7.10.6-rev12",
+                  "product_identification_helper": {
+                    "x_generic_uris": [
+                      {
+                        "namespace": "https://documentation.open-xchange.com/appsuite/security/advisories/#urn-parsing",
+                        "uri": "urn:open-xchange:app_suite:patch-id:6304"
+                      }
+                    ],
+                    "cpe": "cpe:2.3:a:open-xchange:office:7.10.6:rev12:*:*:*:*:*:*"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "cve": "CVE-2024-47875",
+      "cwe": {
+        "id": "CWE-79",
+        "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "The DOMPurify third-party library has been updated to resolve known vulnerabilities."
+        }
+      ],
+      "product_status": {
+        "last_affected": [
+          "OXAS-FRONTEND_7.10.6-rev49"
+        ],
+        "first_fixed": [
+          "OXAS-FRONTEND_7.10.6-rev50"
+        ]
+      },
+      "discovery_date": "2024-12-13T10:21:37.494000+01:00",
+      "ids": [
+        {
+          "system_name": "GitLab Issue",
+          "text": "appsuite/web-apps/ui#785"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Third-party libraries have been updated.",
+          "date": "2025-01-08T08:55:19.495000+01:00",
+          "product_ids": [
+            "OXAS-FRONTEND_7.10.6-rev49"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "products": [
+            "OXAS-FRONTEND_7.10.6-rev49"
+          ],
+          "cvss_v3": {
+            "version": "3.1",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:H",
+            "baseScore": 10.0,
+            "baseSeverity": "CRITICAL",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "CHANGED",
+            "confidentialityImpact": "LOW",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH"
+          }
+        }
+      ],
+      "threats": [
+        {
+          "category": "impact",
+          "details": "This is done as a precautionary measure, at this time none of the related vulnerabilities is known to be exploitable in context of OX App Suite."
+        },
+        {
+          "category": "exploit_status",
+          "details": "No publicly available exploits are known."
+        }
+      ],
+      "title": "Vulnerable DOMPurify shipped with App Suite 7.10.6 and 7.6.3"
+    },
+    {
+      "cve": "CVE-2022-0839",
+      "cwe": {
+        "id": "CWE-611",
+        "name": "Improper Restriction of XML External Entity Reference"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "Several third-party libraries have been updated to resolve known vulnerabilities. This includes H2, Xalan, Liquibase and Spring Boot."
+        }
+      ],
+      "product_status": {
+        "last_affected": [
+          "OXAS-OFFICE_7.10.6-rev15"
+        ],
+        "first_fixed": [
+          "OXAS-OFFICE_7.10.6-rev16"
+        ]
+      },
+      "discovery_date": "2023-09-12T10:35:52+02:00",
+      "ids": [
+        {
+          "system_name": "JIRA OX Bug",
+          "text": "DOCS-5081"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Third-party libraries have been updated.",
+          "date": "2024-12-03T16:27:44+01:00",
+          "product_ids": [
+            "OXAS-OFFICE_7.10.6-rev15"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "products": [
+            "OXAS-OFFICE_7.10.6-rev15"
+          ],
+          "cvss_v3": {
+            "version": "3.1",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH"
+          }
+        }
+      ],
+      "threats": [
+        {
+          "category": "impact",
+          "details": "This is done as a precautionary measure, at this time none of the related vulnerabilities is known to be exploitable in context of OX App Suite."
+        },
+        {
+          "category": "exploit_status",
+          "details": "No publicly available exploits are known."
+        }
+      ],
+      "title": "Resolving third-party vulnerabilities in the office master (7.10.6) repo"
+    },
+    {
+      "cve": "CVE-2021-23358",
+      "cwe": {
+        "id": "CWE-79",
+        "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      },
+      "notes": [
+        {
+          "category": "description",
+          "text": "Several third-party libraries have been updated to resolve known vulnerabilities. This includes grunt, dompurify, codecept, underscore and requirejs."
+        }
+      ],
+      "product_status": {
+        "last_affected": [
+          "OXAS-OFFICE_7.10.6-rev11"
+        ],
+        "first_fixed": [
+          "OXAS-OFFICE_7.10.6-rev12"
+        ]
+      },
+      "discovery_date": "2024-12-12T10:50:59+01:00",
+      "ids": [
+        {
+          "system_name": "JIRA OX Bug",
+          "text": "DOCS-5338"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "vendor_fix",
+          "details": "Third-party libraries have been updated.",
+          "date": "2025-01-27T16:08:03+01:00",
+          "product_ids": [
+            "OXAS-OFFICE_7.10.6-rev11"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "products": [
+            "OXAS-OFFICE_7.10.6-rev11"
+          ],
+          "cvss_v3": {
+            "version": "3.1",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+            "baseScore": 7.2,
+            "baseSeverity": "HIGH",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "HIGH",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH"
+          }
+        }
+      ],
+      "threats": [
+        {
+          "category": "impact",
+          "details": "This is done as a precautionary measure, at this time none of the related vulnerabilities is known to be exploitable in context of OX App Suite."
+        },
+        {
+          "category": "exploit_status",
+          "details": "No publicly available exploits are known."
+        }
+      ],
+      "title": "Resolving third-party vulnerabilities in the office-ui master (7.10.6) repo"
+    }
+  ]
+}
