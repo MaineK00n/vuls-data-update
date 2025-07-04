@@ -43,6 +43,7 @@ import (
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/emb3d"
 	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
 	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
@@ -201,6 +202,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCWE(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdEcho(),
+		newCmdEMB3D(),
 		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
@@ -1275,6 +1277,33 @@ func newCmdEcho() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := echo.Fetch(echo.WithDir(options.dir), echo.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch echo")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdEMB3D() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "emb3d"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "emb3d",
+		Short: "Fetch MITRE EMB3D data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch emb3d
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := emb3d.Fetch(emb3d.WithDir(options.dir), emb3d.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch emb3d")
 			}
 			return nil
 		},
