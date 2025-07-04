@@ -1,0 +1,46 @@
+{
+    "alpine": [
+        {
+            "distroversion": "3.19",
+            "packages": [
+                {
+                    "pkg": {
+                        "name": "botan",
+                        "cves": {
+                            "CVE-2024-50382": {
+                                "vulnerable_ranges": [
+                                    "<2.19.5-r00071"
+                                ],
+                                "fixed_versions": [
+                                    "2.19.5-r00071"
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "debian": [
+        {
+            "distroversion": "12",
+            "packages": [
+                {
+                    "pkg": {
+                        "name": "mbedtls",
+                        "cves": {
+                            "CVE-2024-23775": {
+                                "vulnerable_ranges": [
+                                    "<2.28.3-1.root.io.1"
+                                ],
+                                "fixed_versions": [
+                                    "2.28.3-1.root.io.1"
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
