@@ -1,0 +1,195 @@
+{
+  "document": {
+    "aggregate_severity": {
+      "text": "HIGH"
+    },
+    "category": "csaf_vex",
+    "csaf_version": "2.0",
+    "distribution": {
+      "tlp": {
+        "label": "WHITE"
+      }
+    },
+    "lang": "en-US",
+    "notes": [
+      {
+        "category": "other",
+        "text": "High",
+        "title": "Risk Level for Nozomi customers"
+      }
+    ],
+    "publisher": {
+      "category": "vendor",
+      "contact_details": "Nozomi Networks Product Security team can be reached at prodsec@nozominetworks.com",
+      "name": "Nozomi Networks Product Security",
+      "namespace": "https://security.nozominetworks.com/psirt"
+    },
+    "title": "Authenticated RCE in update functionality in Guardian/CMC before 24.6.0",
+    "tracking": {
+      "aliases": [
+        "CVE-2024-13089"
+      ],
+      "current_release_date": "2025-06-10T11:00:00.000Z",
+      "id": "NN-2025:1-01",
+      "initial_release_date": "2025-06-10T11:00:00.000Z",
+      "revision_history": [
+        {
+          "date": "2025-06-10T11:00:00.000Z",
+          "number": "1",
+          "summary": "Initial revision"
+        }
+      ],
+      "status": "final",
+      "version": "1"
+    }
+  },
+  "product_tree": {
+    "branches": [
+      {
+        "branches": [
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "vers:gem/<24.6.0",
+                "product": {
+                  "name": "Nozomi Networks Guardian <24.6.0",
+                  "product_id": "CSAFPID-0001"
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "24.6.0",
+                "product": {
+                  "name": "Nozomi Networks Guardian 24.6.0",
+                  "product_id": "CSAFPID-0002"
+                }
+              }
+            ],
+            "category": "product_name",
+            "name": "Guardian"
+          },
+          {
+            "branches": [
+              {
+                "category": "product_version_range",
+                "name": "vers:gem/<24.6.0",
+                "product": {
+                  "name": "Nozomi Networks CMC <24.6.0",
+                  "product_id": "CSAFPID-0003"
+                }
+              },
+              {
+                "category": "product_version",
+                "name": "24.6.0",
+                "product": {
+                  "name": "Nozomi Networks CMC 24.6.0",
+                  "product_id": "CSAFPID-0004"
+                }
+              }
+            ],
+            "category": "product_name",
+            "name": "CMC"
+          }
+        ],
+        "category": "vendor",
+        "name": "Nozomi Networks"
+      }
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "acknowledgments": [
+        {
+          "organization": "IOActive",
+          "summary": "finding this issue during a VAPT testing session commissioned by one of our customers"
+        }
+      ],
+      "cve": "CVE-2024-13089",
+      "cwe": {
+        "id": "CWE-78",
+        "name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+      },
+      "discovery_date": "2025-06-10T11:00:00.000Z",
+      "ids": [
+        {
+          "system_name": "Nozomi Networks Security Advisory ID",
+          "text": "NN-2025:1-01"
+        }
+      ],
+      "notes": [
+        {
+          "category": "summary",
+          "text": "An OS command injection vulnerability within the update functionality may allow an authenticated administrator to execute unauthorized arbitrary OS commands.",
+          "title": "Vulnerability summary"
+        }
+      ],
+      "product_status": {
+        "fixed": [
+          "CSAFPID-0002",
+          "CSAFPID-0004"
+        ],
+        "known_affected": [
+          "CSAFPID-0001",
+          "CSAFPID-0003"
+        ]
+      },
+      "references": [
+        {
+          "category": "external",
+          "summary": "Mitre CVE entry",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-13089"
+        },
+        {
+          "category": "self",
+          "summary": "Canonical URL",
+          "url": "https://security.nozominetworks.com/csaf/2025/nn-2025_1-01.json"
+        },
+        {
+          "category": "self",
+          "summary": "Human-readable advisory.",
+          "url": "https://security.nozominetworks.com/NN-2025:1-01"
+        }
+      ],
+      "remediations": [
+        {
+          "category": "mitigation",
+          "details": "Only install update packages from trusted sources.",
+          "product_ids": [
+            "CSAFPID-0001",
+            "CSAFPID-0003"
+          ]
+        },
+        {
+          "category": "vendor_fix",
+          "details": "Upgrade to v24.6.0 or later.",
+          "product_ids": [
+            "CSAFPID-0001",
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "scores": [
+        {
+          "cvss_v3": {
+            "baseScore": 7.2,
+            "baseSeverity": "HIGH",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+            "version": "3.1"
+          },
+          "products": [
+            "CSAFPID-0001",
+            "CSAFPID-0003"
+          ]
+        }
+      ],
+      "threats": [
+        {
+          "category": "impact",
+          "details": "Users with administrative privileges may upload update packages to upgrade the versions of Nozomi Networks Guardian and CMC. While these updates are signed and their signatures are validated prior to installation, an improper signature validation check has been identified. This issue could potentially enable users to execute commands remotely on the appliance, thereby impacting confidentiality, integrity, and availability."
+        }
+      ],
+      "title": "Authenticated RCE in update functionality in Guardian/CMC before 24.6.0"
+    }
+  ]
+}
