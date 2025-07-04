@@ -98,6 +98,7 @@ import (
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/oss-fuzz/osv"
+	oxCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/ox/csaf"
 	paloaltoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
 	paloaltoJSON "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/json"
 	paloaltoList "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/list"
@@ -223,6 +224,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
 		newCmdOracle(),
 		newCmdOSSFuzzOSV(),
+		newCmdOXCSAF(),
 		newCmdPaloAltoList(), newCmdPaloAltoJSON(), newCmdPaloAltoCSAF(),
 		newCmdPerlDB(),
 		newCmdPhotonCVE(), newCmdPhotonOVAL(),
@@ -3024,6 +3026,43 @@ func newCmdOSSFuzzOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "oss-fuzz", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdOXCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "ox", "csaf"),
+			retry: 3,
+		},
+		concurrency: 3,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "ox-csaf",
+		Short: "Fetch Open-Xchange(OX) CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch ox-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := oxCSAF.Fetch(oxCSAF.WithDir(options.dir), oxCSAF.WithRetry(options.retry), oxCSAF.WithConcurrency(options.concurrency), oxCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch ox csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
