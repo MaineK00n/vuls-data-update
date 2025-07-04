@@ -1,0 +1,229 @@
+{
+	"document": {
+		"category": "csaf_security_advisory",
+		"csaf_version": "2.0",
+		"distribution": {
+			"tlp": {
+				"label": "WHITE"
+			}
+		},
+		"lang": "nl",
+		"notes": [
+			{
+				"category": "legal_disclaimer",
+				"text": "The Netherlands Cyber Security Center (henceforth: NCSC-NL) maintains this page to enhance access to its information and security advisories. The use of this security advisory is subject to the following terms and conditions:\n\n    NCSC-NL makes every reasonable effort to ensure that the content of this page is kept up to date, and that it is accurate and complete. Nevertheless, NCSC-NL cannot entirely rule out the possibility of errors, and therefore cannot give any warranty in respect of its completeness, accuracy or continuous keeping up-to-date. The information contained in this security advisory is intended solely for the purpose of providing general information to professional users. No rights can be derived from the information provided therein.\n\n    NCSC-NL and the Kingdom of the Netherlands assume no legal liability or responsibility for any damage resulting from either the use or inability of use of this security advisory. This includes damage resulting from the inaccuracy of incompleteness of the information contained in the advisory.\n    This security advisory is subject to Dutch law. All disputes related to or arising from the use of this advisory will be submitted to the competent court in The Hague. This choice of means also applies to the court in summary proceedings."
+			},
+			{
+				"category": "description",
+				"text": "Cisco heeft een kwetsbaarheid verholpen in Cisco Unified Communications Manager (en Cisco Unified Communications Manager Session Management Edition).",
+				"title": "Feiten"
+			},
+			{
+				"category": "description",
+				"text": "De kwetsbaarheid bevindt zich in de hardcoded root SSH-credentials die niet kunnen worden gewijzigd of verwijderd. Dit stelt ongeauthenticeerde externe aanvallers in staat om in te loggen en willekeurige commando's uit te voeren op de getroffen systemen. Dit vormt een ernstig beveiligingsrisico voor organisaties die deze producten gebruiken.\n\nSSH toegang is onder normale omstandigheden beperkt tot de interne infrastructuur. Het is goed gebruik een dergelijke toegang te beperken en niet publiek toegankelijk te hebben, maar af te steunen in een separate beheer-omgeving.",
+				"title": "Interpretaties"
+			},
+			{
+				"category": "description",
+				"text": "Potentieel misbruik kan worden gedetecteerd door middel van de onderstaande Indicators of Compromise:\n\nSuccesvol misbruik resulteert in een log entry in `/var/log/active/syslog/secure` voor de  `root` gebruiker met `root permissions`. Het loggen van dit event is standaard ingeschakeld.\n\nDe logs kunnen worden verkregen door de volgende commando's uit te voeren op de command line:\n\n`cucm1# file get activelog syslog/secure`\n\nWanneer een log entry zowel een sshd vermelding als een succesvolle SSH login vertoont kan dit duiden op mogelijke compromittatie. Zie voorbeeld:\n\n```\nApr 6 10:38:43 cucm1 authpriv 6 systemd: pam_unix(systemd-user:session): session opened for user root by (uid=0)\nApr 6 10:38:43 cucm1 authpriv 6 sshd: pam_unix(sshd:session): session opened for user root by (uid=0)\n```",
+				"title": "Interpretaties"
+			},
+			{
+				"category": "description",
+				"text": "Cisco heeft updates uitgebracht om de kwetsbaarheid te verhelpen. Zie bijgevoegde referenties voor meer informatie.",
+				"title": "Oplossingen"
+			},
+			{
+				"category": "general",
+				"text": "medium",
+				"title": "Kans"
+			},
+			{
+				"category": "general",
+				"text": "high",
+				"title": "Schade"
+			},
+			{
+				"category": "general",
+				"text": "Use of Hard-coded Credentials",
+				"title": "CWE-798"
+			}
+		],
+		"publisher": {
+			"category": "coordinator",
+			"contact_details": "cert@ncsc.nl",
+			"name": "Nationaal Cyber Security Centrum",
+			"namespace": "https://www.ncsc.nl/"
+		},
+		"references": [
+			{
+				"category": "external",
+				"summary": "Reference - cisco; cveprojectv5; nvd",
+				"url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-cucm-ssh-m4UBdpE7"
+			}
+		],
+		"title": "Kwetsbaarheid verholpen in Cisco Unified Communications Manager",
+		"tracking": {
+			"current_release_date": "2025-07-03T07:43:27.075341Z",
+			"generator": {
+				"date": "2025-06-05T14:45:00Z",
+				"engine": {
+					"name": "V.A.",
+					"version": "1.1"
+				}
+			},
+			"id": "NCSC-2025-0210",
+			"initial_release_date": "2025-07-03T07:43:27.075341Z",
+			"revision_history": [
+				{
+					"date": "2025-07-03T07:43:27.075341Z",
+					"number": "1.0.0",
+					"summary": "Initiele versie"
+				}
+			],
+			"status": "final",
+			"version": "1.0.0"
+		}
+	},
+	"product_tree": {
+		"branches": [
+			{
+				"branches": [
+					{
+						"branches": [
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13010-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13010-1",
+									"product_id": "CSAFPID-2952396"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13011-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13011-1",
+									"product_id": "CSAFPID-2952397"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13012-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13012-1",
+									"product_id": "CSAFPID-2952398"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13013-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13013-1",
+									"product_id": "CSAFPID-2952399"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13014-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13014-1",
+									"product_id": "CSAFPID-2952400"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13015-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13015-1",
+									"product_id": "CSAFPID-2952401"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13016-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13016-1",
+									"product_id": "CSAFPID-2952402"
+								}
+							},
+							{
+								"category": "product_version_range",
+								"name": "vers:unknown/15.0.1.13017-1",
+								"product": {
+									"name": "vers:unknown/15.0.1.13017-1",
+									"product_id": "CSAFPID-2952403"
+								}
+							}
+						],
+						"category": "product_name",
+						"name": "Cisco Unified Communications Manager"
+					}
+				],
+				"category": "vendor",
+				"name": "Cisco"
+			}
+		]
+	},
+	"vulnerabilities": [
+		{
+			"cve": "CVE-2025-20309",
+			"cwe": {
+				"id": "CWE-798",
+				"name": "Use of Hard-coded Credentials"
+			},
+			"notes": [
+				{
+					"category": "other",
+					"text": "Use of Hard-coded Credentials",
+					"title": "CWE-798"
+				},
+				{
+					"category": "general",
+					"text": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+					"title": "CVSSV4"
+				}
+			],
+			"product_status": {
+				"known_affected": [
+					"CSAFPID-2952396",
+					"CSAFPID-2952397",
+					"CSAFPID-2952398",
+					"CSAFPID-2952399",
+					"CSAFPID-2952400",
+					"CSAFPID-2952401",
+					"CSAFPID-2952402",
+					"CSAFPID-2952403"
+				]
+			},
+			"references": [
+				{
+					"category": "self",
+					"summary": "CVE-2025-20309 | NCSC-NL Website",
+					"url": "https://vulnerabilities.ncsc.nl/csaf/v2/2025/cve-2025-20309.json"
+				}
+			],
+			"scores": [
+				{
+					"cvss_v3": {
+						"baseScore": 10,
+						"baseSeverity": "CRITICAL",
+						"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+						"version": "3.1"
+					},
+					"products": [
+						"CSAFPID-2952396",
+						"CSAFPID-2952397",
+						"CSAFPID-2952398",
+						"CSAFPID-2952399",
+						"CSAFPID-2952400",
+						"CSAFPID-2952401",
+						"CSAFPID-2952402",
+						"CSAFPID-2952403"
+					]
+				}
+			],
+			"title": "CVE-2025-20309"
+		}
+	]
+}
