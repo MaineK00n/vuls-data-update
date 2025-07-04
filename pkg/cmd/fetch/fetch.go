@@ -25,6 +25,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
+	certBundCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cert-bund/csaf"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
 	chainguardSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/secdb"
 	cisaCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/csaf"
@@ -190,6 +191,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdBottlerocket(),
 		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
+		newCmdCertBundCSAF(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
 		newCmdCISACSAF(), newCmdCISAKEV(),
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
@@ -735,6 +737,43 @@ func newCmdCargoOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cargo", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCertBundCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "cert-bund", "csaf"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cert-bund-csaf",
+		Short: "Fetch Cert-Bund CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cert-bund-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := certBundCSAF.Fetch(certBundCSAF.WithDir(options.dir), certBundCSAF.WithRetry(options.retry), certBundCSAF.WithConcurrency(options.concurrency), certBundCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch cert-bund csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }
