@@ -1,0 +1,503 @@
+{
+  "document" : {
+    "aggregate_severity" : {
+      "text" : "hoch"
+    },
+    "category" : "csaf_base",
+    "csaf_version" : "2.0",
+    "distribution" : {
+      "tlp" : {
+        "label" : "WHITE",
+        "url" : "https://www.first.org/tlp/"
+      }
+    },
+    "lang" : "de-DE",
+    "notes" : [ {
+      "category" : "legal_disclaimer",
+      "text" : "Das BSI ist als Anbieter für die eigenen, zur Nutzung bereitgestellten Inhalte nach den allgemeinen Gesetzen verantwortlich. Nutzerinnen und Nutzer sind jedoch dafür verantwortlich, die Verwendung und/oder die Umsetzung der mit den Inhalten bereitgestellten Informationen sorgfältig im Einzelfall zu prüfen."
+    }, {
+      "category" : "description",
+      "text" : "IBM DB2 ist ein relationales Datenbanksystem (RDBS) von IBM.",
+      "title" : "Produktbeschreibung"
+    }, {
+      "category" : "summary",
+      "text" : "Ein entfernter oder lokaler Angreifer kann mehrere Schwachstellen in IBM DB2 on Cloud Pak for Data ausnutzen, um seine Privilegien zu erhöhen, beliebigen Code auszuführen, vertrauliche Informationen offenzulegen, Sicherheitsmaßnahmen zu umgehen oder einen Denial-of-Service-Zustand zu erzeugen.",
+      "title" : "Angriff"
+    }, {
+      "category" : "general",
+      "text" : "- Sonstiges",
+      "title" : "Betroffene Betriebssysteme"
+    } ],
+    "publisher" : {
+      "category" : "other",
+      "contact_details" : "csaf-provider@cert-bund.de",
+      "name" : "Bundesamt für Sicherheit in der Informationstechnik",
+      "namespace" : "https://www.bsi.bund.de"
+    },
+    "references" : [ {
+      "category" : "self",
+      "summary" : "WID-SEC-W-2025-0001 - CSAF Version",
+      "url" : "https://wid.cert-bund.de/.well-known/csaf/white/2025/wid-sec-w-2025-0001.json"
+    }, {
+      "category" : "self",
+      "summary" : "WID-SEC-2025-0001 - Portal Version",
+      "url" : "https://wid.cert-bund.de/portal/wid/securityadvisory?name=WID-SEC-2025-0001"
+    }, {
+      "category" : "external",
+      "summary" : "IBM Security Bulletin vom 2025-01-01",
+      "url" : "https://www.ibm.com/support/pages/node/7180105"
+    }, {
+      "category" : "external",
+      "summary" : "IBM Security Bulletin 7180361 vom 2025-01-07",
+      "url" : "https://www.ibm.com/support/pages/node/7180361"
+    }, {
+      "category" : "external",
+      "summary" : "Red Hat Security Advisory RHSA-2025:1227 vom 2025-02-12",
+      "url" : "https://access.redhat.com/errata/RHSA-2025:1227"
+    }, {
+      "category" : "external",
+      "summary" : "IBM Security Bulletin 7183676 vom 2025-02-27",
+      "url" : "https://www.ibm.com/support/pages/node/7183676"
+    }, {
+      "category" : "external",
+      "summary" : "IBM Security Bulletin 7229443 vom 2025-03-28",
+      "url" : "https://www.ibm.com/support/pages/node/7229443"
+    }, {
+      "category" : "external",
+      "summary" : "IBM Security Bulletin 7237702 vom 2025-06-24",
+      "url" : "https://www.ibm.com/support/pages/node/7237702"
+    } ],
+    "source_lang" : "en-US",
+    "title" : "IBM DB2: Mehrere Schwachstellen",
+    "tracking" : {
+      "current_release_date" : "2025-06-23T22:00:00.000+00:00",
+      "generator" : {
+        "date" : "2025-06-24T07:49:56.255+00:00",
+        "engine" : {
+          "name" : "BSI-WID",
+          "version" : "1.3.12"
+        }
+      },
+      "id" : "WID-SEC-W-2025-0001",
+      "initial_release_date" : "2025-01-01T23:00:00.000+00:00",
+      "revision_history" : [ {
+        "date" : "2025-01-01T23:00:00.000+00:00",
+        "number" : "1",
+        "summary" : "Initiale Fassung"
+      }, {
+        "date" : "2025-01-06T23:00:00.000+00:00",
+        "number" : "2",
+        "summary" : "Neue Updates von IBM aufgenommen"
+      }, {
+        "date" : "2025-02-12T23:00:00.000+00:00",
+        "number" : "3",
+        "summary" : "Neue Updates von Red Hat aufgenommen"
+      }, {
+        "date" : "2025-02-27T23:00:00.000+00:00",
+        "number" : "4",
+        "summary" : "Neue Updates von IBM aufgenommen"
+      }, {
+        "date" : "2025-03-30T22:00:00.000+00:00",
+        "number" : "5",
+        "summary" : "Neue Updates von IBM aufgenommen"
+      }, {
+        "date" : "2025-06-23T22:00:00.000+00:00",
+        "number" : "6",
+        "summary" : "Neue Updates von IBM aufgenommen"
+      } ],
+      "status" : "final",
+      "version" : "6"
+    }
+  },
+  "product_tree" : {
+    "branches" : [ {
+      "branches" : [ {
+        "branches" : [ {
+          "category" : "product_version_range",
+          "name" : "<12.0.4 IF2",
+          "product" : {
+            "name" : "IBM Cognos Analytics <12.0.4 IF2",
+            "product_id" : "T041469"
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "12.0.4 IF2",
+          "product" : {
+            "name" : "IBM Cognos Analytics 12.0.4 IF2",
+            "product_id" : "T041469-fixed",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:cognos_analytics:12.0.4_if2"
+            }
+          }
+        }, {
+          "category" : "product_version_range",
+          "name" : "<11.2.4 IF4",
+          "product" : {
+            "name" : "IBM Cognos Analytics <11.2.4 IF4",
+            "product_id" : "T041470"
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "11.2.4 IF4",
+          "product" : {
+            "name" : "IBM Cognos Analytics 11.2.4 IF4",
+            "product_id" : "T041470-fixed",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:cognos_analytics:11.2.4_if4"
+            }
+          }
+        } ],
+        "category" : "product_name",
+        "name" : "Cognos Analytics"
+      }, {
+        "branches" : [ {
+          "category" : "product_version_range",
+          "name" : "<5.1.0",
+          "product" : {
+            "name" : "IBM DB2 <5.1.0",
+            "product_id" : "T039987"
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "5.1.0",
+          "product" : {
+            "name" : "IBM DB2 5.1.0",
+            "product_id" : "T039987-fixed",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:db2:5.1.0"
+            }
+          }
+        }, {
+          "category" : "product_version_range",
+          "name" : "Warehouse <5.1.0",
+          "product" : {
+            "name" : "IBM DB2 Warehouse <5.1.0",
+            "product_id" : "T039988"
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "Warehouse 5.1.0",
+          "product" : {
+            "name" : "IBM DB2 Warehouse 5.1.0",
+            "product_id" : "T039988-fixed",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:db2:warehouse__5.1.0"
+            }
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "on Cloud Pak for Data",
+          "product" : {
+            "name" : "IBM DB2 on Cloud Pak for Data",
+            "product_id" : "T042208",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:db2:on_cloud_pak_for_data"
+            }
+          }
+        } ],
+        "category" : "product_name",
+        "name" : "DB2"
+      }, {
+        "branches" : [ {
+          "category" : "product_version_range",
+          "name" : "<10.1.6.4",
+          "product" : {
+            "name" : "IBM Spectrum Protect Plus <10.1.6.4",
+            "product_id" : "T040030"
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "10.1.6.4",
+          "product" : {
+            "name" : "IBM Spectrum Protect Plus 10.1.6.4",
+            "product_id" : "T040030-fixed",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:spectrum_protect_plus:10.1.6.4"
+            }
+          }
+        }, {
+          "category" : "product_version_range",
+          "name" : "<10.1.17.1",
+          "product" : {
+            "name" : "IBM Spectrum Protect Plus <10.1.17.1",
+            "product_id" : "T044782"
+          }
+        }, {
+          "category" : "product_version",
+          "name" : "10.1.17.1",
+          "product" : {
+            "name" : "IBM Spectrum Protect Plus 10.1.17.1",
+            "product_id" : "T044782-fixed",
+            "product_identification_helper" : {
+              "cpe" : "cpe:/a:ibm:spectrum_protect_plus:10.1.17.1"
+            }
+          }
+        } ],
+        "category" : "product_name",
+        "name" : "Spectrum Protect Plus"
+      } ],
+      "category" : "vendor",
+      "name" : "IBM"
+    }, {
+      "branches" : [ {
+        "category" : "product_name",
+        "name" : "Red Hat Enterprise Linux",
+        "product" : {
+          "name" : "Red Hat Enterprise Linux",
+          "product_id" : "67646",
+          "product_identification_helper" : {
+            "cpe" : "cpe:/o:redhat:enterprise_linux:-"
+          }
+        }
+      } ],
+      "category" : "vendor",
+      "name" : "Red Hat"
+    } ]
+  },
+  "vulnerabilities" : [ {
+    "cve" : "CVE-2021-32740",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2021-32740"
+  }, {
+    "cve" : "CVE-2021-41186",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2021-41186"
+  }, {
+    "cve" : "CVE-2022-0759",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2022-0759"
+  }, {
+    "cve" : "CVE-2022-24795",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2022-24795"
+  }, {
+    "cve" : "CVE-2022-31163",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2022-31163"
+  }, {
+    "cve" : "CVE-2023-39325",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2023-39325"
+  }, {
+    "cve" : "CVE-2023-41993",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2023-41993"
+  }, {
+    "cve" : "CVE-2023-45283",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2023-45283"
+  }, {
+    "cve" : "CVE-2023-45288",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2023-45288"
+  }, {
+    "cve" : "CVE-2023-6597",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2023-6597"
+  }, {
+    "cve" : "CVE-2024-0406",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-0406"
+  }, {
+    "cve" : "CVE-2024-20918",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-20918"
+  }, {
+    "cve" : "CVE-2024-20952",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-20952"
+  }, {
+    "cve" : "CVE-2024-2398",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-2398"
+  }, {
+    "cve" : "CVE-2024-24786",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-24786"
+  }, {
+    "cve" : "CVE-2024-27281",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-27281"
+  }, {
+    "cve" : "CVE-2024-2961",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-2961"
+  }, {
+    "cve" : "CVE-2024-29857",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-29857"
+  }, {
+    "cve" : "CVE-2024-33599",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-33599"
+  }, {
+    "cve" : "CVE-2024-33883",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-33883"
+  }, {
+    "cve" : "CVE-2024-37370",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-37370"
+  }, {
+    "cve" : "CVE-2024-37371",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-37371"
+  }, {
+    "cve" : "CVE-2024-37890",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-37890"
+  }, {
+    "cve" : "CVE-2024-39338",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-39338"
+  }, {
+    "cve" : "CVE-2024-4068",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-4068"
+  }, {
+    "cve" : "CVE-2024-41110",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-41110"
+  }, {
+    "cve" : "CVE-2024-41123",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-41123"
+  }, {
+    "cve" : "CVE-2024-41946",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-41946"
+  }, {
+    "cve" : "CVE-2024-45296",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-45296"
+  }, {
+    "cve" : "CVE-2024-45491",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-45491"
+  }, {
+    "cve" : "CVE-2024-45590",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-45590"
+  }, {
+    "cve" : "CVE-2024-47220",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-47220"
+  }, {
+    "cve" : "CVE-2024-47554",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-47554"
+  }, {
+    "cve" : "CVE-2024-6119",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-6119"
+  }, {
+    "cve" : "CVE-2024-6345",
+    "product_status" : {
+      "known_affected" : [ "T040030", "T041470", "67646", "T042208", "T041469", "T039988", "T039987", "T044782" ]
+    },
+    "release_date" : "2025-01-01T23:00:00.000+00:00",
+    "title" : "CVE-2024-6345"
+  } ]
+}
