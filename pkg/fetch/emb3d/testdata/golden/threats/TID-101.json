@@ -1,0 +1,21 @@
+{
+	"id": "TID-101",
+	"text": "Power Consumption Analysis Side Channel",
+	"category": "hardware",
+	"properties": [
+		{
+			"id": "PID-11"
+		}
+	],
+	"mitigations": [
+		{
+			"id": "MID-027"
+		},
+		{
+			"id": "MID-059"
+		},
+		{
+			"id": "MID-060"
+		}
+	]
+}

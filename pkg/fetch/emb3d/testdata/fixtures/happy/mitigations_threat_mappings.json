@@ -1,0 +1,36 @@
+{
+    "mitigations": [
+        {
+            "id": "MID-001",
+            "name": "Software Only Bootloader Authentication",
+            "text": "Software Only Bootloader Authentication",
+            "level": "foundational",
+            "threats": [
+                {
+                    "id": "TID-201",
+                    "text": "Inadequate Bootloader Protection and Verification"
+                },
+                {
+                    "id": "TID-203",
+                    "text": "Malicious OS Kernel Driver/Module Installable"
+                },
+                {
+                    "id": "TID-211",
+                    "text": "Device Allows Unauthenticated Firmware Installation"
+                },
+                {
+                    "id": "TID-213",
+                    "text": "Faulty FW/SW Update Integrity Verification"
+                },
+                {
+                    "id": "TID-218",
+                    "text": "Operating System Susceptible to Rootkit"
+                },
+                {
+                    "id": "TID-301",
+                    "text": "Applications Binaries Modified"
+                }
+            ]
+        }
+    ]
+}

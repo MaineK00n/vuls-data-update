@@ -1,0 +1,26 @@
+{
+	"id": "PID-11",
+	"text": "Device includes a microprocessor",
+	"category": "Hardware",
+	"isparentProp": true,
+	"subProps": [],
+	"parentProp": "",
+	"threats": [
+		{
+			"id": "TID-101",
+			"text": "Power Consumption Analysis Side Channel"
+		},
+		{
+			"id": "TID-102",
+			"text": "Electromagnetic Analysis Side Channel"
+		},
+		{
+			"id": "TID-103",
+			"text": "Microarchitectural Side Channels"
+		},
+		{
+			"id": "TID-105",
+			"text": "Hardware Fault Injection – Control Flow Modification"
+		}
+	]
+}
