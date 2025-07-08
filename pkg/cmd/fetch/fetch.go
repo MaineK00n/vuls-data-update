@@ -146,6 +146,8 @@ import (
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/tracker"
 	ubuntuUSNDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/usndb"
 	ubuntuVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/vex"
+	variotExploits "github.com/MaineK00n/vuls-data-update/pkg/fetch/variot/exploits"
+	variotVulns "github.com/MaineK00n/vuls-data-update/pkg/fetch/variot/vulns"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
 	windowsAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/advisory"
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
@@ -250,6 +252,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSUSEOVAL(), newCmdSUSECVRF(), newCmdSUSECVRFCVE(), newCmdSUSECSAF(), newCmdSUSECSAFVEX(), newCmdSUSEOSV(),
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(), newCmdUbuntuCVE(), newCmdUbuntuNotice(),
+		newCmdVARIoTExploits(), newCmdVARIoTVulns(),
 		newCmdVulnCheckKEV(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsDeployment(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiSecDB(), newCmdWolfiOSV(),
@@ -4543,6 +4546,80 @@ func newCmdUbuntuNotice() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := ubuntuNotice.Fetch(ubuntuNotice.WithDir(options.dir), ubuntuNotice.WithRetry(options.retry), ubuntuNotice.WithConcurrency(options.concurrency), ubuntuNotice.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch ubuntu notice")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdVARIoTExploits() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "variot", "exploits"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "variot-exploits <API Token>",
+		Short: "Fetch VARIoT Exploits data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch variot-exploits token
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := variotExploits.Fetch(args[0], variotExploits.WithDir(options.dir), variotExploits.WithRetry(options.retry), variotExploits.WithConcurrency(options.concurrency), variotExploits.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch variot exploits")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdVARIoTVulns() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "variot", "vulns"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "variot-vulns <API Token>",
+		Short: "Fetch VARIoT Vulns data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch variot-vulns token
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := variotVulns.Fetch(args[0], variotVulns.WithDir(options.dir), variotVulns.WithRetry(options.retry), variotVulns.WithConcurrency(options.concurrency), variotVulns.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch variot vulns")
 			}
 			return nil
 		},

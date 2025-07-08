@@ -1,0 +1,1028 @@
+{
+	"id": "VAR-201810-0092",
+	"affected_products": {
+		"data": [
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.40.37.4835"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.36.28.4332"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.40.41.5058"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.40.38.4963"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.36.33.4578"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.36.31.4414"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.40.36.4703"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.36.35.5057"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.36.34.4889"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "intel",
+				"version": "15.40.34.4624"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "intel",
+				"version": "15.33.43.4425"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "intel",
+				"version": "15.33.47.5059"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "intel",
+				"version": "15.36.26.4294"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "intel",
+				"version": "15.33.46.4885"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "intel",
+				"version": "15.33.45.4653"
+			},
+			{
+				"model": "nuc kits",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "intel",
+				"version": "2018 year 5 moon 24 before the japanese version"
+			},
+			{
+				"model": "quickassist technology",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "intel",
+				"version": "for linux version 4.2"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "intel",
+				"version": "10.18.x.5056 (aka 15.33.x.5056)"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "intel",
+				"version": "10.18.x.5057 (aka 15.36.x.5057)"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "intel",
+				"version": "20.19.x.5058 (aka 15.40.x.5058)"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.49"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.47"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.46"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.45"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.40"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.36"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.33"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "eq",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "0"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "20.19.x.5058"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.40.x.5058"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.36.x.5057"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "15.33.x.5056"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "10.18.x.5057"
+			},
+			{
+				"model": "graphics driver",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "intel",
+				"version": "10.18.x.5056"
+			}
+		],
+		"sources": [
+			{
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"configurations": {
+		"data": [
+			{
+				"CVE_data_version": "4.0",
+				"nodes": [
+					{
+						"cpe_match": [
+							{
+								"cpe22Uri": "cpe:/o:intel:next_unit_of_computing_firmware",
+								"vulnerable": true
+							},
+							{
+								"cpe22Uri": "cpe:/a:intel:quickassist_technology",
+								"vulnerable": true
+							},
+							{
+								"cpe22Uri": "cpe:/a:intel:graphics_driver",
+								"vulnerable": true
+							}
+						],
+						"operator": "OR"
+					}
+				]
+			}
+		],
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			}
+		]
+	},
+	"credits": {
+		"data": "Apple",
+		"sources": [
+			{
+				"db": "PACKETSTORM",
+				"id": "155067"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155066"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			}
+		],
+		"trust": 0.8
+	},
+	"cve": "CVE-2018-12153",
+	"cvss": {
+		"data": [
+			{
+				"cvssV2": [
+					{
+						"accessComplexity": "LOW",
+						"accessVector": "LOCAL",
+						"authentication": "NONE",
+						"author": "nvd@nist.gov",
+						"availabilityImpact": "COMPLETE",
+						"baseScore": 4.9,
+						"confidentialityImpact": "NONE",
+						"exploitabilityScore": 3.9,
+						"id": "CVE-2018-12153",
+						"impactScore": 6.9,
+						"integrityImpact": "NONE",
+						"severity": "MEDIUM",
+						"trust": 1,
+						"vectorString": "AV:L/AC:L/Au:N/C:N/I:N/A:C",
+						"version": "2.0"
+					},
+					{
+						"accessComplexity": "LOW",
+						"accessVector": "LOCAL",
+						"authentication": "NONE",
+						"author": "VULHUB",
+						"availabilityImpact": "COMPLETE",
+						"baseScore": 4.9,
+						"confidentialityImpact": "NONE",
+						"exploitabilityScore": 3.9,
+						"id": "VHN-122084",
+						"impactScore": 6.9,
+						"integrityImpact": "NONE",
+						"severity": "MEDIUM",
+						"trust": 0.1,
+						"vectorString": "AV:L/AC:L/AU:N/C:N/I:N/A:C",
+						"version": "2.0"
+					}
+				],
+				"cvssV3": [
+					{
+						"attackComplexity": "LOW",
+						"attackVector": "LOCAL",
+						"author": "nvd@nist.gov",
+						"availabilityImpact": "HIGH",
+						"baseScore": 6.5,
+						"baseSeverity": "MEDIUM",
+						"confidentialityImpact": "NONE",
+						"exploitabilityScore": 2,
+						"id": "CVE-2018-12153",
+						"impactScore": 4,
+						"integrityImpact": "NONE",
+						"privilegesRequired": "LOW",
+						"scope": "CHANGED",
+						"trust": 1,
+						"userInteraction": "NONE",
+						"vectorString": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H",
+						"version": "3.0"
+					}
+				],
+				"severity": [
+					{
+						"author": "nvd@nist.gov",
+						"id": "CVE-2018-12153",
+						"trust": 1,
+						"value": "MEDIUM"
+					},
+					{
+						"author": "CNNVD",
+						"id": "CNNVD-201810-533",
+						"trust": 0.6,
+						"value": "MEDIUM"
+					},
+					{
+						"author": "VULHUB",
+						"id": "VHN-122084",
+						"trust": 0.1,
+						"value": "MEDIUM"
+					}
+				]
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"description": {
+		"data": "Denial of Service in Unified Shader Compiler in Intel Graphics Drivers before 10.18.x.5056 (aka 15.33.x.5056), 10.18.x.5057 (aka 15.36.x.5057) and 20.19.x.5058 (aka 15.40.x.5058) may allow an unprivileged user from a virtual machine guest to potentially crash the host system via local access. Intel Has released an update for each product.The expected impact depends on each vulnerability, but can be affected as follows: * Service operation interruption (DoS) * information leak * any WebGL Code execution. Intel Graphics Driver is prone to a remote code-execution vulnerability and a denial-of-service vulnerability. \nSuccessfully exploiting these issues may allow an attacker to execute  arbitrary code in the context of affected application or cause  denial-of-service conditions. \nIntel Graphics Driver versions prior to 10.18.x.5056 (aka 15.33.x.5056), 10.18.x.5057 (aka 15.36.x.5057) and 20.19.x.5058 (aka 15.40.x.5058) are vulnerable. Unified Shader Compiler is one of those compilers. A remote attacker can use a specially crafted shader file to exploit this vulnerability to cause a denial of service (system crash). \nCVE-2019-8787: Steffen Klee of Secure Mobile Networking Lab at\nTechnische Universität Darmstadt\n\nApp Store\nAvailable for: macOS Catalina 10.15\nImpact: A local attacker may be able to login to the account of a\npreviously logged in user without valid credentials. \nCVE-2019-8803: Kiyeon An, 차민규 (CHA Minkyu)\n\nAppleGraphicsControl\nAvailable for: macOS Catalina 10.15\nImpact: An application may be able to read restricted memory\nDescription: A validation issue was addressed with improved input\nsanitization. \nCVE-2019-8716: Zhiyi Zhang of Codesafe Team of Legendsec at Qi'anxin\nGroup, Zhuo Liang of Qihoo 360 Vulcan Team\n\nAssociated Domains\nAvailable for: macOS Catalina 10.15\nImpact: Improper URL processing may lead to data exfiltration\nDescription: An issue existed in the parsing of URLs. \nCVE-2019-8785: Ian Beer of Google Project Zero\nCVE-2019-8797: 08Tc3wBB working with SSD Secure Disclosure\n\nBooks\nAvailable for: macOS Catalina 10.15\nImpact: Parsing a maliciously crafted iBooks file may lead to\ndisclosure of user information\nDescription: A validation issue existed in the handling of symlinks. \nCVE-2019-8789: Gertjan Franken of imec-DistriNet, KU Leuven\n\nContacts\nAvailable for: macOS Catalina 10.15\nImpact: Processing a maliciously contact may lead to UI spoofing\nDescription: An inconsistent user interface issue was addressed with\nimproved state management. \nCVE-2019-8798: ABC Research s.r.o. \nCVE-2019-8759: another of 360 Nirvan Team\n\niTunes\nAvailable for: macOS Catalina 10.15\nImpact: Running the iTunes installer in an untrusted directory may\nresult in arbitrary code execution\nDescription: A dynamic library loading issue existed in iTunes setup. \nCVE-2019-8801: Hou JingYi (@hjy79425575) of Qihoo 360 CERT\n\nKernel\nAvailable for: macOS Catalina 10.15\nImpact: An application may be able to read restricted memory\nDescription: A validation issue was addressed with improved input\nsanitization. \nCVE-2019-8750: found by OSS-Fuzz\n\nmanpages\nAvailable for: macOS High Sierra 10.13.6, macOS Catalina 10.15\nImpact: A malicious application may be able to gain root privileges\nDescription: A validation issue was addressed with improved logic. \nCVE-2019-8802: Csaba Fitzl (@theevilbit)\n\nPluginKit\nAvailable for: macOS High Sierra 10.13.6, macOS Mojave 10.14.6\nImpact: A local user may be able to check for the existence of\narbitrary files\nDescription: A logic issue was addressed with improved restrictions. \nCVE-2019-8715: an anonymous researcher\n\nSystemExtensions\nAvailable for: macOS Catalina 10.15\nImpact: An application may be able to execute arbitrary code with\nsystem privileges\nDescription: A validation issue existed in the entitlement\nverification. -----BEGIN PGP SIGNED MESSAGE-----\nHash: SHA256\n\nAPPLE-SA-2019-10-29-10 Additional information\nfor APPLE-SA-2019-10-07-1 macOS Catalina 10.15\n\nmacOS Catalina 10.15 addresses the following:\n\nAMD\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An application may be able to execute arbitrary code with\nkernel privileges\nDescription: A memory corruption issue was addressed with improved\nmemory handling. \nCVE-2019-8748: Lilang Wu and Moony Li of TrendMicro Mobile Security\nResearch Team\n\napache_mod_php\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Multiple issues in PHP\nDescription: Multiple issues were addressed by updating to PHP\nversion 7.3.8. \nCVE-2019-11041\nCVE-2019-11042\n\nAudio\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing a maliciously crafted audio file may lead to\narbitrary code execution\nDescription: A memory corruption issue was addressed with improved\nstate management. \nCVE-2019-8706: Yu Zhou of Ant-financial Light-Year Security Lab\nEntry added October 29, 2019\n\nBooks\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Parsing a maliciously crafted iBooks file may lead to a\npersistent denial-of-service\nDescription: A resource exhaustion issue was addressed with improved\ninput validation. \nCVE-2019-8774: Gertjan Franken imec-DistriNet of KU Leuven\nEntry added October 29, 2019\n\nCFNetwork\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing maliciously crafted web content may lead to a\ncross site scripting attack\nDescription: This issue was addressed with improved checks. \nCVE-2019-8753: Łukasz Pilorz of Standard Chartered GBS Poland\nEntry added October 29, 2019\n\nCoreAudio\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing a maliciously crafted movie may result in the\ndisclosure of process memory\nDescription: A memory corruption issue was addressed with improved\nvalidation. \nCVE-2019-8705: riusksk of VulWar Corp working with Trend Micro's Zero\nDay Initiative\n\nCoreCrypto\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing a large input may lead to a denial of service\nDescription: A denial of service issue was addressed with improved\ninput validation. \nCVE-2019-8741: Nicky Mouha of NIST\nEntry added October 29, 2019\n\nCoreMedia\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing maliciously crafted web content may lead to\narbitrary code execution\nDescription: A memory corruption issue was addressed with improved\nstate management. \nCVE-2019-8825: Found by GWP-ASan in Google Chrome\nEntry added October 29, 2019\n\nCrash Reporter\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: The \"Share Mac Analytics\" setting may not be disabled when a\nuser deselects the switch to share analytics\nDescription: A race condition existed when reading and writing user\npreferences. This was addressed with improved state handling. \nCVE-2019-8757: William Cerniuk of Core Development, LLC\n\nCUPS\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An attacker in a privileged network position may be able to\nleak sensitive user information\nDescription: An input validation issue was addressed with improved\ninput validation. \nCVE-2019-8736: Pawel Gocyla of ING Tech Poland (ingtechpoland.com)\nEntry added October 29, 2019\n\nCUPS\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing a maliciously crafted string may lead to heap\ncorruption\nDescription: A memory consumption issue was addressed with improved\nmemory handling. \nCVE-2019-8767: Stephen Zeisberg\nEntry added October 29, 2019\n\nCUPS\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An attacker in a privileged position may be able to perform a\ndenial of service attack\nDescription: A denial of service issue was addressed with improved\nvalidation. \nCVE-2019-8737: Pawel Gocyla of ING Tech Poland (ingtechpoland.com)\nEntry added October 29, 2019\n\nFile Quarantine\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A malicious application may be able to elevate privileges\nDescription: This issue was addressed by removing the vulnerable\ncode. \nCVE-2019-8509: CodeColorist of Ant-Financial LightYear Labs\nEntry added October 29, 2019\n\nFoundation\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A remote attacker may be able to cause unexpected application\ntermination or arbitrary code execution\nDescription: An out-of-bounds read was addressed with improved input\nvalidation. \nCVE-2019-8746: Natalie Silvanovich and Samuel Groß of Google Project\nZero\nEntry added October 29, 2019\n\nGraphics\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing a malicious shader may result in unexpected\napplication termination or arbitrary code execution\nDescription: Multiple memory corruption issues were addressed with\nimproved input validation. \nCVE-2018-12152: Piotr Bania of Cisco Talos\nCVE-2018-12153: Piotr Bania of Cisco Talos\nCVE-2018-12154: Piotr Bania of Cisco Talos\nEntry added October 29, 2019\n\nIntel Graphics Driver\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An application may be able to execute arbitrary code with\nsystem privileges\nDescription: A memory corruption issue was addressed with improved\nmemory handling. \nCVE-2019-8758: Lilang Wu and Moony Li of Trend Micro\n\nIOGraphics\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A malicious application may be able to determine kernel\nmemory layout\nDescription: A logic issue was addressed with improved restrictions. \nCVE-2019-8755: Lilang Wu and Moony Li of Trend Micro\n\nIOGraphics\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A local user may be able to cause unexpected system\ntermination or read kernel memory\nDescription: An out-of-bounds read was addressed with improved bounds\nchecking. \nCVE-2019-8759: another of 360 Nirvan Team\nEntry added October 29, 2019\n\nKernel\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A local app may be able to read a persistent account\nidentifier\nDescription: A validation issue was addressed with improved logic. \nCVE-2019-8809: Apple\nEntry added October 29, 2019\n\nKernel\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An application may be able to execute arbitrary code with\nkernel privileges\nDescription: A memory corruption issue was addressed with improved\nstate management. \nCVE-2019-8709: derrek (@derrekr6)\n[confirmed]derrek (@derrekr6)\nCVE-2019-8781: Linus Henze (pinauten.de)\nEntry added October 29, 2019\n\nKernel\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An application may be able to execute arbitrary code with\nkernel privileges\nDescription: A memory corruption issue was addressed with improved\nmemory handling. \nCVE-2019-8717: Jann Horn of Google Project Zero\n\nKernel\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A malicious application may be able to determine kernel\nmemory layout\nDescription: A memory corruption issue existed in the handling of\nIPv6 packets. This issue was addressed with improved memory\nmanagement. \nCVE-2019-8744: Zhuo Liang of Qihoo 360 Vulcan Team\nEntry added October 29, 2019\n\nlibxml2\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Multiple issues in libxml2\nDescription: Multiple memory corruption issues were addressed with\nimproved input validation. \nCVE-2019-8749: found by OSS-Fuzz\nCVE-2019-8756: found by OSS-Fuzz\nEntry added October 29, 2019\n\nlibxslt\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Multiple issues in libxslt\nDescription: Multiple memory corruption issues were addressed with\nimproved input validation. \nCVE-2019-8750: found by OSS-Fuzz\nEntry added October 29, 2019\n\nmDNSResponder\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An attacker in physical proximity may be able to passively\nobserve device names in AWDL communications\nDescription: This issue was resolved by replacing device names with a\nrandom identifier. \nCVE-2019-8799: David Kreitschmann and Milan Stute of Secure Mobile\nNetworking Lab at Technische Universität Darmstadt\nEntry added October 29, 2019\n\nMenus\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing maliciously crafted web content may lead to\narbitrary code execution\nDescription: A memory corruption issue was addressed with improved\nstate management. \nCVE-2019-8826: Found by GWP-ASan in Google Chrome\nEntry added October 29, 2019\n\nNotes\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A local user may be able to view a user's locked notes\nDescription: The contents of locked notes sometimes appeared in\nsearch results. This issue was addressed with improved data cleanup. \nCVE-2019-8730: Jamie Blumberg (@jamie_blumberg) of Virginia\nPolytechnic Institute and State University\n\nPDFKit\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An attacker may be able to exfiltrate the contents of an\nencrypted PDF\nDescription: An issue existed in the handling of links in encrypted\nPDFs. This issue was addressed by adding a confirmation prompt. \nCVE-2019-8772: Jens Müller of Ruhr University Bochum, Fabian Ising\nof FH Münster University of Applied Sciences, Vladislav Mladenov\nof Ruhr University Bochum, Christian Mainka of Ruhr University\nBochum, Sebastian Schinzel of FH Münster University of Applied\nSciences, and Jörg Schwenk of Ruhr University Bochum\n\nPluginKit\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A local user may be able to check for the existence of\narbitrary files\nDescription: A logic issue was addressed with improved restrictions. \nCVE-2019-8708: an anonymous researcher\nEntry added October 29, 2019\n\nPluginKit\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An application may be able to execute arbitrary code with\nsystem privileges\nDescription: A memory corruption issue was addressed with improved\nmemory handling. \nCVE-2019-8715: an anonymous researcher\nEntry added October 29, 2019\n\nSharedFileList\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A malicious application may be able to access recent\ndocuments\nDescription: The issue was addressed with improved permissions logic. \nCVE-2019-8770: Stanislav Zinukhov of Parallels International GmbH\n\nsips\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: An application may be able to execute arbitrary code with\nsystem privileges\nDescription: A memory corruption issue was addressed with improved\nmemory handling. \nCVE-2019-8701: Simon Huang(@HuangShaomang), Rong Fan(@fanrong1992)\nand pjf of IceSword Lab of Qihoo 360\n\nUIFoundation\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Parsing a maliciously crafted text file may lead to\ndisclosure of user information\nDescription: This issue was addressed with improved checks. \nCVE-2019-8761: Renee Trisberg of SpectX\nEntry added October 29, 2019\n\nUIFoundation\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Processing a maliciously crafted text file may lead to\narbitrary code execution\nDescription: A buffer overflow was addressed with improved bounds\nchecking. \nCVE-2019-8745: riusksk of VulWar Corp working with Trend Micro's Zero\nDay Initiative\n\nWebKit\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: A user may be unable to delete browsing history items\nDescription: \"Clear History and Website Data\" did not clear the\nhistory. The issue was addressed with improved data deletion. \nCVE-2019-8768: Hugo S. Diaz (coldpointblue)\n\nWebKit\nAvailable for: MacBook (Early 2015 and later), MacBook Air (Mid 2012\nand later), MacBook Pro (Mid 2012 and later), Mac mini (Late 2012 and\nlater), iMac (Late 2012 and later), iMac Pro (all models), Mac Pro\n(Late 2013 and later)\nImpact: Visiting a maliciously crafted website may reveal browsing\nhistory\nDescription: An issue existed in the drawing of web page elements. \nThe issue was addressed with improved logic. \nCVE-2019-8769: Piérre Reimertz (@reimertz)\n\nAdditional recognition\n\nAppleRTC\nWe would like to acknowledge Vitaly Cheptsov for their assistance. \n\nAudio\nWe would like to acknowledge riusksk of VulWar Corp working with\nTrend Micro's Zero Day Initiative for their assistance. \n\nboringssl\nWe would like to acknowledge Nimrod Aviram of Tel Aviv University,\nRobert Merget of Ruhr University Bochum, Juraj Somorovsky of Ruhr\nUniversity Bochum and Thijs Alkemade (@xnyhps) of Computest for their\nassistance. \n\nFinder\nWe would like to acknowledge Csaba Fitzl (@theevilbit) for their\nassistance. \n\nGatekeeper\nWe would like to acknowledge Csaba Fitzl (@theevilbit) for their\nassistance. \n\nIdentity Service\nWe would like to acknowledge Yiğit Can YILMAZ (@yilmazcanyigit) for\ntheir assistance. \n\nKernel\nWe would like to acknowledge Brandon Azad of Google Project Zero for\ntheir assistance. \n\nmDNSResponder\nWe would like to acknowledge Gregor Lang of e.solutions GmbH for\ntheir assistance. \n\npython\nWe would like to acknowledge an anonymous researcher for their\nassistance. \n\nSafari Data Importing\nWe would like to acknowledge Kent Zoya for their assistance. \n\nSimple certificate enrollment protocol (SCEP)\nWe would like to acknowledge an anonymous researcher for their\nassistance. \n\nTelephony\nWe would like to acknowledge Phil Stokes from SentinelOne for their\nassistance. \n\nVPN\nWe would like to acknowledge Royce Gawron of Second Son Consulting,\nInc. for their assistance. \n\nInstallation note:\n\nmacOS Catalina 10.15 may be obtained from the Mac App Store or\nApple's Software Downloads web site:\nhttps://support.apple.com/downloads/\n\nInformation will also be posted to the Apple Security Updates\nweb site: https://support.apple.com/kb/HT201222\n\nThis message is signed with Apple's Product Security PGP key,\nand details are available at:\nhttps://www.apple.com/support/security/pgp/\n-----BEGIN PGP SIGNATURE-----\n\niQIzBAEBCAAdFiEEM5FaaFRjww9EJgvRBz4uGe3y0M0FAl24s4QACgkQBz4uGe3y\n0M0s3w//QZG0JsE1BjWJ3mwKoSn/I1V0SLryV9UxJeibPfhyF6VJEYk63jZxZ5ki\n48vM7iKE3nAHamNFOMtUvyzEdO6VGNZ1uiuSu9nkyziEERapHJSLcEh83p2JhWV/\nSEsBB3bsT4l3V9ZYxk/9DX6ynCTzKLZTynw6Yo2PMYiMpavD5sfZ6v8U53qdZ+LX\nSNuw+vRTsvu3YlFkUStTdQ64sT72yGII0c8iFpSb2AWv7IgbypB5lW4/MRQjrzoc\n9yMhvMgXcgAlzoH5GpGE2EflbekcQxudxDh1t0o7f8OASRPTljNjL4oiKXBMhiAM\niUgDn7duE9LqupfSWK5WOUkF+XRV0qTaLCTDWaCzVa5YsApvSVPhbmoFqKXSQG8T\nU6SxQviqzJ06sD1jqm2sZ/LnD5xMEXhQvNx89oJrTRsCU/o0fy4tRhHp52aJoF7E\nWvr1kTlo6SGm6NjkmZVoKj6962/0XUYSOt8gR+L/sF7N6URUG+1Ko2jx8zhYHMEO\nju+Hw0TFHd+8mP29oOEIsIpuRpCp9jjgEJDdu7mGqJ1Py2Gs0uGeHEZd6DJhKggA\nIvdJu4Q9usjWaxQ9H3m2I/xEqw78sMEEFgCYfLTC0gf2ChaiGZuhKipcF04c81kM\nbOGmjuyJrajD/2rY9EHrqtCm5b2079YAIxUAmTOkT0uP2WmlZoM=\n=bhin\n-----END PGP SIGNATURE-----\n\n\n",
+		"sources": [
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155067"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155066"
+			}
+		],
+		"trust": 2.16
+	},
+	"external_ids": {
+		"data": [
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153",
+				"trust": 3
+			},
+			{
+				"db": "BID",
+				"id": "105582",
+				"trust": 2
+			},
+			{
+				"db": "JVN",
+				"id": "JVNVU99973215",
+				"trust": 0.8
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201",
+				"trust": 0.8
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533",
+				"trust": 0.7
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155067",
+				"trust": 0.7
+			},
+			{
+				"db": "AUSCERT",
+				"id": "ESB-2019.4010",
+				"trust": 0.6
+			},
+			{
+				"db": "LENOVO",
+				"id": "LEN-24426",
+				"trust": 0.6
+			},
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084",
+				"trust": 0.1
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155066",
+				"trust": 0.1
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155067"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155066"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"iot": {
+		"data": true,
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			}
+		],
+		"trust": 0.84444443
+	},
+	"last_update_date": "2024-11-23T21:01:59.874000Z",
+	"patch": {
+		"data": [
+			{
+				"title": "INTEL-OSS-10005 - Intel QuickAssist Technology for Linux Advisory",
+				"trust": 0.8,
+				"url": "https://01.org/security/advisories/intel-oss-10005"
+			},
+			{
+				"title": "INTEL-SA-00166 - Intel Graphics Driver Unified Shader Compiler Advisory",
+				"trust": 0.8,
+				"url": "https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00166.html"
+			},
+			{
+				"title": "INTEL-SA-00168 - Intel NUC Bios Updater Advisory",
+				"trust": 0.8,
+				"url": "https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00168.html"
+			},
+			{
+				"title": "Intel Graphics Drivers Unified Shader Compiler Security vulnerabilities",
+				"trust": 0.6,
+				"url": "http://www.cnnvd.org.cn/web/xxk/bdxqById.tag?id=86131"
+			}
+		],
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			}
+		]
+	},
+	"problemtype_data": {
+		"data": [
+			{
+				"problemtype": "CWE-20",
+				"trust": 1.1
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"references": {
+		"data": [
+			{
+				"trust": 2,
+				"url": "https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00166.html"
+			},
+			{
+				"trust": 1.7,
+				"url": "http://www.securityfocus.com/bid/105582"
+			},
+			{
+				"trust": 1.7,
+				"url": "https://support.apple.com/kb/ht210634"
+			},
+			{
+				"trust": 1.7,
+				"url": "https://support.apple.com/kb/ht210722"
+			},
+			{
+				"trust": 1.7,
+				"url": "http://seclists.org/fulldisclosure/2019/oct/55"
+			},
+			{
+				"trust": 1.7,
+				"url": "http://seclists.org/fulldisclosure/2019/oct/56"
+			},
+			{
+				"trust": 1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2018-12152"
+			},
+			{
+				"trust": 1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2018-12153"
+			},
+			{
+				"trust": 1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2018-12154"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2018-12152"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2018-12158"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2018-12153"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2018-12154"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2018-12193"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://jvn.jp/vu/jvnvu99973215/"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2018-12158"
+			},
+			{
+				"trust": 0.8,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2018-12193"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://support.apple.com/en-au/ht201222"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://vigilance.fr/vulnerability/apple-macos-multiple-vulnerabilities-30747"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://support.lenovo.com/us/en/solutions/len-24426"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://packetstormsecurity.com/files/155067/apple-security-advisory-2019-10-29-2.html"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://www.auscert.org.au/bulletins/esb-2019.4010/"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://support.apple.com/en-us/ht210722"
+			},
+			{
+				"trust": 0.6,
+				"url": "https://support.apple.com/en-us/ht210634"
+			},
+			{
+				"trust": 0.3,
+				"url": "http://www.intel.com/"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://support.apple.com/kb/ht201222"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8706"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8744"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8736"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8750"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://support.apple.com/downloads/"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8708"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8509"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8756"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://www.apple.com/support/security/pgp/"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8737"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8749"
+			},
+			{
+				"trust": 0.2,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8715"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8784"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8789"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8788"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8767"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2017-7152"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8716"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8786"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8801"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8787"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8794"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8798"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8797"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8785"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8759"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8761"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-11042"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8753"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-11041"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8717"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8757"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8701"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8730"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8746"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8745"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8748"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8758"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8709"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8755"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8705"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2019-8741"
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155067"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155066"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"sources": {
+		"data": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155067"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "155066"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"sources_release_date": {
+		"data": [
+			{
+				"date": "2018-10-10T00:00:00",
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"date": "2018-10-09T00:00:00",
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"date": "2018-10-11T00:00:00",
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"date": "2019-11-01T17:11:03",
+				"db": "PACKETSTORM",
+				"id": "155067"
+			},
+			{
+				"date": "2019-11-01T17:10:40",
+				"db": "PACKETSTORM",
+				"id": "155066"
+			},
+			{
+				"date": "2018-10-11T00:00:00",
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"date": "2018-10-10T18:29:03.920000",
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"sources_update_date": {
+		"data": [
+			{
+				"date": "2019-10-30T00:00:00",
+				"db": "VULHUB",
+				"id": "VHN-122084"
+			},
+			{
+				"date": "2018-10-09T00:00:00",
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"date": "2019-07-26T00:00:00",
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			},
+			{
+				"date": "2021-11-03T00:00:00",
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			},
+			{
+				"date": "2024-11-21T03:44:40.033000",
+				"db": "NVD",
+				"id": "CVE-2018-12153"
+			}
+		]
+	},
+	"threat_type": {
+		"data": "local",
+		"sources": [
+			{
+				"db": "BID",
+				"id": "105582"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			}
+		],
+		"trust": 0.9
+	},
+	"title": {
+		"data": "Intel Multiple vulnerabilities in the product",
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2018-008201"
+			}
+		],
+		"trust": 0.8
+	},
+	"type": {
+		"data": "input validation error",
+		"sources": [
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201810-533"
+			}
+		],
+		"trust": 0.6
+	}
+}
