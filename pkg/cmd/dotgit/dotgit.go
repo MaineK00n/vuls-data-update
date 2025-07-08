@@ -30,6 +30,8 @@ func NewCmdDotGit() *cobra.Command {
 		newCmdContains(), newCmdFind(), newCmdGrep(),
 		newCmdCat(), newCmdDiff(),
 		newCmdLog(),
+		newCmdLs(),
+		newCmdStatus(),
 	)
 
 	return cmd
