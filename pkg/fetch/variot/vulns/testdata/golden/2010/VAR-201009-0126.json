@@ -1,0 +1,3591 @@
+{
+	"id": "VAR-201009-0126",
+	"affected_products": {
+		"data": [
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 2.1,
+				"vendor": "cisco",
+				"version": "12.2"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 2.1,
+				"vendor": "cisco",
+				"version": "12.3"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.8,
+				"vendor": "cisco",
+				"version": "12.4"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xi"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xq"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xr"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xm"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xs"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xt"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1t"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xp"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.6,
+				"vendor": "cisco",
+				"version": "12.1xl"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.3,
+				"vendor": "cisco",
+				"version": "12.2xv"
+			},
+			{
+				"model": "ios xe",
+				"scope": "eq",
+				"trust": 1.3,
+				"vendor": "cisco",
+				"version": "2.5.1"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.3,
+				"vendor": "cisco",
+				"version": "12.1xv"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.3,
+				"vendor": "cisco",
+				"version": "12.4xv"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1.3,
+				"vendor": "cisco",
+				"version": "12.3xx"
+			},
+			{
+				"model": "ios xe",
+				"scope": "eq",
+				"trust": 1.1,
+				"vendor": "cisco",
+				"version": "2.6"
+			},
+			{
+				"model": "ios xe",
+				"scope": "eq",
+				"trust": 1.1,
+				"vendor": "cisco",
+				"version": "2.5"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yz"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xz"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sca"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2ze"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xn"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sg"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2bw"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xm"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xz"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zu"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2dd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1yd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3b"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xw"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yg"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zh"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1xu"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2ym"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sra"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xh"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zy"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yy"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xg"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xl"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2cz"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sv"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4ya"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2t"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xn"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2b"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yx"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2scc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xy"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xf"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1ya"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3tpc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xr"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xg"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2by"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4mr"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2s"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yf"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xu"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xs"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2bx"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yw"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xf"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3ys"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2\\(18\\)sxf8"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zya"
+			},
+			{
+				"model": "ios xe",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "2.6.0"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1yb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4ye"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yx"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2tpc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "15.0xa"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yf"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xa"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1ye"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yi"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xp"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xk"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yv"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "15.1t"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xa"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xk"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xl"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1xy"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xl"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sxe"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xi"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4sw"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yt"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yh"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1yf"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2ye"
+			},
+			{
+				"model": "ios xe",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "2.5.0"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yz"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2ex"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2scd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xu"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xg"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yh"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sxd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xm"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yu"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sy"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sz"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1yh"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xq"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2ya"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xj"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3ym"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yq"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4yb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xw"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "15.1xb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1yc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yu"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xy"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xq"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yl"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.1yi"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "15.0m"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2dx"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yk"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xa"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xi"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2srb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zf"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3yt"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3t"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yo"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3ya"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3va"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3za"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xe"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4yd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2\\(18\\)sxf7"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xt"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xk"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yk"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zl"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.3xw"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zd"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2zp"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2yn"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xt"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2scb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2xs"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.4xb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sbc"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sxa"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2sxb"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 1,
+				"vendor": "cisco",
+				"version": "12.2su"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "cisco",
+				"version": "12.1"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "cisco",
+				"version": "15.0"
+			},
+			{
+				"model": "ios",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "cisco",
+				"version": "15.1"
+			},
+			{
+				"model": "ios 12.3xd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3b",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xa7",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3va",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sxb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xm3",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xt",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yh",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xu",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xm",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxd1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sra6",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xm1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xs",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xg5",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xg3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.1 t0a",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 t4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sbc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xp",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sga",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 srb1",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4yb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yv",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yz",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.0m",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xg",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 yx17",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yx",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scd3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xq6",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 sw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xu",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xa3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios xe",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": "2.5.2"
+			},
+			{
+				"model": "ios 12.2xt",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sz",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi8a",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sra3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yy",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zh",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4t",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.0 m3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scb8",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2t",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xi",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xg",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxa",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 sw3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi9",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1yf",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yo",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xq",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 mc1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xm",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 ye1",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2s",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2svd",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zj",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sra4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1yd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.0s",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4ye",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2ex",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yf",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zl",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yl",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xa4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yx",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yz",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xg4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yg",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 t6",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yt",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 xn1",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xj",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xz",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3t",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxb4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xa",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1 ye4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 ye",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yf",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sv",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xh",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.1xb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1ye",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2srd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxb1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi10a",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xj",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 yk1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xj",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xa5",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3jk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3ym",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1yi",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xa6",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xr",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scb10",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xr",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4mr",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sy",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sre1",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xy",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4mra",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xi",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sre",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yu",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sg",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xs",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios xe",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": "2.6.1"
+			},
+			{
+				"model": "ios 12.4ya",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi10",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xq",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xf",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4yd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xq",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 mda4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.1t",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 yk3",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi7",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xe3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxf9",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2cz",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1yb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scc4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1t",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 srb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zf",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.0xa",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xn",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xn",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xe",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sxd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2by",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb19",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1yc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xl",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1 ye1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2b",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xf",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxb6",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sv1",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yt",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 15.1 t1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3tpc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2ya",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xu",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xt",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 gc2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sra1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2mc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scb9",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb1b",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xe2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scd4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yq",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxb7",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xz",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1yh",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xm",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zu",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xy",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xe1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xg2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3za",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 sw1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xl",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xy",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xj",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2dx",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2ze",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1xi",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sg",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xe5",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3yu",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.1ya",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sxf8",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sb3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 yk",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2bx",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xa",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 t14",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 yk2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 sw6",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xa",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 yg3",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sxa",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xg",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xp",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xq",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xe",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2su",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2sca",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2src",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 scc5",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yb",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3xc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2tpc",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yj",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2zp",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2yn",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2dd",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xm",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2bw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2xl",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2 sra2",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4sw",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3ys",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.2ye",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 mra1",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4 xe4",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.3 xi11",
+				"scope": "ne",
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			},
+			{
+				"model": "ios 12.4xl",
+				"scope": null,
+				"trust": 0.3,
+				"vendor": "cisco",
+				"version": null
+			}
+		],
+		"sources": [
+			{
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"configurations": {
+		"data": [
+			{
+				"CVE_data_version": "4.0",
+				"nodes": [
+					{
+						"cpe_match": [
+							{
+								"cpe22Uri": "cpe:/o:cisco:ios",
+								"vulnerable": true
+							},
+							{
+								"cpe22Uri": "cpe:/o:cisco:ios_xe",
+								"vulnerable": true
+							}
+						],
+						"operator": "OR"
+					}
+				]
+			}
+		],
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			}
+		]
+	},
+	"credits": {
+		"data": "Cisco",
+		"sources": [
+			{
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			}
+		],
+		"trust": 0.9
+	},
+	"cve": "CVE-2010-2829",
+	"cvss": {
+		"data": [
+			{
+				"cvssV2": [
+					{
+						"accessComplexity": "LOW",
+						"accessVector": "NETWORK",
+						"authentication": "NONE",
+						"author": "nvd@nist.gov",
+						"availabilityImpact": "COMPLETE",
+						"baseScore": 7.8,
+						"confidentialityImpact": "NONE",
+						"exploitabilityScore": 10,
+						"id": "CVE-2010-2829",
+						"impactScore": 6.9,
+						"integrityImpact": "NONE",
+						"severity": "HIGH",
+						"trust": 1.8,
+						"vectorString": "AV:N/AC:L/Au:N/C:N/I:N/A:C",
+						"version": "2.0"
+					},
+					{
+						"accessComplexity": "LOW",
+						"accessVector": "NETWORK",
+						"authentication": "NONE",
+						"author": "VULHUB",
+						"availabilityImpact": "COMPLETE",
+						"baseScore": 7.8,
+						"confidentialityImpact": "NONE",
+						"exploitabilityScore": 10,
+						"id": "VHN-45434",
+						"impactScore": 6.9,
+						"integrityImpact": "NONE",
+						"severity": "HIGH",
+						"trust": 0.1,
+						"vectorString": "AV:N/AC:L/AU:N/C:N/I:N/A:C",
+						"version": "2.0"
+					}
+				],
+				"cvssV3": [],
+				"severity": [
+					{
+						"author": "nvd@nist.gov",
+						"id": "CVE-2010-2829",
+						"trust": 1,
+						"value": "HIGH"
+					},
+					{
+						"author": "NVD",
+						"id": "CVE-2010-2829",
+						"trust": 0.8,
+						"value": "High"
+					},
+					{
+						"author": "CNNVD",
+						"id": "CNNVD-201009-239",
+						"trust": 0.6,
+						"value": "HIGH"
+					},
+					{
+						"author": "VULHUB",
+						"id": "VHN-45434",
+						"trust": 0.1,
+						"value": "HIGH"
+					}
+				]
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"description": {
+		"data": "Unspecified vulnerability in the H.323 implementation in Cisco IOS 12.1 through 12.4 and 15.0 through 15.1, and IOS XE 2.5.x before 2.5.2 and 2.6.x before 2.6.1, allows remote attackers to cause a denial of service (traceback and device reload) via crafted H.323 packets, aka Bug ID CSCtd33567. Cisco IOS of H.323 For implementation, H.323 Service operation disruption due to incomplete packet processing (DoS) There is a vulnerability that becomes a condition. The problem is Bug ID : CSCtd33567 It is a problem.Skillfully crafted by a third party H.323 Service disruption via packets (DoS) There is a possibility of being put into a state. Cisco IOS is prone to an unspecified  remote denial-of-service vulnerability. \nAn attacker can exploit this issue to cause the affected device to reload, denying service to legitimate users. \nThis issue is being tracked by Cisco Bug ID CSCtd33567. ----------------------------------------------------------------------\n\n\nWindows Applications Insecure Library Loading\n\nThe Official, Verified Secunia List:\nhttp://secunia.com/advisories/windows_insecure_library_loading/\n\nThe list is continuously updated as we confirm the vulnerability reports so check back regularly too see if any of your apps are affected. \n\nSOLUTION:\nApply updates (please see the vendor's advisory for details). \n\nPROVIDED AND/OR DISCOVERED BY:\nReported by the vendor. \n\nORIGINAL ADVISORY:\ncisco-sa-20100922-h323:\nhttp://www.cisco.com/warp/public/707/cisco-sa-20100922-h323.shtml\n\nOTHER REFERENCES:\nFurther details available in Customer Area:\nhttp://secunia.com/products/corporate/EVM/\n\nDEEP LINKS:\nFurther details available in Customer Area:\nhttp://secunia.com/products/corporate/EVM/\n\nEXTENDED DESCRIPTION:\nFurther details available in Customer Area:\nhttp://secunia.com/products/corporate/EVM/\n\nEXTENDED SOLUTION:\nFurther details available in Customer Area:\nhttp://secunia.com/products/corporate/EVM/\n\nEXPLOIT:\nFurther details available in Customer Area:\nhttp://secunia.com/products/corporate/EVM/\n\n----------------------------------------------------------------------\n\nAbout:\nThis Advisory was delivered by Secunia as a free service to help\nprivate users keeping their systems up to date against the latest\nvulnerabilities. \n\nSubscribe:\nhttp://secunia.com/advisories/secunia_security_advisories/\n\nDefinitions: (Criticality, Where etc.)\nhttp://secunia.com/advisories/about_secunia_advisories/\n\n\nPlease Note:\nSecunia recommends that you verify all advisories you receive by\nclicking the link. \nSecunia NEVER sends attached files with advisories. \nSecunia does not advise people to install third party patches, only\nuse those supplied by the vendor. \n\n----------------------------------------------------------------------\n\nUnsubscribe: Secunia Security Advisories\nhttp://secunia.com/sec_adv_unsubscribe/?email=packet%40packetstormsecurity.org\n\n----------------------------------------------------------------------\n\n\n. \n\nCisco has released free software updates that address these\nvulnerabilities. There are no workarounds to mitigate these\nvulnerabilities other than disabling H.323 on the vulnerable device. \n\nThis advisory is posted at \nhttp://www.cisco.com/warp/public/707/cisco-sa-20100922-h323.shtml\n\nNote:  The September 22, 2010, Cisco IOS Software Security Advisory\nbundled publication includes six Cisco Security Advisories. Five of\nthe advisories address vulnerabilities in Cisco IOS Software, and one\nadvisory addresses vulnerabilities in Cisco Unified Communications\nManager. Each advisory lists the releases that correct the\nvulnerability or vulnerabilities detailed in the advisory. The table\nat the following URL lists releases that correct all Cisco IOS\nSoftware vulnerabilities that have been published on September 22,\n2010, or earlier:\n\nhttp://www.cisco.com/warp/public/707/cisco-sa-20100922-bundle.shtml\n\nIndividual publication links are in \"Cisco Event Response: Semiannual\nCisco IOS Software Security Advisory Bundled Publication\" at the\nfollowing link:\n\nhttp://www.cisco.com/web/about/security/intelligence/Cisco_ERP_sep10.html\n\nAffected Products\n=================\n\nThese vulnerabilities only affect devices that are running Cisco IOS\nSoftware with H.323 voice services enabled. \n\nVulnerable Products\n+------------------\n\nCisco devices that are running affected Cisco IOS Software versions\nthat are configured to process H.323 messages are affected by these\nvulnerabilities. H.323 is not enabled by default. \n\nTo determine if the Cisco IOS Software device is running H.323\nservices, issue the show process cpu | include H323 command, as shown\nin this example:\n\n    Router# show process cpu | include H323\n     249       16000           3       5333  0.00%  0.00%  0.00%   0 CCH323_CT\n     250           0           1          0  0.00%  0.00%  0.00%   0 CCH323_DNS\n    Router#\n\nIn the previous example the processes CCH323_CT and CCH323_DNS are\nrunning on the device; therefore, the device is listening to H.323\nmessages. The device is vulnerable if any of these processes (or\nsimilar) are active. \n\nNote: Creating a dial peer by issuing the dial-peer voice command\nwill start the H.323 processes, which causes the Cisco IOS device to\nprocess H.323 messages. \n\nTo determine the Cisco IOS Software release that is running on a\nCisco product, administrators can log in to the device and issue the\nshow version command to display the system banner. The system banner\nconfirms that the device is running Cisco IOS Software by displaying\ntext similar to \"Cisco Internetwork Operating System Software\" or\n\"Cisco IOS Software.\" The image name displays in parentheses,\nfollowed by \"Version\" and the Cisco IOS Software release name. Other\nCisco devices do not have the show version command or may provide\ndifferent output. \n\nThe following example identifies a Cisco product that is running\nCisco IOS Software Release 12.3(26) with an installed image name of\nC2500-IS-L:\n\n    Router# show version\n    Cisco Internetwork Operating System Software\n    IOS (tm) 2500 Software (C2500-IS-L), Version 12.3(26), RELEASE SOFTWARE (fc2)\n    Technical Support: http://www.cisco.com/techsupport\n    Copyright (c) 1986-2008 by cisco Systems, Inc. \n    Compiled Mon 17-Mar-08 14:39 by dchih\n\n\n    !--- output truncated\n\n\nThe following example identifies a Cisco product that is running\nCisco IOS Software Release 12.4(20)T with an installed image name of\nC1841-ADVENTERPRISEK9-M:\n\n    Router# show version\n    Cisco IOS Software, 1841 Software (C1841-ADVENTERPRISEK9-M), Version 12.4(20)T,\n        RELEASE SOFTWARE (fc3)\n    Technical Support: http://www.cisco.com/techsupport\n    Copyright (c) 1986-2008 by Cisco Systems, Inc. \n    Compiled Thu 10-Jul-08 20:25 by prod_rel_team\n\n\n    !--- output truncated\n\n\nAdditional information about Cisco IOS Software release naming\nconventions is available in \"White Paper: Cisco IOS Reference Guide\"\nat the following link: \nhttp://www.cisco.com/web/about/security/intelligence/ios-ref.html\n\nProducts Confirmed Not Vulnerable\n+--------------------------------\n\nCisco IOS XR Software is not affected by these vulnerabilities. \n\nNo other Cisco products are currently known to be affected by these\nvulnerabilities. \n\nDetails\n=======\n\nH.323 is the International Telecommunication Union (ITU) standard for\nreal-time multimedia communications and conferencing over\npacket-based (IP) networks. A subset of the H.323 standard is\nH.225.0, a standard that is used for call signaling protocols and\nmedia stream packetization over IP networks. An attacker can exploit these vulnerabilities\nremotely by sending crafted H.323 packets to an affected device that\nis running Cisco IOS Software. A TCP three-way handshake is required\nto exploit these vulnerabilities. \n\nThese vulnerabilities are documented in Cisco Bug IDs CSCtc73759 (\nregistered customers only) and CSCtd33567 ( registered customers\nonly) , and have been assigned Common Vulnerabilities and Exposures\n(CVE) IDs CVE-2010-2828 and CVE-2010-2829, respectively. \n\nVulnerability Scoring Details\n=============================\n\nCisco has provided scores for the vulnerabilities in this advisory\nbased on the Common Vulnerability Scoring System (CVSS). The CVSS\nscoring in this Security Advisory is done in accordance with CVSS\nversion 2.0. \n\nCVSS is a standards-based scoring method that conveys vulnerability\nseverity and helps determine urgency and priority of response. \n\nCisco has provided a base and temporal score. Customers can then\ncompute environmental scores to assist in determining the impact of\nthe vulnerability in individual networks. \n\nCisco has provided an FAQ to answer additional questions regarding\nCVSS at\n\nhttp://www.cisco.com/web/about/security/intelligence/cvss-qandas.html\n\nCisco has also provided a CVSS calculator to help compute the\nenvironmental impact for individual networks at\n\nhttp://intellishield.cisco.com/security/alertmanager/cvss\n\nCSCtc73759 - Device crashing upon receipt of specific traffic\n\nCVSS Base Score - 7.8\nAccess Vector           Network\nAccess Complexity       Low\nAuthentication          None\nConfidentiality Impact  None\nIntegrity Impact        None\nAvailability Impact     Complete\n\nCVSS Temporal Score - 6.4\nExploitability          Functional\nRemediation Level       Official Fix\nReport Confidence       Confirmed\n\nCSCtd33567 - Traceback seen when receiving crafted H.323 packets\n\nCVSS Base Score - 7.8\nAccess Vector           Network\nAccess Complexity       Low\nAuthentication          None\nConfidentiality Impact  None\nIntegrity Impact        None\nAvailability Impact     Complete\n\nCVSS Temporal Score - 6.4\nExploitability          Functional\nRemediation Level       Official Fix\nReport Confidence       Confirmed\n\nImpact\n======\n\nSuccessful exploitation of the vulnerabilities described in this\nadvisory may cause the affected device to reload. Theses\nvulnerabilities could be exploited repeatedly to cause an extended\nDoS condition. \n\nSoftware Versions and Fixes\n===========================\n\nWhen considering software upgrades, also consult \nhttp://www.cisco.com/go/psirt and any subsequent advisories to \ndetermine exposure and a complete upgrade solution. \n\nIn all cases, customers should exercise caution to be certain the\ndevices to be upgraded contain sufficient memory and that current\nhardware and software configurations will continue to be supported\nproperly by the new release. If the information is not clear, contact\nthe Cisco Technical Assistance Center (TAC) or your contracted\nmaintenance provider for assistance. \n\nEach row of the following Cisco IOS Software table corresponds to a\nCisco IOS Software train. If a particular train is vulnerable, the\nearliest releases that contain the fix are listed in the First Fixed\nRelease For This Advisory column. The First Fixed Release for All\nAdvisories in the September 2010 Bundle Publication column lists the\nearliest possible releases that correct all the published\nvulnerabilities in the Cisco IOS Software Security Advisory bundled\npublication. Cisco recommends upgrading to the latest available\nrelease, where possible. \n\n+--------------------------------------------------------------------+\n|   Major    |             Availability of Repaired Releases         |\n|  Release   |                                                       |\n|------------+-------------------------------------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 12.0-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|--------------------------------------------------------------------|\n| There are no affected 12.0-based releases                          |\n|--------------------------------------------------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 12.1-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n| 12.1       | Not Vulnerable            |                           |\n|            |                           | Releases up to and        |\n|            |                           | including 12.1(4b) are    |\n|            |                           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n| 12.1AA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1AX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1AY     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1AZ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1CX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1DA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1DB     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1DC     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1E      | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EB     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EC     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EO     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EU     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EV     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EW     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EY     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1EZ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1GA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1GB     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n| 12.1T      |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.1(3a)T8 are  | including 12.1(3a)T8 are  |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n| 12.1XA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XB     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XC     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XD     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XE     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XF     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XG     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XH     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XI     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XJ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XL     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XM     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XP     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XQ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XR     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n| 12.1XS     |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.1(3)XS are   | including 12.1(3)XS are   |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n| 12.1XT     |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.1(2)XT2 are  | including 12.1(2)XT2 are  |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n| 12.1XU     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XV     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1XW     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1XX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n| 12.1XY     |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.1(4)XY are   | including 12.1(4)XY are   |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n| 12.1XZ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.1YA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1YB     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1YC     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1YD     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.1(5) | Releases prior to 12.1(5) |\n|            | YE6 are vulnerable,       | YE6 are vulnerable,       |\n| 12.1YE     | release 12.1(5)YE6 and    | release 12.1(5)YE6 and    |\n|            | later are not vulnerable; | later are not vulnerable; |\n|            | first fixed in 12.4       | first fixed in 12.4T      |\n|------------+---------------------------+---------------------------|\n| 12.1YF     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.1YH     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.1YI     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.1YJ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 12.2-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|------------+---------------------------+---------------------------|\n| 12.2       | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n| 12.2B      |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.2(2)B7 are   | including 12.2(2)B7 are   |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n| 12.2BC     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2BW     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.2SB                 | in 12.2SB                 |\n| 12.2BX     |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.2(15)BX are  | including 12.2(15)BX are  |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n| 12.2BY     |                           |                           |\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.2(2)BY3 are  | including 12.2(2)BY3 are  |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n| 12.2BZ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2CX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2CY     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2CZ     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2DA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2DD     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2DX     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2EW     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2EWA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2EX     | Vulnerable; migrate to    | Not Vulnerable            |\n|            | any release in 12.2SE     |                           |\n|------------+---------------------------+---------------------------|\n| 12.2EY     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2EZ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2FX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2FY     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2FZ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IRA    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IRB    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IRC    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IRD    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IRE    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXA    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXB    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXC    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXD    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXE    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXF    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXG    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2IXH    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2JA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2JK     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2MB     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.2(15)MC1 are | including 12.2(15)MC1 are |\n|            | not vulnerable.           | not vulnerable. Releases  |\n| 12.2MC     |                           | 12.2(15)MC2b and later    |\n|            | Releases 12.2(15)MC2b and | are not vulnerable; first |\n|            | later are not vulnerable; | fixed in 12.4T            |\n|            | first fixed in 12.4       |                           |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2MRA    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2MRB    | Not Vulnerable            | 12.2(33)MRB2              |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Releases prior to 12.2    |\n| 12.2S      | (30)S are vulnerable,     | (30)S are vulnerable,     |\n|            | release 12.2(30)S and     | release 12.2(30)S and     |\n|            | later are not vulnerable  | later are not vulnerable  |\n|------------+---------------------------+---------------------------|\n|            | 12.2(31)SB19              | 12.2(31)SB19              |\n|            |                           |                           |\n| 12.2SB     | Releases prior to 12.2    | Releases prior to 12.2    |\n|            | (33)SB5 are vulnerable,   | (33)SB5 are vulnerable,   |\n|            | release 12.2(33)SB5 and   | release 12.2(33)SB5 and   |\n|            | later are not vulnerable  | later are not vulnerable  |\n|------------+---------------------------+---------------------------|\n| 12.2SBC    | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.2SB                 | in 12.2SB                 |\n|------------+---------------------------+---------------------------|\n| 12.2SCA    | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.2SCB                | in 12.2SCB                |\n|------------+---------------------------+---------------------------|\n|            | 12.2(33)SCB10             |                           |\n|            |                           |                           |\n| 12.2SCB    | 12.2(33)SCB9              | 12.2(33)SCB9              |\n|            |                           |                           |\n|            | 12.2(33)SCB8              |                           |\n|------------+---------------------------+---------------------------|\n|            | 12.2(33)SCC5              |                           |\n| 12.2SCC    |                           | 12.2(33)SCC5              |\n|            | 12.2(33)SCC4              |                           |\n|------------+---------------------------+---------------------------|\n|            | 12.2(33)SCD3              |                           |\n| 12.2SCD    |                           | 12.2(33)SCD3              |\n|            | 12.2(33)SCD4              |                           |\n|------------+---------------------------+---------------------------|\n| 12.2SE     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SEA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SEB    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SEC    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SED    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SEE    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SEF    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SEG    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Releases prior to 12.2    |\n|            | (40)SG are vulnerable,    | (40)SG are vulnerable,    |\n| 12.2SG     | release 12.2(40)SG and    | release 12.2(40)SG and    |\n|            | later are not vulnerable; | later are not vulnerable; |\n|            | migrate to any release in | migrate to any release in |\n|            | 12.2SGA                   | 12.2SGA                   |\n|------------+---------------------------+---------------------------|\n| 12.2SGA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SL     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SM     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SO     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SQ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Releases prior to 12.2    |\n| 12.2SRA    | (33)SRA6 are vulnerable,  | (33)SRA6 are vulnerable,  |\n|            | release 12.2(33)SRA6 and  | release 12.2(33)SRA6 and  |\n|            | later are not vulnerable  | later are not vulnerable  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Releases prior to 12.2    |\n| 12.2SRB    | (33)SRB1 are vulnerable,  | (33)SRB1 are vulnerable,  |\n|            | release 12.2(33)SRB1 and  | release 12.2(33)SRB1 and  |\n|            | later are not vulnerable  | later are not vulnerable  |\n|------------+---------------------------+---------------------------|\n| 12.2SRC    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SRD    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SRE    | Not Vulnerable            | 12.2(33)SRE1              |\n|------------+---------------------------+---------------------------|\n| 12.2STE    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SU     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Releases prior to 12.2    |\n|            | (29b)SV1 are vulnerable,  | (29b)SV1 are vulnerable,  |\n| 12.2SV     | release 12.2(29b)SV1 and  | release 12.2(29b)SV1 and  |\n|            | later are not vulnerable; | later are not vulnerable; |\n|            | migrate to any release in | migrate to any release in |\n|            | 12.2SVD                   | 12.2SVD                   |\n|------------+---------------------------+---------------------------|\n| 12.2SVA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SVC    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SVD    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SVE    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.2(21)SW1 are | including 12.2(21)SW1 are |\n|            | not vulnerable.           | not vulnerable. Releases  |\n| 12.2SW     |                           | 12.2(25)SW12 and later    |\n|            | Releases 12.2(25)SW12 and | are not vulnerable; first |\n|            | later are not vulnerable; | fixed in 12.4T            |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n|            |                           | Releases up to and        |\n| 12.2SX     | Not Vulnerable            | including 12.2(14)SX2 are |\n|            |                           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Vulnerable; Contact your  |\n|            | (17b)SXA2 are vulnerable, | support organization per  |\n| 12.2SXA    | release 12.2(17b)SXA2 and | the instructions in       |\n|            | later are not vulnerable  | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Vulnerable; Contact your  |\n|            | (17d)SXB7 are vulnerable, | support organization per  |\n| 12.2SXB    | release 12.2(17d)SXB7 and | the instructions in       |\n|            | later are not vulnerable; | Obtaining Fixed Software  |\n|            | migrate to any release in | section of this advisory  |\n|            | 12.2SXE                   |                           |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Vulnerable; Contact your  |\n|            | (18)SXD2 are vulnerable,  | support organization per  |\n| 12.2SXD    | release 12.2(18)SXD2 and  | the instructions in       |\n|            | later are not vulnerable  | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2SXE    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Only 12.2(18)SXF7 and     | Releases prior to 12.2    |\n| 12.2SXF    | 12.2(18)SXF8 are          | (18)SXF11 are vulnerable, |\n|            | vulnerable                | release 12.2(18)SXF11 and |\n|            |                           | later are not vulnerable  |\n|------------+---------------------------+---------------------------|\n| 12.2SXH    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2SXI    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  |                           |\n|            | support organization per  |                           |\n| 12.2SY     | the instructions in       | Not Vulnerable            |\n|            | Obtaining Fixed Software  |                           |\n|            | section of this advisory  |                           |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2SZ     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2T      | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2TPC    | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   |                           |\n|            | in 12.4                   |                           |\n| 12.2XA     |                           | Vulnerable; first fixed   |\n|            | Releases up to and        | in 12.4T                  |\n|            | including 12.2(1)XA are   |                           |\n|            | not vulnerable.           |                           |\n|------------+---------------------------+---------------------------|\n| 12.2XB     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XC     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XD     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XE     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2XF     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2XG     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XH     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XI     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XJ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XK     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XL     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XM     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    |                           |\n|            | (33)XN1 are vulnerable,   | Vulnerable; first fixed   |\n| 12.2XN     | release 12.2(33)XN1 and   | in 12.2SB                 |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.2SB     |                           |\n|------------+---------------------------+---------------------------|\n| 12.2XNA    | Please see Cisco IOS-XE   | Please see Cisco IOS-XE   |\n|            | Software Availability     | Software Availability     |\n|------------+---------------------------+---------------------------|\n| 12.2XNB    | Please see Cisco IOS-XE   | Please see Cisco IOS-XE   |\n|            | Software Availability     | Software Availability     |\n|------------+---------------------------+---------------------------|\n| 12.2XNC    | Please see Cisco IOS-XE   | Please see Cisco IOS-XE   |\n|            | Software Availability     | Software Availability     |\n|------------+---------------------------+---------------------------|\n| 12.2XND    | Please see Cisco IOS-XE   | Please see Cisco IOS-XE   |\n|            | Software Availability     | Software Availability     |\n|------------+---------------------------+---------------------------|\n| 12.2XNE    | Please see Cisco IOS-XE   | Please see Cisco IOS-XE   |\n|            | Software Availability     | Software Availability     |\n|------------+---------------------------+---------------------------|\n| 12.2XNF    | Please see Cisco IOS-XE   | Please see Cisco IOS-XE   |\n|            | Software Availability     | Software Availability     |\n|------------+---------------------------+---------------------------|\n| 12.2XO     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2XQ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XR     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2XS     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XT     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XU     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XV     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2XW     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2YA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YB     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YC     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YD     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YE     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YF     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2YG     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YH     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YJ     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YK     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YL     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2YM     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YN     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  |                           |\n|            | support organization per  |                           |\n| 12.2YO     | the instructions in       | Not Vulnerable            |\n|            | Obtaining Fixed Software  |                           |\n|            | section of this advisory  |                           |\n|------------+---------------------------+---------------------------|\n| 12.2YP     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2YQ     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2YR     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2YS     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YT     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YU     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.2    | Releases prior to 12.2    |\n| 12.2YV     | (11)YV1 are vulnerable,   | (11)YV1 are vulnerable,   |\n|            | release 12.2(11)YV1 and   | release 12.2(11)YV1 and   |\n|            | later are not vulnerable  | later are not vulnerable  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YW     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YX     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YY     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2YZ     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2ZA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Releases up to and        | Releases up to and        |\n| 12.2ZB     | including 12.2(8)ZB are   | including 12.2(8)ZB are   |\n|            | not vulnerable.           | not vulnerable.           |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2ZC     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2ZD     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.2ZE     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2ZF     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.2ZG     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.2ZH     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2ZJ     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2ZL     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.2ZP     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; migrate to    | Vulnerable; Contact your  |\n|            | any release in 12.2SXH    | support organization per  |\n| 12.2ZU     |                           | the instructions in       |\n|            | Releases up to and        | Obtaining Fixed Software  |\n|            | including 12.2(18)ZU are  | section of this advisory  |\n|            | not vulnerable.           |                           |\n|------------+---------------------------+---------------------------|\n| 12.2ZX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2ZY     | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            |                           | support organization per  |\n| 12.2ZYA    | Not Vulnerable            | the instructions in       |\n|            |                           | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 12.3-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|------------+---------------------------+---------------------------|\n| 12.3       | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3B      | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3BC     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3BW     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3EU     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3JA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3JEA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3JEB    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3JEC    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3JED    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|            | Releases up to and        | Releases up to and        |\n|            | including 12.3(2)JK3 are  | including 12.3(2)JK3 are  |\n|            | not vulnerable.           | not vulnerable. Releases  |\n| 12.3JK     |                           | 12.3(8)JK1 and later are  |\n|            | Releases 12.3(8)JK1 and   | not vulnerable; first     |\n|            | later are not vulnerable; | fixed in 12.4T            |\n|            | first fixed in 12.4       |                           |\n|------------+---------------------------+---------------------------|\n| 12.3JL     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3JX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.3T      | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            |                           | Vulnerable; Contact your  |\n|            | Releases up to and        | support organization per  |\n| 12.3TPC    | including 12.3(4)TPC11a   | the instructions in       |\n|            | are not vulnerable.       | Obtaining Fixed Software  |\n|            |                           | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.3VA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.3(2) |                           |\n|            | XA7 are vulnerable,       | Vulnerable; first fixed   |\n| 12.3XA     | release 12.3(2)XA7 and    | in 12.4T                  |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4       |                           |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.3XB     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.3XC     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XD     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XE     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.3XF     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.3XG     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.3(7) | Releases prior to 12.3(7) |\n|            | XI11 are vulnerable,      | XI11 are vulnerable,      |\n| 12.3XI     | release 12.3(7)XI11 and   | release 12.3(7)XI11 and   |\n|            | later are not vulnerable; | later are not vulnerable; |\n|            | first fixed in 12.2SB     | first fixed in 12.2SB     |\n|------------+---------------------------+---------------------------|\n| 12.3XJ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.3YX                 | in 12.4XR                 |\n|------------+---------------------------+---------------------------|\n| 12.3XK     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XL     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XQ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XR     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XS     | Not Vulnerable            | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   |                           |\n|            | in 12.4T                  |                           |\n| 12.3XU     |                           | Vulnerable; first fixed   |\n|            | Releases up to and        | in 12.4T                  |\n|            | including 12.3(8)XU1 are  |                           |\n|            | not vulnerable.           |                           |\n|------------+---------------------------+---------------------------|\n| 12.3XW     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.3YX                 | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XX     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XY     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3XZ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4                   | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YA     | Not Vulnerable            | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YD     | Not Vulnerable            | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YF     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.3YX                 | in 12.4XR                 |\n|------------+---------------------------+---------------------------|\n| 12.3YG     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YH     | Not Vulnerable            | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YI     | Not Vulnerable            | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YJ     | Not Vulnerable            | Vulnerable; first fixed   |\n|            |                           | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.3    |                           |\n|            | (11)YK3 are vulnerable,   | Vulnerable; first fixed   |\n| 12.3YK     | release 12.3(11)YK3 and   | in 12.4T                  |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n| 12.3YM     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YQ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; first fixed   |                           |\n|            | in 12.4T                  |                           |\n| 12.3YS     |                           | Vulnerable; first fixed   |\n|            | Releases up to and        | in 12.4T                  |\n|            | including 12.3(11)YS1 are |                           |\n|            | not vulnerable.           |                           |\n|------------+---------------------------+---------------------------|\n| 12.3YT     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YU     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.3YX     | 12.3(14)YX17              | Vulnerable; first fixed   |\n|            |                           | in 12.4XR                 |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.3YZ     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.3ZA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 12.4-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|------------+---------------------------+---------------------------|\n| 12.4       | 12.4(25d)                 | 12.4(25d)                 |\n|------------+---------------------------+---------------------------|\n| 12.4GC     | 12.4(24)GC2               | 12.4(24)GC2               |\n|------------+---------------------------+---------------------------|\n| 12.4JA     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JDA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JDC    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JDD    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JHA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JHB    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JK     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JL     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JMA    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JMB    | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JX     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4JY     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n| 12.4MD     | Not Vulnerable            | 12.4(24)MD2               |\n|------------+---------------------------+---------------------------|\n| 12.4MDA    | 12.4(22)MDA4              | 12.4(22)MDA4              |\n|------------+---------------------------+---------------------------|\n| 12.4MR     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4MRA                | in 12.4MRA                |\n|------------+---------------------------+---------------------------|\n| 12.4MRA    | 12.4(20)MRA1              | 12.4(20)MRA1              |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.4    |                           |\n|            | (15)SW6 are vulnerable,   | Vulnerable; first fixed   |\n| 12.4SW     | release 12.4(15)SW6 and   | in 12.4T                  |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n|            | 12.4(15)T14               | 12.4(15)T14               |\n|            |                           |                           |\n| 12.4T      | 12.4(20)T6                | 12.4(20)T6                |\n|            |                           |                           |\n|            | 12.4(24)T4                | 12.4(24)T4                |\n|------------+---------------------------+---------------------------|\n| 12.4XA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4XB     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4XC     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4XD     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.4(6) | Releases prior to 12.4(6) |\n|            | XE5 are vulnerable,       | XE5 are vulnerable,       |\n| 12.4XE     | release 12.4(6)XE5 and    | release 12.4(6)XE5 and    |\n|            | later are not vulnerable; | later are not vulnerable; |\n|            | first fixed in 12.4T      | first fixed in 12.4T      |\n|------------+---------------------------+---------------------------|\n| 12.4XF     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.4(9) |                           |\n|            | XG5 are vulnerable,       | Vulnerable; first fixed   |\n| 12.4XG     | release 12.4(9)XG5 and    | in 12.4T                  |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n| 12.4XJ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4XK     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.4XL     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.4    |                           |\n|            | (15)XM3 are vulnerable,   | Vulnerable; first fixed   |\n| 12.4XM     | release 12.4(15)XM3 and   | in 12.4T                  |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.4XN     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.4XP     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Releases up to and        |                           |\n|            | including 12.4(15)XQ are  |                           |\n|            | not vulnerable.           | 12.4(15)XQ6; Available on |\n| 12.4XQ     |                           | 22-SEP-10                 |\n|            | Releases 12.4(15)XQ6 and  |                           |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n|            |                           | 12.4(15)XR9               |\n| 12.4XR     | Not Vulnerable            |                           |\n|            |                           | 12.4(22)XR7               |\n|------------+---------------------------+---------------------------|\n| 12.4XT     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.4XV     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n| 12.4XW     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4XY     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4XZ     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n| 12.4YA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 12.4T                  | in 12.4T                  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.4YB     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Vulnerable; Contact your  | Vulnerable; Contact your  |\n|            | support organization per  | support organization per  |\n| 12.4YD     | the instructions in       | the instructions in       |\n|            | Obtaining Fixed Software  | Obtaining Fixed Software  |\n|            | section of this advisory  | section of this advisory  |\n|------------+---------------------------+---------------------------|\n|            | Releases prior to 12.4    |                           |\n|            | (24)YE1 are vulnerable,   |                           |\n| 12.4YE     | release 12.4(24)YE1 and   | 12.4(24)YE1               |\n|            | later are not vulnerable; |                           |\n|            | first fixed in 12.4T      |                           |\n|------------+---------------------------+---------------------------|\n| 12.4YG     | 12.4(24)YG3               | 12.4(24)YG3               |\n|------------+---------------------------+---------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 15.0-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|------------+---------------------------+---------------------------|\n| 15.0M      | 15.0(1)M3                 | 15.0(1)M3                 |\n|------------+---------------------------+---------------------------|\n|            | Cisco 7600 and 10000      | Cisco 7600 and 10000      |\n|            | Series routers: Not       | Series routers: 15.0(1)S1 |\n|            | Vulnerable                | (available early October  |\n|            |                           | 2010)                     |\n| 15.0S      | Cisco ASR 1000 Series     |                           |\n|            | routes: Please see Cisco  | Cisco ASR 1000 Series     |\n|            | IOS-XE Software           | routes: Please see Cisco  |\n|            | Availability              | IOS-XE Software           |\n|            |                           | Availability              |\n|------------+---------------------------+---------------------------|\n| 15.0XA     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 15.1T                  | in 15.1T                  |\n|------------+---------------------------+---------------------------|\n| 15.0XO     | Not Vulnerable            | Not Vulnerable            |\n|------------+---------------------------+---------------------------|\n|  Affected  |                           |  First Fixed Release for  |\n| 15.1-Based |  First Fixed Release for  |   All Advisories in the   |\n|  Releases  |       This Advisory       |   September 2010 Bundle   |\n|            |                           |        Publication        |\n|------------+---------------------------+---------------------------|\n|            | 15.1(1)T1                 |                           |\n| 15.1T      |                           | 15.1(2)T1                 |\n|            | 15.1(2)T0a                |                           |\n|------------+---------------------------+---------------------------|\n| 15.1XB     | Vulnerable; first fixed   | Vulnerable; first fixed   |\n|            | in 15.1T                  | in 15.1T                  |\n+--------------------------------------------------------------------+\n\nCisco IOS XE Software\n+--------------------\n\n+-------------------------------------------------------------------+\n| Cisco IOS |   First Fixed    |    First Fixed Release for All     |\n|    XE     | Release for This |  Advisories in the September 2010  |\n|  Release  |     Advisory     |         Bundle Publication         |\n|-----------+------------------+------------------------------------|\n| 2.1.x     | Not Vulnerable   | Not Vulnerable                     |\n|-----------+------------------+------------------------------------|\n| 2.2.x     | Not Vulnerable   | Not Vulnerable                     |\n|-----------+------------------+------------------------------------|\n| 2.3.x     | Not Vulnerable   | Not Vulnerable                     |\n|-----------+------------------+------------------------------------|\n| 2.4.x     | Not Vulnerable   | Not Vulnerable                     |\n|-----------+------------------+------------------------------------|\n| 2.5.x     | 2.5.2            | Vulnerable; migrate to 2.6.2 or    |\n|           |                  | later                              |\n|-----------+------------------+------------------------------------|\n| 2.6.x     | 2.6.1            | 2.6.2                              |\n|-----------+------------------+------------------------------------|\n| 3.1.xS    | Not Vulnerable   | Not Vulnerable                     |\n+-------------------------------------------------------------------+\n\nFor mapping of Cisco IOS XE to Cisco IOS releases, please refer to\nthe Cisco IOS XE 2 and Cisco IOS XE 3S Release Notes. \n\nWorkarounds\n===========\n\nThere are no workarounds to mitigate these vulnerabilities apart from\ndisabling H.323 if the Cisco IOS device does not require it. Applying\naccess lists on interfaces that should not accept H.323 traffic and\nplacing firewalls in strategic locations may greatly reduce exposure\nuntil an upgrade can be performed. \n\nCisco provides Solution Reference Network Design (SRND) guides to\nhelp design and deploy networking solutions, which can be found at\nhttp://www.cisco.com/go/srnd Voice Security best practices are\ncovered in the Cisco Unified Communications SRND Based on Cisco\nUnified Communications Manager 6.x at \nhttp://www.cisco.com/en/US/docs/voice_ip_comm/cucm/srnd/6x/security.html\n\nTo disable all H.323 call processing, administrators can issue the\ncall service stop forced command under the voice service voip mode,\nas shown in this example:\n\n    voice service voip\n     h323\n      call service stop forced\n\nNote: The call service stop forced command disables all H.323 call\nprocessing. \n\nAdditional mitigations that can be deployed on Cisco devices within\nthe network are available in the companion document \"Cisco Applied\nMitigation Bulletin: Identifying and Mitigating Exploitation of the\nMultiple Vulnerabilities in Cisco Voice Products\", which is available\nat the following location: \nhttp://www.cisco.com/warp/public/707/cisco-amb-20100922-voice.shtml\n\nObtaining Fixed Software\n========================\n\nCisco has released free software updates that address these\nvulnerabilities. Prior to deploying software, customers should\nconsult their maintenance provider or check the software for feature\nset compatibility and known issues specific to their environment. \n\nCustomers may only install and expect support for the feature sets\nthey have purchased. By installing, downloading, accessing or\notherwise using such software upgrades, customers agree to be bound\nby the terms of Cisco's software license terms found at \nhttp://www.cisco.com/en/US/docs/general/warranty/English/EU1KEN_.html\nor as otherwise set forth at Cisco.com Downloads at \nhttp://www.cisco.com/public/sw-center/sw-usingswc.shtml\n\nDo not contact psirt@cisco.com or security-alert@cisco.com for\nsoftware upgrades. \n\nCustomers with Service Contracts\n+-------------------------------\n\nCustomers with contracts should obtain upgraded software through\ntheir regular update channels. For most customers, this means that\nupgrades should be obtained through the Software Center on Cisco's\nworldwide website at http://www.cisco.com\n\nCustomers using Third Party Support Organizations\n+------------------------------------------------\n\nCustomers whose Cisco products are provided or maintained through\nprior or existing agreements with third-party support organizations,\nsuch as Cisco Partners, authorized resellers, or service providers\nshould contact that support organization for guidance and assistance\nwith the appropriate course of action in regards to this advisory. \n\nThe effectiveness of any workaround or fix is dependent on specific\ncustomer situations, such as product mix, network topology, traffic\nbehavior, and organizational mission. Due to the variety of affected\nproducts and releases, customers should consult with their service\nprovider or support organization to ensure any applied workaround or\nfix is the most appropriate for use in the intended network before it\nis deployed. \n\nCustomers without Service Contracts\n+----------------------------------\n\nCustomers who purchase direct from Cisco but do not hold a Cisco\nservice contract, and customers who purchase through third-party\nvendors but are unsuccessful in obtaining fixed software through\ntheir point of sale should acquire upgrades by contacting the Cisco\nTechnical Assistance Center (TAC). TAC contacts are as follows. \n\n  * +1 800 553 2447 (toll free from within North America)\n  * +1 408 526 7209 (toll call from anywhere in the world)\n  * e-mail: tac@cisco.com\n\nCustomers should have their product serial number available and be\nprepared to give the URL of this notice as evidence of entitlement to\na free upgrade. Free upgrades for non-contract customers must be\nrequested through the TAC. \n\nRefer to \nhttp://www.cisco.com/en/US/support/tsd_cisco_worldwide_contacts.html\nfor additional TAC contact information, including localized telephone\nnumbers, and instructions and e-mail addresses for use in various \nlanguages. \n\nExploitation and Public Announcements\n=====================================\n\nThe Cisco PSIRT is not aware of any public announcements or malicious\nuse of the vulnerabilities described in this advisory. \n\nThese vulnerabilities were found during Cisco internal testing. \n\nStatus of this Notice: FINAL\n============================\n\nTHIS DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS AND DOES NOT IMPLY ANY\nKIND OF GUARANTEE OR WARRANTY, INCLUDING THE WARRANTIES OF\nMERCHANTABILITY OR FITNESS FOR A PARTICULAR USE. YOUR USE OF THE\nINFORMATION ON THE DOCUMENT OR MATERIALS LINKED FROM THE DOCUMENT IS\nAT YOUR OWN RISK. CISCO RESERVES THE RIGHT TO CHANGE OR UPDATE THIS\nDOCUMENT AT ANY TIME. \n\nA stand-alone copy or Paraphrase of the text of this document that\nomits the distribution URL in the following section is an\nuncontrolled copy, and may lack important information or contain\nfactual errors. \n\nDistribution\n============\n\nThis advisory is posted on Cisco's worldwide website at :\n\nhttp://www.cisco.com/warp/public/707/cisco-sa-2010922-h323.shtml\n\nIn addition to worldwide web posting, a text version of this notice\nis clear-signed with the Cisco PSIRT PGP key and is posted to the\nfollowing e-mail and Usenet news recipients. \n\n  * cust-security-announce@cisco.com\n  * first-bulletins@lists.first.org\n  * bugtraq@securityfocus.com\n  * vulnwatch@vulnwatch.org\n  * cisco@spot.colorado.edu\n  * cisco-nsp@puck.nether.net\n  * full-disclosure@lists.grok.org.uk\n  * comp.dcom.sys.cisco@newsgate.cisco.com\n\nFuture updates of this advisory, if any, will be placed on Cisco's\nworldwide website, but may or may not be actively announced on\nmailing lists or newsgroups. Users concerned about this problem are\nencouraged to check the above URL for any updates. \n\nRevision History\n================\n\n+-----------------------------------------+\n| Revision |                   | Initial  |\n| 1.0      | 2010-September-22 | public   |\n|          |                   | release. |\n+-----------------------------------------+\n\nCisco Security Procedures\n=========================\n\nComplete information on reporting security vulnerabilities in Cisco\nproducts, obtaining assistance with security incidents, and\nregistering to receive security information from Cisco, is available\non Cisco's worldwide website at \nhttp://www.cisco.com/en/US/products/products_security_vulnerability_policy.html\nThis includes instructions for press inquiries regarding Cisco \nsecurity notices. All Cisco security advisories are available at \nhttp://www.cisco.com/go/psirt\n-----BEGIN PGP SIGNATURE-----\nVersion: GnuPG v1.4.10 (Darwin)\n\niEYEARECAAYFAkyZ/SoACgkQ86n/Gc8U/uCR8ACfbSQwX1PMeEwUVJWTSeGDtyrW\njTMAnRuYshIzCis7CHMiORtLxeSKi80b\n=B67E\n-----END PGP SIGNATURE-----\n\n_______________________________________________\nFull-Disclosure - We believe in it. \nCharter: http://lists.grok.org.uk/full-disclosure-charter.html\nHosted and sponsored by Secunia - http://secunia.com/\n",
+		"sources": [
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94168"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94152"
+			}
+		],
+		"trust": 2.16
+	},
+	"external_ids": {
+		"data": [
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829",
+				"trust": 2.9
+			},
+			{
+				"db": "BID",
+				"id": "43395",
+				"trust": 1.2
+			},
+			{
+				"db": "SECUNIA",
+				"id": "41513",
+				"trust": 0.9
+			},
+			{
+				"db": "VUPEN",
+				"id": "ADV-2010-2478",
+				"trust": 0.8
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120",
+				"trust": 0.8
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239",
+				"trust": 0.7
+			},
+			{
+				"db": "CISCO",
+				"id": "20100922 CISCO IOS SOFTWARE H.323 DENIAL OF SERVICE VULNERABILITIES",
+				"trust": 0.6
+			},
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434",
+				"trust": 0.1
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94168",
+				"trust": 0.1
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94152",
+				"trust": 0.1
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94168"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94152"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"iot": {
+		"data": true,
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			}
+		],
+		"trust": 0.6843887
+	},
+	"last_update_date": "2025-04-11T22:50:42.080000Z",
+	"patch": {
+		"data": [
+			{
+				"title": "cisco-amb-20100922-voice",
+				"trust": 0.8,
+				"url": "http://www.cisco.com/warp/public/707/cisco-amb-20100922-voice.shtml"
+			},
+			{
+				"title": "cisco-sa-20100922-h323",
+				"trust": 0.8,
+				"url": "http://www.cisco.com/warp/public/707/cisco-sa-20100922-h323.shtml"
+			},
+			{
+				"title": "21377",
+				"trust": 0.8,
+				"url": "http://tools.cisco.com/security/center/viewAlert.x?alertId=21377"
+			},
+			{
+				"title": "cisco-sa-20100922-h323",
+				"trust": 0.8,
+				"url": "http://www.cisco.com/JP/support/public/ht/security/109/1091516/cisco-sa-20100922-h323-j.shtml"
+			}
+		],
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			}
+		]
+	},
+	"problemtype_data": {
+		"data": [
+			{
+				"problemtype": "NVD-CWE-noinfo",
+				"trust": 1
+			}
+		],
+		"sources": [
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"references": {
+		"data": [
+			{
+				"trust": 1.7,
+				"url": "http://www.cisco.com/en/us/products/products_security_advisory09186a0080b4a300.shtml"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2010-2829"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://web.nvd.nist.gov/view/vuln/detail?vulnid=cve-2010-2829"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://secunia.com/advisories/41513"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://www.securityfocus.com/bid/43395"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://www.vupen.com/english/advisories/2010/2478"
+			},
+			{
+				"trust": 0.3,
+				"url": "http://www.cisco.com/"
+			},
+			{
+				"trust": 0.3,
+				"url": "http://www.cisco.com/en/us/products/products_security_advisory09186a0080b4a300.shtml#@id"
+			},
+			{
+				"trust": 0.2,
+				"url": "http://www.cisco.com/warp/public/707/cisco-sa-20100922-h323.shtml"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/advisories/41513/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/advisories/41513/#comments"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/products/corporate/evm/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/advisories/secunia_security_advisories/"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://ca.secunia.com/?page=viewadvisory&vuln_id=41513"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/vulnerability_scanning/corporate/wsus_sccm_3rd_third_party_patching/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/advisories/windows_insecure_library_loading/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/vulnerability_scanning/personal/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/sec_adv_unsubscribe/?email=packet%40packetstormsecurity.org"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/advisories/about_secunia_advisories/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/go/psirt"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/en/us/docs/general/warranty/english/eu1ken_.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://secunia.com/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/en/us/support/tsd_cisco_worldwide_contacts.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/web/about/security/intelligence/cvss-qandas.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2010-2829"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://lists.grok.org.uk/full-disclosure-charter.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/public/sw-center/sw-usingswc.shtml"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/warp/public/707/cisco-sa-2010922-h323.shtml"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/warp/public/707/cisco-sa-20100922-bundle.shtml"
+			},
+			{
+				"trust": 0.1,
+				"url": "https://nvd.nist.gov/vuln/detail/cve-2010-2828"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/web/about/security/intelligence/ios-ref.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/warp/public/707/cisco-amb-20100922-voice.shtml"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/en/us/products/products_security_vulnerability_policy.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/web/about/security/intelligence/cisco_erp_sep10.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/go/srnd"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/techsupport"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.cisco.com/en/us/docs/voice_ip_comm/cucm/srnd/6x/security.html"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://intellishield.cisco.com/security/alertmanager/cvss"
+			}
+		],
+		"sources": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94168"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94152"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"sources": {
+		"data": [
+			{
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94168"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "94152"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"sources_release_date": {
+		"data": [
+			{
+				"date": "2010-09-23T00:00:00",
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"date": "2010-09-22T00:00:00",
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"date": "2010-10-12T00:00:00",
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"date": "2010-09-23T14:07:26",
+				"db": "PACKETSTORM",
+				"id": "94168"
+			},
+			{
+				"date": "2010-09-23T01:18:19",
+				"db": "PACKETSTORM",
+				"id": "94152"
+			},
+			{
+				"date": "2010-09-26T00:00:00",
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"date": "2010-09-23T19:00:13.137000",
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"sources_update_date": {
+		"data": [
+			{
+				"date": "2010-09-24T00:00:00",
+				"db": "VULHUB",
+				"id": "VHN-45434"
+			},
+			{
+				"date": "2015-03-19T08:31:00",
+				"db": "BID",
+				"id": "43395"
+			},
+			{
+				"date": "2010-10-12T00:00:00",
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			},
+			{
+				"date": "2010-09-26T00:00:00",
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			},
+			{
+				"date": "2025-04-11T00:51:21.963000",
+				"db": "NVD",
+				"id": "CVE-2010-2829"
+			}
+		]
+	},
+	"threat_type": {
+		"data": "remote",
+		"sources": [
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			}
+		],
+		"trust": 0.6
+	},
+	"title": {
+		"data": "Cisco IOS of  H.323 Service disruption in implementation  (DoS) Vulnerabilities",
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2010-002120"
+			}
+		],
+		"trust": 0.8
+	},
+	"type": {
+		"data": "lack of information",
+		"sources": [
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201009-239"
+			}
+		],
+		"trust": 0.6
+	}
+}

@@ -1,0 +1,639 @@
+{
+	"id": "VAR-201106-0273",
+	"affected_products": {
+		"data": [
+			{
+				"model": "onebridge mobile data suite",
+				"scope": "eq",
+				"trust": 1.9,
+				"vendor": "sybase",
+				"version": "5.6"
+			},
+			{
+				"model": "onebridge mobile data suite",
+				"scope": "eq",
+				"trust": 1.9,
+				"vendor": "sybase",
+				"version": "5.5"
+			},
+			{
+				"model": "onebridge",
+				"scope": "eq",
+				"trust": 0.9,
+				"vendor": "sybase",
+				"version": "5.6"
+			},
+			{
+				"model": "onebridge",
+				"scope": "eq",
+				"trust": 0.9,
+				"vendor": "sybase",
+				"version": "5.5"
+			},
+			{
+				"model": "onebridge mobile data suite",
+				"scope": "eq",
+				"trust": 0.8,
+				"vendor": "sybase",
+				"version": "5.5 and  5.6"
+			},
+			{
+				"model": "onebridge",
+				"scope": null,
+				"trust": 0.7,
+				"vendor": "sybase",
+				"version": null
+			}
+		],
+		"sources": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"configurations": {
+		"data": [
+			{
+				"CVE_data_version": "4.0",
+				"nodes": [
+					{
+						"cpe_match": [
+							{
+								"cpe22Uri": "cpe:/a:sybase:onebridge_mobile_data_suite",
+								"vulnerable": true
+							}
+						],
+						"operator": "OR"
+					}
+				]
+			}
+		],
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			}
+		]
+	},
+	"credits": {
+		"data": "Luigi Auriemma",
+		"sources": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "BID",
+				"id": "46905"
+			}
+		],
+		"trust": 1
+	},
+	"cve": "CVE-2011-2475",
+	"cvss": {
+		"data": [
+			{
+				"cvssV2": [
+					{
+						"accessComplexity": "LOW",
+						"accessVector": "NETWORK",
+						"authentication": "NONE",
+						"author": "nvd@nist.gov",
+						"availabilityImpact": "COMPLETE",
+						"baseScore": 10,
+						"confidentialityImpact": "COMPLETE",
+						"exploitabilityScore": 10,
+						"id": "CVE-2011-2475",
+						"impactScore": 10,
+						"integrityImpact": "COMPLETE",
+						"severity": "HIGH",
+						"trust": 1.8,
+						"vectorString": "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+						"version": "2.0"
+					},
+					{
+						"accessComplexity": "LOW",
+						"accessVector": "NETWORK",
+						"authentication": "NONE",
+						"author": "ZDI",
+						"availabilityImpact": "COMPLETE",
+						"baseScore": 10,
+						"confidentialityImpact": "COMPLETE",
+						"exploitabilityScore": 10,
+						"id": "ZDI-11-171",
+						"impactScore": 10,
+						"integrityImpact": "COMPLETE",
+						"severity": "HIGH",
+						"trust": 0.7,
+						"vectorString": "AV:N/AC:L/Au:N/C:C/I:C/A:C",
+						"version": "2.0"
+					}
+				],
+				"cvssV3": [],
+				"severity": [
+					{
+						"author": "nvd@nist.gov",
+						"id": "CVE-2011-2475",
+						"trust": 1,
+						"value": "HIGH"
+					},
+					{
+						"author": "NVD",
+						"id": "CVE-2011-2475",
+						"trust": 0.8,
+						"value": "High"
+					},
+					{
+						"author": "ZDI",
+						"id": "ZDI-11-171",
+						"trust": 0.7,
+						"value": "HIGH"
+					},
+					{
+						"author": "CNNVD",
+						"id": "CNNVD-201106-108",
+						"trust": 0.6,
+						"value": "CRITICAL"
+					}
+				]
+			}
+		],
+		"sources": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"description": {
+		"data": "Format string vulnerability in ECTrace.dll in the iMailGateway service in the Internet Mail Gateway in OneBridge Server and DMZ Proxy in Sybase OneBridge Mobile Data Suite 5.5 and 5.6 allows remote attackers to execute arbitrary code via format string specifiers in unspecified string fields, related to authentication logging. Authentication is not required to exploit this vulnerability.The specific flaw exists within the iMailGatewayService server process (ECTrace.dll) which listens for encrypted requests by default on TCP port 993 (IMAP) and port 587 (SMTP). The process fails to properly sanitize malformed user string inputs before passing to the authentication logging function. A format string vulnerability exists in the Sybase OneBridge server and DMZ agent. Failed exploit attempts will likely result in a denial-of-service condition. \nNOTE (June 3, 2011): This BID was previously titled 'Sybase OneBridge Server and DMZ Proxy Unspecified Security Vulnerability'; it has been updated to better reflect the nature of the vulnerability. \nAuthentication is not required to exploit this vulnerability. \n\n-- Vendor Response:\nSybase has issued an update to correct this vulnerability. More\ndetails can be found at:\nhttp://www.sybase.com/detail?id=1092074\n\n-- Disclosure Timeline:\n2011-01-21 - Vulnerability reported to vendor\n2011-06-03 - Coordinated public release of advisory\n\n-- Credit:\nThis vulnerability was discovered by:\n    * Luigi Auriemma\n\n-- About the Zero Day Initiative (ZDI):\nEstablished by TippingPoint, The Zero Day Initiative (ZDI) represents \na best-of-breed model for rewarding security researchers for responsibly\ndisclosing discovered vulnerabilities. \n\nResearchers interested in getting paid for their security research\nthrough the ZDI can find more information and sign-up at:\n\n    http://www.zerodayinitiative.com\n\nThe ZDI is unique in how the acquired vulnerability information is\nused. Instead, upon notifying the affected product vendor,\nTippingPoint provides its customers with zero day protection through\nits intrusion prevention technology. Explicit details regarding the\nspecifics of the vulnerability are not exposed to any parties until\nan official vendor patch is publicly available. Furthermore, with the\naltruistic aim of helping to secure a broader user base, TippingPoint\nprovides this vulnerability information confidentially to security\nvendors (including competitors) who have a vulnerability protection or\nmitigation product. \n\nOur vulnerability disclosure policy is available online at:\n\n    http://www.zerodayinitiative.com/advisories/disclosure_policy/\n\n\nFollow the ZDI on Twitter:\n\n    http://twitter.com/thezdi\n",
+		"sources": [
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "101997"
+			}
+		],
+		"trust": 3.42
+	},
+	"external_ids": {
+		"data": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171",
+				"trust": 3
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475",
+				"trust": 2.7
+			},
+			{
+				"db": "BID",
+				"id": "46905",
+				"trust": 0.9
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713",
+				"trust": 0.8
+			},
+			{
+				"db": "ZDI_CAN",
+				"id": "ZDI-CAN-1068",
+				"trust": 0.7
+			},
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109",
+				"trust": 0.6
+			},
+			{
+				"db": "NSFOCUS",
+				"id": "16959",
+				"trust": 0.6
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108",
+				"trust": 0.6
+			},
+			{
+				"db": "BID",
+				"id": "79755",
+				"trust": 0.3
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "101997",
+				"trust": 0.1
+			}
+		],
+		"sources": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "101997"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"iot": {
+		"data": true,
+		"sources": [
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			}
+		],
+		"trust": 1.2666667
+	},
+	"iot_taxonomy": {
+		"data": [
+			{
+				"category": [
+					"Network device"
+				],
+				"sub_category": null,
+				"trust": 0.6
+			}
+		],
+		"sources": [
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			}
+		]
+	},
+	"last_update_date": "2025-04-11T23:05:48.956000Z",
+	"patch": {
+		"data": [
+			{
+				"title": "ID 1092074",
+				"trust": 1.5,
+				"url": "http://www.sybase.com/detail?id=1092074"
+			}
+		],
+		"sources": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			}
+		]
+	},
+	"problemtype_data": {
+		"data": [
+			{
+				"problemtype": "CWE-134",
+				"trust": 1.8
+			}
+		],
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"references": {
+		"data": [
+			{
+				"trust": 3,
+				"url": "http://www.sybase.com/detail?id=1092074"
+			},
+			{
+				"trust": 1.9,
+				"url": "http://zerodayinitiative.com/advisories/zdi-11-171/"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2011-2475"
+			},
+			{
+				"trust": 0.8,
+				"url": "http://web.nvd.nist.gov/view/vuln/detail?vulnid=cve-2011-2475"
+			},
+			{
+				"trust": 0.6,
+				"url": "http://www.securityfocus.com/bid/46905/info"
+			},
+			{
+				"trust": 0.6,
+				"url": "http://www.nsfocus.net/vulndb/16959"
+			},
+			{
+				"trust": 0.3,
+				"url": "http://www.sybase.com/products/archivedproducts/onebridge"
+			},
+			{
+				"trust": 0.3,
+				"url": "/archive/1/518247"
+			},
+			{
+				"trust": 0.3,
+				"url": "http://www.zerodayinitiative.com/advisories/zdi-11-171/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.zerodayinitiative.com/advisories/disclosure_policy/"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.zerodayinitiative.com/advisories/zdi-11-171"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://twitter.com/thezdi"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.tippingpoint.com"
+			},
+			{
+				"trust": 0.1,
+				"url": "http://www.zerodayinitiative.com"
+			}
+		],
+		"sources": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "101997"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"sources": {
+		"data": [
+			{
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"db": "PACKETSTORM",
+				"id": "101997"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"sources_release_date": {
+		"data": [
+			{
+				"date": "2011-06-03T00:00:00",
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"date": "2011-06-05T00:00:00",
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"date": "2011-03-08T00:00:00",
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"date": "2011-06-09T00:00:00",
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"date": "2012-03-27T00:00:00",
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"date": "2011-06-04T03:31:47",
+				"db": "PACKETSTORM",
+				"id": "101997"
+			},
+			{
+				"date": "2011-06-10T00:00:00",
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"date": "2011-06-09T21:55:01.617000",
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"sources_update_date": {
+		"data": [
+			{
+				"date": "2011-06-03T00:00:00",
+				"db": "ZDI",
+				"id": "ZDI-11-171"
+			},
+			{
+				"date": "2011-06-05T00:00:00",
+				"db": "CNVD",
+				"id": "CNVD-2011-2109"
+			},
+			{
+				"date": "2011-06-03T18:00:00",
+				"db": "BID",
+				"id": "46905"
+			},
+			{
+				"date": "2011-06-09T00:00:00",
+				"db": "BID",
+				"id": "79755"
+			},
+			{
+				"date": "2012-03-27T00:00:00",
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			},
+			{
+				"date": "2011-06-14T00:00:00",
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			},
+			{
+				"date": "2025-04-11T00:51:21.963000",
+				"db": "NVD",
+				"id": "CVE-2011-2475"
+			}
+		]
+	},
+	"threat_type": {
+		"data": "remote",
+		"sources": [
+			{
+				"db": "PACKETSTORM",
+				"id": "101997"
+			},
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			}
+		],
+		"trust": 0.7
+	},
+	"title": {
+		"data": "Sybase OneBridge Mobile Data Suite of  ECTrace.dll Vulnerable to arbitrary code execution",
+		"sources": [
+			{
+				"db": "JVNDB",
+				"id": "JVNDB-2011-004713"
+			}
+		],
+		"trust": 0.8
+	},
+	"type": {
+		"data": "format string",
+		"sources": [
+			{
+				"db": "CNNVD",
+				"id": "CNNVD-201106-108"
+			}
+		],
+		"trust": 0.6
+	}
+}
