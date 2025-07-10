@@ -251,7 +251,9 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		}
 	case RangeTypeRPMVersionOnly:
-		return rpm.NewVersion(fmt.Sprintf("0:%s-release", v1)).Compare(rpm.NewVersion(fmt.Sprintf("0:%s-release", v2))), nil
+		va := rpm.NewVersion(v1)
+		vb := rpm.NewVersion(v2)
+		return rpm.NewVersion(va.Version()).Compare(rpm.NewVersion(vb.Version())), nil
 	case RangeTypeDPKG:
 		va, err := deb.NewVersion(v1)
 		if err != nil {
