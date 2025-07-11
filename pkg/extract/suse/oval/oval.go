@@ -7,10 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
@@ -21,6 +24,7 @@ import (
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
@@ -117,28 +121,20 @@ func Extract(inputDir string, opts ...Option) error {
 				return nil
 			}
 
-			// SUSE用のID形式に対応した分割処理
-			// 例: SUSE-SU-2023-1234-1 のような形式を想定
-			// splitted, err := util.Split(string(data.ID), "-", "-")
-			// if err != nil {
-			// 	return errors.Wrapf(err, "unexpected ID format for SUSE. actual: %q", data.ID)
-			// }
+			splitted, err := util.Split(string(data.ID), "-", "-")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
+			}
 
-			// if len(splitted) < 3 {
-			// 	return errors.Errorf("unexpected SUSE ID format. expected: SUSE-<TYPE>-<YEAR>-<ID>, actual: %q", data.ID)
-			// }
-
-			// // SUSE-SU-2023-1234-1 -> year = 2023
-			// year := splitted[2]
-			// if _, err := time.Parse("2006", year); err != nil {
-			// 	return errors.Wrapf(err, "unexpected year format in ID. actual: %q", data.ID)
-			// }
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
+			}
 
 			// FIXME: merge if a file exists
 
-			// if err := util.Write(filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-			// 	return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", year, fmt.Sprintf("%s.json", data.ID)))
-			// }
+			if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
+			}
 
 			return nil
 		}); err != nil {
@@ -182,7 +178,7 @@ func (e extractor) extract(def oval.Definition) (*dataTypes.Data, error) {
 	}
 	id := strings.TrimSpace(def.Metadata.Title)
 
-	_, err := e.walkCriteria(def.Criteria)
+	c, err := e.walkCriteria(def.Criteria)
 	if err != nil {
 		return nil, errors.Wrapf(err, "eval criteria")
 	}
@@ -197,7 +193,22 @@ func (e extractor) extract(def oval.Definition) (*dataTypes.Data, error) {
 		ID: dataTypes.RootID(id),
 		// Advisories: // TODO: アドバイザリ情報を構築
 		// Vulnerabilities: // TODO: 脆弱性情報を構築
-		// Detections: // TODO: 検出条件を構築
+		Detections: func() []detection.Detection {
+			if c == nil {
+				return nil
+			}
+			return []detection.Detection{
+				{
+					Conditions: []condition.Condition{
+						{
+							Criteria: *c,
+							// FIXME: what is suitable?
+							Tag: segment.DetectionTag(fmt.Sprintf("%s-%s-%s", e.osname, e.version, e.ovaltype)),
+						},
+					},
+				},
+			}
+		}(),
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.SUSEOVAL,
 			Raws: e.r.Paths(),
@@ -345,10 +356,11 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 				return true, nil, nil
 			case "equals":
 				// Sibling of kernel-livepatch pattern
-				if o.Name != "kernel-default" {
-					return false, nil, errors.Errorf("unexpected rpminfo_state evr. test: %s, expected: \"kernel-default\", actual: %q", oc.TestRef, o.Name)
+				if !strings.HasPrefix(o.Name, "kernel-") {
+					return false, nil, errors.Errorf(`unexpected rpminfo_object name. test: %s, expected: "kernel-*", actual: %q`, oc.TestRef, o.Name)
 				}
 
+				// FIXME: use fixstatus of unknown
 				return true, []affectedrangeTypes.Range{{
 					Equal: s.Evr.Text,
 				}}, nil
