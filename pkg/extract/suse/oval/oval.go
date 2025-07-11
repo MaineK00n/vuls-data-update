@@ -188,13 +188,13 @@ func Extract(inputDir string, opts ...Option) error {
 
 func (e extractor) extract(path, outdir string) error {
 	var def oval.Definition
-	if err := e.r.Read(path, e.baseDir, &def); err != nil {
+	if err := e.r.Read(path, e.inputDir, &def); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
 
-	data, err := e.extract1(def)
+	data, err := e.buildData(def)
 	if err != nil {
-		return errors.Wrapf(err, "extract %s", path)
+		return errors.Wrapf(err, "build data %s", path)
 	}
 	if data == nil {
 		return nil
@@ -232,7 +232,7 @@ func (e extractor) extract(path, outdir string) error {
 	return nil
 }
 
-func (e extractor) extract1(def oval.Definition) (*dataTypes.Data, error) {
+func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 	if strings.Contains(def.Metadata.Description, "** REJECT **") {
 		return nil, nil
 	}
@@ -336,17 +336,17 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 
 func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criterion, *criteriaTypes.Criteria, error) {
 	var t oval.RpminfoTest
-	if err := e.r.Read(filepath.Join(e.baseDir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", oc.TestRef)), e.baseDir, &t); err != nil {
+	if err := e.r.Read(filepath.Join(e.baseDir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", oc.TestRef)), e.inputDir, &t); err != nil {
 		return nil, nil, errors.Wrapf(err, "read rpminfo_test %s", filepath.Join(e.baseDir, "tests", "rpminfo_test", oc.TestRef))
 	}
 
 	var o oval.RpminfoObject
-	if err := e.r.Read(filepath.Join(e.baseDir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", t.Object.ObjectRef)), e.baseDir, &o); err != nil {
+	if err := e.r.Read(filepath.Join(e.baseDir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", t.Object.ObjectRef)), e.inputDir, &o); err != nil {
 		return nil, nil, errors.Wrapf(err, "read rpminfo_object %s", filepath.Join(e.baseDir, "objects", "rpminfo_object", t.Object.ObjectRef))
 	}
 
 	var s oval.RpminfoState
-	if err := e.r.Read(filepath.Join(e.baseDir, "states", "rpminfo_state", fmt.Sprintf("%s.json", t.State.StateRef)), e.baseDir, &s); err != nil {
+	if err := e.r.Read(filepath.Join(e.baseDir, "states", "rpminfo_state", fmt.Sprintf("%s.json", t.State.StateRef)), e.inputDir, &s); err != nil {
 		return nil, nil, errors.Wrapf(err, "read rpminfo_state %s", filepath.Join(e.baseDir, "states", "rpminfo_state", t.State.StateRef))
 	}
 
