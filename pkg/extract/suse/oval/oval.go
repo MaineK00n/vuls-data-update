@@ -1,6 +1,7 @@
 package oval
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
@@ -130,9 +131,23 @@ func Extract(inputDir string, opts ...Option) error {
 				return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
 			}
 
-			// FIXME: merge if a file exists
+			filename := filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
+			if _, err := os.Stat(filename); err == nil {
+				f, err := os.Open(filename)
+				if err != nil {
+					return errors.Wrapf(err, "open %s", filename)
+				}
+				defer f.Close()
 
-			if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+				var base dataTypes.Data
+				if err := json.NewDecoder(f).Decode(&base); err != nil {
+					return errors.Wrapf(err, "decode %s", filename)
+				}
+
+				data.Merge(base)
+			}
+
+			if err := util.Write(filename, data, true); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
 			}
 
@@ -217,6 +232,10 @@ func (e extractor) extract(def oval.Definition) (*dataTypes.Data, error) {
 }
 
 func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, error) {
+	if len(oc.Criterias) == 0 && len(oc.Criterions) == 0 {
+		return nil, nil
+	}
+
 	c := criteriaTypes.Criteria{}
 
 	switch oc.Operator {
@@ -225,7 +244,7 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 	case "AND":
 		c.Operator = criteriaTypes.CriteriaOperatorTypeAND
 	default:
-		return nil, errors.Errorf(`unexpected oval criteria operator. expected: ["OR", "AND"], actual: %s`, oc.Operator)
+		return nil, errors.Errorf(`unexpected oval criteria operator. expected: ["OR", "AND"], actual: %q`, oc.Operator)
 	}
 
 	for _, oc := range oc.Criterias {
@@ -286,6 +305,13 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 		return nil, nil, errors.Errorf("unexpected rpminfo_object name. name: %q", o.Name)
 	}
 
+	if s.SignatureKeyid.Text != "" {
+		if s.Version.Text != "" || s.Evr.Text != "" || s.Arch.Text != "" {
+			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q, evr: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text, s.Arch.Text)
+		}
+		return nil, nil, nil
+	}
+
 	if strings.HasSuffix(oc.Comment, "is not affected") {
 		// sanity check
 		if s.Version.Text != "0" || s.Version.Operation != "equals" {
@@ -298,12 +324,12 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 	switch t.Check {
 	case "at least one":
 		if (s.Version.Text == "" && s.Evr.Text == "") || (s.Version.Text != "" && s.Evr.Text != "") {
-			return nil, nil, errors.Errorf("only version or evr should be set. test: %s, check: %s, version: %q, evr: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text)
+			return nil, nil, errors.Errorf("only version or evr should be set. test: %s, check: %q, version: %q, evr: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text)
 		}
 
 		if s.Version.Text != "" {
 			if s.Arch.Text != "" {
-				return nil, nil, errors.Errorf(`unexpected arch. test: %s, check: %s, expected: "", actual: %q`, oc.TestRef, t.Check, s.Arch.Text)
+				return nil, nil, errors.Errorf(`unexpected arch. test: %s, check: %q, expected: "", actual: %q`, oc.TestRef, t.Check, s.Arch.Text)
 			}
 
 			if s.Version.Operation != "equals" {
@@ -333,39 +359,47 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 		}
 
 		// case that EVR is set
-		vulnerable, ranges, err := func() (bool, []affectedrangeTypes.Range, error) {
+		vulnerable, fixstatus, ranges, err := func() (bool, *fixstatusTypes.FixStatus, []affectedrangeTypes.Range, error) {
 			switch s.Evr.Operation {
 			case "less than":
-				return true, []affectedrangeTypes.Range{{
-					LessThan: s.Version.Text,
-				}}, nil
-			case "greater than or equal":
-				if e.osname == "opensuse" && e.version == "tumbleweed" {
-					// FIXME: validate package name, too
-					return false, []affectedrangeTypes.Range{{
-						GreaterEqual: s.Version.Text,
+				return true, &fixstatusTypes.FixStatus{
+						Class: fixstatusTypes.ClassFixed,
+					}, []affectedrangeTypes.Range{{
+						LessThan: s.Version.Text,
 					}}, nil
+
+			case "greater than or equal":
+				// suse.linux.enterprise.server.11-affected.xml oval:org.opensuse.security:def:20042771 has
+				// A criterion of "greater than or equal" exists in "SUSE Linux Enterprise Server 11-SECURITY is installed" test.
+				// Also, opensuse tumbleweed has such criterias in "openSUSE Tumbleweed is installed" tests.
+				if !strings.HasSuffix(o.Name, "-release") {
+					return false, nil, nil, errors.Errorf("unexpected rpminfo_state evr operation. test; %s, expected: [\"less than\"], actual: %q", oc.TestRef, s.Evr.Operation)
 				}
 
-				return false, nil, errors.Errorf("unexpected rpminfo_state evr operation. test; %s, expected: [\"less than\"], actual: %q", oc.TestRef, s.Evr.Operation)
+				return false, nil, []affectedrangeTypes.Range{{
+					GreaterEqual: s.Version.Text,
+				}}, nil
+
 			case "greater than":
 				if s.Evr.Text != "0:0-0" {
-					return false, nil, errors.Errorf("unexpected rpminfo_state evr. test: %s, expected: \"0:0-0\", oc.TestRef, actual: %q", oc.TestRef, s.Evr.Text)
+					return false, nil, nil, errors.Errorf("unexpected rpminfo_state evr. test: %s, expected: \"0:0-0\", oc.TestRef, actual: %q", oc.TestRef, s.Evr.Text)
 				}
 
-				return true, nil, nil
+				return true, &fixstatusTypes.FixStatus{
+					Class: fixstatusTypes.ClassUnfixed,
+				}, nil, nil
 			case "equals":
 				// Sibling of kernel-livepatch pattern
 				if !strings.HasPrefix(o.Name, "kernel-") {
-					return false, nil, errors.Errorf(`unexpected rpminfo_object name. test: %s, expected: "kernel-*", actual: %q`, oc.TestRef, o.Name)
+					return false, nil, nil, errors.Errorf(`unexpected rpminfo_object name. test: %s, expected: "kernel-*", actual: %q`, oc.TestRef, o.Name)
 				}
 
 				// FIXME: use fixstatus of unknown
-				return true, []affectedrangeTypes.Range{{
+				return true, nil, []affectedrangeTypes.Range{{
 					Equal: s.Evr.Text,
 				}}, nil
 			default:
-				return false, nil, errors.Errorf(`unexpected evr operation. test: %s, expected: ["less than", "greater than or equal", "greater than", "equals"], actual: %q`, oc.TestRef, s.Evr.Operation)
+				return false, nil, nil, errors.Errorf(`unexpected evr operation. test: %s, expected: ["less than", "greater than or equal", "greater than", "equals"], actual: %q`, oc.TestRef, s.Evr.Operation)
 			}
 		}()
 		if err != nil {
@@ -376,19 +410,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &versoncriterionTypes.Criterion{
 				Vulnerable: vulnerable,
-				FixStatus: func() *fixstatusTypes.FixStatus {
-					if !vulnerable {
-						return nil
-					}
-					if len(ranges) == 0 {
-						return &fixstatusTypes.FixStatus{
-							Class: fixstatusTypes.ClassUnfixed,
-						}
-					}
-					return &fixstatusTypes.FixStatus{
-						Class: fixstatusTypes.ClassFixed,
-					}
-				}(),
+				FixStatus:  fixstatus,
 				Package: criterionpackageTypes.Package{
 					Type: criterionpackageTypes.PackageTypeBinary,
 					Binary: &binaryTypes.Package{
@@ -416,15 +438,8 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 		}, nil, nil
 
 	case "all":
-		if s.SignatureKeyid.Text != "" {
-			if s.Version.Text != "" || s.Evr.Text != "" || s.Arch.Text != "" {
-				return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %s, rpminfo_state version: %q, evr: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text, s.Arch.Text)
-			}
-			return nil, nil, nil
-		}
-
 		if s.Version.Text != "" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %s, rpminfo_state version: %q", oc.TestRef, t.Check, s.Version.Text)
+			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q", oc.TestRef, t.Check, s.Version.Text)
 		}
 
 		if s.Arch.Text != "" && s.Arch.Operation != "pattern match" {
@@ -523,13 +538,13 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 
 		// Limit to kernel-livepatch-* packages. If not, it's time to investigate the raw data to re-think how they should be translated.
 		if !strings.HasPrefix(o.Name, "kernel-livepatch-") {
-			return nil, nil, errors.Errorf("unexpected rpminfo_object. test: %s, rpminfo_test check: %s, rpminfo_object name: %q", oc.TestRef, t.Check, o.Name)
+			return nil, nil, errors.Errorf("unexpected rpminfo_object. test: %s, rpminfo_test check: %q, rpminfo_object name: %q", oc.TestRef, t.Check, o.Name)
 		}
 		if s.Version.Text != "" || s.Arch.Text != "" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %s, rpminfo_state version: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Arch.Text)
+			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Arch.Text)
 		}
 		if s.Evr.Text == "" || s.Evr.Operation != "greater than or equal" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %s, rpminfo_state evr: %q, operation: %q", oc.TestRef, t.Check, s.Evr.Text, s.Evr.Operation)
+			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state evr: %q, operation: %q", oc.TestRef, t.Check, s.Evr.Text, s.Evr.Operation)
 		}
 
 		return nil,
