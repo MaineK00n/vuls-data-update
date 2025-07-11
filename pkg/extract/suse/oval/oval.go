@@ -1,16 +1,19 @@
 package oval
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
@@ -36,7 +39,8 @@ import (
 )
 
 type options struct {
-	dir string
+	dir         string
+	concurrency int
 }
 
 type Option interface {
@@ -53,6 +57,16 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
+type concurrencyOption int
+
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
+}
+
+func WithConcurrency(concurrency int) Option {
+	return concurrencyOption(concurrency)
+}
+
 type extractor struct {
 	inputDir string
 	baseDir  string
@@ -64,7 +78,8 @@ type extractor struct {
 
 func Extract(inputDir string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "suse", "oval"),
+		dir:         filepath.Join(util.CacheDir(), "extract", "suse", "oval"),
+		concurrency: runtime.NumCPU(),
 	}
 
 	for _, o := range opts {
@@ -92,70 +107,58 @@ func Extract(inputDir string, opts ...Option) error {
 		baseDir := filepath.Join(inputDir, elems[0], elems[1], elems[2])
 		log.Printf("[INFO] extract OVAL files. dir: %s", filepath.Join(baseDir, "definitions"))
 
-		if err := filepath.WalkDir(filepath.Join(baseDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
+		g, ctx := errgroup.WithContext(context.Background())
+		g.SetLimit(options.concurrency)
 
-			if d.IsDir() || filepath.Ext(path) != ".json" {
-				return nil
-			}
+		reqChan := make(chan string)
 
-			e := extractor{
-				inputDir: inputDir,
-				baseDir:  baseDir,
-				osname:   elems[0],
-				version:  elems[1],
-				ovaltype: elems[2],
-				r:        utiljson.NewJSONReader(),
-			}
-			var def oval.Definition
-			if err := e.r.Read(path, e.baseDir, &def); err != nil {
-				return errors.Wrapf(err, "read json %s", path)
-			}
+		g.Go(func() error {
+			defer close(reqChan)
 
-			data, err := e.extract(def)
-			if err != nil {
-				return errors.Wrapf(err, "extract %s", path)
-			}
-			if data == nil {
-				return nil
-			}
-
-			splitted, err := util.Split(string(data.ID), "-", "-")
-			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
-			}
-
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
-			}
-
-			filename := filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
-			if _, err := os.Stat(filename); err == nil {
-				f, err := os.Open(filename)
+			if err := filepath.WalkDir(filepath.Join(baseDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
-					return errors.Wrapf(err, "open %s", filename)
-				}
-				defer f.Close()
-
-				var base dataTypes.Data
-				if err := json.NewDecoder(f).Decode(&base); err != nil {
-					return errors.Wrapf(err, "decode %s", filename)
+					return err
 				}
 
-				data.Merge(base)
-			}
+				if d.IsDir() || filepath.Ext(path) != ".json" {
+					return nil
+				}
 
-			if err := util.Write(filename, data, true); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
+				select {
+				case reqChan <- path:
+				case <-ctx.Done():
+					return ctx.Err()
+				}
+				return nil
+			}); err != nil {
+				return errors.Wrapf(err, "walk %s", filepath.Join(baseDir, "definitions"))
 			}
 
 			return nil
-		}); err != nil {
-			return errors.Wrapf(err, "walk %s", baseDir)
+		})
+
+		for i := 0; i < options.concurrency; i++ {
+			g.Go(func() error {
+				for path := range reqChan {
+					e := extractor{
+						inputDir: inputDir,
+						baseDir:  baseDir,
+						osname:   elems[0],
+						version:  elems[1],
+						ovaltype: elems[2],
+						r:        utiljson.NewJSONReader(),
+					}
+					if err := e.extract(path, options.dir); err != nil {
+						return errors.Wrapf(err, "extract %s", path)
+					}
+				}
+				return nil
+			})
 		}
 
+		if err := g.Wait(); err != nil {
+			return errors.Wrapf(err, "wait for walk")
+		}
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
@@ -183,7 +186,53 @@ func Extract(inputDir string, opts ...Option) error {
 	return nil
 }
 
-func (e extractor) extract(def oval.Definition) (*dataTypes.Data, error) {
+func (e extractor) extract(path, outdir string) error {
+	var def oval.Definition
+	if err := e.r.Read(path, e.baseDir, &def); err != nil {
+		return errors.Wrapf(err, "read json %s", path)
+	}
+
+	data, err := e.extract1(def)
+	if err != nil {
+		return errors.Wrapf(err, "extract %s", path)
+	}
+	if data == nil {
+		return nil
+	}
+
+	splitted, err := util.Split(string(data.ID), "-", "-")
+	if err != nil {
+		return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
+	}
+
+	if _, err := time.Parse("2006", splitted[1]); err != nil {
+		return errors.Wrapf(err, "unexpected ID format. expected: CVE-YYYY-ZZZZ, actual: %s", data.ID)
+	}
+
+	filename := filepath.Join(outdir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
+	if _, err := os.Stat(filename); err == nil {
+		f, err := os.Open(filename)
+		if err != nil {
+			return errors.Wrapf(err, "open %s", filename)
+		}
+		defer f.Close()
+
+		var base dataTypes.Data
+		if err := json.NewDecoder(f).Decode(&base); err != nil {
+			return errors.Wrapf(err, "decode %s", filename)
+		}
+
+		data.Merge(base)
+	}
+
+	if err := util.Write(filename, data, true); err != nil {
+		return errors.Wrapf(err, "write %s", filename)
+	}
+
+	return nil
+}
+
+func (e extractor) extract1(def oval.Definition) (*dataTypes.Data, error) {
 	if strings.Contains(def.Metadata.Description, "** REJECT **") {
 		return nil, nil
 	}
