@@ -1,8 +1,7 @@
 package osv
 
 import (
-	"archive/zip"
-	"bytes"
+	"archive/tar"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,12 +12,13 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/ulikunitz/xz"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://osv-vulnerabilities.storage.googleapis.com/Ubuntu/all.zip"
+const dataURL = "https://security-metadata.canonical.com/osv/osv-all.tar.xz"
 
 type options struct {
 	dataURL string
@@ -87,36 +87,32 @@ func Fetch(opts ...Option) error {
 		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
-	bs, err := io.ReadAll(resp.Body)
+	xr, err := xz.NewReader(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "read all response body")
+		return errors.Wrap(err, "create xz reader")
 	}
 
-	r, err := zip.NewReader(bytes.NewReader(bs), int64(len(bs)))
-	if err != nil {
-		return errors.Wrap(err, "create zip reader")
-	}
+	tr := tar.NewReader(xr)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return errors.Wrap(err, "next tar reader")
+		}
 
-	for _, zf := range r.File {
-		if zf.FileInfo().IsDir() {
+		if hdr.FileInfo().IsDir() {
 			continue
 		}
 
-		a, err := func() (*OSV, error) {
-			f, err := zf.Open()
-			if err != nil {
-				return nil, errors.Wrapf(err, "open %s", zf.Name)
-			}
-			defer f.Close()
+		if filepath.Ext(hdr.Name) != ".json" {
+			continue
+		}
 
-			var a OSV
-			if err := json.NewDecoder(f).Decode(&a); err != nil {
-				return nil, errors.Wrap(err, "decode json")
-			}
-			return &a, nil
-		}()
-		if err != nil {
-			return errors.Wrapf(err, "read %s", zf.Name)
+		var a OSV
+		if err := json.NewDecoder(tr).Decode(&a); err != nil {
+			return errors.Wrap(err, "decode json")
 		}
 
 		switch {
