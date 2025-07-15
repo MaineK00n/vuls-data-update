@@ -1,22 +1,22 @@
 {
-	"schema_version": "1.6.0",
+	"schema_version": "1.6.3",
 	"id": "LSN-0108-1",
 	"modified": "2024-12-19T11:12:01Z",
 	"published": "2024-12-19T11:12:01Z",
 	"related": [
 		"CVE-2024-26800",
-		"CVE-2024-26921",
-		"CVE-2024-26960",
-		"CVE-2024-27398",
-		"CVE-2024-38630",
-		"CVE-2024-43882",
-		"CVE-2024-50264",
 		"UBUNTU-CVE-2024-26800",
+		"CVE-2024-26921",
 		"UBUNTU-CVE-2024-26921",
+		"CVE-2024-26960",
 		"UBUNTU-CVE-2024-26960",
+		"CVE-2024-27398",
 		"UBUNTU-CVE-2024-27398",
+		"CVE-2024-38630",
 		"UBUNTU-CVE-2024-38630",
+		"CVE-2024-43882",
 		"UBUNTU-CVE-2024-43882",
+		"CVE-2024-50264",
 		"UBUNTU-CVE-2024-50264"
 	],
 	"summary": "Kernel Live Patch Security Notice",
@@ -26,7 +26,7 @@
 			"package": {
 				"ecosystem": "Ubuntu:Pro:14.04:LTS",
 				"name": "linux-lts-xenial",
-				"purl": "pkg:deb/ubuntu/linux-lts-xenial@4.4.0-261.295~14.04.1?arch=source&distro=trusty/esm"
+				"purl": "pkg:deb/ubuntu/linux-lts-xenial@4.4.0-267.301~14.04.1?arch=source&distro=esm-infra-legacy/trusty"
 			},
 			"ranges": [
 				{
@@ -36,7 +36,7 @@
 							"introduced": "0"
 						},
 						{
-							"fixed": "4.4.0-261.295~14.04.1"
+							"fixed": "4.4.0-267.301~14.04.1"
 						}
 					]
 				}
@@ -180,14 +180,16 @@
 				"4.4.0-257.291~14.04.1",
 				"4.4.0-258.292~14.04.2",
 				"4.4.0-259.293~14.04.1",
-				"4.4.0-260.294~14.04.1"
+				"4.4.0-260.294~14.04.1",
+				"4.4.0-261.295~14.04.1",
+				"4.4.0-262.296~14.04.1",
+				"4.4.0-263.297~14.04.1",
+				"4.4.0-264.298~14.04.1",
+				"4.4.0-266.300~14.04.1"
 			],
 			"ecosystem_specific": {
 				"availability": "Livepatch subscription required",
 				"module_name_regex": "lkp_Ubuntu_4_4_0[_|\\d]+_(?:generic|lowlatency)_(\\d+)"
-			},
-			"database_specific": {
-				"source": "https://github.com/canonical/ubuntu-security-notices/blob/main/osv/lsn/LSN-0108-1.json"
 			}
 		},
 		{
@@ -310,9 +312,6 @@
 			"ecosystem_specific": {
 				"availability": "Livepatch subscription required",
 				"module_name_regex": "lkp_Ubuntu_4_15_0[_|\\d]+_aws_(\\d+)"
-			},
-			"database_specific": {
-				"source": "https://github.com/canonical/ubuntu-security-notices/blob/main/osv/lsn/LSN-0108-1.json"
 			}
 		},
 		{
@@ -458,9 +457,6 @@
 			"ecosystem_specific": {
 				"availability": "Livepatch subscription required",
 				"module_name_regex": "lkp_Ubuntu_4_15_0[_|\\d]+_aws_(\\d+)"
-			},
-			"database_specific": {
-				"source": "https://github.com/canonical/ubuntu-security-notices/blob/main/osv/lsn/LSN-0108-1.json"
 			}
 		},
 		{
@@ -589,9 +585,6 @@
 			"ecosystem_specific": {
 				"availability": "Livepatch subscription required",
 				"module_name_regex": "lkp_Ubuntu_5_4_0[_|\\d]+_aws_(\\d+)"
-			},
-			"database_specific": {
-				"source": "https://github.com/canonical/ubuntu-security-notices/blob/main/osv/lsn/LSN-0108-1.json"
 			}
 		},
 		{
@@ -676,9 +669,6 @@
 			"ecosystem_specific": {
 				"availability": "Livepatch subscription required",
 				"module_name_regex": "lkp_Ubuntu_5_15_0[_|\\d]+_aws_(\\d+)"
-			},
-			"database_specific": {
-				"source": "https://github.com/canonical/ubuntu-security-notices/blob/main/osv/lsn/LSN-0108-1.json"
 			}
 		},
 		{
@@ -722,9 +712,6 @@
 			"ecosystem_specific": {
 				"availability": "Livepatch subscription required",
 				"module_name_regex": "lkp_Ubuntu_6_8_0[_|\\d]+_aws_(\\d+)"
-			},
-			"database_specific": {
-				"source": "https://github.com/canonical/ubuntu-security-notices/blob/main/osv/lsn/LSN-0108-1.json"
 			}
 		}
 	],
