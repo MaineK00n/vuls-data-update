@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -466,6 +467,15 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			return nil, nil, errors.Wrap(err, "translate rpminfo_state version.")
 		}
 
+		if slices.Contains(strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|"), "ant") {
+			return nil, nil, errors.Errorf(`unexpected arch. test: %s, actual: %q`, oc.TestRef, s.Arch.Text)
+		}
+
+		archs, err := architectures(s.Arch.Text)
+		if err != nil {
+			return nil, nil, errors.Wrapf(err, "architectures")
+		}
+
 		return &criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &versoncriterionTypes.Criterion{
@@ -474,15 +484,8 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 				Package: criterionpackageTypes.Package{
 					Type: criterionpackageTypes.PackageTypeBinary,
 					Binary: &binaryTypes.Package{
-						Name: o.Name,
-						Architectures: func() []string {
-							switch s.Arch.Text {
-							case "":
-								return nil
-							default:
-								return strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|")
-							}
-						}(),
+						Name:          o.Name,
+						Architectures: archs,
 					},
 				},
 				Affected: func() *affectedTypes.Affected {
@@ -505,15 +508,6 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 		if s.Arch.Text != "" && s.Arch.Operation != "pattern match" {
 			return nil, nil, errors.Errorf(`unexpected rpminfo_state arch operation. test: %s, expected: "pattern match", actual: %q`, oc.TestRef, s.Arch.Operation)
 		}
-
-		archs := func() []string {
-			switch s.Arch.Text {
-			case "":
-				return nil
-			default:
-				return strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|")
-			}
-		}()
 
 		affected, fixstatus, err := func() (*affectedTypes.Affected, *fixstatusTypes.FixStatus, error) {
 			if s.Evr.Text == "" {
@@ -544,6 +538,11 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 		}()
 		if err != nil {
 			return nil, nil, errors.Wrapf(err, "translate rpminfo_state evr. test: %s", oc.TestRef)
+		}
+
+		archs, err := architectures(s.Arch.Text)
+		if err != nil {
+			return nil, nil, errors.Wrapf(err, "architectures")
 		}
 
 		c := criterionTypes.Criterion{
@@ -678,4 +677,19 @@ func (e extractor) translateUnameCriterion(oc oval.Criterion) (*criterionTypes.C
 			Release: &s.OSRelease.Text,
 		},
 	}, nil
+}
+
+func architectures(arch string) ([]string, error) {
+	if arch == "" {
+		return nil, nil
+	}
+
+	archs := strings.Split(strings.TrimPrefix(strings.TrimSuffix(arch, ")"), "("), "|")
+	for _, a := range archs {
+		// FIXME: how to treat noarch
+		if !slices.Contains([]string{"aarch64", "aarch64_ilp32", "i586", "i686", "ia64", "ppc", "ppc64", "ppc64le", "s390", "s390x", "x86_64", "noarch"}, a) {
+			return nil, errors.Errorf(`unexpected arch. expected: ["aarch64", "aarch64_ilp32", "i586", "i686", "ia64", "ppc", "ppc64", "ppc64le", "s390", "s390x", "x86_64", "noarch"], actual: %s`, arch)
+		}
+	}
+	return archs, nil
 }
