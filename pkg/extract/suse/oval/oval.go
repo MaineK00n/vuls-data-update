@@ -426,7 +426,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 				return true, &fixstatusTypes.FixStatus{
 						Class: fixstatusTypes.ClassFixed,
 					}, []affectedrangeTypes.Range{{
-						LessThan: s.Version.Text,
+						LessThan: s.Evr.Text,
 					}}, nil
 
 			case "greater than or equal":
@@ -438,7 +438,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 				}
 
 				return false, nil, []affectedrangeTypes.Range{{
-					GreaterEqual: s.Version.Text,
+					GreaterEqual: s.Evr.Text,
 				}}, nil
 
 			case "greater than":
@@ -464,7 +464,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			}
 		}()
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "translate rpminfo_state version.")
+			return nil, nil, errors.Wrap(err, "translate rpminfo_state EVR.")
 		}
 
 		if slices.Contains(strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|"), "ant") {
@@ -686,7 +686,6 @@ func architectures(arch string) ([]string, error) {
 
 	archs := strings.Split(strings.TrimPrefix(strings.TrimSuffix(arch, ")"), "("), "|")
 	for _, a := range archs {
-		// FIXME: how to treat noarch
 		if !slices.Contains([]string{"aarch64", "aarch64_ilp32", "i586", "i686", "ia64", "ppc", "ppc64", "ppc64le", "s390", "s390x", "x86_64", "noarch"}, a) {
 			return nil, errors.Errorf(`unexpected arch. expected: ["aarch64", "aarch64_ilp32", "i586", "i686", "ia64", "ppc", "ppc64", "ppc64le", "s390", "s390x", "x86_64", "noarch"], actual: %s`, arch)
 		}
