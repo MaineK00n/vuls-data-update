@@ -3,8 +3,9 @@ package local
 import (
 	"path/filepath"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 	"github.com/pkg/errors"
+
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
 type options struct {
