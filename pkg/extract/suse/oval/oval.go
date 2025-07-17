@@ -310,12 +310,17 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 			return nil, nil
 		}
 		if child != nil {
+			if slices.ContainsFunc(c.Criterias, func(sibling criteriaTypes.Criteria) bool {
+				return criteriaTypes.Compare(sibling, *child) == 0
+			}) {
+				continue
+			}
 			c.Criterias = append(c.Criterias, *child)
 		}
 	}
 
-	for _, oc := range oc.Criterions {
-		cn, ca, err := e.translateCriterion(oc)
+	for _, ocn := range oc.Criterions {
+		cn, ca, err := e.translateCriterion(ocn)
 		if err != nil {
 			return nil, errors.Wrapf(err, "translace criterion")
 		}
@@ -324,9 +329,19 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 			return nil, nil
 		}
 		if cn != nil {
+			if slices.ContainsFunc(c.Criterions, func(sibling criterionTypes.Criterion) bool {
+				return criterionTypes.Compare(sibling, *cn) == 0
+			}) {
+				continue
+			}
 			c.Criterions = append(c.Criterions, *cn)
 		}
 		if ca != nil {
+			if slices.ContainsFunc(c.Criterias, func(sibling criteriaTypes.Criteria) bool {
+				return criteriaTypes.Compare(sibling, *ca) == 0
+			}) {
+				continue
+			}
 			c.Criterias = append(c.Criterias, *ca)
 		}
 	}
