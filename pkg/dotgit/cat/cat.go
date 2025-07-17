@@ -1,17 +1,31 @@
 package cat
 
 import (
+	"fmt"
+	"os/exec"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
 )
 
 type options struct {
-	treeish string
+	useNativeGit bool
+	treeish      string
 }
 
 type Option interface {
 	apply(*options)
+}
+
+type useNativeGitOption bool
+
+func (o useNativeGitOption) apply(opts *options) {
+	opts.useNativeGit = bool(o)
+}
+
+func WithUseNativeGit(native bool) Option {
+	return useNativeGitOption(native)
 }
 
 type treeishOption string
@@ -26,11 +40,21 @@ func WithTreeish(id string) Option {
 
 func Cat(repository, path string, opts ...Option) (string, error) {
 	options := &options{
-		treeish: "main",
+		useNativeGit: true,
+		treeish:      "main",
 	}
 
 	for _, opt := range opts {
 		opt.apply(options)
+	}
+
+	if options.useNativeGit {
+		cmd := exec.Command("git", "-C", repository, "show", fmt.Sprintf("%s:%s", options.treeish, path))
+		output, err := cmd.Output()
+		if err != nil {
+			return "", errors.Wrapf(err, "exec %q", cmd.String())
+		}
+		return string(output), nil
 	}
 
 	r, err := git.PlainOpen(repository)

@@ -17,8 +17,8 @@ func newCmdStatus() *cobra.Command {
 		Use:   "status",
 		Short: "Show dotgit status",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit status local vuls-data-raw-debian-security-tracker
-			$ vuls-data-update dotgit status remote ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker
+			$ vuls-data-update dotgit status local vuls-data-raw-debian-security-tracker-api
+			$ vuls-data-update dotgit status remote ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 		`),
 	}
 
@@ -32,7 +32,7 @@ func newCmdStatusLocal() *cobra.Command {
 		Use:   "local <dotgit directory>",
 		Short: "Show local dotgit status",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit status local vuls-data-raw-debian-security-tracker
+			$ vuls-data-update dotgit status local vuls-data-raw-debian-security-tracker-api
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -55,7 +55,7 @@ func newCmdStatusRemote() *cobra.Command {
 		Use:   "remote <repository>",
 		Short: "Show remote dotgit status",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit status remote ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker
+			$ vuls-data-update dotgit status remote ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {

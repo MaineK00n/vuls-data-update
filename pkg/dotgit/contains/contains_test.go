@@ -14,33 +14,44 @@ import (
 
 func TestContains(t *testing.T) {
 	type args struct {
-		commit string
+		repository string
+		commit     string
+		opts       []contains.Option
 	}
 	tests := []struct {
 		name    string
-		dotgit  string
 		args    args
 		wantErr interface{}
 	}{
 		{
-			name:   "contains full commit hash",
-			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			name: "contains full commit hash, native git",
 			args: args{
-				commit: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fab",
+				opts:       []contains.Option{contains.WithUseNativeGit(true)},
 			},
 		},
 		{
-			name:   "contains short commit hash",
-			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			name: "contains short commit hash, native git",
 			args: args{
-				commit: "9d3d5d48",
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				commit:     "9d3d5d48",
+				opts:       []contains.Option{contains.WithUseNativeGit(true)},
 			},
 		},
 		{
-			name:   "not contains commit hash",
-			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			name: "contains short commit hash, go-git",
 			args: args{
-				commit: "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				commit:     "9d3d5d48",
+				opts:       []contains.Option{contains.WithUseNativeGit(false)},
+			},
+		},
+		{
+			name: "not contains commit hash",
+			args: args{
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
 			},
 			wantErr: func() interface{} {
 				var err *contains.CommitNotFoundError
@@ -50,18 +61,18 @@ func TestContains(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, err := os.Open(tt.dotgit)
+			f, err := os.Open(tt.args.repository)
 			if err != nil {
-				t.Errorf("open %s. err: %v", tt.dotgit, err)
+				t.Errorf("open %s. err: %v", tt.args.repository, err)
 			}
 			defer f.Close()
 
 			dir := t.TempDir()
-			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst"))); err != nil {
-				t.Errorf("extract %s. err: %v", tt.dotgit, err)
+			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst"))); err != nil {
+				t.Errorf("extract %s. err: %v", tt.args.repository, err)
 			}
 
-			err = contains.Contains(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst")), tt.args.commit)
+			err = contains.Contains(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst")), tt.args.commit)
 			switch {
 			case err != nil && tt.wantErr == nil:
 				t.Errorf("unexpected err: %v", err)

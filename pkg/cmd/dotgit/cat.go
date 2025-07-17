@@ -13,20 +13,22 @@ import (
 
 func newCmdCat() *cobra.Command {
 	options := &struct {
-		treeish string
+		useNativeGit bool
+		treeish      string
 	}{
-		treeish: "main",
+		useNativeGit: true,
+		treeish:      "main",
 	}
 
 	cmd := &cobra.Command{
 		Use:   "cat <repository> <path>",
 		Short: "Print the file content of the specified path, in the specified treeish",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit cat --treeish HEAD vuls-data-raw-debian-security-tracker bookworm/2025/CVE-2025-0001.json
+			$ vuls-data-update dotgit cat --treeish HEAD vuls-data-raw-debian-security-tracker-api bookworm/2025/CVE-2025-0001.json
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			content, err := cat.Cat(args[0], args[1], cat.WithTreeish(options.treeish))
+			content, err := cat.Cat(args[0], args[1], cat.WithUseNativeGit(options.useNativeGit), cat.WithTreeish(options.treeish))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit cat")
 			}
@@ -39,6 +41,7 @@ func newCmdCat() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().StringVarP(&options.treeish, "treeish", "", options.treeish, "cat file in specified treeish")
 
 	return cmd
