@@ -25,9 +25,11 @@ func TestLog(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:   "log",
+			name:   "log, native git",
 			dotgit: "testdata/fixtures/vuls-data-raw-redhat-ovalv2.tar.zst",
-			args:   args{},
+			args: args{
+				opts: []log.Option{log.WithUseNativeGit(true)},
+			},
 			want: func(yield func(string, error) bool) {
 				if !yield(`commit 6e6128f16b40edf3963ebb0036a3e0a55a54d0de
 Author: GitHub Actions <action@github.com>
@@ -56,10 +58,72 @@ Date:   Thu Oct 31 00:23:18 2024 +0000
 			},
 		},
 		{
-			name:   "log -- 9/rhel-9/definitions/oval:com.redhat.rhsa:def:20249315.json",
+			name:   "log, go-git",
+			dotgit: "testdata/fixtures/vuls-data-raw-redhat-ovalv2.tar.zst",
+			args: args{
+				opts: []log.Option{log.WithUseNativeGit(false)},
+			},
+			want: func(yield func(string, error) bool) {
+				if !yield(`commit 6e6128f16b40edf3963ebb0036a3e0a55a54d0de
+Author: GitHub Actions <action@github.com>
+Date:   Fri Mar 28 02:22:16 2025 +0000
+
+    update
+`, nil) {
+					return
+				}
+				if !yield(`commit 63a30ff24dea0d2198c1e3160c33b52df66970a4
+Author: GitHub Actions <action@github.com>
+Date:   Wed Jan 29 12:18:24 2025 +0000
+
+    update
+`, nil) {
+					return
+				}
+				if !yield(`commit 6c46d130ffee8d2990169f751c0ed9661da95a52
+Author: GitHub Actions <action@github.com>
+Date:   Thu Oct 31 00:23:18 2024 +0000
+
+    update
+`, nil) {
+					return
+				}
+			},
+		},
+		{
+			name:   "log -- 9/rhel-9/definitions/oval:com.redhat.rhsa:def:20249315.json, native git",
 			dotgit: "testdata/fixtures/vuls-data-raw-redhat-ovalv2.tar.zst",
 			args: args{
 				opts: []log.Option{
+					log.WithUseNativeGit(true),
+					log.WithPathSpecs([]string{"9/rhel-9/definitions/oval:com.redhat.rhsa:def:20249315.json"}),
+				},
+			},
+			want: func(yield func(string, error) bool) {
+				if !yield(`commit 6e6128f16b40edf3963ebb0036a3e0a55a54d0de
+Author: GitHub Actions <action@github.com>
+Date:   Fri Mar 28 02:22:16 2025 +0000
+
+    update
+`, nil) {
+					return
+				}
+				if !yield(`commit 63a30ff24dea0d2198c1e3160c33b52df66970a4
+Author: GitHub Actions <action@github.com>
+Date:   Wed Jan 29 12:18:24 2025 +0000
+
+    update
+`, nil) {
+					return
+				}
+			},
+		},
+		{
+			name:   "log -- 9/rhel-9/definitions/oval:com.redhat.rhsa:def:20249315.json, go-git",
+			dotgit: "testdata/fixtures/vuls-data-raw-redhat-ovalv2.tar.zst",
+			args: args{
+				opts: []log.Option{
+					log.WithUseNativeGit(false),
 					log.WithPathSpecs([]string{"9/rhel-9/definitions/oval:com.redhat.rhsa:def:20249315.json"}),
 				},
 			},

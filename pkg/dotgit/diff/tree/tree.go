@@ -2,6 +2,7 @@ package tree
 
 import (
 	"bytes"
+	"os/exec"
 	"regexp"
 
 	"github.com/go-git/go-git/v5"
@@ -12,13 +13,23 @@ import (
 )
 
 type options struct {
-	color bool
-
-	pathspecs []string
+	useNativeGit bool
+	color        bool
+	pathspecs    []string
 }
 
 type Option interface {
 	apply(*options)
+}
+
+type useNativeGitOption bool
+
+func (o useNativeGitOption) apply(opts *options) {
+	opts.useNativeGit = bool(o)
+}
+
+func WithUseNativeGit(native bool) Option {
+	return useNativeGitOption(native)
 }
 
 type colorOption bool
@@ -43,11 +54,32 @@ func WithPathSpecs(pathspecs []string) Option {
 
 func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 	options := &options{
-		pathspecs: nil,
+		useNativeGit: true,
+		color:        false,
+		pathspecs:    nil,
 	}
 
 	for _, opt := range opts {
 		opt.apply(options)
+	}
+
+	if options.useNativeGit {
+		args := []string{"-C", repository, "diff-tree", "-p"}
+		if options.color {
+			args = append(args, "--color")
+		}
+		args = append(args, minus, plus)
+		if len(options.pathspecs) > 0 {
+			args = append(args, "--")
+			args = append(args, options.pathspecs...)
+		}
+
+		cmd := exec.Command("git", args...)
+		output, err := cmd.Output()
+		if err != nil {
+			return "", errors.Wrapf(err, "exec %q", cmd.String())
+		}
+		return string(output), nil
 	}
 
 	rePathSpecs := make([]*regexp.Regexp, 0, len(options.pathspecs))

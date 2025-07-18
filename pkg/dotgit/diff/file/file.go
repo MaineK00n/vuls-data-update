@@ -2,6 +2,7 @@ package file
 
 import (
 	"bytes"
+	"os/exec"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
@@ -12,11 +13,22 @@ import (
 )
 
 type options struct {
-	color bool
+	useNativeGit bool
+	color        bool
 }
 
 type Option interface {
 	apply(*options)
+}
+
+type useNativeGitOption bool
+
+func (o useNativeGitOption) apply(opts *options) {
+	opts.useNativeGit = bool(o)
+}
+
+func WithUseNativeGit(native bool) Option {
+	return useNativeGitOption(native)
 }
 
 type colorOption bool
@@ -31,11 +43,27 @@ func WithColor(c bool) Option {
 
 func Diff(repository, minus, plus string, opts ...Option) (string, error) {
 	options := &options{
-		color: false,
+		useNativeGit: true,
+		color:        false,
 	}
 
 	for _, opt := range opts {
 		opt.apply(options)
+	}
+
+	if options.useNativeGit {
+		args := []string{"-C", repository, "diff"}
+		if options.color {
+			args = append(args, "--color")
+		}
+		args = append(args, minus, plus)
+
+		cmd := exec.Command("git", args...)
+		output, err := cmd.Output()
+		if err != nil {
+			return "", errors.Wrapf(err, "exec %q", cmd.String())
+		}
+		return string(output), nil
 	}
 
 	r, err := git.PlainOpen(repository)

@@ -28,8 +28,8 @@ func newCmdCompress() *cobra.Command {
 		Use:   "compress <repository path>",
 		Short: "Compress vuls-data-* dotgit with Zstandard",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit compress vuls-data-raw-debian-security-tracker
-			$ vuls-data-update dotgit compress vuls-data-raw-debian-security-tracker-archive-1 --output /tmp/vuls-data-raw-debian-security-tracker.tar.zst --root vuls-data-raw-debian-security-tracker 
+			$ vuls-data-update dotgit compress vuls-data-raw-debian-security-tracker-api
+			$ vuls-data-update dotgit compress vuls-data-raw-debian-security-tracker-api-archive-1 --output /tmp/vuls-data-raw-debian-security-tracker.tar.zst --root vuls-data-raw-debian-security-tracker-api 
 		`),
 		Args: cobra.ExactArgs(1),
 		PreRunE: func(_ *cobra.Command, args []string) error {

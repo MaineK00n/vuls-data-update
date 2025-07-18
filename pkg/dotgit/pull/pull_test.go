@@ -44,8 +44,8 @@ func generateManifestContent(config ocispec.Descriptor, layers ...ocispec.Descri
 
 func TestPull(t *testing.T) {
 	type args struct {
-		tag     string
-		restore bool
+		tag  string
+		opts []pull.Option
 	}
 	tests := []struct {
 		name      string
@@ -57,16 +57,26 @@ func TestPull(t *testing.T) {
 		{
 			name: "vuls-data-raw-test restore: false",
 			args: args{
-				tag: "vuls-data-raw-test",
+				tag:  "vuls-data-raw-test",
+				opts: []pull.Option{pull.WithRestore(false)},
 			},
 			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 			golden:    "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test restore: true",
+			name: "vuls-data-raw-test restore: true, native git",
 			args: args{
-				tag:     "vuls-data-raw-test",
-				restore: true,
+				tag:  "vuls-data-raw-test",
+				opts: []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(true)},
+			},
+			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			golden:    "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test restore: true, go-git",
+			args: args{
+				tag:  "vuls-data-raw-test",
+				opts: []pull.Option{pull.WithRestore(true), pull.WithUseNativeGit(false)},
 			},
 			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 			golden:    "testdata/golden/vuls-data-raw-test-restored.tar.zst",
@@ -74,8 +84,8 @@ func TestPull(t *testing.T) {
 		{
 			name: "vuls-data-raw-test-archive-1 restore: false",
 			args: args{
-				tag:     "vuls-data-raw-test-archive-1",
-				restore: false,
+				tag:  "vuls-data-raw-test-archive-1",
+				opts: []pull.Option{pull.WithRestore(false)},
 			},
 			layerBlob: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 			golden:    "testdata/golden/vuls-data-raw-test-archive-1.tar.zst",
@@ -149,7 +159,13 @@ func TestPull(t *testing.T) {
 			http.DefaultTransport = ts.Client().Transport
 
 			dir := t.TempDir()
-			err = pull.Pull(fmt.Sprintf("%s/vuls-data-db:%s", u.Host, tt.args.tag), pull.WithDir(dir), pull.WithRestore(tt.args.restore))
+			err = pull.Pull(fmt.Sprintf("%s/vuls-data-db:%s", u.Host, tt.args.tag), func() []pull.Option {
+				opts := []pull.Option{
+					pull.WithDir(dir),
+				}
+				opts = append(opts, tt.args.opts...)
+				return opts
+			}()...)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)

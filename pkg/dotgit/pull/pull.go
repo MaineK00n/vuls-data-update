@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/go-git/go-git/v5"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
@@ -17,8 +18,9 @@ import (
 )
 
 type options struct {
-	dir     string
-	restore bool
+	dir          string
+	restore      bool
+	useNativeGit bool
 }
 
 type Option interface {
@@ -45,10 +47,21 @@ func WithRestore(restore bool) Option {
 	return restoreOption(restore)
 }
 
+type useNativeGitOption bool
+
+func (o useNativeGitOption) apply(opts *options) {
+	opts.useNativeGit = bool(o)
+}
+
+func WithUseNativeGit(native bool) Option {
+	return useNativeGitOption(native)
+}
+
 func Pull(repository string, opts ...Option) error {
 	options := &options{
-		dir:     filepath.Join(util.CacheDir(), "dotgit"),
-		restore: false,
+		dir:          filepath.Join(util.CacheDir(), "dotgit"),
+		restore:      false,
+		useNativeGit: true,
 	}
 
 	for _, opt := range opts {
@@ -105,9 +118,25 @@ func Pull(repository string, opts ...Option) error {
 	}
 
 	if options.restore {
-		cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Reference), "restore", ".")
-		if err := cmd.Run(); err != nil {
-			return errors.Wrapf(err, "exec %q", cmd.String())
+		if options.useNativeGit {
+			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Reference), "restore", ".")
+			if err := cmd.Run(); err != nil {
+				return errors.Wrapf(err, "exec %q", cmd.String())
+			}
+		} else {
+			r, err := git.PlainOpen(filepath.Join(options.dir, repo.Reference.Reference))
+			if err != nil {
+				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, repo.Reference.Reference))
+			}
+
+			w, err := r.Worktree()
+			if err != nil {
+				return errors.Wrapf(err, "git worktree %s", filepath.Join(options.dir, repo.Reference.Reference))
+			}
+
+			if err := w.Reset(&git.ResetOptions{Mode: git.HardReset}); err != nil {
+				return errors.Wrapf(err, "reset %s", filepath.Join(options.dir, repo.Reference.Reference))
+			}
 		}
 	}
 

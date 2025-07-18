@@ -14,11 +14,13 @@ import (
 
 func newCmdFind() *cobra.Command {
 	options := &struct {
-		treeish string
+		useNativeGit bool
+		treeish      string
 
 		format formatType
 	}{
-		treeish: "main",
+		useNativeGit: true,
+		treeish:      "main",
 
 		format: formatTypePlain,
 	}
@@ -27,12 +29,12 @@ func newCmdFind() *cobra.Command {
 		Use:   "find <repository> <expression>",
 		Short: "Find files in the specified treeish",
 		Example: heredoc.Doc(`
-			$ vuls-data-update dotgit find --treeish HEAD vuls-data-raw-debian-security-tracker CVE-2025-0001.json
-			$ vuls-data-update dotgit find --treeish HEAD vuls-data-raw-debian-security-tracker "CVE-2025-\d+\.json"
+			$ vuls-data-update dotgit find --treeish HEAD vuls-data-raw-debian-security-tracker-api CVE-2025-0001.json
+			$ vuls-data-update dotgit find --treeish HEAD vuls-data-raw-debian-security-tracker-api "CVE-2025-\d+\.json"
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			fs, err := find.Find(args[0], args[1], find.WithTreeish(options.treeish))
+			fs, err := find.Find(args[0], args[1], find.WithUseNativeGit(options.useNativeGit), find.WithTreeish(options.treeish))
 			if err != nil {
 				return errors.Wrap(err, "failed to dotgit find")
 			}
@@ -62,6 +64,7 @@ func newCmdFind() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 	cmd.Flags().StringVarP(&options.treeish, "treeish", "", options.treeish, "find in specified treeish")
 	cmd.Flags().VarP(&options.format, "format", "f", "output format")
 	_ = cmd.RegisterFlagCompletionFunc("format", formatTypeCompletion)

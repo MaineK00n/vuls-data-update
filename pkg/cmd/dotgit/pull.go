@@ -13,11 +13,13 @@ import (
 
 func newCmdPull() *cobra.Command {
 	options := &struct {
-		dir     string
-		restore bool
+		dir          string
+		restore      bool
+		useNativeGit bool
 	}{
-		dir:     filepath.Join(util.CacheDir(), "dotgit"),
-		restore: false,
+		dir:          filepath.Join(util.CacheDir(), "dotgit"),
+		restore:      false,
+		useNativeGit: true,
 	}
 
 	cmd := &cobra.Command{
@@ -28,7 +30,7 @@ func newCmdPull() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := pull.Pull(args[0], pull.WithDir(options.dir), pull.WithRestore(options.restore)); err != nil {
+			if err := pull.Pull(args[0], pull.WithDir(options.dir), pull.WithRestore(options.restore), pull.WithUseNativeGit(options.useNativeGit)); err != nil {
 				return errors.Wrap(err, "failed to dotgit pull")
 			}
 			return nil
@@ -37,6 +39,7 @@ func newCmdPull() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "pull repository dotgit under the specified directory")
 	cmd.Flags().BoolVarP(&options.restore, "restore", "", options.restore, "do restore")
+	cmd.Flags().BoolVarP(&options.useNativeGit, "use-native-git", "", options.useNativeGit, "use native git command instead of go-git")
 
 	return cmd
 }

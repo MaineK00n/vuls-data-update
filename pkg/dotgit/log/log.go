@@ -1,8 +1,13 @@
 package log
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
 	"iter"
+	"os/exec"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -13,14 +18,25 @@ import (
 )
 
 type options struct {
-	from      string
-	pathspecs []string
-	since     *time.Time
-	until     *time.Time
+	useNativeGit bool
+	from         string
+	pathspecs    []string
+	since        *time.Time
+	until        *time.Time
 }
 
 type Option interface {
 	apply(*options)
+}
+
+type useNativeGitOption bool
+
+func (o useNativeGitOption) apply(opts *options) {
+	opts.useNativeGit = bool(o)
+}
+
+func WithUseNativeGit(native bool) Option {
+	return useNativeGitOption(native)
 }
 
 type fromOption string
@@ -69,14 +85,65 @@ func WithUntil(until *time.Time) Option {
 
 func Log(repository string, opts ...Option) (iter.Seq2[string, error], error) {
 	options := &options{
-		from:      "",
-		pathspecs: nil,
-		since:     nil,
-		until:     nil,
+		useNativeGit: true,
+		from:         "",
+		pathspecs:    nil,
+		since:        nil,
+		until:        nil,
 	}
 
 	for _, opt := range opts {
 		opt.apply(options)
+	}
+
+	if options.useNativeGit {
+		args := []string{"-C", repository, "log"}
+		if options.since != nil {
+			args = append(args, fmt.Sprintf("--since=%s", options.since.Format(time.RFC3339)))
+		}
+		if options.until != nil {
+			args = append(args, fmt.Sprintf("--until=%s", options.until.Format(time.RFC3339)))
+		}
+		if options.from != "" {
+			args = append(args, options.from)
+		} else {
+			args = append(args, "HEAD")
+		}
+		if len(options.pathspecs) > 0 {
+			args = append(args, "--")
+			args = append(args, options.pathspecs...)
+		}
+
+		cmd := exec.Command("git", args...)
+		output, err := cmd.Output()
+		if err != nil {
+			return nil, errors.Wrapf(err, "exec %q", cmd.String())
+		}
+		return func(yield func(string, error) bool) {
+			var sb strings.Builder
+			scanner := bufio.NewScanner(bytes.NewReader(output))
+			for scanner.Scan() {
+				s := scanner.Text()
+				if strings.HasPrefix(s, "commit ") && sb.Len() > 0 {
+					if !yield(strings.TrimSuffix(sb.String(), "\n"), nil) {
+						return
+					}
+					sb.Reset()
+				}
+				sb.WriteString(fmt.Sprintf("%s\n", s))
+			}
+			if sb.Len() > 0 {
+				if !yield(sb.String(), nil) {
+					return
+				}
+			}
+
+			if err := scanner.Err(); err != nil {
+				if !yield("", errors.Wrap(err, "scanner encounter error")) {
+					return
+				}
+			}
+		}, nil
 	}
 
 	r, err := git.PlainOpen(repository)

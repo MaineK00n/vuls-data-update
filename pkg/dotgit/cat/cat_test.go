@@ -14,49 +14,58 @@ import (
 
 func TestCat(t *testing.T) {
 	type args struct {
-		path string
+		repository string
+		path       string
+		opts       []cat.Option
 	}
 	tests := []struct {
 		name     string
-		dotgit   string
 		args     args
-		treeish  string
 		want     string
 		hasError bool
 	}{
 		{
-			name:   "README.md",
-			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			name: "README.md, native git",
 			args: args{
-				path: "README.md",
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				path:       "README.md",
+				opts:       []cat.Option{cat.WithUseNativeGit(true), cat.WithTreeish("main")},
 			},
-			treeish: "main",
-			want:    "# vuls-data-raw-test\n",
+			want: "# vuls-data-raw-test\n",
 		},
 		{
-			name:   "README",
-			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+			name: "README.md, go-git",
 			args: args{
-				path: "README",
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				path:       "README.md",
+				opts:       []cat.Option{cat.WithUseNativeGit(false), cat.WithTreeish("main")},
 			},
-			treeish:  "main",
+			want: "# vuls-data-raw-test\n",
+		},
+		{
+			name: "README",
+			args: args{
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				path:       "README",
+				opts:       []cat.Option{cat.WithUseNativeGit(true), cat.WithTreeish("main")},
+			},
 			hasError: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, err := os.Open(tt.dotgit)
+			f, err := os.Open(tt.args.repository)
 			if err != nil {
-				t.Errorf("open %s. err: %v", tt.dotgit, err)
+				t.Errorf("open %s. err: %v", tt.args.repository, err)
 			}
 			defer f.Close()
 
 			dir := t.TempDir()
-			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst"))); err != nil {
-				t.Errorf("extract %s. err: %v", tt.dotgit, err)
+			if err := util.ExtractDotgitTarZst(f, filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst"))); err != nil {
+				t.Errorf("extract %s. err: %v", tt.args.repository, err)
 			}
 
-			got, err := cat.Cat(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst")), tt.args.path, cat.WithTreeish(tt.treeish))
+			got, err := cat.Cat(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst")), tt.args.path, tt.args.opts...)
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)
