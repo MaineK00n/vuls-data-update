@@ -319,10 +319,17 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 		}
 	}
 
+	hasSignatureKeyId := false
 	for _, ocn := range oc.Criterions {
-		cn, ca, err := e.translateCriterion(ocn)
+		cn, isSignatureKeyId, ca, err := e.translateCriterion(ocn)
+
 		if err != nil {
 			return nil, errors.Wrapf(err, "translace criterion")
+		}
+
+		if isSignatureKeyId {
+			hasSignatureKeyId = true
+			continue
 		}
 
 		if c.Operator == criteriaTypes.CriteriaOperatorTypeAND && cn == nil && ca == nil {
@@ -347,69 +354,76 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 	}
 
 	if len(c.Criterias) == 0 && len(c.Criterions) == 0 {
+		if hasSignatureKeyId {
+			return nil, errors.Errorf("unexpected empty criteria. criteria: %v", oc)
+		}
 		return nil, nil
 	}
 
 	return &c, nil
 }
 
-func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criterion, *criteriaTypes.Criteria, error) {
+// translateCriterion translates an oval.Criterion to a criterionTypes.Criterion.
+// If the criterion is SignatureKeyid,, the second return value is true and vice versa.
+// If the first return value is nil, it means that the criterion is never satisfired.
+func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criterion, bool, *criteriaTypes.Criteria, error) {
 	var t oval.RpminfoTest
 	if err := e.r.Read(filepath.Join(e.baseDir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", oc.TestRef)), e.inputDir, &t); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
+			// FIXME: remove uname criterion
 			uc, err := e.translateUnameCriterion(oc)
 			if err != nil {
-				return nil, nil, errors.Wrapf(err, "translate uname criterion %s", oc.TestRef)
+				return nil, false, nil, errors.Wrapf(err, "translate uname criterion %s", oc.TestRef)
 			}
-			return uc, nil, nil
+			return uc, false, nil, nil
 		}
 
-		return nil, nil, errors.Wrapf(err, "read rpminfo_test %s", filepath.Join(e.baseDir, "tests", "rpminfo_test", oc.TestRef))
+		return nil, false, nil, errors.Wrapf(err, "read rpminfo_test %s", filepath.Join(e.baseDir, "tests", "rpminfo_test", oc.TestRef))
 	}
 
 	var o oval.RpminfoObject
 	if err := e.r.Read(filepath.Join(e.baseDir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", t.Object.ObjectRef)), e.inputDir, &o); err != nil {
-		return nil, nil, errors.Wrapf(err, "read rpminfo_object %s", filepath.Join(e.baseDir, "objects", "rpminfo_object", t.Object.ObjectRef))
+		return nil, false, nil, errors.Wrapf(err, "read rpminfo_object %s", filepath.Join(e.baseDir, "objects", "rpminfo_object", t.Object.ObjectRef))
 	}
 
 	var s oval.RpminfoState
 	if err := e.r.Read(filepath.Join(e.baseDir, "states", "rpminfo_state", fmt.Sprintf("%s.json", t.State.StateRef)), e.inputDir, &s); err != nil {
-		return nil, nil, errors.Wrapf(err, "read rpminfo_state %s", filepath.Join(e.baseDir, "states", "rpminfo_state", t.State.StateRef))
+		return nil, false, nil, errors.Wrapf(err, "read rpminfo_state %s", filepath.Join(e.baseDir, "states", "rpminfo_state", t.State.StateRef))
 	}
 
 	if o.Name == "" {
-		return nil, nil, errors.Errorf("unexpected rpminfo_object name. name: %q", o.Name)
+		return nil, false, nil, errors.Errorf("unexpected rpminfo_object name. name: %q", o.Name)
 	}
 
 	if s.SignatureKeyid.Text != "" {
 		if s.Version.Text != "" || s.Evr.Text != "" || s.Arch.Text != "" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q, evr: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text, s.Arch.Text)
+			return nil, false, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q, evr: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text, s.Arch.Text)
 		}
-		return nil, nil, nil
+		return nil, true, nil, nil
 	}
 
 	if strings.HasSuffix(oc.Comment, "is not affected") {
 		// sanity check
 		if s.Version.Text != "0" || s.Version.Operation != "equals" {
-			return nil, nil, errors.Errorf(`unexpected rpminfo_state for "not affected". test: %s, expected "equals" "0", actual: %q %q`, oc.TestRef, s.Version.Operation, s.Version.Text)
+			return nil, false, nil, errors.Errorf(`unexpected rpminfo_state for "not affected". test: %s, expected "equals" "0", actual: %q %q`, oc.TestRef, s.Version.Operation, s.Version.Text)
 		}
 
-		return nil, nil, nil
+		return nil, false, nil, nil
 	}
 
 	switch t.Check {
 	case "at least one":
 		if (s.Version.Text == "" && s.Evr.Text == "") || (s.Version.Text != "" && s.Evr.Text != "") {
-			return nil, nil, errors.Errorf("only version or evr should be set. test: %s, check: %q, version: %q, evr: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text)
+			return nil, false, nil, errors.Errorf("only version or evr should be set. test: %s, check: %q, version: %q, evr: %q", oc.TestRef, t.Check, s.Version.Text, s.Evr.Text)
 		}
 
 		if s.Version.Text != "" {
 			if s.Arch.Text != "" {
-				return nil, nil, errors.Errorf(`unexpected arch. test: %s, check: %q, expected: "", actual: %q`, oc.TestRef, t.Check, s.Arch.Text)
+				return nil, false, nil, errors.Errorf(`unexpected arch. test: %s, check: %q, expected: "", actual: %q`, oc.TestRef, t.Check, s.Arch.Text)
 			}
 
 			if s.Version.Operation != "equals" {
-				return nil, nil, errors.Errorf(`unexpected operation. test: %s, expected: "equals", actual: %q`, oc.TestRef, s.Version.Operation)
+				return nil, false, nil, errors.Errorf(`unexpected operation. test: %s, expected: "equals", actual: %q`, oc.TestRef, s.Version.Operation)
 			}
 
 			return &criterionTypes.Criterion{
@@ -431,7 +445,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 						},
 					},
 				},
-			}, nil, nil
+			}, false, nil, nil
 		}
 
 		// case that EVR is set
@@ -479,16 +493,16 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			}
 		}()
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "translate rpminfo_state EVR.")
+			return nil, false, nil, errors.Wrap(err, "translate rpminfo_state EVR.")
 		}
 
 		if slices.Contains(strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|"), "ant") {
-			return nil, nil, errors.Errorf(`unexpected arch. test: %s, actual: %q`, oc.TestRef, s.Arch.Text)
+			return nil, false, nil, errors.Errorf(`unexpected arch. test: %s, actual: %q`, oc.TestRef, s.Arch.Text)
 		}
 
 		archs, err := architectures(s.Arch.Text)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "architectures")
+			return nil, false, nil, errors.Wrapf(err, "architectures")
 		}
 
 		return &criterionTypes.Criterion{
@@ -513,15 +527,15 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 					}
 				}(),
 			},
-		}, nil, nil
+		}, false, nil, nil
 
 	case "all":
 		if s.Version.Text != "" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q", oc.TestRef, t.Check, s.Version.Text)
+			return nil, false, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q", oc.TestRef, t.Check, s.Version.Text)
 		}
 
 		if s.Arch.Text != "" && s.Arch.Operation != "pattern match" {
-			return nil, nil, errors.Errorf(`unexpected rpminfo_state arch operation. test: %s, expected: "pattern match", actual: %q`, oc.TestRef, s.Arch.Operation)
+			return nil, false, nil, errors.Errorf(`unexpected rpminfo_state arch operation. test: %s, expected: "pattern match", actual: %q`, oc.TestRef, s.Arch.Operation)
 		}
 
 		affected, fixstatus, err := func() (*affectedTypes.Affected, *fixstatusTypes.FixStatus, error) {
@@ -552,12 +566,12 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			}
 		}()
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "translate rpminfo_state evr. test: %s", oc.TestRef)
+			return nil, false, nil, errors.Wrapf(err, "translate rpminfo_state evr. test: %s", oc.TestRef)
 		}
 
 		archs, err := architectures(s.Arch.Text)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "architectures")
+			return nil, false, nil, errors.Wrapf(err, "architectures")
 		}
 
 		c := criterionTypes.Criterion{
@@ -576,7 +590,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			},
 		}
 
-		return &c, nil, nil
+		return &c, false, nil, nil
 
 	case "none satisfy":
 		// Translation of "none satisfy" rpminfo_test.
@@ -612,16 +626,16 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 
 		// Limit to kernel-livepatch-* and kgraft-patch-* packages. If not, it's time to investigate the raw data to re-think how they should be translated.
 		if !strings.HasPrefix(o.Name, "kernel-livepatch-") && !strings.HasPrefix(o.Name, "kgraft-patch-") {
-			return nil, nil, errors.Errorf(`unexpected rpminfo_object. test: %s, rpminfo_test check: %q, expected: ["kernel-livepatch-*", "kgraft-patch-*"],rpminfo_object name: %q`, oc.TestRef, t.Check, o.Name)
+			return nil, false, nil, errors.Errorf(`unexpected rpminfo_object. test: %s, rpminfo_test check: %q, expected: ["kernel-livepatch-*", "kgraft-patch-*"],rpminfo_object name: %q`, oc.TestRef, t.Check, o.Name)
 		}
 		if s.Version.Text != "" || s.Arch.Text != "" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Arch.Text)
+			return nil, false, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state version: %q arch: %q", oc.TestRef, t.Check, s.Version.Text, s.Arch.Text)
 		}
 		if s.Evr.Text == "" || s.Evr.Operation != "greater than or equal" {
-			return nil, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state evr: %q, operation: %q", oc.TestRef, t.Check, s.Evr.Text, s.Evr.Operation)
+			return nil, false, nil, errors.Errorf("unexpected combination. test: %s, rpminfo_test check: %q, rpminfo_state evr: %q, operation: %q", oc.TestRef, t.Check, s.Evr.Text, s.Evr.Operation)
 		}
 
-		return nil,
+		return nil, false,
 			&criteriaTypes.Criteria{
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 				Criterions: []criterionTypes.Criterion{
@@ -659,7 +673,7 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			}, nil
 
 	default:
-		return nil, nil, errors.Errorf(`unexpected rpminfo_test check. test: %s, expected: ["at least one", "none satisfy", "all"], actural: %q`, oc.TestRef, t.Check)
+		return nil, false, nil, errors.Errorf(`unexpected rpminfo_test check. test: %s, expected: ["at least one", "none satisfy", "all"], actural: %q`, oc.TestRef, t.Check)
 	}
 }
 
