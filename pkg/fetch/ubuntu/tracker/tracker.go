@@ -386,8 +386,8 @@ func parse(r io.Reader) (Advisory, error) {
 				}
 
 				status, note, _ := strings.Cut(strings.TrimSpace(rhs), " ")
-				if !slices.Contains([]string{"DNE", "needs-triage", "not-affected", "needed", "active", "ignored", "pending", "deferred", "released"}, status) {
-					log.Printf("[WARN] unexpected package status in %s. expected: %q, actual: %q", a.Candidate, []string{"DNE", "needs-triage", "not-affected", "needed", "active", "ignored", "pending", "deferred", "released"}, status)
+				if !slices.Contains([]string{"DNE", "needs-triage", "not-affected", "needed", "in-progress", "ignored", "pending", "deferred", "released"}, status) {
+					log.Printf("[WARN] unexpected package status in %s. expected: %q, actual: %q", a.Candidate, []string{"DNE", "needs-triage", "not-affected", "needed", "in-progress", "ignored", "pending", "deferred", "released"}, status)
 					break
 				}
 
