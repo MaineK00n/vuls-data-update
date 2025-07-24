@@ -4399,7 +4399,8 @@ func newCmdUbuntuCVETracker() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "ubuntu", "ubuntu-cve-tracker"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
