@@ -108,7 +108,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if query.Binary == nil {
 			return false, nil
 		}
-		isAccepted, err := c.Package.Accept(packageTypes.Query{
+		isAccepted, err := c.Package.Accept(query.Binary.Family, packageTypes.Query{
 			Binary: &binaryTypes.Query{
 				Name:       query.Binary.Name,
 				Arch:       query.Binary.Arch,
@@ -134,7 +134,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if query.Source == nil {
 			return false, nil
 		}
-		isAccepted, err := c.Package.Accept(packageTypes.Query{
+		isAccepted, err := c.Package.Accept(query.Source.Family, packageTypes.Query{
 			Source: &sourceTypes.Query{
 				Name:       query.Source.Name,
 				Repository: query.Source.Repository,
@@ -159,7 +159,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if query.CPE == nil {
 			return false, nil
 		}
-		isAccepted, err := c.Package.Accept(packageTypes.Query{
+		isAccepted, err := c.Package.Accept(ecosystemTypes.EcosystemTypeCPE, packageTypes.Query{
 			CPE: func() *cpeTypes.Query {
 				q := cpeTypes.Query(*query.CPE)
 				return &q
@@ -203,7 +203,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 		if query.Language == nil {
 			return false, nil
 		}
-		isAccepted, err := c.Package.Accept(packageTypes.Query{
+		isAccepted, err := c.Package.Accept(query.Language.Ecosystem, packageTypes.Query{
 			Language: &languageTypes.Query{
 				Name:      query.Language.Name,
 				Arch:      query.Language.Arch,
