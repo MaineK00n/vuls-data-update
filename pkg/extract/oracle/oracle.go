@@ -9,6 +9,9 @@ import (
 	"strings"
 	"time"
 
+	gocvss20 "github.com/pandatix/go-cvss/20"
+	gocvss30 "github.com/pandatix/go-cvss/30"
+	gocvss31 "github.com/pandatix/go-cvss/31"
 	"github.com/pkg/errors"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
@@ -177,9 +180,10 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 			var ss []severityTypes.Severity
 			if cve.CVSS2 != "" {
 				_, rhs, _ := strings.Cut(cve.CVSS2, "/")
-				v2, err := cvssV2Types.Parse(rhs)
+				v2, err := cvssV2Types.Parse(strings.TrimPrefix(rhs, "CVSS:2/")) // e.g. AV:L/AC:L/Au:N/C:C/I:C/A:C ; oval:com.oracle.elsa-201729301 CVE-2017-1000111, CVSS:2/AV:N/AC:M/Au:N/C:N/I:N/A:C ; oval:com.oracle.elsa-20184110 CVE-2018-1093
 				if err != nil {
-					if !strings.Contains(rhs, "AC:N") { // e.g. AV:N/AC:N/Au:N/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20100046 CVE-2009-2910
+					log.Printf("[WARN] failed to parse CVSSv2. cve: %s, error: %s", cve.Text, err)
+					if !errors.Is(err, gocvss20.ErrTooShortVector) && !errors.Is(err, gocvss20.ErrInvalidMetricOrder) && !errors.Is(err, gocvss20.ErrInvalidMetricValue) { // e.g. AV:N/AC:N/Au:N/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20100046 CVE-2009-2910
 						return nil, errors.Wrap(err, "parse cvss2")
 					}
 				} else {
@@ -196,7 +200,8 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 				case strings.HasPrefix(rhs, "CVSS:3.0"):
 					v30, err := cvssV30Types.Parse(rhs)
 					if err != nil {
-						if !strings.Contains(rhs, "AC:N") { // e.g. CVSS:3.0/AV:N/AC:N/PR:N/UI:N/S:U/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20130727 CVE-2013-1798
+						log.Printf("[WARN] failed to parse CVSSv3.0. cve: %s, error: %s", cve.Text, err)
+						if !errors.Is(err, gocvss30.ErrTooShortVector) && !errors.Is(err, gocvss30.ErrInvalidMetricValue) { // e.g. CVSS:3.0/AV:N/AC:N/PR:N/UI:N/S:U/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20130727 CVE-2013-1798
 							return nil, errors.Wrap(err, "parse cvss3")
 						}
 					} else {
@@ -209,7 +214,10 @@ func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
 				case strings.HasPrefix(rhs, "CVSS:3.1"):
 					v31, err := cvssV31Types.Parse(rhs)
 					if err != nil {
-						return nil, errors.Wrap(err, "parse cvss3")
+						log.Printf("[WARN] failed to parse CVSSv3.1. cve: %s, error: %s", cve.Text, err)
+						if !errors.Is(err, gocvss31.ErrTooShortVector) && !errors.Is(err, gocvss31.ErrInvalidMetricValue) {
+							return nil, errors.Wrap(err, "parse cvss3")
+						}
 					}
 					ss = append(ss, severityTypes.Severity{
 						Type:    severityTypes.SeverityTypeCVSSv31,
