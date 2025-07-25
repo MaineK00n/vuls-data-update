@@ -2,6 +2,8 @@ package source
 
 import (
 	"testing"
+
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 func TestPackage_Sort(t *testing.T) {
@@ -53,7 +55,8 @@ func TestPackage_Accept(t *testing.T) {
 		Repositories []string
 	}
 	type args struct {
-		query Query
+		family ecosystemTypes.Ecosystem
+		query  Query
 	}
 	tests := []struct {
 		name    string
@@ -68,6 +71,7 @@ func TestPackage_Accept(t *testing.T) {
 				Name: "name",
 			},
 			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: Query{
 					Name: "name",
 				},
@@ -80,6 +84,7 @@ func TestPackage_Accept(t *testing.T) {
 				Name: "name",
 			},
 			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: Query{
 					Name: "name2",
 				},
@@ -93,6 +98,7 @@ func TestPackage_Accept(t *testing.T) {
 				Repositories: []string{"repo"},
 			},
 			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: Query{
 					Name:       "name",
 					Repository: "repo",
@@ -107,6 +113,7 @@ func TestPackage_Accept(t *testing.T) {
 				Repositories: []string{"repo"},
 			},
 			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: Query{
 					Name: "name",
 				},
@@ -120,12 +127,39 @@ func TestPackage_Accept(t *testing.T) {
 				Repositories: []string{"repo"},
 			},
 			args: args{
+				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: Query{
 					Name:       "name",
 					Repository: "repo2",
 				},
 			},
 			want: false,
+		},
+		{
+			name: "debian accept: name",
+			fields: fields{
+				Name: "linux",
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeDebian,
+				query: Query{
+					Name: "linux-signed-amd64",
+				},
+			},
+			want: true,
+		},
+		{
+			name: "ubuntu accept: name",
+			fields: fields{
+				Name: "linux",
+			},
+			args: args{
+				family: ecosystemTypes.EcosystemTypeUbuntu,
+				query: Query{
+					Name: "linux-signed",
+				},
+			},
+			want: true,
 		},
 	}
 	for _, tt := range tests {
@@ -134,7 +168,7 @@ func TestPackage_Accept(t *testing.T) {
 				Name:         tt.fields.Name,
 				Repositories: tt.fields.Repositories,
 			}
-			got, err := p.Accept(tt.args.query)
+			got, err := p.Accept(tt.args.family, tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
