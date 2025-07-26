@@ -70,38 +70,40 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Extract Ubuntu CVE Tracker")
-	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	for _, target := range []string{"active", "retired"} {
+		if err := filepath.WalkDir(filepath.Join(args, target), func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
 
-		if d.IsDir() || filepath.Ext(path) != ".json" {
+			if d.IsDir() || filepath.Ext(path) != ".json" {
+				return nil
+			}
+
+			r := utiljson.NewJSONReader()
+			var fetched tracker.Advisory
+			if err := r.Read(path, args, &fetched); err != nil {
+				return errors.Wrapf(err, "read %s", path)
+			}
+
+			extracted, err := extract(fetched, r.Paths())
+			if err != nil {
+				return errors.Wrapf(err, "extract %s", path)
+			}
+
+			ss, err := util.Split(string(extracted.ID), "-", "-")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", extracted.ID)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, "data", ss[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", ss[1], fmt.Sprintf("%s.json", extracted.ID)))
+			}
+
 			return nil
+		}); err != nil {
+			return errors.Wrapf(err, "walk %s", args)
 		}
-
-		r := utiljson.NewJSONReader()
-		var fetched tracker.Advisory
-		if err := r.Read(path, args, &fetched); err != nil {
-			return errors.Wrapf(err, "read %s", path)
-		}
-
-		extracted, err := extract(fetched, r.Paths())
-		if err != nil {
-			return errors.Wrapf(err, "extract %s", path)
-		}
-
-		ss, err := util.Split(string(extracted.ID), "-", "-")
-		if err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", extracted.ID)
-		}
-
-		if err := util.Write(filepath.Join(options.dir, "data", ss[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", ss[1], fmt.Sprintf("%s.json", extracted.ID)))
-		}
-
-		return nil
-	}); err != nil {
-		return errors.Wrapf(err, "walk %s", args)
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
