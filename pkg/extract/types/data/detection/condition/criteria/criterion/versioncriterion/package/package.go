@@ -11,7 +11,6 @@ import (
 	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 type PackageType int
@@ -154,7 +153,7 @@ type Query struct {
 	Language *languageTypes.Query
 }
 
-func (p Package) Accept(family ecosystemTypes.Ecosystem, query Query) (bool, error) {
+func (p Package) Accept(query Query) (bool, error) {
 	switch p.Type {
 	case PackageTypeBinary:
 		if query.Binary == nil {
@@ -169,7 +168,7 @@ func (p Package) Accept(family ecosystemTypes.Ecosystem, query Query) (bool, err
 		if query.Source == nil {
 			return false, errors.New("query is not set for Source Package")
 		}
-		isAccepted, err := p.Source.Accept(family, *query.Source)
+		isAccepted, err := p.Source.Accept(*query.Source)
 		if err != nil {
 			return false, errors.Wrap(err, "source package accept")
 		}
