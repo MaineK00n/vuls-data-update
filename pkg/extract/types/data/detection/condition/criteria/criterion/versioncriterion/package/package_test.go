@@ -8,7 +8,6 @@ import (
 	cpeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	languageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/language"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
-	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
 
 func TestPackage_Sort(t *testing.T) {
@@ -69,8 +68,7 @@ func TestPackage_Accept(t *testing.T) {
 		Language *languageTypes.Package
 	}
 	type args struct {
-		family ecosystemTypes.Ecosystem
-		query  packageTypes.Query
+		query packageTypes.Query
 	}
 	tests := []struct {
 		name    string
@@ -86,7 +84,6 @@ func TestPackage_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{Name: "name"},
 			},
 			args: args{
-				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: packageTypes.Query{
 					Binary: &binaryTypes.Query{Name: "name"},
 					Source: &sourceTypes.Query{Name: "name"},
@@ -101,7 +98,6 @@ func TestPackage_Accept(t *testing.T) {
 				Source: &sourceTypes.Package{Name: "name"},
 			},
 			args: args{
-				family: ecosystemTypes.EcosystemTypeRedHat,
 				query: packageTypes.Query{
 					Binary: &binaryTypes.Query{Name: "name"},
 					Source: &sourceTypes.Query{Name: "name"},
@@ -116,7 +112,6 @@ func TestPackage_Accept(t *testing.T) {
 				CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 			},
 			args: args{
-				family: ecosystemTypes.EcosystemTypeCPE,
 				query: packageTypes.Query{
 					CPE: func() *cpeTypes.Query { s := cpeTypes.Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
 				},
@@ -130,7 +125,6 @@ func TestPackage_Accept(t *testing.T) {
 				Language: &languageTypes.Package{Name: "name"},
 			},
 			args: args{
-				family: ecosystemTypes.EcosystemTypeCargo,
 				query: packageTypes.Query{
 					Language: &languageTypes.Query{Name: "name"},
 				},
@@ -152,7 +146,7 @@ func TestPackage_Accept(t *testing.T) {
 				CPE:      tt.fields.CPE,
 				Language: tt.fields.Language,
 			}
-			got, err := p.Accept(tt.args.family, tt.args.query)
+			got, err := p.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
