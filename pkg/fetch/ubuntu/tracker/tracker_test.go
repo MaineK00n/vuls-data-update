@@ -2,8 +2,10 @@ package tracker_test
 
 import (
 	"io/fs"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -48,9 +50,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					dir, file := filepath.Split(path)
-					_, y := filepath.Split(filepath.Clean(dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", y, file))
+					wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
 					if err != nil {
 						return err
 					}
