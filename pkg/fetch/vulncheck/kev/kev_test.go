@@ -111,6 +111,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
+
 			err = kev.Fetch(tt.args.apiToken, kev.WithBaseURL(u), kev.WithDir(dir), kev.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
@@ -128,8 +129,12 @@ func TestFetch(t *testing.T) {
 					return nil
 				}
 
-				dir, file := filepath.Split(path)
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
+				rpath, err := filepath.Rel(dir, path)
+				if err != nil {
+					return err
+				}
+
+				want, err := os.ReadFile(filepath.Join("testdata", "golden", rpath))
 				if err != nil {
 					return err
 				}

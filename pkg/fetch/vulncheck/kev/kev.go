@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/cheggaaa/pb/v3"
@@ -132,6 +133,28 @@ func Fetch(apiToken string, opts ...Option) error {
 			bar.Increment()
 		}
 		bar.Finish()
+	}
+
+	f, err := os.Create(filepath.Join(options.dir, "README.md"))
+	if err != nil {
+		return errors.Wrapf(err, "create %s", filepath.Join(options.dir, "README.md"))
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString(`## Repository of VulnCheck KEV data accumulation
+
+All the data in this repository are fetched from VulnCheck by its API.
+
+- https://docs.vulncheck.com/
+- https://docs.vulncheck.com/api
+- https://docs.vulncheck.com/community/vulncheck-kev/attribution
+
+**CAUTION**
+
+When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
+Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
+`); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
 	return nil
