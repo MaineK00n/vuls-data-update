@@ -135,13 +135,7 @@ func Fetch(apiToken string, opts ...Option) error {
 		bar.Finish()
 	}
 
-	f, err := os.Create(filepath.Join(options.dir, "README.md"))
-	if err != nil {
-		return errors.Wrapf(err, "create %s", filepath.Join(options.dir, "README.md"))
-	}
-	defer f.Close()
-
-	if _, err := f.WriteString(`## Repository of VulnCheck KEV data accumulation
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
 
 All the data in this repository are fetched from VulnCheck by its API.
 
@@ -153,7 +147,7 @@ All the data in this repository are fetched from VulnCheck by its API.
 
 When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
 Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
-`); err != nil {
+`), 0666); err != nil {
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
