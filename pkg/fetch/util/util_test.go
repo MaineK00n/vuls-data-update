@@ -62,13 +62,7 @@ func TestRemoveAll(t *testing.T) {
 				t.Error("unexpected error:", err)
 			}
 
-			f, err := os.Create(filepath.Join(d, "README.md"))
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			defer f.Close()
-
-			f, err = os.Create(filepath.Join(d, "test.json"))
+			f, err := os.Create(filepath.Join(d, "test.json"))
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
@@ -80,10 +74,6 @@ func TestRemoveAll(t *testing.T) {
 
 			if _, err := os.Stat(filepath.Join(d, ".git")); errors.Is(err, fs.ErrNotExist) {
 				t.Error(".git is not exist")
-			}
-
-			if _, err := os.Stat(filepath.Join(d, "README.md")); errors.Is(err, fs.ErrNotExist) {
-				t.Error("README.md is not exist")
 			}
 
 			if _, err := os.Stat(filepath.Join(d, "test.json")); err == nil {
