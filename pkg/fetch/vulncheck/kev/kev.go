@@ -77,6 +77,23 @@ func Fetch(apiToken string, opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch VulnCheck KEV")
+
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
+
+All the data in this repository are fetched from VulnCheck by its API.
+
+- https://docs.vulncheck.com/
+- https://docs.vulncheck.com/api
+- https://docs.vulncheck.com/community/vulncheck-kev/attribution
+
+**CAUTION**
+
+When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
+Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
+`), 0666); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
+	}
+
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	u, err := fetchBackupURL(client, options.baseURL, apiToken)
 	if err != nil {
@@ -133,22 +150,6 @@ func Fetch(apiToken string, opts ...Option) error {
 			bar.Increment()
 		}
 		bar.Finish()
-	}
-
-	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
-
-All the data in this repository are fetched from VulnCheck by its API.
-
-- https://docs.vulncheck.com/
-- https://docs.vulncheck.com/api
-- https://docs.vulncheck.com/community/vulncheck-kev/attribution
-
-**CAUTION**
-
-When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
-Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
-`), 0666); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
 	return nil
