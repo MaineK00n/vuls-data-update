@@ -111,7 +111,6 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-
 			err = kev.Fetch(tt.args.apiToken, kev.WithBaseURL(u), kev.WithDir(dir), kev.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
