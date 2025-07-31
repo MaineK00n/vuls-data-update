@@ -1,0 +1,61 @@
+{
+	"id": "CM0001",
+	"name": "Disable Server Message Block (SMB) Protocol",
+	"subtype": "Disable",
+	"url": null,
+	"content": "## Details\n\n* **ID:** CM0001\n* **Version:** 1.0\n* **Created:** 14 March 2025\n* **Modified:** 14 March 2025\n* **Type:** Disable\n* **Status:** Active\n\n## Intended Outcome\n\nDisabling the Server Message Block (SMB) protocol blocks adversary lateral movement to admin shares using SMB.\n\n## Introduction\n\nAdversaries can use the SMB protocol to remotely access administrative and hidden shares (those not mapped to a drive letter).\n\n## Preparation\n\n- Estimate impact on business operations.\n- Conduct risk assessment to understand whether potential disruption outweighs consequences of continued adversary access.\n- Perform a backup of the registry before making any changes.\n\n## Risks\n\nThis countermeasure can break legitimate functionality.\n\nDisabling administrative and hidden shares on Domain Controllers increases this risk. For example, disabling the ADMIN$ share can:\n\n  - Inhibit the ability to use PsExec to remotely interface with endpoints\n  - Disrupt software updates and automated patching for third-party applications\n\nConsider restricting access to shares by implementing an allowlist on the firewall as an alternative.\n\n## Guidance\n\n### Disable Administrative and Hidden Shares\n\nTo mitigate the adversary's ability to write and execute from administrative and hidden shares and help contain an adversary by restricting their ability to remotely access systems, disable administrative or hidden shares from being accessible on endpoints.\n\n### Disable Lanman Server via Services Console\n\nFile, print, and named-pipe sharing over the network can be disabled by opening the Services console (services.msc) on an endpoint, opening the Server service, and selecting disable from the Startup type drop down menu. The service can be likewise paused or stopped via the Server service configuration window.\n\n### Disable Administrative and Hidden Shares via Registry\n\nAdmin and hidden shares can be disabled on endpoints by modifying the value in the registry by setting the AutoShareWks parameter to 0. For workstations, this will be at:\n\n`HKLM\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters DWORD Name = \"AutoShareWks\" Value = \"0\"`\n\nFor servers, admin and hidden shares can be disabled at:\n\n`HKLM\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters DWORD Name = \"AutoShareServer\" Value = \"0\"`\n\nNote that this change will not disable the IPC\\$ share. Although this share is not used for direct file access, it should still be disabled.\n\n### Disable Administrative and Hidden Shares via GPO\n\nCreate a new Group Policy Object (GPO) named \"Disable Administrative and Hidden Shares\" or edit an existing GPO in the Group Policy Management Console. Then mark the following settings as disabled.\n\n- Computer Configuration \\> Policies \\> Administrative Templates \\> MSS(Legacy) \\> MSS(AutoShareServer)\n- Computer Configuration \\> Policies \\> Administrative Templates \\> MSS(Legacy) \\> MSS(AutoShareWks)\n\nAfter establishing this GPO, link it to the appropriate Organizational Unit and apply the the update to all relevant machines.\n\n### Secure Accounts with Access to Hidden and Admin Shares\n\nAccounts with access to hidden and admin shares should be locked down to prevent an adversary from leveraging the privileged accounts to conduct an attack. This includes considering the isolation of TCP 445 between machines or workstation subnets, where risks permit this.\n\n- Administrative privileges should be regularly audited.\n- Leverage Microsoft's Local Administrative Password Solution (LAPS).\n- Accounts with access to admin or hidden shares should have logins configured to use multi-factor authentication (MFA).\n\n## References\n\n- Ransomware Protection and Containment Strategies: Practical Guidance for Endpoint Protection, Hardening, and Containment | <https://cloud.google.com/blog/topics/threat-intelligence/ransomware-protection-and-containment-strategies/>\n- SMB/Windows Admin Shares | <https://redcanary.com/threat-detection-report/techniques/windows-admin-shares/>\n- Remove administrative shares - Windows Server | <https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/remove-administrative-shares>\n- Administrative shares are missing - Windows Server | <https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/problems-administrative-shares-missing>",
+	"version": "1.0",
+	"created": "2025-03-14T00:00:00.000Z",
+	"modified": "2025-03-14T00:00:00.000Z",
+	"contributors": [],
+	"technologies": [],
+	"platforms": [],
+	"revoked": null,
+	"deprecated": null,
+	"ids_before_this": [],
+	"ids_after_this": [],
+	"is_baseline": false,
+	"related_ids": [
+		"CM0012",
+		"CM0017",
+		"CM0019",
+		"CM0020",
+		"CM0025",
+		"CM0052",
+		"CM0053",
+		"CM0062",
+		"CM0098",
+		"CM0100",
+		"CM0141"
+	],
+	"automatable": "unspecified",
+	"references": [
+		{
+			"description": "Ransomware Protection and Containment Strategies: Practical Guidance for Endpoint Protection, Hardening, and Containment",
+			"source_name": "cloud.google.com",
+			"url": "https://cloud.google.com/blog/topics/threat-intelligence/ransomware-protection-and-containment-strategies/"
+		},
+		{
+			"description": "SMB/Windows Admin Shares",
+			"source_name": "redcanary.com",
+			"url": "https://redcanary.com/threat-detection-report/techniques/windows-admin-shares/"
+		},
+		{
+			"description": "Remove administrative shares - Windows Server",
+			"source_name": "learn.microsoft.com",
+			"url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/remove-administrative-shares"
+		},
+		{
+			"description": "Administrative shares are missing - Windows Server",
+			"source_name": "learn.microsoft.com",
+			"url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/problems-administrative-shares-missing"
+		}
+	],
+	"techniques": [
+		{
+			"tech_id": "T1021.002",
+			"content": null,
+			"details": null
+		}
+	]
+}

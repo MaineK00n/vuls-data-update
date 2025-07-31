@@ -28,6 +28,7 @@ import (
 	certBundCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cert-bund/csaf"
 	chainguardOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/osv"
 	chainguardSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/chainguard/secdb"
+	cisaCOUN7ER "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/coun7er"
 	cisaCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/csaf"
 	cisaKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisa/kev"
 	ciscoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cisco/csaf"
@@ -197,7 +198,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdCertBundCSAF(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
-		newCmdCISACSAF(), newCmdCISAKEV(),
+		newCmdCISACOUN7ER(), newCmdCISACSAF(), newCmdCISAKEV(),
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
@@ -835,6 +836,33 @@ func newCmdChainguardOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "chainguard", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdCISACOUN7ER() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "cisa", "coun7er"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cisa-coun7er",
+		Short: "Fetch CISA COUN7ER data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch cisa-coun7er
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := cisaCOUN7ER.Fetch(cisaCOUN7ER.WithDir(options.dir), cisaCOUN7ER.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch cisa coun7er")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
