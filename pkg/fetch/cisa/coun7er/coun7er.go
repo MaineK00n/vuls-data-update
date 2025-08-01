@@ -71,7 +71,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch CISA Coun7er")
+	log.Println("[INFO] Fetch CISA COUN7ER")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch cisa coun7er data")
