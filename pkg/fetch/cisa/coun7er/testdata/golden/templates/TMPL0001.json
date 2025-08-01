@@ -1,0 +1,338 @@
+{
+	"id": "TMPL0001",
+	"name": "Volt Typhoon",
+	"featured": false,
+	"iconSrc": null,
+	"link": {
+		"text": "Volt Typhoon on MITRE ATT&CK (group G1017)",
+		"url": "https://attack.mitre.org/groups/G1017/"
+	},
+	"description": "Countermeasures for Techniques used by Volt Typhoon.\n\n> Volt Typhoon is a People's Republic of China (PRC) state-sponsored actor that has been active since at least 2021. Volt Typhoon typically focuses on espionage and information gathering and has targeted critical infrastructure organizations in the US including Guam. Volt Typhoon has emphasized stealth in operations using web shells, living-off-the-land (LOTL) binaries, hands on keyboard activities, and stolen credentials.\n>\n> \\- <https://attack.mitre.org/groups/G1017/>\n",
+	"tech_to_items": {
+		"T1003.001": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0087",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0088",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0090",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1003.003": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0096",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1005": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1012": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1016": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1018": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0065",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0036",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1033": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1036.005": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0003",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1036.008": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1047": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0045",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0065",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0036",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0038",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0039",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1049": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0025",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0042",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1057": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1059.001": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0019",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0031",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1059.003": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1069.001": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1069.002": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1070.004": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1070.007": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1074": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1074.001": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1078.002": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0059",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0060",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0028",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0070",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0084",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0041",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0102",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1082": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0081",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1087.002": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0137",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1090": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0065",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1090.001": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0093",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1190": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0067",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0037",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0093",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0106",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1497.001": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1505.003": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0106",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1518": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1555": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0061",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0067",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0029",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0033",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0135",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1560.001": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1570": {
+			"confidence": "suspected",
+			"items": [
+				{
+					"id": "CM0065",
+					"version": "1.0"
+				},
+				{
+					"id": "CM0101",
+					"version": "1.0"
+				}
+			]
+		},
+		"T1573.001": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1584.004": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1584.005": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1588.002": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"T1654": {
+			"confidence": "suspected",
+			"items": []
+		},
+		"unmapped": {
+			"confidence": "suspected",
+			"items": []
+		}
+	},
+	"ignored_items": []
+}

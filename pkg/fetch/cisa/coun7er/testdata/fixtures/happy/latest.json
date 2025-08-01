@@ -1,0 +1,411 @@
+{
+    "id": "coun7er",
+    "version": "latest",
+    "name": "CISA COUN7ER",
+    "url": null,
+    "spec_version": "1.0.0",
+    "item_type": "Countermeasure",
+    "items": [
+        {
+            "id": "CM0001",
+            "name": "Disable Server Message Block (SMB) Protocol",
+            "subtype": "Disable",
+            "url": null,
+            "content": "## Details\n\n* **ID:** CM0001\n* **Version:** 1.0\n* **Created:** 14 March 2025\n* **Modified:** 14 March 2025\n* **Type:** Disable\n* **Status:** Active\n\n## Intended Outcome\n\nDisabling the Server Message Block (SMB) protocol blocks adversary lateral movement to admin shares using SMB.\n\n## Introduction\n\nAdversaries can use the SMB protocol to remotely access administrative and hidden shares (those not mapped to a drive letter).\n\n## Preparation\n\n- Estimate impact on business operations.\n- Conduct risk assessment to understand whether potential disruption outweighs consequences of continued adversary access.\n- Perform a backup of the registry before making any changes.\n\n## Risks\n\nThis countermeasure can break legitimate functionality.\n\nDisabling administrative and hidden shares on Domain Controllers increases this risk. For example, disabling the ADMIN$ share can:\n\n  - Inhibit the ability to use PsExec to remotely interface with endpoints\n  - Disrupt software updates and automated patching for third-party applications\n\nConsider restricting access to shares by implementing an allowlist on the firewall as an alternative.\n\n## Guidance\n\n### Disable Administrative and Hidden Shares\n\nTo mitigate the adversary's ability to write and execute from administrative and hidden shares and help contain an adversary by restricting their ability to remotely access systems, disable administrative or hidden shares from being accessible on endpoints.\n\n### Disable Lanman Server via Services Console\n\nFile, print, and named-pipe sharing over the network can be disabled by opening the Services console (services.msc) on an endpoint, opening the Server service, and selecting disable from the Startup type drop down menu. The service can be likewise paused or stopped via the Server service configuration window.\n\n### Disable Administrative and Hidden Shares via Registry\n\nAdmin and hidden shares can be disabled on endpoints by modifying the value in the registry by setting the AutoShareWks parameter to 0. For workstations, this will be at:\n\n`HKLM\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters DWORD Name = \"AutoShareWks\" Value = \"0\"`\n\nFor servers, admin and hidden shares can be disabled at:\n\n`HKLM\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters DWORD Name = \"AutoShareServer\" Value = \"0\"`\n\nNote that this change will not disable the IPC\\$ share. Although this share is not used for direct file access, it should still be disabled.\n\n### Disable Administrative and Hidden Shares via GPO\n\nCreate a new Group Policy Object (GPO) named \"Disable Administrative and Hidden Shares\" or edit an existing GPO in the Group Policy Management Console. Then mark the following settings as disabled.\n\n- Computer Configuration \\> Policies \\> Administrative Templates \\> MSS(Legacy) \\> MSS(AutoShareServer)\n- Computer Configuration \\> Policies \\> Administrative Templates \\> MSS(Legacy) \\> MSS(AutoShareWks)\n\nAfter establishing this GPO, link it to the appropriate Organizational Unit and apply the the update to all relevant machines.\n\n### Secure Accounts with Access to Hidden and Admin Shares\n\nAccounts with access to hidden and admin shares should be locked down to prevent an adversary from leveraging the privileged accounts to conduct an attack. This includes considering the isolation of TCP 445 between machines or workstation subnets, where risks permit this.\n\n- Administrative privileges should be regularly audited.\n- Leverage Microsoft's Local Administrative Password Solution (LAPS).\n- Accounts with access to admin or hidden shares should have logins configured to use multi-factor authentication (MFA).\n\n## References\n\n- Ransomware Protection and Containment Strategies: Practical Guidance for Endpoint Protection, Hardening, and Containment | <https://cloud.google.com/blog/topics/threat-intelligence/ransomware-protection-and-containment-strategies/>\n- SMB/Windows Admin Shares | <https://redcanary.com/threat-detection-report/techniques/windows-admin-shares/>\n- Remove administrative shares - Windows Server | <https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/remove-administrative-shares>\n- Administrative shares are missing - Windows Server | <https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/problems-administrative-shares-missing>",
+            "version": "1.0",
+            "created": "2025-03-14T00:00:00.000Z",
+            "modified": "2025-03-14T00:00:00.000Z",
+            "contributors": [],
+            "technologies": [],
+            "platforms": [],
+            "revoked": null,
+            "deprecated": null,
+            "ids_before_this": [],
+            "ids_after_this": [],
+            "is_baseline": false,
+            "related_ids": [
+                "CM0012",
+                "CM0017",
+                "CM0019",
+                "CM0020",
+                "CM0025",
+                "CM0052",
+                "CM0053",
+                "CM0062",
+                "CM0098",
+                "CM0100",
+                "CM0141"
+            ],
+            "automatable": "unspecified",
+            "references": [
+                {
+                    "source_name": "cloud.google.com",
+                    "description": "Ransomware Protection and Containment Strategies: Practical Guidance for Endpoint Protection, Hardening, and Containment",
+                    "url": "https://cloud.google.com/blog/topics/threat-intelligence/ransomware-protection-and-containment-strategies/"
+                },
+                {
+                    "source_name": "redcanary.com",
+                    "description": "SMB/Windows Admin Shares",
+                    "url": "https://redcanary.com/threat-detection-report/techniques/windows-admin-shares/"
+                },
+                {
+                    "source_name": "learn.microsoft.com",
+                    "description": "Remove administrative shares - Windows Server",
+                    "url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/remove-administrative-shares"
+                },
+                {
+                    "source_name": "learn.microsoft.com",
+                    "description": "Administrative shares are missing - Windows Server",
+                    "url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/problems-administrative-shares-missing"
+                }
+            ],
+            "techniques": [
+                {
+                    "tech_id": "T1021.002",
+                    "content": null,
+                    "details": null
+                }
+            ]
+        }
+    ],
+    "templates": [
+        {
+            "id": "TMPL0001",
+            "name": "Volt Typhoon",
+            "featured": false,
+            "iconSrc": null,
+            "link": {
+                "url": "https://attack.mitre.org/groups/G1017/",
+                "text": "Volt Typhoon on MITRE ATT&CK (group G1017)"
+            },
+            "description": "Countermeasures for Techniques used by Volt Typhoon.\n\n> Volt Typhoon is a People's Republic of China (PRC) state-sponsored actor that has been active since at least 2021. Volt Typhoon typically focuses on espionage and information gathering and has targeted critical infrastructure organizations in the US including Guam. Volt Typhoon has emphasized stealth in operations using web shells, living-off-the-land (LOTL) binaries, hands on keyboard activities, and stolen credentials.\n>\n> \\- <https://attack.mitre.org/groups/G1017/>\n",
+            "tech_to_items": {
+                "unmapped": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1003.001": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0087",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0088",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0090",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1003.003": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0096",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1005": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1012": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1016": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1018": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0065",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0036",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1033": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1036.005": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0003",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1036.008": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1047": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0045",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0065",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0036",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0038",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0039",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1049": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0025",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0042",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1057": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1059.001": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0019",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0031",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1059.003": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1069.001": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1069.002": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1070.004": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1070.007": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1074": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1074.001": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1078.002": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0059",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0060",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0028",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0070",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0084",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0041",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0102",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1082": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0081",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1087.002": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0137",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1090": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0065",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1090.001": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0093",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1190": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0067",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0037",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0093",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0106",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1497.001": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1505.003": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0106",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1518": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1555": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0061",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0067",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0029",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0033",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0135",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1560.001": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1570": {
+                    "confidence": "suspected",
+                    "items": [
+                        {
+                            "id": "CM0065",
+                            "version": "1.0"
+                        },
+                        {
+                            "id": "CM0101",
+                            "version": "1.0"
+                        }
+                    ]
+                },
+                "T1573.001": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1584.004": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1584.005": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1588.002": {
+                    "confidence": "suspected",
+                    "items": []
+                },
+                "T1654": {
+                    "confidence": "suspected",
+                    "items": []
+                }
+            },
+            "ignored_items": []
+        }
+    ]
+}
