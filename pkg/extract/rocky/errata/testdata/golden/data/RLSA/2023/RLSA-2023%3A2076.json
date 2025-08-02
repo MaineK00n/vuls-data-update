@@ -195,7 +195,7 @@
 	"data_source": {
 		"id": "rocky-errata",
 		"raws": [
-			"fixtures/2023/RLSA-2023:2076.json"
+			"fixtures/RLSA/2023/RLSA-2023:2076.json"
 		]
 	}
 }

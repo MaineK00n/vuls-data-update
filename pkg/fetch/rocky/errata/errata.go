@@ -16,7 +16,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://errata.build.resf.org/api/v2/advisories?filters.type=TYPE_SECURITY&page=%d&limit=100"
+const dataURL = "https://errata.build.resf.org/api/v2/advisories?page=%d&limit=100"
 
 type options struct {
 	dataURL string
@@ -119,8 +119,8 @@ func Fetch(opts ...Option) error {
 			continue
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.Name)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.Name)))
+		if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)))
 		}
 
 		bar.Increment()
