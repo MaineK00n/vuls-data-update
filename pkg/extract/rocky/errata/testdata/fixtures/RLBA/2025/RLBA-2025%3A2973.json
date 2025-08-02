@@ -1,0 +1,49 @@
+{
+	"affectedProducts": [
+		"Rocky Linux 9"
+	],
+	"cves": [
+		{
+			"cvss3BaseScore": "5.4",
+			"cvss3ScoringVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+			"cwe": "CWE-863",
+			"name": "CVE-2024-10306",
+			"sourceBy": "MITRE",
+			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-10306"
+		}
+	],
+	"description": "The mod_proxy_cluster module is a plugin for the Apache HTTP Server that provides load-balancer functionality.\n\nBug Fix(es):\n\n* Rebuild mod_proxy_cluster against httpd 2.4.62 (JIRA:Rocky Linux-70140)\n\n* Rebase mod_proxy_cluster to upstream 1.3.22.Final release (JIRA:Rocky Linux-80435)\n\n* Update deprecated misspeled EnableMCPMReceive directive (JIRA:Rocky Linux-82135)",
+	"fixes": [
+		{
+			"sourceBy": "Red Hat",
+			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2321302",
+			"ticket": "2321302"
+		}
+	],
+	"name": "RLBA-2025:2973",
+	"publishedAt": "2025-07-29T13:40:19.644888Z",
+	"rpms": {
+		"Rocky Linux 9": {
+			"nvras": [
+				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.aarch64.rpm",
+				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.ppc64le.rpm",
+				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.s390x.rpm",
+				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.src.rpm",
+				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.x86_64.rpm",
+				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.aarch64.rpm",
+				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.ppc64le.rpm",
+				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.s390x.rpm",
+				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.x86_64.rpm",
+				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.aarch64.rpm",
+				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.ppc64le.rpm",
+				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.s390x.rpm",
+				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.x86_64.rpm"
+			]
+		}
+	},
+	"severity": "SEVERITY_MODERATE",
+	"shortCode": "RL",
+	"synopsis": "Moderate:mod_proxy_cluster bug fix update",
+	"topic": "An update is available for mod_proxy_cluster.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"type": "TYPE_BUGFIX"
+}
