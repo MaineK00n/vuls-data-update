@@ -74,52 +74,74 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Extract AlmaLinux Errata")
-	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
+	ventries, err := os.ReadDir(args)
+	if err != nil {
+		return errors.Wrapf(err, "read dir %s", args)
+	}
+	for _, ve := range ventries {
+		if !ve.IsDir() {
+			continue
+		}
+
+		entries, err := os.ReadDir(filepath.Join(args, ve.Name()))
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "read dir %s", filepath.Join(args, ve.Name()))
 		}
+		for _, e := range entries {
+			if err := filepath.WalkDir(filepath.Join(args, ve.Name(), e.Name()), func(path string, d fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
 
-		if d.IsDir() {
-			return nil
-		}
+				if d.IsDir() || filepath.Ext(path) != ".json" {
+					return nil
+				}
 
-		if filepath.Ext(path) != ".json" {
-			return nil
-		}
+				r := utiljson.NewJSONReader()
+				var fetched errata.Erratum
+				if err := r.Read(path, args, &fetched); err != nil {
+					return errors.Wrapf(err, "read json %s", path)
+				}
 
-		dir, y := filepath.Split(filepath.Dir(path))
-		v := filepath.Base(filepath.Clean(dir))
+				extracted := extract(fetched, ve.Name(), r.Paths())
 
-		r := utiljson.NewJSONReader()
-		var fetched errata.Erratum
-		if err := r.Read(path, args, &fetched); err != nil {
-			return errors.Wrapf(err, "read json %s", path)
-		}
+				if e.Name() != "ALSA" && len(extracted.Vulnerabilities) == 0 {
+					return nil
+				}
 
-		extracted := extract(fetched, v, r.Paths())
+				splitted, err := util.Split(string(extracted.ID), "-", ":")
+				if err != nil {
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", fmt.Sprintf("%s-yyyy:\\d{4}", e.Name()), extracted.ID)
+				}
 
-		if _, err := os.Stat(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID))); err == nil {
-			f, err := os.Open(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
-			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
+				if _, err := time.Parse("2006", splitted[1]); err != nil {
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", fmt.Sprintf("%s-yyyy:\\d{4}", e.Name()), extracted.ID)
+				}
+
+				if _, err := os.Stat(filepath.Join(options.dir, "data", e.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID))); err == nil {
+					f, err := os.Open(filepath.Join(options.dir, "data", e.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
+					if err != nil {
+						return errors.Wrapf(err, "open %s", filepath.Join(options.dir, "data", e.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
+					}
+					defer f.Close()
+
+					var base dataTypes.Data
+					if err := json.NewDecoder(f).Decode(&base); err != nil {
+						return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", e.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
+					}
+
+					extracted.Merge(base)
+				}
+
+				if err := util.Write(filepath.Join(options.dir, "data", e.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", e.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
+				}
+
+				return nil
+			}); err != nil {
+				return errors.Wrapf(err, "walk %s", args)
 			}
-			defer f.Close()
-
-			var base dataTypes.Data
-			if err := json.NewDecoder(f).Decode(&base); err != nil {
-				return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
-			}
-
-			extracted.Merge(base)
 		}
-
-		if err := util.Write(filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", y, fmt.Sprintf("%s.json", extracted.ID)))
-		}
-
-		return nil
-	}); err != nil {
-		return errors.Wrapf(err, "walk %s", args)
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
