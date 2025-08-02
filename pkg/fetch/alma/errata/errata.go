@@ -18,7 +18,7 @@ import (
 
 const urlFormat = "https://errata.almalinux.org/%s/errata.full.json"
 
-var versions = []string{"8", "9"}
+var versions = []string{"8", "9", "10"}
 
 type options struct {
 	urls  map[string]string
@@ -99,15 +99,7 @@ func Fetch(opts ...Option) error {
 				return nil, errors.Wrapf(err, "decode almalinux %s", v)
 			}
 
-			var advs []Erratum
-			for _, d := range root.Data {
-				if d.Type != "security" {
-					continue
-				}
-				advs = append(advs, d)
-			}
-
-			return advs, nil
+			return root.Data, nil
 		}()
 		if err != nil {
 			return errors.Wrapf(err, "fetch almalinux %s", v)
@@ -125,8 +117,8 @@ func Fetch(opts ...Option) error {
 				continue
 			}
 
-			if err := util.Write(filepath.Join(options.dir, v, splitted[1], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, splitted[1], fmt.Sprintf("%s.json", a.ID)))
+			if err := util.Write(filepath.Join(options.dir, v, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.ID)))
 			}
 
 			bar.Increment()
