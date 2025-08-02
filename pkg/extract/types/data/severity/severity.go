@@ -9,6 +9,7 @@ import (
 	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
 	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
 	v40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
+	vendorTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/vendor"
 )
 
 type Severity struct {
@@ -82,5 +83,66 @@ func Compare(x, y Severity) int {
 	return cmp.Or(
 		cmp.Compare(x.Source, y.Source),
 		cmp.Compare(x.Type, y.Type),
+		func() int {
+			switch x.Type {
+			case SeverityTypeVendor:
+				switch {
+				case x.Vendor == nil && y.Vendor == nil:
+					return 0
+				case x.Vendor == nil && y.Vendor != nil:
+					return -1
+				case x.Vendor != nil && y.Vendor == nil:
+					return +1
+				default:
+					return vendorTypes.Compare(x.Source, *x.Vendor, *y.Vendor)
+				}
+			case SeverityTypeCVSSv2:
+				switch {
+				case x.CVSSv2 == nil && y.CVSSv2 == nil:
+					return 0
+				case x.CVSSv2 == nil && y.CVSSv2 != nil:
+					return -1
+				case x.CVSSv2 != nil && y.CVSSv2 == nil:
+					return +1
+				default:
+					return v2Types.Compare(*x.CVSSv2, *y.CVSSv2)
+				}
+			case SeverityTypeCVSSv30:
+				switch {
+				case x.CVSSv30 == nil && y.CVSSv30 == nil:
+					return 0
+				case x.CVSSv30 == nil && y.CVSSv30 != nil:
+					return -1
+				case x.CVSSv30 != nil && y.CVSSv30 == nil:
+					return +1
+				default:
+					return v30Types.Compare(*x.CVSSv30, *y.CVSSv30)
+				}
+			case SeverityTypeCVSSv31:
+				switch {
+				case x.CVSSv31 == nil && y.CVSSv31 == nil:
+					return 0
+				case x.CVSSv31 == nil && y.CVSSv31 != nil:
+					return -1
+				case x.CVSSv31 != nil && y.CVSSv31 == nil:
+					return +1
+				default:
+					return v31Types.Compare(*x.CVSSv31, *y.CVSSv31)
+				}
+			case SeverityTypeCVSSv40:
+				switch {
+				case x.CVSSv40 == nil && y.CVSSv40 == nil:
+					return 0
+				case x.CVSSv40 == nil && y.CVSSv40 != nil:
+					return -1
+				case x.CVSSv40 != nil && y.CVSSv40 == nil:
+					return +1
+				default:
+					return v40Types.Compare(*x.CVSSv40, *y.CVSSv40)
+				}
+			default:
+				return 0
+			}
+		}(),
 	)
 }
