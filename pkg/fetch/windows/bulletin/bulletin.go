@@ -132,12 +132,10 @@ func Fetch(opts ...Option) error {
 	for bid, bs := range bulletins {
 		splitted, err := util.Split(strings.TrimPrefix(strings.ToLower(bid), "ms"), "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
 		}
 		if _, err := time.Parse("06", splitted[0]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "[mM][sS]yy-\\d{3}", bid)
 		}
 
 		if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))), bs); err != nil {

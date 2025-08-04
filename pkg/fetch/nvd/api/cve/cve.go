@@ -264,12 +264,10 @@ func Fetch(opts ...Option) error {
 		for _, v := range response.Vulnerabilities {
 			splitted, err := util.Split(v.CVE.ID, "-", "-")
 			if err != nil {
-				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
-				continue
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
 			}
 			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
-				continue
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
 			}
 
 			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)), v.CVE); err != nil {

@@ -120,12 +120,10 @@ func Fetch(opts ...Option) error {
 
 		splitted, err := util.Split(a.ID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(GSD|UVI)-yyyy-\\d+", a.ID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(GSD|UVI)-yyyy-\\d+", a.ID)
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(GSD|UVI)-yyyy-\\d+", a.ID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(GSD|UVI)-yyyy-\\d+", a.ID)
 		}
 
 		if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.ID)), a); err != nil {

@@ -164,36 +164,37 @@ func Fetch(opts ...Option) error {
 			log.Printf("[INFO] Fetched Amazon Linux %s %s", v, r)
 			bar := pb.StartNew(len(us))
 			for _, u := range us {
-				var y string
-				switch len(strings.Split(u.ID, "-")) {
-				case 3:
-					splitted, err := util.Split(u.ID, "-", "-")
-					if err != nil {
-						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
-						break
+				y, err := func() (string, error) {
+					switch len(strings.Split(u.ID, "-")) {
+					case 3:
+						splitted, err := util.Split(u.ID, "-", "-")
+						if err != nil {
+							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+						}
+						if _, err := time.Parse("2006", splitted[1]); err != nil {
+							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
+						}
+						return splitted[1], nil
+					case 4:
+						if !strings.HasPrefix(u.ID, "ALAS2") {
+							return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+						}
+						splitted, err := util.Split(u.ID, "-", "-", "-")
+						if err != nil {
+							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+						}
+						if _, err := time.Parse("2006", splitted[2]); err != nil {
+							return "", errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+						}
+						return splitted[2], nil
+					default:
+						return "", errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"ALAS(1|2|2022|2023)-yyyy-\\d{3}", "ALAS2.+-.+-yyyy-\\d{3}"}, u.ID)
 					}
-					if _, err := time.Parse("2006", splitted[1]); err != nil {
-						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", u.ID)
-						break
-					}
-					y = splitted[1]
-				case 4:
-					splitted, err := util.Split(u.ID, "-", "-", "-")
-					if err != nil {
-						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
-						break
-					}
-					if _, err := time.Parse("2006", splitted[2]); err != nil {
-						log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
-						break
-					}
-					y = splitted[2]
-				default:
-					log.Printf("[WARN] unexpected ID format. expected: %q or %q, actual: %q", "ALAS(1|2|2022|2023)-yyyy-\\d{3}", "ALAS2.+-.+-yyyy-\\d{3}", u.ID)
+				}()
+				if err != nil {
+					return errors.Wrap(err, "parse id")
 				}
-				if y == "" {
-					continue
-				}
+
 				if err := util.Write(filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)), u); err != nil {
 					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)))
 				}

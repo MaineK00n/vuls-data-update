@@ -112,8 +112,7 @@ func Fetch(opts ...Option) error {
 
 		splitted, err := util.Split(adv.ID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-(SU|RU|FU|OU)-.*", adv.ID)
-			return nil
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(SUSE|openSUSE)-(SU|RU|FU|OU)-.*", adv.ID)
 		}
 
 		y := "others"
