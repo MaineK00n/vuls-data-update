@@ -344,19 +344,38 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 						}
 						m := instance.Qualifiers.Map()
 
-						p.name = instance.Name
-						p.version = func() string {
-							if n, ok := m["epoch"]; ok {
-								return fmt.Sprintf("%s:%s", n, instance.Version)
-							}
-							return fmt.Sprintf("0:%s", instance.Version)
-						}()
-
-						switch m["arch"] {
+						switch rpmmod := m["rpmmod"]; rpmmod {
 						case "":
-							return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
+							switch instance.Version {
+							case "":
+								return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
+							default:
+								p.name = instance.Name
+								p.version = func() string {
+									if n, ok := m["epoch"]; ok {
+										return fmt.Sprintf("%s:%s", n, instance.Version)
+									}
+									return fmt.Sprintf("0:%s", instance.Version)
+								}()
+
+								switch m["arch"] {
+								case "":
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
+								default:
+									p.arch = m["arch"]
+								}
+							}
 						default:
-							p.arch = m["arch"]
+							switch arch := m["arch"]; arch {
+							case "": // fixed: pkg:rpm/redhat/nodejs@12?rpmmod=nodejs:12:8010020210817113128:c27ad7f8
+								ss := strings.Split(rpmmod, ":")
+								if len(ss) < 4 {
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<module>@<stream>?rpmmod=<<module>:<stream>:<version>:<context>>", fpn.ProductIdentificationHelper.PURL)
+								}
+								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
+							default:
+								return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<module>@<stream>?rpmmod=<<module>:<stream>:<version>:<context>>", fpn.ProductIdentificationHelper.PURL)
+							}
 						}
 					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:rpmmod/"):
 						instance, err := packageurl.FromString(fpn.ProductIdentificationHelper.PURL)
