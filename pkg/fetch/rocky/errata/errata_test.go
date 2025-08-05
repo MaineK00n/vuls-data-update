@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -38,42 +39,41 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := errata.Fetch(errata.WithDataURL(fmt.Sprintf("%s/api/v2/advisories?filters.type=TYPE_SECURITY&page=%%d&limit=5", ts.URL)), errata.WithDir(dir), errata.WithRetry(0))
+			err := errata.Fetch(errata.WithDataURL(fmt.Sprintf("%s/api/v2/advisories?page=%%d", ts.URL)), errata.WithDir(dir), errata.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
+			default:
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
 
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
+					if d.IsDir() {
+						return nil
+					}
 
-				if d.IsDir() {
+					wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
+					if err != nil {
+						return err
+					}
+
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
+
 					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
 				}
-
-				dir, file := filepath.Split(path)
-				_, y := filepath.Split(filepath.Clean(dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", y, url.QueryEscape(file)))
-				if err != nil {
-					return err
-				}
-
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
 			}
 		})
 	}

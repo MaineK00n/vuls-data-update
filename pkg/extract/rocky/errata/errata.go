@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -74,41 +75,56 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Extract Rocky Linux Errata")
-	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
+
+	entries, err := os.ReadDir(args)
+	if err != nil {
+		return errors.Wrapf(err, "read dir %s", args)
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
 		}
 
-		if d.IsDir() || filepath.Ext(path) != ".json" {
+		if err := filepath.WalkDir(filepath.Join(args, entry.Name()), func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if d.IsDir() || filepath.Ext(path) != ".json" {
+				return nil
+			}
+
+			r := utiljson.NewJSONReader()
+			var a errata.Advisory
+			if err := r.Read(path, args, &a); err != nil {
+				return errors.Wrapf(err, "read json %s", path)
+			}
+
+			if entry.Name() != "RLSA" && len(a.Cves) == 0 {
+				return nil
+			}
+
+			extracted, err := extract(a, r.Paths())
+			if err != nil {
+				return errors.Wrapf(err, "extract %s", extracted.ID)
+			}
+
+			splitted, err := util.Split(string(extracted.ID), "-", ":")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", fmt.Sprintf("%s-yyyy:\\d{4}", entry.Name()), extracted.ID)
+			}
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", fmt.Sprintf("%s-yyyy:\\d{4}", entry.Name()), extracted.ID)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, "data", entry.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", entry.Name(), splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
+			}
+
 			return nil
+		}); err != nil {
+			return errors.Wrapf(err, "walk %s", args)
 		}
-
-		r := utiljson.NewJSONReader()
-		var a errata.Advisory
-		if err := r.Read(path, args, &a); err != nil {
-			return errors.Wrapf(err, "read json %s", path)
-		}
-
-		extracted, err := extract(a, r.Paths())
-		if err != nil {
-			return errors.Wrapf(err, "extract %s", extracted.ID)
-		}
-
-		splitted, err := util.Split(string(extracted.ID), "-", ":")
-		if err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", extracted.ID)
-		}
-		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", extracted.ID)
-		}
-
-		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)), extracted, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", extracted.ID)))
-		}
-
-		return nil
-	}); err != nil {
-		return errors.Wrapf(err, "walk %s", args)
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
