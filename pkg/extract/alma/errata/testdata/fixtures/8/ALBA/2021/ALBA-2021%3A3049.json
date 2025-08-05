@@ -1,0 +1,79 @@
+{
+	"description": "PC/SC Lite provides a Windows SCard compatible interface for communicating\nwith smart cards, smart card readers, and other security tokens.\n\nBug Fixes:\n\n* Increase global reader array size to 48 to address issue with RHCS secure\nchannel creation (BZ#1972569)\n\n* Increase global reader array size to 48 to address issue with RHCS secure\nchannel creation (pcsc-lite-ccid) (BZ#1973405)",
+	"id": "ALBA-2021:3049",
+	"issued_date": 1628589283,
+	"modules": [],
+	"packages": [
+		{
+			"arch": "x86_64",
+			"checksum": "6933a8e1a026bec08a291e032209a481ad99c9282b19354d4adb3e136c3b6dde",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "pcsc-lite-ccid-1.4.29-5.1.el8_4.x86_64.rpm",
+			"name": "pcsc-lite-ccid",
+			"reboot_suggested": 0,
+			"release": "5.1.el8_4",
+			"src": "pcsc-lite-ccid-1.4.29-5.1.el8_4.src.rpm",
+			"version": "1.4.29"
+		},
+		{
+			"arch": "i686",
+			"checksum": "0be495deb451fee7e52a1ff6a135c2fe4e100ac94707b2e53ca1f322590c2d11",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "pcsc-lite-devel-1.8.23-4.1.el8_4.i686.rpm",
+			"name": "pcsc-lite-devel",
+			"reboot_suggested": 0,
+			"release": "4.1.el8_4",
+			"src": "pcsc-lite-1.8.23-4.1.el8_4.src.rpm",
+			"version": "1.8.23"
+		},
+		{
+			"arch": "x86_64",
+			"checksum": "66a7f38c3427acb68a0b13e6036d0e11e57e1be166d610b3d3d23719dceaba13",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "pcsc-lite-devel-1.8.23-4.1.el8_4.x86_64.rpm",
+			"name": "pcsc-lite-devel",
+			"reboot_suggested": 0,
+			"release": "4.1.el8_4",
+			"src": "pcsc-lite-1.8.23-4.1.el8_4.src.rpm",
+			"version": "1.8.23"
+		},
+		{
+			"arch": "aarch64",
+			"checksum": "02a5850312d30e028470d6f15f0ba94434e6dd2c455c7a3878cfcd106cdc809b",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "pcsc-lite-ccid-1.4.29-5.1.el8_4.aarch64.rpm",
+			"name": "pcsc-lite-ccid",
+			"reboot_suggested": 0,
+			"release": "5.1.el8_4",
+			"src": "pcsc-lite-ccid-1.4.29-5.1.el8_4.src.rpm",
+			"version": "1.4.29"
+		},
+		{
+			"arch": "ppc64le",
+			"checksum": "5ca94ac7120135e443d59e205aa493f95c0005094d294c72e835aa5f4bc9cc6c",
+			"checksum_type": "sha256",
+			"epoch": "0",
+			"filename": "pcsc-lite-ccid-1.4.29-5.1.el8_4.ppc64le.rpm",
+			"name": "pcsc-lite-ccid",
+			"reboot_suggested": 0,
+			"release": "5.1.el8_4",
+			"src": "pcsc-lite-ccid-1.4.29-5.1.el8_4.src.rpm",
+			"version": "1.4.29"
+		}
+	],
+	"references": [
+		{
+			"href": "https://errata.almalinux.org/8/ALBA-2021-3049.html",
+			"id": "ALBA-2021-3049",
+			"type": "self"
+		}
+	],
+	"severity": "None",
+	"title": "pcsc-lite bug fix and enhancement update",
+	"type": "bugfix",
+	"updated_date": 1628589276
+}
