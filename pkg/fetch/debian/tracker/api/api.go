@@ -138,12 +138,10 @@ func Fetch(opts ...Option) error {
 			if strings.HasPrefix(a.ID, "CVE-") {
 				splitted, err := util.Split(a.ID, "-", "-")
 				if err != nil {
-					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
-					continue
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
 				}
 				if _, err := time.Parse("2006", splitted[1]); err != nil {
-					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
-					continue
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
 				}
 				d = splitted[1]
 			}

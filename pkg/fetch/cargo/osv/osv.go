@@ -121,8 +121,7 @@ func Fetch(opts ...Option) error {
 
 		lhs, _, ok := strings.Cut(a.ID, "-")
 		if !ok {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "(RUSTSEC|GHSA|MAL)-.+", a.ID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RUSTSEC|GHSA|MAL)-.+", a.ID)
 		}
 
 		t, err := time.Parse("2006-01-02T15:04:05Z", a.Published)

@@ -167,12 +167,10 @@ func Fetch(releases []string, opts ...Option) error {
 
 				splitted, err := util.Split(strings.TrimPrefix(adv.Alias, adv.Release.IDPrefix), "-", "-")
 				if err != nil {
-					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "<ID Prefix>-yyyy-.+", adv.Alias)
-					return nil
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "<ID Prefix>-yyyy-.+", adv.Alias)
 				}
 				if _, err := time.Parse("2006", splitted[1]); err != nil {
-					log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "<ID Prefix>-yyyy-.+", adv.Alias)
-					return nil
+					return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "<ID Prefix>-yyyy-.+", adv.Alias)
 				}
 
 				if err := util.Write(filepath.Join(options.dir, release, splitted[1], fmt.Sprintf("%s.json", adv.Alias)), adv); err != nil {

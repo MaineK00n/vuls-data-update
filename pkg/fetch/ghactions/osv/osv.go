@@ -120,8 +120,7 @@ func Fetch(opts ...Option) error {
 
 		t, err := time.Parse(time.RFC3339, a.Published)
 		if err != nil {
-			log.Printf("[WARN] unexpected Published format. expected: %q, actual: %q", time.RFC3339, a.Published)
-			continue
+			return errors.Wrapf(err, "unexpected Published format. expected: %q, actual: %q", time.RFC3339, a.Published)
 		}
 
 		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", a.ID)), a); err != nil {

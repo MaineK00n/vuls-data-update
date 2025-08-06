@@ -126,12 +126,10 @@ func Fetch(opts ...Option) error {
 	for _, v := range vs {
 		splitted, err := util.Split(v.CVEMetadata.CVEID, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVEMetadata.CVEID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVEMetadata.CVEID)
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVEMetadata.CVEID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVEMetadata.CVEID)
 		}
 
 		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVEMetadata.CVEID)), v); err != nil {

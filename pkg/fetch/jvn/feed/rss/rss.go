@@ -159,12 +159,10 @@ func Fetch(opts ...Option) error {
 	for _, a := range advisories {
 		splitted, err := util.Split(a.Identifier, "-", "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.Identifier)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.Identifier)
 		}
 		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.Identifier)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", a.Identifier)
 		}
 		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.Identifier)), a); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.Identifier)))

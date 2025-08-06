@@ -122,12 +122,10 @@ func Fetch(opts ...Option) error {
 	for _, a := range as {
 		splitted, err := util.Split(a.ID, "-")
 		if err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyymm-\\d{2,}", a.ID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "yyyymm-\\d{2,}", a.ID)
 		}
 		if _, err := time.Parse("200601", splitted[0]); err != nil {
-			log.Printf("[WARN] unexpected ID format. expected: %q, actual: %q", "yyyymm-\\d{2,}", a.ID)
-			continue
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "yyyymm-\\d{2,}", a.ID)
 		}
 
 		if err := util.Write(filepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID)), a); err != nil {
