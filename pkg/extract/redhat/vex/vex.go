@@ -320,13 +320,10 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 							switch instance.Version {
 							case "":
 								p.name = instance.Name
-								switch m["arch"] {
-								case "": // https://issues.redhat.com/browse/SECDATA-1116
-									log.Printf("[WARN] unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>", fpn.ProductIdentificationHelper.PURL)
-									return nil, nil
-								default:
-									p.arch = m["arch"]
-								}
+
+								// source rpm: 'arch=src'
+								// binary rpm: ''
+								p.arch = m["arch"]
 							default:
 								p.name = instance.Name
 								p.version = func() string {
@@ -336,6 +333,8 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 									return fmt.Sprintf("0:%s", instance.Version)
 								}()
 
+								// source rpm: 'arch=src'
+								// binary rpm: 'arch=<arch>'
 								switch m["arch"] {
 								case "":
 									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
@@ -344,37 +343,41 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 								}
 							}
 						default:
-							switch arch := m["arch"]; arch {
-							case "": // fixed: pkg:rpm/redhat/nodejs@12?rpmmod=nodejs:12:8010020210817113128:c27ad7f8
-								ss := strings.Split(rpmmod, ":")
-								if len(ss) < 4 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<module>@<stream>?rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
-								}
-								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
-							case "src": // unfixed, unaffected: pkg:rpm/redhat/nodejs@10?arch=src&rpmmod=nodejs:10
+							switch instance.Version {
+							case "":
 								ss := strings.Split(rpmmod, ":")
 								if len(ss) < 2 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<stream>?arch=src&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
 								}
 								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
 								p.name = instance.Name
-								p.arch = arch
+
+								// source rpm: 'arch=src'
+								// binary rpm: ''
+								p.arch = m["arch"]
 							default:
-								return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/redhat/<module>@<stream>?rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", "pkg:rpm/redhat/<name>@<stream>?arch=src&rpmmod=<<module>:<stream>>"}, fpn.ProductIdentificationHelper.PURL)
+								ss := strings.Split(rpmmod, ":")
+								if len(ss) < 4 {
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+								}
+								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
+								p.name = instance.Name
+								p.version = func() string {
+									if n, ok := m["epoch"]; ok {
+										return fmt.Sprintf("%s:%s", n, instance.Version)
+									}
+									return fmt.Sprintf("0:%s", instance.Version)
+								}()
+
+								// source rpm: 'arch=src'
+								// binary rpm: 'arch=<arch>'
+								switch m["arch"] {
+								case "":
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+								default:
+									p.arch = m["arch"]
+								}
 							}
-						}
-					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:rpmmod/"):
-						instance, err := packageurl.FromString(fpn.ProductIdentificationHelper.PURL)
-						if err != nil {
-							return nil, errors.Wrapf(err, "parse %q", fpn.ProductIdentificationHelper.PURL)
-						}
-						switch instance.Version {
-						case "":
-							p.name = instance.Name
-							p.arch = "src"
-							p.modularitylabel = strings.TrimPrefix(instance.Namespace, "redhat/")
-						default:
-							p.modularitylabel = fmt.Sprintf("%s:%s", instance.Name, strings.Split(instance.Version, ":")[0])
 						}
 					default:
 						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
@@ -382,7 +385,7 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 								return nil, nil
 							}
 						}
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:rpmmod/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
@@ -846,14 +849,14 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 			}
 
 			for _, p2 := range pmax.p2s {
-				vc, err := buildVersionCriterion(p2, ass)
+				vcs, err := buildVersionCriterion(p2, ass)
 				if err != nil {
 					return nil, nil, nil, errors.Wrap(err, "build version criterion")
 				}
-				if vc != nil {
+				for _, vc := range vcs {
 					ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
 						Type:    criterionTypes.CriterionTypeVersion,
-						Version: vc,
+						Version: &vc,
 					})
 				}
 			}
@@ -901,63 +904,129 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 	return as, vs, ds, nil
 }
 
-func buildVersionCriterion(p2 product2, ass ass) (*vcTypes.Criterion, error) {
+func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 	switch ass.status.product_status {
 	case "fixed":
 		if p2.name == "" && p2.version == "" {
 			return nil, nil
 		}
 
-		if len(p2.archs) == 1 && p2.archs[0] == "src" {
+		vcs := make([]vcTypes.Criterion, 0, 2)
+
+		if as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }); len(as) > 0 {
+			vcs = append(vcs, vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeBinary,
+					Binary: &vcBinaryPackageTypes.Package{
+						Name: func() string {
+							if p2.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
+							}
+							return p2.name
+						}(),
+						Architectures: as,
+						Repositories:  p2.repositories,
+					},
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: p2.version}},
+					Fixed: []string{p2.version},
+				},
+			})
+		}
+
+		if slices.Contains(p2.archs, "src") {
+			vcs = append(vcs, vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeSource,
+					Source: &vcSourcePackageTypes.Package{
+						Name: func() string {
+							if p2.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
+							}
+							return p2.name
+						}(),
+						Repositories: p2.repositories,
+					},
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: p2.version}},
+					Fixed: []string{p2.version},
+				},
+			})
+		}
+
+		if len(vcs) == 0 {
+			return nil, errors.Errorf("No version criterion is built. product: %+v, ass: %+v", p2, ass)
+		}
+		return vcs, nil
+	case "affected":
+		if p2.name == "" {
 			return nil, nil
 		}
 
-		return &vcTypes.Criterion{
-			Vulnerable: true,
-			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-			Package: vcPackageTypes.Package{
-				Type: vcPackageTypes.PackageTypeBinary,
-				Binary: &vcBinaryPackageTypes.Package{
-					Name: func() string {
-						if p2.modularitylabel != "" {
-							return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
-						}
-						return p2.name
-					}(),
-					Architectures: slices.DeleteFunc(p2.archs, func(x string) bool { return x == "src" }),
-					Repositories:  p2.repositories,
+		vcs := make([]vcTypes.Criterion, 0, 2)
+
+		if as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }); len(as) > 0 {
+			vcs = append(vcs, vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus: &fixstatusTypes.FixStatus{
+					Class:  fixstatusTypes.ClassUnfixed,
+					Vendor: ass.status.affected_status,
 				},
-			},
-			Affected: &affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypeRPM,
-				Range: []rangeTypes.Range{{LessThan: p2.version}},
-				Fixed: []string{p2.version},
-			},
-		}, nil
-	case "affected":
-		if len(p2.archs) != 1 || p2.archs[0] != "src" {
-			return nil, errors.Errorf("unexpected affected pkg arch. expected: %q, actual: %q", []string{"src"}, p2.archs)
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeBinary,
+					Binary: &vcBinaryPackageTypes.Package{
+						Name: func() string {
+							if p2.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
+							}
+							return p2.name
+						}(),
+						Architectures: func() []string {
+							if slices.Contains(as, "") {
+								return nil
+							}
+							return as
+						}(),
+						Repositories: p2.repositories,
+					},
+				},
+			})
 		}
 
-		return &vcTypes.Criterion{
-			Vulnerable: true,
-			FixStatus: &fixstatusTypes.FixStatus{
-				Class:  fixstatusTypes.ClassUnfixed,
-				Vendor: ass.status.affected_status,
-			},
-			Package: vcPackageTypes.Package{
-				Type: vcPackageTypes.PackageTypeSource,
-				Source: &vcSourcePackageTypes.Package{
-					Name: func() string {
-						if p2.modularitylabel != "" {
-							return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
-						}
-						return p2.name
-					}(),
-					Repositories: p2.repositories,
+		if slices.Contains(p2.archs, "src") {
+			vcs = append(vcs, vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus: &fixstatusTypes.FixStatus{
+					Class:  fixstatusTypes.ClassUnfixed,
+					Vendor: ass.status.affected_status,
 				},
-			},
-		}, nil
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeSource,
+					Source: &vcSourcePackageTypes.Package{
+						Name: func() string {
+							if p2.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
+							}
+							return p2.name
+						}(),
+						Repositories: p2.repositories,
+					},
+				},
+			})
+		}
+
+		if len(vcs) == 0 {
+			return nil, errors.Errorf("No version criterion is built. product: %+v, ass: %+v", p2, ass)
+		}
+		return vcs, nil
 	case "unaffected":
 		return nil, nil
 	default:
