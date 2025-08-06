@@ -1,9 +1,9 @@
-package kev
+package nistnvd2
 
 import (
 	"archive/zip"
 	"bytes"
-	"crypto/md5"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,15 +11,16 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://api.vulncheck.com/v3/backup/vulncheck-kev"
+const baseURL = "https://api.vulncheck.com/v3/backup/nist-nvd2"
 
 type options struct {
 	baseURL string
@@ -64,7 +65,7 @@ func WithRetry(retry int) Option {
 func Fetch(apiToken string, opts ...Option) error {
 	options := &options{
 		baseURL: baseURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "vulncheck", "kev"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "vulncheck", "nist-nvd2"),
 		retry:   3,
 	}
 
@@ -76,23 +77,23 @@ func Fetch(apiToken string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch VulnCheck KEV")
+	log.Println("[INFO] Fetch VulnCheck NVD++ (nist-nvd2)")
 
 	if err := os.MkdirAll(options.dir, 0755); err != nil {
 		return errors.Wrapf(err, "mkdir %s", options.dir)
 	}
-	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck KEV data accumulation
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of VulnCheck NVD++ (nist-nvd2) data accumulation
 
 All the data in this repository are fetched from VulnCheck by its API.
 
 - https://docs.vulncheck.com/
 - https://docs.vulncheck.com/api
-- https://docs.vulncheck.com/community/vulncheck-kev/attribution
+- https://docs.vulncheck.com/community/nist-nvd/attribution
 
 **CAUTION**
 
-When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck KEV: https://docs.vulncheck.com/community/vulncheck-kev/attribution
-Notably, you must show "prominent attribution" to show the data is from VulnCheck KEV to users.
+When you use the data in this repository, you *MUST* comply with the terms and conditions of VulnCheck NVD++: https://docs.vulncheck.com/community/nist-nvd/attribution
+Notably, you must show "prominent attribution" to show the data is from VulnCheck NVD++ to users.
 `), 0666); err != nil {
 		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
@@ -105,7 +106,7 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 
 	resp, err := client.Get(u)
 	if err != nil {
-		return errors.Wrap(err, "fetch vulncheck kev")
+		return errors.Wrap(err, "fetch vulncheck nvd++")
 	}
 	defer resp.Body.Close()
 
@@ -124,35 +125,46 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 			continue
 		}
 
-		if zf.FileInfo().Name() != "vulncheck_known_exploited_vulnerabilities.json" {
+		if !strings.HasPrefix(zf.FileInfo().Name(), "nvdcve-2.0-") || !strings.HasSuffix(zf.FileInfo().Name(), ".json.gz") {
 			continue
 		}
 
-		ks, err := func() ([]VulnCheckKEV, error) {
+		feed, err := func() (api20, error) {
 			f, err := zf.Open()
 			if err != nil {
-				return nil, errors.Wrapf(err, "open %s", zf.Name)
+				return api20{}, errors.Wrapf(err, "open %s", zf.Name)
 			}
 			defer f.Close()
 
-			var ks []VulnCheckKEV
-			if err := json.NewDecoder(f).Decode(&ks); err != nil {
-				return nil, errors.Wrap(err, "decode json")
+			gr, err := gzip.NewReader(f)
+			if err != nil {
+				return api20{}, errors.Wrap(err, "create gzip reader")
 			}
-			return ks, nil
+			defer gr.Close()
+
+			var feed api20
+			if err := json.NewDecoder(gr).Decode(&feed); err != nil {
+				return api20{}, errors.Wrap(err, "decode json")
+			}
+			return feed, nil
 		}()
 		if err != nil {
 			return errors.Wrapf(err, "read %s", zf.Name)
 		}
 
-		bar := pb.StartNew(len(ks))
-		for _, k := range ks {
-			if err := util.Write(filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum([]byte(fmt.Sprintf("%s %q", k.Name, k.CVE))))), k); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum([]byte(fmt.Sprintf("%s %q", k.Name, k.CVE))))))
+		for _, v := range feed.Vulnerabilities {
+			splitted, err := util.Split(v.CVE.ID, "-", "-")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
 			}
-			bar.Increment()
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.CVE.ID)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)), v.CVE); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE.ID)))
+			}
 		}
-		bar.Finish()
 	}
 
 	return nil
@@ -173,7 +185,7 @@ func fetchBackupURL(client *utilhttp.Client, baseURL, apiToken string) (string, 
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", errors.Wrap(err, "fetch vulncheck kev backup")
+		return "", errors.Wrap(err, "fetch vulncheck nist-nvd2 backup")
 	}
 	defer resp.Body.Close()
 

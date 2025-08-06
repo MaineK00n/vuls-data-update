@@ -1,4 +1,4 @@
-package kev_test
+package nistnvd2_test
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
+	nistnvd2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd2"
 )
 
 func TestFetch(t *testing.T) {
@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
-				case strings.HasSuffix(r.URL.Path, "vulncheck-kev"):
+				case strings.HasSuffix(r.URL.Path, "backup/nist-nvd2"):
 					c, err := r.Cookie("token")
 					if err != nil {
 						http.Error(w, fmt.Sprintf("Bad Request. err: %s", err), http.StatusBadRequest)
@@ -54,43 +54,41 @@ func TestFetch(t *testing.T) {
 					bs, err := json.Marshal(struct {
 						Benchmark float64 `json:"_benchmark"`
 						Meta      struct {
-							Timestamp string `json:"timestamp"`
-							Index     string `json:"index"`
+							Timestamp time.Time `json:"timestamp"`
+							Index     string    `json:"index"`
 						} `json:"_meta"`
 						Data []struct {
-							Filename      string `json:"filename"`
-							Sha256        string `json:"sha256"`
-							DateAdded     string `json:"date_added"`
-							URL           string `json:"url"`
-							URLTTLMinutes int    `json:"url_ttl_minutes"`
-							URLExpires    string `json:"url_expires"`
+							Filename      string    `json:"filename"`
+							Sha256        string    `json:"sha256"`
+							DateAdded     time.Time `json:"date_added"`
+							URL           string    `json:"url"`
+							URLTTLMinutes int       `json:"url_ttl_minutes"`
+							URLExpires    time.Time `json:"url_expires"`
 						} `json:"data"`
 					}{
-						Benchmark: 0.979224,
+						Benchmark: 0.022611,
 						Meta: struct {
-							Timestamp string "json:\"timestamp\""
-							Index     string "json:\"index\""
+							Timestamp time.Time `json:"timestamp"`
+							Index     string    `json:"index"`
 						}{
-							Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
-							Index:     "vulncheck-kev",
+							Timestamp: time.Now(),
+							Index:     "nist-nvd2",
 						},
 						Data: []struct {
-							Filename      string "json:\"filename\""
-							Sha256        string "json:\"sha256\""
-							DateAdded     string "json:\"date_added\""
-							URL           string "json:\"url\""
-							URLTTLMinutes int    "json:\"url_ttl_minutes\""
-							URLExpires    string "json:\"url_expires\""
+							Filename      string    `json:"filename"`
+							Sha256        string    `json:"sha256"`
+							DateAdded     time.Time `json:"date_added"`
+							URL           string    `json:"url"`
+							URLTTLMinutes int       `json:"url_ttl_minutes"`
+							URLExpires    time.Time `json:"url_expires"`
 						}{
 							{
-								Filename:  "vulncheck-kev-1723803822402071515.zip",
-								Sha256:    "91536eafc74ac99bf6da67d17ccddb700aa0b0adc0d932a1569ec8dc57321092",
-								DateAdded: "2024-08-16T10:23:42.402Z",
-								URL: func() string {
-									return fmt.Sprintf("http://%s/testdata/fixtures/vulncheck-kev-1723803822402071515.zip", r.Host)
-								}(),
-								URLTTLMinutes: 60,
-								URLExpires:    "2024-08-16T11:23:42.402Z",
+								Filename:      "nist-nvd2-1754586143238923080.zip",
+								Sha256:        "6176994fb0e20ea73f02ed9603d5a09a5f0eb0b13caf23767243ad199850611e",
+								DateAdded:     time.Now(),
+								URL:           fmt.Sprintf("http://%s/nist-nvd2-1754586143238923080.zip", r.Host),
+								URLTTLMinutes: 15,
+								URLExpires:    time.Now(),
 							},
 						},
 					})
@@ -98,21 +96,20 @@ func TestFetch(t *testing.T) {
 						http.Error(w, fmt.Sprintf("Internal Server Error. err: %s", err), http.StatusInternalServerError)
 						return
 					}
-
-					http.ServeContent(w, r, "vulncheck-kev.json", time.Now(), bytes.NewReader(bs))
+					http.ServeContent(w, r, "", time.Now(), bytes.NewReader(bs))
 				default:
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "vulncheck-kev")
+			u, err := url.JoinPath(ts.URL, "v3/backup/nist-nvd2")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = kev.Fetch(tt.args.apiToken, kev.WithBaseURL(u), kev.WithDir(dir), kev.WithRetry(0))
+			err = nistnvd2.Fetch(tt.args.apiToken, nistnvd2.WithBaseURL(u), nistnvd2.WithDir(dir), nistnvd2.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
