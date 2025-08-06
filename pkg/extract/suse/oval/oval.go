@@ -17,8 +17,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
@@ -29,14 +29,23 @@ import (
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	criterionpackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	binaryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	cvssV30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
+	cvssV31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
+	cvssV40Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v40"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval" // SUSE OVAL用のfetchパッケージ
+	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/suse/oval"
 )
 
 type options struct {
@@ -238,38 +247,46 @@ func (e extractor) extract(path, outdir string) error {
 }
 
 func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
-
 	if !strings.HasPrefix(strings.TrimSpace(def.Metadata.Title), "CVE-") {
 		return nil, errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-YYYY-ZZZZZ", def.Metadata.Title)
 	}
 	id := strings.TrimSpace(def.Metadata.Title)
+
+	// FIXME: how do we go?
+	es := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", e.osname, e.version))
+
+	v, err := buildVulnerability(def)
+	if err != nil {
+		return nil, errors.Wrapf(err, "build vulnerability %s", def.Metadata.Title)
+	}
 
 	c, err := e.walkCriteria(def.Criteria)
 	if err != nil {
 		return nil, errors.Wrapf(err, "eval criteria")
 	}
 
-	// TODO: SUSE固有のデータ抽出ロジックを実装
-	// - パッケージ情報の収集
-	// - 脆弱性情報の抽出
-	// - セキュリティアドバイザリ情報の構築
-
-	// 基本的なデータ構造を返す（実装は要調整）
 	return &dataTypes.Data{
 		ID: dataTypes.RootID(id),
-		// Advisories: // TODO: アドバイザリ情報を構築
-		// Vulnerabilities: // TODO: 脆弱性情報を構築
-		Detections: func() []detection.Detection {
+		Vulnerabilities: []vulnerabilityTypes.Vulnerability{
+			{
+				Content: v,
+				Segments: []segmentTypes.Segment{
+					{
+						Ecosystem: es,
+					},
+				},
+			},
+		},
+		Detections: func() []detectionTypes.Detection {
 			if c == nil {
 				return nil
 			}
-			return []detection.Detection{
+			return []detectionTypes.Detection{
 				{
-					Conditions: []condition.Condition{
+					Ecosystem: es,
+					Conditions: []conditionTypes.Condition{
 						{
 							Criteria: *c,
-							// FIXME: what is suitable?
-							Tag: segment.DetectionTag(fmt.Sprintf("%s-%s-%s", e.osname, e.version, e.ovaltype)),
 						},
 					},
 				},
@@ -279,6 +296,124 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 			ID:   sourceTypes.SUSEOVAL,
 			Raws: e.r.Paths(),
 		},
+	}, nil
+}
+
+func buildVulnerability(def oval.Definition) (vulnerabilityContentTypes.Content, error) {
+
+	refs := make([]referenceTypes.Reference, 0, len(def.Metadata.Reference))
+	ss := make([]severityTypes.Severity, 0, len(def.Metadata.Advisory.Cve))
+
+	for _, r := range def.Metadata.Reference {
+		refs = append(refs, referenceTypes.Reference{
+			Source: r.Source,
+			URL:    r.RefURL,
+		})
+	}
+
+	if def.Metadata.Advisory.Severity != "" {
+		ss = append(ss, severityTypes.Severity{
+			Type:   severityTypes.SeverityTypeVendor,
+			Source: def.Metadata.Advisory.From,
+			Vendor: &def.Metadata.Advisory.Severity,
+		})
+	}
+
+	for _, cve := range def.Metadata.Advisory.Cve {
+		source := func() string {
+			_, rhs, found := strings.Cut(cve.Text, " at ")
+			if !found {
+				return cve.Text
+			}
+			if rhs == "SUSE" {
+				return "security@suse.de"
+			}
+			return rhs
+		}()
+
+		refs = append(refs, referenceTypes.Reference{
+			Source: source,
+			URL:    cve.Href,
+		})
+
+		if cve.Impact != "" {
+			ss = append(ss, severityTypes.Severity{
+				Type:   severityTypes.SeverityTypeVendor,
+				Source: source,
+				Vendor: &cve.Impact,
+			})
+		}
+		if cve.Cvss3 != "" {
+			_, rhs, _ := strings.Cut(cve.Cvss3, "/")
+			switch {
+			case strings.HasPrefix(rhs, "CVSS:3.0"):
+				v30, err := cvssV30Types.Parse(rhs)
+				if err != nil {
+					return vulnerabilityContentTypes.Content{}, errors.Wrap(err, "parse cvss3")
+				}
+				ss = append(ss, severityTypes.Severity{
+					Type:    severityTypes.SeverityTypeCVSSv30,
+					Source:  source,
+					CVSSv30: v30,
+				})
+			case strings.HasPrefix(rhs, "CVSS:3.1"):
+				v31, err := cvssV31Types.Parse(rhs)
+				if err != nil {
+					return vulnerabilityContentTypes.Content{}, errors.Wrap(err, "parse cvss3")
+				}
+				ss = append(ss, severityTypes.Severity{
+					Type:    severityTypes.SeverityTypeCVSSv31,
+					Source:  source,
+					CVSSv31: v31,
+				})
+			default:
+				return vulnerabilityContentTypes.Content{}, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", cve.Cvss3)
+			}
+		}
+		if cve.Cvss4 != "" {
+			_, rhs, _ := strings.Cut(cve.Cvss4, "/")
+			switch {
+			case strings.HasPrefix(rhs, "CVSS:4.0"):
+				v40, err := cvssV40Types.Parse(rhs)
+				if err != nil {
+					return vulnerabilityContentTypes.Content{}, errors.Wrap(err, "parse cvss4")
+				}
+				ss = append(ss, severityTypes.Severity{
+					Type:    severityTypes.SeverityTypeCVSSv40,
+					Source:  source,
+					CVSSv40: v40,
+				})
+			default:
+				return vulnerabilityContentTypes.Content{}, errors.Errorf("unexpected CVSSv4 string. expected: %q, actual: %q", "<score>/CVSS:4.0/<vector>", cve.Cvss4)
+			}
+		}
+	}
+
+	for _, b := range def.Metadata.Advisory.Bugzilla {
+		refs = append(refs, referenceTypes.Reference{
+			Source: func() string {
+				if strings.HasPrefix(b.Text, "SUSE bug ") {
+					return "security@suse.de"
+				}
+				return b.Text
+			}(),
+			URL: b.Href,
+		})
+	}
+
+	return vulnerabilityContentTypes.Content{
+		ID:    vulnerabilityContentTypes.VulnerabilityID(strings.TrimSpace(def.Metadata.Title)),
+		Title: def.Metadata.Title,
+		Description: func() string {
+			if def.Metadata.Description != "" {
+				return strings.TrimSpace(def.Metadata.Description)
+			}
+			return ""
+		}(),
+		Severity:   ss,
+		References: refs,
+		Published:  utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Issued.Date),
+		Modified:   utiltime.Parse([]string{"2006-01-02"}, def.Metadata.Advisory.Updated.Date),
 	}, nil
 }
 
