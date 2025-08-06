@@ -58,6 +58,22 @@ func TestCompare(t *testing.T) {
 			},
 			want: +1,
 		},
+		{
+			name: "x:vendor < y:vendor",
+			args: args{
+				x: severityTypes.Severity{
+					Type:   severityTypes.SeverityTypeVendor,
+					Source: "source1",
+					Vendor: func() *string { s := "low"; return &s }(),
+				},
+				y: severityTypes.Severity{
+					Type:   severityTypes.SeverityTypeVendor,
+					Source: "source1",
+					Vendor: func() *string { s := "medium"; return &s }(),
+				},
+			},
+			want: -1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
