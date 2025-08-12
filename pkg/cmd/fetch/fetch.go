@@ -150,6 +150,7 @@ import (
 	variotExploits "github.com/MaineK00n/vuls-data-update/pkg/fetch/variot/exploits"
 	variotVulns "github.com/MaineK00n/vuls-data-update/pkg/fetch/variot/vulns"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
+	vulncheckNISTNVD "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd"
 	vulncheckNISTNVD2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd2"
 	windowsAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/advisory"
 	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
@@ -255,7 +256,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(), newCmdUbuntuCVE(), newCmdUbuntuNotice(),
 		newCmdVARIoTExploits(), newCmdVARIoTVulns(),
-		newCmdVulnCheckKEV(), newCmdVulnCheckNISTNVD2(),
+		newCmdVulnCheckKEV(), newCmdVulnCheckNISTNVD(), newCmdVulnCheckNISTNVD2(),
 		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsDeployment(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiSecDB(), newCmdWolfiOSV(),
 		newCmdWRLinux(),
@@ -4686,6 +4687,33 @@ func newCmdVulnCheckKEV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "vulncheck", "kev"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdVulnCheckNISTNVD() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "vulncheck", "nist-nvd"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "vulncheck-nist-nvd <VulnCheck token>",
+		Short: "Fetch VulnCheck NVD++ (nist-nvd) data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch vulncheck-nist-nvd vulncheck_token
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := vulncheckNISTNVD.Fetch(args[0], vulncheckNISTNVD.WithDir(options.dir), vulncheckNISTNVD.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch vulncheck nist-nvd")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
