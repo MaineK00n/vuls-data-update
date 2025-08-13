@@ -144,7 +144,7 @@ func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
 	return filtered, nil
 }
 
-func (c FilteredCriteria) Affected() (bool, error) {
+func (c *FilteredCriteria) Affected() (bool, error) {
 	switch c.Operator {
 	case CriteriaOperatorTypeAND:
 		for _, ca := range c.Criterias {
@@ -168,13 +168,15 @@ func (c FilteredCriteria) Affected() (bool, error) {
 		}
 		return true, nil
 	case CriteriaOperatorTypeOR:
+		cas := make([]FilteredCriteria, 0, len(c.Criterias))
+		cns := make([]criterionTypes.FilteredCriterion, 0, len(c.Criterions))
 		for _, ca := range c.Criterias {
 			isAffected, err := ca.Affected()
 			if err != nil {
 				return false, errors.Wrap(err, "criteria affected")
 			}
 			if isAffected {
-				return true, nil
+				cas = append(cas, ca)
 			}
 		}
 
@@ -184,11 +186,17 @@ func (c FilteredCriteria) Affected() (bool, error) {
 				return false, errors.Wrap(err, "criterion affected")
 			}
 			if isAffected {
-				return true, nil
+				cns = append(cns, cn)
 			}
 		}
-		return false, nil
+		fmt.Printf("======= cas: %+v\n", cas)
+		fmt.Printf("======= cns: %+v\n", cns)
+
+		c.Criterias = cas
+		c.Criterions = cns
+		return len(c.Criterias)+len(c.Criterions) > 0, nil
 	default:
 		return false, errors.Errorf("unexpected criteria operator type. expected: %q, actual: %q", []CriteriaOperatorType{CriteriaOperatorTypeAND, CriteriaOperatorTypeOR}, c.Operator)
 	}
+
 }
