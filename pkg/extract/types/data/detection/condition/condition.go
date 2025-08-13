@@ -50,7 +50,7 @@ type FilteredCondition struct {
 	Tag      segmentTypes.DetectionTag      `json:"tag,omitempty"`
 }
 
-func (c FilteredCondition) Affected() (bool, error) {
+func (c *FilteredCondition) Affected() (bool, error) {
 	isAffected, err := c.Criteria.Affected()
 	if err != nil {
 		return false, errors.Wrap(err, "criteria affected")
