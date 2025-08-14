@@ -1,6 +1,7 @@
 package condition_test
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -17,6 +18,7 @@ import (
 	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestCondition_Sort(t *testing.T) {
@@ -335,6 +337,10 @@ func TestCondition_Accept(t *testing.T) {
 				t.Errorf("Condition.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("Condition.Accept() mismatch (-want +got):\n%s", diff)
+			}
+
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Condition.Accept() = %v, want %v", got, tt.want)
 			}
@@ -456,6 +462,126 @@ func TestFilteredCondition_Affected(t *testing.T) {
 			},
 			want: false,
 		},
+		{
+			name: "OR - AND - {OR1, OR2}, OR1 is not satisfied",
+			fields: fields{
+				Criteria: criteriaTypes.FilteredCriteria{
+					Operator: criteriaTypes.CriteriaOperatorTypeOR,
+					Criterias: []criteriaTypes.FilteredCriteria{
+						{
+							Operator: criteriaTypes.CriteriaOperatorTypeAND,
+							Criterias: []criteriaTypes.FilteredCriteria{
+								{
+									Operator: criteriaTypes.CriteriaOperatorTypeOR,
+									Criterions: []criterionTypes.FilteredCriterion{
+										{
+											Criterion: criterionTypes.Criterion{
+												Type: criterionTypes.CriterionTypeVersion,
+												Version: &vcTypes.Criterion{
+													Vulnerable: false,
+													Package: vcPackageTypes.Package{
+														Type: vcPackageTypes.PackageTypeBinary,
+														Binary: &vcBinaryPackageTypes.Package{
+															Name: "product1-release",
+														},
+													},
+													Affected: &affectedTypes.Affected{
+														Type:  affectedrangeTypes.RangeTypeRPMVersionOnly,
+														Range: []affectedrangeTypes.Range{{Equal: "0.0.1"}},
+													},
+												},
+											},
+											Accepts: criterionTypes.AcceptQueries{
+												Version: nil,
+											},
+										},
+									},
+								},
+								{
+									Operator: criteriaTypes.CriteriaOperatorTypeOR,
+									Criterions: []criterionTypes.FilteredCriterion{
+										{
+											Criterion: criterionTypes.Criterion{
+												Type: criterionTypes.CriterionTypeVersion,
+												Version: &vcTypes.Criterion{
+													Vulnerable: true,
+													Package: vcPackageTypes.Package{
+														Type: vcPackageTypes.PackageTypeBinary,
+														Binary: &vcBinaryPackageTypes.Package{
+															Name: "package1",
+														},
+													},
+													Affected: &affectedTypes.Affected{
+														Type:  affectedrangeTypes.RangeTypeRPM,
+														Range: []affectedrangeTypes.Range{{LessThan: "0.0.1-1"}},
+													},
+												},
+											},
+											Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
+										},
+									},
+								},
+							},
+						},
+						{
+							Operator: criteriaTypes.CriteriaOperatorTypeAND,
+							Criterias: []criteriaTypes.FilteredCriteria{
+								{
+									Operator: criteriaTypes.CriteriaOperatorTypeOR,
+									Criterions: []criterionTypes.FilteredCriterion{
+										{
+											Criterion: criterionTypes.Criterion{
+												Type: criterionTypes.CriterionTypeVersion,
+												Version: &vcTypes.Criterion{
+													Vulnerable: false,
+													Package: vcPackageTypes.Package{
+														Type: vcPackageTypes.PackageTypeBinary,
+														Binary: &vcBinaryPackageTypes.Package{
+															Name: "product1-release",
+														},
+													},
+													Affected: &affectedTypes.Affected{
+														Type:  affectedrangeTypes.RangeTypeRPMVersionOnly,
+														Range: []affectedrangeTypes.Range{{Equal: "0.0.2"}},
+													},
+												},
+											},
+											Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+										},
+									},
+								},
+								{
+									Operator: criteriaTypes.CriteriaOperatorTypeOR,
+									Criterions: []criterionTypes.FilteredCriterion{
+										{
+											Criterion: criterionTypes.Criterion{
+												Type: criterionTypes.CriterionTypeVersion,
+												Version: &vcTypes.Criterion{
+													Vulnerable: true,
+													Package: vcPackageTypes.Package{
+														Type: vcPackageTypes.PackageTypeBinary,
+														Binary: &vcBinaryPackageTypes.Package{
+															Name: "package1",
+														},
+													},
+													Affected: &affectedTypes.Affected{
+														Type:  affectedrangeTypes.RangeTypeRPM,
+														Range: []affectedrangeTypes.Range{{LessThan: "0.0.1-1"}},
+													},
+												},
+											},
+											Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				Tag: segmentTypes.DetectionTag("tag"),
+			},
+			want: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -463,11 +589,14 @@ func TestFilteredCondition_Affected(t *testing.T) {
 				Criteria: tt.fields.Criteria,
 				Tag:      tt.fields.Tag,
 			}
-			got, err := c.Affected()
+			c2 := &c
+			got, err := c2.Affected()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FilteredCondition.Affected() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+			fmt.Printf("======= c2: %+v\n", c2)
+
 			if got != tt.want {
 				t.Errorf("FilteredCondition.Affected() = %v, want %v", got, tt.want)
 			}

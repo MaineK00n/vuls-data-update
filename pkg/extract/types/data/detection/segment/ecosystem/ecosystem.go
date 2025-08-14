@@ -25,7 +25,7 @@ const (
 	EcosystemTypeRedHat      = "redhat"
 	EcosystemTypeRocky       = "rocky"
 	EcosystemTypeOpenSUSE    = "opensuse"
-	EcosystemTypeSUSEServer  = "sles"
+	EcosystemTypeSUSEServer  = "suse.linux.enterprise.server"
 	EcosystemTypeSUSEDesktop = "sled"
 	EcosystemTypeUbuntu      = "ubuntu"
 	EcosystemTypeWindows     = "windows"
@@ -102,11 +102,13 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 		}
 		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
 	case EcosystemTypeSUSEServer:
-		ss := strings.Split(release, ".")
-		if len(ss) < 2 {
-			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
-		}
-		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		// FIXME
+		// ss := strings.Split(release, ".")
+		// if len(ss) < 2 {
+		// 	return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
+		// }
+		// return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
+		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
 	case EcosystemTypeSUSEDesktop:
 		ss := strings.Split(release, ".")
 		if len(ss) < 2 {
