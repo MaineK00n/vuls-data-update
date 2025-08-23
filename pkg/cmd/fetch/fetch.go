@@ -20,6 +20,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	azureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
+	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bitnami/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/bottlerocket"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
@@ -194,6 +195,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdArch(),
 		newCmdAttack(),
 		newCmdAzureOVAL(),
+		newCmdBellSoftAlpaquitaOSV(),
 		newCmdBitnamiOSV(),
 		newCmdBottlerocket(),
 		newCmdCapec(),
@@ -578,6 +580,33 @@ func newCmdAzureOVAL() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := azureOVAL.Fetch(azureOVAL.WithDir(options.dir), azureOVAL.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch azure oval")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdBellSoftAlpaquitaOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "bellsoft", "alpaquita", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "bellsoft-alpaquita-osv",
+		Short: "Fetch BellSoft Alpaquita OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch bellsoft-alpaquita-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := bellsoftAlpaquitaOSV.Fetch(bellsoftAlpaquitaOSV.WithDir(options.dir), bellsoftAlpaquitaOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch bellsoft alpaquita")
 			}
 			return nil
 		},
