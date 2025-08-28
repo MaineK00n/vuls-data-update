@@ -21,6 +21,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	azureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
 	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
+	bellsoftHardenedContainersOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/hardened-containers/osv"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bitnami/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/bottlerocket"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
@@ -196,7 +197,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdArch(),
 		newCmdAttack(),
 		newCmdAzureOVAL(),
-		newCmdBellSoftAlpaquitaOSV(),
+		newCmdBellSoftAlpaquitaOSV(), newCmdBellSoftHardenedContainersOSV(),
 		newCmdBitnamiOSV(),
 		newCmdBottlerocket(),
 		newCmdCapec(),
@@ -609,6 +610,33 @@ func newCmdBellSoftAlpaquitaOSV() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := bellsoftAlpaquitaOSV.Fetch(bellsoftAlpaquitaOSV.WithDir(options.dir), bellsoftAlpaquitaOSV.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch bellsoft alpaquita")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdBellSoftHardenedContainersOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "bellsoft", "hardened-containers", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "bellsoft-hardened-containers-osv",
+		Short: "Fetch BellSoft Hardened Containers OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch bellsoft-hardened-containers-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := bellsoftHardenedContainersOSV.Fetch(bellsoftHardenedContainersOSV.WithDir(options.dir), bellsoftHardenedContainersOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch bellsoft hardened containers")
 			}
 			return nil
 		},
