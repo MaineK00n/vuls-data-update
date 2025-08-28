@@ -5,7 +5,7 @@ type GHSA struct {
 	ID            string   `json:"id,omitempty"`
 	Modified      string   `json:"modified,omitempty"`
 	Published     string   `json:"published,omitempty"`
-	WithDrawn     string   `json:"with_drawn,omitempty"`
+	Withdrawn     string   `json:"withdrawn,omitempty"`
 	Aliases       []string `json:"aliases,omitempty"`
 	Related       []string `json:"related,omitempty"`
 	Summary       string   `json:"summary,omitempty"`
