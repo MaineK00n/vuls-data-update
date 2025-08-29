@@ -33,17 +33,6 @@
 					]
 				}
 			}
-		},
-		{
-			"pkg": {
-				"name": "binutils",
-				"secfixes": {
-					"2.44-r0": [
-						"CVE-2025-0840",
-						"GHSA-c5qp-mx9f-m5c7"
-					]
-				}
-			}
 		}
 	]
 }
