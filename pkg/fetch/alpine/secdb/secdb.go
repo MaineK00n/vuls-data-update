@@ -2,6 +2,7 @@ package secdb
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -114,8 +115,17 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "fetch alpine linux %s %s", r, f)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, strings.TrimPrefix(r, "v"), f), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.TrimPrefix(r, "v"), f))
+			for _, p := range a.Packages {
+				if err := util.Write(filepath.Join(options.dir, strings.TrimPrefix(r, "v"), a.Reponame, fmt.Sprintf("%s.json", p.Pkg.Name)), Advisory{
+					Apkurl:        a.Apkurl,
+					Archs:         a.Archs,
+					Reponame:      a.Reponame,
+					Urlprefix:     a.Urlprefix,
+					Distroversion: a.Distroversion,
+					Packages:      []Package{p},
+				}); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, strings.TrimPrefix(r, "v"), a.Reponame, fmt.Sprintf("%s.json", p.Pkg.Name)))
+				}
 			}
 		}
 	}

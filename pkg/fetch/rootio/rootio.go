@@ -89,8 +89,12 @@ func Fetch(opts ...Option) error {
 	}
 
 	for distro, data := range feed {
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", distro)), data); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", distro)))
+		for _, d := range data {
+			for _, p := range d.Packages {
+				if err := util.Write(filepath.Join(options.dir, distro, d.DistroVersion, fmt.Sprintf("%s.json", p.Pkg.Name)), p); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, distro, d.DistroVersion, fmt.Sprintf("%s.json", p.Pkg.Name)))
+				}
+			}
 		}
 	}
 

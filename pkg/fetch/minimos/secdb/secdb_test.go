@@ -13,7 +13,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/secdb"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/secdb"
 )
 
 func TestFetch(t *testing.T) {
