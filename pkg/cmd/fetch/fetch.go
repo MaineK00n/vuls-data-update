@@ -18,13 +18,11 @@ import (
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
 	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/attack"
 	azureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
 	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
 	bellsoftHardenedContainersOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/hardened-containers/osv"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bitnami/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/bottlerocket"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
 	cargoGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/ghsa"
 	cargoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/cargo/osv"
 	certBundCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/cert-bund/csaf"
@@ -40,13 +38,11 @@ import (
 	composerGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/glsa"
 	composerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/composer/osv"
 	conanGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/conan/glsa"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/cwe"
 	debianOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/osv"
 	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/emb3d"
 	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
 	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
@@ -78,7 +74,11 @@ import (
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
 	minimOSOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/osv"
 	minimOSSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/secdb"
+	mitreATTACK "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/attack"
+	mitreCAPEC "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/capec"
 	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cvrf"
+	mitreCWE "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cwe"
+	mitreEMB3D "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/emb3d"
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v4"
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/v5"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/msf"
@@ -195,12 +195,10 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAndroidOSV(),
 		newCmdAnolisOVAL(),
 		newCmdArch(),
-		newCmdAttack(),
 		newCmdAzureOVAL(),
 		newCmdBellSoftAlpaquitaOSV(), newCmdBellSoftHardenedContainersOSV(),
 		newCmdBitnamiOSV(),
 		newCmdBottlerocket(),
-		newCmdCapec(),
 		newCmdCargoGHSA(), newCmdCargoOSV(), newCmdCargoDB(),
 		newCmdCertBundCSAF(),
 		newCmdChainguardSecDB(), newCmdChainguardOSV(),
@@ -208,10 +206,8 @@ func NewCmdFetch() *cobra.Command {
 		newCmdCiscoJSON(), newCmdCiscoCVRF(), newCmdCiscoCSAF(),
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
-		newCmdCWE(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdEcho(),
-		newCmdEMB3D(),
 		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
@@ -230,7 +226,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
-		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
+		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNCSCCSAF(),
 		newCmdNetBSD(),
@@ -540,33 +536,6 @@ func newCmdArch() *cobra.Command {
 	return cmd
 }
 
-func newCmdAttack() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "attack"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "attack",
-		Short: "Fetch MITRE ATT&CK data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch attack
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := attack.Fetch(attack.WithDir(options.dir), attack.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch attack")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "attack"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
 func newCmdAzureOVAL() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "azure", "oval"),
@@ -698,33 +667,6 @@ func newCmdBottlerocket() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdCapec() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "capec"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "capec",
-		Short: "Fetch CAPEC data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch capec
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := capec.Fetch(capec.WithDir(options.dir), capec.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch capec")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "capec"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 
 	return cmd
 }
@@ -1218,33 +1160,6 @@ func newCmdConanGLSA() *cobra.Command {
 	return cmd
 }
 
-func newCmdCWE() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "cwe"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "cwe",
-		Short: "Fetch CWE data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch cwe
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := cwe.Fetch(cwe.WithDir(options.dir), cwe.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch cwe")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "cwe"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
 func newCmdDebianOVAL() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "oval"),
@@ -1369,33 +1284,6 @@ func newCmdEcho() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := echo.Fetch(echo.WithDir(options.dir), echo.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch echo")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdEMB3D() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "emb3d"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "emb3d",
-		Short: "Fetch MITRE EMB3D data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch emb3d
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := emb3d.Fetch(emb3d.WithDir(options.dir), emb3d.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch emb3d")
 			}
 			return nil
 		},
@@ -2336,6 +2224,60 @@ func newCmdMinimOSSecDB() *cobra.Command {
 	return cmd
 }
 
+func newCmdMitreATTACK() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "attack"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre-attack",
+		Short: "Fetch MITRE ATT&CK data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch mitre-attack
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := mitreATTACK.Fetch(mitreATTACK.WithDir(options.dir), mitreATTACK.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch mitre attack")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMitreCAPEC() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "capec"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre-capec",
+		Short: "Fetch MITRE CAPEC data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch mitre-capec
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := mitreCAPEC.Fetch(mitreCAPEC.WithDir(options.dir), mitreCAPEC.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch mitre capec")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
 func newCmdMitreCVRF() *cobra.Command {
 	options := &base{
 		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"),
@@ -2359,6 +2301,60 @@ func newCmdMitreCVRF() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "mitre", "cvrf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMitreCWE() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "cwe"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre-cwe",
+		Short: "Fetch MITRE CWE data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch mitre-cwe
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := mitreCWE.Fetch(mitreCWE.WithDir(options.dir), mitreCWE.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch mitre cwe")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMitreEMB3D() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "mitre", "emb3d"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "mitre-emb3d",
+		Short: "Fetch MITRE EMB3D data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch mitre-emb3d
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := mitreEMB3D.Fetch(mitreEMB3D.WithDir(options.dir), mitreEMB3D.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch emb3d")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
