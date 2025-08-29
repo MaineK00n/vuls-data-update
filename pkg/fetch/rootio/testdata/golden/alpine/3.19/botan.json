@@ -1,0 +1,15 @@
+{
+	"pkg": {
+		"name": "botan",
+		"cves": {
+			"CVE-2024-50382": {
+				"vulnerable_ranges": [
+					"<2.19.5-r00071"
+				],
+				"fixed_versions": [
+					"2.19.5-r00071"
+				]
+			}
+		}
+	}
+}
