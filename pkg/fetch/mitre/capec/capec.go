@@ -60,7 +60,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "capec"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "mitre", "capec"),
 		retry:   3,
 	}
 
@@ -72,7 +72,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Common Attack Pattern Enumerations and Classifications: CAPEC")
+	log.Printf("[INFO] Fetch MITRE Common Attack Pattern Enumerations and Classifications: CAPEC")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch capec data")

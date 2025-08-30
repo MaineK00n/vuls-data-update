@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/capec"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/capec"
 )
 
 func TestFetch(t *testing.T) {
