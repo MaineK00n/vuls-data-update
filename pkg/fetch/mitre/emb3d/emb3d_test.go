@@ -13,7 +13,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/emb3d"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/emb3d"
 )
 
 func TestFetch(t *testing.T) {
