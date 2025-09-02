@@ -3204,6 +3204,12 @@
 						"arch": "x86_64"
 					}
 				]
+			},
+			"module": {
+				"name": "mysql",
+				"stream": "8.0",
+				"version": "3820230907003352",
+				"context": "75741a8b"
 			}
 		}
 	],

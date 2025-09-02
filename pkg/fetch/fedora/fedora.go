@@ -395,11 +395,12 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 
 func (opts options) advisory(client *utilhttp.Client, advisory *Advisory) error {
 	for i, build := range advisory.Builds {
-		pkgs, err := opts.packages(client, build)
+		pkgs, mod, err := opts.packages(client, build)
 		if err != nil {
 			return errors.Wrap(err, "fetch packages")
 		}
 		advisory.Builds[i].Package = pkgs
+		advisory.Builds[i].Module = mod
 	}
 
 	for i, bug := range advisory.Bugs {
@@ -413,17 +414,17 @@ func (opts options) advisory(client *utilhttp.Client, advisory *Advisory) error 
 	return nil
 }
 
-func (opts options) packages(client *utilhttp.Client, build Build) (map[string][]Package, error) {
+func (opts options) packages(client *utilhttp.Client, build Build) (map[string][]Package, *Module, error) {
 	switch build.Type {
 	case "rpm":
 		buildID, err := findBuildID(client, opts.dataURL.Package, build.NVR)
 		if err != nil {
-			return nil, errors.Wrap(err, "findBuildID")
+			return nil, nil, errors.Wrap(err, "findBuildID")
 		}
 
 		ps, err := listRPMs(client, opts.dataURL.Package, &buildID, nil)
 		if err != nil {
-			return nil, errors.Wrap(err, "listRPMs")
+			return nil, nil, errors.Wrap(err, "listRPMs")
 		}
 
 		m := make(map[string][]Package)
@@ -431,31 +432,35 @@ func (opts options) packages(client *utilhttp.Client, build Build) (map[string][
 			m[p.Arch] = append(m[p.Arch], p)
 		}
 
-		return m, nil
+		return m, nil, nil
 	case "module":
-		buildID, err := findBuildID(client, opts.dataURL.Package, build.NVR)
+		buildinfo, err := getBuild(client, opts.dataURL.Package, build.NVR)
 		if err != nil {
-			return nil, errors.Wrap(err, "findBuildID")
+			return nil, nil, errors.Wrap(err, "getBuild")
 		}
 
-		as, err := listArchives(client, opts.dataURL.Package, buildID)
+		if buildinfo.Extra.TypeInfo.Module.IsZero() {
+			return nil, nil, errors.Errorf("buildinfo does not have module info. build_id: %q, nvr: %q", buildinfo.ID, build.NVR)
+		}
+
+		as, err := listArchives(client, opts.dataURL.Package, buildinfo.ID)
 		if err != nil {
-			return nil, errors.Wrap(err, "listArchives")
+			return nil, nil, errors.Wrap(err, "listArchives")
 		}
 
 		m := make(map[string][]Package)
 		for _, a := range as {
 			ps, err := listRPMs(client, opts.dataURL.Package, nil, &a.ID)
 			if err != nil {
-				return nil, errors.Wrap(err, "listRPMs")
+				return nil, nil, errors.Wrap(err, "listRPMs")
 			}
 			m[a.Filename] = ps
 		}
-		return m, nil
+		return m, &buildinfo.Extra.TypeInfo.Module, nil
 	case "flatpak", "container":
-		return nil, nil
+		return nil, nil, nil
 	default:
-		return nil, errors.Errorf("unexpected build type. expected: %q, actual: %q", []string{"rpm", "module", "flatpak", "container"}, build.Type)
+		return nil, nil, errors.Errorf("unexpected build type. expected: %q, actual: %q", []string{"rpm", "module", "flatpak", "container"}, build.Type)
 	}
 }
 
@@ -495,6 +500,44 @@ func findBuildID(client *utilhttp.Client, url, nvr string) (int, error) {
 	}
 
 	return id, nil
+}
+
+func getBuild(client *utilhttp.Client, url string, nvr string) (build, error) {
+	bs, err := xmlrpc.Marshal("getBuild", nvr)
+	if err != nil {
+		return build{}, errors.Wrap(err, "marshal xmlrpc body")
+	}
+
+	header := make(http.Header)
+	header.Set("Content-Type", "text/xml")
+
+	req, err := utilhttp.NewRequest(http.MethodPost, url, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody(bs))
+	if err != nil {
+		return build{}, errors.Wrap(err, "from request")
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return build{}, errors.Wrapf(err, "fetch %#v", req)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return build{}, errors.Errorf("error response with status code %d", resp.StatusCode)
+	}
+
+	bs, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return build{}, errors.Wrap(err, "read all response body")
+	}
+
+	var b build
+	if err := xmlrpc.Unmarshal(bs, &b); err != nil {
+		return build{}, errors.Wrap(err, "unmarshal xmlrpc")
+	}
+
+	return b, nil
 }
 
 func listArchives(client *utilhttp.Client, url string, buildID int) ([]archive, error) {

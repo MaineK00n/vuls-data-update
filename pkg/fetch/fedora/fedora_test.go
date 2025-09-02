@@ -200,6 +200,22 @@ func TestFetch(t *testing.T) {
 							return
 						}
 						http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/kojihub/findBuildID/%s.xml", c.Params.Param.Value.String))
+					case "getBuild":
+						type methodCall struct {
+							Params struct {
+								Param struct {
+									Value struct {
+										String string `xml:"string"`
+									} `xml:"value"`
+								} `xml:"param"`
+							} `xml:"params"`
+						}
+						var c methodCall
+						if err := xml.Unmarshal(bs, &c); err != nil {
+							http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+							return
+						}
+						http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/kojihub/getBuild/%s.xml", c.Params.Param.Value.String))
 					case "listArchives":
 						type methodCall struct {
 							Params struct {

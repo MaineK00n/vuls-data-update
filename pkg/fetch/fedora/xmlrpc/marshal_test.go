@@ -28,6 +28,14 @@ func TestMarshal(t *testing.T) {
 			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>findBuildID</methodName><params><param><value><string>iperf3-3.14-1.fc39</string></value></param></params></methodCall>"),
 		},
 		{
+			name: "getBuild(mysql-8.0-3820230907003352.75741a8b)",
+			args: args{
+				method: "getBuild",
+				args:   []interface{}{"mysql-8.0-3820230907003352.75741a8b"},
+			},
+			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>getBuild</methodName><params><param><value><string>mysql-8.0-3820230907003352.75741a8b</string></value></param></params></methodCall>"),
+		},
+		{
 			name: "listArchives(2284719)",
 			args: args{
 				method: "listArchives",
