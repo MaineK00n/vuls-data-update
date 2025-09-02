@@ -27,7 +27,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.9.1
 	github.com/tealeg/xlsx v1.0.5
-	github.com/ulikunitz/xz v0.5.14
+	github.com/ulikunitz/xz v0.5.15
 	golang.org/x/net v0.43.0
 	golang.org/x/sync v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
