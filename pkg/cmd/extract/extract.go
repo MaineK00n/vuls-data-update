@@ -1068,7 +1068,7 @@ func newCmdFedora() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "fedora"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }

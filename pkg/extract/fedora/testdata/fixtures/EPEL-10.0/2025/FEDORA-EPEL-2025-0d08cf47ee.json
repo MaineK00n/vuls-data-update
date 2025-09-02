@@ -1,0 +1,305 @@
+{
+	"alias": "FEDORA-EPEL-2025-0d08cf47ee",
+	"autokarma": true,
+	"autotime": true,
+	"bugs": [
+		{
+			"bug_id": 2370424,
+			"parent": true,
+			"security": true,
+			"title": "CVE-2011-10007 perl-file-find-rule: File::Find::Rule Arbitrary Code Execution",
+			"bugzilla": {
+				"bug_id": "2370424",
+				"alias": "CVE-2011-10007",
+				"creation_ts": "2025-06-05 13:01:14 +0000",
+				"short_desc": "CVE-2011-10007 perl-file-find-rule: File::Find::Rule Arbitrary Code Execution",
+				"delta_ts": "2025-08-13 13:10:11 +0000",
+				"bug_status": "NEW",
+				"keywords": "Security",
+				"priority": "high",
+				"bug_severity": "high",
+				"depends_on": [
+					"2370475",
+					"2370476",
+					"2370477",
+					"2370478",
+					"2370473",
+					"2370474"
+				],
+				"external_bugs": {
+					"text": "RHSA-2025:9741",
+					"name": "Red Hat Product Errata"
+				},
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "18509638",
+						"comment_count": "0",
+						"who": {
+							"text": "bzimport",
+							"name": "OSIDB Bzimport"
+						},
+						"bug_when": "2025-06-05 13:01:14 +0000",
+						"thetext": "File::Find::Rule through 0.34 for Perl is vulnerable to Arbitrary Code Execution when `grep()` encounters a crafted filename.\n\nA file handle is opened with the 2 argument form of `open()` allowing an attacker controlled filename to provide the MODE parameter to `open()`, turning the filename into a command to be executed.\n\nExample:\n\n$ mkdir /tmp/poc; echo > \"/tmp/poc/|id\"\n$ perl -MFile::Find::Rule \\\n    -E 'File::Find::Rule->grep(\"foo\")->in(\"/tmp/poc\")'\nuid=1000(user) gid=1000(user) groups=1000(user),100(users)"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18510796",
+						"comment_count": "4",
+						"who": {
+							"text": "ppisar",
+							"name": "Petr Pisar"
+						},
+						"bug_when": "2025-06-06 08:51:46 +0000",
+						"thetext": "Upstream fix <https://github.com/richardc/perl-file-find-rule/pull/4>, allegedly included in new 0.35 version."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18522220",
+						"comment_count": "5",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-15 00:30:42 +0000",
+						"thetext": "FEDORA-EPEL-2025-9dcb1aae07 (perl-File-Find-Rule-0.35-1.el10_1) has been pushed to the Fedora EPEL 10.1 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18522226",
+						"comment_count": "6",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-15 00:33:56 +0000",
+						"thetext": "FEDORA-EPEL-2025-0d08cf47ee (perl-File-Find-Rule-0.35-1.el10_0) has been pushed to the Fedora EPEL 10.0 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18531803",
+						"comment_count": "7",
+						"who": {
+							"text": "errata-xmlrpc",
+							"name": "errata-xmlrpc"
+						},
+						"bug_when": "2025-06-24 11:29:19 +0000",
+						"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2025:9517 https://access.redhat.com/errata/RHSA-2025:9517"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18532737",
+						"comment_count": "8",
+						"who": {
+							"text": "errata-xmlrpc",
+							"name": "errata-xmlrpc"
+						},
+						"bug_when": "2025-06-25 06:14:26 +0000",
+						"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2025:9605 https://access.redhat.com/errata/RHSA-2025:9605"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18533115",
+						"comment_count": "9",
+						"who": {
+							"text": "errata-xmlrpc",
+							"name": "errata-xmlrpc"
+						},
+						"bug_when": "2025-06-25 15:56:58 +0000",
+						"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9.4 Extended Update Support\n\nVia RHSA-2025:9658 https://access.redhat.com/errata/RHSA-2025:9658"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18533498",
+						"comment_count": "10",
+						"who": {
+							"text": "errata-xmlrpc",
+							"name": "errata-xmlrpc"
+						},
+						"bug_when": "2025-06-26 06:25:51 +0000",
+						"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 7 Extended Lifecycle Support\n\nVia RHSA-2025:9740 https://access.redhat.com/errata/RHSA-2025:9740"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18533503",
+						"comment_count": "11",
+						"who": {
+							"text": "errata-xmlrpc",
+							"name": "errata-xmlrpc"
+						},
+						"bug_when": "2025-06-26 06:29:40 +0000",
+						"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 7 Extended Lifecycle Support\n\nVia RHSA-2025:9741 https://access.redhat.com/errata/RHSA-2025:9741"
+					}
+				]
+			}
+		}
+	],
+	"builds": [
+		{
+			"epoch": 0,
+			"nvr": "perl-File-Find-Rule-0.35-1.el10_0",
+			"release_id": 83,
+			"signed": true,
+			"type": "rpm",
+			"package": {
+				"noarch": [
+					{
+						"name": "perl-File-Find-Rule",
+						"version": "0.35",
+						"release": "1.el10_0",
+						"arch": "noarch"
+					}
+				],
+				"src": [
+					{
+						"name": "perl-File-Find-Rule",
+						"version": "0.35",
+						"release": "1.el10_0",
+						"arch": "src"
+					}
+				]
+			}
+		}
+	],
+	"comments": [
+		{
+			"id": 4109125,
+			"text": "This update has been submitted for testing by pghmcfc. ",
+			"timestamp": "2025-06-06 09:39:42",
+			"update_id": 721275,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4109126,
+			"text": "This update's test gating status has been changed to 'ignored'.",
+			"timestamp": "2025-06-06 09:39:42",
+			"update_id": 721275,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4110553,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2025-06-07 01:24:18",
+			"update_id": 721275,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4119886,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2025-06-14 01:25:57",
+			"update_id": 721275,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4120471,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2025-06-15 00:33:59",
+			"update_id": 721275,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "rpm",
+	"critpath_groups": "",
+	"date_approved": "2025-06-14 01:25:57",
+	"date_pushed": "2025-06-15 00:33:52",
+	"date_stable": "2025-06-15 00:33:52",
+	"date_submitted": "2025-06-06 09:39:42",
+	"date_testing": "2025-06-07 01:24:02",
+	"meets_testing_requirements": true,
+	"notes": "This update fixes an arbitrary code execution vulnerability (CVE-2011-10007) by using a 3-argument version of `open()` instead of the old-fashioned 2-argument version.\n",
+	"pushed": true,
+	"release": {
+		"branch": "epel10.0",
+		"candidate_tag": "epel10.0-testing-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "epel10.0",
+		"id_prefix": "FEDORA-EPEL",
+		"long_name": "Fedora EPEL 10.0",
+		"mail_template": "fedora_epel_legacy_errata_template",
+		"name": "EPEL-10.0",
+		"override_tag": "epel10.0-override",
+		"package_manager": "unspecified",
+		"pending_signing_tag": "epel10.0-signing-pending",
+		"pending_stable_tag": "epel10.0-pending",
+		"pending_testing_tag": "epel10.0-testing-pending",
+		"stable_tag": "epel10.0",
+		"state": "current",
+		"testing_tag": "epel10.0-testing",
+		"version": "10.0"
+	},
+	"require_bugs": true,
+	"require_testcases": true,
+	"severity": "medium",
+	"stable_days": 7,
+	"stable_karma": 2,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_gating_status": "ignored",
+	"title": "perl-File-Find-Rule-0.35-1.el10_0",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-EPEL-2025-0d08cf47ee",
+	"unstable_karma": -1,
+	"updateid": "FEDORA-EPEL-2025-0d08cf47ee",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/e6d92d9d894db58d2c7e8c1a627b669f062f35ef31fdaa8d8c7b57068b2416e1?s=24&d=retro",
+		"email": "paul@city-fan.org",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "provenpackager"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			},
+			{
+				"name": "perl-maint-sig"
+			}
+		],
+		"id": 165,
+		"name": "pghmcfc",
+		"openid": "pghmcfc.id.fedoraproject.org"
+	},
+	"version_hash": "84172c7474cd87e2a2172a46fc3dad02482d41fd"
+}

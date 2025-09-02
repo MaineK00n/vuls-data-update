@@ -62,18 +62,26 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 				if err := json.NewDecoder(ef).Decode(&want); err != nil {
 					return err
 				}
+				want.Sort()
+
 				if err := json.NewDecoder(gf).Decode(&got); err != nil {
 					return err
 				}
+				got.Sort()
+
 				diff = cmp.Diff(want, got)
 			case "data":
 				var want, got dataTypes.Data
 				if err := json.NewDecoder(ef).Decode(&want); err != nil {
 					return err
 				}
+				want.Sort()
+
 				if err := json.NewDecoder(gf).Decode(&got); err != nil {
 					return err
 				}
+				got.Sort()
+
 				diff = cmp.Diff(want, got)
 			case "cpe":
 				var want, got cpeTypes.CPE
