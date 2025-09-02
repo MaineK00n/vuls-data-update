@@ -1,0 +1,9 @@
+{
+	"url": "http://www.cert.org/advisories/CA-2000-15.html",
+	"packages": [
+		{
+			"condition": "navigator<4.75",
+			"type_of_exploit": "remote-user-access"
+		}
+	]
+}

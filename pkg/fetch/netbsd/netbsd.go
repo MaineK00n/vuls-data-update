@@ -2,6 +2,8 @@ package netbsd
 
 import (
 	"bufio"
+	"crypto/sha256"
+	"fmt"
 	"io"
 	"net/http"
 	"path/filepath"
@@ -81,7 +83,7 @@ func Fetch(opts ...Option) error {
 		return errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
-	var vs []Vulnerability
+	m := make(map[string]Vulnerability)
 
 	// ref. parse_pkg_vuln https://cdn.netbsd.org/pub/pkgsrc/stable/pkgsrc/pkgtools/pkg_install/files/lib/vulnerabilities-file.c
 	s := bufio.NewScanner(resp.Body)
@@ -100,19 +102,28 @@ LOOP:
 			if len(ss) != 3 {
 				return errors.Errorf("unexpected line format. expected: %q, actual: %q", "<package> <type of exploit> <URL>", t)
 			}
-			vs = append(vs, Vulnerability{
-				Package:       ss[0],
+
+			v, ok := m[ss[2]]
+			if !ok {
+				v = Vulnerability{URL: ss[2]}
+			}
+			v.Packages = append(v.Packages, Package{
+				Condition:     ss[0],
 				TypeOfExploit: ss[1],
-				URL:           ss[2],
 			})
+			m[ss[2]] = v
 		}
 	}
 	if err := s.Err(); err != nil {
 		return errors.Wrap(err, "scanner encounter error")
 	}
 
-	if err := util.Write(filepath.Join(options.dir, "vulnerabilities.json"), vs); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "vulnerabilities.json"))
+	for k, v := range m {
+		sum := sha256.Sum256([]byte(k))
+
+		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", sum[:1]), fmt.Sprintf("%x.json", sum)), v); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", sum[:4]), fmt.Sprintf("%x.json", sum)))
+		}
 	}
 
 	return nil
