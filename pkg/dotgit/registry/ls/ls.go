@@ -1,4 +1,4 @@
-package remote
+package ls
 
 import (
 	"encoding/json"
@@ -65,7 +65,7 @@ type Response struct {
 	CreatedAt string `json:"created_at"`
 }
 
-func List(remotes []string, token string, opts ...Option) ([]Response, error) {
+func List(registries []string, token string, opts ...Option) ([]Response, error) {
 	options := &options{
 		baseURL: baseURL,
 	}
@@ -75,14 +75,14 @@ func List(remotes []string, token string, opts ...Option) ([]Response, error) {
 	}
 
 	var ps []Response
-	for _, remote := range remotes {
-		targetType, rhs, ok := strings.Cut(remote, ":")
+	for _, registry := range registries {
+		targetType, rhs, ok := strings.Cut(registry, ":")
 		if !ok {
-			return nil, errors.Errorf("unexpected remote format. expected: %q, actual: %q", "<type: (org|user)>:<name>/<package name>", remote)
+			return nil, errors.Errorf("unexpected registry format. expected: %q, actual: %q", "<type: (org|user)>:<name>/<package name>", registry)
 		}
 		target, name, ok := strings.Cut(rhs, "/")
 		if !ok {
-			return nil, errors.Errorf("unexpected remote format. expected: %q, actual: %q", "<type: (org|user)>:<name>/<package name>", remote)
+			return nil, errors.Errorf("unexpected registry format. expected: %q, actual: %q", "<type: (org|user)>:<name>/<package name>", registry)
 		}
 
 		u, err := url.Parse(options.baseURL)
@@ -96,7 +96,7 @@ func List(remotes []string, token string, opts ...Option) ([]Response, error) {
 		case "user":
 			u = u.JoinPath("user", "packages", "container", name, "versions")
 		default:
-			return nil, errors.Errorf("unexpected remote type. expected: %q, actual: %q", []string{"org", "user"}, targetType)
+			return nil, errors.Errorf("unexpected registry type. expected: %q, actual: %q", []string{"org", "user"}, targetType)
 		}
 
 		header := make(http.Header)

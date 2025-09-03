@@ -1,4 +1,4 @@
-package remote_test
+package ls_test
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/ls/remote"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
 )
 
 func TestList(t *testing.T) {
@@ -17,7 +17,7 @@ func TestList(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []remote.Response
+		want    []ls.Response
 		wantErr bool
 	}{
 		{
@@ -26,7 +26,7 @@ func TestList(t *testing.T) {
 				remotes: []string{"org:vulsio/vuls-data-db", "user:vuls/vuls-data-db"},
 				token:   "token",
 			},
-			want: []remote.Response{
+			want: []ls.Response{
 				{
 					ID:        460898921,
 					Name:      "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-suse-oval",
@@ -104,7 +104,7 @@ func TestList(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			got, err := remote.List(tt.args.remotes, tt.args.token, remote.WithbaseURL(ts.URL))
+			got, err := ls.List(tt.args.remotes, tt.args.token, ls.WithbaseURL(ts.URL))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("List() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/go-containerregistry/pkg/registry"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/remote/tag"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/tag"
 )
 
 func TestTag(t *testing.T) {

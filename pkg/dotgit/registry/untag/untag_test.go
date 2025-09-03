@@ -16,8 +16,8 @@ import (
 	"github.com/google/go-containerregistry/pkg/registry"
 	"github.com/opencontainers/go-digest"
 
-	ls "github.com/MaineK00n/vuls-data-update/pkg/dotgit/ls/remote"
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/remote/untag"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/untag"
 )
 
 type manifest struct {

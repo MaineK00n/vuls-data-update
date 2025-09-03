@@ -1,4 +1,4 @@
-package local_test
+package status_test
 
 import (
 	"os"
@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/status/local"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/status"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
@@ -18,13 +18,13 @@ func TestStatus(t *testing.T) {
 	tests := []struct {
 		name     string
 		dotgit   string
-		want     local.DotGitStatus
+		want     status.DotGitStatus
 		hasError bool
 	}{
 		{
 			name:   "vuls-data-raw-test",
 			dotgit: "testdata/fixtures/vuls-data-raw-test.tar.zst",
-			want: local.DotGitStatus{
+			want: status.DotGitStatus{
 				Name: "vuls-data-raw-test",
 				Time: time.Now(),
 				Size: struct {
@@ -40,7 +40,7 @@ func TestStatus(t *testing.T) {
 		{
 			name:   "vuls-data-raw-test-restored",
 			dotgit: "testdata/fixtures/vuls-data-raw-test-restored.tar.zst",
-			want: local.DotGitStatus{
+			want: status.DotGitStatus{
 				Name: "vuls-data-raw-test-restored",
 				Time: time.Now(),
 				Size: struct {
@@ -67,7 +67,7 @@ func TestStatus(t *testing.T) {
 				t.Errorf("extract %s. err: %v", tt.dotgit, err)
 			}
 
-			got, err := local.Status(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst")))
+			got, err := status.Status(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.dotgit), ".tar.zst")))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)
