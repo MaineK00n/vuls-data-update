@@ -11,8 +11,8 @@ import (
 
 func TestList(t *testing.T) {
 	type args struct {
-		remotes []string
-		token   string
+		repositories []ls.Repository
+		token        string
 	}
 	tests := []struct {
 		name    string
@@ -23,8 +23,21 @@ func TestList(t *testing.T) {
 		{
 			name: "happy",
 			args: args{
-				remotes: []string{"org:vulsio/vuls-data-db", "user:vuls/vuls-data-db"},
-				token:   "token",
+				repositories: []ls.Repository{
+					{
+						Type:     "orgs",
+						Registry: "ghcr.io",
+						Owner:    "vulsio",
+						Package:  "vuls-data-db",
+					},
+					{
+						Type:     "users",
+						Registry: "ghcr.io",
+						Owner:    "vuls",
+						Package:  "vuls-data-db",
+					},
+				},
+				token: "token",
 			},
 			want: []ls.Response{
 				{
@@ -85,7 +98,7 @@ func TestList(t *testing.T) {
 							t.Errorf("unexpected error: %v", err)
 						}
 					}
-				case "/user/packages/container/vuls-data-db/versions":
+				case "/users/vuls/packages/container/vuls-data-db/versions":
 					switch r.URL.Query().Get("page") {
 					case "1":
 						w.WriteHeader(http.StatusOK)
@@ -104,7 +117,7 @@ func TestList(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			got, err := ls.List(tt.args.remotes, tt.args.token, ls.WithbaseURL(ts.URL))
+			got, err := ls.List(tt.args.repositories, tt.args.token, ls.WithbaseURL(ts.URL))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("List() error = %v, wantErr %v", err, tt.wantErr)
 				return

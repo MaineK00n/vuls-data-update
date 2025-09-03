@@ -3,6 +3,7 @@ package dotgit
 import (
 	"encoding/json"
 	"os"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
@@ -39,7 +40,7 @@ func newCmdRegistryLs() *cobra.Command {
 		registries []string
 		token      string
 	}{
-		registries: []string{"org:vulsio/vuls-data-db", "org:vulsio/vuls-data-db-archive", "org:vulsio/vuls-data-db-backup"},
+		registries: []string{"ghcr.io/vulsio/vuls-data-db", "ghcr.io/vulsio/vuls-data-db-archive", "ghcr.io/vulsio/vuls-data-db-backup"},
 		token:      os.Getenv("GITHUB_TOKEN"),
 	}
 
@@ -51,7 +52,20 @@ func newCmdRegistryLs() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			ps, err := ls.List(options.registries, options.token)
+			rs := make([]ls.Repository, 0, len(options.registries))
+			for _, r := range options.registries {
+				lhs, rhs, ok := strings.Cut(r, "/")
+				if !ok {
+					return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", r)
+				}
+				owner, pack, ok := strings.Cut(rhs, "/")
+				if !ok {
+					return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", r)
+				}
+				rs = append(rs, ls.Repository{Registry: lhs, Owner: owner, Package: pack})
+			}
+
+			ps, err := ls.List(rs, options.token)
 			if err != nil {
 				return errors.Wrap(err, "failed to list registry dotgits")
 			}
@@ -64,7 +78,7 @@ func newCmdRegistryLs() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringSliceVarP(&options.registries, "registries", "", options.registries, "specify registries. format: <type: (org|user)>:<name>/<package name>")
+	cmd.Flags().StringSliceVarP(&options.registries, "registries", "", options.registries, "specify registries. format: ghcr.io:<owner>/<package>")
 	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
 
 	return cmd

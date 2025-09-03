@@ -148,11 +148,11 @@ func TestUntag(t *testing.T) {
 				}
 			}
 
-			s := httptest.NewTLSServer(http.HandlerFunc(h))
-			defer s.Close()
+			ts := httptest.NewTLSServer(http.HandlerFunc(h))
+			defer ts.Close()
 
 			originalTransport := http.DefaultTransport
-			http.DefaultTransport = s.Client().Transport
+			http.DefaultTransport = ts.Client().Transport
 			defer func() {
 				http.DefaultTransport = originalTransport
 			}()
@@ -161,7 +161,7 @@ func TestUntag(t *testing.T) {
 				"not-to-be-deleted": "foo",
 				"existing-tag":      "bar",
 			} {
-				u, err := url.Parse(fmt.Sprintf("%s/v2/%s/%s/manifests/%s", s.URL, owner, pack, tag))
+				u, err := url.Parse(fmt.Sprintf("%s/v2/%s/%s/manifests/%s", ts.URL, owner, pack, tag))
 				if err != nil {
 					t.Fatalf("parse url: %v", err)
 				}
@@ -170,7 +170,7 @@ func TestUntag(t *testing.T) {
 					t.Fatalf("create request: %v", err)
 				}
 				req.Header.Set("Content-Type", "text/plain")
-				resp, err := s.Client().Do(req)
+				resp, err := ts.Client().Do(req)
 				if err != nil {
 					t.Fatalf("put manifest: %v", err)
 				}
@@ -180,13 +180,13 @@ func TestUntag(t *testing.T) {
 				}
 			}
 
-			err := untag.Untag(tt.args.imageRef, tt.args.token, untag.WithGitHubAPIURL(s.URL), untag.WithRegistryHost(strings.TrimPrefix(s.URL, "https://")))
+			err := untag.Untag(tt.args.imageRef, tt.args.token, untag.WithGitHubAPIURL(ts.URL), untag.WithRegistryHost(strings.TrimPrefix(ts.URL, "https://")))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Untag() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			rs, err := ls.List([]string{fmt.Sprintf("org:%s/%s", owner, pack)}, tt.args.token, ls.WithbaseURL(s.URL))
+			rs, err := ls.List([]ls.Repository{{Type: "orgs", Registry: "ghcr.io", Owner: owner, Package: pack}}, tt.args.token, ls.WithbaseURL(ts.URL))
 			if err != nil {
 				t.Errorf("List() error = %v", err)
 				return
