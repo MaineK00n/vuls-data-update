@@ -347,6 +347,7 @@ type Build struct {
 	Signed    bool                 `json:"signed,omitempty"`
 	Type      string               `json:"type,omitempty"`
 	Package   map[string][]Package `json:"package,omitempty"`
+	Module    *Module              `json:"module,omitempty"`
 }
 
 type Package struct {
@@ -355,6 +356,26 @@ type Package struct {
 	Version string `json:"version,omitempty" xmlrpc:"version"`
 	Release string `json:"release,omitempty" xmlrpc:"release"`
 	Arch    string `json:"arch,omitempty" xmlrpc:"arch"`
+}
+
+type build struct {
+	ID    int `xmlrpc:"id"`
+	Extra struct {
+		TypeInfo struct {
+			Module Module `xmlrpc:"module"`
+		} `xmlrpc:"typeinfo"`
+	} `xmlrpc:"extra"`
+}
+
+type Module struct {
+	Name    string `json:"name,omitempty" xmlrpc:"name"`
+	Stream  string `json:"stream,omitempty" xmlrpc:"stream"`
+	Version string `json:"version,omitempty" xmlrpc:"version"`
+	Context string `json:"context,omitempty" xmlrpc:"context"`
+}
+
+func (m Module) IsZero() bool {
+	return m.Name == "" && m.Stream == "" && m.Version == "" && m.Context == ""
 }
 
 type archive struct {

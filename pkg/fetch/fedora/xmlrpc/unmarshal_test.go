@@ -295,6 +295,46 @@ func TestUnmarshal(t *testing.T) {
 			want: 2234486,
 		},
 		{
+			name: "getBuild(mysql-8.0-3820230907003352.75741a8b)",
+			args: args{
+				testdata: "testdata/fixtures/getBuild.xml",
+				v: new(struct {
+					ID    int `xmlrpc:"id"`
+					Extra struct {
+						TypeInfo struct {
+							Module fedora.Module `xmlrpc:"module"`
+						} `xmlrpc:"typeinfo"`
+					} `xmlrpc:"extra"`
+				}),
+			},
+			want: struct {
+				ID    int `xmlrpc:"id"`
+				Extra struct {
+					TypeInfo struct {
+						Module fedora.Module `xmlrpc:"module"`
+					} `xmlrpc:"typeinfo"`
+				} `xmlrpc:"extra"`
+			}{
+				ID: 2284719,
+				Extra: struct {
+					TypeInfo struct {
+						Module fedora.Module `xmlrpc:"module"`
+					} `xmlrpc:"typeinfo"`
+				}{
+					TypeInfo: struct {
+						Module fedora.Module `xmlrpc:"module"`
+					}{
+						Module: fedora.Module{
+							Name:    "mysql",
+							Stream:  "8.0",
+							Version: "3820230907003352",
+							Context: "75741a8b",
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "listArchives(2284719)",
 			args: args{
 				testdata: "testdata/fixtures/listArchives.xml",

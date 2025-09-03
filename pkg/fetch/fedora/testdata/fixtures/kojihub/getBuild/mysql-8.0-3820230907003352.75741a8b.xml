@@ -1,0 +1,238 @@
+<?xml version='1.0'?>
+<methodResponse>
+<params>
+<param>
+<value><struct>
+<member>
+<name>build_id</name>
+<value><int>2284719</int></value>
+</member>
+<member>
+<name>cg_id</name>
+<value><int>2</int></value>
+</member>
+<member>
+<name>completion_time</name>
+<value><string>2023-09-07 02:19:47+00:00</string></value>
+</member>
+<member>
+<name>completion_ts</name>
+<value><double>1694053187.0</double></value>
+</member>
+<member>
+<name>creation_event_id</name>
+<value><int>117154663</int></value>
+</member>
+<member>
+<name>creation_time</name>
+<value><string>2023-09-07 02:19:51.021428+00:00</string></value>
+</member>
+<member>
+<name>creation_ts</name>
+<value><double>1694053191.021428</double></value>
+</member>
+<member>
+<name>draft</name>
+<value><boolean>0</boolean></value>
+</member>
+<member>
+<name>epoch</name>
+<value><nil/></value></member>
+<member>
+<name>extra</name>
+<value><struct>
+<member>
+<name>typeinfo</name>
+<value><struct>
+<member>
+<name>module</name>
+<value><struct>
+<member>
+<name>modulemd_str</name>
+<value><string>---
+document: modulemd
+version: 2
+data:
+  name: mysql
+  stream: "8.0"
+  version: 3820230907003352
+  context: 75741a8b
+  summary: MySQL Module
+  description: &gt;-
+    MySQL is a multi-user, multi-threaded SQL database server. MySQL is a client/server
+    implementation consisting of a server daemon (mysqld) and many different client
+    programs and libraries. The base package contains the standard MySQL client programs
+    and generic MySQL files.
+  license:
+    module:
+    - MIT
+  xmd:
+    mbs:
+      buildrequires:
+        platform:
+          context: "00000000"
+          filtered_rpms: []
+          koji_tag: module-f38-build
+          ref: f38
+          stream: f38
+          stream_collision_modules: ""
+          ursine_rpms: ""
+          version: "1"
+      commit: 781761078b9742ef133a68a8d392a2e174475618
+      mse: TRUE
+      rpms:
+        community-mysql:
+          ref: 6eb4caef930cf54b748607aa60b338085b9cac13
+      scmurl: https://src.fedoraproject.org/modules/mysql.git?#781761078b9742ef133a68a8d392a2e174475618
+  dependencies:
+  - buildrequires:
+      platform: [f38]
+    requires:
+      platform: [f38]
+  profiles:
+    client:
+      description: Client.
+      rpms:
+      - community-mysql
+    devel:
+      description: Devel package.
+      rpms:
+      - community-mysql-devel
+    server:
+      description: Base server.
+      rpms:
+      - community-mysql-server
+  api:
+    rpms:
+    - community-mysql
+    - community-mysql-server
+  buildopts:
+    rpms:
+      macros: &gt;
+        %runselftest 0
+
+        %check_testsuite 1
+  components:
+    rpms:
+      community-mysql:
+        rationale: The main component.
+        repository: git+https://src.fedoraproject.org/rpms/community-mysql
+        cache: https://src.fedoraproject.org/repo/pkgs/community-mysql
+        ref: rawhide
+        arches: [aarch64, i686, ppc64le, s390x, x86_64]
+...
+</string></value>
+</member>
+<member>
+<name>name</name>
+<value><string>mysql</string></value>
+</member>
+<member>
+<name>stream</name>
+<value><string>8.0</string></value>
+</member>
+<member>
+<name>module_build_service_id</name>
+<value><int>17431</int></value>
+</member>
+<member>
+<name>version</name>
+<value><string>3820230907003352</string></value>
+</member>
+<member>
+<name>context</name>
+<value><string>75741a8b</string></value>
+</member>
+<member>
+<name>content_koji_tag</name>
+<value><string>module-mysql-8.0-3820230907003352-75741a8b</string></value>
+</member>
+</struct></value>
+</member>
+</struct></value>
+</member>
+</struct></value>
+</member>
+<member>
+<name>id</name>
+<value><int>2284719</int></value>
+</member>
+<member>
+<name>name</name>
+<value><string>mysql</string></value>
+</member>
+<member>
+<name>nvr</name>
+<value><string>mysql-8.0-3820230907003352.75741a8b</string></value>
+</member>
+<member>
+<name>owner_id</name>
+<value><int>3635</int></value>
+</member>
+<member>
+<name>owner_name</name>
+<value><string>mschorm</string></value>
+</member>
+<member>
+<name>package_id</name>
+<value><int>687</int></value>
+</member>
+<member>
+<name>package_name</name>
+<value><string>mysql</string></value>
+</member>
+<member>
+<name>promoter_id</name>
+<value><nil/></value></member>
+<member>
+<name>promoter_name</name>
+<value><nil/></value></member>
+<member>
+<name>promotion_time</name>
+<value><nil/></value></member>
+<member>
+<name>promotion_ts</name>
+<value><nil/></value></member>
+<member>
+<name>release</name>
+<value><string>3820230907003352.75741a8b</string></value>
+</member>
+<member>
+<name>source</name>
+<value><string>https://src.fedoraproject.org/modules/mysql.git?#781761078b9742ef133a68a8d392a2e174475618</string></value>
+</member>
+<member>
+<name>start_time</name>
+<value><string>2023-09-07 00:34:42+00:00</string></value>
+</member>
+<member>
+<name>start_ts</name>
+<value><double>1694046882.0</double></value>
+</member>
+<member>
+<name>state</name>
+<value><int>1</int></value>
+</member>
+<member>
+<name>task_id</name>
+<value><nil/></value></member>
+<member>
+<name>version</name>
+<value><string>8.0</string></value>
+</member>
+<member>
+<name>volume_id</name>
+<value><int>0</int></value>
+</member>
+<member>
+<name>volume_name</name>
+<value><string>DEFAULT</string></value>
+</member>
+<member>
+<name>cg_name</name>
+<value><string>module-build-service</string></value>
+</member>
+</struct></value>
+</param>
+</params>
+</methodResponse>
