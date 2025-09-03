@@ -30,26 +30,32 @@ func WithbaseURL(url string) Option {
 	return baseURLOption(url)
 }
 
-type response struct {
-	ID             int     `json:"id"`
-	Name           string  `json:"name"`
-	URL            string  `json:"url"`
-	PackageHTMLURL string  `json:"package_html_url"`
-	HTMLURL        *string `json:"html_url,omitempty"`
-	License        *string `json:"license,omitempty"`
-	Description    *string `json:"description,omitempty"`
-	CreatedAt      string  `json:"created_at"`
-	UpdatedAt      string  `json:"updated_at"`
-	DeletedAt      *string `json:"deleted_at,omitempty"`
-	Metadata       *struct {
-		PackageType string `json:"package_type"`
-		Container   *struct {
-			Tags []string `json:"tags"`
-		} `json:"container,omitempty"`
-		Docker *struct {
-			Tags []string `json:"tags"`
-		} `json:"docker,omitempty"`
-	} `json:"metadata,omitempty"`
+type Version struct {
+	ID             int       `json:"id"`
+	Name           string    `json:"name"`
+	URL            string    `json:"url"`
+	PackageHTMLURL string    `json:"package_html_url"`
+	HTMLURL        *string   `json:"html_url,omitempty"`
+	License        *string   `json:"license,omitempty"`
+	Description    *string   `json:"description,omitempty"`
+	CreatedAt      string    `json:"created_at"`
+	UpdatedAt      string    `json:"updated_at"`
+	DeletedAt      *string   `json:"deleted_at,omitempty"`
+	Metadata       *Metadata `json:"metadata,omitempty"`
+}
+
+type Metadata struct {
+	PackageType string     `json:"package_type"`
+	Container   *Container `json:"container,omitempty"`
+	Docker      *Docker    `json:"docker,omitempty"`
+}
+
+type Container struct {
+	Tags []string `json:"tags"`
+}
+
+type Docker struct {
+	Tags []string `json:"tags"`
 }
 
 type Response struct {
@@ -120,30 +126,30 @@ func List(remotes []string, token string, opts ...Option) ([]Response, error) {
 				return nil, errors.Errorf("unexpected response status. expected: %d, actual: %d", http.StatusOK, resp.StatusCode)
 			}
 
-			var rs []response
-			if err := json.NewDecoder(resp.Body).Decode(&rs); err != nil {
+			var vs []Version
+			if err := json.NewDecoder(resp.Body).Decode(&vs); err != nil {
 				return nil, errors.Wrap(err, "decode json")
 			}
 
-			for _, r := range rs {
-				if r.Metadata == nil {
-					return nil, errors.Errorf("missing metadata for response: %+v", r)
+			for _, v := range vs {
+				if v.Metadata == nil {
+					return nil, errors.Errorf("missing metadata for response: %+v", v)
 				}
-				switch r.Metadata.PackageType {
+				switch v.Metadata.PackageType {
 				case "container":
-					if r.Metadata.Container == nil {
-						return nil, errors.Errorf("missing container metadata for response: %+v", r)
+					if v.Metadata.Container == nil {
+						return nil, errors.Errorf("missing container metadata for response: %+v", v)
 					}
-					for _, tag := range r.Metadata.Container.Tags {
+					for _, tag := range v.Metadata.Container.Tags {
 						ps = append(ps, Response{
-							ID:        r.ID,
+							ID:        v.ID,
 							Name:      fmt.Sprintf("ghcr.io/%s/%s:%s", target, name, tag),
-							Digest:    r.Name,
-							CreatedAt: r.CreatedAt,
+							Digest:    v.Name,
+							CreatedAt: v.CreatedAt,
 						})
 					}
 				default:
-					return nil, errors.Errorf("unexpected package type. expected: %q, actual: %q", "container", r.Metadata.PackageType)
+					return nil, errors.Errorf("unexpected package type. expected: %q, actual: %q", "container", v.Metadata.PackageType)
 				}
 			}
 
