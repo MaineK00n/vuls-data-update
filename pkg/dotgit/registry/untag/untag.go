@@ -17,7 +17,7 @@ import (
 	"oras.land/oras-go/v2/registry/remote/auth"
 	"oras.land/oras-go/v2/registry/remote/retry"
 
-	ls "github.com/MaineK00n/vuls-data-update/pkg/dotgit/ls/remote"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
 )
 
 type options struct {

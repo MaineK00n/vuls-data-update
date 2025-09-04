@@ -1,4 +1,4 @@
-package remote_test
+package status_test
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ import (
 	"github.com/opencontainers/image-spec/specs-go"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/status/remote"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/status"
 )
 
 func generateDescriptor(mediaType string, blob []byte) (desc ocispec.Descriptor) {
@@ -44,7 +44,7 @@ func TestStatus(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    remote.RepoStatus
+		want    status.RepoStatus
 		wantErr bool
 	}{
 		{
@@ -52,7 +52,7 @@ func TestStatus(t *testing.T) {
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 			},
-			want: remote.RepoStatus{
+			want: status.RepoStatus{
 				Repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
 				Layer: ocispec.Descriptor{
 					MediaType: "application/vnd.vulsio.vuls-data-db.dotgit.layer.v1.tar+zstd",
@@ -129,7 +129,7 @@ func TestStatus(t *testing.T) {
 
 			http.DefaultTransport = ts.Client().Transport
 
-			got, err := remote.Status(strings.Replace(tt.args.repository, "ghcr.io/vulsio", u.Host, 1))
+			got, err := status.Status(strings.Replace(tt.args.repository, "ghcr.io/vulsio", u.Host, 1))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Status() error = %v, wantErr %v", err, tt.wantErr)
 				return

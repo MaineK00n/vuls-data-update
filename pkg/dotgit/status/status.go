@@ -1,4 +1,4 @@
-package local
+package status
 
 import (
 	"io/fs"

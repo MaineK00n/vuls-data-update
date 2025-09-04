@@ -1,4 +1,4 @@
-package local_test
+package ls_test
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/ls/local"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/ls"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
@@ -38,7 +38,7 @@ func TestList(t *testing.T) {
 				t.Errorf("extract %s. err: %v", tt.dotgit, err)
 			}
 
-			got, err := local.List(local.WithDir(dir))
+			got, err := ls.List(ls.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Errorf("unexpected err: %v", err)

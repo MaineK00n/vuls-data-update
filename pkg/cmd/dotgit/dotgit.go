@@ -23,13 +23,13 @@ func NewCmdDotGit() *cobra.Command {
 
 			$ vuls-data-update dotgit log vuls-data-raw-debian-security-tracker-api
 
-			$ vuls-data-update dotgit ls local
-			$ vuls-data-update dotgit ls remote
-			$ vuls-data-update dotgit status local vuls-data-raw-debian-security-tracker-api
-			$ vuls-data-update dotgit status remote ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
+			$ vuls-data-update dotgit ls
+			$ vuls-data-update dotgit status vuls-data-raw-debian-security-tracker-api
 
-			$ vuls-data-update dotgit remote tag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-test
-			$ vuls-data-update dotgit remote untag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test
+			$ vuls-data-update dotgit registry ls
+			$ vuls-data-update dotgit registry status ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
+			$ vuls-data-update dotgit registry tag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-test
+			$ vuls-data-update dotgit registry untag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test
 		`),
 	}
 
@@ -40,7 +40,7 @@ func NewCmdDotGit() *cobra.Command {
 		newCmdLog(),
 		newCmdLs(),
 		newCmdStatus(),
-		newCmdRemote(),
+		newCmdRegistry(),
 	)
 
 	return cmd
