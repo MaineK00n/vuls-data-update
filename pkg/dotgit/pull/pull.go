@@ -113,29 +113,29 @@ func Pull(repository string, opts ...Option) error {
 	}
 	defer r.Close()
 
-	if err := util.ExtractDotgitTarZst(r, filepath.Join(options.dir, repo.Reference.Reference)); err != nil {
-		return errors.Wrapf(err, "extract to %s", filepath.Join(options.dir, repo.Reference.Reference))
+	if err := util.ExtractDotgitTarZst(r, filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference)); err != nil {
+		return errors.Wrapf(err, "extract to %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
 	}
 
 	if options.restore {
 		if options.useNativeGit {
-			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Reference), "restore", ".")
+			cmd := exec.Command("git", "-C", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference), "restore", ".")
 			if err := cmd.Run(); err != nil {
 				return errors.Wrapf(err, "exec %q", cmd.String())
 			}
 		} else {
-			r, err := git.PlainOpen(filepath.Join(options.dir, repo.Reference.Reference))
+			r, err := git.PlainOpen(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
 			if err != nil {
-				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, repo.Reference.Reference))
+				return errors.Wrapf(err, "open %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
 			}
 
 			w, err := r.Worktree()
 			if err != nil {
-				return errors.Wrapf(err, "git worktree %s", filepath.Join(options.dir, repo.Reference.Reference))
+				return errors.Wrapf(err, "git worktree %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
 			}
 
 			if err := w.Reset(&git.ResetOptions{Mode: git.HardReset}); err != nil {
-				return errors.Wrapf(err, "reset %s", filepath.Join(options.dir, repo.Reference.Reference))
+				return errors.Wrapf(err, "reset %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
 			}
 		}
 	}
