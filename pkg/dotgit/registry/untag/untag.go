@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"slices"
 	"strings"
 
@@ -18,6 +17,7 @@ import (
 	"oras.land/oras-go/v2/registry/remote/retry"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
+	utilGitHub "github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/util/github"
 )
 
 type options struct {
@@ -79,27 +79,31 @@ func Untag(imageRef, token string, opts ...Option) error {
 		return errors.Errorf("only ghcr.io is supported. repository: %s", repoRef)
 	}
 
-	user, err := options.callGitHubAPI(http.MethodGet, token, []string{"users", ss[1]})
-	if err != nil {
-		return errors.Wrap(err, "call GitHub API")
-	}
-
-	repoType, err := func() (string, error) {
-		t, ok := user["type"].(string)
-		if !ok {
-			return "", errors.Errorf("invalid user info. user: %+v", user)
-		}
-		switch t {
-		case "User":
-			return "users", nil
-		case "Organization":
-			return "orgs", nil
+	var repoType string
+	if err := utilGitHub.Do(http.MethodGet, fmt.Sprintf("%s/users/%s", options.githubAPIURL, ss[1]), token, func(resp *http.Response) error {
+		switch resp.StatusCode {
+		case http.StatusOK:
+			type users struct {
+				Type string `json:"type"`
+			}
+			var us users
+			if err := json.NewDecoder(resp.Body).Decode(&us); err != nil {
+				return errors.Wrap(err, "decode response")
+			}
+			switch us.Type {
+			case "Organization":
+				repoType = "orgs"
+			case "User":
+				repoType = "users"
+			default:
+				return errors.Errorf("unexpected repository type. expected: %q, actual: %s", []string{"Organization", "User"}, us.Type)
+			}
+			return nil
 		default:
-			return "", errors.Errorf("unexpected repository type. expected: %q, actual: %s", []string{"User", "Organization"}, t)
+			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusOK}, resp.StatusCode)
 		}
-	}()
-	if err != nil {
-		return errors.Wrap(err, "get repository type")
+	}); err != nil {
+		return errors.Wrap(err, "call GitHub API")
 	}
 
 	dummyDesc, err := options.moveTagToDummy(ctx, ss[1], ss[2], tag, token)
@@ -107,7 +111,7 @@ func Untag(imageRef, token string, opts ...Option) error {
 		return errors.Wrapf(err, "move tag to dummy")
 	}
 
-	if err := options.deleteDummy(repoType, ss[1], ss[2], dummyDesc, token); err != nil {
+	if err := options.deleteDummy(repoType, ss[1], ss[2], token, dummyDesc); err != nil {
 		return errors.Wrapf(err, "delete dummy")
 	}
 
@@ -149,8 +153,8 @@ func (o options) moveTagToDummy(ctx context.Context, owner, pack, tag, token str
 	return dummyDesc, nil
 }
 
-func (o options) deleteDummy(repoType, owner, pack string, dummyDesc ocispec.Descriptor, token string) error {
-	rs, err := ls.List([]string{fmt.Sprintf("%s:%s/%s", strings.TrimSuffix(repoType, "s"), owner, pack)}, token, ls.WithbaseURL(o.githubAPIURL))
+func (o options) deleteDummy(repoType, owner, pack, token string, dummyDesc ocispec.Descriptor) error {
+	rs, err := ls.List([]ls.Repository{{Type: repoType, Registry: "ghcr.io", Owner: owner, Package: pack}}, token, ls.WithbaseURL(o.githubAPIURL))
 	if err != nil {
 		return errors.Wrapf(err, "list versions")
 	}
@@ -162,47 +166,16 @@ func (o options) deleteDummy(repoType, owner, pack string, dummyDesc ocispec.Des
 		return errors.Errorf("dummy version not found. digest: %s", dummyDesc.Digest.String())
 	}
 
-	if _, err := o.callGitHubAPI(http.MethodDelete, token, []string{repoType, owner, "packages", "container", pack, "versions", fmt.Sprintf("%d", rs[i].ID)}); err != nil {
+	if err := utilGitHub.Do(http.MethodDelete, fmt.Sprintf("%s/%s/%s/packages/container/%s/versions/%d", o.githubAPIURL, repoType, owner, pack, rs[i].ID), token, func(resp *http.Response) error {
+		switch resp.StatusCode {
+		case http.StatusNoContent:
+			return nil
+		default:
+			return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent}, resp.StatusCode)
+		}
+	}); err != nil {
 		return errors.Wrap(err, "call GitHub API")
 	}
 
 	return nil
-}
-
-func (o options) callGitHubAPI(method string, token string, path []string) (map[string]any, error) {
-	u, err := url.Parse(o.githubAPIURL)
-	if err != nil {
-		return nil, errors.Wrapf(err, "parse url. URL: %s", o.githubAPIURL)
-	}
-	u = u.JoinPath(path...)
-
-	header := make(http.Header)
-	header.Set("Accept", "application/vnd.github+json")
-	header.Set("X-GitHub-Api-Version", "2022-11-28")
-	header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-
-	req, err := http.NewRequest(method, u.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "create request")
-	}
-	req.Header = header
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrapf(err, "do request. method: %s, url: %s", method, u.String())
-	}
-	defer resp.Body.Close()
-
-	switch resp.StatusCode {
-	case http.StatusNoContent:
-		return nil, nil
-	case http.StatusOK:
-		var m map[string]any
-		if err := json.NewDecoder(resp.Body).Decode(&m); err != nil {
-			return nil, errors.Wrap(err, "decode response")
-		}
-		return m, nil
-	default:
-		return nil, errors.Errorf("unexpected response status. expected: %d, actual: %d", http.StatusOK, resp.StatusCode)
-	}
 }

@@ -37,12 +37,11 @@ func TestTag(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			repo, _, _ := strings.Cut(strings.TrimPrefix(tt.args.imageRef, "ghcr.io/"), ":")
-			reg := registry.New()
-			s := httptest.NewTLSServer(reg)
-			defer s.Close()
+			ts := httptest.NewTLSServer(registry.New())
+			defer ts.Close()
 
 			originalTransport := http.DefaultTransport
-			http.DefaultTransport = s.Client().Transport
+			http.DefaultTransport = ts.Client().Transport
 			defer func() {
 				http.DefaultTransport = originalTransport
 			}()
@@ -51,7 +50,7 @@ func TestTag(t *testing.T) {
 				"existing-tag": "bar",
 				"another-tag":  "foo",
 			} {
-				u, err := url.Parse(fmt.Sprintf("%s/v2/%s/manifests/%s", s.URL, repo, tag))
+				u, err := url.Parse(fmt.Sprintf("%s/v2/%s/manifests/%s", ts.URL, repo, tag))
 				if err != nil {
 					t.Fatalf("parse url: %v", err)
 				}
@@ -60,7 +59,7 @@ func TestTag(t *testing.T) {
 					t.Fatalf("create request: %v", err)
 				}
 				req.Header.Set("Content-Type", "text/plain")
-				resp, err := s.Client().Do(req)
+				resp, err := ts.Client().Do(req)
 				if err != nil {
 					t.Fatalf("put manifest: %v", err)
 				}
@@ -70,13 +69,13 @@ func TestTag(t *testing.T) {
 				}
 			}
 
-			err := tag.Tag(strings.Replace(tt.args.imageRef, "ghcr.io", strings.TrimPrefix(s.URL, "https://"), 1), tt.args.newTag, tt.args.token)
+			err := tag.Tag(strings.Replace(tt.args.imageRef, "ghcr.io", strings.TrimPrefix(ts.URL, "https://"), 1), tt.args.newTag, tt.args.token)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Tag() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			u, err := url.Parse(fmt.Sprintf("%s/v2/%s/manifests/%s", s.URL, repo, tt.args.newTag))
+			u, err := url.Parse(fmt.Sprintf("%s/v2/%s/manifests/%s", ts.URL, repo, tt.args.newTag))
 			if err != nil {
 				t.Fatalf("parse url: %v", err)
 			}
@@ -84,7 +83,7 @@ func TestTag(t *testing.T) {
 			if err != nil {
 				t.Errorf("create request: %v", err)
 			}
-			resp, err := s.Client().Do(req)
+			resp, err := ts.Client().Do(req)
 			if err != nil {
 				t.Fatalf("put manifest: %v", err)
 			}

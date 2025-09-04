@@ -156,7 +156,11 @@ func TestPull(t *testing.T) {
 				t.Errorf("parse url. err: %v", err)
 			}
 
+			originalTransport := http.DefaultTransport
 			http.DefaultTransport = ts.Client().Transport
+			defer func() {
+				http.DefaultTransport = originalTransport
+			}()
 
 			dir := t.TempDir()
 			err = pull.Pull(fmt.Sprintf("%s/vuls-data-db:%s", u.Host, tt.args.tag), func() []pull.Option {
