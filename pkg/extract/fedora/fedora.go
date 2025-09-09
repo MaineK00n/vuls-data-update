@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -103,8 +104,8 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", fmt.Sprintf("%s-yyyy-.+", fetched.Release.IDPrefix), fetched.Updateid)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "data", fetched.Release.Name, splitted[0], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fetched.Release.Name, splitted[0], fmt.Sprintf("%s.json", data.ID)))
+		if err := util.Write(filepath.Join(options.dir, "data", fetched.Release.Name, splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", fetched.Release.Name, splitted[1], fmt.Sprintf("%s.json", data.ID)))
 		}
 
 		return nil
@@ -307,7 +308,7 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 				Segments: []segmentTypes.Segment{{Ecosystem: eco}},
 			}},
 			Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
-				var vs []vulnerabilityTypes.Vulnerability
+				m := make(map[string]fedora.Bugzilla)
 				for _, bug := range fetched.Bugs {
 					var f func(b fedora.Bugzilla) []fedora.Bugzilla
 					f = func(b fedora.Bugzilla) []fedora.Bugzilla {
@@ -315,33 +316,46 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 						for _, b := range b.Blocked {
 							bugs = append(bugs, f(b)...)
 						}
-						if strings.HasPrefix(b.Alias, "CVE-") {
+						if slices.ContainsFunc(b.Alias, func(e string) bool {
+							return strings.HasPrefix(e, "CVE-")
+						}) {
 							bugs = append(bugs, b)
 						}
 						return bugs
 					}
 
 					for _, b := range f(bug.Bugzilla) {
-						vs = append(vs, vulnerabilityTypes.Vulnerability{
-							Content: vulnerabilityContentTypes.Content{
-								ID:    vulnerabilityContentTypes.VulnerabilityID(b.Alias),
-								Title: b.ShortDesc,
-								Severity: []severityTypes.Severity{{
-									Type:   severityTypes.SeverityTypeVendor,
-									Source: "fedoraproject.org",
-									Vendor: func() *string { return &b.BugSeverity }(),
-								}},
-								References: []referenceTypes.Reference{{
-									Source: "fedoraproject.org",
-									URL:    fmt.Sprintf("https://bugzilla.redhat.com/show_bug.cgi?id=%s", b.BugID),
-								}},
-								Published: utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.CreationTs),
-								Modified:  utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.DeltaTs),
-							},
-							Segments: []segmentTypes.Segment{{Ecosystem: eco}},
-						})
+						m[b.BugID] = b
 					}
 				}
+
+				var vs []vulnerabilityTypes.Vulnerability
+
+				for _, b := range m {
+					for _, alias := range b.Alias {
+						if strings.HasPrefix(alias, "CVE-") {
+							vs = append(vs, vulnerabilityTypes.Vulnerability{
+								Content: vulnerabilityContentTypes.Content{
+									ID:    vulnerabilityContentTypes.VulnerabilityID(alias),
+									Title: b.ShortDesc,
+									Severity: []severityTypes.Severity{{
+										Type:   severityTypes.SeverityTypeVendor,
+										Source: "fedoraproject.org",
+										Vendor: func() *string { return &b.BugSeverity }(),
+									}},
+									References: []referenceTypes.Reference{{
+										Source: "fedoraproject.org",
+										URL:    fmt.Sprintf("https://bugzilla.redhat.com/show_bug.cgi?id=%s", b.BugID),
+									}},
+									Published: utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.CreationTs),
+									Modified:  utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.DeltaTs),
+								},
+								Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+							})
+						}
+					}
+				}
+
 				return vs
 			}(),
 			Detections: []detectionTypes.Detection{d},

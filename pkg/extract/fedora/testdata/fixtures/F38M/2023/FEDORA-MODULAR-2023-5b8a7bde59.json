@@ -12,6 +12,12 @@
 				"creation_ts": "2022-11-15 16:38:40 +0000",
 				"short_desc": "CVE-2022-21594 CVE-2022-21599 CVE-2022-21604 CVE-2022-21608 CVE-2022-21611 CVE-2022-21617 CVE-2022-21625 CVE-2022-21632 CVE-2022-21633 CVE-2022-21637 CVE-2022-21640 CVE-2022-39400 CVE-2022-39408 ... mysql:8.0/community-mysql: various flaws [fedora-all]",
 				"delta_ts": "2023-09-16 00:28:34 +0000",
+				"classification": "Fedora",
+				"product": "Fedora",
+				"component": "community-mysql",
+				"version": "37",
+				"rep_platform": "Unspecified",
+				"op_sys": "Unspecified",
 				"bug_status": "CLOSED",
 				"resolution": "ERRATA",
 				"keywords": "Security, SecurityTracking",
@@ -20,10 +26,18 @@
 				"blocked": [
 					{
 						"bug_id": "2142861",
-						"alias": "CVE-2022-21594",
+						"alias": [
+							"CVE-2022-21594"
+						],
 						"creation_ts": "2022-11-15 11:28:08 +0000",
 						"short_desc": "CVE-2022-21594 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:14:13 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -119,10 +133,18 @@
 					},
 					{
 						"bug_id": "2142863",
-						"alias": "CVE-2022-21599",
+						"alias": [
+							"CVE-2022-21599"
+						],
 						"creation_ts": "2022-11-15 11:28:20 +0000",
 						"short_desc": "CVE-2022-21599 mysql: Server: Stored Procedure unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:14:37 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -218,10 +240,18 @@
 					},
 					{
 						"bug_id": "2142865",
-						"alias": "CVE-2022-21604",
+						"alias": [
+							"CVE-2022-21604"
+						],
 						"creation_ts": "2022-11-15 11:28:31 +0000",
 						"short_desc": "CVE-2022-21604 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:14:52 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -317,10 +347,18 @@
 					},
 					{
 						"bug_id": "2142868",
-						"alias": "CVE-2022-21608",
+						"alias": [
+							"CVE-2022-21608"
+						],
 						"creation_ts": "2022-11-15 11:28:48 +0000",
 						"short_desc": "CVE-2022-21608 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:15:24 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -416,10 +454,18 @@
 					},
 					{
 						"bug_id": "2142869",
-						"alias": "CVE-2022-21611",
+						"alias": [
+							"CVE-2022-21611"
+						],
 						"creation_ts": "2022-11-15 11:28:54 +0000",
 						"short_desc": "CVE-2022-21611 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:15:32 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -515,10 +561,18 @@
 					},
 					{
 						"bug_id": "2142870",
-						"alias": "CVE-2022-21617",
+						"alias": [
+							"CVE-2022-21617"
+						],
 						"creation_ts": "2022-11-15 11:29:00 +0000",
 						"short_desc": "CVE-2022-21617 mysql: Server: Connection Handling unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:15:40 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -614,10 +668,18 @@
 					},
 					{
 						"bug_id": "2142871",
-						"alias": "CVE-2022-21625",
+						"alias": [
+							"CVE-2022-21625"
+						],
 						"creation_ts": "2022-11-15 11:29:06 +0000",
 						"short_desc": "CVE-2022-21625 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:15:47 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -713,10 +775,18 @@
 					},
 					{
 						"bug_id": "2142872",
-						"alias": "CVE-2022-21632",
+						"alias": [
+							"CVE-2022-21632"
+						],
 						"creation_ts": "2022-11-15 11:29:11 +0000",
 						"short_desc": "CVE-2022-21632 mysql: Server: Security: Privileges unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:15:56 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -812,10 +882,18 @@
 					},
 					{
 						"bug_id": "2142873",
-						"alias": "CVE-2022-21633",
+						"alias": [
+							"CVE-2022-21633"
+						],
 						"creation_ts": "2022-11-15 11:29:16 +0000",
 						"short_desc": "CVE-2022-21633 mysql: Server: Replication unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:16:03 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -911,10 +989,18 @@
 					},
 					{
 						"bug_id": "2142875",
-						"alias": "CVE-2022-21637",
+						"alias": [
+							"CVE-2022-21637"
+						],
 						"creation_ts": "2022-11-15 11:29:27 +0000",
 						"short_desc": "CVE-2022-21637 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:16:17 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1010,10 +1096,18 @@
 					},
 					{
 						"bug_id": "2142877",
-						"alias": "CVE-2022-21640",
+						"alias": [
+							"CVE-2022-21640"
+						],
 						"creation_ts": "2022-11-15 11:29:39 +0000",
 						"short_desc": "CVE-2022-21640 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:16:30 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1109,10 +1203,18 @@
 					},
 					{
 						"bug_id": "2142879",
-						"alias": "CVE-2022-39400",
+						"alias": [
+							"CVE-2022-39400"
+						],
 						"creation_ts": "2022-11-15 11:29:51 +0000",
 						"short_desc": "CVE-2022-39400 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:16:50 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1208,10 +1310,18 @@
 					},
 					{
 						"bug_id": "2142880",
-						"alias": "CVE-2022-39408",
+						"alias": [
+							"CVE-2022-39408"
+						],
 						"creation_ts": "2022-11-15 11:29:56 +0000",
 						"short_desc": "CVE-2022-39408 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:16:57 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1307,10 +1417,18 @@
 					},
 					{
 						"bug_id": "2142881",
-						"alias": "CVE-2022-39410",
+						"alias": [
+							"CVE-2022-39410"
+						],
 						"creation_ts": "2022-11-15 11:30:02 +0000",
 						"short_desc": "CVE-2022-39410 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 						"delta_ts": "2023-09-22 09:17:06 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1406,10 +1524,18 @@
 					},
 					{
 						"bug_id": "2162271",
-						"alias": "CVE-2023-21864",
+						"alias": [
+							"CVE-2023-21864"
+						],
 						"creation_ts": "2023-01-19 09:22:55 +0000",
 						"short_desc": "CVE-2023-21864 mysql: Server: Optimizer unspecified vulnerability (CPU Jan 2023)",
 						"delta_ts": "2023-09-22 09:19:05 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1494,10 +1620,18 @@
 					},
 					{
 						"bug_id": "2162272",
-						"alias": "CVE-2023-21865",
+						"alias": [
+							"CVE-2023-21865"
+						],
 						"creation_ts": "2023-01-19 09:23:01 +0000",
 						"short_desc": "CVE-2023-21865 mysql: Server: Optimizer unspecified vulnerability (CPU Jan 2023)",
 						"delta_ts": "2023-09-22 09:19:09 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1582,10 +1716,18 @@
 					},
 					{
 						"bug_id": "2162281",
-						"alias": "CVE-2023-21874",
+						"alias": [
+							"CVE-2023-21874"
+						],
 						"creation_ts": "2023-01-19 09:23:49 +0000",
 						"short_desc": "CVE-2023-21874 mysql: Server: Thread Pooling unspecified vulnerability (CPU Jan 2023)",
 						"delta_ts": "2023-09-22 09:20:48 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1670,10 +1812,18 @@
 					},
 					{
 						"bug_id": "2188110",
-						"alias": "CVE-2023-21912",
+						"alias": [
+							"CVE-2023-21912"
+						],
 						"creation_ts": "2023-04-19 20:02:39 +0000",
 						"short_desc": "CVE-2023-21912 mysql: Server: Security: Privileges unspecified vulnerability (CPU Apr 2023)",
 						"delta_ts": "2023-05-17 03:44:59 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
@@ -1758,10 +1908,18 @@
 					},
 					{
 						"bug_id": "2188112",
-						"alias": "CVE-2023-21917",
+						"alias": [
+							"CVE-2023-21917"
+						],
 						"creation_ts": "2023-04-19 20:02:49 +0000",
 						"short_desc": "CVE-2023-21917 mysql: Server: Optimizer unspecified vulnerability (CPU Apr 2023)",
 						"delta_ts": "2023-09-22 09:24:10 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
 						"bug_status": "CLOSED",
 						"resolution": "ERRATA",
 						"keywords": "Security",
