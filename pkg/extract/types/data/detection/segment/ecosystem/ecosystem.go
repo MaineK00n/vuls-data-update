@@ -17,6 +17,7 @@ const (
 	EcosytemCentOS           = "centos"
 	EcosystemTypeDebian      = "debian"
 	EcosystemTypeEPEL        = "epel"
+	EcosystemTypeEPELNext    = "epel-next"
 	EcosystemTypeFedora      = "fedora"
 	EcosystemTypeFreeBSD     = "freebsd"
 	EcosystemTypeGentoo      = "gentoo"
@@ -70,6 +71,8 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 	case EcosystemTypeDebian:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeEPEL:
+		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
+	case EcosystemTypeEPELNext:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
 	case EcosystemTypeFedora:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil

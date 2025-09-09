@@ -16,6 +16,8 @@ func rank(src, s string) int {
 			return [][]string{{"LOW"}, {"MEDIUM"}, {"IMPORTANT"}, {"CRITICAL"}}
 		case "security.archlinux.org":
 			return [][]string{{"UNKNOWN"}, {"LOW"}, {"MEDIUM"}, {"HIGH"}, {"CRITICAL"}}
+		case "fedoraproject.org":
+			return [][]string{{"UNSPECIFIED"}, {"LOW"}, {"MEDIUM"}, {"HIGH"}, {"URGENT"}}
 		case "linux.oracle.com/security":
 			return [][]string{{"N/A"}, {"LOW"}, {"MODERATE"}, {"IMPORTANT"}, {"CRITICAL"}}
 		case "secalert@redhat.com":
@@ -25,7 +27,7 @@ func rank(src, s string) int {
 		case "launchpad.net/ubuntu-cve-tracker":
 			return [][]string{{"NEGLIGIBLE"}, {"LOW"}, {"MEDIUM"}, {"HIGH"}, {"CRITICAL"}}
 		default:
-			return [][]string{{"NONE", "UNKNOWN", "N/A"}, {"NEGLIGIBLE"}, {"LOW"}, {"MEDIUM"}, {"HIGH", "IMPORTANT"}, {"CRITICAL"}}
+			return [][]string{{"NONE", "UNKNOWN", "UNSPECIFIED", "N/A"}, {"NEGLIGIBLE"}, {"LOW"}, {"MEDIUM"}, {"HIGH", "IMPORTANT"}, {"CRITICAL", "URGENT"}}
 		}
 	}(), func(e []string) bool {
 		return slices.Contains(e, s)
