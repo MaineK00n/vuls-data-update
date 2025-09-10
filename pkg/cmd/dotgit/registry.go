@@ -8,7 +8,9 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/delete"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/push"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/status"
@@ -24,6 +26,7 @@ func newCmdRegistry() *cobra.Command {
 			$ vuls-data-update dotgit registry ls
 			$ vuls-data-update dotgit registry status ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 			$ vuls-data-update dotgit registry push ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-debian-security-tracker-api.tar.zst
+			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23
 			$ vuls-data-update dotgit registry tag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-test
 			$ vuls-data-update dotgit registry untag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test
 		`),
@@ -31,7 +34,7 @@ func newCmdRegistry() *cobra.Command {
 
 	cmd.AddCommand(
 		newCmdRegistryLs(), newCmdRegistryStatus(),
-		newCmdRegistryPush(), newCmdRegistryTag(), newCmdRegistryUntag(),
+		newCmdRegistryPush(), newCmdRegistryDelete(), newCmdRegistryTag(), newCmdRegistryUntag(),
 	)
 
 	return cmd
@@ -60,15 +63,31 @@ func newCmdRegistryLs() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			rs := make([]ls.Repository, 0, len(options.repositories))
 			for _, r := range options.repositories {
-				lhs, rhs, ok := strings.Cut(r, "/")
-				if !ok {
-					return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", r)
+				repo, err := remote.NewRepository(r)
+				if err != nil {
+					return errors.Wrapf(err, "create client for %s", r)
 				}
-				owner, pack, ok := strings.Cut(rhs, "/")
-				if !ok {
-					return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", r)
+				if repo.Reference.Reference != "" {
+					return errors.Errorf("unexpected repository format. expected: %q, actual: %q", []string{"<repository>"}, r)
 				}
-				rs = append(rs, ls.Repository{Registry: lhs, Owner: owner, Package: pack})
+
+				owner, pack, err := func() (string, string, error) {
+					switch repo.Reference.Registry {
+					case "ghcr.io":
+						lhs, rhs, ok := strings.Cut(repo.Reference.Repository, "/")
+						if !ok {
+							return "", "", errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", r)
+						}
+						return lhs, rhs, nil
+					default:
+						return "", "", nil
+					}
+				}()
+				if err != nil {
+					return errors.Wrap(err, "parse repository")
+				}
+
+				rs = append(rs, ls.Repository{Registry: repo.Reference.Registry, Owner: owner, Package: pack})
 			}
 
 			ps, err := ls.List(rs, options.token, ls.WithTaggedOnly(options.taggedOnly))
@@ -139,6 +158,33 @@ func newCmdRegistryPush() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&options.force, "force", "f", options.force, "overwrite existing tag")
+	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
+
+	return cmd
+}
+
+func newCmdRegistryDelete() *cobra.Command {
+	options := &struct {
+		token string
+	}{
+		token: os.Getenv("GITHUB_TOKEN"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "delete <image>",
+		Short: "Delete registry dotgit images",
+		Example: heredoc.Doc(`
+			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := delete.Delete(args[0], options.token); err != nil {
+				return errors.Wrap(err, "failed to delete registry dotgit image")
+			}
+			return nil
+		},
+	}
+
 	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
 
 	return cmd

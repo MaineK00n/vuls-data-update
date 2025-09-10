@@ -29,6 +29,7 @@ func NewCmdDotGit() *cobra.Command {
 			$ vuls-data-update dotgit registry ls
 			$ vuls-data-update dotgit registry status ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 			$ vuls-data-update dotgit registry push ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-debian-security-tracker-api.tar.zst
+			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23
 			$ vuls-data-update dotgit registry tag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-test
 			$ vuls-data-update dotgit registry untag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test
 		`),
