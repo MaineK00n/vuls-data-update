@@ -7,14 +7,16 @@ import (
 	"net/url"
 	"strings"
 
-	utilGitHub "github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/util/github"
 	"github.com/pkg/errors"
+
+	utilGitHub "github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/util/github"
 )
 
 const baseURL = "https://api.github.com"
 
 type options struct {
-	baseURL string
+	baseURL    string
+	taggedOnly bool
 }
 
 type Option interface {
@@ -29,6 +31,16 @@ func (u baseURLOption) apply(opts *options) {
 
 func WithbaseURL(url string) Option {
 	return baseURLOption(url)
+}
+
+type taggedOnlyOption bool
+
+func (t taggedOnlyOption) apply(opts *options) {
+	opts.taggedOnly = bool(t)
+}
+
+func WithTaggedOnly(taggedOnly bool) Option {
+	return taggedOnlyOption(taggedOnly)
 }
 
 type Repository struct {
@@ -67,15 +79,18 @@ type Docker struct {
 }
 
 type Response struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Digest    string `json:"digest"`
-	CreatedAt string `json:"created_at"`
+	ID        int     `json:"id"`
+	Name      string  `json:"name"`
+	Digest    string  `json:"digest"`
+	CreatedAt string  `json:"created_at"`
+	URL       string  `json:"url,omitempty"`
+	HTMLURL   *string `json:"html_url,omitempty"`
 }
 
 func List(repositories []Repository, token string, opts ...Option) ([]Response, error) {
 	options := &options{
-		baseURL: baseURL,
+		baseURL:    baseURL,
+		taggedOnly: false,
 	}
 
 	for _, o := range opts {
@@ -149,12 +164,24 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 								if v.Metadata.Container == nil {
 									return errors.Errorf("missing container metadata for response: %+v", v)
 								}
+								if !options.taggedOnly && len(v.Metadata.Container.Tags) == 0 {
+									ps = append(ps, Response{
+										ID:        v.ID,
+										Name:      "",
+										Digest:    v.Name,
+										CreatedAt: v.CreatedAt,
+										URL:       v.URL,
+										HTMLURL:   v.HTMLURL,
+									})
+								}
 								for _, tag := range v.Metadata.Container.Tags {
 									ps = append(ps, Response{
 										ID:        v.ID,
 										Name:      fmt.Sprintf("ghcr.io/%s/%s:%s", repository.Owner, repository.Package, tag),
 										Digest:    v.Name,
 										CreatedAt: v.CreatedAt,
+										URL:       v.URL,
+										HTMLURL:   v.HTMLURL,
 									})
 								}
 							default:
@@ -182,5 +209,6 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 			return nil, errors.Errorf("unexpected registry. expected: %q, actual: %q", []string{"ghcr.io"}, repository.Registry)
 		}
 	}
+
 	return ps, nil
 }

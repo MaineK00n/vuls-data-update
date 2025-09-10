@@ -39,11 +39,15 @@ func newCmdRegistry() *cobra.Command {
 
 func newCmdRegistryLs() *cobra.Command {
 	options := &struct {
-		registries []string
-		token      string
+		repositories []string
+		token        string
+
+		taggedOnly bool
 	}{
-		registries: []string{"ghcr.io/vulsio/vuls-data-db", "ghcr.io/vulsio/vuls-data-db-archive", "ghcr.io/vulsio/vuls-data-db-backup"},
-		token:      os.Getenv("GITHUB_TOKEN"),
+		repositories: []string{"ghcr.io/vulsio/vuls-data-db", "ghcr.io/vulsio/vuls-data-db-archive", "ghcr.io/vulsio/vuls-data-db-backup"},
+		token:        os.Getenv("GITHUB_TOKEN"),
+
+		taggedOnly: false,
 	}
 
 	cmd := &cobra.Command{
@@ -54,8 +58,8 @@ func newCmdRegistryLs() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			rs := make([]ls.Repository, 0, len(options.registries))
-			for _, r := range options.registries {
+			rs := make([]ls.Repository, 0, len(options.repositories))
+			for _, r := range options.repositories {
 				lhs, rhs, ok := strings.Cut(r, "/")
 				if !ok {
 					return errors.Errorf("unexpected repository format. expected: %q, actual: %q", "<registry>/<owner>/<package>", r)
@@ -67,7 +71,7 @@ func newCmdRegistryLs() *cobra.Command {
 				rs = append(rs, ls.Repository{Registry: lhs, Owner: owner, Package: pack})
 			}
 
-			ps, err := ls.List(rs, options.token)
+			ps, err := ls.List(rs, options.token, ls.WithTaggedOnly(options.taggedOnly))
 			if err != nil {
 				return errors.Wrap(err, "failed to list registry dotgits")
 			}
@@ -80,8 +84,9 @@ func newCmdRegistryLs() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringSliceVarP(&options.registries, "registries", "", options.registries, "specify registries. format: ghcr.io:<owner>/<package>")
+	cmd.Flags().StringSliceVarP(&options.repositories, "repositories", "", options.repositories, "specify repositories. format: <registry>/<owner>/<package>")
 	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
+	cmd.Flags().BoolVarP(&options.taggedOnly, "tagged-only", "", options.taggedOnly, "show only tagged images")
 
 	return cmd
 }
