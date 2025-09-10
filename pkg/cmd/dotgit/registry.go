@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/push"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/status"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/tag"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/untag"
@@ -22,6 +23,7 @@ func newCmdRegistry() *cobra.Command {
 		Example: heredoc.Doc(`
 			$ vuls-data-update dotgit registry ls
 			$ vuls-data-update dotgit registry status ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
+			$ vuls-data-update dotgit registry push ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-debian-security-tracker-api.tar.zst
 			$ vuls-data-update dotgit registry tag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-test
 			$ vuls-data-update dotgit registry untag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test
 		`),
@@ -29,7 +31,7 @@ func newCmdRegistry() *cobra.Command {
 
 	cmd.AddCommand(
 		newCmdRegistryLs(), newCmdRegistryStatus(),
-		newCmdRegistryTag(), newCmdRegistryUntag(),
+		newCmdRegistryPush(), newCmdRegistryTag(), newCmdRegistryUntag(),
 	)
 
 	return cmd
@@ -103,6 +105,36 @@ func newCmdRegistryStatus() *cobra.Command {
 			return nil
 		},
 	}
+
+	return cmd
+}
+
+func newCmdRegistryPush() *cobra.Command {
+	options := &struct {
+		force bool
+		token string
+	}{
+		force: false,
+		token: os.Getenv("GITHUB_TOKEN"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "push <image> <dotgit path>",
+		Short: "Push local dotgit image to registry",
+		Example: heredoc.Doc(`
+			$ vuls-data-update dotgit registry push ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-debian-security-tracker-api.tar.zst
+		`),
+		Args: cobra.ExactArgs(2),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := push.Push(args[0], args[1], options.token, push.WithForce(options.force)); err != nil {
+				return errors.Wrap(err, "failed to push dotgit image")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().BoolVarP(&options.force, "force", "f", options.force, "overwrite existing tag")
+	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
 
 	return cmd
 }
