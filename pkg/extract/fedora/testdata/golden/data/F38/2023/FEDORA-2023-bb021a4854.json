@@ -1,0 +1,245 @@
+{
+	"id": "FEDORA-2023-bb021a4854",
+	"advisories": [
+		{
+			"content": {
+				"id": "FEDORA-2023-bb021a4854",
+				"title": "thunderbird-115.5.0-1.fc38",
+				"description": "Update to 115.5.0\n\n* https://www.mozilla.org/en-US/security/advisories/mfsa2023-52/\n* https://www.thunderbird.net/en-US/thunderbird/115.5.0/releasenotes/\n",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "high"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2023-bb021a4854"
+					}
+				],
+				"published": "2023-11-24T17:15:38Z",
+				"modified": "2023-11-24T17:16:14Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "fedora:38",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"src",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-librnp-rnp-debuginfo",
+											"architectures": [
+												"ppc64le",
+												"x86_64",
+												"aarch64",
+												"i686"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-wayland",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-debugsource",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-debuginfo",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-librnp-rnp",
+											"architectures": [
+												"ppc64le",
+												"x86_64",
+												"aarch64",
+												"i686"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fedora",
+		"raws": [
+			"fixtures/F38/2023/FEDORA-2023-bb021a4854.json"
+		]
+	}
+}

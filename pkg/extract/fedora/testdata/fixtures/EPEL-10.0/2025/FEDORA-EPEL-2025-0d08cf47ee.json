@@ -10,10 +10,18 @@
 			"title": "CVE-2011-10007 perl-file-find-rule: File::Find::Rule Arbitrary Code Execution",
 			"bugzilla": {
 				"bug_id": "2370424",
-				"alias": "CVE-2011-10007",
+				"alias": [
+					"CVE-2011-10007"
+				],
 				"creation_ts": "2025-06-05 13:01:14 +0000",
 				"short_desc": "CVE-2011-10007 perl-file-find-rule: File::Find::Rule Arbitrary Code Execution",
 				"delta_ts": "2025-08-13 13:10:11 +0000",
+				"classification": "Other",
+				"product": "Security Response",
+				"component": "vulnerability",
+				"version": "unspecified",
+				"rep_platform": "All",
+				"op_sys": "Linux",
 				"bug_status": "NEW",
 				"keywords": "Security",
 				"priority": "high",

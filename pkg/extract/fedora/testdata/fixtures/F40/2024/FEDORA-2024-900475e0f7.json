@@ -1,0 +1,548 @@
+{
+	"alias": "FEDORA-2024-900475e0f7",
+	"autokarma": true,
+	"autotime": true,
+	"bugs": [
+		{
+			"bug_id": 2292817,
+			"parent": true,
+			"security": true,
+			"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+			"bugzilla": {
+				"bug_id": "2292817",
+				"alias": [
+					"CVE-2024-38439",
+					"CVE-2024-38440",
+					"CVE-2024-38441"
+				],
+				"creation_ts": "2024-06-18 03:21:00 +0000",
+				"short_desc": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+				"delta_ts": "2024-06-29 16:25:44 +0000",
+				"classification": "Other",
+				"product": "Security Response",
+				"component": "vulnerability",
+				"version": "unspecified",
+				"rep_platform": "All",
+				"op_sys": "Linux",
+				"bug_status": "NEW",
+				"keywords": "Security",
+				"priority": "medium",
+				"bug_severity": "medium",
+				"depends_on": [
+					"2292818",
+					"2292819"
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "18070509",
+						"comment_count": "0",
+						"who": {
+							"text": "pdelbell",
+							"name": "Patrick Del Bello"
+						},
+						"bug_when": "2024-06-18 03:21:00 +0000",
+						"thetext": "Netatalk 3.2.0 has an off-by-one error and resultant heap-based buffer overflow because of setting ibuf[len] to '\\0' in FPMapName in afp_mapname in etc/afp/directory.c.\n\nhttps://github.com/Netatalk/netatalk/issues/1098\n\n\nNetatalk 3.2.0 has an off-by-one error and resultant heap-based buffer overflow because of incorrectly using FPLoginExt in BN_bin2bn in etc/uams/uams_dhx_pam.c.\n\nhttps://github.com/Netatalk/netatalk/issues/1097\n\nNetatalk 3.2.0 has an off-by-one error and resultant heap-based buffer overflow because of setting ibuf[PASSWDLEN] to '\\0' in FPLoginExt in login in etc/uams/uams_pam.c.\n\nhttps://github.com/Netatalk/netatalk/issues/1096"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18070514",
+						"comment_count": "1",
+						"who": {
+							"text": "pdelbell",
+							"name": "Patrick Del Bello"
+						},
+						"bug_when": "2024-06-18 03:21:33 +0000",
+						"thetext": "Created netatalk tracking bugs for this issue:\n\nAffects: epel-all [bug 2292819]\nAffects: fedora-all [bug 2292818]"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18082165",
+						"comment_count": "2",
+						"who": {
+							"text": "zonexpertconsulting",
+							"name": "Andrew Bauer"
+						},
+						"bug_when": "2024-06-29 16:25:44 +0000",
+						"thetext": "The github issues mentioned in this bug were moved to the Security tab of the upstream project:\n\nCVE-2024-38439\nhttps://github.com/Netatalk/netatalk/security/advisories/GHSA-8r68-857c-4rqc\n\nCVE-2024-38440\nhttps://github.com/Netatalk/netatalk/security/advisories/GHSA-mxx4-9fhm-r3w5\n\nCVE-2024-38441\nhttps://github.com/Netatalk/netatalk/security/advisories/GHSA-mj6v-cr68-mj9q\n\n\nThese have all been fixed in the 3.2.1 release. I will push new packages as soon as I am able (1-2 days)."
+					}
+				]
+			}
+		},
+		{
+			"bug_id": 2292818,
+			"security": true,
+			"title": "CVE-2024-38439 CVE-2024-38440 CVE-2024-38441 netatalk: multiple vulnerabilities [fedora-all]",
+			"bugzilla": {
+				"bug_id": "2292818",
+				"creation_ts": "2024-06-18 03:21:22 +0000",
+				"short_desc": "CVE-2024-38439 CVE-2024-38440 CVE-2024-38441 netatalk: multiple vulnerabilities [fedora-all]",
+				"delta_ts": "2024-07-09 01:54:40 +0000",
+				"classification": "Fedora",
+				"product": "Fedora",
+				"component": "netatalk",
+				"version": "40",
+				"rep_platform": "Unspecified",
+				"op_sys": "Unspecified",
+				"bug_status": "CLOSED",
+				"resolution": "ERRATA",
+				"keywords": "Security, SecurityTracking",
+				"priority": "medium",
+				"bug_severity": "medium",
+				"blocked": [
+					{
+						"bug_id": "2292817",
+						"alias": [
+							"CVE-2024-38439",
+							"CVE-2024-38440",
+							"CVE-2024-38441"
+						],
+						"creation_ts": "2024-06-18 03:21:00 +0000",
+						"short_desc": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+						"delta_ts": "2024-06-29 16:25:44 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
+						"bug_status": "NEW",
+						"keywords": "Security",
+						"priority": "medium",
+						"bug_severity": "medium",
+						"depends_on": [
+							"2292818",
+							"2292819"
+						],
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "18070509",
+								"comment_count": "0",
+								"who": {
+									"text": "pdelbell",
+									"name": "Patrick Del Bello"
+								},
+								"bug_when": "2024-06-18 03:21:00 +0000",
+								"thetext": "Netatalk 3.2.0 has an off-by-one error and resultant heap-based buffer overflow because of setting ibuf[len] to '\\0' in FPMapName in afp_mapname in etc/afp/directory.c.\n\nhttps://github.com/Netatalk/netatalk/issues/1098\n\n\nNetatalk 3.2.0 has an off-by-one error and resultant heap-based buffer overflow because of incorrectly using FPLoginExt in BN_bin2bn in etc/uams/uams_dhx_pam.c.\n\nhttps://github.com/Netatalk/netatalk/issues/1097\n\nNetatalk 3.2.0 has an off-by-one error and resultant heap-based buffer overflow because of setting ibuf[PASSWDLEN] to '\\0' in FPLoginExt in login in etc/uams/uams_pam.c.\n\nhttps://github.com/Netatalk/netatalk/issues/1096"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18070514",
+								"comment_count": "1",
+								"who": {
+									"text": "pdelbell",
+									"name": "Patrick Del Bello"
+								},
+								"bug_when": "2024-06-18 03:21:33 +0000",
+								"thetext": "Created netatalk tracking bugs for this issue:\n\nAffects: epel-all [bug 2292819]\nAffects: fedora-all [bug 2292818]"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18082165",
+								"comment_count": "2",
+								"who": {
+									"text": "zonexpertconsulting",
+									"name": "Andrew Bauer"
+								},
+								"bug_when": "2024-06-29 16:25:44 +0000",
+								"thetext": "The github issues mentioned in this bug were moved to the Security tab of the upstream project:\n\nCVE-2024-38439\nhttps://github.com/Netatalk/netatalk/security/advisories/GHSA-8r68-857c-4rqc\n\nCVE-2024-38440\nhttps://github.com/Netatalk/netatalk/security/advisories/GHSA-mxx4-9fhm-r3w5\n\nCVE-2024-38441\nhttps://github.com/Netatalk/netatalk/security/advisories/GHSA-mj6v-cr68-mj9q\n\n\nThese have all been fixed in the 3.2.1 release. I will push new packages as soon as I am able (1-2 days)."
+							}
+						]
+					}
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "18070510",
+						"comment_count": "0",
+						"who": {
+							"text": "pdelbell",
+							"name": "Patrick Del Bello"
+						},
+						"bug_when": "2024-06-18 03:21:22 +0000",
+						"thetext": "\nMore information about this security flaw is available in the following bug:\n\nhttp://bugzilla.redhat.com/show_bug.cgi?id=2292817\n\nDisclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18070511",
+						"comment_count": "1",
+						"who": {
+							"text": "pdelbell",
+							"name": "Patrick Del Bello"
+						},
+						"bug_when": "2024-06-18 03:21:24 +0000",
+						"thetext": "Use the following template to for the 'fedpkg update' request to submit an\nupdate for this issue as it contains the top-level parent bug(s) as well as\nthis tracking bug.  This will ensure that all associated bugs get updated\nwhen new packages are pushed to stable.\n\n=====\n\n# bugfix, security, enhancement, newpackage (required)\ntype=security\n\n# low, medium, high, urgent (required)\nseverity=medium\n\n# testing, stable\nrequest=testing\n\n# Bug numbers: 1234,9876\nbugs=2292817,2292818\n\n# Description of your update\nnotes=Security fix for [PUT CVEs HERE]\n\n# Enable request automation based on the stable/unstable karma thresholds\nautokarma=True\nstable_karma=3\nunstable_karma=-3\n\n# Automatically close bugs when this marked as stable\nclose_bugs=True\n\n# Suggest that users restart after update\nsuggest_reboot=False\n\n======\n\nAdditionally, you may opt to use the bodhi web interface to submit updates:\n\nhttps://bodhi.fedoraproject.org/updates/new"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18082479",
+						"comment_count": "2",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2024-06-30 17:41:57 +0000",
+						"thetext": "FEDORA-2024-900475e0f7 (netatalk-3.2.1-1.fc40) has been submitted as an update to Fedora 40.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2024-900475e0f7"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18082700",
+						"comment_count": "3",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2024-07-01 04:50:30 +0000",
+						"thetext": "FEDORA-2024-900475e0f7 has been pushed to the Fedora 40 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2024-900475e0f7`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2024-900475e0f7\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18091579",
+						"comment_count": "4",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2024-07-09 01:54:40 +0000",
+						"thetext": "FEDORA-2024-900475e0f7 (netatalk-3.2.1-1.fc40) has been pushed to the Fedora 40 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					}
+				]
+			}
+		}
+	],
+	"builds": [
+		{
+			"epoch": 5,
+			"nvr": "netatalk-3.2.1-1.fc40",
+			"release_id": 76,
+			"signed": true,
+			"type": "rpm",
+			"package": {
+				"aarch64": [
+					{
+						"name": "netatalk-devel",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "netatalk-debuginfo",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "netatalk-debugsource",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "netatalk",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "aarch64"
+					}
+				],
+				"i686": [
+					{
+						"name": "netatalk-debugsource",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "netatalk-debuginfo",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "netatalk-devel",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "netatalk",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "i686"
+					}
+				],
+				"ppc64le": [
+					{
+						"name": "netatalk-devel",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "netatalk-debuginfo",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "netatalk-debugsource",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "netatalk",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "ppc64le"
+					}
+				],
+				"s390x": [
+					{
+						"name": "netatalk-debuginfo",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "netatalk-debugsource",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "netatalk",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "netatalk-devel",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "s390x"
+					}
+				],
+				"src": [
+					{
+						"name": "netatalk",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "src"
+					}
+				],
+				"x86_64": [
+					{
+						"name": "netatalk-devel",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "netatalk-debugsource",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "netatalk",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "netatalk-debuginfo",
+						"epoch": 5,
+						"version": "3.2.1",
+						"release": "1.fc40",
+						"arch": "x86_64"
+					}
+				]
+			}
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 3595168,
+			"text": "This update has been submitted for testing by kni. ",
+			"timestamp": "2024-06-30 17:41:53",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3595169,
+			"text": "This update's test gating status has been changed to 'ignored'.",
+			"timestamp": "2024-06-30 17:41:53",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3595379,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2024-07-01 04:50:36",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3601863,
+			"text": "This update's test gating status has been changed to 'waiting'.",
+			"timestamp": "2024-07-06 09:36:05",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3602175,
+			"text": "This update's test gating status has been changed to 'ignored'.",
+			"timestamp": "2024-07-06 10:24:14",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3603869,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2024-07-08 04:50:28",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3604757,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2024-07-09 01:55:15",
+			"update_id": 624484,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "rpm",
+	"critpath_groups": "",
+	"date_approved": "2024-07-08 04:50:28",
+	"date_pushed": "2024-07-09 01:53:44",
+	"date_stable": "2024-07-09 01:53:44",
+	"date_submitted": "2024-06-30 17:41:52",
+	"date_testing": "2024-07-01 04:50:04",
+	"meets_testing_requirements": true,
+	"notes": "Security fix for CVE-2024-38439, CVE-2024-38440, and CVE-2024-38441",
+	"pushed": true,
+	"release": {
+		"branch": "f40",
+		"candidate_tag": "f40-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f40",
+		"eol": "2025-05-13",
+		"id_prefix": "FEDORA",
+		"long_name": "Fedora 40",
+		"mail_template": "fedora_errata_template",
+		"name": "F40",
+		"override_tag": "f40-override",
+		"package_manager": "dnf",
+		"pending_signing_tag": "f40-signing-pending",
+		"pending_stable_tag": "f40-updates-pending",
+		"pending_testing_tag": "f40-updates-testing-pending",
+		"stable_tag": "f40-updates",
+		"state": "archived",
+		"testing_repository": "updates-testing",
+		"testing_tag": "f40-updates-testing",
+		"version": "40"
+	},
+	"require_bugs": true,
+	"require_testcases": true,
+	"severity": "medium",
+	"stable_days": 7,
+	"stable_karma": 3,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_gating_status": "ignored",
+	"title": "netatalk-3.2.1-1.fc40",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2024-900475e0f7",
+	"unstable_karma": -3,
+	"updateid": "FEDORA-2024-900475e0f7",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/14e6d27a847651ad4eba71828f3f858b6be7a7849888b834cb22a001096ab0da?s=24&d=retro",
+		"email": "zonexpertconsulting@outlook.com",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			}
+		],
+		"id": 3369,
+		"name": "kni",
+		"openid": "kni.id.fedoraproject.org"
+	},
+	"version_hash": "30295dcf27e42ab5c8271deaf07817b2b1e3181e"
+}

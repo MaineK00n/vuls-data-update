@@ -31,84 +31,6 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2022-21594",
-				"title": "CVE-2022-21594 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142861"
-					}
-				],
-				"published": "2022-11-15T11:28:08Z",
-				"modified": "2023-09-22T09:14:13Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2022-21599",
-				"title": "CVE-2022-21599 mysql: Server: Stored Procedure unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142863"
-					}
-				],
-				"published": "2022-11-15T11:28:20Z",
-				"modified": "2023-09-22T09:14:37Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2022-21604",
-				"title": "CVE-2022-21604 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142865"
-					}
-				],
-				"published": "2022-11-15T11:28:31Z",
-				"modified": "2023-09-22T09:14:52Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
 				"id": "CVE-2022-21608",
 				"title": "CVE-2022-21608 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
 				"severity": [
@@ -135,32 +57,6 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2022-21611",
-				"title": "CVE-2022-21611 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142869"
-					}
-				],
-				"published": "2022-11-15T11:28:54Z",
-				"modified": "2023-09-22T09:15:32Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
 				"id": "CVE-2022-21617",
 				"title": "CVE-2022-21617 mysql: Server: Connection Handling unspecified vulnerability (CPU Oct 2022)",
 				"severity": [
@@ -178,84 +74,6 @@
 				],
 				"published": "2022-11-15T11:29:00Z",
 				"modified": "2023-09-22T09:15:40Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2022-21625",
-				"title": "CVE-2022-21625 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142871"
-					}
-				],
-				"published": "2022-11-15T11:29:06Z",
-				"modified": "2023-09-22T09:15:47Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2022-21632",
-				"title": "CVE-2022-21632 mysql: Server: Security: Privileges unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142872"
-					}
-				],
-				"published": "2022-11-15T11:29:11Z",
-				"modified": "2023-09-22T09:15:56Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2022-21633",
-				"title": "CVE-2022-21633 mysql: Server: Replication unspecified vulnerability (CPU Oct 2022)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142873"
-					}
-				],
-				"published": "2022-11-15T11:29:16Z",
-				"modified": "2023-09-22T09:16:03Z"
 			},
 			"segments": [
 				{
@@ -308,6 +126,58 @@
 				],
 				"published": "2022-11-15T11:29:39Z",
 				"modified": "2023-09-22T09:16:30Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2023-21912",
+				"title": "CVE-2023-21912 mysql: Server: Security: Privileges unspecified vulnerability (CPU Apr 2023)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "high"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2188110"
+					}
+				],
+				"published": "2023-04-19T20:02:39Z",
+				"modified": "2023-05-17T03:44:59Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-21599",
+				"title": "CVE-2022-21599 mysql: Server: Stored Procedure unspecified vulnerability (CPU Oct 2022)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142863"
+					}
+				],
+				"published": "2022-11-15T11:28:20Z",
+				"modified": "2023-09-22T09:14:37Z"
 			},
 			"segments": [
 				{
@@ -395,8 +265,8 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2023-21864",
-				"title": "CVE-2023-21864 mysql: Server: Optimizer unspecified vulnerability (CPU Jan 2023)",
+				"id": "CVE-2023-21917",
+				"title": "CVE-2023-21917 mysql: Server: Optimizer unspecified vulnerability (CPU Apr 2023)",
 				"severity": [
 					{
 						"type": "vendor",
@@ -407,11 +277,89 @@
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2162271"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2188112"
 					}
 				],
-				"published": "2023-01-19T09:22:55Z",
-				"modified": "2023-09-22T09:19:05Z"
+				"published": "2023-04-19T20:02:49Z",
+				"modified": "2023-09-22T09:24:10Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-21611",
+				"title": "CVE-2022-21611 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142869"
+					}
+				],
+				"published": "2022-11-15T11:28:54Z",
+				"modified": "2023-09-22T09:15:32Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-21632",
+				"title": "CVE-2022-21632 mysql: Server: Security: Privileges unspecified vulnerability (CPU Oct 2022)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142872"
+					}
+				],
+				"published": "2022-11-15T11:29:11Z",
+				"modified": "2023-09-22T09:15:56Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-21633",
+				"title": "CVE-2022-21633 mysql: Server: Replication unspecified vulnerability (CPU Oct 2022)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142873"
+					}
+				],
+				"published": "2022-11-15T11:29:16Z",
+				"modified": "2023-09-22T09:16:03Z"
 			},
 			"segments": [
 				{
@@ -473,34 +421,8 @@
 		},
 		{
 			"content": {
-				"id": "CVE-2023-21912",
-				"title": "CVE-2023-21912 mysql: Server: Security: Privileges unspecified vulnerability (CPU Apr 2023)",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "high"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2188110"
-					}
-				],
-				"published": "2023-04-19T20:02:39Z",
-				"modified": "2023-05-17T03:44:59Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2023-21917",
-				"title": "CVE-2023-21917 mysql: Server: Optimizer unspecified vulnerability (CPU Apr 2023)",
+				"id": "CVE-2022-21604",
+				"title": "CVE-2022-21604 mysql: InnoDB unspecified vulnerability (CPU Oct 2022)",
 				"severity": [
 					{
 						"type": "vendor",
@@ -511,11 +433,89 @@
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2188112"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142865"
 					}
 				],
-				"published": "2023-04-19T20:02:49Z",
-				"modified": "2023-09-22T09:24:10Z"
+				"published": "2022-11-15T11:28:31Z",
+				"modified": "2023-09-22T09:14:52Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-21625",
+				"title": "CVE-2022-21625 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142871"
+					}
+				],
+				"published": "2022-11-15T11:29:06Z",
+				"modified": "2023-09-22T09:15:47Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2023-21864",
+				"title": "CVE-2023-21864 mysql: Server: Optimizer unspecified vulnerability (CPU Jan 2023)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2162271"
+					}
+				],
+				"published": "2023-01-19T09:22:55Z",
+				"modified": "2023-09-22T09:19:05Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:38"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-21594",
+				"title": "CVE-2022-21594 mysql: Server: Optimizer unspecified vulnerability (CPU Oct 2022)",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142861"
+					}
+				],
+				"published": "2022-11-15T11:28:08Z",
+				"modified": "2023-09-22T09:14:13Z"
 			},
 			"segments": [
 				{
@@ -542,46 +542,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "mysql:8.0::community-mysql-errmsg",
-											"architectures": [
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64",
-												"i686"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
-											}
-										],
-										"fixed": [
-											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "mysql:8.0::community-mysql-libs",
 											"architectures": [
-												"aarch64",
 												"i686",
 												"ppc64le",
+												"x86_64",
 												"s390x",
-												"x86_64"
+												"aarch64"
 											]
 										}
 									},
@@ -610,144 +577,11 @@
 										"binary": {
 											"name": "mysql:8.0::community-mysql-server",
 											"architectures": [
-												"i686",
-												"ppc64le",
 												"s390x",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
-											}
-										],
-										"fixed": [
-											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "mysql:8.0::community-mysql-server-debuginfo",
-											"architectures": [
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64",
-												"i686"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
-											}
-										],
-										"fixed": [
-											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "mysql:8.0::community-mysql",
-											"architectures": [
 												"aarch64",
 												"i686",
 												"ppc64le",
-												"s390x",
-												"src",
 												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
-											}
-										],
-										"fixed": [
-											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "mysql:8.0::community-mysql-debuginfo",
-											"architectures": [
-												"s390x",
-												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
-											}
-										],
-										"fixed": [
-											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "mysql:8.0::community-mysql-libs-debuginfo",
-											"architectures": [
-												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x"
 											]
 										}
 									},
@@ -776,43 +610,10 @@
 										"binary": {
 											"name": "mysql:8.0::community-mysql-test",
 											"architectures": [
-												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
-											}
-										],
-										"fixed": [
-											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "mysql:8.0::community-mysql-test-debuginfo",
-											"architectures": [
-												"aarch64",
-												"i686",
-												"ppc64le",
 												"s390x",
+												"aarch64",
+												"i686",
+												"ppc64le",
 												"x86_64"
 											]
 										}
@@ -843,8 +644,8 @@
 											"name": "mysql:8.0::community-mysql-common",
 											"architectures": [
 												"ppc64le",
-												"s390x",
 												"x86_64",
+												"s390x",
 												"aarch64",
 												"i686"
 											]
@@ -873,13 +674,46 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "mysql:8.0::community-mysql-debugsource",
+											"name": "mysql:8.0::community-mysql-debuginfo",
 											"architectures": [
 												"aarch64",
 												"i686",
 												"ppc64le",
+												"x86_64",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
+											}
+										],
+										"fixed": [
+											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "mysql:8.0::community-mysql-debugsource",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"x86_64",
 												"s390x",
-												"x86_64"
+												"aarch64"
 											]
 										}
 									},
@@ -908,11 +742,144 @@
 										"binary": {
 											"name": "mysql:8.0::community-mysql-devel",
 											"architectures": [
+												"aarch64",
 												"i686",
 												"ppc64le",
-												"s390x",
 												"x86_64",
-												"aarch64"
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
+											}
+										],
+										"fixed": [
+											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "mysql:8.0::community-mysql-libs-debuginfo",
+											"architectures": [
+												"s390x",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
+											}
+										],
+										"fixed": [
+											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "mysql:8.0::community-mysql-server-debuginfo",
+											"architectures": [
+												"s390x",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
+											}
+										],
+										"fixed": [
+											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "mysql:8.0::community-mysql-test-debuginfo",
+											"architectures": [
+												"s390x",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
+											}
+										],
+										"fixed": [
+											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "mysql:8.0::community-mysql",
+											"architectures": [
+												"s390x",
+												"src",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
 											]
 										}
 									},
@@ -941,11 +908,44 @@
 										"binary": {
 											"name": "mysql:8.0::community-mysql-devel-debuginfo",
 											"architectures": [
+												"s390x",
+												"aarch64",
 												"i686",
 												"ppc64le",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8.0.34-2.module_f38+17431+1f3fdb0a"
+											}
+										],
+										"fixed": [
+											"0:8.0.34-2.module_f38+17431+1f3fdb0a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "mysql:8.0::community-mysql-errmsg",
+											"architectures": [
 												"s390x",
-												"x86_64",
-												"aarch64"
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
 											]
 										}
 									},

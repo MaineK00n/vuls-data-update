@@ -385,21 +385,27 @@ type archive struct {
 
 type bugzilla struct {
 	Bug struct {
-		BugID        string   `xml:"bug_id"`
-		Error        string   `xml:"error,attr"`
-		Alias        string   `xml:"alias"`
-		CreationTs   string   `xml:"creation_ts"`
-		ShortDesc    string   `xml:"short_desc"`
-		DeltaTs      string   `xml:"delta_ts"`
-		BugStatus    string   `xml:"bug_status"`
-		Resolution   string   `xml:"resolution"`
-		BugFileLoc   string   `xml:"bug_file_loc"`
-		Keywords     string   `xml:"keywords"`
-		Priority     string   `xml:"priority"`
-		BugSeverity  string   `xml:"bug_severity"`
-		DependsOn    []string `xml:"dependson"`
-		Blocked      []string `xml:"blocked"`
-		ExternalBugs *struct {
+		BugID          string   `xml:"bug_id"`
+		Error          string   `xml:"error,attr"`
+		Alias          []string `xml:"alias"`
+		CreationTs     string   `xml:"creation_ts"`
+		ShortDesc      string   `xml:"short_desc"`
+		DeltaTs        string   `xml:"delta_ts"`
+		Classification string   `xml:"classification"`
+		Product        string   `xml:"product"`
+		Component      string   `xml:"component"`
+		Version        string   `xml:"version"`
+		RepPlatform    string   `xml:"rep_platform"`
+		OpSys          string   `xml:"op_sys"`
+		BugStatus      string   `xml:"bug_status"`
+		Resolution     string   `xml:"resolution"`
+		BugFileLoc     string   `xml:"bug_file_loc"`
+		Keywords       string   `xml:"keywords"`
+		Priority       string   `xml:"priority"`
+		BugSeverity    string   `xml:"bug_severity"`
+		DependsOn      []string `xml:"dependson"`
+		Blocked        []string `xml:"blocked"`
+		ExternalBugs   *struct {
 			Text string `xml:",chardata"`
 			Name string `xml:"name,attr"`
 		} `xml:"external_bugs"`
@@ -418,21 +424,27 @@ type bugzilla struct {
 }
 
 type Bugzilla struct {
-	BugID        string     `json:"bug_id,omitempty"`
-	Error        string     `json:"error,omitempty"`
-	Alias        string     `json:"alias,omitempty"`
-	CreationTs   string     `json:"creation_ts,omitempty"`
-	ShortDesc    string     `json:"short_desc,omitempty"`
-	DeltaTs      string     `json:"delta_ts,omitempty"`
-	BugStatus    string     `json:"bug_status,omitempty"`
-	Resolution   string     `json:"resolution,omitempty"`
-	BugFileLoc   string     `json:"bug_file_loc,omitempty"`
-	Keywords     string     `json:"keywords,omitempty"`
-	Priority     string     `json:"priority,omitempty"`
-	BugSeverity  string     `json:"bug_severity,omitempty"`
-	DependsOn    []string   `json:"depends_on,omitempty"`
-	Blocked      []Bugzilla `json:"blocked,omitempty"`
-	ExternalBugs *struct {
+	BugID          string     `json:"bug_id,omitempty"`
+	Error          string     `json:"error,omitempty"`
+	Alias          []string   `json:"alias,omitempty"`
+	CreationTs     string     `json:"creation_ts,omitempty"`
+	ShortDesc      string     `json:"short_desc,omitempty"`
+	DeltaTs        string     `json:"delta_ts,omitempty"`
+	Classification string     `json:"classification,omitempty"`
+	Product        string     `json:"product,omitempty"`
+	Component      string     `json:"component,omitempty"`
+	Version        string     `json:"version,omitempty"`
+	RepPlatform    string     `json:"rep_platform,omitempty"`
+	OpSys          string     `json:"op_sys,omitempty"`
+	BugStatus      string     `json:"bug_status,omitempty"`
+	Resolution     string     `json:"resolution,omitempty"`
+	BugFileLoc     string     `json:"bug_file_loc,omitempty"`
+	Keywords       string     `json:"keywords,omitempty"`
+	Priority       string     `json:"priority,omitempty"`
+	BugSeverity    string     `json:"bug_severity,omitempty"`
+	DependsOn      []string   `json:"depends_on,omitempty"`
+	Blocked        []Bugzilla `json:"blocked,omitempty"`
+	ExternalBugs   *struct {
 		Text string `json:"text,omitempty"`
 		Name string `json:"name,omitempty"`
 	} `json:"external_bugs,omitempty"`

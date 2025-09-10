@@ -100,10 +100,18 @@
 			"title": "CVE-2018-16873 golang: \"go get\" command vulnerable to RCE via import of malicious package",
 			"bugzilla": {
 				"bug_id": "1657563",
-				"alias": "CVE-2018-16873",
+				"alias": [
+					"CVE-2018-16873"
+				],
 				"creation_ts": "2018-12-10 00:58:31 +0000",
 				"short_desc": "CVE-2018-16873 golang: \"go get\" command vulnerable to RCE via import of malicious package",
 				"delta_ts": "2022-03-13 16:25:03 +0000",
+				"classification": "Other",
+				"product": "Security Response",
+				"component": "vulnerability",
+				"version": "unspecified",
+				"rep_platform": "All",
+				"op_sys": "Linux",
 				"bug_status": "CLOSED",
 				"resolution": "ERRATA",
 				"keywords": "Security",

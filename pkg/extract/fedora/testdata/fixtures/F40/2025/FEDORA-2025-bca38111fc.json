@@ -1,0 +1,729 @@
+{
+	"alias": "FEDORA-2025-bca38111fc",
+	"autokarma": true,
+	"autotime": true,
+	"bugs": [
+		{
+			"bug_id": 2357926,
+			"security": true,
+			"title": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-40]",
+			"bugzilla": {
+				"bug_id": "2357926",
+				"creation_ts": "2025-04-07 14:56:16 +0000",
+				"short_desc": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-40]",
+				"delta_ts": "2025-04-30 02:00:21 +0000",
+				"classification": "Fedora",
+				"product": "Fedora",
+				"component": "icecat",
+				"version": "40",
+				"rep_platform": "Unspecified",
+				"op_sys": "Unspecified",
+				"bug_status": "CLOSED",
+				"resolution": "ERRATA",
+				"keywords": "Security, SecurityTracking",
+				"priority": "low",
+				"bug_severity": "low",
+				"blocked": [
+					{
+						"bug_id": "2357560",
+						"alias": [
+							"CVE-2025-3416",
+							"GHSA-4fcv-w3qc-ppgg"
+						],
+						"creation_ts": "2025-04-04 21:02:38 +0000",
+						"short_desc": "CVE-2025-3416 rust-openssl: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch`",
+						"delta_ts": "2025-09-01 08:28:32 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
+						"bug_status": "NEW",
+						"keywords": "Security",
+						"priority": "low",
+						"bug_severity": "low",
+						"depends_on": [
+							"2357935",
+							"2357936",
+							"2357940",
+							"2357943",
+							"2357922",
+							"2357923",
+							"2357924",
+							"2357925",
+							"2357926",
+							"2357927",
+							"2357928",
+							"2357929",
+							"2357930",
+							"2357931",
+							"2357932",
+							"2357933",
+							"2357934",
+							"2357937",
+							"2357938",
+							"2357939",
+							"2357941",
+							"2357942",
+							"2357944"
+						],
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "18436759",
+								"comment_count": "0",
+								"who": {
+									"text": "bzimport",
+									"name": "OSIDB Bzimport"
+								},
+								"bug_when": "2025-04-04 21:02:38 +0000",
+								"thetext": "When a `Some(...)` value was passed to the `properties` argument of either of these functions, a use-after-free would result.\n\nIn practice this would nearly always result in OpenSSL treating the properties as an empty string (due to `CString::drop`'s behavior).\n\nThe maintainers thank [quitbug](https://github.com/quitbug/) for reporting this vulnerability to us."
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18439705",
+								"comment_count": "2",
+								"who": {
+									"text": "decathorpe",
+									"name": "Fabio Valentini"
+								},
+								"bug_when": "2025-04-07 21:47:29 +0000",
+								"thetext": "How did you determine which Rust applications to file bugs against?\nI was surprised to see that bugs were filed against *some* applications (but not all) that use the OpenSSL bindings from the \"openssl\" Rust crate, but no bug was filed against \"rust-openssl\" itself."
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18440754",
+								"comment_count": "3",
+								"who": {
+									"text": "decathorpe",
+									"name": "Fabio Valentini"
+								},
+								"bug_when": "2025-04-08 16:15:32 +0000",
+								"thetext": "I have now looked at the source code of all packages that depend on \"rust-openssl\", and only *one* of them has a reference to `Cipher::fetch` - python-cryptography, and it doesn't use the function in a way that triggers this CVE. There are zero references to `Md::fetch` in any packages that depend on \"rust-openssl\". I'll go ahead close all bugs that were reported against packages that are definitely not affected by this issue.\n\nAgain, I'm surprised that bugs were opened against \"maturin\" and \"rustup\" - neither use code from the \"openssl\" crate directly. The only package that *could* be affected (because it calls `Cipher::fetch`) is \"python-cryptography\", and it's one of the few packages that didn't get a bug reported against it 🤣\n\nNote that I have *not* checked packages that vendor the \"openssl\" crate."
+							}
+						]
+					}
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "18439153",
+						"comment_count": "0",
+						"who": {
+							"text": "mfindra",
+							"name": "Michal Findra"
+						},
+						"bug_when": "2025-04-07 14:56:16 +0000",
+						"thetext": "More information about this security flaw is available in the following bug:\n\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2357560\n\nDisclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18455675",
+						"comment_count": "1",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-21 16:20:42 +0000",
+						"thetext": "FEDORA-2025-883816b756 (icecat-115.22.0-2.rh1.fc41) has been submitted as an update to Fedora 41.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-883816b756"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18455676",
+						"comment_count": "2",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-21 16:20:42 +0000",
+						"thetext": "FEDORA-2025-bca38111fc (icecat-115.22.0-2.rh1.fc40) has been submitted as an update to Fedora 40.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-bca38111fc"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18456170",
+						"comment_count": "3",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-22 01:46:25 +0000",
+						"thetext": "FEDORA-2025-17f64d2c4d has been pushed to the Fedora 42 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-17f64d2c4d`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-17f64d2c4d\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18456210",
+						"comment_count": "4",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-22 01:55:34 +0000",
+						"thetext": "FEDORA-2025-883816b756 has been pushed to the Fedora 41 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-883816b756`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-883816b756\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18456238",
+						"comment_count": "5",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-22 02:18:04 +0000",
+						"thetext": "FEDORA-2025-bca38111fc has been pushed to the Fedora 40 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-bca38111fc`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-bca38111fc\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18467549",
+						"comment_count": "6",
+						"who": {
+							"text": "amoloney",
+							"name": "Aoife Moloney"
+						},
+						"bug_when": "2025-04-28 15:45:40 +0000",
+						"thetext": "This message is a reminder that Fedora Linux 40 is nearing its end of life.\nFedora will stop maintaining and issuing updates for Fedora Linux 40 on 2025-05-13.\nIt is Fedora's policy to close all bug reports from releases that are no longer\nmaintained. At that time this bug will be closed as EOL if it remains open with a\n'version' of '40'.\n\nPackage Maintainer: If you wish for this bug to remain open because you\nplan to fix it in a currently maintained version, change the 'version' \nto a later Fedora Linux version. Note that the version field may be hidden.\nClick the \"Show advanced fields\" button if you do not see it.\n\nThank you for reporting this issue and we are sorry that we were not \nable to fix it before Fedora Linux 40 is end of life. If you would still like \nto see this bug fixed and are able to reproduce it against a later version \nof Fedora Linux, you are encouraged to change the 'version' to a later version\nprior to this bug being closed."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18469103",
+						"comment_count": "7",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-29 20:39:07 +0000",
+						"thetext": "FEDORA-2025-17f64d2c4d (icecat-115.22.0-2.rh1.fc42) has been pushed to the Fedora 42 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18469381",
+						"comment_count": "8",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-30 01:37:41 +0000",
+						"thetext": "FEDORA-2025-883816b756 (icecat-115.22.0-2.rh1.fc41) has been pushed to the Fedora 41 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18469441",
+						"comment_count": "9",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-30 02:00:21 +0000",
+						"thetext": "FEDORA-2025-bca38111fc (icecat-115.22.0-2.rh1.fc40) has been pushed to the Fedora 40 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					}
+				]
+			}
+		},
+		{
+			"bug_id": 2357938,
+			"security": true,
+			"title": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-41]",
+			"bugzilla": {
+				"bug_id": "2357938",
+				"creation_ts": "2025-04-07 14:57:18 +0000",
+				"short_desc": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-41]",
+				"delta_ts": "2025-04-30 02:00:23 +0000",
+				"classification": "Fedora",
+				"product": "Fedora",
+				"component": "icecat",
+				"version": "41",
+				"rep_platform": "Unspecified",
+				"op_sys": "Unspecified",
+				"bug_status": "CLOSED",
+				"resolution": "ERRATA",
+				"keywords": "Security, SecurityTracking",
+				"priority": "low",
+				"bug_severity": "low",
+				"blocked": [
+					{
+						"bug_id": "2357560",
+						"alias": [
+							"CVE-2025-3416",
+							"GHSA-4fcv-w3qc-ppgg"
+						],
+						"creation_ts": "2025-04-04 21:02:38 +0000",
+						"short_desc": "CVE-2025-3416 rust-openssl: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch`",
+						"delta_ts": "2025-09-01 08:28:32 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
+						"bug_status": "NEW",
+						"keywords": "Security",
+						"priority": "low",
+						"bug_severity": "low",
+						"depends_on": [
+							"2357935",
+							"2357936",
+							"2357940",
+							"2357943",
+							"2357922",
+							"2357923",
+							"2357924",
+							"2357925",
+							"2357926",
+							"2357927",
+							"2357928",
+							"2357929",
+							"2357930",
+							"2357931",
+							"2357932",
+							"2357933",
+							"2357934",
+							"2357937",
+							"2357938",
+							"2357939",
+							"2357941",
+							"2357942",
+							"2357944"
+						],
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "18436759",
+								"comment_count": "0",
+								"who": {
+									"text": "bzimport",
+									"name": "OSIDB Bzimport"
+								},
+								"bug_when": "2025-04-04 21:02:38 +0000",
+								"thetext": "When a `Some(...)` value was passed to the `properties` argument of either of these functions, a use-after-free would result.\n\nIn practice this would nearly always result in OpenSSL treating the properties as an empty string (due to `CString::drop`'s behavior).\n\nThe maintainers thank [quitbug](https://github.com/quitbug/) for reporting this vulnerability to us."
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18439705",
+								"comment_count": "2",
+								"who": {
+									"text": "decathorpe",
+									"name": "Fabio Valentini"
+								},
+								"bug_when": "2025-04-07 21:47:29 +0000",
+								"thetext": "How did you determine which Rust applications to file bugs against?\nI was surprised to see that bugs were filed against *some* applications (but not all) that use the OpenSSL bindings from the \"openssl\" Rust crate, but no bug was filed against \"rust-openssl\" itself."
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18440754",
+								"comment_count": "3",
+								"who": {
+									"text": "decathorpe",
+									"name": "Fabio Valentini"
+								},
+								"bug_when": "2025-04-08 16:15:32 +0000",
+								"thetext": "I have now looked at the source code of all packages that depend on \"rust-openssl\", and only *one* of them has a reference to `Cipher::fetch` - python-cryptography, and it doesn't use the function in a way that triggers this CVE. There are zero references to `Md::fetch` in any packages that depend on \"rust-openssl\". I'll go ahead close all bugs that were reported against packages that are definitely not affected by this issue.\n\nAgain, I'm surprised that bugs were opened against \"maturin\" and \"rustup\" - neither use code from the \"openssl\" crate directly. The only package that *could* be affected (because it calls `Cipher::fetch`) is \"python-cryptography\", and it's one of the few packages that didn't get a bug reported against it 🤣\n\nNote that I have *not* checked packages that vendor the \"openssl\" crate."
+							}
+						]
+					}
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "18439167",
+						"comment_count": "0",
+						"who": {
+							"text": "mfindra",
+							"name": "Michal Findra"
+						},
+						"bug_when": "2025-04-07 14:57:18 +0000",
+						"thetext": "More information about this security flaw is available in the following bug:\n\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2357560\n\nDisclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18455678",
+						"comment_count": "1",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-21 16:20:44 +0000",
+						"thetext": "FEDORA-2025-883816b756 (icecat-115.22.0-2.rh1.fc41) has been submitted as an update to Fedora 41.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-883816b756"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18455679",
+						"comment_count": "2",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-21 16:20:48 +0000",
+						"thetext": "FEDORA-2025-17f64d2c4d (icecat-115.22.0-2.rh1.fc42) has been submitted as an update to Fedora 42.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-17f64d2c4d"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18455680",
+						"comment_count": "3",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-21 16:20:50 +0000",
+						"thetext": "FEDORA-2025-bca38111fc (icecat-115.22.0-2.rh1.fc40) has been submitted as an update to Fedora 40.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-bca38111fc"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18456171",
+						"comment_count": "4",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-22 01:46:28 +0000",
+						"thetext": "FEDORA-2025-17f64d2c4d has been pushed to the Fedora 42 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-17f64d2c4d`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-17f64d2c4d\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18456211",
+						"comment_count": "5",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-22 01:55:36 +0000",
+						"thetext": "FEDORA-2025-883816b756 has been pushed to the Fedora 41 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-883816b756`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-883816b756\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18456239",
+						"comment_count": "6",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-22 02:18:06 +0000",
+						"thetext": "FEDORA-2025-bca38111fc has been pushed to the Fedora 40 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-bca38111fc`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-bca38111fc\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18469104",
+						"comment_count": "7",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-29 20:39:13 +0000",
+						"thetext": "FEDORA-2025-17f64d2c4d (icecat-115.22.0-2.rh1.fc42) has been pushed to the Fedora 42 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18469382",
+						"comment_count": "8",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-30 01:37:43 +0000",
+						"thetext": "FEDORA-2025-883816b756 (icecat-115.22.0-2.rh1.fc41) has been pushed to the Fedora 41 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18469442",
+						"comment_count": "9",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-04-30 02:00:23 +0000",
+						"thetext": "FEDORA-2025-bca38111fc (icecat-115.22.0-2.rh1.fc40) has been pushed to the Fedora 40 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					}
+				]
+			}
+		}
+	],
+	"builds": [
+		{
+			"epoch": 2,
+			"nvr": "icecat-115.22.0-2.rh1.fc40",
+			"release_id": 76,
+			"signed": true,
+			"type": "rpm",
+			"package": {
+				"aarch64": [
+					{
+						"name": "icecat-langpacks",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "icecat-debuginfo",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "icecat",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "icecat-debugsource",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "aarch64"
+					}
+				],
+				"ppc64le": [
+					{
+						"name": "icecat-debuginfo",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "icecat-langpacks",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "icecat",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "icecat-debugsource",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "ppc64le"
+					}
+				],
+				"s390x": [
+					{
+						"name": "icecat-debuginfo",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "icecat-debugsource",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "icecat",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "icecat-langpacks",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "s390x"
+					}
+				],
+				"src": [
+					{
+						"name": "icecat",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "src"
+					}
+				],
+				"x86_64": [
+					{
+						"name": "icecat-debuginfo",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "icecat-langpacks",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "icecat",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "icecat-debugsource",
+						"epoch": 2,
+						"version": "115.22.0",
+						"release": "2.rh1.fc40",
+						"arch": "x86_64"
+					}
+				]
+			}
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 4055753,
+			"text": "This update has been submitted for testing by sagitter. ",
+			"timestamp": "2025-04-21 16:20:40",
+			"update_id": 711294,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4055754,
+			"text": "This update's test gating status has been changed to 'ignored'.",
+			"timestamp": "2025-04-21 16:20:40",
+			"update_id": 711294,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4056256,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2025-04-22 02:18:32",
+			"update_id": 711294,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4064823,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2025-04-29 02:18:57",
+			"update_id": 711294,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4066698,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2025-04-30 02:01:09",
+			"update_id": 711294,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "rpm",
+	"critpath_groups": "",
+	"date_approved": "2025-04-29 02:18:57",
+	"date_pushed": "2025-04-30 01:59:13",
+	"date_stable": "2025-04-30 01:59:13",
+	"date_submitted": "2025-04-21 16:20:39",
+	"date_testing": "2025-04-22 02:17:22",
+	"meets_testing_requirements": true,
+	"notes": "- Rebuild with pregenerated cbindgen",
+	"pushed": true,
+	"release": {
+		"branch": "f40",
+		"candidate_tag": "f40-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f40",
+		"eol": "2025-05-13",
+		"id_prefix": "FEDORA",
+		"long_name": "Fedora 40",
+		"mail_template": "fedora_errata_template",
+		"name": "F40",
+		"override_tag": "f40-override",
+		"package_manager": "dnf",
+		"pending_signing_tag": "f40-signing-pending",
+		"pending_stable_tag": "f40-updates-pending",
+		"pending_testing_tag": "f40-updates-testing-pending",
+		"stable_tag": "f40-updates",
+		"state": "archived",
+		"testing_repository": "updates-testing",
+		"testing_tag": "f40-updates-testing",
+		"version": "40"
+	},
+	"require_bugs": true,
+	"require_testcases": true,
+	"severity": "unspecified",
+	"stable_days": 7,
+	"stable_karma": 3,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_gating_status": "ignored",
+	"title": "icecat-115.22.0-2.rh1.fc40",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2025-bca38111fc",
+	"unstable_karma": -3,
+	"updateid": "FEDORA-2025-bca38111fc",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/7b7f0481363bff8e9c960ad1e8aa97f7531ffb3dd41a7f662812ec8c1ad1bd19?s=24&d=retro",
+		"email": "trpost@rocketmail.com",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "provenpackager"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			},
+			{
+				"name": "ambassadors"
+			},
+			{
+				"name": "neuro-sig"
+			},
+			{
+				"name": "scitech"
+			}
+		],
+		"id": 329,
+		"name": "sagitter",
+		"openid": "sagitter.id.fedoraproject.org"
+	},
+	"version_hash": "5f810b7c9bef46eb7fa0b1213259840e25069f95"
+}
