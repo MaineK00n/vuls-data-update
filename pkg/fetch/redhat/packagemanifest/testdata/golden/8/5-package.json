@@ -1,0 +1,29 @@
+{
+	"major": 8,
+	"index": 5,
+	"type": "package",
+	"repository": "Supplementary",
+	"packages": [
+		{
+			"package": "dptfxtract",
+			"license": "Intel"
+		},
+		{
+			"package": "java-1.8.0-ibm",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-demo",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-devel",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-headless",
+			"license": "IBM Binary Code License"
+		}
+	],
+	"source": "http://127.0.0.1:45555/rhel-8.html"
+}

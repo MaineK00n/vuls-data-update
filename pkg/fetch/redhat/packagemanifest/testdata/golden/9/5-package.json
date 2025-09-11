@@ -1,0 +1,14 @@
+{
+	"major": 9,
+	"index": 5,
+	"type": "package",
+	"repository": "Supplementary",
+	"packages": [
+		{
+			"package": "zhongyi-song-fonts",
+			"license": "Commercial",
+			"minor_release_version": "9.0"
+		}
+	],
+	"source": "http://127.0.0.1:45555/rhel-9.html"
+}

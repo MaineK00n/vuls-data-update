@@ -1,0 +1,33 @@
+{
+	"major": 10,
+	"index": 7,
+	"type": "package",
+	"packages": [
+		{
+			"package": "booth",
+			"license": "GPLv2+",
+			"compatibility_level": "2"
+		},
+		{
+			"package": "booth-arbitrator",
+			"license": "GPLv2+",
+			"compatibility_level": "2"
+		},
+		{
+			"package": "booth-core",
+			"license": "GPLv2+",
+			"compatibility_level": "2"
+		},
+		{
+			"package": "booth-site",
+			"license": "GPLv2+",
+			"compatibility_level": "2"
+		},
+		{
+			"package": "booth-test",
+			"license": "GPLv2+",
+			"compatibility_level": "2"
+		}
+	],
+	"source": "http://127.0.0.1:45555/rhel-10.html"
+}
