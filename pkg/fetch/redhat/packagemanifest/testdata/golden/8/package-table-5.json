@@ -1,0 +1,27 @@
+{
+	"title": "Chapter 4. The Supplementary repositoryCopy linkLink copied to clipboard!",
+	"id": "table-5",
+	"packages": [
+		{
+			"package": "dptfxtract",
+			"license": "Intel"
+		},
+		{
+			"package": "java-1.8.0-ibm",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-demo",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-devel",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-headless",
+			"license": "IBM Binary Code License"
+		}
+	],
+	"source": "fixtures/rhel-8.html"
+}

@@ -1,0 +1,27 @@
+{
+	"title": "Chapter 5. The High Availability add-onCopy linkLink copied to clipboard!",
+	"id": "table-6",
+	"packages": [
+		{
+			"package": "awscli",
+			"license": "ASL 2.0 and MIT"
+		},
+		{
+			"package": "booth",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "booth-arbitrator",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "booth-core",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "booth-site",
+			"license": "GPLv2+"
+		}
+	],
+	"source": "fixtures/rhel-8.html"
+}

@@ -85,6 +85,39 @@ type Table struct {
 	Source  string              `json:"source"`
 }
 
+// Package represents a row in a package table (first header == "package").
+type Package struct {
+	Package                       string `json:"package"`
+	License                       string `json:"license,omitempty"`
+	ApplicationCompatibilityLevel string `json:"application_compatibility_level,omitempty"`
+	RHEL9MinorReleaseVersion      string `json:"rhel_9_minor_release_version,omitempty"`
+	RHEL10MinorReleaseVersion     string `json:"rhel_10_minor_release_version,omitempty"`
+}
+
+// PackageTable is a specialized table containing packages.
+type PackageTable struct {
+	Title    string    `json:"title"`
+	ID       string    `json:"id"`
+	Packages []Package `json:"packages"`
+	Source   string    `json:"source"`
+}
+
+// Module represents a row in a module table (first header == "module").
+type Module struct {
+	Module                        string   `json:"module"`
+	Stream                        string   `json:"stream"`
+	ApplicationCompatibilityLevel string   `json:"application_compatibility_level,omitempty"`
+	Packages                      []string `json:"packages"`
+}
+
+// ModuleTable is a specialized table containing modules.
+type ModuleTable struct {
+	Title   string   `json:"title"`
+	ID      string   `json:"id"`
+	Modules []Module `json:"modules"`
+	Source  string   `json:"source"`
+}
+
 // Fetch scrapes package manifest tables for specified RHEL major versions.
 func Fetch(opts ...Option) error {
 	opt := &options{
@@ -145,19 +178,16 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 	// Simpler: when table has no caption, look backward for nearest h2/h3/h4.
 	tableIndex := 0
 	doc.Find("table").Each(func(i int, s *goquery.Selection) {
-		var title, id string
-		if capSel := s.Find("caption"); capSel.Length() > 0 {
-			title = strings.TrimSpace(capSel.Text())
-		}
-		if title == "" {
-			// Walk previous nodes until heading found
-			for p := s.Prev(); p.Length() > 0; p = p.Prev() {
-				if goquery.NodeName(p) == "h2" || goquery.NodeName(p) == "h3" || goquery.NodeName(p) == "h4" {
-					title = strings.TrimSpace(p.Text())
-					break
-				}
+		var id string
+		// Title detection (improved): caption -> nearest heading (h1-h6) traversing previous siblings recursively up the ancestor chain.
+		title := findNearestHeading(s)
+		if capSel := s.Find("caption"); capSel.Length() > 0 { // caption has precedence if present
+			captionText := strings.TrimSpace(capSel.Text())
+			if captionText != "" {
+				title = captionText
 			}
 		}
+
 		id, _ = s.Attr("id")
 		if id == "" {
 			id = fmt.Sprintf("table-%d", tableIndex)
@@ -171,6 +201,10 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 		})
 		if len(headers) == 0 {
 			s.Find("tr").First().Find("th,td").Each(func(_ int, h *goquery.Selection) { headers = append(headers, normalizeHeader(h.Text())) })
+		}
+		firstHeader := ""
+		if len(headers) > 0 {
+			firstHeader = headers[0]
 		}
 
 		// build rows
@@ -208,6 +242,50 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 			})
 		}
 
+		// Specialized handling for package/module tables based on first header
+		if firstHeader == "package" {
+			var pkgs []Package
+			for _, r := range rows {
+				pkgs = append(pkgs, Package{
+					Package:                       r["package"],
+					License:                       r["license"],
+					ApplicationCompatibilityLevel: r["application_compatibility_level"],
+					RHEL9MinorReleaseVersion:      r["rhel_9_minor_release_version"],
+					RHEL10MinorReleaseVersion:     r["rhel_10_minor_release_version"],
+				})
+			}
+			pt := PackageTable{Title: title, ID: id, Packages: pkgs, Source: source}
+			if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("package-%s.json", sanitizeFilename(id))), pt); err != nil {
+				log.Printf("[ERROR] write package table %s: %v", id, err)
+			}
+			return
+		}
+		if firstHeader == "module" {
+			var mods []Module
+			for _, r := range rows {
+				var list []string
+				if pkgsField := r["packages"]; pkgsField != "" {
+					for _, p := range strings.Split(pkgsField, ",") {
+						pp := strings.TrimSpace(p)
+						if pp != "" {
+							list = append(list, pp)
+						}
+					}
+				}
+				mods = append(mods, Module{
+					Module:                        r["module"],
+					Stream:                        r["stream"],
+					ApplicationCompatibilityLevel: r["application_compatibility_level"],
+					Packages:                      list,
+				})
+			}
+			mt := ModuleTable{Title: title, ID: id, Modules: mods, Source: source}
+			if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("module-%s.json", sanitizeFilename(id))), mt); err != nil {
+				log.Printf("[ERROR] write module table %s: %v", id, err)
+			}
+			return
+		}
+
 		// write file
 		t := Table{Title: title, ID: id, Headers: headers, Rows: rows, Source: source}
 		if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("%s.json", sanitizeFilename(id))), t); err != nil {
@@ -215,6 +293,36 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 		}
 	})
 	return nil
+}
+
+// findNearestHeading finds the closest preceding heading (h1-h6) relative to the table.
+// It walks up the ancestor chain; for each ancestor it inspects previous siblings (closest first),
+// searching inside them (depth-first) for the last heading. Returns empty string if not found.
+func findNearestHeading(s *goquery.Selection) string {
+	headingsSelector := "h1,h2,h3,h4,h5,h6"
+	// current node whose previous siblings we inspect
+	cur := s
+	for cur.Length() > 0 {
+		// iterate previous siblings in reverse order (closest first)
+		prevs := []*goquery.Selection{}
+		cur.PrevAll().Each(func(_ int, ps *goquery.Selection) { prevs = append(prevs, ps) })
+		for i := 0; i < len(prevs)/2; i++ { // reverse slice
+			prevs[i], prevs[len(prevs)-1-i] = prevs[len(prevs)-1-i], prevs[i]
+		}
+		for _, p := range prevs {
+			// direct heading sibling
+			if goquery.NodeName(p) == "h1" || goquery.NodeName(p) == "h2" || goquery.NodeName(p) == "h3" || goquery.NodeName(p) == "h4" || goquery.NodeName(p) == "h5" || goquery.NodeName(p) == "h6" {
+				return strings.TrimSpace(p.Text())
+			}
+			// search inside previous sibling for headings; take the last one (closest context)
+			hs := p.Find(headingsSelector)
+			if hs.Length() > 0 {
+				return strings.TrimSpace(hs.Last().Text())
+			}
+		}
+		cur = cur.Parent()
+	}
+	return ""
 }
 
 func normalizeHeader(h string) string {
