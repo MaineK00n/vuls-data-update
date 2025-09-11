@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -137,6 +138,8 @@ func Extract(args string, opts ...Option) error {
 
 	return nil
 }
+
+var cveIDPattern = regexp.MustCompile(`CVE-\d{4}-\d{4,}`)
 
 func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 	switch ct := func() string {
@@ -353,6 +356,20 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 								Segments: []segmentTypes.Segment{{Ecosystem: eco}},
 							})
 						}
+					}
+				}
+
+				// add CVE IDs mentioned in the advisory notes but not linked to Bugzilla
+				for _, cveid := range cveIDPattern.FindAllString(fetched.Notes, -1) {
+					if !slices.ContainsFunc(vs, func(e vulnerabilityTypes.Vulnerability) bool {
+						return e.Content.ID == vulnerabilityContentTypes.VulnerabilityID(cveid)
+					}) {
+						vs = append(vs, vulnerabilityTypes.Vulnerability{
+							Content: vulnerabilityContentTypes.Content{
+								ID: vulnerabilityContentTypes.VulnerabilityID(cveid),
+							},
+							Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+						})
 					}
 				}
 

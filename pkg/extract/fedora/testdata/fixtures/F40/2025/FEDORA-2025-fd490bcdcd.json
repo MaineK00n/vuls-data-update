@@ -1,0 +1,686 @@
+{
+	"alias": "FEDORA-2025-fd490bcdcd",
+	"autokarma": true,
+	"autotime": true,
+	"builds": [
+		{
+			"epoch": 0,
+			"nvr": "xorg-x11-server-1.20.14-37.fc40",
+			"release_id": 76,
+			"signed": true,
+			"type": "rpm",
+			"package": {
+				"aarch64": [
+					{
+						"name": "xorg-x11-server-Xorg-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xnest-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-debugsource",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xorg",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-Xnest",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-devel",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					},
+					{
+						"name": "xorg-x11-server-common",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "aarch64"
+					}
+				],
+				"i686": [
+					{
+						"name": "xorg-x11-server-Xephyr-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xorg-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-debugsource",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xnest-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xorg",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-Xnest",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-devel",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					},
+					{
+						"name": "xorg-x11-server-common",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "i686"
+					}
+				],
+				"noarch": [
+					{
+						"name": "xorg-x11-server-source",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "noarch"
+					}
+				],
+				"ppc64le": [
+					{
+						"name": "xorg-x11-server-Xorg-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xnest-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xorg",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-debugsource",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-Xnest",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-devel",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "xorg-x11-server-common",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "ppc64le"
+					}
+				],
+				"s390x": [
+					{
+						"name": "xorg-x11-server-Xorg-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-debugsource",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xnest-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xorg",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-Xnest",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-devel",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					},
+					{
+						"name": "xorg-x11-server-common",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "s390x"
+					}
+				],
+				"src": [
+					{
+						"name": "xorg-x11-server",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "src"
+					}
+				],
+				"x86_64": [
+					{
+						"name": "xorg-x11-server-Xvfb-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xorg-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-debugsource",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xnest-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xorg",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xephyr",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xdmx",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-debuginfo",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xvfb",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-Xnest",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-devel",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					},
+					{
+						"name": "xorg-x11-server-common",
+						"version": "1.20.14",
+						"release": "37.fc40",
+						"arch": "x86_64"
+					}
+				]
+			}
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 3976830,
+			"text": "This update has been submitted for testing by ofourdan. ",
+			"timestamp": "2025-02-26 10:11:39",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3976831,
+			"text": "This update's test gating status has been changed to 'waiting'.",
+			"timestamp": "2025-02-26 10:11:40",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3976891,
+			"text": "This update's test gating status has been changed to 'passed'.",
+			"timestamp": "2025-02-26 11:25:05",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3977487,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2025-02-27 02:04:42",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 3985436,
+			"karma": 1,
+			"text": "Works for me.",
+			"timestamp": "2025-03-03 23:07:03",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://seccdn.libravatar.org/avatar/32627f354509d9aae5fb8c622b417f31c0dc9b1330b86404a02822e7d0c11301?s=24&d=retro",
+				"email": "vywunm0jfimu@posteo.de",
+				"groups": [
+					{
+						"name": "ipausers"
+					}
+				],
+				"id": 5876,
+				"name": "wbo",
+				"openid": "wbo.id.fedoraproject.org"
+			},
+			"user_id": 5876
+		},
+		{
+			"id": 3986564,
+			"karma": 1,
+			"text": "This is working for me in 40.",
+			"timestamp": "2025-03-04 08:32:55",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://seccdn.libravatar.org/avatar/365861a25716b355bf17bd01d55d25c29e1d98a79e197ef46bd8cfafdd93c836?s=24&d=retro",
+				"email": "nixuser@mail.com",
+				"groups": [
+					{
+						"name": "qa"
+					},
+					{
+						"name": "ipausers"
+					},
+					{
+						"name": "fedora-contributor"
+					},
+					{
+						"name": "signed_fpca"
+					},
+					{
+						"name": "fedorabugs"
+					}
+				],
+				"id": 4756,
+				"name": "nixuser",
+				"openid": "nixuser.id.fedoraproject.org"
+			},
+			"user_id": 4756
+		},
+		{
+			"id": 3986565,
+			"text": "This update can be pushed to stable now if the maintainer wishes",
+			"timestamp": "2025-03-04 08:35:46",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4000576,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2025-03-13 02:05:48",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4002035,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2025-03-14 02:12:25",
+			"update_id": 696899,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "rpm",
+	"critpath": true,
+	"critpath_groups": "critical-path-deepin-desktop critical-path-gnome",
+	"date_approved": "2025-03-04 08:35:46",
+	"date_pushed": "2025-03-14 02:12:06",
+	"date_stable": "2025-03-14 02:12:06",
+	"date_submitted": "2025-02-26 10:11:39",
+	"date_testing": "2025-02-27 02:04:01",
+	"karma": 2,
+	"meets_testing_requirements": true,
+	"notes": "CVE fix for: CVE-2025-26594, CVE-2025-26595, CVE-2025-26596, CVE-2025-26597,\nCVE-2025-26598, CVE-2025-26599, CVE-2025-26600, CVE-2025-26601",
+	"pushed": true,
+	"release": {
+		"branch": "f40",
+		"candidate_tag": "f40-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f40",
+		"eol": "2025-05-13",
+		"id_prefix": "FEDORA",
+		"long_name": "Fedora 40",
+		"mail_template": "fedora_errata_template",
+		"name": "F40",
+		"override_tag": "f40-override",
+		"package_manager": "dnf",
+		"pending_signing_tag": "f40-signing-pending",
+		"pending_stable_tag": "f40-updates-pending",
+		"pending_testing_tag": "f40-updates-testing-pending",
+		"stable_tag": "f40-updates",
+		"state": "archived",
+		"testing_repository": "updates-testing",
+		"testing_tag": "f40-updates-testing",
+		"version": "40"
+	},
+	"require_bugs": true,
+	"require_testcases": true,
+	"severity": "medium",
+	"stable_days": 14,
+	"stable_karma": 3,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_gating_status": "passed",
+	"title": "xorg-x11-server-1.20.14-37.fc40",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2025-fd490bcdcd",
+	"unstable_karma": -3,
+	"updateid": "FEDORA-2025-fd490bcdcd",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/bfdc4e2c380660381d860be7550883f13f42f3ca3e78579c019c29ebc4855b21?s=24&d=retro",
+		"email": "ofourdan@redhat.com",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "gnome-sig"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			},
+			{
+				"name": "graphics-sig"
+			}
+		],
+		"id": 2991,
+		"name": "ofourdan",
+		"openid": "ofourdan.id.fedoraproject.org"
+	},
+	"version_hash": "2b8d38cba62a534e9619347970c985bc5f33bc63"
+}
