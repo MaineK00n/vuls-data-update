@@ -159,7 +159,7 @@ func Fetch(opts ...Option) error {
 
 			scanner := bufio.NewScanner(indexf)
 			for scanner.Scan() {
-				f, err := os.Open(filepath.Join(tempDir, scanner.Text()))
+				f, err := os.Open(filepath.Join(tempDir, "csaf_files", p, scanner.Text()))
 				if err != nil {
 					return errors.Wrapf(err, "open %s", filepath.Join(tempDir, scanner.Text()))
 				}
