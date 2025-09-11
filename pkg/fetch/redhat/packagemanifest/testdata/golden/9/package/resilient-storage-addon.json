@@ -1,0 +1,37 @@
+{
+	"major": "9",
+	"type": "package",
+	"reference": "resilient-storage-addon",
+	"packages": [
+		{
+			"package": "booth",
+			"license": "GPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "booth-arbitrator",
+			"license": "GPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "booth-core",
+			"license": "GPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "booth-site",
+			"license": "GPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		},
+		{
+			"package": "booth-test",
+			"license": "GPLv2+",
+			"compatibility_level": "2",
+			"minor_release_version": "9.0"
+		}
+	]
+}

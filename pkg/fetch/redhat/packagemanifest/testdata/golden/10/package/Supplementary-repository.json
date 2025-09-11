@@ -1,0 +1,12 @@
+{
+	"major": "10",
+	"type": "package",
+	"reference": "Supplementary-repository",
+	"packages": [
+		{
+			"package": "zhongyi-song-fonts",
+			"license": "Commercial",
+			"minor_release_version": "10.0"
+		}
+	]
+}

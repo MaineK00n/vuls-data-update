@@ -1,0 +1,27 @@
+{
+	"major": "8",
+	"type": "package",
+	"reference": "AppStream-repository",
+	"packages": [
+		{
+			"package": "389-ds-base",
+			"license": "GPLv3+ and (ASL 2.0 or MIT)"
+		},
+		{
+			"package": "389-ds-base-devel",
+			"license": "GPLv3+ and (ASL 2.0 or MIT)"
+		},
+		{
+			"package": "389-ds-base-legacy-tools",
+			"license": "GPLv3+ and (ASL 2.0 or MIT)"
+		},
+		{
+			"package": "389-ds-base-libs",
+			"license": "GPLv3+ and (ASL 2.0 or MIT)"
+		},
+		{
+			"package": "389-ds-base-snmp",
+			"license": "GPLv3+ and (ASL 2.0 or MIT)"
+		}
+	]
+}

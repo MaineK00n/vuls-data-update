@@ -1,0 +1,12 @@
+{
+	"major": "9",
+	"type": "package",
+	"reference": "Supplementary-repository",
+	"packages": [
+		{
+			"package": "zhongyi-song-fonts",
+			"license": "Commercial",
+			"minor_release_version": "9.0"
+		}
+	]
+}

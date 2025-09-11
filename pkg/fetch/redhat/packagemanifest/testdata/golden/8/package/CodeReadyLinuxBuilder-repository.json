@@ -1,0 +1,27 @@
+{
+	"major": "8",
+	"type": "package",
+	"reference": "CodeReadyLinuxBuilder-repository",
+	"packages": [
+		{
+			"package": "accel-config-devel",
+			"license": "LGPLv2+"
+		},
+		{
+			"package": "accountsservice-devel",
+			"license": "GPLv3+"
+		},
+		{
+			"package": "adwaita-icon-theme-devel",
+			"license": "LGPLv3+ or CC-BY-SA"
+		},
+		{
+			"package": "anaconda-widgets-devel",
+			"license": "GPLv2+ and MIT"
+		},
+		{
+			"package": "ant",
+			"license": "ASL 2.0"
+		}
+	]
+}
