@@ -1,0 +1,35 @@
+{
+	"uri": "http/exposed-panels/phoenix-contact-charx-panel.yaml",
+	"id": "phoenix-contact-charx-panel",
+	"name": "Phoenix Contact CHARX SEC-3XXX AC Charging Controller Panel - Detect",
+	"author": [
+		"inokii"
+	],
+	"tags": [
+		"panel",
+		"phoenix-contact",
+		"charx",
+		"ics"
+	],
+	"severity": "info",
+	"type": "http",
+	"dir": "http/exposed-panels",
+	"ref": "projectdiscovery/nuclei-templates:ca380a3636cb",
+	"metadata": {
+		"max-request": 1,
+		"shodan-query": "title:\"Phoenix Contact - CHARX\"",
+		"verified": true
+	},
+	"digest": "4b0a004830460221009c3d4f49e72b7f97dd67f9ecaccf8b706b52faff3c91a91036b948c0a660ff1d02210087b687af1b23109ee1165f10570751d107d56d5197f5d7b3c73b5b2c71679c9f:922c64590222798bb761d5b6d8e72950",
+	"created_at": "2025-09-11T11:45:34Z",
+	"updated_at": "2025-09-11T11:47:59.969958609Z",
+	"is_early": true,
+	"raw": "id: phoenix-contact-charx-panel\n\ninfo:\n  name: Phoenix Contact CHARX SEC-3XXX AC Charging Controller Panel - Detect\n  author: inokii\n  severity: info\n  description: |\n    Phoenix Contact CHARX SEC-3XXX AC Charging Controller panel was detected.\n  reference:\n    - https://www.phoenixcontact.com/en-us/products/ac-charging-controllers\n  metadata:\n    verified: true\n    max-request: 1\n    shodan-query: title:\"Phoenix Contact - CHARX\"\n  tags: panel,phoenix-contact,charx,ics\n\nhttp:\n  - method: GET\n    path:\n      - \"{{BaseURL}}\"\n\n    matchers-condition: and\n    matchers:\n      - type: word\n        part: body\n        words:\n          - \"<title>Phoenix Contact - CHARX</title>\"\n\n      - type: status\n        status:\n          - 200\n# digest: 4b0a004830460221009c3d4f49e72b7f97dd67f9ecaccf8b706b52faff3c91a91036b948c0a660ff1d02210087b687af1b23109ee1165f10570751d107d56d5197f5d7b3c73b5b2c71679c9f:922c64590222798bb761d5b6d8e72950",
+	"template_id": "phoenix-contact-charx-panel",
+	"description": "Phoenix Contact CHARX SEC-3XXX AC Charging Controller panel was detected.\n",
+	"filename": "phoenix-contact-charx-panel.yaml",
+	"references": [
+		"https://www.phoenixcontact.com/en-us/products/ac-charging-controllers"
+	],
+	"template_type": "public"
+}
