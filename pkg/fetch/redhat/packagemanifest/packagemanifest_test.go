@@ -1,8 +1,6 @@
 package packagemanifest_test
 
 import (
-	"archive/tar"
-	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -26,37 +24,13 @@ type tableNoSource struct {
 	Rows    []map[string]string `json:"rows"`
 }
 
-// loadHTMLFromTarGz extracts the first regular file content from a .tar.gz.
-func loadHTMLFromTarGz(path string) (string, error) {
-	f, err := os.Open(path)
+// loadHTMLFromFile reads a plain HTML fixture file.
+func loadHTMLFromFile(path string) (string, error) {
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
-	gz, err := gzip.NewReader(f)
-	if err != nil {
-		return "", err
-	}
-	defer gz.Close()
-	tarR := tar.NewReader(gz)
-	for {
-		hdr, err := tarR.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return "", err
-		}
-		if hdr.Typeflag != tar.TypeReg {
-			continue
-		}
-		b, err := io.ReadAll(tarR)
-		if err != nil {
-			return "", err
-		}
-		return string(b), nil
-	}
-	return "", io.ErrUnexpectedEOF
+	return string(b), nil
 }
 
 func readTableNoSource(path string) (tableNoSource, error) {
@@ -81,13 +55,19 @@ func readTableNoSource(path string) (tableNoSource, error) {
 func TestFetch(t *testing.T) {
 	majors := []int{8, 9, 10}
 
-	// Load HTML from tar.gz fixtures
+	// Load HTML from plain .html fixtures
 	htmlByMajor := map[int]string{}
 	for _, m := range majors {
-		p := filepath.Join("testdata", "fixtures", fmt.Sprintf("rhel-%d.tar.gz", m))
-		html, err := loadHTMLFromTarGz(p)
+		p := filepath.Join("testdata", "fixtures", fmt.Sprintf("rhel-%d.html", m))
+		html, err := loadHTMLFromFile(p)
 		if err != nil {
-			t.Fatalf("load fixture %s: %v", p, err)
+			// Provide guidance if file missing
+			files, _ := os.ReadDir(filepath.Join("testdata", "fixtures"))
+			var list []string
+			for _, f := range files {
+				list = append(list, f.Name())
+			}
+			t.Fatalf("load fixture %s: %v (fixtures: %v)", p, err, list)
 		}
 		htmlByMajor[m] = html
 	}
@@ -115,7 +95,13 @@ func TestFetch(t *testing.T) {
 		pm.WithDir(dir),
 		pm.WithRetry(0),
 	); err != nil {
-		t.Fatalf("Fetch error: %v", err)
+		// Provide directory listing for debugging
+		entries, _ := os.ReadDir(dir)
+		var list []string
+		for _, e := range entries {
+			list = append(list, e.Name())
+		}
+		t.Fatalf("Fetch error: %v (out root entries: %v)", err, list)
 	}
 
 	// Compare produced JSON with golden (ignoring Source field)
