@@ -82,7 +82,7 @@ import (
 	nvdFeedCPEMATCHv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cpematch/v2"
 	nvdFeedCVEv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v1"
 	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/nvd/feed/cve/v2"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle"
+	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/oss-fuzz/osv"
 	perlDB "github.com/MaineK00n/vuls-data-update/pkg/extract/perl/db"
 	pipDB "github.com/MaineK00n/vuls-data-update/pkg/extract/pip/db"
@@ -177,7 +177,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
-		newCmdOracle(),
+		newCmdOracleLinux(),
 		newCmdOSSFuzzOSV(),
 		newCmdPerlDB(),
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
@@ -2055,27 +2055,27 @@ func newCmdNVDFeedCPEMATCHv2() *cobra.Command {
 	return cmd
 }
 
-func newCmdOracle() *cobra.Command {
+func newCmdOracleLinux() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "oracle"),
+		dir: filepath.Join(util.CacheDir(), "extract", "oracle", "linux"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "oracle <Raw Oracle Linux Repository PATH>",
+		Use:   "oracle-linux <Raw Oracle Linux Repository PATH>",
 		Short: "Extract Oracle Linux data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract oracle vuls-data-raw-oracle
+			$ vuls-data-update extract oracle-linux vuls-data-raw-oracle
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := oracle.Extract(args[0], oracle.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract oracle")
+			if err := oracleLinux.Extract(args[0], oracleLinux.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract oracle linux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "oracle"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }

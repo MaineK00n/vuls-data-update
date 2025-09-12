@@ -1,4 +1,4 @@
-package oracle
+package linux
 
 import (
 	"fmt"
@@ -43,7 +43,7 @@ import (
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
 )
 
 type options struct {
@@ -71,7 +71,7 @@ type extractor struct {
 
 func Extract(inputDir string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "oracle"),
+		dir: filepath.Join(util.CacheDir(), "extract", "oracle", "linux"),
 	}
 
 	for _, o := range opts {
@@ -82,7 +82,7 @@ func Extract(inputDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Oracle")
+	log.Printf("[INFO] Extract Oracle Linux")
 
 	if err := filepath.WalkDir(filepath.Join(inputDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -97,7 +97,7 @@ func Extract(inputDir string, opts ...Option) error {
 			inputDir: inputDir,
 			r:        utiljson.NewJSONReader(),
 		}
-		var def oracle.Definition
+		var def linux.Definition
 		if err := e.r.Read(path, e.inputDir, &def); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
@@ -155,7 +155,7 @@ func Extract(inputDir string, opts ...Option) error {
 	return nil
 }
 
-func (e extractor) extract(def oracle.Definition) (dataTypes.Data, error) {
+func (e extractor) extract(def linux.Definition) (dataTypes.Data, error) {
 	id, _, ok := strings.Cut(strings.TrimSpace(def.Metadata.Title), ":")
 	if !ok {
 		return dataTypes.Data{}, errors.Errorf("unexpected title format. expected: %q, actual: %q", "<Advisory ID>: ...", def.Metadata.Title)
@@ -290,7 +290,7 @@ type ovalPackage struct {
 	arch            string
 }
 
-func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.Detection, error) {
+func (e extractor) collectPackages(criteria linux.Criteria) ([]detectionTypes.Detection, error) {
 	pkgs, err := e.evalCriteria(criteria)
 	if err != nil {
 		return nil, errors.Wrapf(err, "eval criteria")
@@ -357,7 +357,7 @@ func (e extractor) collectPackages(criteria oracle.Criteria) ([]detectionTypes.D
 	return ds, nil
 }
 
-func (e extractor) evalCriteria(criteria oracle.Criteria) ([]ovalPackage, error) {
+func (e extractor) evalCriteria(criteria linux.Criteria) ([]ovalPackage, error) {
 	// Exclude patterns that do not exists in oracle oval data and don't implement them, YAGNI.
 	// With these constraints, we can ignore Criteria.Operator (AND or OR) to extract package information.
 	switch {
@@ -390,7 +390,7 @@ func (e extractor) evalCriteria(criteria oracle.Criteria) ([]ovalPackage, error)
 	return pkgs, nil
 }
 
-func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criterion) error {
+func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []linux.Criterion) error {
 	for _, c := range criterions {
 		test, err := e.readRpminfoTest(c.TestRef)
 		if err != nil && !errors.Is(err, os.ErrNotExist) {
@@ -501,56 +501,56 @@ func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []oracle.Criter
 	return nil
 }
 
-func (e extractor) readRpminfoTest(id string) (oracle.RpminfoTest, error) {
+func (e extractor) readRpminfoTest(id string) (linux.RpminfoTest, error) {
 	path := filepath.Join(e.inputDir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", id))
-	var test oracle.RpminfoTest
+	var test linux.RpminfoTest
 	if err := e.r.Read(path, e.inputDir, &test); err != nil {
-		return oracle.RpminfoTest{}, errors.Wrapf(err, "read rpminfo_test json. path: %s", path)
+		return linux.RpminfoTest{}, errors.Wrapf(err, "read rpminfo_test json. path: %s", path)
 	}
 	return test, nil
 }
 
-func (e extractor) readTextfilecontent54Test(id string) (oracle.Textfilecontent54Test, error) {
+func (e extractor) readTextfilecontent54Test(id string) (linux.Textfilecontent54Test, error) {
 	path := filepath.Join(e.inputDir, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", id))
-	var test oracle.Textfilecontent54Test
+	var test linux.Textfilecontent54Test
 	if err := e.r.Read(path, e.inputDir, &test); err != nil {
-		return oracle.Textfilecontent54Test{}, errors.Wrapf(err, "read textfilecontent54_test json. path: %s", path)
+		return linux.Textfilecontent54Test{}, errors.Wrapf(err, "read textfilecontent54_test json. path: %s", path)
 	}
 	return test, nil
 }
 
-func (e extractor) readRpminfoObj(id string) (oracle.RpminfoObject, error) {
+func (e extractor) readRpminfoObj(id string) (linux.RpminfoObject, error) {
 	path := filepath.Join(e.inputDir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", id))
-	var obj oracle.RpminfoObject
+	var obj linux.RpminfoObject
 	if err := e.r.Read(path, e.inputDir, &obj); err != nil {
-		return oracle.RpminfoObject{}, errors.Wrapf(err, "read rpminfo_object json. path: %s", path)
+		return linux.RpminfoObject{}, errors.Wrapf(err, "read rpminfo_object json. path: %s", path)
 	}
 	return obj, nil
 }
 
-func (e extractor) readTextfilecontent54Obj(id string) (oracle.Textfilecontent54Object, error) {
+func (e extractor) readTextfilecontent54Obj(id string) (linux.Textfilecontent54Object, error) {
 	path := filepath.Join(e.inputDir, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", id))
-	var obj oracle.Textfilecontent54Object
+	var obj linux.Textfilecontent54Object
 	if err := e.r.Read(path, e.inputDir, &obj); err != nil {
-		return oracle.Textfilecontent54Object{}, errors.Wrapf(err, "read textfilecontent54_object json. path: %s", path)
+		return linux.Textfilecontent54Object{}, errors.Wrapf(err, "read textfilecontent54_object json. path: %s", path)
 	}
 	return obj, nil
 }
 
-func (e extractor) readRpminfoState(id string) (oracle.RpminfoState, error) {
+func (e extractor) readRpminfoState(id string) (linux.RpminfoState, error) {
 	path := filepath.Join(e.inputDir, "states", "rpminfo_state", fmt.Sprintf("%s.json", id))
-	var state oracle.RpminfoState
+	var state linux.RpminfoState
 	if err := e.r.Read(path, e.inputDir, &state); err != nil {
-		return oracle.RpminfoState{}, errors.Wrapf(err, "read rpminfo_state json. path: %s", path)
+		return linux.RpminfoState{}, errors.Wrapf(err, "read rpminfo_state json. path: %s", path)
 	}
 	return state, nil
 }
 
-func (e extractor) readTextfilecontent54OState(id string) (oracle.Textfilecontent54State, error) {
+func (e extractor) readTextfilecontent54OState(id string) (linux.Textfilecontent54State, error) {
 	path := filepath.Join(e.inputDir, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", id))
-	var obj oracle.Textfilecontent54State
+	var obj linux.Textfilecontent54State
 	if err := e.r.Read(path, e.inputDir, &obj); err != nil {
-		return oracle.Textfilecontent54State{}, errors.Wrapf(err, "read textfilecontent54_state json. path: %s", path)
+		return linux.Textfilecontent54State{}, errors.Wrapf(err, "read textfilecontent54_state json. path: %s", path)
 	}
 	return obj, nil
 }
