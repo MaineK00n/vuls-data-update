@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.ovmsa:tst:20250001005",
+	"version": "501",
+	"comment": "kernel-uek-firmware is earlier than 0:4.1.12-124.93.1.el6uek",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.ovmsa:obj:20250001003"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.ovmsa:ste:20250001004"
+	}
+}

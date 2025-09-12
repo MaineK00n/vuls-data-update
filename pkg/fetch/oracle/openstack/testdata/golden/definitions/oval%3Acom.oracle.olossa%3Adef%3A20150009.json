@@ -1,0 +1,113 @@
+{
+	"id": "oval:com.oracle.olossa:def:20150009",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nOLOSSA-2015-0009:  openstack-keystone security update (IMPORTANT)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 6"
+			]
+		},
+		"reference": [
+			{
+				"source": "olossa",
+				"ref_id": "OLOSSA-2015-0009",
+				"ref_url": "https://linux.oracle.com/errata/OLOSSA-2015-0009.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2014-3621",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2014-3621.html"
+			}
+		],
+		"description": "\n[2014.1.3-2]\n- Include policy.v3cloudsample.json example (from nkinder)\n\n[2014.1.3-1]\n- Update to upstream 2014.1.3\n\n[2014.1.2.1-4]\n- exclude default port 35357 from the ephemeral port range rhbz#1130213\n- Avoid conversion of binary LDAP values rhbz#1138684\n\n[2014.1.2.1-2]\n- ensure python-migrate upgrade\n\n[2014.1.2.1-1]\n- updated to stable icehouse 2014.1.2.1 release\n",
+		"advisory": {
+			"severity": "IMPORTANT",
+			"rights": "Copyright 2015 Oracle, Inc.",
+			"issued": {
+				"date": "2015-01-30"
+			},
+			"cve": [
+				{
+					"text": "CVE-2014-3621",
+					"href": "https://linux.oracle.com/cve/CVE-2014-3621.html",
+					"cvss2": "3.6/AV:N/AC:H/Au:S/C:P/I:P/A:N",
+					"public": "20140916"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:oracle:linux:6::openstack10"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olossa:tst:20150009003",
+										"comment": "openstack-keystone is earlier than 0:2014.1.3-2.el6"
+									},
+									{
+										"test_ref": "oval:com.oracle.olossa:tst:20150009004",
+										"comment": "openstack-keystone is signed with the Oracle Linux 6 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olossa:tst:20150009005",
+										"comment": "openstack-keystone-doc is earlier than 0:2014.1.3-2.el6"
+									},
+									{
+										"test_ref": "oval:com.oracle.olossa:tst:20150009006",
+										"comment": "openstack-keystone-doc is signed with the Oracle Linux 6 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olossa:tst:20150009007",
+										"comment": "python-keystone is earlier than 0:2014.1.3-2.el6"
+									},
+									{
+										"test_ref": "oval:com.oracle.olossa:tst:20150009008",
+										"comment": "python-keystone is signed with the Oracle Linux 6 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.oracle.olossa:tst:20150009002",
+						"comment": "Oracle Linux arch is x86_64"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.oracle.olossa:tst:20150009001",
+				"comment": "Oracle Linux 6 is installed"
+			}
+		]
+	}
+}
