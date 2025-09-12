@@ -17,11 +17,34 @@ import (
 	pm "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/packagemanifest"
 )
 
-type tableNoSource struct {
-	Title   string              `json:"title"`
-	ID      string              `json:"id"`
-	Headers []string            `json:"headers"`
-	Rows    []map[string]string `json:"rows"`
+// Updated struct matching new schema (ignoring Source for comparison).
+// Use concrete row structs for packages/modules to reflect nested arrays correctly.
+type packageRow struct {
+	Package                       string `json:"package"`
+	License                       string `json:"license,omitempty"`
+	ApplicationCompatibilityLevel string `json:"application_compatibility_level,omitempty"`
+	RHEL9MinorReleaseVersion      string `json:"rhel_9_minor_release_version,omitempty"`
+	RHEL10MinorReleaseVersion     string `json:"rhel_10_minor_release_version,omitempty"`
+}
+
+type moduleRow struct {
+	Module                        string   `json:"module"`
+	Stream                        string   `json:"stream"`
+	ApplicationCompatibilityLevel string   `json:"application_compatibility_level,omitempty"`
+	Packages                      []string `json:"packages"`
+}
+
+type manifestTable struct {
+	Title      string              `json:"title"`
+	Section    string              `json:"section"`
+	ID         string              `json:"id"`
+	Repository string              `json:"repository"`
+	Type       string              `json:"type"`
+	Headers    []string            `json:"headers,omitempty"`
+	Rows       []map[string]string `json:"rows,omitempty"`
+	Packages   []packageRow        `json:"packages,omitempty"`
+	Modules    []moduleRow         `json:"modules,omitempty"`
+	Source     string              `json:"source"`
 }
 
 // loadHTMLFromFile reads a plain HTML fixture file.
@@ -33,29 +56,22 @@ func loadHTMLFromFile(path string) (string, error) {
 	return string(b), nil
 }
 
-func readTableNoSource(path string) (tableNoSource, error) {
-	var tns tableNoSource
+func readManifestTable(path string) (manifestTable, error) {
+	var mt manifestTable
 	b, err := os.ReadFile(path)
 	if err != nil {
-		return tns, err
+		return mt, err
 	}
-	// unmarshal into full struct then strip Source implicitly by using tableNoSource
-	var full struct {
-		Title   string              `json:"title"`
-		ID      string              `json:"id"`
-		Headers []string            `json:"headers"`
-		Rows    []map[string]string `json:"rows"`
+	if err := json.Unmarshal(b, &mt); err != nil {
+		return mt, err
 	}
-	if err := json.Unmarshal(b, &full); err != nil {
-		return tns, err
-	}
-	return tableNoSource{Title: full.Title, ID: full.ID, Headers: full.Headers, Rows: full.Rows}, nil
+	return mt, nil
 }
 
 func TestFetch(t *testing.T) {
 	majors := []int{8, 9, 10}
 
-	// Load HTML from plain .html fixtures
+	// Load HTML fixtures (.html)
 	htmlByMajor := map[int]string{}
 	for _, m := range majors {
 		p := filepath.Join("testdata", "fixtures", fmt.Sprintf("rhel-%d.html", m))
@@ -122,11 +138,12 @@ func TestFetch(t *testing.T) {
 			}
 			goldPath := filepath.Join(goldenDir, e.Name())
 			gotPath := filepath.Join(outDir, e.Name())
-			gold, err := readTableNoSource(goldPath)
+
+			gold, err := readManifestTable(goldPath)
 			if err != nil {
 				t.Fatalf("read golden %s: %v", goldPath, err)
 			}
-			got, err := readTableNoSource(gotPath)
+			got, err := readManifestTable(gotPath)
 			if err != nil {
 				// Provide context listing files when missing
 				files, _ := os.ReadDir(outDir)
@@ -136,7 +153,11 @@ func TestFetch(t *testing.T) {
 				}
 				t.Fatalf("read output %s: %v (have: %v)", gotPath, err, list)
 			}
-			if diff := cmp.Diff(gold, got, cmpopts.EquateEmpty()); diff != "" {
+
+			// Convert specialized tables to generic comparable shape if needed
+			// (Packages/Modules already map[string]string slices; keep as-is)
+			if diff := cmp.Diff(gold, got, cmpopts.IgnoreFields(manifestTable{}, "Source"), cmpopts.EquateEmpty()); diff != "" {
+				// Table mismatch
 				t.Errorf("major %d file %s mismatch (-want +got):\n%s", m, e.Name(), diff)
 			}
 			seen[e.Name()] = struct{}{}
@@ -158,6 +179,7 @@ func TestFetch(t *testing.T) {
 			}
 			return nil
 		}); err != nil {
+			// Non-fatal to collect all diffs
 			t.Errorf("major %d: %v", m, err)
 		}
 	}

@@ -1,27 +1,29 @@
 {
-	"title": "Chapter 1. The BaseOS repositoryCopy linkLink copied to clipboard!",
 	"id": "table-0",
 	"packages": [
 		{
-			"package": "aajohan-comfortaa-fonts",
-			"license": "OFL"
+			"license": "OFL",
+			"package": "aajohan-comfortaa-fonts"
 		},
 		{
-			"package": "accel-config",
-			"license": "GPLv2 and LGPLv2+ and MIT and CC0"
+			"license": "GPLv2 and LGPLv2+ and MIT and CC0",
+			"package": "accel-config"
 		},
 		{
-			"package": "accel-config-libs",
-			"license": "LGPLv2+ and MIT and CC0"
+			"license": "LGPLv2+ and MIT and CC0",
+			"package": "accel-config-libs"
 		},
 		{
-			"package": "acl",
-			"license": "GPLv2+"
+			"license": "GPLv2+",
+			"package": "acl"
 		},
 		{
-			"package": "acpica-tools",
-			"license": "GPLv2"
+			"license": "GPLv2",
+			"package": "acpica-tools"
 		}
 	],
-	"source": "fixtures/rhel-8.html"
+	"repository": "BaseOS",
+	"source": "fixtures/rhel-8.html",
+	"title": "BaseOS repository",
+	"type": "package"
 }

@@ -1,10 +1,8 @@
 {
-	"title": "3.1. Modules in the CodeReady Linux Builder repositoryCopy linkLink copied to clipboard!",
 	"id": "table-4",
 	"modules": [
 		{
 			"module": "javapackages-tools",
-			"stream": "201801",
 			"packages": [
 				"ant",
 				"ant-antlr",
@@ -522,11 +520,11 @@
 				"xmvn-tools-pom",
 				"xz-java",
 				"xz-java-javadoc"
-			]
+			],
+			"stream": "201801"
 		},
 		{
 			"module": "mariadb-devel",
-			"stream": "10.3",
 			"packages": [
 				"asio",
 				"asio-devel",
@@ -559,11 +557,11 @@
 				"mariadb-server-utils-debuginfo",
 				"mariadb-test",
 				"mariadb-test-debuginfo"
-			]
+			],
+			"stream": "10.3"
 		},
 		{
 			"module": "python38-devel",
-			"stream": "3.8",
 			"packages": [
 				"pytest",
 				"python-atomicwrites",
@@ -583,11 +581,11 @@
 				"python38-pytest",
 				"python38-wcwidth",
 				"python3x-pyparsing"
-			]
+			],
+			"stream": "3.8"
 		},
 		{
 			"module": "python39-devel",
-			"stream": "3.9",
 			"packages": [
 				"Cython",
 				"Cython-debugsource",
@@ -615,11 +613,11 @@
 				"python39-pytest",
 				"python39-wcwidth",
 				"python3x-pyparsing"
-			]
+			],
+			"stream": "3.9"
 		},
 		{
 			"module": "subversion-devel",
-			"stream": "1.10",
 			"packages": [
 				"libserf",
 				"libserf-debuginfo",
@@ -646,8 +644,11 @@
 				"utf8proc-debuginfo",
 				"utf8proc-debugsource",
 				"utf8proc-devel"
-			]
+			],
+			"stream": "1.10"
 		}
 	],
-	"source": "fixtures/rhel-8.html"
+	"source": "fixtures/rhel-8.html",
+	"title": "3.1. Modules in the CodeReady Linux Builder repository",
+	"type": "module"
 }

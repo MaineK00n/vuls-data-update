@@ -1,10 +1,8 @@
 {
-	"title": "2.1. AppStream modulesCopy linkLink copied to clipboard!",
 	"id": "table-2",
 	"modules": [
 		{
 			"module": "389-ds",
-			"stream": "1.4",
 			"packages": [
 				"389-ds-base",
 				"389-ds-base-debuginfo",
@@ -17,19 +15,19 @@
 				"389-ds-base-snmp",
 				"389-ds-base-snmp-debuginfo",
 				"python3-lib389"
-			]
+			],
+			"stream": "1.4"
 		},
 		{
 			"module": "ant",
-			"stream": "1.10",
 			"packages": [
 				"ant",
 				"ant-lib"
-			]
+			],
+			"stream": "1.10"
 		},
 		{
 			"module": "container-tools",
-			"stream": "1.0",
 			"packages": [
 				"buildah",
 				"buildah-debuginfo",
@@ -66,11 +64,11 @@
 				"slirp4netns",
 				"slirp4netns-debuginfo",
 				"slirp4netns-debugsource"
-			]
+			],
+			"stream": "1.0"
 		},
 		{
 			"module": "container-tools",
-			"stream": "2.0",
 			"packages": [
 				"buildah",
 				"buildah-debuginfo",
@@ -112,11 +110,11 @@
 				"slirp4netns-debugsource",
 				"toolbox",
 				"udica"
-			]
+			],
+			"stream": "2.0"
 		},
 		{
 			"module": "container-tools",
-			"stream": "3.0",
 			"packages": [
 				"buildah",
 				"buildah-debuginfo",
@@ -176,8 +174,11 @@
 				"toolbox-debugsource",
 				"toolbox-tests",
 				"udica"
-			]
+			],
+			"stream": "3.0"
 		}
 	],
-	"source": "fixtures/rhel-8.html"
+	"source": "fixtures/rhel-8.html",
+	"title": "2.1. AppStream modules",
+	"type": "module"
 }

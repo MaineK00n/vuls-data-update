@@ -1,12 +1,14 @@
 {
-	"title": "2.4. The Supplementary repositoryCopy linkLink copied to clipboard!",
 	"id": "table-5",
 	"packages": [
 		{
-			"package": "zhongyi-song-fonts",
 			"license": "Commercial",
+			"package": "zhongyi-song-fonts",
 			"rhel_9_minor_release_version": "9.0"
 		}
 	],
-	"source": "fixtures/rhel-9.html"
+	"repository": "Supplementary",
+	"source": "fixtures/rhel-9.html",
+	"title": "Supplementary repository",
+	"type": "package"
 }

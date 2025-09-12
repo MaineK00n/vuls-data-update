@@ -1,37 +1,38 @@
 {
-	"title": "2.6. The Resilient Storage add-onCopy linkLink copied to clipboard!",
 	"id": "table-7",
 	"packages": [
 		{
+			"application_compatibility_level": "2",
+			"license": "GPLv2+",
 			"package": "booth",
-			"license": "GPLv2+",
-			"application_compatibility_level": "2",
 			"rhel_9_minor_release_version": "9.0"
 		},
 		{
+			"application_compatibility_level": "2",
+			"license": "GPLv2+",
 			"package": "booth-arbitrator",
-			"license": "GPLv2+",
-			"application_compatibility_level": "2",
 			"rhel_9_minor_release_version": "9.0"
 		},
 		{
+			"application_compatibility_level": "2",
+			"license": "GPLv2+",
 			"package": "booth-core",
-			"license": "GPLv2+",
-			"application_compatibility_level": "2",
 			"rhel_9_minor_release_version": "9.0"
 		},
 		{
+			"application_compatibility_level": "2",
+			"license": "GPLv2+",
 			"package": "booth-site",
-			"license": "GPLv2+",
-			"application_compatibility_level": "2",
 			"rhel_9_minor_release_version": "9.0"
 		},
 		{
-			"package": "booth-test",
-			"license": "GPLv2+",
 			"application_compatibility_level": "2",
+			"license": "GPLv2+",
+			"package": "booth-test",
 			"rhel_9_minor_release_version": "9.0"
 		}
 	],
-	"source": "fixtures/rhel-10.html"
+	"source": "fixtures/rhel-10.html",
+	"title": "2.6. The Resilient Storage add-on",
+	"type": "package"
 }

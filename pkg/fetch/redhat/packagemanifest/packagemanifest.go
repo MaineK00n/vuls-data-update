@@ -76,13 +76,39 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// Table represents a scraped HTML table.
+// Normalized pattern regexes for title processing.
+var (
+	reCopyTail = regexp.MustCompile(`\s*Copy linkLink copied to clipboard!?$`)
+	reSection  = regexp.MustCompile(`^(\d+(?:\.\d+)*)\s+`)
+	reRepo     = regexp.MustCompile(`The ([A-Za-z0-9+._-]+) repository`)
+)
+
+// normalizeTitle converts a raw heading/caption into canonical form.
+// Returns normalized title (e.g. "BaseOS repository"), section number (e.g. "2.1"), repository name (e.g. "BaseOS").
+func normalizeTitle(raw string) (title, section, repo string) {
+	raw = reCopyTail.ReplaceAllString(raw, "")
+	raw = strings.TrimSpace(raw)
+	if ms := reSection.FindStringSubmatch(raw); len(ms) > 0 {
+		section = ms[1]
+		raw = strings.TrimPrefix(raw, ms[0])
+	}
+	if ms := reRepo.FindStringSubmatch(raw); len(ms) > 0 {
+		repo = ms[1]
+		raw = fmt.Sprintf("%s repository", repo)
+	}
+	return raw, section, repo
+}
+
+// Table represents a scraped HTML table (generic fallback).
 type Table struct {
-	Title   string              `json:"title"`
-	ID      string              `json:"id"`
-	Headers []string            `json:"headers"`
-	Rows    []map[string]string `json:"rows"`
-	Source  string              `json:"source"`
+	Title      string              `json:"title"`
+	Section    string              `json:"section,omitempty"`
+	ID         string              `json:"id"`
+	Repository string              `json:"repository,omitempty"`
+	Type       string              `json:"type,omitempty"`
+	Headers    []string            `json:"headers"`
+	Rows       []map[string]string `json:"rows"`
+	Source     string              `json:"source"`
 }
 
 // Package represents a row in a package table (first header == "package").
@@ -96,10 +122,13 @@ type Package struct {
 
 // PackageTable is a specialized table containing packages.
 type PackageTable struct {
-	Title    string    `json:"title"`
-	ID       string    `json:"id"`
-	Packages []Package `json:"packages"`
-	Source   string    `json:"source"`
+	Title      string    `json:"title"`
+	Section    string    `json:"section,omitempty"`
+	ID         string    `json:"id"`
+	Repository string    `json:"repository,omitempty"`
+	Type       string    `json:"type"`
+	Packages   []Package `json:"packages"`
+	Source     string    `json:"source"`
 }
 
 // Module represents a row in a module table (first header == "module").
@@ -112,10 +141,13 @@ type Module struct {
 
 // ModuleTable is a specialized table containing modules.
 type ModuleTable struct {
-	Title   string   `json:"title"`
-	ID      string   `json:"id"`
-	Modules []Module `json:"modules"`
-	Source  string   `json:"source"`
+	Title      string   `json:"title"`
+	Section    string   `json:"section,omitempty"`
+	ID         string   `json:"id"`
+	Repository string   `json:"repository,omitempty"`
+	Type       string   `json:"type"`
+	Modules    []Module `json:"modules"`
+	Source     string   `json:"source"`
 }
 
 // Fetch scrapes package manifest tables for specified RHEL major versions.
@@ -179,9 +211,9 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 	tableIndex := 0
 	doc.Find("table").Each(func(i int, s *goquery.Selection) {
 		var id string
-		// Title detection (improved): caption -> nearest heading (h1-h6) traversing previous siblings recursively up the ancestor chain.
+		// Title detection
 		title := findNearestHeading(s)
-		if capSel := s.Find("caption"); capSel.Length() > 0 { // caption has precedence if present
+		if capSel := s.Find("caption"); capSel.Length() > 0 {
 			captionText := strings.TrimSpace(capSel.Text())
 			if captionText != "" {
 				title = captionText
@@ -193,6 +225,12 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 			id = fmt.Sprintf("table-%d", tableIndex)
 		}
 		tableIndex++
+
+		// Normalize Title -> section/repository
+		nTitle, section, repo := normalizeTitle(title)
+		if nTitle != "" {
+			title = nTitle
+		}
 
 		// headers
 		var headers []string
@@ -254,7 +292,7 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 					RHEL10MinorReleaseVersion:     r["rhel_10_minor_release_version"],
 				})
 			}
-			pt := PackageTable{Title: title, ID: id, Packages: pkgs, Source: source}
+			pt := PackageTable{Title: title, Section: section, ID: id, Repository: repo, Type: "package", Packages: pkgs, Source: source}
 			if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("package-%s.json", sanitizeFilename(id))), pt); err != nil {
 				log.Printf("[ERROR] write package table %s: %v", id, err)
 			}
@@ -279,15 +317,15 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 					Packages:                      list,
 				})
 			}
-			mt := ModuleTable{Title: title, ID: id, Modules: mods, Source: source}
+			mt := ModuleTable{Title: title, Section: section, ID: id, Repository: repo, Type: "module", Modules: mods, Source: source}
 			if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("module-%s.json", sanitizeFilename(id))), mt); err != nil {
 				log.Printf("[ERROR] write module table %s: %v", id, err)
 			}
 			return
 		}
 
-		// write file
-		t := Table{Title: title, ID: id, Headers: headers, Rows: rows, Source: source}
+		// write generic table
+		t := Table{Title: title, Section: section, ID: id, Repository: repo, Type: "table", Headers: headers, Rows: rows, Source: source}
 		if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("%s.json", sanitizeFilename(id))), t); err != nil {
 			log.Printf("[ERROR] write table %s: %v", id, err)
 		}

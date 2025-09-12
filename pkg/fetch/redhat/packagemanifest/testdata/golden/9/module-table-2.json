@@ -1,11 +1,9 @@
 {
-	"title": "2.2.1. AppStream modulesCopy linkLink copied to clipboard!",
 	"id": "table-2",
 	"modules": [
 		{
-			"module": "mariadb",
-			"stream": "10.11",
 			"application_compatibility_level": "3",
+			"module": "mariadb",
 			"packages": [
 				"galera",
 				"galera-debuginfo",
@@ -34,12 +32,12 @@
 				"mariadb-server-utils-debuginfo",
 				"mariadb-test",
 				"mariadb-test-debuginfo"
-			]
+			],
+			"stream": "10.11"
 		},
 		{
-			"module": "maven",
-			"stream": "3.8",
 			"application_compatibility_level": "3",
+			"module": "maven",
 			"packages": [
 				"apache-commons-cli",
 				"apache-commons-codec",
@@ -75,12 +73,12 @@
 				"plexus-utils",
 				"sisu",
 				"slf4j"
-			]
+			],
+			"stream": "3.8"
 		},
 		{
-			"module": "maven",
-			"stream": "3.9",
 			"application_compatibility_level": "3",
+			"module": "maven",
 			"packages": [
 				"aopalliance",
 				"apache-commons-cli",
@@ -114,12 +112,12 @@
 				"plexus-utils",
 				"sisu",
 				"slf4j"
-			]
+			],
+			"stream": "3.9"
 		},
 		{
-			"module": "mysql",
-			"stream": "8.4",
 			"application_compatibility_level": "3",
+			"module": "mysql",
 			"packages": [
 				"mecab",
 				"mecab-debuginfo",
@@ -144,12 +142,12 @@
 				"rapidjson",
 				"rapidjson-devel",
 				"rapidjson-doc"
-			]
+			],
+			"stream": "8.4"
 		},
 		{
-			"module": "nginx",
-			"stream": "1.22",
 			"application_compatibility_level": "3",
+			"module": "nginx",
 			"packages": [
 				"nginx",
 				"nginx-all-modules",
@@ -169,8 +167,11 @@
 				"nginx-mod-mail-debuginfo",
 				"nginx-mod-stream",
 				"nginx-mod-stream-debuginfo"
-			]
+			],
+			"stream": "1.22"
 		}
 	],
-	"source": "fixtures/rhel-9.html"
+	"source": "fixtures/rhel-9.html",
+	"title": "2.2.1. AppStream modules",
+	"type": "module"
 }

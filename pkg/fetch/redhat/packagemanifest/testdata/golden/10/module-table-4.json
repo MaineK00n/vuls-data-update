@@ -1,19 +1,20 @@
 {
-	"title": "2.3.1. Modules in the CodeReady Linux Builder repositoryCopy linkLink copied to clipboard!",
 	"id": "table-4",
 	"modules": [
 		{
-			"module": "swig",
-			"stream": "4.1",
 			"application_compatibility_level": "4",
+			"module": "swig",
 			"packages": [
 				"swig",
 				"swig-debuginfo",
 				"swig-debugsource",
 				"swig-doc",
 				"swig-gdb"
-			]
+			],
+			"stream": "4.1"
 		}
 	],
-	"source": "fixtures/rhel-10.html"
+	"source": "fixtures/rhel-10.html",
+	"title": "2.3.1. Modules in the CodeReady Linux Builder repository",
+	"type": "module"
 }
