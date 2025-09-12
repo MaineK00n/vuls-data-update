@@ -1,14 +1,14 @@
 {
-	"id": "table-5",
-	"packages": [
-		{
-			"license": "Commercial",
-			"package": "zhongyi-song-fonts",
-			"rhel_10_minor_release_version": "10.0"
-		}
-	],
-	"repository": "Supplementary",
-	"source": "fixtures/rhel-10.html",
-	"title": "Supplementary repository",
-	"type": "package"
+  "id": "table-5",
+  "packages": [
+    {
+      "license": "Commercial",
+      "package": "zhongyi-song-fonts",
+      "minor_release_version": "10.0"
+    }
+  ],
+  "repository": "Supplementary",
+  "source": "fixtures/rhel-10.html",
+  "title": "Supplementary repository",
+  "type": "package"
 }

@@ -1,38 +1,38 @@
 {
-	"id": "table-7",
-	"packages": [
-		{
-			"application_compatibility_level": "2",
-			"license": "GPLv2+",
-			"package": "booth",
-			"rhel_9_minor_release_version": "9.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPLv2+",
-			"package": "booth-arbitrator",
-			"rhel_9_minor_release_version": "9.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPLv2+",
-			"package": "booth-core",
-			"rhel_9_minor_release_version": "9.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPLv2+",
-			"package": "booth-site",
-			"rhel_9_minor_release_version": "9.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPLv2+",
-			"package": "booth-test",
-			"rhel_9_minor_release_version": "9.0"
-		}
-	],
-	"source": "fixtures/rhel-9.html",
-	"title": "2.6. The Resilient Storage add-on",
-	"type": "package"
+  "id": "table-7",
+  "packages": [
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2+",
+      "package": "booth",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2+",
+      "package": "booth-arbitrator",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2+",
+      "package": "booth-core",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2+",
+      "package": "booth-site",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2+",
+      "package": "booth-test",
+      "minor_release_version": "9.0"
+    }
+  ],
+  "source": "fixtures/rhel-9.html",
+  "title": "2.6. The Resilient Storage add-on",
+  "type": "package"
 }

@@ -1,38 +1,38 @@
 {
-	"id": "table-6",
-	"packages": [
-		{
-			"application_compatibility_level": "2",
-			"license": "GPL-2.0-or-later",
-			"package": "booth",
-			"rhel_10_minor_release_version": "10.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPL-2.0-or-later",
-			"package": "booth-arbitrator",
-			"rhel_10_minor_release_version": "10.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPL-2.0-or-later",
-			"package": "booth-core",
-			"rhel_10_minor_release_version": "10.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPL-2.0-or-later",
-			"package": "booth-site",
-			"rhel_10_minor_release_version": "10.0"
-		},
-		{
-			"application_compatibility_level": "2",
-			"license": "GPL-2.0-or-later",
-			"package": "booth-test",
-			"rhel_10_minor_release_version": "10.0"
-		}
-	],
-	"source": "fixtures/rhel-10.html",
-	"title": "2.5. The High Availability add-on",
-	"type": "package"
+  "id": "table-6",
+  "packages": [
+    {
+      "application_compatibility_level": "2",
+      "license": "GPL-2.0-or-later",
+      "package": "booth",
+      "minor_release_version": "10.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPL-2.0-or-later",
+      "package": "booth-arbitrator",
+      "minor_release_version": "10.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPL-2.0-or-later",
+      "package": "booth-core",
+      "minor_release_version": "10.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPL-2.0-or-later",
+      "package": "booth-site",
+      "minor_release_version": "10.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPL-2.0-or-later",
+      "package": "booth-test",
+      "minor_release_version": "10.0"
+    }
+  ],
+  "source": "fixtures/rhel-10.html",
+  "title": "2.5. The High Availability add-on",
+  "type": "package"
 }

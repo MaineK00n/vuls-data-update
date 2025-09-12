@@ -116,8 +116,7 @@ type Package struct {
 	Package                       string `json:"package"`
 	License                       string `json:"license,omitempty"`
 	ApplicationCompatibilityLevel string `json:"application_compatibility_level,omitempty"`
-	RHEL9MinorReleaseVersion      string `json:"rhel_9_minor_release_version,omitempty"`
-	RHEL10MinorReleaseVersion     string `json:"rhel_10_minor_release_version,omitempty"`
+	MinorReleaseVersion           string `json:"minor_release_version,omitempty"`
 }
 
 // PackageTable is a specialized table containing packages.
@@ -284,12 +283,26 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 		if firstHeader == "package" {
 			var pkgs []Package
 			for _, r := range rows {
+				// Direct lookup: column name is deterministic for the executing major.
+				minorKey := fmt.Sprintf("rhel_%d_minor_release_version", major)
+				minor := r[minorKey]
+				// Fallback: if empty, pick the first non-empty rhel_*_minor_release_version (future-proof for other majors present in shared table)
+				if minor == "" {
+					for k, v := range r {
+						if v == "" {
+							continue
+						}
+						if strings.HasPrefix(k, "rhel_") && strings.HasSuffix(k, "_minor_release_version") {
+							minor = v
+							break
+						}
+					}
+				}
 				pkgs = append(pkgs, Package{
 					Package:                       r["package"],
 					License:                       r["license"],
 					ApplicationCompatibilityLevel: r["application_compatibility_level"],
-					RHEL9MinorReleaseVersion:      r["rhel_9_minor_release_version"],
-					RHEL10MinorReleaseVersion:     r["rhel_10_minor_release_version"],
+					MinorReleaseVersion:           minor,
 				})
 			}
 			pt := PackageTable{Title: title, Section: section, ID: id, Repository: repo, Type: "package", Packages: pkgs, Source: source}
