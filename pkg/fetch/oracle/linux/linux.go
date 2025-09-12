@@ -1,4 +1,4 @@
-package oracle
+package linux
 
 import (
 	"compress/bzip2"
@@ -61,7 +61,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		advisoryURL: advisoryURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "oracle"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "oracle", "linux"),
 		retry:       3,
 	}
 
@@ -136,13 +136,13 @@ func Fetch(opts ...Option) error {
 	bar = pb.StartNew(len(root.States.RpminfoState) + len(root.States.Textfilecontent54State))
 	for _, state := range root.States.RpminfoState {
 		if err := util.Write(filepath.Join(options.dir, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "states", "", fmt.Sprintf("%s.json", state.ID)))
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)))
 		}
 		bar.Increment()
 	}
 	for _, state := range root.States.Textfilecontent54State {
 		if err := util.Write(filepath.Join(options.dir, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "states", "", fmt.Sprintf("%s.json", state.ID)))
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
 		}
 		bar.Increment()
 	}
