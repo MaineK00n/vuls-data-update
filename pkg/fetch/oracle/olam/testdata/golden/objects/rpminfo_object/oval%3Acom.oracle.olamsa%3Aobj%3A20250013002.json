@@ -1,0 +1,6 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:com.oracle.olamsa:obj:20250013002",
+	"version": "501",
+	"name": "python3.11-cryptography"
+}

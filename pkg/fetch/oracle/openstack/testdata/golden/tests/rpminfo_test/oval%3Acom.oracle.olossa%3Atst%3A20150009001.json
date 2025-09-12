@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.olossa:tst:20150009001",
+	"version": "501",
+	"comment": "Oracle Linux 6 is installed",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.olossa:obj:20150009001"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.olossa:ste:20150009002"
+	}
+}

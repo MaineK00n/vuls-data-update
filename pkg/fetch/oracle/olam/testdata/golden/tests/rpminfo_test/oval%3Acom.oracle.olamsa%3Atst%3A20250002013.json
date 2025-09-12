@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.olamsa:tst:20250002013",
+	"version": "501",
+	"comment": "python311-olamkit is earlier than 0:2.2.0-25.el8",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.olamsa:obj:20250002007"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.olamsa:ste:20250002004"
+	}
+}

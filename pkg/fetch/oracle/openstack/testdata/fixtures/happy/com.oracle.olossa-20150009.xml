@@ -1,0 +1,149 @@
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:red-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+<generator>
+<oval:product_name>Oracle Errata System</oval:product_name>
+<oval:product_version>Oracle Linux</oval:product_version>
+<oval:schema_version>5.11</oval:schema_version>
+<oval:timestamp>2024-09-21T19:09:01</oval:timestamp>
+</generator>
+<definitions>
+<definition id="oval:com.oracle.olossa:def:20150009" version="501" class="patch">
+<metadata>
+<title>
+OLOSSA-2015-0009:  openstack-keystone security update (IMPORTANT)
+</title>
+<affected family="unix">
+<platform>Oracle Linux 6</platform>
+
+</affected>
+<reference source="olossa" ref_id="OLOSSA-2015-0009" ref_url="https://linux.oracle.com/errata/OLOSSA-2015-0009.html"/>
+<reference source="CVE" ref_id="CVE-2014-3621" ref_url="https://linux.oracle.com/cve/CVE-2014-3621.html"/>
+
+<description>
+[2014.1.3-2]
+- Include policy.v3cloudsample.json example (from nkinder)
+
+[2014.1.3-1]
+- Update to upstream 2014.1.3
+
+[2014.1.2.1-4]
+- exclude default port 35357 from the ephemeral port range rhbz#1130213
+- Avoid conversion of binary LDAP values rhbz#1138684
+
+[2014.1.2.1-2]
+- ensure python-migrate upgrade
+
+[2014.1.2.1-1]
+- updated to stable icehouse 2014.1.2.1 release
+</description>
+<!--
+ ~~~~~~~~~~~~~~~~~~~~   advisory details   ~~~~~~~~~~~~~~~~~~~ 
+-->
+<advisory>
+<severity>IMPORTANT</severity>
+<rights>Copyright 2015 Oracle, Inc.</rights>
+<issued date="2015-01-30"/>
+<cve cvss2="3.6/AV:N/AC:H/Au:S/C:P/I:P/A:N" href="https://linux.oracle.com/cve/CVE-2014-3621.html" public="20140916">CVE-2014-3621</cve>
+
+<affected_cpe_list>
+<cpe>cpe:/a:oracle:linux:6::openstack10</cpe>
+</affected_cpe_list>
+</advisory>
+</metadata>
+<criteria operator="AND">
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009001" comment="Oracle Linux 6 is installed"/>
+<criteria operator="AND">
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009002" comment="Oracle Linux arch is x86_64"/>
+<criteria operator="OR">
+<criteria operator="AND">
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009003" comment="openstack-keystone is earlier than 0:2014.1.3-2.el6"/>
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009004" comment="openstack-keystone is signed with the Oracle Linux 6 key"/>
+</criteria>
+<criteria operator="AND">
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009005" comment="openstack-keystone-doc is earlier than 0:2014.1.3-2.el6"/>
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009006" comment="openstack-keystone-doc is signed with the Oracle Linux 6 key"/>
+</criteria>
+<criteria operator="AND">
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009007" comment="python-keystone is earlier than 0:2014.1.3-2.el6"/>
+<criterion test_ref="oval:com.oracle.olossa:tst:20150009008" comment="python-keystone is signed with the Oracle Linux 6 key"/>
+</criteria>
+</criteria>
+</criteria>
+</criteria>
+
+</definition>
+</definitions>
+<!--
+ ~~~~~~~~~~~~~~~~~~~~~   rpminfo tests   ~~~~~~~~~~~~~~~~~~~~~ 
+-->
+<tests>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009001" version="501" comment="Oracle Linux 6 is installed" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009001"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009002"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009002" version="501" comment="Oracle Linux arch is x86_64" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009001"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009003"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009003" version="501" comment="openstack-keystone is earlier than 0:2014.1.3-2.el6" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009002"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009004"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009004" version="501" comment="openstack-keystone is signed with the Oracle Linux 6 key" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009002"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009001"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009005" version="501" comment="openstack-keystone-doc is earlier than 0:2014.1.3-2.el6" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009003"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009004"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009006" version="501" comment="openstack-keystone-doc is signed with the Oracle Linux 6 key" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009003"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009001"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009007" version="501" comment="python-keystone is earlier than 0:2014.1.3-2.el6" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009004"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009004"/>
+</rpminfo_test>
+<rpminfo_test id="oval:com.oracle.olossa:tst:20150009008" version="501" comment="python-keystone is signed with the Oracle Linux 6 key" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+<object object_ref="oval:com.oracle.olossa:obj:20150009004"/>
+<state state_ref="oval:com.oracle.olossa:ste:20150009001"/>
+</rpminfo_test>
+
+</tests>
+<!--
+ ~~~~~~~~~~~~~~~~~~~~   rpminfo objects   ~~~~~~~~~~~~~~~~~~~~ 
+-->
+<objects>
+<rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:obj:20150009003" version="501">
+<name>openstack-keystone-doc</name>
+</rpminfo_object>
+<rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:obj:20150009002" version="501">
+<name>openstack-keystone</name>
+</rpminfo_object>
+<rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:obj:20150009004" version="501">
+<name>python-keystone</name>
+</rpminfo_object>
+<rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:obj:20150009001" version="501">
+<name>oraclelinux-release</name>
+</rpminfo_object>
+
+</objects>
+<states>
+<!--
+ ~~~~~~~~~~~~~~~~~~~~   rpminfo states   ~~~~~~~~~~~~~~~~~~~~~ 
+-->
+<rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:ste:20150009001" version="501">
+<signature_keyid operation="equals">72f97b74ec551f03</signature_keyid>
+</rpminfo_state>
+<rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:ste:20150009002" version="501">
+<version operation="pattern match">^6</version>
+</rpminfo_state>
+<rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:ste:20150009003" version="501">
+<arch operation="pattern match">x86_64</arch>
+</rpminfo_state>
+<rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:com.oracle.olossa:ste:20150009004" version="501">
+<evr datatype="evr_string" operation="less than">0:2014.1.3-2.el6</evr>
+</rpminfo_state>
+
+</states>
+</oval_definitions>

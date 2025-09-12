@@ -1,0 +1,100 @@
+{
+	"id": "oval:com.oracle.ovmsa:def:20250001",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nOVMSA-2025-0001: Unbreakable Enterprise kernel security update (IMPORTANT)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 6"
+			]
+		},
+		"reference": [
+			{
+				"source": "ovmsa",
+				"ref_id": "OVMSA-2025-0001",
+				"ref_url": "https://linux.oracle.com/errata/OVMSA-2025-0001.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-26840",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-26840.html"
+			}
+		],
+		"description": "\n[4.1.12-124.93.1]\n- cachefiles: fix memory leak in cachefiles_add_cache() (Baokun Li)  [Orabug: 36544657]  {CVE-2024-26840}\n",
+		"advisory": {
+			"severity": "IMPORTANT",
+			"rights": "Copyright 2025 Oracle, Inc.",
+			"issued": {
+				"date": "2025-01-10"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-26840",
+					"href": "https://linux.oracle.com/cve/CVE-2024-26840.html",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+					"public": "20240417"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:oracle:linux:6:10:UEKR4_ELS"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.ovmsa:tst:20250001003",
+										"comment": "kernel-uek is earlier than 0:4.1.12-124.93.1.el6uek"
+									},
+									{
+										"test_ref": "oval:com.oracle.ovmsa:tst:20250001004",
+										"comment": "kernel-uek is signed with the Oracle Linux 6 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.ovmsa:tst:20250001005",
+										"comment": "kernel-uek-firmware is earlier than 0:4.1.12-124.93.1.el6uek"
+									},
+									{
+										"test_ref": "oval:com.oracle.ovmsa:tst:20250001006",
+										"comment": "kernel-uek-firmware is signed with the Oracle Linux 6 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.oracle.ovmsa:tst:20250001002",
+						"comment": "Oracle Linux arch is x86_64"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.oracle.ovmsa:tst:20250001001",
+				"comment": "Oracle Linux 6 is installed"
+			}
+		]
+	}
+}
