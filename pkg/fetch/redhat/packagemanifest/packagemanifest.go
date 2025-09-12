@@ -76,27 +76,36 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
-// Normalized pattern regexes for title processing.
+// Simplified pattern regexes for title processing and repository detection.
 var (
-	reCopyTail = regexp.MustCompile(`\s*Copy linkLink copied to clipboard!?$`)
-	reSection  = regexp.MustCompile(`^(\d+(?:\.\d+)*)\s+`)
-	reRepo     = regexp.MustCompile(`The ([A-Za-z0-9+._-]+) repository`)
+	reCopyTail    = regexp.MustCompile(`\s*Copy linkLink copied to clipboard!?$`)
+	reSection     = regexp.MustCompile(`^(\d+(?:\.\d+)*)\s+`)
+	reRepoLimited = regexp.MustCompile(`\b(BaseOS|AppStream|Supplementary)\b`)
 )
 
-// normalizeTitle converts a raw heading/caption into canonical form.
-// Returns normalized title (e.g. "BaseOS repository"), section number (e.g. "2.1"), repository name (e.g. "BaseOS").
+var whitespace = regexp.MustCompile(`\s+`)
+
+// detectRepoFromHeading returns "BaseOS" or "AppStream" if present in heading text; otherwise "".
+func detectRepoFromHeading(h string) string {
+	h = strings.NewReplacer("\u00a0", " ", "\u202f", " ").Replace(h)
+	if h == "" {
+		return ""
+	}
+	if m := reRepoLimited.FindStringSubmatch(h); len(m) > 1 {
+		return m[1]
+	}
+	return ""
+}
+
+// normalizeTitle now only extracts section number; it does NOT modify title or detect repository.
 func normalizeTitle(raw string) (title, section, repo string) {
+	raw = strings.NewReplacer("\u00a0", " ", "\u202f", " ").Replace(raw)
 	raw = reCopyTail.ReplaceAllString(raw, "")
 	raw = strings.TrimSpace(raw)
 	if ms := reSection.FindStringSubmatch(raw); len(ms) > 0 {
 		section = ms[1]
-		raw = strings.TrimPrefix(raw, ms[0])
 	}
-	if ms := reRepo.FindStringSubmatch(raw); len(ms) > 0 {
-		repo = ms[1]
-		raw = fmt.Sprintf("%s repository", repo)
-	}
-	return raw, section, repo
+	return raw, section, ""
 }
 
 // Table represents a scraped HTML table (generic fallback).
@@ -198,8 +207,6 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-var whitespace = regexp.MustCompile(`\s+`)
-
 func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source string) error {
 	// Strategy: find all tables inside the article/body; for each table, determine caption (if present) or preceding heading text.
 	// Provide stable ID: use table id attribute if present else normalized title index.
@@ -210,26 +217,22 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 	tableIndex := 0
 	doc.Find("table").Each(func(i int, s *goquery.Selection) {
 		var id string
-		// Title detection
-		title := findNearestHeading(s)
+		nearestHeadingText, _, _ := findNearestHeadingInfo(s)
+		title := nearestHeadingText
 		if capSel := s.Find("caption"); capSel.Length() > 0 {
-			captionText := strings.TrimSpace(capSel.Text())
-			if captionText != "" {
+			if captionText := strings.TrimSpace(capSel.Text()); captionText != "" {
 				title = captionText
 			}
 		}
-
 		id, _ = s.Attr("id")
 		if id == "" {
 			id = fmt.Sprintf("table-%d", tableIndex)
 		}
 		tableIndex++
-
-		// Normalize Title -> section/repository
-		nTitle, section, repo := normalizeTitle(title)
-		if nTitle != "" {
-			title = nTitle
-		}
+		// Normalize title (removes copy-link tail, normalizes spaces, extracts section)
+		var section string
+		title, section, _ = normalizeTitle(title)
+		repo := detectRepoFromHeading(nearestHeadingText)
 
 		// headers
 		var headers []string
@@ -283,10 +286,8 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 		if firstHeader == "package" {
 			var pkgs []Package
 			for _, r := range rows {
-				// Direct lookup: column name is deterministic for the executing major.
 				minorKey := fmt.Sprintf("rhel_%d_minor_release_version", major)
 				minor := r[minorKey]
-				// Fallback: if empty, pick the first non-empty rhel_*_minor_release_version (future-proof for other majors present in shared table)
 				if minor == "" {
 					for k, v := range r {
 						if v == "" {
@@ -346,36 +347,6 @@ func extractAndWriteTables(doc *goquery.Document, major int, rootDir, source str
 	return nil
 }
 
-// findNearestHeading finds the closest preceding heading (h1-h6) relative to the table.
-// It walks up the ancestor chain; for each ancestor it inspects previous siblings (closest first),
-// searching inside them (depth-first) for the last heading. Returns empty string if not found.
-func findNearestHeading(s *goquery.Selection) string {
-	headingsSelector := "h1,h2,h3,h4,h5,h6"
-	// current node whose previous siblings we inspect
-	cur := s
-	for cur.Length() > 0 {
-		// iterate previous siblings in reverse order (closest first)
-		prevs := []*goquery.Selection{}
-		cur.PrevAll().Each(func(_ int, ps *goquery.Selection) { prevs = append(prevs, ps) })
-		for i := 0; i < len(prevs)/2; i++ { // reverse slice
-			prevs[i], prevs[len(prevs)-1-i] = prevs[len(prevs)-1-i], prevs[i]
-		}
-		for _, p := range prevs {
-			// direct heading sibling
-			if goquery.NodeName(p) == "h1" || goquery.NodeName(p) == "h2" || goquery.NodeName(p) == "h3" || goquery.NodeName(p) == "h4" || goquery.NodeName(p) == "h5" || goquery.NodeName(p) == "h6" {
-				return strings.TrimSpace(p.Text())
-			}
-			// search inside previous sibling for headings; take the last one (closest context)
-			hs := p.Find(headingsSelector)
-			if hs.Length() > 0 {
-				return strings.TrimSpace(hs.Last().Text())
-			}
-		}
-		cur = cur.Parent()
-	}
-	return ""
-}
-
 func normalizeHeader(h string) string {
 	return strings.TrimSpace(whitespace.ReplaceAllString(strings.ToLower(h), "_"))
 }
@@ -396,4 +367,49 @@ func headerAt(headers []string, idx int) string {
 		return headers[idx]
 	}
 	return fmt.Sprintf("col_%d", idx)
+}
+
+// helper: return numeric level of heading tag (h1=1..h6=6) else 0
+func headingLevel(name string) int {
+	switch name {
+	case "h1":
+		return 1
+	case "h2":
+		return 2
+	case "h3":
+		return 3
+	case "h4":
+		return 4
+	case "h5":
+		return 5
+	case "h6":
+		return 6
+	}
+	return 0
+}
+
+func isHeadingTag(name string) bool {
+	return name == "h1" || name == "h2" || name == "h3" || name == "h4" || name == "h5" || name == "h6"
+}
+
+// findNearestHeadingInfo returns the closest preceding heading text and its level.
+func findNearestHeadingInfo(s *goquery.Selection) (string, int, *goquery.Selection) {
+	headingsSelector := "h1,h2,h3,h4,h5,h6"
+	cur := s
+	for cur.Length() > 0 {
+		prevs := []*goquery.Selection{}
+		cur.PrevAll().Each(func(_ int, ps *goquery.Selection) { prevs = append(prevs, ps) })
+		for _, p := range prevs {
+			if isHeadingTag(goquery.NodeName(p)) {
+				return strings.TrimSpace(p.Text()), headingLevel(goquery.NodeName(p)), p
+			}
+			hs := p.Find(headingsSelector)
+			if hs.Length() > 0 {
+				last := hs.Last()
+				return strings.TrimSpace(last.Text()), headingLevel(goquery.NodeName(last)), last
+			}
+		}
+		cur = cur.Parent()
+	}
+	return "", 0, nil
 }

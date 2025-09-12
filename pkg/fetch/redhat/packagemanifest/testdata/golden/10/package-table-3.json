@@ -28,6 +28,6 @@
     }
   ],
   "source": "fixtures/rhel-10.html",
-  "title": "2.3. The CodeReady Linux Builder repository",
+  "title": "2.3. The CodeReady Linux Builder repository",
   "type": "package"
 }

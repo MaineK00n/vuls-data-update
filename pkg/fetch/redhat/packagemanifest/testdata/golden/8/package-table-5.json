@@ -1,29 +1,29 @@
 {
-	"id": "table-5",
-	"packages": [
-		{
-			"license": "Intel",
-			"package": "dptfxtract"
-		},
-		{
-			"license": "IBM Binary Code License",
-			"package": "java-1.8.0-ibm"
-		},
-		{
-			"license": "IBM Binary Code License",
-			"package": "java-1.8.0-ibm-demo"
-		},
-		{
-			"license": "IBM Binary Code License",
-			"package": "java-1.8.0-ibm-devel"
-		},
-		{
-			"license": "IBM Binary Code License",
-			"package": "java-1.8.0-ibm-headless"
-		}
-	],
-	"repository": "Supplementary",
-	"source": "fixtures/rhel-8.html",
-	"title": "Supplementary repository",
-	"type": "package"
+  "id": "table-5",
+  "packages": [
+    {
+      "license": "Intel",
+      "package": "dptfxtract"
+    },
+    {
+      "license": "IBM Binary Code License",
+      "package": "java-1.8.0-ibm"
+    },
+    {
+      "license": "IBM Binary Code License",
+      "package": "java-1.8.0-ibm-demo"
+    },
+    {
+      "license": "IBM Binary Code License",
+      "package": "java-1.8.0-ibm-devel"
+    },
+    {
+      "license": "IBM Binary Code License",
+      "package": "java-1.8.0-ibm-headless"
+    }
+  ],
+  "repository": "Supplementary",
+  "source": "fixtures/rhel-8.html",
+  "title": "Chapter 4. The Supplementary repository",
+  "type": "package"
 }

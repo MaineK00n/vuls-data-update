@@ -9,6 +9,6 @@
   ],
   "repository": "Supplementary",
   "source": "fixtures/rhel-9.html",
-  "title": "Supplementary repository",
+  "title": "2.4. The Supplementary repository",
   "type": "package"
 }

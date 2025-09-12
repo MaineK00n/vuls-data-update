@@ -33,6 +33,6 @@
     }
   ],
   "source": "fixtures/rhel-9.html",
-  "title": "2.6. The Resilient Storage add-on",
+  "title": "2.6. The Resilient Storage add-on",
   "type": "package"
 }

@@ -1,29 +1,29 @@
 {
-	"id": "table-1",
-	"packages": [
-		{
-			"license": "GPLv3+ and (ASL 2.0 or MIT)",
-			"package": "389-ds-base"
-		},
-		{
-			"license": "GPLv3+ and (ASL 2.0 or MIT)",
-			"package": "389-ds-base-devel"
-		},
-		{
-			"license": "GPLv3+ and (ASL 2.0 or MIT)",
-			"package": "389-ds-base-legacy-tools"
-		},
-		{
-			"license": "GPLv3+ and (ASL 2.0 or MIT)",
-			"package": "389-ds-base-libs"
-		},
-		{
-			"license": "GPLv3+ and (ASL 2.0 or MIT)",
-			"package": "389-ds-base-snmp"
-		}
-	],
-	"repository": "AppStream",
-	"source": "fixtures/rhel-8.html",
-	"title": "AppStream repository",
-	"type": "package"
+  "id": "table-1",
+  "packages": [
+    {
+      "license": "GPLv3+ and (ASL 2.0 or MIT)",
+      "package": "389-ds-base"
+    },
+    {
+      "license": "GPLv3+ and (ASL 2.0 or MIT)",
+      "package": "389-ds-base-devel"
+    },
+    {
+      "license": "GPLv3+ and (ASL 2.0 or MIT)",
+      "package": "389-ds-base-legacy-tools"
+    },
+    {
+      "license": "GPLv3+ and (ASL 2.0 or MIT)",
+      "package": "389-ds-base-libs"
+    },
+    {
+      "license": "GPLv3+ and (ASL 2.0 or MIT)",
+      "package": "389-ds-base-snmp"
+    }
+  ],
+  "repository": "AppStream",
+  "source": "fixtures/rhel-8.html",
+  "title": "Chapter 2. The AppStream repository",
+  "type": "package"
 }

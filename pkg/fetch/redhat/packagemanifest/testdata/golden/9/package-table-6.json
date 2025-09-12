@@ -33,6 +33,6 @@
     }
   ],
   "source": "fixtures/rhel-9.html",
-  "title": "2.5. The High Availability add-on",
+  "title": "2.5. The High Availability add-on",
   "type": "package"
 }

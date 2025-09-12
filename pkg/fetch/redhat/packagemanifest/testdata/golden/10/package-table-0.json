@@ -34,6 +34,6 @@
   ],
   "repository": "BaseOS",
   "source": "fixtures/rhel-10.html",
-  "title": "BaseOS repository",
+  "title": "2.1. The BaseOS repository",
   "type": "package"
 }
