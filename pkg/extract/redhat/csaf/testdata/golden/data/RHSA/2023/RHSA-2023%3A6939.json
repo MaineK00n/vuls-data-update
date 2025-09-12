@@ -204,12 +204,12 @@
 					}
 				],
 				"published": "2023-11-14T16:03:32Z",
-				"modified": "2025-08-04T14:08:40Z"
+				"modified": "2025-09-10T15:07:55Z"
 			},
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		}
@@ -287,7 +287,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -375,7 +375,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -451,7 +451,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -527,7 +527,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -595,7 +595,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -663,7 +663,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -731,7 +731,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -799,7 +799,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -867,7 +867,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -935,7 +935,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1015,7 +1015,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1083,7 +1083,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1155,7 +1155,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1219,7 +1219,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1287,7 +1287,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1351,7 +1351,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		},
@@ -1423,7 +1423,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		}
@@ -5644,10 +5644,1210 @@
 										]
 									}
 								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::aardvark-dns",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:1.7.0-1.module+el8.9.0+19244+655f84ee"
+											}
+										],
+										"fixed": [
+											"2:1.7.0-1.module+el8.9.0+19244+655f84ee"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::buildah",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.31.3-1.module+el8.9.0+19761+326da906"
+											}
+										],
+										"fixed": [
+											"1:1.31.3-1.module+el8.9.0+19761+326da906"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::cockpit-podman",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:75-1.module+el8.9.0+19761+326da906"
+											}
+										],
+										"fixed": [
+											"0:75-1.module+el8.9.0+19761+326da906"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::conmon",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "3:2.1.8-1.module+el8.9.0+19761+326da906"
+											}
+										],
+										"fixed": [
+											"3:2.1.8-1.module+el8.9.0+19761+326da906"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::container-selinux",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:2.221.0-1.module+el8.9.0+19685+019f3589"
+											}
+										],
+										"fixed": [
+											"2:2.221.0-1.module+el8.9.0+19685+019f3589"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::containernetworking-plugins",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.3.0-4.module+el8.9.0+19649+5879504a"
+											}
+										],
+										"fixed": [
+											"1:1.3.0-4.module+el8.9.0+19649+5879504a"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::containers-common",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:1-54.module+el8.9.0+19761+326da906"
+											}
+										],
+										"fixed": [
+											"2:1-54.module+el8.9.0+19761+326da906"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::criu",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.18-4.module+el8.9.0+19090+d2921118"
+											}
+										],
+										"fixed": [
+											"0:3.18-4.module+el8.9.0+19090+d2921118"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::crun",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.8.7-1.module+el8.9.0+19731+94cfa27e"
+											}
+										],
+										"fixed": [
+											"0:1.8.7-1.module+el8.9.0+19731+94cfa27e"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::fuse-overlayfs",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.12-1.module+el8.9.0+19090+d2921118"
+											}
+										],
+										"fixed": [
+											"0:1.12-1.module+el8.9.0+19090+d2921118"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::libslirp",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.4.0-1.module+el8.9.0+19244+655f84ee"
+											}
+										],
+										"fixed": [
+											"0:4.4.0-1.module+el8.9.0+19244+655f84ee"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::netavark",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:1.7.0-1.module+el8.9.0+19244+655f84ee"
+											}
+										],
+										"fixed": [
+											"2:1.7.0-1.module+el8.9.0+19244+655f84ee"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::oci-seccomp-bpf-hook",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2.9-1.module+el8.9.0+19090+d2921118"
+											}
+										],
+										"fixed": [
+											"0:1.2.9-1.module+el8.9.0+19090+d2921118"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::podman",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "3:4.6.1-4.module+el8.9.0+19761+326da906"
+											}
+										],
+										"fixed": [
+											"3:4.6.1-4.module+el8.9.0+19761+326da906"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::python-podman",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.6.0-1.module+el8.9.0+19513+83322573"
+											}
+										],
+										"fixed": [
+											"0:4.6.0-1.module+el8.9.0+19513+83322573"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::runc",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.1.9-1.module+el8.9.0+19648+0d5ae0ec"
+											}
+										],
+										"fixed": [
+											"1:1.1.9-1.module+el8.9.0+19648+0d5ae0ec"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::skopeo",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:1.13.3-1.module+el8.9.0+19761+326da906"
+											}
+										],
+										"fixed": [
+											"2:1.13.3-1.module+el8.9.0+19761+326da906"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::slirp4netns",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2.1-1.module+el8.9.0+19731+94cfa27e"
+											}
+										],
+										"fixed": [
+											"0:1.2.1-1.module+el8.9.0+19731+94cfa27e"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::toolbox",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.0.99.4-5.module+el8.9.0+19655+b08391f8"
+											}
+										],
+										"fixed": [
+											"0:0.0.99.4-5.module+el8.9.0+19655+b08391f8"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "container-tools:rhel8::udica",
+											"repositories": [
+												"rhel-8-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-debug-rpms",
+												"rhel-8-for-aarch64-appstream-rpms",
+												"rhel-8-for-aarch64-appstream-source-rpms",
+												"rhel-8-for-ppc64le-appstream-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-rpms",
+												"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+												"rhel-8-for-ppc64le-appstream-rpms",
+												"rhel-8-for-ppc64le-appstream-source-rpms",
+												"rhel-8-for-s390x-appstream-debug-rpms",
+												"rhel-8-for-s390x-appstream-rpms",
+												"rhel-8-for-s390x-appstream-source-rpms",
+												"rhel-8-for-x86_64-appstream-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-rpms",
+												"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+												"rhel-8-for-x86_64-appstream-rpms",
+												"rhel-8-for-x86_64-appstream-source-rpms",
+												"ubi-8-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-debug-rpms",
+												"ubi-8-for-aarch64-appstream-rpms",
+												"ubi-8-for-aarch64-appstream-source-rpms",
+												"ubi-8-for-ppc64le-appstream-debug-rpms",
+												"ubi-8-for-ppc64le-appstream-rpms",
+												"ubi-8-for-ppc64le-appstream-source-rpms",
+												"ubi-8-for-s390x-appstream-debug-rpms",
+												"ubi-8-for-s390x-appstream-rpms",
+												"ubi-8-for-s390x-appstream-source-rpms",
+												"ubi-8-for-x86_64-appstream-debug-rpms",
+												"ubi-8-for-x86_64-appstream-rpms",
+												"ubi-8-for-x86_64-appstream-source-rpms"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.2.6-20.module+el8.9.0+19244+655f84ee"
+											}
+										],
+										"fixed": [
+											"0:0.2.6-20.module+el8.9.0+19244+655f84ee"
+										]
+									}
+								}
 							}
 						]
 					},
-					"tag": "8-fixed--d1d35894-26d8-7d06"
+					"tag": "8-fixed--42ea70c6-b398-42db"
 				}
 			]
 		}

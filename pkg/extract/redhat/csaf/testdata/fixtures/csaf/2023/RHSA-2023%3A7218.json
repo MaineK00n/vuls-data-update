@@ -67,12 +67,12 @@
 		],
 		"title": "Red Hat Security Advisory: Kernel Module Management security update",
 		"tracking": {
-			"current_release_date": "2024-12-01T21:11:37+00:00",
+			"current_release_date": "2025-09-10T15:08:19+00:00",
 			"generator": {
-				"date": "2024-12-01T21:11:37+00:00",
+				"date": "2025-09-10T15:08:19+00:00",
 				"engine": {
 					"name": "Red Hat SDEngine",
-					"version": "4.2.1"
+					"version": "4.6.7"
 				}
 			},
 			"id": "RHSA-2023:7218",
@@ -89,7 +89,7 @@
 					"summary": "Last updated version"
 				},
 				{
-					"date": "2024-12-01T21:11:37+00:00",
+					"date": "2025-09-10T15:08:19+00:00",
 					"number": "3",
 					"summary": "Last generated version"
 				}
@@ -619,6 +619,7 @@
 			"remediations": [
 				{
 					"category": "vendor_fix",
+					"date": "2023-11-15T01:02:10+00:00",
 					"details": "For details on how to apply this update, which includes the changes described in this advisory, refer to:\n\nhttps://access.redhat.com/articles/11258",
 					"product_ids": [
 						"9Base-KMM-1.1:kmm/kernel-module-management-hub-operator-bundle@sha256:4b9879b5a7d6003b0c9586a11c2062a78794a6f92fe9ecc14da80e04149a62f8_arm64",
