@@ -1,0 +1,29 @@
+{
+  "id": "table-0",
+  "packages": [
+    {
+      "license": "OFL",
+      "package": "aajohan-comfortaa-fonts"
+    },
+    {
+      "license": "GPLv2 and LGPLv2+ and MIT and CC0",
+      "package": "accel-config"
+    },
+    {
+      "license": "LGPLv2+ and MIT and CC0",
+      "package": "accel-config-libs"
+    },
+    {
+      "license": "GPLv2+",
+      "package": "acl"
+    },
+    {
+      "license": "GPLv2",
+      "package": "acpica-tools"
+    }
+  ],
+  "repository": "BaseOS",
+  "source": "fixtures/rhel-8.html",
+  "title": "Chapter 1. The BaseOS repository",
+  "type": "package"
+}

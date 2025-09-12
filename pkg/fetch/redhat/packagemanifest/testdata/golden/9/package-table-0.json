@@ -1,0 +1,45 @@
+{
+  "id": "table-0",
+  "packages": [
+    {
+      "application_compatibility_level": "4",
+      "license": "GPL-2.0-only",
+      "package": "accel-config",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "4",
+      "license": "LGPL-2.1-only",
+      "package": "accel-config-libs",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2+",
+      "package": "acl",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "GPLv2",
+      "package": "acpica-tools",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "2",
+      "license": "LGPLv2+",
+      "package": "adcli",
+      "minor_release_version": "9.0"
+    },
+    {
+      "application_compatibility_level": "Not Applicable",
+      "license": "MIT AND GPL-2.0-or-later",
+      "package": "ca-certificates",
+      "minor_release_version": "9.0"
+    }
+  ],
+  "repository": "BaseOS",
+  "source": "fixtures/rhel-9.html",
+  "title": "2.1. The BaseOS repository",
+  "type": "package"
+}

@@ -1,0 +1,28 @@
+{
+  "id": "table-3",
+  "packages": [
+    {
+      "license": "LGPLv2+",
+      "package": "accel-config-devel"
+    },
+    {
+      "license": "GPLv3+",
+      "package": "accountsservice-devel"
+    },
+    {
+      "license": "LGPLv3+ or CC-BY-SA",
+      "package": "adwaita-icon-theme-devel"
+    },
+    {
+      "license": "GPLv2+ and MIT",
+      "package": "anaconda-widgets-devel"
+    },
+    {
+      "license": "ASL 2.0",
+      "package": "ant"
+    }
+  ],
+  "source": "fixtures/rhel-8.html",
+  "title": "Chapter 3. The CodeReady Linux Builder repository",
+  "type": "package"
+}
