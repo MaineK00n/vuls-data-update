@@ -88,6 +88,7 @@ import (
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/ghsa"
 	npmGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/glsa"
 	npmOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/npm/osv"
+	nucleiAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuclei/api"
 	nucleiRepository "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuclei/repository"
 	nugetGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/ghsa"
 	nugetGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/nuget/glsa"
@@ -232,7 +233,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNetBSD(),
 		newCmdNozomiNetworksCSAF(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
-		newCmdNucleiRepository(),
+		newCmdNucleiAPI(), newCmdNucleiRepository(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
@@ -2645,6 +2646,33 @@ func newCmdNpmOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "npm", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdNucleiAPI() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "nuclei", "api"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nuclei-api <api-key>",
+		Short: "Fetch Nuclei Templates API data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch nuclei-api key12345
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := nucleiAPI.Fetch(args[0], nucleiAPI.WithDir(options.dir), nucleiAPI.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch nuclei api")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

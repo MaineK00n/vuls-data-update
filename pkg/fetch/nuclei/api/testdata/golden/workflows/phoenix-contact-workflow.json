@@ -1,0 +1,20 @@
+{
+	"uri": "workflows/phoenix-contact-workflow.yaml",
+	"id": "phoenix-contact-workflow",
+	"name": "Phoenix Contact Security Checks",
+	"author": [
+		"inokii"
+	],
+	"severity": "unknown",
+	"type": "workflow",
+	"dir": "workflows",
+	"ref": "projectdiscovery/nuclei-templates:ca380a3636cb",
+	"created_at": "2025-09-11T11:45:34Z",
+	"updated_at": "2025-09-11T11:45:34Z",
+	"is_early": true,
+	"raw": "id: phoenix-contact-workflow\n\ninfo:\n  name: Phoenix Contact Security Checks\n  author: inokii\n  description: A simple workflow that runs all Phoenix Contact related nuclei templates on a given target.\n\nworkflows:\n  - template: http/exposed-panels/phoenix-contact-charx-panel.yaml\n    subtemplates:\n      - tags: phoenix-contact\n",
+	"template_id": "phoenix-contact-workflow",
+	"description": "A simple workflow that runs all Phoenix Contact related nuclei templates on a given target.",
+	"filename": "phoenix-contact-workflow.yaml",
+	"template_type": "public"
+}
