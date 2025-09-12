@@ -1,10 +1,10 @@
-package oracle_test
+package linux_test
 
 import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/oracle/linux"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -40,7 +40,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			outputDir := t.TempDir()
-			err := oracle.Extract(utiltest.QueryUnescapeFileTree(t, tt.fixturePath), oracle.WithDir(outputDir))
+			err := linux.Extract(utiltest.QueryUnescapeFileTree(t, tt.fixturePath), linux.WithDir(outputDir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

@@ -1,4 +1,4 @@
-package oracle
+package linux
 
 import (
 	"compress/bzip2"
@@ -61,7 +61,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		advisoryURL: advisoryURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "oracle"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "oracle", "linux"),
 		retry:       3,
 	}
 
