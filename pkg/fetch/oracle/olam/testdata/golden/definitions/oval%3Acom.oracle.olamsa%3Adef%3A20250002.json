@@ -1,0 +1,218 @@
+{
+	"id": "oval:com.oracle.olamsa:def:20250002",
+	"version": "501",
+	"class": "patch",
+	"metadata": {
+		"title": "\nOLAMSA-2025-0002: OLAM 2.2 security update (IMPORTANT)\n",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"Oracle Linux 8"
+			]
+		},
+		"reference": [
+			{
+				"source": "olamsa",
+				"ref_id": "OLAMSA-2025-0002",
+				"ref_url": "https://linux.oracle.com/errata/OLAMSA-2025-0002.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-26130",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-26130.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2023-49083",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2023-49083.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-6345",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-6345.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-4340",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-4340.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-5620",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-5620.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-53899",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-53899.html"
+			},
+			{
+				"source": "CVE",
+				"ref_id": "CVE-2024-53908",
+				"ref_url": "https://linux.oracle.com/cve/CVE-2024-53908.html"
+			}
+		],
+		"description": "\nol-automation-manager\n[2.2.0-25.el8]\n- OLAM-683 Apply patch for CVE-2024-56201 (Jinja2-3.1.2 patched)\n\n[2.2.0-24.el8]\n- OLAM-600 Upgrade virtualenv>=20.26.6 to fix CVE-2024-53899\n- OLAM-657 Apply patch for CVE-2024-53908 (Django 4.2.6 patched)\n\n[2.2.0-23.el8]\n- OLAM-597 Upgrade setuptools>=70.0 to fix CVE-2024-6345\n\n[2.2.0-22.el8]\n- OLAM-518 Patch for CVE-2024-26130\n- OLAM-519 Patch for CVE-2023-49083\n\n[2.2.0-21.el8]\n- OLAM-521 Patch for sqlparse-0.4.4 - CVE-2024-4340\n\n[2.2.0-20.el8]\n- OLAM-616 Bump venvctrl to 0.9.0 (python 3.11.11 compatible)\n\npython-django\n[4.2.17-1.0.0]\n- OLAM 658 Bump version to mitigate CVE-2024-53908\n\npython3.11-cryptography\n[41.0.7-1.0.1]\n- OLAM-518 Apply patch for CVE-2024-26130\n\npython-jinja2\n[3.1.3-1.0.3]\n- Apply patch for CVE-2024-56201 [JIRA: OLAM-683]\n",
+		"advisory": {
+			"severity": "IMPORTANT",
+			"rights": "Copyright 2025 Oracle, Inc.",
+			"issued": {
+				"date": "2025-02-14"
+			},
+			"cve": [
+				{
+					"text": "CVE-2024-26130",
+					"href": "https://linux.oracle.com/cve/CVE-2024-26130.html",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"public": "20240221"
+				},
+				{
+					"text": "CVE-2023-49083",
+					"href": "https://linux.oracle.com/cve/CVE-2023-49083.html",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"public": "20231129"
+				},
+				{
+					"text": "CVE-2024-6345",
+					"href": "https://linux.oracle.com/cve/CVE-2024-6345.html",
+					"cvss3": "8.8/CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+					"public": "20240715"
+				},
+				{
+					"text": "CVE-2024-4340",
+					"href": "https://linux.oracle.com/cve/CVE-2024-4340.html",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"public": "20240430"
+				},
+				{
+					"text": "CVE-2024-5620",
+					"href": "https://linux.oracle.com/cve/CVE-2024-5620.html",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+					"public": "20240718"
+				},
+				{
+					"text": "CVE-2024-53899",
+					"href": "https://linux.oracle.com/cve/CVE-2024-53899.html",
+					"cvss3": "7.8/CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+					"public": "20241124"
+				},
+				{
+					"text": "CVE-2024-53908",
+					"href": "https://linux.oracle.com/cve/CVE-2024-53908.html",
+					"cvss3": "9.8/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+					"public": "20241206"
+				}
+			],
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/a:oracle:linux_automation_manager:2.2"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "AND",
+				"criterias": [
+					{
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002003",
+										"comment": "ol-automation-manager is earlier than 0:2.2.0-25.el8"
+									},
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002004",
+										"comment": "ol-automation-manager is signed with the Oracle Linux 8 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002005",
+										"comment": "ol-automation-manager-cli is earlier than 0:2.2.0-25.el8"
+									},
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002006",
+										"comment": "ol-automation-manager-cli is signed with the Oracle Linux 8 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002007",
+										"comment": "python3.11-cryptography is earlier than 0:41.0.7-1.0.1.el8"
+									},
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002008",
+										"comment": "python3.11-cryptography is signed with the Oracle Linux 8 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002009",
+										"comment": "python3.11-django is earlier than 0:4.2.17-1.0.0.el8"
+									},
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002010",
+										"comment": "python3.11-django is signed with the Oracle Linux 8 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002011",
+										"comment": "python3.11-jinja2 is earlier than 0:3.1.3-1.0.3.el8"
+									},
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002012",
+										"comment": "python3.11-jinja2 is signed with the Oracle Linux 8 key"
+									}
+								]
+							},
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002013",
+										"comment": "python311-olamkit is earlier than 0:2.2.0-25.el8"
+									},
+									{
+										"test_ref": "oval:com.oracle.olamsa:tst:20250002014",
+										"comment": "python311-olamkit is signed with the Oracle Linux 8 key"
+									}
+								]
+							}
+						]
+					}
+				],
+				"criterions": [
+					{
+						"test_ref": "oval:com.oracle.olamsa:tst:20250002002",
+						"comment": "Oracle Linux arch is x86_64"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:com.oracle.olamsa:tst:20250002001",
+				"comment": "Oracle Linux 8 is installed"
+			}
+		]
+	}
+}

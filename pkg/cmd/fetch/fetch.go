@@ -105,6 +105,9 @@ import (
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
+	oracleOLAM "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/olam"
+	oracleOpenStack "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/openstack"
+	oracleVM "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/vm"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/oss-fuzz/osv"
 	oxCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/ox/csaf"
 	paloaltoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
@@ -237,7 +240,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
-		newCmdOracleLinux(),
+		newCmdOracleLinux(), newCmdOracleOLAM(), newCmdOracleOpenStack(), newCmdOracleVM(),
 		newCmdOSSFuzzOSV(),
 		newCmdOXCSAF(),
 		newCmdPaloAltoList(), newCmdPaloAltoJSON(), newCmdPaloAltoCSAF(),
@@ -3263,6 +3266,107 @@ func newCmdOracleLinux() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdOracleOLAM() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "olam"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "oracle-olam",
+		Short: "Fetch Oracle Linux Automation Manager data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch oracle-olam
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := oracleOLAM.Fetch(oracleOLAM.WithDir(options.dir), oracleOLAM.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch oracle olam")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdOracleOpenStack() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "openstack"),
+			retry: 3,
+		},
+		concurrency: 3,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "oracle-openstack",
+		Short: "Fetch Oracle Linux OpenStack data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch oracle-openstack
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := oracleOpenStack.Fetch(oracleOpenStack.WithDir(options.dir), oracleOpenStack.WithRetry(options.retry), oracleOpenStack.WithConcurrency(options.concurrency), oracleOpenStack.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch oracle openstack")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdOracleVM() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "vm"),
+			retry: 3,
+		},
+		concurrency: 3,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "oracle-vm",
+		Short: "Fetch Oracle VM data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch oracle-vm
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := oracleVM.Fetch(oracleVM.WithDir(options.dir), oracleVM.WithRetry(options.retry), oracleVM.WithConcurrency(options.concurrency), oracleVM.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch oracle vm")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
 
 	return cmd
 }

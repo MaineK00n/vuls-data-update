@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.olamsa:tst:20250002009",
+	"version": "501",
+	"comment": "python3.11-django is earlier than 0:4.2.17-1.0.0.el8",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.olamsa:obj:20250002005"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.olamsa:ste:20250002006"
+	}
+}
