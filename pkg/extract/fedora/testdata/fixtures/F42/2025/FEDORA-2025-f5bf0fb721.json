@@ -1,0 +1,784 @@
+{
+	"alias": "FEDORA-2025-f5bf0fb721",
+	"autokarma": true,
+	"autotime": true,
+	"bugs": [
+		{
+			"bug_id": 2368931,
+			"security": true,
+			"title": "CVE-2025-5262 libvpx: Double-free in libvpx encoder [fedora-all]",
+			"bugzilla": {
+				"bug_id": "2368931",
+				"creation_ts": "2025-05-28 10:02:45 +0000",
+				"short_desc": "CVE-2025-5262 libvpx: Double-free in libvpx encoder [fedora-all]",
+				"delta_ts": "2025-06-08 02:31:45 +0000",
+				"classification": "Fedora",
+				"product": "Fedora",
+				"component": "libvpx",
+				"version": "42",
+				"rep_platform": "Unspecified",
+				"op_sys": "Unspecified",
+				"bug_status": "CLOSED",
+				"resolution": "ERRATA",
+				"keywords": "Security, SecurityTracking",
+				"priority": "urgent",
+				"bug_severity": "urgent",
+				"blocked": [
+					{
+						"bug_id": "2368749",
+						"alias": [
+							"CVE-2025-5283"
+						],
+						"creation_ts": "2025-05-27 13:01:16 +0000",
+						"short_desc": "CVE-2025-5283 libvpx: Double-free in libvpx encoder",
+						"delta_ts": "2025-09-01 08:28:30 +0000",
+						"classification": "Other",
+						"product": "Security Response",
+						"component": "vulnerability",
+						"version": "unspecified",
+						"rep_platform": "All",
+						"op_sys": "Linux",
+						"bug_status": "NEW",
+						"keywords": "Security",
+						"priority": "high",
+						"bug_severity": "high",
+						"depends_on": [
+							"2368932",
+							"2368931"
+						],
+						"external_bugs": {
+							"text": "RHSA-2025:9331",
+							"name": "Red Hat Product Errata"
+						},
+						"long_desc": [
+							{
+								"isprivate": "0",
+								"commentid": "18501001",
+								"comment_count": "0",
+								"who": {
+									"text": "bzimport",
+									"name": "OSIDB Bzimport"
+								},
+								"bug_when": "2025-05-27 13:01:16 +0000",
+								"thetext": "A double-free could have occurred in `vpx_codec_enc_init_multi` after a failed allocation when initializing the encoder for WebRTC. This could have caused memory corruption and a potentially exploitable crash. This vulnerability affects Firefox < 139, Firefox ESR < 115.24, and Firefox ESR < 128.11."
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523373",
+								"comment_count": "1",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 15:37:23 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9\n\nVia RHSA-2025:9118 https://access.redhat.com/errata/RHSA-2025:9118"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523399",
+								"comment_count": "2",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:00:38 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 10\n\nVia RHSA-2025:9120 https://access.redhat.com/errata/RHSA-2025:9120"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523409",
+								"comment_count": "3",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:20:12 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8\n\nVia RHSA-2025:9119 https://access.redhat.com/errata/RHSA-2025:9119"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523420",
+								"comment_count": "4",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:24:32 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8.2 Advanced Update Support\n\nVia RHSA-2025:9128 https://access.redhat.com/errata/RHSA-2025:9128"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523423",
+								"comment_count": "5",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:26:26 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8.4 Advanced Mission Critical Update Support\n\nVia RHSA-2025:9127 https://access.redhat.com/errata/RHSA-2025:9127"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523438",
+								"comment_count": "6",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:36:49 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9.2 Update Services for SAP Solutions\n\nVia RHSA-2025:9123 https://access.redhat.com/errata/RHSA-2025:9123"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523441",
+								"comment_count": "7",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:40:55 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8.8 Update Services for SAP Solutions\n  Red Hat Enterprise Linux 8.8 Telecommunications Update Service\n\nVia RHSA-2025:9125 https://access.redhat.com/errata/RHSA-2025:9125"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523444",
+								"comment_count": "8",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:44:03 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8.6 Advanced Mission Critical Update Support\n  Red Hat Enterprise Linux 8.6 Update Services for SAP Solutions\n  Red Hat Enterprise Linux 8.6 Telecommunications Update Service\n\nVia RHSA-2025:9126 https://access.redhat.com/errata/RHSA-2025:9126"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523445",
+								"comment_count": "9",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:44:07 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9.0 Update Services for SAP Solutions\n\nVia RHSA-2025:9124 https://access.redhat.com/errata/RHSA-2025:9124"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523446",
+								"comment_count": "10",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-16 16:45:53 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 9.4 Extended Update Support\n\nVia RHSA-2025:9122 https://access.redhat.com/errata/RHSA-2025:9122"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18523843",
+								"comment_count": "11",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-17 07:10:12 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 8.6 Advanced Mission Critical Update Support\n  Red Hat Enterprise Linux 8.6 Update Services for SAP Solutions\n  Red Hat Enterprise Linux 8.6 Telecommunications Update Service\n\nVia RHSA-2025:9155 https://access.redhat.com/errata/RHSA-2025:9155"
+							},
+							{
+								"isprivate": "0",
+								"commentid": "18530344",
+								"comment_count": "12",
+								"who": {
+									"text": "errata-xmlrpc",
+									"name": "errata-xmlrpc"
+								},
+								"bug_when": "2025-06-23 02:39:46 +0000",
+								"thetext": "This issue has been addressed in the following products:\n\n  Red Hat Enterprise Linux 7 Extended Lifecycle Support\n\nVia RHSA-2025:9331 https://access.redhat.com/errata/RHSA-2025:9331"
+							}
+						]
+					}
+				],
+				"long_desc": [
+					{
+						"isprivate": "0",
+						"commentid": "18502008",
+						"comment_count": "0",
+						"who": {
+							"text": "mcascell",
+							"name": "Mauro Matteo Cascella"
+						},
+						"bug_when": "2025-05-28 10:02:45 +0000",
+						"thetext": "More information about this security flaw is available in the following bug:\n\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2368749\n\nDisclaimer: Community trackers are created by Red Hat Product Security team on a best effort basis. Package maintainers are required to ascertain if the flaw indeed affects their package, before starting the update process."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18507745",
+						"comment_count": "1",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-03 14:48:46 +0000",
+						"thetext": "FEDORA-2025-8d38482143 (libvpx-1.15.0-3.fc43) has been submitted as an update to Fedora 43.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-8d38482143"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18507778",
+						"comment_count": "2",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-03 15:07:08 +0000",
+						"thetext": "FEDORA-2025-15220f1411 (libvpx-1.15.0-3.fc41) has been submitted as an update to Fedora 41.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-15220f1411"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18507779",
+						"comment_count": "3",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-03 15:07:36 +0000",
+						"thetext": "FEDORA-2025-f5bf0fb721 (libvpx-1.15.0-3.fc42) has been submitted as an update to Fedora 42.\nhttps://bodhi.fedoraproject.org/updates/FEDORA-2025-f5bf0fb721"
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18507815",
+						"comment_count": "4",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-03 16:11:00 +0000",
+						"thetext": "FEDORA-2025-8d38482143 (libvpx-1.15.0-3.fc43) has been pushed to the Fedora 43 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18508231",
+						"comment_count": "5",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-04 04:30:13 +0000",
+						"thetext": "FEDORA-2025-f5bf0fb721 has been pushed to the Fedora 42 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-f5bf0fb721`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-f5bf0fb721\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18508274",
+						"comment_count": "6",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-04 05:04:28 +0000",
+						"thetext": "FEDORA-2025-15220f1411 has been pushed to the Fedora 41 testing repository.\nSoon you'll be able to install the update with the following command:\n`sudo dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-15220f1411`\nYou can provide feedback for this update here: https://bodhi.fedoraproject.org/updates/FEDORA-2025-15220f1411\n\nSee also https://fedoraproject.org/wiki/QA:Updates_Testing for more information on how to test updates."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18510491",
+						"comment_count": "7",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-06 01:44:17 +0000",
+						"thetext": "FEDORA-2025-f5bf0fb721 (libvpx-1.15.0-3.fc42) has been pushed to the Fedora 42 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					},
+					{
+						"isprivate": "0",
+						"commentid": "18512134",
+						"comment_count": "8",
+						"who": {
+							"text": "updates",
+							"name": "Fedora Update System"
+						},
+						"bug_when": "2025-06-08 02:31:45 +0000",
+						"thetext": "FEDORA-2025-15220f1411 (libvpx-1.15.0-3.fc41) has been pushed to the Fedora 41 stable repository.\nIf problem still persists, please make note of it in this bug report."
+					}
+				]
+			}
+		}
+	],
+	"builds": [
+		{
+			"epoch": 0,
+			"nvr": "libvpx-1.15.0-3.fc42",
+			"release_id": 84,
+			"signed": true,
+			"type": "rpm",
+			"package": {
+				"aarch64": [
+					{
+						"name": "libvpx-utils-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "aarch64"
+					},
+					{
+						"name": "libvpx",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "aarch64"
+					},
+					{
+						"name": "libvpx-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "aarch64"
+					},
+					{
+						"name": "libvpx-utils",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "aarch64"
+					},
+					{
+						"name": "libvpx-devel",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "aarch64"
+					},
+					{
+						"name": "libvpx-debugsource",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "aarch64"
+					}
+				],
+				"i686": [
+					{
+						"name": "libvpx-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "i686"
+					},
+					{
+						"name": "libvpx",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "i686"
+					},
+					{
+						"name": "libvpx-devel",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "i686"
+					},
+					{
+						"name": "libvpx-debugsource",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "i686"
+					},
+					{
+						"name": "libvpx-utils-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "i686"
+					},
+					{
+						"name": "libvpx-utils",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "i686"
+					}
+				],
+				"ppc64le": [
+					{
+						"name": "libvpx-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "libvpx-utils-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "libvpx-devel",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "libvpx",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "libvpx-utils",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "ppc64le"
+					},
+					{
+						"name": "libvpx-debugsource",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "ppc64le"
+					}
+				],
+				"s390x": [
+					{
+						"name": "libvpx-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "s390x"
+					},
+					{
+						"name": "libvpx",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "s390x"
+					},
+					{
+						"name": "libvpx-debugsource",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "s390x"
+					},
+					{
+						"name": "libvpx-devel",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "s390x"
+					},
+					{
+						"name": "libvpx-utils-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "s390x"
+					},
+					{
+						"name": "libvpx-utils",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "s390x"
+					}
+				],
+				"src": [
+					{
+						"name": "libvpx",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "src"
+					}
+				],
+				"x86_64": [
+					{
+						"name": "libvpx-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "x86_64"
+					},
+					{
+						"name": "libvpx-utils",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "x86_64"
+					},
+					{
+						"name": "libvpx",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "x86_64"
+					},
+					{
+						"name": "libvpx-utils-debuginfo",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "x86_64"
+					},
+					{
+						"name": "libvpx-debugsource",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "x86_64"
+					},
+					{
+						"name": "libvpx-devel",
+						"version": "1.15.0",
+						"release": "3.fc42",
+						"arch": "x86_64"
+					}
+				]
+			}
+		}
+	],
+	"close_bugs": true,
+	"comments": [
+		{
+			"id": 4106246,
+			"text": "This update has been submitted for testing by wtaymans. ",
+			"timestamp": "2025-06-03 15:07:33",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4106247,
+			"text": "This update's test gating status has been changed to 'waiting'.",
+			"timestamp": "2025-06-03 15:07:34",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4106388,
+			"text": "This update's test gating status has been changed to 'passed'.",
+			"timestamp": "2025-06-03 17:52:20",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4106784,
+			"text": "This update has been pushed to testing.",
+			"timestamp": "2025-06-04 04:30:26",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4106983,
+			"karma": 1,
+			"text": "Works.",
+			"timestamp": "2025-06-04 09:17:51",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://seccdn.libravatar.org/avatar/adb4c3f28bd6969871988f992b1bf71e404f03e3570fbfa0fc9bd7d0bf0003f8?s=24&d=retro",
+				"email": "bojan@rexursive.com",
+				"groups": [
+					{
+						"name": "packager"
+					},
+					{
+						"name": "ipausers"
+					},
+					{
+						"name": "fedora-contributor"
+					},
+					{
+						"name": "signed_fpca"
+					},
+					{
+						"name": "fedorabugs"
+					}
+				],
+				"id": 198,
+				"name": "bojan",
+				"openid": "bojan.id.fedoraproject.org"
+			},
+			"user_id": 198
+		},
+		{
+			"id": 4107006,
+			"karma": 1,
+			"text": "Works great!  LGTM!  =)",
+			"timestamp": "2025-06-04 10:14:14",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://seccdn.libravatar.org/avatar/28bacfa3be75032390ac2c7a34599aeb825c3b62b2c55ef64821d2fc023b56cb?s=24&d=retro",
+				"email": "besser82.fpo@gmail.com",
+				"groups": [
+					{
+						"name": "proventesters"
+					},
+					{
+						"name": "packager"
+					},
+					{
+						"name": "ipausers"
+					},
+					{
+						"name": "fedora-contributor"
+					},
+					{
+						"name": "signed_fpca"
+					},
+					{
+						"name": "fedorabugs"
+					},
+					{
+						"name": "ambassadors"
+					},
+					{
+						"name": "designteam"
+					},
+					{
+						"name": "shogun-ca"
+					},
+					{
+						"name": "alt-gtk-de-sig"
+					},
+					{
+						"name": "trust admins"
+					}
+				],
+				"id": 206,
+				"name": "besser82",
+				"openid": "besser82.id.fedoraproject.org"
+			},
+			"user_id": 206
+		},
+		{
+			"id": 4107008,
+			"text": "This update can be pushed to stable now if the maintainer wishes",
+			"timestamp": "2025-06-04 10:16:58",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4107767,
+			"karma": 1,
+			"text": "Works",
+			"timestamp": "2025-06-05 03:05:42",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://seccdn.libravatar.org/avatar/2181042739e66860b61edeb85351c63ba595fd70a9fe274a54f69df91f135dba?s=24&d=retro",
+				"email": "derekenz@gmail.com",
+				"groups": [
+					{
+						"name": "ipausers"
+					},
+					{
+						"name": "signed_fpca"
+					}
+				],
+				"id": 8341,
+				"name": "derekenz",
+				"openid": "derekenz.id.fedoraproject.org"
+			},
+			"user_id": 8341
+		},
+		{
+			"id": 4107768,
+			"text": "This update has been submitted for stable by bodhi. ",
+			"timestamp": "2025-06-05 03:05:43",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		},
+		{
+			"id": 4108715,
+			"text": "This update has been pushed to stable.",
+			"timestamp": "2025-06-06 01:44:26",
+			"update_id": 720757,
+			"user": {
+				"avatar": "https://apps.fedoraproject.org/img/icons/bodhi-24.png",
+				"id": 91,
+				"name": "bodhi",
+				"openid": "bodhi.id.fedoraproject.org"
+			},
+			"user_id": 91
+		}
+	],
+	"content_type": "rpm",
+	"critpath": true,
+	"critpath_groups": "critical-path-anaconda critical-path-apps critical-path-compose critical-path-gnome critical-path-kde critical-path-lxde critical-path-lxqt critical-path-server critical-path-xfce",
+	"date_approved": "2025-06-04 10:16:58",
+	"date_pushed": "2025-06-06 01:43:35",
+	"date_stable": "2025-06-06 01:43:35",
+	"date_submitted": "2025-06-03 15:07:33",
+	"date_testing": "2025-06-04 04:29:45",
+	"karma": 3,
+	"meets_testing_requirements": true,
+	"notes": "Add patch for double free",
+	"pushed": true,
+	"release": {
+		"branch": "f42",
+		"candidate_tag": "f42-updates-candidate",
+		"composed_by_bodhi": true,
+		"create_automatic_updates": false,
+		"dist_tag": "f42",
+		"eol": "2026-05-13",
+		"id_prefix": "FEDORA",
+		"long_name": "Fedora 42",
+		"mail_template": "fedora_errata_template",
+		"name": "F42",
+		"override_tag": "f42-override",
+		"package_manager": "dnf",
+		"pending_signing_tag": "f42-signing-pending",
+		"pending_stable_tag": "f42-updates-pending",
+		"pending_testing_tag": "f42-updates-testing-pending",
+		"stable_tag": "f42-updates",
+		"state": "current",
+		"testing_repository": "updates-testing",
+		"testing_tag": "f42-updates-testing",
+		"version": "42"
+	},
+	"require_bugs": true,
+	"require_testcases": true,
+	"severity": "urgent",
+	"stable_days": 14,
+	"stable_karma": 3,
+	"status": "stable",
+	"suggest": "unspecified",
+	"test_gating_status": "passed",
+	"title": "libvpx-1.15.0-3.fc42",
+	"type": "security",
+	"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2025-f5bf0fb721",
+	"unstable_karma": -3,
+	"updateid": "FEDORA-2025-f5bf0fb721",
+	"user": {
+		"avatar": "https://seccdn.libravatar.org/avatar/7d40df84052758e99b77ed0951e7fa8ef10cbe62a56509171d32480533b6fc30?s=24&d=retro",
+		"email": "wtaymans@redhat.com",
+		"groups": [
+			{
+				"name": "packager"
+			},
+			{
+				"name": "ipausers"
+			},
+			{
+				"name": "fedora-contributor"
+			},
+			{
+				"name": "signed_fpca"
+			},
+			{
+				"name": "fedorabugs"
+			}
+		],
+		"id": 691,
+		"name": "wtaymans",
+		"openid": "wtaymans.id.fedoraproject.org"
+	},
+	"version_hash": "6b7f42ce6db5d185d5446725ca38784d79fb622c"
+}

@@ -128,203 +128,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "xorg-x11-server-source",
+											"name": "xorg-x11-server-devel",
 											"architectures": [
-												"noarch"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-Xdmx",
-											"architectures": [
-												"i686",
-												"ppc64le",
-												"s390x",
 												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-Xephyr",
-											"architectures": [
 												"aarch64",
 												"i686",
 												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-Xephyr-debuginfo",
-											"architectures": [
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-debuginfo",
-											"architectures": [
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server",
-											"architectures": [
-												"src"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-debugsource",
-											"architectures": [
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x",
-												"x86_64"
+												"s390x"
 											]
 										}
 									},
@@ -384,79 +194,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "xorg-x11-server-Xorg",
+											"name": "xorg-x11-server-Xephyr-debuginfo",
 											"architectures": [
-												"ppc64le",
 												"s390x",
 												"x86_64",
 												"aarch64",
-												"i686"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-Xnest",
-											"architectures": [
-												"aarch64",
 												"i686",
-												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:1.20.14-37.fc40"
-											}
-										],
-										"fixed": [
-											"0:1.20.14-37.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "xorg-x11-server-devel",
-											"architectures": [
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x",
-												"x86_64"
+												"ppc64le"
 											]
 										}
 									},
@@ -485,11 +229,11 @@
 										"binary": {
 											"name": "xorg-x11-server-Xorg-debuginfo",
 											"architectures": [
-												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64"
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -518,11 +262,11 @@
 										"binary": {
 											"name": "xorg-x11-server-Xnest-debuginfo",
 											"architectures": [
-												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64"
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -549,7 +293,7 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "xorg-x11-server-Xvfb-debuginfo",
+											"name": "xorg-x11-server-Xdmx",
 											"architectures": [
 												"x86_64",
 												"aarch64",
@@ -582,7 +326,230 @@
 									"package": {
 										"type": "binary",
 										"binary": {
+											"name": "xorg-x11-server-Xorg",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server",
+											"architectures": [
+												"src"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server-debugsource",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server-debuginfo",
+											"architectures": [
+												"s390x",
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
 											"name": "xorg-x11-server-Xvfb",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server-source",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server-Xvfb-debuginfo",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server-Xephyr",
 											"architectures": [
 												"s390x",
 												"x86_64",
@@ -617,11 +584,44 @@
 										"binary": {
 											"name": "xorg-x11-server-common",
 											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.20.14-37.fc40"
+											}
+										],
+										"fixed": [
+											"0:1.20.14-37.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "xorg-x11-server-Xnest",
+											"architectures": [
+												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64",
-												"aarch64"
+												"x86_64"
 											]
 										}
 									},

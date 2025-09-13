@@ -1,29 +1,29 @@
 {
-	"id": "FEDORA-2025-bca38111fc",
+	"id": "FEDORA-2025-f5bf0fb721",
 	"advisories": [
 		{
 			"content": {
-				"id": "FEDORA-2025-bca38111fc",
-				"title": "icecat-115.22.0-2.rh1.fc40",
-				"description": "- Rebuild with pregenerated cbindgen",
+				"id": "FEDORA-2025-f5bf0fb721",
+				"title": "libvpx-1.15.0-3.fc42",
+				"description": "Add patch for double free",
 				"severity": [
 					{
 						"type": "vendor",
 						"source": "fedoraproject.org",
-						"vendor": "unspecified"
+						"vendor": "urgent"
 					}
 				],
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2025-bca38111fc"
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2025-f5bf0fb721"
 					}
 				],
-				"published": "2025-04-21T16:20:39Z"
+				"published": "2025-06-03T15:07:33Z"
 			},
 			"segments": [
 				{
-					"ecosystem": "fedora:40"
+					"ecosystem": "fedora:42"
 				}
 			]
 		}
@@ -31,86 +31,60 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2025-3416",
-				"title": "CVE-2025-3416 rust-openssl: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch`",
+				"id": "CVE-2025-5283",
+				"title": "CVE-2025-5283 libvpx: Double-free in libvpx encoder",
 				"severity": [
 					{
 						"type": "vendor",
 						"source": "fedoraproject.org",
-						"vendor": "low"
+						"vendor": "high"
 					}
 				],
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2357560"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2368749"
 					}
 				],
-				"published": "2025-04-04T21:02:38Z",
-				"modified": "2025-09-01T08:28:32Z"
+				"published": "2025-05-27T13:01:16Z",
+				"modified": "2025-09-01T08:28:30Z"
 			},
 			"segments": [
 				{
-					"ecosystem": "fedora:40"
+					"ecosystem": "fedora:42"
 				}
 			]
 		},
 		{
 			"content": {
-				"id": "CVE-2025-3416",
-				"title": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-40]",
+				"id": "CVE-2025-5262",
+				"title": "CVE-2025-5262 libvpx: Double-free in libvpx encoder [fedora-all]",
 				"severity": [
 					{
 						"type": "vendor",
 						"source": "fedoraproject.org",
-						"vendor": "low"
+						"vendor": "urgent"
 					}
 				],
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2357926"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2368931"
 					}
 				],
-				"published": "2025-04-07T14:56:16Z",
-				"modified": "2025-04-30T02:00:21Z"
+				"published": "2025-05-28T10:02:45Z",
+				"modified": "2025-06-08T02:31:45Z"
 			},
 			"segments": [
 				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2025-3416",
-				"title": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-41]",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "low"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2357938"
-					}
-				],
-				"published": "2025-04-07T14:57:18Z",
-				"modified": "2025-04-30T02:00:23Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
+					"ecosystem": "fedora:42"
 				}
 			]
 		}
 	],
 	"detections": [
 		{
-			"ecosystem": "fedora:40",
+			"ecosystem": "fedora:42",
 			"conditions": [
 				{
 					"criteria": {
@@ -126,42 +100,11 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "icecat-debuginfo",
-											"architectures": [
-												"s390x",
-												"x86_64",
-												"aarch64",
-												"ppc64le"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "2:115.22.0-2.rh1.fc40"
-											}
-										],
-										"fixed": [
-											"2:115.22.0-2.rh1.fc40"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "icecat-langpacks",
+											"name": "libvpx-utils-debuginfo",
 											"architectures": [
 												"x86_64",
 												"aarch64",
+												"i686",
 												"ppc64le",
 												"s390x"
 											]
@@ -171,11 +114,11 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "2:115.22.0-2.rh1.fc40"
+												"lt": "0:1.15.0-3.fc42"
 											}
 										],
 										"fixed": [
-											"2:115.22.0-2.rh1.fc40"
+											"0:1.15.0-3.fc42"
 										]
 									}
 								}
@@ -190,11 +133,78 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "icecat",
+											"name": "libvpx-utils",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.15.0-3.fc42"
+											}
+										],
+										"fixed": [
+											"0:1.15.0-3.fc42"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libvpx-debuginfo",
+											"architectures": [
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64",
+												"i686"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.15.0-3.fc42"
+											}
+										],
+										"fixed": [
+											"0:1.15.0-3.fc42"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libvpx",
 											"architectures": [
 												"src",
 												"x86_64",
 												"aarch64",
+												"i686",
 												"ppc64le",
 												"s390x"
 											]
@@ -204,11 +214,11 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "2:115.22.0-2.rh1.fc40"
+												"lt": "0:1.15.0-3.fc42"
 											}
 										],
 										"fixed": [
-											"2:115.22.0-2.rh1.fc40"
+											"0:1.15.0-3.fc42"
 										]
 									}
 								}
@@ -223,12 +233,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "icecat-debugsource",
+											"name": "libvpx-devel",
 											"architectures": [
+												"ppc64le",
+												"s390x",
 												"x86_64",
 												"aarch64",
-												"ppc64le",
-												"s390x"
+												"i686"
 											]
 										}
 									},
@@ -236,11 +247,44 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "2:115.22.0-2.rh1.fc40"
+												"lt": "0:1.15.0-3.fc42"
 											}
 										],
 										"fixed": [
-											"2:115.22.0-2.rh1.fc40"
+											"0:1.15.0-3.fc42"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libvpx-debugsource",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.15.0-3.fc42"
+											}
+										],
+										"fixed": [
+											"0:1.15.0-3.fc42"
 										]
 									}
 								}
@@ -254,7 +298,7 @@
 	"data_source": {
 		"id": "fedora",
 		"raws": [
-			"fixtures/F40/2025/FEDORA-2025-bca38111fc.json"
+			"fixtures/F42/2025/FEDORA-2025-f5bf0fb721.json"
 		]
 	}
 }

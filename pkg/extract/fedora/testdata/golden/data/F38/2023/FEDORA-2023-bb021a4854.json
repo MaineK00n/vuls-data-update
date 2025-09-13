@@ -47,103 +47,6 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "thunderbird",
-											"architectures": [
-												"i686",
-												"ppc64le",
-												"src",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:115.5.0-1.fc38"
-											}
-										],
-										"fixed": [
-											"0:115.5.0-1.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "thunderbird-librnp-rnp-debuginfo",
-											"architectures": [
-												"ppc64le",
-												"x86_64",
-												"aarch64",
-												"i686"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:115.5.0-1.fc38"
-											}
-										],
-										"fixed": [
-											"0:115.5.0-1.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "thunderbird-wayland",
-											"architectures": [
-												"i686",
-												"ppc64le",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:115.5.0-1.fc38"
-											}
-										],
-										"fixed": [
-											"0:115.5.0-1.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "thunderbird-debugsource",
 											"architectures": [
 												"i686",
@@ -210,10 +113,107 @@
 										"binary": {
 											"name": "thunderbird-librnp-rnp",
 											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird",
+											"architectures": [
 												"ppc64le",
+												"src",
 												"x86_64",
 												"aarch64",
 												"i686"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-librnp-rnp-debuginfo",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-wayland",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
 											]
 										}
 									},

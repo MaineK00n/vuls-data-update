@@ -321,7 +321,7 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 						}
 						if slices.ContainsFunc(b.Alias, func(e string) bool {
 							return strings.HasPrefix(e, "CVE-")
-						}) {
+						}) || cveIDPattern.MatchString(b.ShortDesc) {
 							bugs = append(bugs, b)
 						}
 						return bugs
@@ -340,6 +340,29 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 							vs = append(vs, vulnerabilityTypes.Vulnerability{
 								Content: vulnerabilityContentTypes.Content{
 									ID:    vulnerabilityContentTypes.VulnerabilityID(alias),
+									Title: b.ShortDesc,
+									Severity: []severityTypes.Severity{{
+										Type:   severityTypes.SeverityTypeVendor,
+										Source: "fedoraproject.org",
+										Vendor: func() *string { return &b.BugSeverity }(),
+									}},
+									References: []referenceTypes.Reference{{
+										Source: "fedoraproject.org",
+										URL:    fmt.Sprintf("https://bugzilla.redhat.com/show_bug.cgi?id=%s", b.BugID),
+									}},
+									Published: utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.CreationTs),
+									Modified:  utiltime.Parse([]string{"2006-01-02 15:04:05 -0700"}, b.DeltaTs),
+								},
+								Segments: []segmentTypes.Segment{{Ecosystem: eco}},
+							})
+						}
+					}
+
+					for _, cveid := range cveIDPattern.FindAllString(b.ShortDesc, -1) {
+						if !slices.Contains(b.Alias, cveid) {
+							vs = append(vs, vulnerabilityTypes.Vulnerability{
+								Content: vulnerabilityContentTypes.Content{
+									ID:    vulnerabilityContentTypes.VulnerabilityID(cveid),
 									Title: b.ShortDesc,
 									Severity: []severityTypes.Severity{{
 										Type:   severityTypes.SeverityTypeVendor,
