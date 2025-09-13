@@ -58,32 +58,6 @@
 		{
 			"content": {
 				"id": "CVE-2023-2602",
-				"title": "CVE-2023-2602 libcap: Memory Leak on pthread_create() Error",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "low"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209114"
-					}
-				],
-				"published": "2023-05-22T16:54:30Z",
-				"modified": "2023-11-21T11:41:39Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2023-2602",
 				"title": "CVE-2023-2602 libcap: Memory Leak on pthread_create() Error [fedora-38]",
 				"severity": [
 					{
@@ -106,32 +80,6 @@
 					"ecosystem": "fedora:38"
 				}
 			]
-		},
-		{
-			"content": {
-				"id": "CVE-2023-2603",
-				"title": "CVE-2023-2603 libcap: Integer Overflow in _libcap_strdup()",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209113"
-					}
-				],
-				"published": "2023-05-22T16:54:28Z",
-				"modified": "2023-11-21T11:41:35Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
 		}
 	],
 	"detections": [
@@ -142,6 +90,105 @@
 					"criteria": {
 						"operator": "OR",
 						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libcap-debuginfo",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.48-7.fc38"
+											}
+										],
+										"fixed": [
+											"0:2.48-7.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libcap-static",
+											"architectures": [
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64",
+												"i686"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.48-7.fc38"
+											}
+										],
+										"fixed": [
+											"0:2.48-7.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libcap-debugsource",
+											"architectures": [
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64",
+												"i686"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.48-7.fc38"
+											}
+										],
+										"fixed": [
+											"0:2.48-7.fc38"
+										]
+									}
+								}
+							},
 							{
 								"type": "version",
 								"version": {
@@ -186,112 +233,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "libcap-debuginfo",
-											"architectures": [
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64",
-												"i686"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:2.48-7.fc38"
-											}
-										],
-										"fixed": [
-											"0:2.48-7.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "libcap-devel",
 											"architectures": [
-												"i686",
-												"ppc64le",
-												"s390x",
 												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:2.48-7.fc38"
-											}
-										],
-										"fixed": [
-											"0:2.48-7.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "libcap-debugsource",
-											"architectures": [
 												"aarch64",
 												"i686",
 												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:2.48-7.fc38"
-											}
-										],
-										"fixed": [
-											"0:2.48-7.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "libcap-static",
-											"architectures": [
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64",
-												"i686"
+												"s390x"
 											]
 										}
 									},

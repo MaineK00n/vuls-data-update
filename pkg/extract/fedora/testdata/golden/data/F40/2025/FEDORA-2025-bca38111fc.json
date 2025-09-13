@@ -32,58 +32,6 @@
 		{
 			"content": {
 				"id": "CVE-2025-3416",
-				"title": "CVE-2025-3416 rust-openssl: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch`",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "low"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2357560"
-					}
-				],
-				"published": "2025-04-04T21:02:38Z",
-				"modified": "2025-09-01T08:28:32Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2025-3416",
-				"title": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-40]",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "low"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2357926"
-					}
-				],
-				"published": "2025-04-07T14:56:16Z",
-				"modified": "2025-04-30T02:00:21Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2025-3416",
 				"title": "CVE-2025-3416 icecat: rust-openssl Use-After-Free in `Md::fetch` and `Cipher::fetch` [fedora-41]",
 				"severity": [
 					{
@@ -128,10 +76,10 @@
 										"binary": {
 											"name": "icecat-debuginfo",
 											"architectures": [
-												"s390x",
 												"x86_64",
 												"aarch64",
-												"ppc64le"
+												"ppc64le",
+												"s390x"
 											]
 										}
 									},
@@ -160,10 +108,10 @@
 										"binary": {
 											"name": "icecat-langpacks",
 											"architectures": [
-												"x86_64",
-												"aarch64",
 												"ppc64le",
-												"s390x"
+												"s390x",
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -192,11 +140,11 @@
 										"binary": {
 											"name": "icecat",
 											"architectures": [
-												"src",
 												"x86_64",
 												"aarch64",
 												"ppc64le",
-												"s390x"
+												"s390x",
+												"src"
 											]
 										}
 									},

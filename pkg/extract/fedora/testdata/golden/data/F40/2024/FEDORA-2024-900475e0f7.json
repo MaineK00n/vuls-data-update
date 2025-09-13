@@ -32,110 +32,6 @@
 		{
 			"content": {
 				"id": "CVE-2024-38439",
-				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
-					}
-				],
-				"published": "2024-06-18T03:21:00Z",
-				"modified": "2024-06-29T16:25:44Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2024-38440",
-				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
-					}
-				],
-				"published": "2024-06-18T03:21:00Z",
-				"modified": "2024-06-29T16:25:44Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2024-38441",
-				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
-					}
-				],
-				"published": "2024-06-18T03:21:00Z",
-				"modified": "2024-06-29T16:25:44Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2024-38439",
-				"title": "CVE-2024-38439 CVE-2024-38440 CVE-2024-38441 netatalk: multiple vulnerabilities [fedora-all]",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292818"
-					}
-				],
-				"published": "2024-06-18T03:21:22Z",
-				"modified": "2024-07-09T01:54:40Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:40"
-				}
-			]
-		},
-		{
-			"content": {
-				"id": "CVE-2024-38440",
 				"title": "CVE-2024-38439 CVE-2024-38440 CVE-2024-38441 netatalk: multiple vulnerabilities [fedora-all]",
 				"severity": [
 					{
@@ -162,6 +58,32 @@
 		{
 			"content": {
 				"id": "CVE-2024-38441",
+				"title": "CVE-2024-38439 CVE-2024-38440 CVE-2024-38441 netatalk: multiple vulnerabilities [fedora-all]",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292818"
+					}
+				],
+				"published": "2024-06-18T03:21:22Z",
+				"modified": "2024-07-09T01:54:40Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-38440",
 				"title": "CVE-2024-38439 CVE-2024-38440 CVE-2024-38441 netatalk: multiple vulnerabilities [fedora-all]",
 				"severity": [
 					{
@@ -204,13 +126,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "netatalk-devel",
+											"name": "netatalk-debuginfo",
 											"architectures": [
+												"i686",
+												"ppc64le",
 												"s390x",
 												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le"
+												"aarch64"
 											]
 										}
 									},
@@ -239,11 +161,11 @@
 										"binary": {
 											"name": "netatalk-debugsource",
 											"architectures": [
-												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64"
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -270,8 +192,9 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "netatalk-debuginfo",
+											"name": "netatalk",
 											"architectures": [
+												"src",
 												"x86_64",
 												"aarch64",
 												"i686",
@@ -303,14 +226,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "netatalk",
+											"name": "netatalk-devel",
 											"architectures": [
-												"aarch64",
-												"i686",
 												"ppc64le",
 												"s390x",
-												"src",
-												"x86_64"
+												"x86_64",
+												"aarch64",
+												"i686"
 											]
 										}
 									},

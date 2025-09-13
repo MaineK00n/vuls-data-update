@@ -54,32 +54,6 @@
 					"ecosystem": "fedora:38"
 				}
 			]
-		},
-		{
-			"content": {
-				"id": "CVE-2023-31083",
-				"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "medium"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2213132"
-					}
-				],
-				"published": "2023-06-07T08:13:27Z",
-				"modified": "2023-10-29T11:27:18Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
 		}
 	],
 	"detections": [
@@ -100,7 +74,68 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-debuginfo",
+											"name": "kernel-modules-extra",
+											"architectures": [
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo-common-ppc64le",
+											"architectures": [
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-devel-matched",
 											"architectures": [
 												"aarch64",
 												"ppc64le",
@@ -132,11 +167,280 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-core",
+											"name": "kernel-debuginfo-common-s390x",
 											"architectures": [
-												"aarch64",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-modules-extra",
+											"architectures": [
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-devel",
+											"architectures": [
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo-common-x86_64",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-core",
+											"architectures": [
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo",
+											"architectures": [
 												"ppc64le",
 												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-modules",
+											"architectures": [
+												"s390x",
+												"x86_64",
+												"aarch64",
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-modules-core",
+											"architectures": [
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-uki-virt",
+											"architectures": [
 												"x86_64"
 											]
 										}
@@ -166,8 +470,8 @@
 										"binary": {
 											"name": "kernel-debug-modules",
 											"architectures": [
-												"aarch64",
-												"x86_64"
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -194,12 +498,76 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-modules",
+											"name": "kernel-modules-internal",
 											"architectures": [
+												"x86_64",
 												"aarch64",
 												"ppc64le",
+												"s390x"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-devel",
+											"architectures": [
+												"ppc64le",
 												"s390x",
-												"x86_64"
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-core",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"ppc64le",
+												"s390x"
 											]
 										}
 									},
@@ -259,310 +627,8 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-debug-devel-matched",
+											"name": "kernel-debug",
 											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debuginfo-common-ppc64le",
-											"architectures": [
-												"ppc64le"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debug-uki-virt",
-											"architectures": [
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debuginfo-common-aarch64",
-											"architectures": [
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debug-modules-core",
-											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debug-modules-extra",
-											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-modules-extra",
-											"architectures": [
-												"aarch64",
-												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debug-modules-internal",
-											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-modules-internal",
-											"architectures": [
-												"aarch64",
-												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debuginfo-common-x86_64",
-											"architectures": [
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-devel",
-											"architectures": [
-												"ppc64le",
-												"s390x",
 												"x86_64",
 												"aarch64"
 											]
@@ -591,69 +657,10 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-debug-devel",
+											"name": "kernel-debug-modules-internal",
 											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debug-debuginfo",
-											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debuginfo-common-s390x",
-											"architectures": [
-												"s390x"
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -709,130 +716,6 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-debug-core",
-											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-modules-core",
-											"architectures": [
-												"x86_64",
-												"aarch64",
-												"ppc64le",
-												"s390x"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-debug",
-											"architectures": [
-												"aarch64",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-devel-matched",
-											"architectures": [
-												"x86_64",
-												"aarch64",
-												"ppc64le",
-												"s390x"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-101.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-101.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "kernel-doc",
 											"architectures": [
 												"noarch"
@@ -862,13 +745,71 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-cross-headers",
+											"name": "kernel-modules-core",
 											"architectures": [
 												"aarch64",
-												"i686",
 												"ppc64le",
 												"s390x",
 												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debug-devel-matched",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-debuginfo-common-aarch64",
+											"architectures": [
+												"aarch64"
 											]
 										}
 									},
@@ -929,7 +870,40 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "perf-debuginfo",
+											"name": "kernel-cross-headers",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-101.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-101.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-tools-libs",
 											"architectures": [
 												"s390x",
 												"x86_64",
@@ -961,140 +935,44 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "perf",
+											"name": "rv",
 											"architectures": [
-												"ppc64le",
 												"s390x",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-100.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-100.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-tools-debugsource",
-											"architectures": [
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-100.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-100.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "libperf-debuginfo",
-											"architectures": [
-												"aarch64",
-												"ppc64le",
-												"s390x",
-												"x86_64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-100.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-100.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-tools-libs-devel",
-											"architectures": [
-												"ppc64le",
-												"s390x",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:6.6.2-100.fc38"
-											}
-										],
-										"fixed": [
-											"0:6.6.2-100.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "kernel-tools-libs",
-											"architectures": [
 												"x86_64",
 												"aarch64",
-												"ppc64le",
-												"s390x"
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-100.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-100.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3-perf-debuginfo",
+											"architectures": [
+												"s390x",
+												"x86_64",
+												"aarch64",
+												"ppc64le"
 											]
 										}
 									},
@@ -1153,7 +1031,7 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-tools-debuginfo",
+											"name": "python3-perf",
 											"architectures": [
 												"s390x",
 												"x86_64",
@@ -1185,12 +1063,77 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "rtla",
+											"name": "bpftool-debuginfo",
 											"architectures": [
-												"ppc64le",
 												"s390x",
 												"x86_64",
-												"aarch64"
+												"aarch64",
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-100.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-100.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-tools",
+											"architectures": [
+												"s390x",
+												"src",
+												"x86_64",
+												"aarch64",
+												"ppc64le"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-100.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-100.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "libperf-debuginfo",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
 											]
 										}
 									},
@@ -1219,10 +1162,10 @@
 										"binary": {
 											"name": "libperf",
 											"architectures": [
-												"s390x",
 												"x86_64",
 												"aarch64",
-												"ppc64le"
+												"ppc64le",
+												"s390x"
 											]
 										}
 									},
@@ -1249,12 +1192,12 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "rv",
+											"name": "kernel-tools-libs-devel",
 											"architectures": [
+												"aarch64",
 												"ppc64le",
 												"s390x",
-												"x86_64",
-												"aarch64"
+												"x86_64"
 											]
 										}
 									},
@@ -1281,7 +1224,39 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "python3-perf-debuginfo",
+											"name": "perf-debuginfo",
+											"architectures": [
+												"aarch64",
+												"ppc64le",
+												"s390x",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.6.2-100.fc38"
+											}
+										],
+										"fixed": [
+											"0:6.6.2-100.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "perf",
 											"architectures": [
 												"x86_64",
 												"aarch64",
@@ -1345,7 +1320,7 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "bpftool-debuginfo",
+											"name": "kernel-tools-debugsource",
 											"architectures": [
 												"aarch64",
 												"ppc64le",
@@ -1377,13 +1352,12 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "kernel-tools",
+											"name": "kernel-tools-debuginfo",
 											"architectures": [
-												"ppc64le",
 												"s390x",
-												"src",
 												"x86_64",
-												"aarch64"
+												"aarch64",
+												"ppc64le"
 											]
 										}
 									},
@@ -1410,12 +1384,12 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "python3-perf",
+											"name": "rtla",
 											"architectures": [
+												"s390x",
 												"x86_64",
 												"aarch64",
-												"ppc64le",
-												"s390x"
+												"ppc64le"
 											]
 										}
 									},
@@ -1444,10 +1418,10 @@
 										"binary": {
 											"name": "kernel-tools-libs-debuginfo",
 											"architectures": [
-												"aarch64",
-												"ppc64le",
 												"s390x",
-												"x86_64"
+												"x86_64",
+												"aarch64",
+												"ppc64le"
 											]
 										}
 									},

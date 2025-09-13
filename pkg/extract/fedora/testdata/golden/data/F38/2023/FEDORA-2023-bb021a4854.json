@@ -47,71 +47,39 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "thunderbird-debugsource",
-											"architectures": [
-												"i686",
-												"ppc64le",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:115.5.0-1.fc38"
-											}
-										],
-										"fixed": [
-											"0:115.5.0-1.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "thunderbird-debuginfo",
-											"architectures": [
-												"i686",
-												"ppc64le",
-												"x86_64",
-												"aarch64"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:115.5.0-1.fc38"
-											}
-										],
-										"fixed": [
-											"0:115.5.0-1.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
 											"name": "thunderbird-librnp-rnp",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-wayland",
 											"architectures": [
 												"x86_64",
 												"aarch64",
@@ -145,11 +113,43 @@
 										"binary": {
 											"name": "thunderbird",
 											"architectures": [
+												"aarch64",
+												"i686",
 												"ppc64le",
 												"src",
-												"x86_64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:115.5.0-1.fc38"
+											}
+										],
+										"fixed": [
+											"0:115.5.0-1.fc38"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "thunderbird-debugsource",
+											"architectures": [
 												"aarch64",
-												"i686"
+												"i686",
+												"ppc64le",
+												"x86_64"
 											]
 										}
 									},
@@ -178,10 +178,10 @@
 										"binary": {
 											"name": "thunderbird-librnp-rnp-debuginfo",
 											"architectures": [
-												"x86_64",
 												"aarch64",
 												"i686",
-												"ppc64le"
+												"ppc64le",
+												"x86_64"
 											]
 										}
 									},
@@ -208,12 +208,12 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "thunderbird-wayland",
+											"name": "thunderbird-debuginfo",
 											"architectures": [
-												"aarch64",
-												"i686",
 												"ppc64le",
-												"x86_64"
+												"x86_64",
+												"aarch64",
+												"i686"
 											]
 										}
 									},
