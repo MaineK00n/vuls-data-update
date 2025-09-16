@@ -1,4 +1,4 @@
-package oracle_test
+package linux_test
 
 import (
 	"io/fs"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
 )
 
 func TestFetch(t *testing.T) {
@@ -54,7 +54,7 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := oracle.Fetch(oracle.WithAdvisoryURL(ts.URL), oracle.WithDir(dir), oracle.WithRetry(0))
+			err := linux.Fetch(linux.WithAdvisoryURL(ts.URL), linux.WithDir(dir), linux.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

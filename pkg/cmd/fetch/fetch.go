@@ -104,7 +104,7 @@ import (
 	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle"
+	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
 	ossFuzzOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/oss-fuzz/osv"
 	oxCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/ox/csaf"
 	paloaltoCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/paloalto/csaf"
@@ -237,7 +237,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
-		newCmdOracle(),
+		newCmdOracleLinux(),
 		newCmdOSSFuzzOSV(),
 		newCmdOXCSAF(),
 		newCmdPaloAltoList(), newCmdPaloAltoJSON(), newCmdPaloAltoCSAF(),
@@ -3240,29 +3240,29 @@ func newCmdOpenEulerCSAF() *cobra.Command {
 	return cmd
 }
 
-func newCmdOracle() *cobra.Command {
+func newCmdOracleLinux() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "oracle"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "linux"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "oracle",
+		Use:   "oracle-linux",
 		Short: "Fetch Oracle Linux data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch oracle
+			$ vuls-data-update fetch oracle-linux
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := oracle.Fetch(oracle.WithDir(options.dir), oracle.WithRetry(options.retry)); err != nil {
+			if err := oracleLinux.Fetch(oracleLinux.WithDir(options.dir), oracleLinux.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch oracle linux")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "oracle"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
