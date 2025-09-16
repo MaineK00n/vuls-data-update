@@ -169,7 +169,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 }
 
 func (e extractor) extract(vuln vex.VEX, c2r map[string][]string) (dataTypes.Data, error) {
-	pm, err := walkProductTree(vuln.ProductTree, c2r)
+	pm, err := walkProductTree(vuln.Document.Tracking.ID, vuln.ProductTree, c2r)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
 	}
@@ -227,7 +227,7 @@ type status struct {
 	affected_status string
 }
 
-func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.ProductID][]product, error) {
+func walkProductTree(cveid string, pt vex.ProductTree, c2r map[string][]string) (map[vex.ProductID][]product, error) {
 	var f func(m map[vex.ProductID]vex.FullProductName, branch vex.Branch) error
 	f = func(m map[vex.ProductID]vex.FullProductName, branch vex.Branch) error {
 		for _, b := range branch.Branches {
@@ -324,6 +324,11 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 								// source rpm: 'arch=src'
 								// binary rpm: ''
 								p.arch = m["arch"]
+
+								// Red Hat VEX data bug: https://issues.redhat.com/browse/SECDATA-1097?focusedId=28048367&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28048367
+								if p.arch == "" && strings.HasSuffix(string(id), ".src") {
+									p.arch = "src"
+								}
 							default:
 								p.name = instance.Name
 								p.version = func() string {
@@ -337,12 +342,18 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 								// binary rpm: 'arch=<arch>'
 								switch m["arch"] {
 								case "":
+									// Red Hat VEX data bug: https://issues.redhat.com/browse/SECDATA-1097?focusedId=28054960&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28054960
+									if slices.Contains([]string{"CVE-2025-26699", "CVE-2025-30472", "CVE-2025-47287", "CVE-2025-48432"}, cveid) {
+										return nil, nil
+									}
 									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
 								default:
 									p.arch = m["arch"]
 								}
 							}
 						default:
+							// Red Hat VEX data bug: https://issues.redhat.com/browse/SECDATA-1097?focusedId=28062364&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28062364
+
 							switch instance.Version {
 							case "":
 								ss := strings.Split(rpmmod, ":")
