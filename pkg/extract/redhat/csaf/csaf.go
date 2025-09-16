@@ -358,6 +358,8 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 									return fmt.Sprintf("0:%s", instance.Version)
 								}()
 
+								// source rpm: 'arch=src'
+								// binary rpm: 'arch=<arch>'
 								switch m["arch"] {
 								case "":
 									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
@@ -366,29 +368,32 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 								}
 							}
 						default:
-							switch arch := m["arch"]; arch {
-							case "": // fixed: pkg:rpm/redhat/nodejs@12?rpmmod=nodejs:12:8010020210817113128:c27ad7f8
+							switch instance.Version {
+							case "":
+								return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+							default:
 								ss := strings.Split(rpmmod, ":")
 								if len(ss) < 4 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<module>@<stream>?rpmmod=<<module>:<stream>:<version>:<context>>", fpn.ProductIdentificationHelper.PURL)
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
 								}
 								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
-							default:
-								return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<module>@<stream>?rpmmod=<<module>:<stream>:<version>:<context>>", fpn.ProductIdentificationHelper.PURL)
+								p.name = instance.Name
+								p.version = func() string {
+									if n, ok := m["epoch"]; ok {
+										return fmt.Sprintf("%s:%s", n, instance.Version)
+									}
+									return fmt.Sprintf("0:%s", instance.Version)
+								}()
+
+								// source rpm: 'arch=src'
+								// binary rpm: 'arch=<arch>'
+								switch m["arch"] {
+								case "":
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
+								default:
+									p.arch = m["arch"]
+								}
 							}
-						}
-					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:rpmmod/"):
-						instance, err := packageurl.FromString(fpn.ProductIdentificationHelper.PURL)
-						if err != nil {
-							return nil, errors.Wrapf(err, "parse %q", fpn.ProductIdentificationHelper.PURL)
-						}
-						switch instance.Version {
-						case "":
-							p.name = instance.Name
-							p.arch = "src"
-							p.modularitylabel = strings.TrimPrefix(instance.Namespace, "redhat/")
-						default:
-							p.modularitylabel = fmt.Sprintf("%s:%s", instance.Name, strings.Split(instance.Version, ":")[0])
 						}
 					default:
 						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
@@ -396,7 +401,7 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 								return nil, nil
 							}
 						}
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:rpmmod/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
@@ -945,99 +950,90 @@ func buildCriterions(pids []csaf.ProductID, status status, pm map[csaf.ProductID
 	var cs []criterionTypes.Criterion
 	for pk, extras := range pkm2 {
 		for _, extra := range extras {
-			vc, err := buildVersionCriterion(pk, extra, status)
+			vcs, err := buildVersionCriterion(pk, extra, status)
 			if err != nil {
 				return nil, errors.Wrap(err, "build version criterion")
 			}
-			if vc == nil {
-				continue
+			for _, vc := range vcs {
+				cs = append(cs, criterionTypes.Criterion{
+					Type:    criterionTypes.CriterionTypeVersion,
+					Version: &vc,
+				})
 			}
-
-			cs = append(cs, criterionTypes.Criterion{
-				Type:    criterionTypes.CriterionTypeVersion,
-				Version: vc,
-			})
 		}
 	}
 
 	return cs, nil
 }
 
-func buildVersionCriterion(pk productKey, extra productExtra, status status) (*vcTypes.Criterion, error) {
+func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]vcTypes.Criterion, error) {
 	switch status.ProductStatus {
 	case "fixed":
 		if pk.name == "" && pk.version == "" {
 			return nil, nil
 		}
 
-		if slices.Equal(extra.arches, []string{"src"}) {
-			return nil, nil
-		}
+		vcs := make([]vcTypes.Criterion, 0, 2)
 
-		return &vcTypes.Criterion{
-			Vulnerable: true,
-			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-			Package: vcPackageTypes.Package{
-				Type: vcPackageTypes.PackageTypeBinary,
-				Binary: &vcBinaryPackageTypes.Package{
-					Name: func() string {
-						if pk.modularitylabel != "" {
-							return fmt.Sprintf("%s::%s", pk.modularitylabel, pk.name)
-						}
-						return pk.name
-					}(),
-					Architectures: func() []string {
-						as := make([]string, 0, len(extra.arches))
-						for _, arch := range extra.arches {
-							switch arch {
-							case "src":
-							default:
-								as = append(as, arch)
+		if as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" }); len(as) > 0 {
+			vcs = append(vcs, vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeBinary,
+					Binary: &vcBinaryPackageTypes.Package{
+						Name: func() string {
+							if pk.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", pk.modularitylabel, pk.name)
 							}
-						}
-						return as
-					}(),
-					Repositories: extra.repositories,
+							return pk.name
+						}(),
+						Architectures: as,
+						Repositories:  extra.repositories,
+					},
 				},
-			},
-			Affected: &affectedTypes.Affected{
-				Type:  rangeTypes.RangeTypeRPM,
-				Range: []rangeTypes.Range{{LessThan: pk.version}},
-				Fixed: []string{pk.version},
-			},
-		}, nil
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: pk.version}},
+					Fixed: []string{pk.version},
+				},
+			})
+		}
+
+		if slices.Contains(extra.arches, "src") {
+			vcs = append(vcs, vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+				Package: vcPackageTypes.Package{
+					Type: vcPackageTypes.PackageTypeSource,
+					Source: &vcSourcePackageTypes.Package{
+						Name: func() string {
+							if pk.modularitylabel != "" {
+								return fmt.Sprintf("%s::%s", pk.modularitylabel, pk.name)
+							}
+							return pk.name
+						}(),
+						Repositories: extra.repositories,
+					},
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{LessThan: pk.version}},
+					Fixed: []string{pk.version},
+				},
+			})
+		}
+
+		if len(vcs) == 0 {
+			return nil, errors.Errorf("No version criterion is built. product key: %+v, product extra: %+v", pk, extra)
+		}
+		return vcs, nil
 	case "affected":
-		if pk.name == "" {
-			return nil, errors.New("name is empty")
-		}
-
-		if !slices.Equal(extra.arches, []string{"src"}) {
-			return nil, errors.Errorf("unexpected affected pkg arch. expected: %q, actual: %q", "src", extra.arches)
-		}
-
-		return &vcTypes.Criterion{
-			Vulnerable: true,
-			FixStatus: &fixstatusTypes.FixStatus{
-				Class:  fixstatusTypes.ClassUnfixed,
-				Vendor: status.AffectedStatus,
-			},
-			Package: vcPackageTypes.Package{
-				Type: vcPackageTypes.PackageTypeSource,
-				Source: &vcSourcePackageTypes.Package{
-					Name: func() string {
-						if pk.modularitylabel != "" {
-							return fmt.Sprintf("%s::%s", pk.modularitylabel, pk.name)
-						}
-						return pk.name
-					}(),
-					Repositories: extra.repositories,
-				},
-			},
-		}, nil
+		return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "unaffected"}, status.ProductStatus)
 	case "unaffected":
 		return nil, nil
 	default:
-		return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "affected", "unaffected"}, status.ProductStatus)
+		return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "unaffected"}, status.ProductStatus)
 	}
 }
 
