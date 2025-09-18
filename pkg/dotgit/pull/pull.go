@@ -80,8 +80,8 @@ func Pull(repository string, opts ...Option) error {
 		return errors.Errorf("unexpected repository format. expected: %q, actual: %q", []string{"<repository>@<digest>", "<repository>:<tag>", "<repository>:<tag>@<digest>"}, repository)
 	}
 
-	if err := os.RemoveAll(filepath.Join(options.dir, repo.Reference.Reference)); err != nil {
-		return errors.Wrapf(err, "remove %s", filepath.Join(options.dir, repo.Reference.Reference))
+	if err := os.RemoveAll(filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference)); err != nil {
+		return errors.Wrapf(err, "remove %s", filepath.Join(options.dir, repo.Reference.Registry, repo.Reference.Repository, repo.Reference.Reference))
 	}
 
 	_, r, err := oras.Fetch(ctx, repo, repo.Reference.Reference, oras.DefaultFetchOptions)
