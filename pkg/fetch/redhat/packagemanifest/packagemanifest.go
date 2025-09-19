@@ -141,7 +141,6 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "write table. major: %d, index: %d", major, idx)
 			}
 		}
-
 	}
 	return nil
 }
