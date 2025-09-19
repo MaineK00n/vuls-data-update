@@ -43,7 +43,7 @@ func TestFetch(t *testing.T) {
 
 			dir := t.TempDir()
 
-			err := packagemanifest.Fetch(packagemanifest.WithURLTemplate(fmt.Sprintf("%s/%s/rhel-%%d.html", ts.URL, tt.testdata)), packagemanifest.WithDir(dir))
+			err := packagemanifest.Fetch(packagemanifest.WithBaseURL(fmt.Sprintf("%s/%s/rhel-%%d.html", ts.URL, tt.testdata)), packagemanifest.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

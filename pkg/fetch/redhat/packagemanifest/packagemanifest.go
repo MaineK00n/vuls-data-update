@@ -18,44 +18,24 @@ import (
 const urlTemplate = "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/%d/html-single/package_manifest/index"
 
 type options struct {
-	majors      []int
-	retry       int
-	urlTemplate string
-	dir         string
+	majors  []int
+	retry   int
+	baseURL string
+	dir     string
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type majorsOption []int
+type baseURLOption string
 
-func (m majorsOption) apply(o *options) {
-	o.majors = m
+func (u baseURLOption) apply(o *options) {
+	o.baseURL = string(u)
 }
 
-func WithMajors(majors ...int) Option {
-	return majorsOption(majors)
-}
-
-type retryOption int
-
-func (r retryOption) apply(o *options) {
-	o.retry = int(r)
-}
-
-func WithRetry(retry int) Option {
-	return retryOption(retry)
-}
-
-type urlTemplateOption string
-
-func (u urlTemplateOption) apply(o *options) {
-	o.urlTemplate = string(u)
-}
-
-func WithURLTemplate(format string) Option {
-	return urlTemplateOption(format)
+func WithBaseURL(baseURL string) Option {
+	return baseURLOption(baseURL)
 }
 
 type dirOption string
@@ -68,12 +48,32 @@ func WithDir(dir string) Option {
 	return dirOption(dir)
 }
 
+type retryOption int
+
+func (r retryOption) apply(o *options) {
+	o.retry = int(r)
+}
+
+func WithRetry(retry int) Option {
+	return retryOption(retry)
+}
+
+type majorsOption []int
+
+func (m majorsOption) apply(o *options) {
+	o.majors = m
+}
+
+func WithMajors(majors ...int) Option {
+	return majorsOption(majors)
+}
+
 func Fetch(opts ...Option) error {
 	opt := &options{
-		majors:      []int{8, 9, 10},
-		retry:       3,
-		urlTemplate: urlTemplate,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
+		majors:  []int{8, 9, 10},
+		retry:   3,
+		baseURL: urlTemplate,
+		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
 	}
 
 	for _, o := range opts {
@@ -86,7 +86,7 @@ func Fetch(opts ...Option) error {
 
 	for _, major := range opt.majors {
 		log.Printf("[INFO] Fetch RHEL %d Package Manifest", major)
-		u := fmt.Sprintf(opt.urlTemplate, major)
+		u := fmt.Sprintf(opt.baseURL, major)
 
 		resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opt.retry)).Get(u)
 		if err != nil {
