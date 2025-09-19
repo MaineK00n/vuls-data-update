@@ -116,10 +116,8 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", opt.dir)
 	}
 
-	log.Printf("[INFO] Fetch RHEL Package Manifest")
-
 	for _, major := range opt.majors {
-		log.Printf("[INFO] Fetch RHEL %d", major)
+		log.Printf("[INFO] Fetch RHEL %d Package Manifest", major)
 		u := fmt.Sprintf(opt.urlTemplate, major)
 
 		resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opt.retry)).Get(u)
