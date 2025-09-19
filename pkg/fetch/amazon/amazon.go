@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 			"1": {Core: "http://repo.us-west-2.amazonaws.com/2018.03/updates/x86_64/mirror.list"},
 			"2": {
 				Core:  "https://cdn.amazonlinux.com/2/core/latest/x86_64/mirror.list",
-				Extra: "http://amazonlinux.default.amazonaws.com/2/extras-catalog.json",
+				Extra: "https://cdn.amazonlinux.com/2/extras-catalog.json",
 			},
 			"2022": {
 				Core: "https://cdn.amazonlinux.com/al2022/core/mirrors/latest/x86_64/mirror.list",
