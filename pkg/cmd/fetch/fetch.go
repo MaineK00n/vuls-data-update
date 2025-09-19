@@ -120,6 +120,7 @@ import (
 	redhatCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/csaf"
 	redhatCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cve"
 	redhatCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cvrf"
+	redhatLifecycle "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/lifecycle"
 	redhatOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/osv"
 	redhatOVALv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
@@ -246,7 +247,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatPackageManifest(),
+		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatLifecycle(), newCmdRedHatPackageManifest(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
@@ -3917,6 +3918,39 @@ func newCmdRedHatOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdRedHatLifecycle() *cobra.Command {
+	options := &struct {
+		base
+		majors []int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "lifecycle"),
+			retry: 3,
+		},
+		majors: []int{8, 9, 10},
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-lifecycle",
+		Short: "Fetch RedHat Enterprise Linux Application Streams Lifecycle tables",
+		Example: heredoc.Doc(`
+            $ vuls-data-update fetch redhat-lifecycle
+        `),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := redhatLifecycle.Fetch(redhatLifecycle.WithDir(options.dir), redhatLifecycle.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat packagemanifest")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
