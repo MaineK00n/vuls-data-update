@@ -1,8 +1,7 @@
 {
-	"major": 9,
-	"index": 0,
+	"major": "9",
 	"type": "package",
-	"repository": "BaseOS",
+	"reference": "BaseOS-repository",
 	"packages": [
 		{
 			"package": "accel-config",
@@ -41,5 +40,5 @@
 			"minor_release_version": "9.0"
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-9.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-9.html"
 }

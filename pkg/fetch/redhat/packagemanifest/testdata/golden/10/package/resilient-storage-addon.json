@@ -1,7 +1,7 @@
 {
-	"major": 10,
-	"index": 7,
+	"major": "10",
 	"type": "package",
+	"reference": "resilient-storage-addon",
 	"packages": [
 		{
 			"package": "booth",
@@ -29,5 +29,5 @@
 			"compatibility_level": "2"
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-10.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-10.html"
 }

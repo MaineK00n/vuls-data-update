@@ -1,7 +1,7 @@
 {
-	"major": 9,
-	"index": 3,
+	"major": "9",
 	"type": "package",
+	"reference": "CodeReadyLinuxBuilder-repository",
 	"packages": [
 		{
 			"package": "389-ds-base-devel",
@@ -29,5 +29,5 @@
 			"minor_release_version": "9.1"
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-9.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-9.html"
 }

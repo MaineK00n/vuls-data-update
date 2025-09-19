@@ -3940,9 +3940,9 @@ func newCmdRedHatPackageManifest() *cobra.Command {
             $ vuls-data-update fetch redhat-packagemanifest
             $ vuls-data-update fetch redhat-packagemanifest --majors 9,10
         `),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatPackageManifest.Fetch(redhatPackageManifest.WithDir(options.dir), redhatPackageManifest.WithRetry(options.retry), redhatPackageManifest.WithMajors(options.majors...)); err != nil {
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := redhatPackageManifest.Fetch(args, redhatPackageManifest.WithDir(options.dir), redhatPackageManifest.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat packagemanifest")
 			}
 			return nil
@@ -3951,7 +3951,6 @@ func newCmdRedHatPackageManifest() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-	cmd.Flags().IntSliceVar(&options.majors, "majors", options.majors, "target RHEL major versions (comma-separated)")
 
 	return cmd
 }

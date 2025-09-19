@@ -1,7 +1,7 @@
 {
-	"major": 8,
-	"index": 4,
+	"major": "8",
 	"type": "module",
+	"reference": "CRB-modules",
 	"modules": [
 		{
 			"module": "javapackages-tools",
@@ -650,5 +650,5 @@
 			]
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-8.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-8.html"
 }

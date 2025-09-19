@@ -1,8 +1,7 @@
 {
-	"major": 9,
-	"index": 1,
+	"major": "9",
 	"type": "package",
-	"repository": "AppStream",
+	"reference": "AppStream-repository",
 	"packages": [
 		{
 			"package": "389-ds-base",
@@ -35,5 +34,5 @@
 			"minor_release_version": "9.0"
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-9.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-9.html"
 }

@@ -1,7 +1,7 @@
 {
-	"major": 10,
-	"index": 4,
+	"major": "9",
 	"type": "module",
+	"reference": "CRB-modules",
 	"modules": [
 		{
 			"module": "swig",
@@ -16,5 +16,5 @@
 			]
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-10.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-9.html"
 }

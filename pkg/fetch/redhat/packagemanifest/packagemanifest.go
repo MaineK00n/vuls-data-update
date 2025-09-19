@@ -15,10 +15,9 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const urlTemplate = "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/%d/html-single/package_manifest/index"
+const baseURL = "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/%s/html-single/package_manifest/index"
 
 type options struct {
-	majors  []int
 	retry   int
 	baseURL string
 	dir     string
@@ -58,21 +57,10 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type majorsOption []int
-
-func (m majorsOption) apply(o *options) {
-	o.majors = m
-}
-
-func WithMajors(majors ...int) Option {
-	return majorsOption(majors)
-}
-
-func Fetch(opts ...Option) error {
+func Fetch(majors []string, opts ...Option) error {
 	opt := &options{
-		majors:  []int{8, 9, 10},
 		retry:   3,
-		baseURL: urlTemplate,
+		baseURL: baseURL,
 		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
 	}
 
@@ -84,8 +72,8 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", opt.dir)
 	}
 
-	for _, major := range opt.majors {
-		log.Printf("[INFO] Fetch RHEL %d Package Manifest", major)
+	for _, major := range majors {
+		log.Printf("[INFO] Fetch RHEL %s Package Manifest", major)
 		u := fmt.Sprintf(opt.baseURL, major)
 
 		resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opt.retry)).Get(u)
@@ -106,14 +94,14 @@ func Fetch(opts ...Option) error {
 
 		for idx, s := range doc.Find("table").EachIter() {
 			if err := writeTable(major, idx, s, opt.dir, u); err != nil {
-				return errors.Wrapf(err, "write table. major: %d, index: %d", major, idx)
+				return errors.Wrapf(err, "write table. major: %s, index: %d", major, idx)
 			}
 		}
 	}
 	return nil
 }
 
-func writeTable(major int, idx int, s *goquery.Selection, rootDir, source string) error {
+func writeTable(major string, idx int, s *goquery.Selection, rootDir, source string) error {
 	var headers []string
 	s.Find("thead tr").Last().Find("th").Each(func(_ int, h *goquery.Selection) {
 		headers = append(headers, h.Text())
@@ -139,12 +127,12 @@ func writeTable(major int, idx int, s *goquery.Selection, rootDir, source string
 					p.License = t
 				case "Application Compatibility Level":
 					p.CompatibilityLevel = t
-				case fmt.Sprintf("RHEL %d Minor Release Version", major):
+				case fmt.Sprintf("RHEL %s Minor Release Version", major):
 					p.MinorReleaseVersion = t
 				default:
 					// RHEL10's "2.6. The Resilient Storage add-on" table has
 					// "RHEL 9 Minor Release Version" column header even though it's for RHEL 10.
-					if major != 10 || idx != 7 {
+					if major != "10" || idx != 7 {
 						return errors.Errorf("unexpected header. type: package, header: %q", headers[i])
 					}
 				}
@@ -155,16 +143,21 @@ func writeTable(major int, idx int, s *goquery.Selection, rootDir, source string
 			}
 			ps = append(ps, p)
 		}
+
+		ref, err := findRef(s)
+		if err != nil {
+			return errors.Wrap(err, "find reference")
+		}
+
 		t := PackageTable{
 			Major:      major,
-			Index:      idx,
-			Repository: findRepo(s),
+			Repository: ref,
 			Type:       "package",
 			Packages:   ps,
 			Source:     source,
 		}
-		if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("%d-package.json", idx)), t); err != nil {
-			return errors.Wrapf(err, "write package table. file: %s", filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("%d-package.json", idx)))
+		if err := util.Write(filepath.Join(rootDir, major, "package", fmt.Sprintf("%s.json", ref)), t); err != nil {
+			return errors.Wrapf(err, "write package table. file: %s", filepath.Join(rootDir, major, "package", fmt.Sprintf("%s.json", ref)))
 		}
 
 	case "Module":
@@ -202,16 +195,21 @@ func writeTable(major int, idx int, s *goquery.Selection, rootDir, source string
 			}
 			ms = append(ms, m)
 		}
-		t := ModuleTable{
-			Major:      major,
-			Index:      idx,
-			Type:       "module",
-			Repository: findRepo(s),
-			Modules:    ms,
-			Source:     source,
+
+		ref, err := findRef(s)
+		if err != nil {
+			return errors.Wrap(err, "find reference")
 		}
-		if err := util.Write(filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("%d-module.json", idx)), t); err != nil {
-			return errors.Wrapf(err, "write module table. file: %s", filepath.Join(rootDir, fmt.Sprintf("%d", major), fmt.Sprintf("%d-module.json", idx)))
+
+		t := ModuleTable{
+			Major:     major,
+			Type:      "module",
+			Reference: ref,
+			Modules:   ms,
+			Source:    source,
+		}
+		if err := util.Write(filepath.Join(rootDir, major, "module", fmt.Sprintf("%s.json", ref)), t); err != nil {
+			return errors.Wrapf(err, "write module table. file: %s", filepath.Join(rootDir, major, "module", fmt.Sprintf("%s.json", ref)))
 		}
 
 	default:
@@ -221,33 +219,31 @@ func writeTable(major int, idx int, s *goquery.Selection, rootDir, source string
 	return nil
 }
 
-func findRepo(s *goquery.Selection) string {
-	title := func() string {
+func findRef(s *goquery.Selection) (string, error) {
+	title := func() *goquery.Selection {
 		cur := s
 		for cur.Length() > 0 {
 			for _, p := range cur.PrevAll().EachIter() {
 				if p.HasClass("title") {
-					return strings.TrimSpace(p.Text())
+					return p
 				}
 				hs := p.Find(".title")
 				if hs.Length() > 0 {
-					last := hs.Last()
-					return strings.TrimSpace(last.Text())
+					return hs.Last()
 				}
 			}
 			cur = cur.Parent()
 		}
-		return ""
+		return nil
 	}()
-
-	switch {
-	case strings.Contains(title, "BaseOS"):
-		return "BaseOS"
-	case strings.Contains(title, "AppStream"):
-		return "AppStream"
-	case strings.Contains(title, "Supplementary"):
-		return "Supplementary"
-	default:
-		return ""
+	if title == nil || title.Length() == 0 {
+		return "", errors.New("no title found")
 	}
+
+	href, exists := title.Find("a").First().Attr("href")
+	if !exists {
+		return "", errors.Errorf("no anchor found. title: %+v", title)
+	}
+
+	return strings.TrimPrefix(href, "#"), nil
 }

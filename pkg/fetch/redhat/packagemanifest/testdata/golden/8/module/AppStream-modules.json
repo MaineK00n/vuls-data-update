@@ -1,8 +1,7 @@
 {
-	"major": 8,
-	"index": 2,
+	"major": "8",
 	"type": "module",
-	"repository": "AppStream",
+	"reference": "AppStream-modules",
 	"modules": [
 		{
 			"module": "389-ds",
@@ -181,5 +180,5 @@
 			]
 		}
 	],
-	"source": "http://127.0.0.1:45555/rhel-8.html"
+	"source": "http://127.0.0.1:45865/testdata/fixtures/rhel-8.html"
 }

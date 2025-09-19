@@ -13,6 +13,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/packagemanifest"
 )
@@ -21,11 +22,13 @@ func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
 		testdata string
+		args     []string
 		hasError bool
 	}{
 		{
 			name:     "happy",
 			testdata: "testdata/fixtures",
+			args:     []string{"8", "9", "10"},
 		},
 	}
 
@@ -43,7 +46,7 @@ func TestFetch(t *testing.T) {
 
 			dir := t.TempDir()
 
-			err := packagemanifest.Fetch(packagemanifest.WithBaseURL(fmt.Sprintf("%s/%s/rhel-%%d.html", ts.URL, tt.testdata)), packagemanifest.WithDir(dir))
+			err := packagemanifest.Fetch(tt.args, packagemanifest.WithBaseURL(fmt.Sprintf("%s/%s/rhel-%%s.html", ts.URL, tt.testdata)), packagemanifest.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -60,8 +63,12 @@ func TestFetch(t *testing.T) {
 					return nil
 				}
 
-				dir, file := filepath.Split(path)
-				wf, err := os.Open(filepath.Join("testdata", "golden", filepath.Base(dir), file))
+				ss := strings.Split(path, string(os.PathSeparator))
+				if len(ss) < 3 {
+					return errors.Errorf("invalid path: %s", path)
+				}
+
+				wf, err := os.Open(filepath.Join("testdata", "golden", ss[len(ss)-3], ss[len(ss)-2], ss[len(ss)-1]))
 				if err != nil {
 					return err
 				}
