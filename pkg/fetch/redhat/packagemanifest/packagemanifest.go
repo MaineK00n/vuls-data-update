@@ -107,6 +107,7 @@ func Fetch(opts ...Option) error {
 		urlTemplate: urlTemplate,
 		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
 	}
+
 	for _, o := range opts {
 		o.apply(opt)
 	}
