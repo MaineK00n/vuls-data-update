@@ -3938,7 +3938,7 @@ func newCmdRedHatPackageManifest() *cobra.Command {
 		Short: "Fetch RedHat Enterprise Linux Package Manifest tables",
 		Example: heredoc.Doc(`
             $ vuls-data-update fetch redhat-packagemanifest
-            $ vuls-data-update fetch redhat-packagemanifest --majors 9,10
+            $ vuls-data-update fetch redhat-packagemanifest 9 10
         `),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
