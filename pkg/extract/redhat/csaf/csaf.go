@@ -120,6 +120,11 @@ func Extract(csafDir, repository2cpeDir string, opts ...Option) error {
 			return errors.Wrapf(err, "read %s", path)
 		}
 
+		// https://issues.redhat.com/browse/SECDATA-1115?focusedId=28089765&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28089765
+		if adv.Document.Tracking.ID == "RHSA-2023:6529" {
+			return nil
+		}
+
 		extracted, err := e.extract(adv, cpe2repository)
 		if err != nil {
 			return errors.Wrapf(err, "extract %s", path)
