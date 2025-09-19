@@ -1,0 +1,46 @@
+{
+	"title": "RHEL 9 Full Life Application Streams Release Life Cycle",
+	"major": "9",
+	"application_streams": [
+		{
+			"application_stream": "Apache httpd 2.4",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "MariaDB 10.5",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "NGINX 1.20",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "Perl 5.32",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "PHP 8.0",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "PostgreSQL 13",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "Python 3.9",
+			"release_date": "May 2022",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "Ruby 3.0",
+			"release_date": "May 2022",
+			"release": "9.0"
+		}
+	]
+}

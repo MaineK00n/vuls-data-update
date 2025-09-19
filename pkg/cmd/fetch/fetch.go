@@ -121,6 +121,7 @@ import (
 	pubGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/ghsa"
 	pubOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/pub/osv"
 	rOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/r/osv"
+	redhatAppstreamLifecycle "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/appstream-lifecycle"
 	redhatCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/csaf"
 	redhatCVE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cve"
 	redhatCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/cvrf"
@@ -250,7 +251,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatPackageManifest(),
+		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatAppstreamLifecycle(), newCmdRedHatPackageManifest(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
@@ -4049,6 +4050,33 @@ func newCmdRedHatOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdRedHatAppstreamLifecycle() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "appstream-lifecycle"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-appstream-lifecycle",
+		Short: "Fetch RedHat Enterprise Linux Application Streams Lifecycle tables",
+		Example: heredoc.Doc(`
+            $ vuls-data-update fetch redhat-appstream-lifecycle
+        `),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := redhatAppstreamLifecycle.Fetch(redhatAppstreamLifecycle.WithDir(options.dir), redhatAppstreamLifecycle.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat packagemanifest")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

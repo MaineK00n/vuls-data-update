@@ -1,0 +1,56 @@
+{
+	"title": "RHEL 8 Full Life Application Streams Release Life Cycle",
+	"major": "8",
+	"application_streams": [
+		{
+			"application_stream": "Apache Ant 1.1",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "FreeRADIUS 3.0",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "Git 2",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "Apache httpd 2.4",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "Identity Management DL1",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "Identity Management Client",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "MariaDB 10.3",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "Maven 3.8",
+			"release_date": "Nov 2022",
+			"release": "8.7.0"
+		},
+		{
+			"application_stream": "mod_auth_openidc for Apache",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "osinfo-db",
+			"release_date": "May 2019",
+			"release": "8.0.0"
+		}
+	]
+}

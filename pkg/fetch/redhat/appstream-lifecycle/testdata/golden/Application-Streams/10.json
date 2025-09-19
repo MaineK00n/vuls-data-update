@@ -1,0 +1,60 @@
+{
+	"title": "RHEL 10 Application Streams Release Life Cycle",
+	"major": "10",
+	"application_streams": [
+		{
+			"application_stream": "Ansible Core",
+			"release_date": "May 2025",
+			"retirement_date": "Nov 2023",
+			"release": "10.0"
+		},
+		{
+			"application_stream": ".NET 8",
+			"release_date": "May 2025",
+			"retirement_date": "Nov 2026",
+			"release": "10.0"
+		},
+		{
+			"application_stream": ".NET 9",
+			"release_date": "May 2025",
+			"retirement_date": "May 2026",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "IDM",
+			"release_date": "May 2025",
+			"retirement_date": "May 2027",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "OpenJDK 21",
+			"release_date": "May 2025",
+			"retirement_date": "Dec 2029",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "JBoss mod_cluster for Apache",
+			"release_date": "May 2025",
+			"retirement_date": "May 2027",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "MySQL 8.4",
+			"release_date": "May 2025",
+			"retirement_date": "May 2029",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "Node.js 22",
+			"release_date": "May 2025",
+			"retirement_date": "Apr 2027",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "Apache Tomcat 9",
+			"release_date": "May 2025",
+			"retirement_date": "May 2026",
+			"release": "10.0"
+		}
+	]
+}

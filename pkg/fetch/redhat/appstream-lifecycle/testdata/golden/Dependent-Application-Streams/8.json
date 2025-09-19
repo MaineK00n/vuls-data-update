@@ -1,0 +1,15 @@
+{
+	"title": "RHEL 8 Dependent Application Streams Release Life Cycle",
+	"major": "8",
+	"application_streams": [
+		{
+			"application_stream": "389-ds 1.4"
+		},
+		{
+			"application_stream": "pki-core"
+		},
+		{
+			"application_stream": "pki-deps"
+		}
+	]
+}
