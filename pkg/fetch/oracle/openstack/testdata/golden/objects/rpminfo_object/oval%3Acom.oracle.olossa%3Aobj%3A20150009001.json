@@ -1,0 +1,6 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:com.oracle.olossa:obj:20150009001",
+	"version": "501",
+	"name": "oraclelinux-release"
+}

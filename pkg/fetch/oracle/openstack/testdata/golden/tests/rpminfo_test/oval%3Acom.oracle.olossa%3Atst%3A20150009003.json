@@ -1,0 +1,13 @@
+{
+	"id": "oval:com.oracle.olossa:tst:20150009003",
+	"version": "501",
+	"comment": "openstack-keystone is earlier than 0:2014.1.3-2.el6",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:com.oracle.olossa:obj:20150009002"
+	},
+	"state": {
+		"state_ref": "oval:com.oracle.olossa:ste:20150009004"
+	}
+}

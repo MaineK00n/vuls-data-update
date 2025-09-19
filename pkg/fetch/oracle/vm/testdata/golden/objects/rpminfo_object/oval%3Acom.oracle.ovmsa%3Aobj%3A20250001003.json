@@ -1,0 +1,6 @@
+{
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"id": "oval:com.oracle.ovmsa:obj:20250001003",
+	"version": "501",
+	"name": "kernel-uek-firmware"
+}
