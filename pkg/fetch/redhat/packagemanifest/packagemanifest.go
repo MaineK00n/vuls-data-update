@@ -76,9 +76,9 @@ func Fetch(majors []string, opts ...Option) error {
 	if err := os.MkdirAll(opt.dir, 0755); err != nil {
 		return errors.Wrapf(err, "mkdir %s", opt.dir)
 	}
-	if err := os.WriteFile(filepath.Join(opt.dir, "README.md"), []byte(`## Repository of RedHat Package Manifest data accumulation
+	if err := os.WriteFile(filepath.Join(opt.dir, "README.md"), []byte(`## Repository of Red Hat Package Manifest data accumulation
 
-All the data in this repository are fetched from following pages by RedHat.
+All the data in this repository are fetched from following pages by Red Hat, Inc.
 
 - https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/package_manifest/index
 - https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/package_manifest/index
