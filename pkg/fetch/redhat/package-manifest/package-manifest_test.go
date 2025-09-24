@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/packagemanifest"
+	packageManifest "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/package-manifest"
 )
 
 func TestFetch(t *testing.T) {
@@ -45,7 +45,7 @@ func TestFetch(t *testing.T) {
 
 			dir := t.TempDir()
 
-			err := packagemanifest.Fetch(tt.args, packagemanifest.WithBaseURL(fmt.Sprintf("%s/en/documentation/red_hat_enterprise_linux/%%s/html-single/package_manifest/index", ts.URL)), packagemanifest.WithDir(dir))
+			err := packageManifest.Fetch(tt.args, packageManifest.WithBaseURL(fmt.Sprintf("%s/en/documentation/red_hat_enterprise_linux/%%s/html-single/package_manifest/index", ts.URL)), packageManifest.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
