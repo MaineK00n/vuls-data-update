@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/packagemanifest"
 )
@@ -63,12 +62,12 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					ss := strings.Split(path, string(os.PathSeparator))
-					if len(ss) < 3 {
-						return errors.Errorf("invalid path: %s", path)
+					rel, err := filepath.Rel(dir, path)
+					if err != nil {
+						return err
 					}
 
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", ss[len(ss)-3], ss[len(ss)-2], ss[len(ss)-1]))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", rel))
 					if err != nil {
 						return err
 					}

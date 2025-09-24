@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -70,6 +71,26 @@ func Fetch(majors []string, opts ...Option) error {
 
 	if err := util.RemoveAll(opt.dir); err != nil {
 		return errors.Wrapf(err, "remove %s", opt.dir)
+	}
+
+	if err := os.MkdirAll(opt.dir, 0755); err != nil {
+		return errors.Wrapf(err, "mkdir %s", opt.dir)
+	}
+	if err := os.WriteFile(filepath.Join(opt.dir, "README.md"), []byte(`## Repository of RedHat Package Manifest data accumulation
+
+All the data in this repository are fetched from following pages by RedHat.
+
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/package_manifest/index
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/package_manifest/index
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html-single/package_manifest/index
+
+### Copyright and License notice
+
+Copyright © 2025 Red Hat, Inc.
+The text of and illustrations in this document are licensed by Red Hat under a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA"). An explanation of CC-BY-SA is available at http://creativecommons.org/licenses/by-sa/3.0/. In accordance with CC-BY-SA, if you distribute this document or an adaptation of it, you must provide the URL for the original version.
+Red Hat, as the licensor of this document, waives the right to enforce, and agrees not to assert, Section 4d of CC-BY-SA to the fullest extent permitted by applicable law.
+`), 0666); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "README.md"))
 	}
 
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opt.retry))
