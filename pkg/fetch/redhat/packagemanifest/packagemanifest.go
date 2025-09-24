@@ -180,8 +180,8 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 			Type:      "package",
 			Packages:  ps,
 		}
-		if err := util.Write(filepath.Join(rootDir, major, "package", fmt.Sprintf("%s.json", ref)), t); err != nil {
-			return errors.Wrapf(err, "write package table. file: %s", filepath.Join(rootDir, major, "package", fmt.Sprintf("%s.json", ref)))
+		if err := util.Write(filepath.Join(rootDir, "package", major, fmt.Sprintf("%s.json", ref)), t); err != nil {
+			return errors.Wrapf(err, "write package table. file: %s", filepath.Join(rootDir, "package", major, fmt.Sprintf("%s.json", ref)))
 		}
 
 		return nil
@@ -226,8 +226,8 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 			Reference: ref,
 			Modules:   ms,
 		}
-		if err := util.Write(filepath.Join(rootDir, major, "module", fmt.Sprintf("%s.json", ref)), t); err != nil {
-			return errors.Wrapf(err, "write module table. file: %s", filepath.Join(rootDir, major, "module", fmt.Sprintf("%s.json", ref)))
+		if err := util.Write(filepath.Join(rootDir, "module", major, fmt.Sprintf("%s.json", ref)), t); err != nil {
+			return errors.Wrapf(err, "write module table. file: %s", filepath.Join(rootDir, "module", major, fmt.Sprintf("%s.json", ref)))
 		}
 
 		return nil
