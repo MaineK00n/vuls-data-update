@@ -60,9 +60,9 @@ func WithRetry(retry int) Option {
 
 func Fetch(majors []string, opts ...Option) error {
 	opt := &options{
-		retry:   3,
 		baseURL: baseURL,
 		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
+		retry:   3,
 	}
 
 	for _, o := range opts {
