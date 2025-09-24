@@ -1,6 +1,6 @@
-## Repository of RedHat Package Manifest data accumulation
+## Repository of Red Hat Package Manifest data accumulation
 
-All the data in this repository are fetched from following pages by RedHat.
+All the data in this repository are fetched from following pages by Red Hat, Inc.
 
 - https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/package_manifest/index
 - https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/package_manifest/index
