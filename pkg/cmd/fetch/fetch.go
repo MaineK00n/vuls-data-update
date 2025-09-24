@@ -127,7 +127,7 @@ import (
 	redhatOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/osv"
 	redhatOVALv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
-	redhatPackageManifest "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/packagemanifest"
+	redhatPackageManifest "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/package-manifest"
 	redhatRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
 	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
@@ -4055,20 +4055,20 @@ func newCmdRedHatOSV() *cobra.Command {
 
 func newCmdRedHatPackageManifest() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "package-manifest"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-packagemanifest",
+		Use:   "redhat-package-manifest",
 		Short: "Fetch RedHat Enterprise Linux Package Manifest tables",
 		Example: heredoc.Doc(`
-            $ vuls-data-update fetch redhat-packagemanifest 9 10
+            $ vuls-data-update fetch redhat-package-manifest 9 10
         `),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := redhatPackageManifest.Fetch(args, redhatPackageManifest.WithDir(options.dir), redhatPackageManifest.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat packagemanifest")
+				return errors.Wrap(err, "failed to fetch redhat package manifest")
 			}
 			return nil
 		},

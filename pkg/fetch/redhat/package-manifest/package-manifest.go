@@ -61,7 +61,7 @@ func WithRetry(retry int) Option {
 func Fetch(majors []string, opts ...Option) error {
 	opt := &options{
 		baseURL: baseURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "package-manifest"),
 		retry:   3,
 	}
 
