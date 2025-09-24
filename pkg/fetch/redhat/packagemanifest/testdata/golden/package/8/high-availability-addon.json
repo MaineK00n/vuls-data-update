@@ -1,0 +1,27 @@
+{
+	"major": "8",
+	"type": "package",
+	"reference": "high-availability-addon",
+	"packages": [
+		{
+			"package": "awscli",
+			"license": "ASL 2.0 and MIT"
+		},
+		{
+			"package": "booth",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "booth-arbitrator",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "booth-core",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "booth-site",
+			"license": "GPLv2+"
+		}
+	]
+}

@@ -1,0 +1,27 @@
+{
+	"major": "8",
+	"type": "package",
+	"reference": "Supplementary-repository",
+	"packages": [
+		{
+			"package": "dptfxtract",
+			"license": "Intel"
+		},
+		{
+			"package": "java-1.8.0-ibm",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-demo",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-devel",
+			"license": "IBM Binary Code License"
+		},
+		{
+			"package": "java-1.8.0-ibm-headless",
+			"license": "IBM Binary Code License"
+		}
+	]
+}

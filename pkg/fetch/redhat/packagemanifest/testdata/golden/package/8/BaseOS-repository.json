@@ -1,0 +1,27 @@
+{
+	"major": "8",
+	"type": "package",
+	"reference": "BaseOS-repository",
+	"packages": [
+		{
+			"package": "aajohan-comfortaa-fonts",
+			"license": "OFL"
+		},
+		{
+			"package": "accel-config",
+			"license": "GPLv2 and LGPLv2+ and MIT and CC0"
+		},
+		{
+			"package": "accel-config-libs",
+			"license": "LGPLv2+ and MIT and CC0"
+		},
+		{
+			"package": "acl",
+			"license": "GPLv2+"
+		},
+		{
+			"package": "acpica-tools",
+			"license": "GPLv2"
+		}
+	]
+}

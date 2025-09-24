@@ -127,6 +127,7 @@ import (
 	redhatOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/osv"
 	redhatOVALv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v1"
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
+	redhatPackageManifest "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/packagemanifest"
 	redhatRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
 	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
@@ -249,7 +250,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(),
+		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatPackageManifest(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
@@ -4048,6 +4049,33 @@ func newCmdRedHatOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdRedHatPackageManifest() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "packagemanifest"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-packagemanifest",
+		Short: "Fetch RedHat Enterprise Linux Package Manifest tables",
+		Example: heredoc.Doc(`
+            $ vuls-data-update fetch redhat-packagemanifest 9 10
+        `),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := redhatPackageManifest.Fetch(args, redhatPackageManifest.WithDir(options.dir), redhatPackageManifest.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat packagemanifest")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
