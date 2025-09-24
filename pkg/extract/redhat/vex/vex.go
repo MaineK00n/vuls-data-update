@@ -922,7 +922,7 @@ func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 			return nil, nil
 		}
 
-		vcs := make([]vcTypes.Criterion, 0, 2)
+		vcs := make([]vcTypes.Criterion, 0, 1)
 
 		if as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }); len(as) > 0 {
 			vcs = append(vcs, vcTypes.Criterion{
@@ -949,33 +949,6 @@ func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 			})
 		}
 
-		if slices.Contains(p2.archs, "src") {
-			vcs = append(vcs, vcTypes.Criterion{
-				Vulnerable: true,
-				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-				Package: vcPackageTypes.Package{
-					Type: vcPackageTypes.PackageTypeSource,
-					Source: &vcSourcePackageTypes.Package{
-						Name: func() string {
-							if p2.modularitylabel != "" {
-								return fmt.Sprintf("%s::%s", p2.modularitylabel, p2.name)
-							}
-							return p2.name
-						}(),
-						Repositories: p2.repositories,
-					},
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  rangeTypes.RangeTypeRPM,
-					Range: []rangeTypes.Range{{LessThan: p2.version}},
-					Fixed: []string{p2.version},
-				},
-			})
-		}
-
-		if len(vcs) == 0 {
-			return nil, errors.Errorf("No version criterion is built. product: %+v, ass: %+v", p2, ass)
-		}
 		return vcs, nil
 	case "affected":
 		if p2.name == "" {
@@ -1034,9 +1007,6 @@ func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 			})
 		}
 
-		if len(vcs) == 0 {
-			return nil, errors.Errorf("No version criterion is built. product: %+v, ass: %+v", p2, ass)
-		}
 		return vcs, nil
 	case "unaffected":
 		return nil, nil

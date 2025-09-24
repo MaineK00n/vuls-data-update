@@ -30,7 +30,6 @@ import (
 	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	vcPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	vcBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/binary"
-	vcSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/source"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
@@ -984,7 +983,7 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 			return nil, nil
 		}
 
-		vcs := make([]vcTypes.Criterion, 0, 2)
+		vcs := make([]vcTypes.Criterion, 0, 1)
 
 		if as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" }); len(as) > 0 {
 			vcs = append(vcs, vcTypes.Criterion{
@@ -1011,33 +1010,6 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 			})
 		}
 
-		if slices.Contains(extra.arches, "src") {
-			vcs = append(vcs, vcTypes.Criterion{
-				Vulnerable: true,
-				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-				Package: vcPackageTypes.Package{
-					Type: vcPackageTypes.PackageTypeSource,
-					Source: &vcSourcePackageTypes.Package{
-						Name: func() string {
-							if pk.modularitylabel != "" {
-								return fmt.Sprintf("%s::%s", pk.modularitylabel, pk.name)
-							}
-							return pk.name
-						}(),
-						Repositories: extra.repositories,
-					},
-				},
-				Affected: &affectedTypes.Affected{
-					Type:  rangeTypes.RangeTypeRPM,
-					Range: []rangeTypes.Range{{LessThan: pk.version}},
-					Fixed: []string{pk.version},
-				},
-			})
-		}
-
-		if len(vcs) == 0 {
-			return nil, errors.Errorf("No version criterion is built. product key: %+v, product extra: %+v", pk, extra)
-		}
 		return vcs, nil
 	case "affected":
 		return nil, errors.Errorf("unexpected product_status. expected: %q, actual: %q", []string{"fixed", "unaffected"}, status.ProductStatus)
