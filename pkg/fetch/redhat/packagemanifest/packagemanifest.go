@@ -116,7 +116,7 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 		}
 
 		for idx, s := range doc.Find("table").EachIter() {
-			if err := writeTable(major, idx, s, opt.dir); err != nil {
+			if err := writeTable(major, s, opt.dir); err != nil {
 				return errors.Wrapf(err, "write table. major: %s, index: %d", major, idx)
 			}
 		}
@@ -124,18 +124,24 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 	return nil
 }
 
-func writeTable(major string, idx int, s *goquery.Selection, rootDir string) error {
+func writeTable(major string, s *goquery.Selection, rootDir string) error {
+	ref, err := findReference(s)
+	if err != nil {
+		return errors.Wrap(err, "find reference")
+	}
+
+	// RHEL10's "2.6. The Resilient Storage add-on" table has "RHEL 9 Minor Release Version" column header
+	// even though it's for RHEL 10. The table should be removed in the future because it is deprecated in RHEL 10.
+	if major == "10" && ref == "resilient-storage-addon" {
+		return nil
+	}
+
 	var headers []string
 	s.Find("thead tr").Last().Find("th").Each(func(_ int, h *goquery.Selection) {
 		headers = append(headers, h.Text())
 	})
 	if len(headers) == 0 {
 		return errors.New("no table header")
-	}
-
-	ref, err := findReference(s)
-	if err != nil {
-		return errors.Wrap(err, "find reference")
 	}
 
 	switch headers[0] {
@@ -158,12 +164,7 @@ func writeTable(major string, idx int, s *goquery.Selection, rootDir string) err
 				case fmt.Sprintf("RHEL %s Minor Release Version", major):
 					p.MinorReleaseVersion = t
 				default:
-					// RHEL10's "2.6. The Resilient Storage add-on" table has
-					// "RHEL 9 Minor Release Version" column header even though it's for RHEL 10.
-					// The table should be removed in the future because the add-on is deprecated in RHEL 10.
-					if major != "10" || ref != "resilient-storage-addon" {
-						return errors.Errorf("unexpected header. type: package, header: %q", headers[i])
-					}
+					return errors.Errorf("unexpected header. type: package, header: %q", headers[i])
 				}
 			}
 
