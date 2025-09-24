@@ -133,6 +133,11 @@ func writeTable(major string, idx int, s *goquery.Selection, rootDir string) err
 		return errors.New("no table header")
 	}
 
+	ref, err := findReference(s)
+	if err != nil {
+		return errors.Wrap(err, "find reference")
+	}
+
 	switch headers[0] {
 	case "Package":
 		var ps []Package
@@ -155,7 +160,8 @@ func writeTable(major string, idx int, s *goquery.Selection, rootDir string) err
 				default:
 					// RHEL10's "2.6. The Resilient Storage add-on" table has
 					// "RHEL 9 Minor Release Version" column header even though it's for RHEL 10.
-					if major != "10" || idx != 7 {
+					// The table should be removed in the future because the add-on is deprecated in RHEL 10.
+					if major != "10" || ref != "resilient-storage-addon" {
 						return errors.Errorf("unexpected header. type: package, header: %q", headers[i])
 					}
 				}
@@ -165,11 +171,6 @@ func writeTable(major string, idx int, s *goquery.Selection, rootDir string) err
 				return errors.Errorf("invalid package information. package: %+v", p)
 			}
 			ps = append(ps, p)
-		}
-
-		ref, err := findReference(s)
-		if err != nil {
-			return errors.Wrap(err, "find reference")
 		}
 
 		t := PackageTable{
@@ -216,11 +217,6 @@ func writeTable(major string, idx int, s *goquery.Selection, rootDir string) err
 				return errors.Errorf("invalid module information. module: %+v", m)
 			}
 			ms = append(ms, m)
-		}
-
-		ref, err := findReference(s)
-		if err != nil {
-			return errors.Wrap(err, "find reference")
 		}
 
 		t := ModuleTable{
