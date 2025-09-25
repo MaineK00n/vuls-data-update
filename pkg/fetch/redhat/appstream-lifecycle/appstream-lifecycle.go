@@ -162,6 +162,23 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
+func findHeadingForTable(table *goquery.Selection) (string, error) {
+	cur := table
+	for cur.Length() > 0 {
+		for _, s := range cur.PrevAll().EachIter() {
+			if goquery.NodeName(s) == "h2" {
+				text := strings.TrimSpace(s.Text())
+				if text == "" {
+					return "", errors.Errorf("empty heading text")
+				}
+				return text, nil
+			}
+		}
+		cur = cur.Parent()
+	}
+	return "", errors.New("no heading found")
+}
+
 func extractApplicationStreams(table *goquery.Selection, headers []string) ([]ApplicationStream, error) {
 	var rows []ApplicationStream
 	for _, tr := range table.Find("tbody tr").EachIter() {
@@ -288,21 +305,4 @@ func extractDependentApplicationStreams(table *goquery.Selection, headers []stri
 		rows = append(rows, row)
 	}
 	return rows, nil
-}
-
-func findHeadingForTable(table *goquery.Selection) (string, error) {
-	cur := table
-	for cur.Length() > 0 {
-		for _, s := range cur.PrevAll().EachIter() {
-			if goquery.NodeName(s) == "h2" {
-				text := strings.TrimSpace(s.Text())
-				if text == "" {
-					return "", errors.Errorf("empty heading text")
-				}
-				return text, nil
-			}
-		}
-		cur = cur.Parent()
-	}
-	return "", errors.New("no heading found")
 }
