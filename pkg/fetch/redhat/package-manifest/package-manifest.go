@@ -59,24 +59,24 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(majors []string, opts ...Option) error {
-	opt := &options{
+	options := &options{
 		baseURL: baseURL,
 		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "package-manifest"),
 		retry:   3,
 	}
 
 	for _, o := range opts {
-		o.apply(opt)
+		o.apply(options)
 	}
 
-	if err := util.RemoveAll(opt.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", opt.dir)
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	if err := os.MkdirAll(opt.dir, 0755); err != nil {
-		return errors.Wrapf(err, "mkdir %s", opt.dir)
+	if err := os.MkdirAll(options.dir, 0755); err != nil {
+		return errors.Wrapf(err, "mkdir %s", options.dir)
 	}
-	if err := os.WriteFile(filepath.Join(opt.dir, "README.md"), []byte(`## Repository of Red Hat Package Manifest data accumulation
+	if err := os.WriteFile(filepath.Join(options.dir, "README.md"), []byte(`## Repository of Red Hat Package Manifest data accumulation
 
 All the data in this repository are fetched from following pages by Red Hat, Inc.
 
@@ -90,14 +90,14 @@ Copyright © 2025 Red Hat, Inc.
 The text of and illustrations in this document are licensed by Red Hat under a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA"). An explanation of CC-BY-SA is available at http://creativecommons.org/licenses/by-sa/3.0/. In accordance with CC-BY-SA, if you distribute this document or an adaptation of it, you must provide the URL for the original version.
 Red Hat, as the licensor of this document, waives the right to enforce, and agrees not to assert, Section 4d of CC-BY-SA to the fullest extent permitted by applicable law.
 `), 0666); err != nil {
-		return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "README.md"))
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "README.md"))
 	}
 
-	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opt.retry))
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	for _, major := range majors {
 		log.Printf("[INFO] Fetch RHEL %s Package Manifest", major)
-		u := fmt.Sprintf(opt.baseURL, major)
+		u := fmt.Sprintf(options.baseURL, major)
 
 		resp, err := c.Get(u)
 		if err != nil {
@@ -116,7 +116,7 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 		}
 
 		for idx, s := range doc.Find("table").EachIter() {
-			if err := writeTable(major, s, opt.dir); err != nil {
+			if err := writeTable(major, s, options.dir); err != nil {
 				return errors.Wrapf(err, "write table. major: %s, index: %d", major, idx)
 			}
 		}
