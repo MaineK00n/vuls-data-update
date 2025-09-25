@@ -188,7 +188,6 @@ func extractApplicationStreams(table *goquery.Selection, headers []string) ([]Ap
 		if row.ApplicationStream == "" || row.ReleaseDate == "" || row.RetirementDate == "" || row.Release == "" {
 			return nil, errors.Errorf("empty field in ApplicationStream. row: %+v", row)
 		}
-
 		rows = append(rows, row)
 	}
 	return rows, nil
