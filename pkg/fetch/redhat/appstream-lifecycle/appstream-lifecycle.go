@@ -64,6 +64,7 @@ func Fetch(opts ...Option) error {
 		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "appstream-lifecycle"),
 		retry:   3,
 	}
+
 	for _, o := range opts {
 		o.apply(opt)
 	}
