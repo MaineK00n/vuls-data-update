@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	lifecycle "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/appstream-lifecycle"
+	appstreamlifecycle "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/appstream-lifecycle"
 )
 
 func TestFetch(t *testing.T) {
@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := lifecycle.Fetch(lifecycle.WithBaseURL(fmt.Sprintf("%s/support/policy/updates/rhel-app-streams-life-cycle", ts.URL)), lifecycle.WithDir(dir), lifecycle.WithRetry(0))
+			err := appstreamlifecycle.Fetch(appstreamlifecycle.WithBaseURL(fmt.Sprintf("%s/support/policy/updates/rhel-app-streams-life-cycle", ts.URL)), appstreamlifecycle.WithDir(dir), appstreamlifecycle.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
