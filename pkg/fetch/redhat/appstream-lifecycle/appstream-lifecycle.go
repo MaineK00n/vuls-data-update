@@ -116,7 +116,6 @@ func Fetch(opts ...Option) error {
 			}
 			headers = append(headers, th.Text())
 		}
-
 		if len(headers) == 0 {
 			return errors.Errorf("no headers found. major: %s, title: %s", ss[1], title)
 		}
