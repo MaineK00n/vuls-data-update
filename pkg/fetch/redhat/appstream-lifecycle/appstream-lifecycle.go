@@ -107,7 +107,7 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "unexpected title. expected: %q, actual: %q", "RHEL <major> ...", title)
 		}
 
-		headers := make([]string, 0)
+		var headers []string
 		for _, th := range tab.Find("thead tr").Last().Find("th").EachIter() {
 			if th.Text() == "" {
 				return errors.Errorf("empty header. major: %s, title: %s", ss[1], title)
