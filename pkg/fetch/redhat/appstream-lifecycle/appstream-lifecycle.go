@@ -16,9 +16,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const (
-	baseURL = "https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle"
-)
+const baseURL = "https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle"
 
 type options struct {
 	baseURL string
