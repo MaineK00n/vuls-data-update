@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009705474",
+	"version": "1",
+	"comment": "libpython3_6m1_0 is <3.6.15-150300.10.27.1 for aarch64,x86_64",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009042555"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009167963"
+	}
+}
