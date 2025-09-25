@@ -4067,7 +4067,7 @@ func newCmdRedHatAppstreamLifecycle() *cobra.Command {
             $ vuls-data-update fetch redhat-appstream-lifecycle
         `),
 		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := redhatAppstreamLifecycle.Fetch(redhatAppstreamLifecycle.WithDir(options.dir), redhatAppstreamLifecycle.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat packagemanifest")
 			}
