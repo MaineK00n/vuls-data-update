@@ -135,7 +135,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			if err := util.Write(filepath.Join(opt.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])), FullLifeApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write table. file: %s", filepath.Join(opt.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+				return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Rolling Application Streams Release Life Cycle":
 			ass, err := extractRollingApplicationStreams(tab, headers, ss[1])
