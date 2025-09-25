@@ -123,7 +123,7 @@ func Fetch(opts ...Option) error {
 		case "Application Streams Release Life Cycle":
 			ass, err := extractApplicationStreams(tab, headers)
 			if err != nil {
-				return errors.Wrapf(err, "extract application streams. title: %s", title)
+				return errors.Wrapf(err, "extract %s", title)
 			}
 
 			if err := util.Write(filepath.Join(opt.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])), ApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
@@ -132,7 +132,7 @@ func Fetch(opts ...Option) error {
 		case "Full Life Application Streams Release Life Cycle":
 			ass, err := extractFullLifeApplicationStreams(tab, headers)
 			if err != nil {
-				return errors.Wrapf(err, "extract full life application streams. title: %s", title)
+				return errors.Wrapf(err, "extract %s", title)
 			}
 
 			if err := util.Write(filepath.Join(opt.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])), FullLifeApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
@@ -141,7 +141,7 @@ func Fetch(opts ...Option) error {
 		case "Rolling Application Streams Release Life Cycle":
 			ass, err := extractRollingApplicationStreams(tab, headers, ss[1])
 			if err != nil {
-				return errors.Wrapf(err, "extract rolling application streams. title: %s", title)
+				return errors.Wrapf(err, "extract %s", title)
 			}
 
 			if err := util.Write(filepath.Join(opt.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])), RollingApplicationStreamTable{Title: title, Major: ss[1], RollingApplicationStreams: ass}); err != nil {
@@ -150,7 +150,7 @@ func Fetch(opts ...Option) error {
 		case "Dependent Application Streams Release Life Cycle":
 			ass, err := extractDependentApplicationStreams(tab, headers)
 			if err != nil {
-				return errors.Wrapf(err, "extract dependent application streams. title: %s", title)
+				return errors.Wrapf(err, "extract %s", title)
 			}
 
 			if err := util.Write(filepath.Join(opt.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])), DependentApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
