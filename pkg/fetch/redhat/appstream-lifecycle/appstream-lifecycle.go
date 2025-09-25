@@ -99,11 +99,13 @@ func Fetch(opts ...Option) error {
 		}
 
 		ss, err := util.Split(title, " ", " ")
-		if err != nil || ss[0] != "RHEL" {
+		if err != nil {
 			return errors.Wrapf(err, "unexpected title. expected: %q, actual: %q", "RHEL <major> ...", title)
 		}
-		_, err = strconv.Atoi(ss[1])
-		if err != nil {
+		if ss[0] != "RHEL" {
+			return errors.Errorf("unexpected title. expected: %q, actual: %q", "RHEL <major> ...", title)
+		}
+		if _, err := strconv.Atoi(ss[1]); err != nil {
 			return errors.Wrapf(err, "unexpected title. expected: %q, actual: %q", "RHEL <major> ...", title)
 		}
 
