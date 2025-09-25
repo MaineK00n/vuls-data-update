@@ -40,9 +40,7 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-
 			err := lifecycle.Fetch(lifecycle.WithBaseURL(fmt.Sprintf("%s/support/policy/updates/rhel-app-streams-life-cycle", ts.URL)), lifecycle.WithDir(dir), lifecycle.WithRetry(0))
-
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
