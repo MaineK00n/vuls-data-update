@@ -148,11 +148,13 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 	case "Package":
 		var ps []Package
 		for _, tr := range s.Find("tbody tr").EachIter() {
-			p := Package{}
-			for i, c := range tr.Find("td").EachIter() {
-				if len(headers) <= i {
-					return errors.Errorf("unexpected cell index. type: package, expected: < %d, actual: %d", len(headers), i)
-				}
+			cells := tr.Find("td")
+			if cells.Length() != len(headers) {
+				return errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
+			}
+
+			var p Package
+			for i, c := range cells.EachIter() {
 				t := strings.TrimSpace(c.Text())
 				switch headers[i] {
 				case "Package":
@@ -188,11 +190,13 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 	case "Module":
 		var ms []Module
 		for _, tr := range s.Find("tbody tr").EachIter() {
-			m := Module{}
-			for i, c := range tr.Find("td").EachIter() {
-				if len(headers) <= i {
-					return errors.Errorf("unexpected cell index. type: module, expected: <%d, actual: %d", len(headers), i)
-				}
+			cells := tr.Find("td")
+			if cells.Length() != len(headers) {
+				return errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
+			}
+
+			var m Module
+			for i, c := range cells.EachIter() {
 				t := strings.TrimSpace(c.Text())
 				switch headers[i] {
 				case "Module":
