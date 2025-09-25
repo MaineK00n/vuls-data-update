@@ -289,9 +289,6 @@ func extractDependentApplicationStreams(table *goquery.Selection, headers []stri
 
 		var row DependentApplicationStream
 		for i, td := range cells.EachIter() {
-			if i >= len(headers) {
-				return nil, errors.Errorf("index out of range. i: %d headers: %d", i, len(headers))
-			}
 			switch headers[i] {
 			case "Application Stream":
 				row.ApplicationStream = td.Text()
