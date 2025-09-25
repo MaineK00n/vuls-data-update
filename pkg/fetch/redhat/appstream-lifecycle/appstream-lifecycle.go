@@ -59,25 +59,25 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	opt := &options{
+	options := &options{
 		baseURL: baseURL,
 		dir:     filepath.Join(util.CacheDir(), "fetch", "redhat", "appstream-lifecycle"),
 		retry:   3,
 	}
 
 	for _, o := range opts {
-		o.apply(opt)
+		o.apply(options)
 	}
 
-	if err := util.RemoveAll(opt.dir); err != nil {
-		return errors.Wrapf(err, "remove %s", opt.dir)
+	if err := util.RemoveAll(options.dir); err != nil {
+		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
 	log.Print("[INFO] Fetch RHEL Application Streams Life Cycle")
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opt.retry)).Get(opt.baseURL)
+	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
 	if err != nil {
-		return errors.Wrapf(err, "get document. URL: %s", opt.baseURL)
+		return errors.Wrapf(err, "get document. URL: %s", options.baseURL)
 	}
 	defer resp.Body.Close()
 
@@ -126,8 +126,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(opt.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])), ApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(options.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])), ApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Full Life Application Streams Release Life Cycle":
 			ass, err := extractFullLifeApplicationStreams(tab, headers)
@@ -135,8 +135,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(opt.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])), FullLifeApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(options.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])), FullLifeApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Rolling Application Streams Release Life Cycle":
 			ass, err := extractRollingApplicationStreams(tab, headers, ss[1])
@@ -144,8 +144,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(opt.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])), RollingApplicationStreamTable{Title: title, Major: ss[1], RollingApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(options.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])), RollingApplicationStreamTable{Title: title, Major: ss[1], RollingApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Dependent Application Streams Release Life Cycle":
 			ass, err := extractDependentApplicationStreams(tab, headers)
@@ -153,8 +153,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(opt.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])), DependentApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(options.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])), DependentApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		default:
 			return errors.Errorf("unexpected table type. expected: %q, actual: %q", []string{"RHEL <major> Application Streams Release Life Cycle", "RHEL <major> Full Life Application Streams Release Life Cycle", "RHEL <major> Rolling Application Streams Release Life Cycle", "RHEL <major> Dependent Application Streams Release Life Cycle"}, title)
