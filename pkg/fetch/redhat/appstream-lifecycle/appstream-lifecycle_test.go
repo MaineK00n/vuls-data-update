@@ -30,12 +30,12 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != "/support/policy/updates/rhel-app-streams-life-cycle" {
+				switch r.URL.Path {
+				case "/support/policy/updates/rhel-app-streams-life-cycle":
+					http.ServeFile(w, r, filepath.Join(tt.testdata, "rhel-app-streams-life-cycle.html"))
+				default:
 					http.NotFound(w, r)
-					return
 				}
-
-				http.ServeFile(w, r, filepath.Join(tt.testdata, "rhel-app-streams-life-cycle.html"))
 			}))
 			defer ts.Close()
 
