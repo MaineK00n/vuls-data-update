@@ -153,7 +153,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			if err := util.Write(filepath.Join(opt.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])), DependentApplicationStreamTable{Title: title, Major: ss[1], ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write table . file: %s", filepath.Join(opt.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+				return errors.Wrapf(err, "write %s", filepath.Join(opt.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		default:
 			return errors.Errorf("unknown table type. major: %s, title: %s", ss[1], title)
