@@ -34,10 +34,6 @@ func TestFetch(t *testing.T) {
 					http.NotFound(w, r)
 					return
 				}
-				if _, err := os.Stat(filepath.Join(tt.testdata, "rhel-app-streams-life-cycle.html")); err != nil {
-					http.NotFound(w, r)
-					return
-				}
 
 				http.ServeFile(w, r, filepath.Join(tt.testdata, "rhel-app-streams-life-cycle.html"))
 			}))
