@@ -1,6 +1,5 @@
 {
 	"title": "RHEL 10 Rolling Application Streams Release Life Cycle",
-	"major": "10",
 	"rolling_application_streams": [
 		{
 			"rolling_application_stream": "container-tools",

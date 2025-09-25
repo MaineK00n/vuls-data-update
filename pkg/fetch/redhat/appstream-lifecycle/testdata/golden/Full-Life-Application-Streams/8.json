@@ -1,6 +1,5 @@
 {
 	"title": "RHEL 8 Full Life Application Streams Release Life Cycle",
-	"major": "8",
 	"application_streams": [
 		{
 			"application_stream": "Apache Ant 1.1",

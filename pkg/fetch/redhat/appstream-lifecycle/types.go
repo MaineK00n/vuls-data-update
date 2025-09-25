@@ -2,7 +2,6 @@ package appstreamlifecycle
 
 type ApplicationStreamTable struct {
 	Title              string              `json:"title"`
-	Major              string              `json:"major"`
 	ApplicationStreams []ApplicationStream `json:"application_streams,omitempty"`
 }
 
@@ -15,7 +14,6 @@ type ApplicationStream struct {
 
 type FullLifeApplicationStreamTable struct {
 	Title              string                      `json:"title"`
-	Major              string                      `json:"major"`
 	ApplicationStreams []FullLifeApplicationStream `json:"application_streams,omitempty"`
 }
 
@@ -27,7 +25,6 @@ type FullLifeApplicationStream struct {
 
 type RollingApplicationStreamTable struct {
 	Title                     string                     `json:"title"`
-	Major                     string                     `json:"major"`
 	RollingApplicationStreams []RollingApplicationStream `json:"rolling_application_streams,omitempty"`
 }
 
@@ -40,7 +37,6 @@ type RollingApplicationStream struct {
 
 type DependentApplicationStreamTable struct {
 	Title              string                       `json:"title"`
-	Major              string                       `json:"major"`
 	ApplicationStreams []DependentApplicationStream `json:"application_streams,omitempty"`
 }
 

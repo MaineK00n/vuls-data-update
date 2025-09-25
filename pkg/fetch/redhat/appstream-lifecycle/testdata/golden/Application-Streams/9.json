@@ -1,6 +1,5 @@
 {
 	"title": "RHEL 9 Application Streams Release Life Cycle",
-	"major": "9",
 	"application_streams": [
 		{
 			"application_stream": "Ansible Core",

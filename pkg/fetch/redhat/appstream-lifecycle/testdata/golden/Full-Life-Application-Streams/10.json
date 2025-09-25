@@ -1,6 +1,5 @@
 {
 	"title": "RHEL 10 Full Life Application Streams Release Life Cycle",
-	"major": "10",
 	"application_streams": [
 		{
 			"application_stream": "Apache httpd 2.4",
