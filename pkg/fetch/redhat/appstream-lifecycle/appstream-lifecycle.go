@@ -187,7 +187,7 @@ func extractApplicationStreams(table *goquery.Selection, headers []string) ([]Ap
 			return nil, errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
 		}
 
-		row := ApplicationStream{}
+		var row ApplicationStream
 		for i, td := range cells.EachIter() {
 			switch headers[i] {
 			case "Application Stream":
@@ -218,7 +218,7 @@ func extractFullLifeApplicationStreams(table *goquery.Selection, headers []strin
 			return nil, errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
 		}
 
-		row := FullLifeApplicationStream{}
+		var row FullLifeApplicationStream
 		for i, td := range cells.EachIter() {
 			switch headers[i] {
 			case "Application Stream":
@@ -252,7 +252,7 @@ func extractRollingApplicationStreams(table *goquery.Selection, headers []string
 			return nil, errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
 		}
 
-		row := RollingApplicationStream{}
+		var row RollingApplicationStream
 		for i, td := range cells.EachIter() {
 			switch headers[i] {
 			case "Rolling Application Stream":
@@ -287,7 +287,7 @@ func extractDependentApplicationStreams(table *goquery.Selection, headers []stri
 			return nil, errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
 		}
 
-		row := DependentApplicationStream{}
+		var row DependentApplicationStream
 		for i, td := range cells.EachIter() {
 			if i >= len(headers) {
 				return nil, errors.Errorf("index out of range. i: %d headers: %d", i, len(headers))
