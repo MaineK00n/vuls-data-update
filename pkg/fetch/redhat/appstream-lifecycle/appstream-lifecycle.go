@@ -188,16 +188,16 @@ func extractApplicationStreams(table *goquery.Selection, headers []string) ([]Ap
 		}
 
 		var row ApplicationStream
-		for i, td := range cells.EachIter() {
+		for i, c := range cells.EachIter() {
 			switch headers[i] {
 			case "Application Stream":
-				row.ApplicationStream = td.Text()
+				row.ApplicationStream = c.Text()
 			case "Release Date":
-				row.ReleaseDate = td.Text()
+				row.ReleaseDate = c.Text()
 			case "Retirement Date":
-				row.RetirementDate = td.Text()
+				row.RetirementDate = c.Text()
 			case "Release":
-				row.Release = td.Text()
+				row.Release = c.Text()
 			default:
 				return nil, errors.Errorf("unexpected header. expected: %s, actual: %s", []string{"Application Stream", "Release Date", "Retirement Date", "Release"}, headers[i])
 			}
@@ -219,14 +219,14 @@ func extractFullLifeApplicationStreams(table *goquery.Selection, headers []strin
 		}
 
 		var row FullLifeApplicationStream
-		for i, td := range cells.EachIter() {
+		for i, c := range cells.EachIter() {
 			switch headers[i] {
 			case "Application Stream":
-				row.ApplicationStream = td.Text()
+				row.ApplicationStream = c.Text()
 			case "Release Date":
-				row.ReleaseDate = td.Text()
+				row.ReleaseDate = c.Text()
 			case "Release":
-				row.Release = td.Text()
+				row.Release = c.Text()
 			default:
 				return nil, errors.Errorf("unexpected header. expected: %s, actual: %s", []string{"Application Stream", "Release Date", "Release"}, headers[i])
 			}
@@ -253,18 +253,18 @@ func extractRollingApplicationStreams(table *goquery.Selection, headers []string
 		}
 
 		var row RollingApplicationStream
-		for i, td := range cells.EachIter() {
+		for i, c := range cells.EachIter() {
 			switch headers[i] {
 			case "Rolling Application Stream":
-				row.RollingApplicationStream = td.Text()
+				row.RollingApplicationStream = c.Text()
 			case "Release Date":
-				row.ReleaseDate = td.Text()
+				row.ReleaseDate = c.Text()
 			case "Product Version":
-				row.ProductVersion = td.Text()
+				row.ProductVersion = c.Text()
 			case "Previous Release":
-				href, exists := td.Find("a").First().Attr("href")
+				href, exists := c.Find("a").First().Attr("href")
 				if !exists {
-					return nil, errors.Errorf("no link found in Previous Release. td: %+v", td)
+					return nil, errors.Errorf("no link found in Previous Release. td: %+v", c)
 				}
 				row.PreviousRelease = href
 			default:
@@ -288,10 +288,10 @@ func extractDependentApplicationStreams(table *goquery.Selection, headers []stri
 		}
 
 		var row DependentApplicationStream
-		for i, td := range cells.EachIter() {
+		for i, c := range cells.EachIter() {
 			switch headers[i] {
 			case "Application Stream":
-				row.ApplicationStream = td.Text()
+				row.ApplicationStream = c.Text()
 			default:
 				return nil, errors.Errorf("unexpected header. expected: %s, actual: %s", []string{"Application Stream"}, headers[i])
 			}
