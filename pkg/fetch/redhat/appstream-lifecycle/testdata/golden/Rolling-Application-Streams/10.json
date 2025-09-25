@@ -1,0 +1,47 @@
+{
+	"title": "RHEL 10 Rolling Application Streams Release Life Cycle",
+	"rolling_application_streams": [
+		{
+			"rolling_application_stream": "container-tools",
+			"release_date": "May 2025",
+			"product_version": "1.14.0",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Firefox",
+			"release_date": "May 2025",
+			"product_version": "128.7.0",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Git",
+			"release_date": "May 2025",
+			"product_version": "2.47.1",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Go",
+			"release_date": "Mar 2025",
+			"product_version": "1.23.7",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "LLVM",
+			"release_date": "Oct 2024",
+			"product_version": "19.1.7",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Rust",
+			"release_date": "Oct 2024",
+			"product_version": "1.84.1",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Thunderbird",
+			"release_date": "May 2025",
+			"product_version": "128.7.0",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		}
+	]
+}

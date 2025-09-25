@@ -1,0 +1,844 @@
+<!DOCTYPE html><html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#"><head>
+<title>Red Hat Enterprise Linux Application Streams Life Cycle | Red Hat Customer Portal</title>
+</head>
+<body>
+<div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas="">
+<div class="page page-- legacy-page-template legacy-page-template--nimbus">
+<div id="page-wrap" class="page-wrap">
+<div id="pers-top-page-wrap" class="top-page-wrap pers-loader-bg">
+<main id="cp-main" class="portal-content-area">
+<div id="cp-content" class="main-content">
+<div class="container">
+<div>
+<div data-drupal-messages-fallback="" class="hidden"></div>
+</div>
+</div>
+<section class="page-content container">
+<div>
+<article class="node-content" id="node-4079021">
+<div class="container--legacy container">
+<div></div>
+<div class="band band-first">
+<div class="container">
+<h1 class="headline-md">Red Hat Enterprise Linux Application Streams Life Cycle</h1>
+<div class="container">
+<div class="cp-grid push-top-narrow">
+<div class="cp-grid-item" data-cp-grid-size="md-span-12">
+<h2 class="subheading">Overview</h2>
+<p>
+                        Red Hat Enterprise Linux 8 introduced the concept of Application Streams - 
+                        multiple versions of user space components that are delivered and updated
+                        more frequently than the core operating system packages. This provides
+                        greater flexibility to customize Red Hat Enterprise Linux without impacting
+                        the underlying stability of the platform or specific deployments.
+</p>
+<p>
+                        Components made available as Application Streams can be packaged as:
+</p><ul>
+<li>RPM packages</li>
+<li>Modules</li>
+<li>Software Collections</li>
+</ul>
+<p></p>
+<p>
+                        Application Streams are delivered through the AppStream repository. Each
+                        Application Stream component has a given life cycle, either the same as the
+                        RHEL release or shorter.
+</p>
+<p>
+                        Application Streams are available for Red Hat Enteprise Linux 8 and 9.
+</p>
+</div>
+</div>
+</div>
+<div class="container">
+<h2 class="section-title section-title-red">Details</h2>
+<div class="cp-grid push-top">
+<div class="cp-grid-item" data-cp-grid-size="md-span-12">
+<p>
+                        Application Streams will be available during the Red Hat Enterprise Linux
+                        lifecycle. Multiple versions of user space components are delivered and updated
+                        more frequently than the core operating system packages. This provides greater
+                        flexibility to customize Red Hat Enterprise Linux without impacting the
+                        underlying stability of the platform or specific deployments.
+</p>
+<ul>
+<li>
+<p>
+<b>Application Streams</b>
+</p>
+<p>
+                                New versions of most Application Streams will become available as needed during
+                                the Red Hat Enterprise Linux 9 life cycle. Lifecycles will align
+                                to the upstream support life or to product needs as required. Multiple versions
+                                of the same Application Stream may be available at the same time with
+                                overlapping support durations.
+</p>
+<ul>
+<li><a href="#rhel10_application_streams">RHEL 10 Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel9_application_streams">RHEL 9 Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel8_application_streams">RHEL 8 Application Streams Release Life Cycle</a></li>
+</ul>
+</li>
+<li>
+<p>
+<b>Full Life Application Streams</b>
+</p>
+<p>
+                                Where possible, if there are multiple shorter-lived Application Streams
+                                offered, a single stream that extends the duration of the underlying RHEL
+                                release may be offered.
+</p>
+<ul>
+<li><a href="#rhel10_full_life_application_streams">RHEL 10 Full Life Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel9_full_life_application_streams">RHEL 9 Full Life Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel8_full_life_application_streams">RHEL 8 Full Life Application Streams Release Life Cycle</a></li>
+</ul>
+</li>
+<li>
+<p>
+<b>Rolling Streams</b>
+</p>
+<p>
+                                Rolling Application Streams include tools and application that move very fast and are updated
+                                frequently. Rolling Application Streams are fully supported for the full life of the Red Hat
+                                Enterprise Linux major release. New versions will be made available via the release of new
+                                minor versions of Red Hat Enterprise Linux, and will replace support for prior application
+                                versions in previous minor releases of Red Hat Enterprise Linux. Rolling streams are only used
+                                when having new versions of the stream is very important. Users of rolling streams should
+                                understand when and how the streams are updated and be prepared for newer versions.
+                                Details can be found on <a href="https://access.redhat.com/">access.redhat.com</a> and 
+<a href="https://developers.redhat.com/">developers.redhat.com</a>.
+</p>
+<ul>
+<li><a href="#rhel10_rolling_application_streams">RHEL 10 Rolling Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel9_rolling_application_streams">RHEL 9 Rolling Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel8_rolling_application_streams">RHEL 8 Rolling Application Streams Release Life Cycle</a></li>
+</ul>
+</li>
+<li>
+<p>
+<b>Dependent Application Streams</b>
+</p>
+<p>
+                                Dependent Application Streams are only supported as used by the depending
+                                Application Streams and not standalone.
+</p>
+<ul>
+<li><a href="#rhel10_dependent_application_streams">RHEL 10 Dependent Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel9_dependent_application_streams">RHEL 9 Dependent Application Streams Release Life Cycle</a></li>
+<li><a href="#rhel8_dependent_application_streams">RHEL 8 Dependent Application Streams Release Life Cycle</a></li>
+</ul>
+</li>
+</ul>
+<p>
+                        For details regarding component lifecycles outside of the Application Streams
+                        defined below, please see <a href="/support/policy/updates/errata/">Red Hat
+                        Enterprise Linux Life Cycle</a>.
+</p>
+</div>
+<div class="container">
+<div class="card card-light">
+<h3 class="card-heading">Releases and Support</h3>
+<p>
+                            Red Hat will support Application Streams for the defined life cycle, after
+                            which customers are encouraged either to upgrade to a later release or continue
+                            on as self-supported without official Red Hat Support. Application Streams will
+                            not have a corresponding Extended Update Support (EUS) nor an Extended Life
+                            Cycle Support (ELS) offering.
+</p>
+<p>
+                            Retired/Deprecated Application Streams packages do not receive updates or Errata.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="container">
+<h1 class="section-heading headline-sm">Red Hat Enterprise Linux 10 Application Streams</h1>
+<div class="container">
+<a name="rhel10_application_streams"></a>
+<h2 class="subheading">RHEL 10 Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Retirement Date</th>
+<th scope="col">Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ansible Core</td>
+<td>May 2025</td>
+<td>Nov 2023</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>.NET 8</td>
+<td>May 2025</td>
+<td>Nov 2026</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>.NET 9</td>
+<td>May 2025</td>
+<td>May 2026</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>IDM</td>
+<td>May 2025</td>
+<td>May 2027</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>OpenJDK 21</td>
+<td>May 2025</td>
+<td>Dec 2029</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>JBoss mod_cluster for Apache</td>
+<td>May 2025</td>
+<td>May 2027</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>MySQL 8.4</td>
+<td>May 2025</td>
+<td>May 2029</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>Node.js 22</td>
+<td>May 2025</td>
+<td>Apr 2027</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>Apache Tomcat 9</td>
+<td>May 2025</td>
+<td>May 2026</td>
+<td>10.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel10_full_life_application_streams"></a>
+<h2 class="subheading">RHEL 10 Full Life Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apache httpd 2.4</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>MariaDB 10.11</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>NGINX 1.26</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>Perl 5.40</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>PHP 8.3</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>PostgreSQL 16</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>Python 3.12</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+<tr>
+<td>Ruby 3.3</td>
+<td>May 2025</td>
+<td>10.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel10_rolling_application_streams"></a>
+<h2 class="subheading">RHEL 10 Rolling Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Rolling Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Product Version</th>
+<th scope="col">Previous Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>container-tools</td>
+<td>May 2025</td>
+<td>1.14.0</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td>May 2025</td>
+<td>128.7.0</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>May 2025</td>
+<td>2.47.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Go</td>
+<td>Mar 2025</td>
+<td>1.23.7</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>LLVM</td>
+<td>Oct 2024</td>
+<td>19.1.7</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Rust</td>
+<td>Oct 2024</td>
+<td>1.84.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Thunderbird</td>
+<td>May 2025</td>
+<td>128.7.0</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel10_dependent_application_streams"></a>
+<h2 class="subheading">RHEL 10 Dependent Application Streams Release Life Cycle</h2>
+<ul>
+<li>None at this time</li>
+</ul>
+</div>
+</div>
+<div class="container">
+<h1 class="section-heading headline-sm">Red Hat Enterprise Linux 9 Application Streams</h1>
+<div class="container">
+<a name="rhel9_application_streams"></a>
+<h2 class="subheading">RHEL 9 Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Retirement Date</th>
+<th scope="col">Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ansible Core</td>
+<td>May 2022</td>
+<td>Nov 2023</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>.NET 6</td>
+<td>May 2022</td>
+<td>Nov 2024</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>.NET 7</td>
+<td>Nov 2022</td>
+<td>May 2024</td>
+<td>9.1</td>
+</tr>
+<tr>
+<td>.NET 8</td>
+<td>Nov 2023</td>
+<td>Nov 2026</td>
+<td>9.3</td>
+</tr>
+<tr>
+<td>.NET 9</td>
+<td>Nov 2024</td>
+<td>May 2026</td>
+<td>9.5</td>
+</tr>
+<tr>
+<td>BIND 9.18</td>
+<td>Nov 2024</td>
+<td>May 2027</td>
+<td>9.5</td>
+</tr>
+<tr>
+<td>IDM</td>
+<td>May 2022</td>
+<td>May 2027</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>gcc-toolset 12</td>
+<td>Nov 2022</td>
+<td>Nov 2024</td>
+<td>9.1</td>
+</tr>
+<tr>
+<td>gcc-toolset 13</td>
+<td>Nov 2023</td>
+<td>Nov 2025</td>
+<td>9.3</td>
+</tr>
+<tr>
+<td>gcc-toolset 14</td>
+<td>Nov 2024</td>
+<td>Nov 2026</td>
+<td>9.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel9_full_life_application_streams"></a>
+<h2 class="subheading">RHEL 9 Full Life Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apache httpd 2.4</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>MariaDB 10.5</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>NGINX 1.20</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>Perl 5.32</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>PHP 8.0</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>PostgreSQL 13</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>Python 3.9</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+<tr>
+<td>Ruby 3.0</td>
+<td>May 2022</td>
+<td>9.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel9_rolling_application_streams"></a>
+<h2 class="subheading">RHEL 9 Rolling Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Rolling Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Product Version</th>
+<th scope="col">Previous Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>container-tools</td>
+<td>May 2023</td>
+<td>rhel9</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>GNU Autoconf (Latest Version)</td>
+<td>May 2024</td>
+<td>2.71</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td>May 2023</td>
+<td>102.9.0</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>May 2023</td>
+<td>2.39.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Go</td>
+<td>May 2025</td>
+<td>1.23.6</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>LLVM</td>
+<td>May 2025</td>
+<td>19.1.7</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>GNU Make (Latest Version)</td>
+<td>Nov 2024</td>
+<td>4.4.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Rust</td>
+<td>May 2025</td>
+<td>1.84.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Thunderbird</td>
+<td>May 2023</td>
+<td>102.9.0</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel9_dependent_application_streams"></a>
+<h2 class="subheading">RHEL 9 Dependent Application Streams Release Life Cycle</h2>
+<ul>
+<li>None at this time</li>
+</ul>
+</div>
+</div>
+<div class="container">
+<h1 class="section-heading headline-sm">Red Hat Enterprise Linux 8 Application Streams</h1>
+<div class="container">
+<a name="rhel8_application_streams"></a>
+<h2 class="subheading">RHEL 8 Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Retirement Date</th>
+<th scope="col">Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ansible Core</td>
+<td>May 2022</td>
+<td>Nov 2023</td>
+<td>8.6.0</td>
+</tr>
+<tr>
+<td>authd 1.4.4</td>
+<td>May 2019</td>
+<td>May 2021</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>container-tools 1.0</td>
+<td>May 2019</td>
+<td>May 2021</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>container-tools 2.0</td>
+<td>May 2020</td>
+<td>May 2022</td>
+<td>8.2.0</td>
+</tr>
+<tr>
+<td>container-tools 3.0</td>
+<td>May 2021</td>
+<td>May 2023</td>
+<td>8.4.0</td>
+</tr>
+<tr>
+<td>container-tools 4.0</td>
+<td>May 2022</td>
+<td>May 2024</td>
+<td>8.6.0</td>
+</tr>
+<tr>
+<td>.NET 2.1</td>
+<td>May 2019</td>
+<td>Aug 2021</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>.NET 3.0</td>
+<td>Nov 2019</td>
+<td>Mar 2020</td>
+<td>8.1.0</td>
+</tr>
+<tr>
+<td>.NET 3.1</td>
+<td>Feb 2020</td>
+<td>Dec 2022</td>
+<td>8.1.1</td>
+</tr>
+<tr>
+<td>.NET 5.0</td>
+<td>Nov 2020</td>
+<td>May 2022</td>
+<td>8.3.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel8_full_life_application_streams"></a>
+<h2 class="subheading">RHEL 8 Full Life Application Streams Release Life Cycle</h2>
+<div class="table-data-wrapper push-top-narrow">
+<table class="table table-cp table-bordered table-striped table-data">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apache Ant 1.1</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>FreeRADIUS 3.0</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>Git 2</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>Apache httpd 2.4</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>Identity Management DL1</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>Identity Management Client</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>MariaDB 10.3</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>Maven 3.8</td>
+<td>Nov 2022</td>
+<td>8.7.0</td>
+</tr>
+<tr>
+<td>mod_auth_openidc for Apache</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+<tr>
+<td>osinfo-db</td>
+<td>May 2019</td>
+<td>8.0.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel8_rolling_application_streams"></a>
+<h2 class="subheading">RHEL 8 Rolling Application Streams Release Life Cycle</h2>
+<div class="push-top-narrow">
+<table class="table table-cp table-bordered table-striped">
+<thead>
+<tr>
+<th scope="col">Rolling Application Stream</th>
+<th scope="col">Release Date</th>
+<th scope="col">Product Version</th>
+<th scope="col">Previous Release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>container-tools</td>
+<td>May 2019</td>
+<td>rhel8</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Go</td>
+<td>Apr 2025</td>
+<td>1.23.6</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Java Mission Control</td>
+<td>Nov 2021</td>
+<td>8.0.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>LLVM</td>
+<td>May 2025</td>
+<td>19.1.7</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>GNU Make (Latest Version)</td>
+<td>Nov 2022</td>
+<td>rhel8</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td>Rust</td>
+<td>May 2025</td>
+<td>1.84.1</td>
+<td><a href="/support/policy/updates/rhel-app-retired-rolling-streams">LINK</a></td>
+</tr>
+<tr>
+<td colspan="4">
+                                    The above-mentioned tools are available for the following architectures:
+                                    AMD and Intel 64-bit architectures, the 64-bit ARM architecture, IBM Power Systems, Little Endian, and 64-bit IBM Z.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="container">
+<a name="rhel8_dependent_application_streams"></a>
+<h2 class="subheading">RHEL 8 Dependent Application Streams Release Life Cycle</h2>
+<div class="push-top-narrow">
+<table class="table table-cp table-bordered table-striped">
+<thead>
+<tr>
+<th scope="col">Application Stream</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>389-ds 1.4</td>
+</tr>
+<tr>
+<td>pki-core</td>
+</tr>
+<tr>
+<td>pki-deps</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="compact">
+<div class="footer-inner">
+<div class="taxonomy-group container">
+<div class="page_tags tag-set tag-set--has-list tag-set--has-title">
+<h2 class="tag-set__title">Tags: </h2>
+<span class="tag-set__list">
+<rh-tag>
+<a href="/search?q=tag%3A%28%22rhel_8%22%29" size="compact">
+          rhel_8
+</a>
+</rh-tag>
+<rh-tag>
+<a href="/search?q=tag%3A%28%22rhel_9%22%29" size="compact">
+          rhel_9
+</a>
+</rh-tag>
+</span>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</article>
+</div>
+</section>
+</div>
+</main>
+</div>
+<nav id="to-top" aria-label="Back to Top">
+<a class="btn_slideto" href="#masthead" aria-labelledby="to-top">
+<span class="web-icon-upload" aria-hidden="true"></span>
+</a>
+</nav>
+<div id="consent_blackbar"></div>
+</div>
+</div>
+</div>
+</body></html>

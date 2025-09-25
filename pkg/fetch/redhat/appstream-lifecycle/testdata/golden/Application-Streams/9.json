@@ -1,0 +1,65 @@
+{
+	"title": "RHEL 9 Application Streams Release Life Cycle",
+	"application_streams": [
+		{
+			"application_stream": "Ansible Core",
+			"release_date": "May 2022",
+			"retirement_date": "Nov 2023",
+			"release": "9.0"
+		},
+		{
+			"application_stream": ".NET 6",
+			"release_date": "May 2022",
+			"retirement_date": "Nov 2024",
+			"release": "9.0"
+		},
+		{
+			"application_stream": ".NET 7",
+			"release_date": "Nov 2022",
+			"retirement_date": "May 2024",
+			"release": "9.1"
+		},
+		{
+			"application_stream": ".NET 8",
+			"release_date": "Nov 2023",
+			"retirement_date": "Nov 2026",
+			"release": "9.3"
+		},
+		{
+			"application_stream": ".NET 9",
+			"release_date": "Nov 2024",
+			"retirement_date": "May 2026",
+			"release": "9.5"
+		},
+		{
+			"application_stream": "BIND 9.18",
+			"release_date": "Nov 2024",
+			"retirement_date": "May 2027",
+			"release": "9.5"
+		},
+		{
+			"application_stream": "IDM",
+			"release_date": "May 2022",
+			"retirement_date": "May 2027",
+			"release": "9.0"
+		},
+		{
+			"application_stream": "gcc-toolset 12",
+			"release_date": "Nov 2022",
+			"retirement_date": "Nov 2024",
+			"release": "9.1"
+		},
+		{
+			"application_stream": "gcc-toolset 13",
+			"release_date": "Nov 2023",
+			"retirement_date": "Nov 2025",
+			"release": "9.3"
+		},
+		{
+			"application_stream": "gcc-toolset 14",
+			"release_date": "Nov 2024",
+			"retirement_date": "Nov 2026",
+			"release": "9.5"
+		}
+	]
+}

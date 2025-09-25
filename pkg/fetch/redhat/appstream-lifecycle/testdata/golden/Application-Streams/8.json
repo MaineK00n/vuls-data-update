@@ -1,0 +1,65 @@
+{
+	"title": "RHEL 8 Application Streams Release Life Cycle",
+	"application_streams": [
+		{
+			"application_stream": "Ansible Core",
+			"release_date": "May 2022",
+			"retirement_date": "Nov 2023",
+			"release": "8.6.0"
+		},
+		{
+			"application_stream": "authd 1.4.4",
+			"release_date": "May 2019",
+			"retirement_date": "May 2021",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "container-tools 1.0",
+			"release_date": "May 2019",
+			"retirement_date": "May 2021",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": "container-tools 2.0",
+			"release_date": "May 2020",
+			"retirement_date": "May 2022",
+			"release": "8.2.0"
+		},
+		{
+			"application_stream": "container-tools 3.0",
+			"release_date": "May 2021",
+			"retirement_date": "May 2023",
+			"release": "8.4.0"
+		},
+		{
+			"application_stream": "container-tools 4.0",
+			"release_date": "May 2022",
+			"retirement_date": "May 2024",
+			"release": "8.6.0"
+		},
+		{
+			"application_stream": ".NET 2.1",
+			"release_date": "May 2019",
+			"retirement_date": "Aug 2021",
+			"release": "8.0.0"
+		},
+		{
+			"application_stream": ".NET 3.0",
+			"release_date": "Nov 2019",
+			"retirement_date": "Mar 2020",
+			"release": "8.1.0"
+		},
+		{
+			"application_stream": ".NET 3.1",
+			"release_date": "Feb 2020",
+			"retirement_date": "Dec 2022",
+			"release": "8.1.1"
+		},
+		{
+			"application_stream": ".NET 5.0",
+			"release_date": "Nov 2020",
+			"retirement_date": "May 2022",
+			"release": "8.3.0"
+		}
+	]
+}

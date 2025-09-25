@@ -1,0 +1,45 @@
+{
+	"title": "RHEL 10 Full Life Application Streams Release Life Cycle",
+	"application_streams": [
+		{
+			"application_stream": "Apache httpd 2.4",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "MariaDB 10.11",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "NGINX 1.26",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "Perl 5.40",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "PHP 8.3",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "PostgreSQL 16",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "Python 3.12",
+			"release_date": "May 2025",
+			"release": "10.0"
+		},
+		{
+			"application_stream": "Ruby 3.3",
+			"release_date": "May 2025",
+			"release": "10.0"
+		}
+	]
+}

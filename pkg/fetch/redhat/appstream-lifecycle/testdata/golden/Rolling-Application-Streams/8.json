@@ -1,0 +1,41 @@
+{
+	"title": "RHEL 8 Rolling Application Streams Release Life Cycle",
+	"rolling_application_streams": [
+		{
+			"rolling_application_stream": "container-tools",
+			"release_date": "May 2019",
+			"product_version": "rhel8",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Go",
+			"release_date": "Apr 2025",
+			"product_version": "1.23.6",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Java Mission Control",
+			"release_date": "Nov 2021",
+			"product_version": "8.0.1",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "LLVM",
+			"release_date": "May 2025",
+			"product_version": "19.1.7",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "GNU Make (Latest Version)",
+			"release_date": "Nov 2022",
+			"product_version": "rhel8",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		},
+		{
+			"rolling_application_stream": "Rust",
+			"release_date": "May 2025",
+			"product_version": "1.84.1",
+			"previous_release": "/support/policy/updates/rhel-app-retired-rolling-streams"
+		}
+	]
+}
