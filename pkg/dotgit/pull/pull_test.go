@@ -36,10 +36,82 @@ func TestPull(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name: "vuls-data-raw-test restore: false",
+			name: "vuls-data-raw-test restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
-				opts:       []pull.Option{pull.WithRestore(false)},
+				opts:       []pull.Option{pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: main, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: HEAD, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("HEAD"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: v0.0.1, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: false, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(false), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: main, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: HEAD, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("HEAD"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: v0.0.1, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("v0.0.1"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: 9d3d5d486d4c9414321a2df56f2e007c4c2c8fab, restore: false, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("9d3d5d486d4c9414321a2df56f2e007c4c2c8fab"), pull.WithRestore(false), pull.WithUseNativeGit(false)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test.tar.zst",
 		},
@@ -60,10 +132,26 @@ func TestPull(t *testing.T) {
 			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
 		},
 		{
-			name: "vuls-data-raw-test-archive-1 restore: false",
+			name: "vuls-data-raw-test checkout: main, restore: true, native git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(true), pull.WithUseNativeGit(true)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test checkout: main, restore: true, go-git",
+			args: args{
+				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test",
+				opts:       []pull.Option{pull.WithCheckout("main"), pull.WithRestore(true), pull.WithUseNativeGit(false)},
+			},
+			golden: "testdata/golden/vuls-data-raw-test-restored.tar.zst",
+		},
+		{
+			name: "vuls-data-raw-test-archive-1 restore: false, native git",
 			args: args{
 				repository: "ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test-archive-1",
-				opts:       []pull.Option{pull.WithRestore(false)},
+				opts:       []pull.Option{pull.WithRestore(false), pull.WithUseNativeGit(true)},
 			},
 			golden: "testdata/golden/vuls-data-raw-test-archive-1.tar.zst",
 		},
