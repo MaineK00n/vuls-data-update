@@ -43,3 +43,15 @@ type DependentApplicationStreamTable struct {
 type DependentApplicationStream struct {
 	ApplicationStream string `json:"application_stream,omitempty"`
 }
+
+type RetiredRollingApplicationStreamTable struct {
+	Title                     string                            `json:"title"`
+	RollingApplicationStreams []RetiredRollingApplicationStream `json:"rolling_application_streams,omitempty"`
+}
+
+type RetiredRollingApplicationStream struct {
+	RollingApplicationStream string `json:"rolling_application_stream"`
+	ProductVersion           string `json:"product_version"`
+	ReleaseDate              string `json:"release_date"`
+	MaintenanceSupportEnded  string `json:"maintenance_support_ended"`
+}

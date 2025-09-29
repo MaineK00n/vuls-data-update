@@ -1,0 +1,35 @@
+{
+	"title": "RHEL 9 Retired Rolling Application Streams",
+	"rolling_application_streams": [
+		{
+			"rolling_application_stream": "LLVM",
+			"product_version": "13.0.1",
+			"release_date": "May 2022",
+			"maintenance_support_ended": "Nov 2022"
+		},
+		{
+			"rolling_application_stream": "Go",
+			"product_version": "1.17.7",
+			"release_date": "May 2022",
+			"maintenance_support_ended": "Jun 2022"
+		},
+		{
+			"rolling_application_stream": "Go",
+			"product_version": "1.17.12",
+			"release_date": "Jun 2022",
+			"maintenance_support_ended": "Nov 2022"
+		},
+		{
+			"rolling_application_stream": "Go",
+			"product_version": "1.18.4",
+			"release_date": "Nov 2022",
+			"maintenance_support_ended": "Jan 2023"
+		},
+		{
+			"rolling_application_stream": "Rust",
+			"product_version": "1.58.1",
+			"release_date": "May 2022",
+			"maintenance_support_ended": "Nov 2022"
+		}
+	]
+}

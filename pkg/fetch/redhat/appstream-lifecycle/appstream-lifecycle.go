@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -16,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle"
+const baseURL = "https://access.redhat.com/support/policy/updates/"
 
 type options struct {
 	baseURL string
@@ -75,9 +76,26 @@ func Fetch(opts ...Option) error {
 
 	log.Print("[INFO] Fetch RHEL Application Streams Life Cycle")
 
-	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	if err := options.extractAppStream(c); err != nil {
+		return errors.Wrap(err, "extract appstream")
+	}
+	if err := options.extractRetiredRollingAppStream(c); err != nil {
+		return errors.Wrap(err, "extract retired rolling appstream")
+	}
+
+	return nil
+}
+
+func (opts options) extractAppStream(client *utilhttp.Client) error {
+	u, err := url.JoinPath(opts.baseURL, "rhel-app-streams-life-cycle")
 	if err != nil {
-		return errors.Wrapf(err, "get document. URL: %s", options.baseURL)
+		return errors.Wrap(err, "join path")
+	}
+
+	resp, err := client.Get(u)
+	if err != nil {
+		return errors.Wrapf(err, "get document. URL: %s", u)
 	}
 	defer resp.Body.Close()
 
@@ -126,8 +144,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])), ApplicationStreamTable{Title: title, ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(opts.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])), ApplicationStreamTable{Title: title, ApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Full Life Application Streams Release Life Cycle":
 			ass, err := extractFullLifeApplicationStreams(tab, headers)
@@ -135,8 +153,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])), FullLifeApplicationStreamTable{Title: title, ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(opts.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])), FullLifeApplicationStreamTable{Title: title, ApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "Full-Life-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Rolling Application Streams Release Life Cycle":
 			ass, err := extractRollingApplicationStreams(tab, headers, ss[1])
@@ -144,8 +162,8 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])), RollingApplicationStreamTable{Title: title, RollingApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(opts.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])), RollingApplicationStreamTable{Title: title, RollingApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		case "Dependent Application Streams Release Life Cycle":
 			ass, err := extractDependentApplicationStreams(tab, headers)
@@ -153,13 +171,14 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "extract %s", title)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])), DependentApplicationStreamTable{Title: title, ApplicationStreams: ass}); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			if err := util.Write(filepath.Join(opts.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])), DependentApplicationStreamTable{Title: title, ApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "Dependent-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
 			}
 		default:
 			return errors.Errorf("unexpected table type. expected: %q, actual: %q", []string{"RHEL <major> Application Streams Release Life Cycle", "RHEL <major> Full Life Application Streams Release Life Cycle", "RHEL <major> Rolling Application Streams Release Life Cycle", "RHEL <major> Dependent Application Streams Release Life Cycle"}, title)
 		}
 	}
+
 	return nil
 }
 
@@ -302,5 +321,113 @@ func extractDependentApplicationStreams(table *goquery.Selection, headers []stri
 		}
 		rows = append(rows, row)
 	}
+	return rows, nil
+}
+
+func (opts options) extractRetiredRollingAppStream(client *utilhttp.Client) error {
+	u, err := url.JoinPath(opts.baseURL, "rhel-app-retired-rolling-streams")
+	if err != nil {
+		return errors.Wrap(err, "join path")
+	}
+
+	resp, err := client.Get(u)
+	if err != nil {
+		return errors.Wrapf(err, "get document. URL: %s", u)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return errors.Errorf("error response with status code %d", resp.StatusCode)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "parse html")
+	}
+
+	for i, tab := range doc.Find("table").EachIter() {
+		title, err := findHeadingForTable(tab)
+		if err != nil {
+			return errors.Wrapf(err, "find heading. table index: %d", i)
+		}
+
+		ss, err := util.Split(title, " ", " ")
+		if err != nil {
+			return errors.Wrapf(err, "unexpected title. expected: %q, actual: %q", "RHEL <major> Retired Rolling Application Streams", title)
+		}
+		if ss[0] != "RHEL" {
+			return errors.Errorf("unexpected title. expected: %q, actual: %q", "RHEL <major> Retired Rolling Application Streams", title)
+		}
+		if _, err := strconv.Atoi(ss[1]); err != nil {
+			return errors.Wrapf(err, "unexpected title. expected: %q, actual: %q", "RHEL <major> Retired Rolling Application Streams", title)
+		}
+
+		var headers []string
+		for _, th := range tab.Find("thead tr").Last().Find("th").EachIter() {
+			if th.Text() == "" {
+				return errors.Errorf("empty header. title: %s", title)
+			}
+			headers = append(headers, th.Text())
+		}
+		if len(headers) == 0 {
+			return errors.Errorf("no headers found. title: %s", title)
+		}
+
+		switch ss[2] {
+		case "Retired Rolling Application Streams":
+			ass, err := extractRetiredRollingApplicationStreams(tab, headers)
+			if err != nil {
+				return errors.Wrapf(err, "extract %s", title)
+			}
+
+			if err := util.Write(filepath.Join(opts.dir, "Retired-Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])), RetiredRollingApplicationStreamTable{Title: title, RollingApplicationStreams: ass}); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "Retired-Rolling-Application-Streams", fmt.Sprintf("%s.json", ss[1])))
+			}
+		default:
+			return errors.Errorf("unexpected table type. expected: %q, actual: %q", []string{"RHEL <major> Retired Rolling Application Streams"}, title)
+		}
+	}
+
+	return nil
+}
+
+func extractRetiredRollingApplicationStreams(table *goquery.Selection, headers []string) ([]RetiredRollingApplicationStream, error) {
+	var rows []RetiredRollingApplicationStream
+
+	trs := table.Find("tbody tr")
+	for i, tr := range trs.EachIter() {
+		cells := tr.Find("td")
+
+		if i == trs.Length()-1 && cells.Length() == 1 {
+			// table has a note row, ignore it
+			continue
+		}
+
+		if cells.Length() != len(headers) {
+			return nil, errors.Errorf("unexpected number of cells. expected: %d, actual: %d", len(headers), cells.Length())
+		}
+
+		var row RetiredRollingApplicationStream
+		for i, c := range cells.EachIter() {
+			switch headers[i] {
+			case "Rolling Application Stream":
+				row.RollingApplicationStream = c.Text()
+			case "Product Version":
+				row.ProductVersion = c.Text()
+			case "Release Date":
+				row.ReleaseDate = c.Text()
+			case "Maintenance Support Ended":
+				row.MaintenanceSupportEnded = c.Text()
+			default:
+				return nil, errors.Errorf("unexpected header. expected: %s, actual: %s", []string{"Rolling Application Stream", "Product Version", "Release Date", "Maintenance Support Ended"}, headers[i])
+			}
+		}
+		if row.RollingApplicationStream == "" || row.ProductVersion == "" || row.ReleaseDate == "" || row.MaintenanceSupportEnded == "" {
+			return nil, errors.Errorf("empty field in RetiredRollingApplicationStream. row: %+v", row)
+		}
+		rows = append(rows, row)
+	}
+
 	return rows, nil
 }

@@ -33,6 +33,8 @@ func TestFetch(t *testing.T) {
 				switch r.URL.Path {
 				case "/support/policy/updates/rhel-app-streams-life-cycle":
 					http.ServeFile(w, r, filepath.Join(tt.testdata, "rhel-app-streams-life-cycle.html"))
+				case "/support/policy/updates/rhel-app-retired-rolling-streams":
+					http.ServeFile(w, r, filepath.Join(tt.testdata, "rhel-retired-rolling-app-stream.html"))
 				default:
 					http.NotFound(w, r)
 				}
@@ -40,7 +42,7 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := appstreamlifecycle.Fetch(appstreamlifecycle.WithBaseURL(fmt.Sprintf("%s/support/policy/updates/rhel-app-streams-life-cycle", ts.URL)), appstreamlifecycle.WithDir(dir), appstreamlifecycle.WithRetry(0))
+			err := appstreamlifecycle.Fetch(appstreamlifecycle.WithBaseURL(fmt.Sprintf("%s/support/policy/updates/", ts.URL)), appstreamlifecycle.WithDir(dir), appstreamlifecycle.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
