@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"oras.land/oras-go/v2/registry/remote"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/cp"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/delete"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/ls"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/registry/push"
@@ -27,6 +28,7 @@ func newCmdRegistry() *cobra.Command {
 			$ vuls-data-update dotgit registry status ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 			$ vuls-data-update dotgit registry push ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-debian-security-tracker-api.tar.zst
 			$ vuls-data-update dotgit registry delete ghcr.io/vulsio/vuls-data-db@sha256:5b71484ba9f1565f7ed5cd3aa34b027c44e1773a6e418328ea38a05f9b459f23
+			$ vuls-data-update dotgit registry cp ghcr.io/vuls-data-db-backup:vuls-data-raw-debian-security-tracker-api-backup-daily ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
 			$ vuls-data-update dotgit registry tag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api vuls-data-raw-test
 			$ vuls-data-update dotgit registry untag ghcr.io/vulsio/vuls-data-db:vuls-data-raw-test
 		`),
@@ -34,7 +36,7 @@ func newCmdRegistry() *cobra.Command {
 
 	cmd.AddCommand(
 		newCmdRegistryLs(), newCmdRegistryStatus(),
-		newCmdRegistryPush(), newCmdRegistryDelete(), newCmdRegistryTag(), newCmdRegistryUntag(),
+		newCmdRegistryPush(), newCmdRegistryDelete(), newCmdRegistryCp(), newCmdRegistryTag(), newCmdRegistryUntag(),
 	)
 
 	return cmd
@@ -185,6 +187,36 @@ func newCmdRegistryDelete() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
+
+	return cmd
+}
+
+func newCmdRegistryCp() *cobra.Command {
+	options := &struct {
+		force bool
+		token string
+	}{
+		force: false,
+		token: os.Getenv("GITHUB_TOKEN"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "cp <from image(<repository>@<digest>, <repository>:<tag>, <repository>:<tag>@<digest>)> <to image(<repository>:<tag>)>",
+		Short: "Copy registry dotgit images",
+		Example: heredoc.Doc(`
+			$ vuls-data-update dotgit registry cp ghcr.io/vuls-data-db-backup:vuls-data-raw-debian-security-tracker-api-backup-daily ghcr.io/vulsio/vuls-data-db:vuls-data-raw-debian-security-tracker-api
+		`),
+		Args: cobra.ExactArgs(2),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := cp.Copy(args[0], args[1], options.token, cp.WithForce(options.force)); err != nil {
+				return errors.Wrap(err, "failed to copy registry dotgit image")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().BoolVarP(&options.force, "force", "f", options.force, "overwrite existing image")
 	cmd.Flags().StringVarP(&options.token, "token", "", options.token, "specify GitHub token")
 
 	return cmd
