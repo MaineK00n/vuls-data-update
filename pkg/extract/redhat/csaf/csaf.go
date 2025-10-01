@@ -174,7 +174,7 @@ func Extract(csafDir, repository2cpeDir string, opts ...Option) error {
 }
 
 func (e extractor) extract(adv csaf.CSAF, c2r map[string][]string) (dataTypes.Data, error) {
-	pm, err := walkProductTree(adv.Document.Tracking.ID, adv.ProductTree, c2r)
+	pm, err := walkProductTree(adv.ProductTree, c2r)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
 	}
@@ -260,7 +260,7 @@ type status struct {
 	AffectedStatus string
 }
 
-func walkProductTree(cveid string, pt csaf.ProductTree, c2r map[string][]string) (map[csaf.ProductID][]product, error) {
+func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.ProductID][]product, error) {
 	var f func(m map[csaf.ProductID]csaf.FullProductName, branch csaf.Branch) error
 	f = func(m map[csaf.ProductID]csaf.FullProductName, branch csaf.Branch) error {
 		for _, b := range branch.Branches {
@@ -366,18 +366,12 @@ func walkProductTree(cveid string, pt csaf.ProductTree, c2r map[string][]string)
 								// binary rpm: 'arch=<arch>'
 								switch m["arch"] {
 								case "":
-									// Red Hat VEX data bug: https://issues.redhat.com/browse/SECDATA-1097?focusedId=28054960&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28054960
-									if slices.Contains([]string{"CVE-2025-26699", "CVE-2025-30472", "CVE-2025-47287", "CVE-2025-48432"}, cveid) {
-										return nil, nil
-									}
 									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
 								default:
 									p.arch = m["arch"]
 								}
 							}
 						default:
-							// Red Hat VEX data bug: https://issues.redhat.com/browse/SECDATA-1097?focusedId=28062364&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28062364
-
 							switch instance.Version {
 							case "":
 								return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
