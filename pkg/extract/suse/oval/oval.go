@@ -102,23 +102,23 @@ func Extract(inputDir string, opts ...Option) error {
 
 	log.Printf("[INFO] Extract SUSE OVAL")
 
-	entries, err := filepath.Glob(filepath.Join(inputDir, "*", "*", "vulnerability", "definitions"))
+	defDirs, err := filepath.Glob(filepath.Join(inputDir, "*", "*", "vulnerability", "definitions"))
 	if err != nil {
-		return errors.Wrapf(err, `glob directories "*/*/*/definitions" under %s`, inputDir)
+		return errors.Wrapf(err, `glob directories. pattern: %q`, filepath.Join(inputDir, "*", "*", "vulnerability", "definitions"))
 	}
 
-	for _, entry := range entries {
-		rel, err := filepath.Rel(inputDir, entry)
+	for _, defDir := range defDirs {
+		rel, err := filepath.Rel(inputDir, defDir)
 		if err != nil {
-			return errors.Wrapf(err, "get relative path %s", entry)
+			return errors.Wrapf(err, "get relative path. base: %q, target: %q", inputDir, defDir)
 		}
 
-		elems, err := util.Split(strings.TrimPrefix(rel, string(os.PathSeparator)), string(os.PathSeparator), string(os.PathSeparator), string(os.PathSeparator))
+		parts, err := util.Split(strings.TrimPrefix(rel, string(os.PathSeparator)), string(os.PathSeparator), string(os.PathSeparator), string(os.PathSeparator))
 		if err != nil {
-			return errors.Wrapf(err, "split %s", entry)
+			return errors.Wrapf(err, "split %s", rel)
 		}
 
-		baseDir := filepath.Join(inputDir, elems[0], elems[1], elems[2])
+		baseDir := filepath.Join(inputDir, parts[0], parts[1], parts[2])
 		log.Printf("[INFO] extract OVAL files. dir: %s", filepath.Join(baseDir, "definitions"))
 
 		g, ctx := errgroup.WithContext(context.Background())
@@ -157,9 +157,9 @@ func Extract(inputDir string, opts ...Option) error {
 					e := extractor{
 						inputDir: inputDir,
 						baseDir:  baseDir,
-						osname:   elems[0],
-						version:  elems[1],
-						ovaltype: elems[2],
+						osname:   parts[0],
+						version:  parts[1],
+						ovaltype: parts[2],
 						r:        utiljson.NewJSONReader(),
 					}
 					if err := e.extract(path, options.dir); err != nil {
@@ -250,6 +250,7 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 	if !strings.HasPrefix(strings.TrimSpace(def.Metadata.Title), "CVE-") {
 		return nil, errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-YYYY-ZZZZZ", def.Metadata.Title)
 	}
+
 	id := strings.TrimSpace(def.Metadata.Title)
 
 	es, err := func() (ecosystemTypes.Ecosystem, error) {
@@ -276,7 +277,7 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 		}
 	}()
 	if err != nil {
-		return nil, errors.Wrapf(err, "build ecosystem %s", def.Metadata.Title)
+		return nil, errors.Wrapf(err, "build ecosystem. osname: %q, version: %q", e.osname, e.version)
 	}
 
 	v, err := buildVulnerability(def)
@@ -521,16 +522,20 @@ func (e extractor) walkCriteria(oc oval.Criteria) (*criteriaTypes.Criteria, erro
 }
 
 // translateCriterion translates an oval.Criterion to a criterionTypes.Criterion.
-// If the criterion is SignatureKeyid,, the second return value is true and vice versa.
+// If the criterion is SignatureKeyid, the second return value is true and vice versa.
 // If the first return value is nil, it means that the criterion is never satisfired.
 func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criterion, bool, *criteriaTypes.Criteria, error) {
 	var t oval.RpminfoTest
 	if err := e.r.Read(filepath.Join(e.baseDir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", oc.TestRef)), e.inputDir, &t); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			err := e.translateUnameCriterion(oc)
-			if err != nil {
-				return nil, false, nil, errors.Wrapf(err, "translate uname criterion %s", oc.TestRef)
+			// There was a case that a special build did not have its own release package (by mistake),
+			// then uname criterions was used only for it.
+			// Because it's not used for normal SLES and openSUSE products, we do existence check here
+			// but do not use the information in unae criterions
+			if _, err := os.Stat(filepath.Join(e.baseDir, "tests", "uname_test", fmt.Sprintf("%s.json", oc.TestRef))); err != nil {
+				return nil, false, nil, err
 			}
+
 			return nil, false, nil, nil
 		}
 
@@ -663,11 +668,6 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			return nil, false, nil, errors.Wrap(err, "translate rpminfo_state EVR.")
 		}
 
-		archs, err := architectures(s.Arch.Text)
-		if err != nil {
-			return nil, false, nil, errors.Wrapf(err, "architectures")
-		}
-
 		return &criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &versoncriterionTypes.Criterion{
@@ -676,8 +676,13 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 				Package: criterionpackageTypes.Package{
 					Type: criterionpackageTypes.PackageTypeBinary,
 					Binary: &binaryTypes.Package{
-						Name:          o.Name,
-						Architectures: archs,
+						Name: o.Name,
+						Architectures: func() []string {
+							if s.Arch.Text == "" {
+								return nil
+							}
+							return strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|")
+						}(),
 					},
 				},
 				Affected: func() *affectedTypes.Affected {
@@ -733,11 +738,6 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 			return nil, false, nil, errors.Wrapf(err, "translate rpminfo_state evr. test: %s", oc.TestRef)
 		}
 
-		archs, err := architectures(s.Arch.Text)
-		if err != nil {
-			return nil, false, nil, errors.Wrapf(err, "architectures")
-		}
-
 		c := criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &versoncriterionTypes.Criterion{
@@ -746,8 +746,13 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 				Package: criterionpackageTypes.Package{
 					Type: criterionpackageTypes.PackageTypeBinary,
 					Binary: &binaryTypes.Package{
-						Name:          o.Name,
-						Architectures: archs,
+						Name: o.Name,
+						Architectures: func() []string {
+							if s.Arch.Text == "" {
+								return nil
+							}
+							return strings.Split(strings.TrimPrefix(strings.TrimSuffix(s.Arch.Text, ")"), "("), "|")
+						}(),
 					},
 				},
 				Affected: affected,
@@ -839,38 +844,4 @@ func (e extractor) translateCriterion(oc oval.Criterion) (*criterionTypes.Criter
 	default:
 		return nil, false, nil, errors.Errorf(`unexpected rpminfo_test check. test: %s, expected: ["at least one", "none satisfy", "all"], actural: %q`, oc.TestRef, t.Check)
 	}
-}
-
-func (e extractor) translateUnameCriterion(oc oval.Criterion) error {
-	var t oval.UnameTest
-	if err := e.r.Read(filepath.Join(e.baseDir, "tests", "uname_test", fmt.Sprintf("%s.json", oc.TestRef)), e.inputDir, &t); err != nil {
-		return errors.Wrapf(err, "read uname_test %s", filepath.Join(e.baseDir, "tests", "uname_test", oc.TestRef))
-	}
-
-	var o oval.UnameObject
-	if err := e.r.Read(filepath.Join(e.baseDir, "objects", "uname_object", fmt.Sprintf("%s.json", t.Object.ObjectRef)), e.inputDir, &o); err != nil {
-		return errors.Wrapf(err, "read uname_object %s", filepath.Join(e.baseDir, "objects", "uname_object", t.Object.ObjectRef))
-	}
-
-	var s oval.UnameState
-	if err := e.r.Read(filepath.Join(e.baseDir, "states", "uname_state", fmt.Sprintf("%s.json", t.State.StateRef)), e.inputDir, &s); err != nil {
-		return errors.Wrapf(err, "read uname_state %s", filepath.Join(e.baseDir, "states", "uname_state", t.State.StateRef))
-	}
-
-	// only file existence check, just return.
-	return nil
-}
-
-func architectures(arch string) ([]string, error) {
-	if arch == "" {
-		return nil, nil
-	}
-
-	archs := strings.Split(strings.TrimPrefix(strings.TrimSuffix(arch, ")"), "("), "|")
-	for _, a := range archs {
-		if !slices.Contains([]string{"aarch64", "aarch64_ilp32", "i586", "i686", "ia64", "ppc", "ppc64", "ppc64le", "s390", "s390x", "x86_64", "noarch"}, a) {
-			return nil, errors.Errorf(`unexpected arch. expected: ["aarch64", "aarch64_ilp32", "i586", "i686", "ia64", "ppc", "ppc64", "ppc64le", "s390", "s390x", "x86_64", "noarch"], actual: %s`, arch)
-		}
-	}
-	return archs, nil
 }
