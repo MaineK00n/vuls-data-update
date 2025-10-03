@@ -259,18 +259,18 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 			case "tumbleweed":
 				return ecosystemTypes.EcosystemTypeOpenSUSETumbleweed, nil
 			default:
-				return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSE, e.version)), nil
+				return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSE, strings.Split(e.version, ".")[0])), nil
 			}
 		case "opensuse.leap":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeap, e.version)), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeap, strings.Split(e.version, ".")[0])), nil
 		case "opensuse.leap.micro":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeapMicro, e.version)), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeapMicro, strings.Split(e.version, ".")[0])), nil
 		case "suse.linux.enterprise.server":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseServer, e.version)), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseServer, strings.Split(e.version, ".")[0])), nil
 		case "suse.linux.enterprise.desktop":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseDesktop, e.version)), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseDesktop, strings.Split(e.version, ".")[0])), nil
 		case "suse.linux.enterprise.micro":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseMicro, e.version)), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseMicro, strings.Split(e.version, ".")[0])), nil
 		default:
 			return "", errors.Errorf("unexpected osname. expected: %q, actual: %q", []string{"suse.linux.enterprise.server", "suse.linux.enterprise.desktop", "suse.linux.enterprise.micro", "opensuse", "opensuse.leap", "opensuse.leap.micro"}, e.osname)
 		}
