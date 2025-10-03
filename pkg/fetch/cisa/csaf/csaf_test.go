@@ -29,7 +29,7 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
 			defer ts.Close()
 
@@ -55,8 +55,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}

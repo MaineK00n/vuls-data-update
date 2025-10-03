@@ -1,7 +1,6 @@
 package msf_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -55,52 +54,35 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
-
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() {
-					return nil
-				}
-
-				ss := strings.Split(path, string(os.PathSeparator))
-				for i, s := range ss {
-					if s == "auxiliary" || s == "exploit" {
-						ss = ss[i:]
-						break
+			default:
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
 					}
-				}
 
-				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Join(ss[:len(ss)-1]...), ss[len(ss)-1]))
-				if err != nil {
-					return err
-				}
+					if d.IsDir() {
+						return nil
+					}
 
-				var want msf.Module
-				if err := json.Unmarshal(wantb, &want); err != nil {
-					return err
-				}
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					if err != nil {
+						return err
+					}
 
-				gotb, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
 
-				var got msf.Module
-				if err := json.Unmarshal(gotb, &got); err != nil {
-					return err
-				}
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
 
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
 				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
 			}
 		})
 	}

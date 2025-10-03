@@ -2,7 +2,6 @@ package tracker_test
 
 import (
 	"io/fs"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,8 +49,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}

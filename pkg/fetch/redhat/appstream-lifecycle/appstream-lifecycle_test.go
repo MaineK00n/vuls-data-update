@@ -54,18 +54,18 @@ func TestFetch(t *testing.T) {
 					if err != nil {
 						return err
 					}
+
 					if d.IsDir() {
 						return nil
 					}
 
-					rel := strings.TrimPrefix(strings.TrimPrefix(path, dir), string(os.PathSeparator))
-
-					got, err := os.ReadFile(path)
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}
 
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", rel))
+					got, err := os.ReadFile(path)
 					if err != nil {
 						return err
 					}

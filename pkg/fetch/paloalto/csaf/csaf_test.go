@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -64,35 +63,35 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
+			default:
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
 
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
+					if d.IsDir() {
+						return nil
+					}
 
-				if d.IsDir() {
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					if err != nil {
+						return err
+					}
+
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
+
 					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
 				}
-
-				wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
-				if err != nil {
-					return err
-				}
-
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
 			}
 		})
 	}

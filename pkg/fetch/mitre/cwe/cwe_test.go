@@ -1,13 +1,13 @@
 package cwe_test
 
 import (
-	"encoding/json"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -54,75 +54,35 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
+			default:
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
 
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
+					if d.IsDir() {
+						return nil
+					}
 
-				if d.IsDir() {
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					if err != nil {
+						return err
+					}
+
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
+
 					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
 				}
-
-				dir, file := filepath.Split(path)
-				wantb, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), file))
-				if err != nil {
-					return err
-				}
-				gotb, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-
-				switch dir {
-				case "weakness":
-					var want cwe.Weakness
-					if err := json.Unmarshal(wantb, &want); err != nil {
-						return err
-					}
-
-					var got cwe.Weakness
-					if err := json.Unmarshal(gotb, &got); err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-				case "category":
-					var want cwe.Category
-					if err := json.Unmarshal(wantb, &want); err != nil {
-						return err
-					}
-
-					var got cwe.Category
-					if err := json.Unmarshal(gotb, &got); err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-				case "view":
-					var want cwe.View
-					if err := json.Unmarshal(wantb, &want); err != nil {
-						return err
-					}
-
-					var got cwe.View
-					if err := json.Unmarshal(gotb, &got); err != nil {
-						return err
-					}
-
-					if diff := cmp.Diff(want, got); diff != "" {
-						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-					}
-				}
-
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
 			}
 		})
 	}
