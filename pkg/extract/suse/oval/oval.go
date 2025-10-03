@@ -252,8 +252,32 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 	}
 	id := strings.TrimSpace(def.Metadata.Title)
 
-	// FIXME: how do we go?
-	es := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", e.osname, e.version))
+	es, err := func() (ecosystemTypes.Ecosystem, error) {
+		switch e.osname {
+		case "opensuse":
+			switch e.version {
+			case "tumbleweed":
+				return ecosystemTypes.EcosystemTypeOpenSUSETumbleweed, nil
+			default:
+				return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSE, e.version)), nil
+			}
+		case "opensuse.leap":
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeap, e.version)), nil
+		case "opensuse.leap.micro":
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeapMicro, e.version)), nil
+		case "suse.linux.enterprise.server":
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseServer, e.version)), nil
+		case "suse.linux.enterprise.desktop":
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseDesktop, e.version)), nil
+		case "suse.linux.enterprise.micro":
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterpriseMicro, e.version)), nil
+		default:
+			return "", errors.Errorf("unexpected osname. expected: %q, actual: %q", []string{"suse.linux.enterprise.server", "suse.linux.enterprise.desktop", "suse.linux.enterprise.micro", "opensuse", "opensuse.leap", "opensuse.leap.micro"}, e.osname)
+		}
+	}()
+	if err != nil {
+		return nil, errors.Wrapf(err, "build ecosystem %s", def.Metadata.Title)
+	}
 
 	v, err := buildVulnerability(def)
 	if err != nil {

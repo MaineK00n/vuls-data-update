@@ -201,7 +201,7 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
 		switch family {
-		case ecosystemTypes.EcosytemCentOS:
+		case ecosystemTypes.EcosytemTypeCentOS:
 			if strings.Contains(v1, ".centos") != strings.Contains(v2, ".centos") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non centos package and centos package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
