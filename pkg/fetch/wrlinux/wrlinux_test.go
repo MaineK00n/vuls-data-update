@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -48,9 +49,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					dir, file := filepath.Split(path)
-					_, y := filepath.Split(filepath.Clean(dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", y, file))
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}

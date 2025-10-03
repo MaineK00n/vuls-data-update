@@ -303,9 +303,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					dir, file := filepath.Split(path)
-					dir, y := filepath.Split(filepath.Clean(dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(dir), y, file))
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}

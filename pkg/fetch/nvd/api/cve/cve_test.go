@@ -164,42 +164,42 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
+			default:
+				actualCount := 0
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
 
-			actualCount := 0
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
+					if d.IsDir() {
+						return nil
+					}
 
-				if d.IsDir() {
+					dir, file := filepath.Split(path)
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, filepath.Base(dir), file))
+					if err != nil {
+						return err
+					}
+
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
+					}
+
+					actualCount++
 					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
 				}
 
-				dir, file := filepath.Split(path)
-				want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.fixturePrefix, filepath.Base(dir), file))
-				if err != nil {
-					return err
+				if actualCount != tt.expectedCount {
+					t.Errorf("unexpected #files, expected: %d, actual: %d", actualCount, tt.expectedCount)
+
 				}
-
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). %s (-expected +got):\n%s", file, diff)
-				}
-
-				actualCount++
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
-			}
-
-			if actualCount != tt.expectedCount {
-				t.Errorf("unexpected #files, expected: %d, actual: %d", actualCount, tt.expectedCount)
-
 			}
 		})
 	}
