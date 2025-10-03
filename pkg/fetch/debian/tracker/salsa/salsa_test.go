@@ -30,11 +30,7 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				datapath := strings.TrimPrefix(r.URL.Path, string(os.PathSeparator))
-				if _, err := os.Stat(datapath); err != nil {
-					http.NotFound(w, r)
-				}
-				http.ServeFile(w, r, datapath)
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
 			}))
 			defer ts.Close()
 

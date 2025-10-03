@@ -33,13 +33,7 @@ func TestFetch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				major := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/en/documentation/red_hat_enterprise_linux/"), "/html-single/package_manifest/index")
-
-				testdata := filepath.Join(tt.testdata, fmt.Sprintf("%s.html", major))
-				if _, err := os.Stat(testdata); err != nil {
-					http.NotFound(w, r)
-					return
-				}
-				http.ServeFile(w, r, testdata)
+				http.ServeFile(w, r, filepath.Join(tt.testdata, fmt.Sprintf("%s.html", major)))
 			}))
 			defer ts.Close()
 

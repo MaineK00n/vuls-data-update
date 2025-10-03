@@ -94,12 +94,7 @@ func TestFetch(t *testing.T) {
 
 					http.ServeContent(w, r, "cve.json", time.Now(), strings.NewReader(s))
 				default:
-					testdata := strings.TrimPrefix(r.URL.Path, string(os.PathSeparator))
-					if _, err := os.Stat(testdata); err != nil {
-						http.NotFound(w, r)
-						return
-					}
-					http.ServeFile(w, r, testdata)
+					http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
 				}
 			}))
 			defer ts.Close()
