@@ -1,0 +1,29 @@
+{
+	"type": "relationship",
+	"id": "relationship--90818d25-6ece-4035-aece-62e489abef7d",
+	"created": "2017-12-14T16:46:06.044Z",
+	"created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"description": "In states 3 and 4 [Stuxnet](https://collaborate.mitre.org/attackics/index.php/Software/S0010) sends two network bursts (done through the DP_SEND primitive). The data in the frames are instructions for the frequency converter drives.(Citation: Wired W32.Stuxnet Feb 2011)",
+	"external_references": [
+		{
+			"description": "Nicolas Falliere, Liam O Murchu, Eric Chien. (2011, February). W32.Stuxnet Dossier (Version 1.4). Retrieved September 22, 2017.",
+			"source_name": "Wired W32.Stuxnet Feb 2011",
+			"url": "https://www.wired.com/images_blogs/threatlevel/2010/11/w32_stuxnet_dossier.pdf"
+		}
+	],
+	"modified": "2020-11-12T14:49:39.188Z",
+	"object_marking_refs": [
+		"marking-definition--fa42a846-8d90-4e51-bc29-71d5b4802168"
+	],
+	"relationship_type": "uses",
+	"source_ref": "malware--496bff4d-0700-4b28-b06f-f30a63002be7",
+	"spec_version": "2.1",
+	"target_ref": "attack-pattern--ab390887-afc0-4715-826d-b1b167d522ae",
+	"x_mitre_attack_spec_version": "2.1.0",
+	"x_mitre_deprecated": true,
+	"x_mitre_domains": [
+		"ics-attack"
+	],
+	"x_mitre_modified_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"x_mitre_version": "1.0"
+}

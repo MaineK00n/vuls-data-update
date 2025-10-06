@@ -1,0 +1,53 @@
+{
+	"type": "attack-pattern",
+	"id": "attack-pattern--063b5b92-5361-481a-9c3f-95492ed9a2d8",
+	"created": "2020-05-21T17:43:26.506Z",
+	"created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"description": "Adversaries may stop or disable services on a system to render those services unavailable to legitimate users. Stopping critical services can inhibit or stop response to an incident or aid in the adversary's overall objectives to cause damage to the environment. (Citation: Enterprise ATT&CK)  Services may not allow for modification of their data stores while running. Adversaries may stop services in order to conduct Data Destruction. (Citation: Enterprise ATT&CK)",
+	"external_references": [
+		{
+			"external_id": "T0881",
+			"source_name": "mitre-attack",
+			"url": "https://attack.mitre.org/techniques/T0881"
+		},
+		{
+			"description": "Enterprise ATT&CK Enterprise ATT&CK   Service Stop Retrieved. 2019/10/29  Service Stop Retrieved. 2019/10/29 ",
+			"source_name": "Enterprise ATT&CK",
+			"url": "https://attack.mitre.org/techniques/T1489/"
+		}
+	],
+	"kill_chain_phases": [
+		{
+			"kill_chain_name": "mitre-ics-attack",
+			"phase_name": "inhibit-response-function"
+		}
+	],
+	"modified": "2023-10-13T17:56:58.586Z",
+	"name": "Service Stop",
+	"object_marking_refs": [
+		"marking-definition--fa42a846-8d90-4e51-bc29-71d5b4802168"
+	],
+	"revoked": false,
+	"spec_version": "2.1",
+	"x_mitre_attack_spec_version": "3.2.0",
+	"x_mitre_data_sources": [
+		"File: File Modification",
+		"Command: Command Execution",
+		"Process: OS API Execution",
+		"Process: Process Termination",
+		"Service: Service Metadata",
+		"Windows Registry: Windows Registry Key Modification",
+		"Process: Process Creation"
+	],
+	"x_mitre_deprecated": false,
+	"x_mitre_detection": "",
+	"x_mitre_domains": [
+		"ics-attack"
+	],
+	"x_mitre_is_subtechnique": false,
+	"x_mitre_modified_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"x_mitre_platforms": [
+		"None"
+	],
+	"x_mitre_version": "1.1"
+}
