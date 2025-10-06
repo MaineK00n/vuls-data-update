@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -173,12 +174,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					rpath, err := filepath.Rel(dir, path)
-					if err != nil {
-						return err
-					}
-
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", rpath))
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}

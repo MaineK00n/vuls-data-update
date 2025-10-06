@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
 )
@@ -30,7 +29,7 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, string(os.PathSeparator)))
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
 			defer ts.Close()
 
@@ -72,63 +71,35 @@ func TestFetch(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
-
-			if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() {
-					return nil
-				}
-
-				var want []byte
-				switch filepath.Base(filepath.Dir(path)) {
-				case "DLA", "DSA", "DTSA":
-					want, err = os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(filepath.Dir(path)), filepath.Base(path)))
+			default:
+				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 					if err != nil {
 						return err
 					}
-				default:
-					d, file := filepath.Split(path)
-					d, dd := filepath.Split(filepath.Clean(d))
-					switch filepath.Base(d) {
-					case "CPE", "CVE":
-						want, err = os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(filepath.Clean(d)), dd, file))
-						if err != nil {
-							return err
-						}
-					default:
-						d, file := filepath.Split(path)
-						d, dd := filepath.Split(filepath.Clean(d))
-						d, ddd := filepath.Split(filepath.Clean(d))
-						d, dddd := filepath.Split(filepath.Clean(d))
-						d, ddddd := filepath.Split(filepath.Clean(d))
-						switch filepath.Base(d) {
-						case "packages":
-							want, err = os.ReadFile(filepath.Join("testdata", "golden", filepath.Base(filepath.Clean(d)), ddddd, dddd, ddd, dd, file))
-							if err != nil {
-								return err
-							}
-						default:
-							return errors.Errorf("%s is not expected file", path)
-						}
+
+					if d.IsDir() {
+						return nil
 					}
-				}
 
-				got, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					if err != nil {
+						return err
+					}
 
-				if diff := cmp.Diff(want, got); diff != "" {
-					t.Errorf("Fetch(). (-expected +got):\n%s", diff)
-				}
+					got, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
 
-				return nil
-			}); err != nil {
-				t.Error("walk error:", err)
+					if diff := cmp.Diff(want, got); diff != "" {
+						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
+					}
+
+					return nil
+				}); err != nil {
+					t.Error("walk error:", err)
+				}
 			}
 		})
 	}

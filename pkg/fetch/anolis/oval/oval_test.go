@@ -61,8 +61,8 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 
-					wantDir, wantFile := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", wantDir, url.QueryEscape(wantFile)))
+					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, url.QueryEscape(file)))
 					if err != nil {
 						return err
 					}
