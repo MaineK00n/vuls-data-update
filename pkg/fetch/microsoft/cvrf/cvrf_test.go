@@ -1,58 +1,67 @@
-package advisory_test
+package cvrf_test
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/advisory"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
+		updates  string
 		hasError bool
 	}{
 		{
-			name: "happy",
+			name:    "happy path",
+			updates: "testdata/fixtures/updates",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				n := r.URL.Query().Get("$skip")
-				if n == "" {
-					n = "0"
-				}
+				switch path.Base(path.Clean(r.URL.Path)) {
+				case "updates":
+					f, err := os.Open(strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/"), "/"))
+					if err != nil {
+						http.NotFound(w, r)
+					}
+					defer f.Close()
 
-				bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s.json", n)))
-				if err != nil {
-					http.NotFound(w, r)
-					return
-				}
+					bs, err := io.ReadAll(f)
+					if err != nil {
+						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+					}
 
-				if _, err := fmt.Fprintf(w, "%s", bytes.ReplaceAll(bs, []byte("https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/advisory?$skip="), []byte(fmt.Sprintf("http://%s/sug/v2.0/sugodata/v2.0/en-US/advisory?$skip=", r.Host)))); err != nil {
-					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+					s := strings.ReplaceAll(string(bs), "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf", fmt.Sprintf("http://%s/testdata/fixtures", r.Host))
+
+					http.ServeContent(w, r, "updates", time.Now(), strings.NewReader(s))
+				default:
+					http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 				}
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "sug/v2.0/sugodata/v2.0/en-US/advisory?$skip=0")
+			u, err := url.JoinPath(ts.URL, tt.updates)
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = advisory.Fetch(advisory.WithDataURL(u), advisory.WithDir(dir), advisory.WithRetry(0))
+			err = cvrf.Fetch(cvrf.WithDataURL(u), cvrf.WithDir(dir), cvrf.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

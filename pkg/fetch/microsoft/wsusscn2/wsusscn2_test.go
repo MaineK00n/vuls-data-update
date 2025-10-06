@@ -1,4 +1,4 @@
-package bulletin_test
+package wsusscn2_test
 
 import (
 	"io/fs"
@@ -12,21 +12,20 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata []string
+		cabPath  string
 		hasError bool
 	}{
 		{
-			name:     "happy path",
-			testdata: []string{"testdata/fixtures/BulletinSearch.xlsx", "testdata/fixtures/BulletinSearch2001-2008.xlsx"},
+			name:    "happy path",
+			cabPath: "testdata/fixtures/wsusscn2.cab",
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +33,13 @@ func TestFetch(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			urls := make([]string, 0, len(tt.testdata))
-			for _, datapath := range tt.testdata {
-				u, err := url.JoinPath(ts.URL, datapath)
-				if err != nil {
-					t.Error("unexpected error:", err)
-				}
-				urls = append(urls, u)
+			u, err := url.JoinPath(ts.URL, tt.cabPath)
+			if err != nil {
+				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err := bulletin.Fetch(bulletin.WithDataURLs(urls), bulletin.WithDir(dir), bulletin.WithRetry(0))
+			err = wsusscn2.Fetch(wsusscn2.WithDataURL(u), wsusscn2.WithDir(dir), wsusscn2.WithRetry(0), wsusscn2.WithConcurrency(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

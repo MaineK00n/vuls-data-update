@@ -1,4 +1,4 @@
-package oval_test
+package bulletin_test
 
 import (
 	"io/fs"
@@ -6,40 +6,45 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
+		testdata []string
 		hasError bool
 	}{
 		{
-			name: "happy",
+			name:     "happy path",
+			testdata: []string{"testdata/fixtures/BulletinSearch.xlsx", "testdata/fixtures/BulletinSearch2001-2008.xlsx"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "microsoft/AzureLinuxVulnerabilityData/archive/refs/heads/main.tar.gz")
-			if err != nil {
-				t.Error("unexpected error:", err)
+			urls := make([]string, 0, len(tt.testdata))
+			for _, datapath := range tt.testdata {
+				u, err := url.JoinPath(ts.URL, datapath)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				urls = append(urls, u)
 			}
 
 			dir := t.TempDir()
-			err = oval.Fetch(oval.WithDataURL(u), oval.WithDir(dir), oval.WithRetry(0))
+			err := bulletin.Fetch(bulletin.WithDataURLs(urls), bulletin.WithDir(dir), bulletin.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -56,7 +61,7 @@ func TestFetch(t *testing.T) {
 					}
 
 					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, url.QueryEscape(file)))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}
