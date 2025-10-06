@@ -118,16 +118,13 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "read %s", zf.Name)
 		}
 
-		splitted, err := util.Split(a.ID, "-", "-")
+		t, err := time.Parse("2006-01-02T15:04:05Z", a.Published)
 		if err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
-		}
-		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", a.ID)
+			return errors.Wrap(err, "parse time")
 		}
 
-		if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.ID)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.ID)))
+		if err := util.Write(filepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.ID)), a); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, t.Format("2006"), fmt.Sprintf("%s.json", a.ID)))
 		}
 	}
 
