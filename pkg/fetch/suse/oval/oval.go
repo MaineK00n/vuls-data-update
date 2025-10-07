@@ -248,6 +248,12 @@ func (opts options) walkIndexOf() ([]string, error) {
 			!strings.HasPrefix(txt, "suse.linux.enterprise.micro") {
 			return
 		}
+		switch txt {
+		case "suse.linux.enterprise.micro.5-affected.xml.gz", "suse.linux.enterprise.micro.5-patch.xml.gz", "suse.linux.enterprise.micro.5.xml.gz":
+			// SLEM 5 series has "5" and "5.y". SLEM 6 series has "6.y" only. Exclude "5" here.
+			return
+		default:
+		}
 
 		switch {
 		case strings.Contains(txt, "-affected"):
