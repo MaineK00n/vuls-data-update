@@ -1,8 +1,6 @@
-package cvrf_test
+package oval_test
 
 import (
-	"fmt"
-	"io"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -12,56 +10,36 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/azure/oval"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		updates  string
 		hasError bool
 	}{
 		{
-			name:    "happy path",
-			updates: "testdata/fixtures/updates",
+			name: "happy",
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				switch path.Base(path.Clean(r.URL.Path)) {
-				case "updates":
-					f, err := os.Open(strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/"), "/"))
-					if err != nil {
-						http.NotFound(w, r)
-					}
-					defer f.Close()
-
-					bs, err := io.ReadAll(f)
-					if err != nil {
-						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-					}
-
-					s := strings.ReplaceAll(string(bs), "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf", fmt.Sprintf("http://%s/testdata/fixtures", r.Host))
-
-					http.ServeContent(w, r, "updates", time.Now(), strings.NewReader(s))
-				default:
-					http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
-				}
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, tt.updates)
+			u, err := url.JoinPath(ts.URL, "microsoft/AzureLinuxVulnerabilityData/archive/refs/heads/main.tar.gz")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = cvrf.Fetch(cvrf.WithDataURL(u), cvrf.WithDir(dir), cvrf.WithRetry(0))
+			err = oval.Fetch(oval.WithDataURL(u), oval.WithDir(dir), oval.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -78,7 +56,7 @@ func TestFetch(t *testing.T) {
 					}
 
 					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, url.QueryEscape(file)))
 					if err != nil {
 						return err
 					}

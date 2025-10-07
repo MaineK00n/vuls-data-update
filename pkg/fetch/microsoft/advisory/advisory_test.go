@@ -1,4 +1,4 @@
-package vulnerability_test
+package advisory_test
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/vulnerability"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/advisory"
 )
 
 func TestFetch(t *testing.T) {
@@ -40,19 +40,19 @@ func TestFetch(t *testing.T) {
 					return
 				}
 
-				if _, err := fmt.Fprintf(w, "%s", bytes.ReplaceAll(bs, []byte("https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/vulnerability?$skip="), []byte(fmt.Sprintf("http://%s/sug/v2.0/sugodata/v2.0/en-US/vulnerability?$skip=", r.Host)))); err != nil {
+				if _, err := fmt.Fprintf(w, "%s", bytes.ReplaceAll(bs, []byte("https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/advisory?$skip="), []byte(fmt.Sprintf("http://%s/sug/v2.0/sugodata/v2.0/en-US/advisory?$skip=", r.Host)))); err != nil {
 					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				}
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "sug/v2.0/sugodata/v2.0/en-US/vulnerability?$skip=0")
+			u, err := url.JoinPath(ts.URL, "sug/v2.0/sugodata/v2.0/en-US/advisory?$skip=0")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = vulnerability.Fetch(vulnerability.WithDataURL(u), vulnerability.WithDir(dir), vulnerability.WithRetry(0))
+			err = advisory.Fetch(advisory.WithDataURL(u), advisory.WithDir(dir), advisory.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

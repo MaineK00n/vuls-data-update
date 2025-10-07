@@ -1,48 +1,45 @@
-package msuc_test
+package csaf_test
 
 import (
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/csaf"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name     string
-		testdata string
-		hasError bool
+		name             string
+		testdataRootPath string
+		hasError         bool
 	}{
 		{
-			name:     "happy path",
-			testdata: "testdata/fixtures",
+			name:             "happy",
+			testdataRootPath: "testdata/fixtures/happy",
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				switch path.Base(r.URL.Path) {
-				case "Search.aspx":
-					http.ServeFile(w, r, filepath.Join(tt.testdata, "search"))
-				case "ScopedViewInline.aspx":
-					http.ServeFile(w, r, filepath.Join(tt.testdata, r.URL.Query().Get("updateid")))
-				default:
-					http.NotFound(w, r)
-				}
+				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
 			defer ts.Close()
 
+			u, err := url.JoinPath(ts.URL, tt.testdataRootPath)
+			if err != nil {
+				t.Error("unexpected error:", err)
+			}
+
 			dir := t.TempDir()
-			err := msuc.Fetch([]string{"KB5025239"}, msuc.WithMSUCURL(ts.URL), msuc.WithDir(dir), msuc.WithRetry(0))
+			err = csaf.Fetch(csaf.WithBaseURL(u), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

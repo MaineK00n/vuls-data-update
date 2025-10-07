@@ -1,6 +1,8 @@
-package csaf_test
+package product_test
 
 import (
+	"bytes"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -12,34 +14,45 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/csaf"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
-		name             string
-		testdataRootPath string
-		hasError         bool
+		name     string
+		hasError bool
 	}{
 		{
-			name:             "happy",
-			testdataRootPath: "testdata/fixtures/happy",
+			name: "happy",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+				n := r.URL.Query().Get("$skip")
+				if n == "" {
+					n = "0"
+				}
+
+				bs, err := os.ReadFile(filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s.json", n)))
+				if err != nil {
+					http.NotFound(w, r)
+					return
+				}
+
+				if _, err := fmt.Fprintf(w, "%s", bytes.ReplaceAll(bs, []byte("https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/affectedProduct?$skip="), []byte(fmt.Sprintf("http://%s/sug/v2.0/sugodata/v2.0/en-US/affectedProduct?$skip=", r.Host)))); err != nil {
+					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				}
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, tt.testdataRootPath)
+			u, err := url.JoinPath(ts.URL, "sug/v2.0/sugodata/v2.0/en-US/affectedProduct?$skip=0")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = csaf.Fetch(csaf.WithBaseURL(u), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
+			err = product.Fetch(product.WithDataURL(u), product.WithDir(dir), product.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

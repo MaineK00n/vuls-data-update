@@ -18,7 +18,6 @@ import (
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
 	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
-	azureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/azure/oval"
 	bellsoftAlpaquitaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/alpaquita/osv"
 	bellsoftHardenedContainersOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bellsoft/hardened-containers/osv"
 	bitnamiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/bitnami/osv"
@@ -72,6 +71,16 @@ import (
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/ghsa"
 	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/glsa"
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
+	microsoftAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/advisory"
+	microsoftAzureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/azure/oval"
+	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
+	microsoftCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/csaf"
+	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
+	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
+	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
+	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
+	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
+	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
 	minimOSOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/osv"
 	minimOSSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/secdb"
 	mitreATTACK "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/attack"
@@ -161,15 +170,6 @@ import (
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
 	vulncheckNISTNVD "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd"
 	vulncheckNISTNVD2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd2"
-	windowsAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/advisory"
-	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/bulletin"
-	windowsCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/csaf"
-	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/cvrf"
-	windowsDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/deployment"
-	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/msuc"
-	windowsProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/product"
-	windowsVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/vulnerability"
-	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/windows/wsusscn2"
 	wolfiOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/osv"
 	wolfiSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/wolfi/secdb"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/wrlinux"
@@ -201,7 +201,6 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAndroidOSV(),
 		newCmdAnolisOVAL(),
 		newCmdArch(),
-		newCmdAzureOVAL(),
 		newCmdBellSoftAlpaquitaOSV(), newCmdBellSoftHardenedContainersOSV(),
 		newCmdBitnamiOSV(),
 		newCmdBottlerocket(),
@@ -231,6 +230,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -264,7 +264,6 @@ func NewCmdFetch() *cobra.Command {
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(), newCmdUbuntuCVE(), newCmdUbuntuNotice(),
 		newCmdVARIoTExploits(), newCmdVARIoTVulns(),
 		newCmdVulnCheckKEV(), newCmdVulnCheckNISTNVD(), newCmdVulnCheckNISTNVD2(),
-		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsCSAF(), newCmdWindowsMSUC(), newCmdWindowsAdvisory(), newCmdWindowsVulnerability(), newCmdWindowsProduct(), newCmdWindowsDeployment(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiSecDB(), newCmdWolfiOSV(),
 		newCmdWRLinux(),
 	)
@@ -538,33 +537,6 @@ func newCmdArch() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "arch"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdAzureOVAL() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "azure", "oval"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "azure-oval",
-		Short: "Fetch Azure Linux OVAL data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch azure-oval
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := azureOVAL.Fetch(azureOVAL.WithDir(options.dir), azureOVAL.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch azure oval")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
@@ -2172,6 +2144,303 @@ func newCmdMavenOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "maven", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftBulletin() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletin"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-bulletin",
+		Short: "Fetch Microsoft Bulletin data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-bulletin
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftBulletin.Fetch(microsoftBulletin.WithDir(options.dir), microsoftBulletin.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft bulletin")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftCVRF() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "cvrf"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-cvrf",
+		Short: "Fetch Microsoft CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-cvrf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftCVRF.Fetch(microsoftCVRF.WithDir(options.dir), microsoftCVRF.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-csaf",
+		Short: "Fetch Microsoft CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-csaf
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftCSAF.Fetch(microsoftCSAF.WithDir(options.dir), microsoftCSAF.WithRetry(options.retry), microsoftCSAF.WithConcurrency(options.concurrency), microsoftCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdMicrosoftMSUC() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-msuc <KBID>...",
+		Short: "Fetch Microsoft Software Update Catalog data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-msuc "KB5019311", "KB5017389", "KB5018427", "KB5019509", "KB5018496", "KB5019980", "KB5020044", "KB5021255", "KB5022303", "KB5022360", "KB5022845"
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftMSUC.Fetch(args, microsoftMSUC.WithDir(options.dir), microsoftMSUC.WithRetry(options.retry), microsoftMSUC.WithConcurrency(options.concurrency), microsoftMSUC.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+
+	return cmd
+}
+
+func newCmdMicrosoftAdvisory() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "advisory"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-advisory",
+		Short: "Fetch Microsoft Advisory data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-advisory
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftAdvisory.Fetch(microsoftAdvisory.WithDir(options.dir), microsoftAdvisory.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft advisory")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftVulnerability() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "vulnerability"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-vulnerability",
+		Short: "Fetch Microsoft Vulnerability data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-vulnerability
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftVulnerability.Fetch(microsoftVulnerability.WithDir(options.dir), microsoftVulnerability.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft vulnerability")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftProduct() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "product"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-product",
+		Short: "Fetch Microsoft Product data source",
+		Example: heredoc.Doc(`
+				$ vuls-data-update fetch microsoft-product
+			`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftProduct.Fetch(microsoftProduct.WithDir(options.dir), microsoftProduct.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft product")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftDeployment() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "deployment"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-deployment",
+		Short: "Fetch Microsoft Deployment data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-deployment
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftDeployment.Fetch(microsoftDeployment.WithDir(options.dir), microsoftDeployment.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft deployment")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftWSUSSCN2() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "wsusscn2"),
+			retry: 3,
+		},
+		concurrency: 2,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-wsusscn2",
+		Short: "Fetch Microsoft WSUSSCN2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-wsusscn2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftWSUSSCN2.Fetch(microsoftWSUSSCN2.WithDir(options.dir), microsoftWSUSSCN2.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft wsusscn2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency cabextract")
+
+	return cmd
+}
+
+func newCmdMicrosoftAzureOVAL() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "azure", "oval"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-azure-oval",
+		Short: "Fetch Microsoft Azure Linux OVAL data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-azure-oval
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftAzureOVAL.Fetch(microsoftAzureOVAL.WithDir(options.dir), microsoftAzureOVAL.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft azure oval")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
@@ -5011,276 +5280,6 @@ func newCmdVulnCheckNISTNVD2() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsBulletin() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "bulletin"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-bulletin",
-		Short: "Fetch Windows Bulletin data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-bulletin
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsBulletin.Fetch(windowsBulletin.WithDir(options.dir), windowsBulletin.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows bulletin")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "bulletin"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsCVRF() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "cvrf"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-cvrf",
-		Short: "Fetch Windows CVRF data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-cvrf
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsCVRF.Fetch(windowsCVRF.WithDir(options.dir), windowsCVRF.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows cvrf")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "cvrf"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsCSAF() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "csaf"),
-			retry: 3,
-		},
-		concurrency: 5,
-		wait:        1,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-csaf",
-		Short: "Fetch Windows CSAF data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-csaf
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsCSAF.Fetch(windowsCSAF.WithDir(options.dir), windowsCSAF.WithRetry(options.retry), windowsCSAF.WithConcurrency(options.concurrency), windowsCSAF.WithWait(options.wait)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows csaf")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
-
-	return cmd
-}
-
-func newCmdWindowsMSUC() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"),
-			retry: 3,
-		},
-		concurrency: 5,
-		wait:        1,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-msuc <KBID>...",
-		Short: "Fetch Windows Microsoft Software Update Catalog data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-msuc "KB5019311", "KB5017389", "KB5018427", "KB5019509", "KB5018496", "KB5019980", "KB5020044", "KB5021255", "KB5022303", "KB5022360", "KB5022845"
-		`),
-		Args: cobra.MinimumNArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsMSUC.Fetch(args, windowsMSUC.WithDir(options.dir), windowsMSUC.WithRetry(options.retry), windowsMSUC.WithConcurrency(options.concurrency), windowsMSUC.WithWait(options.wait)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows msuc")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "msuc"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
-
-	return cmd
-}
-
-func newCmdWindowsAdvisory() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "advisory"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-advisory",
-		Short: "Fetch Microsoft Advisory data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-advisory
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsAdvisory.Fetch(windowsAdvisory.WithDir(options.dir), windowsAdvisory.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows advisory")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsVulnerability() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "vulnerability"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-vulnerability",
-		Short: "Fetch Microsoft Vulnerability data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-vulnerability
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsVulnerability.Fetch(windowsVulnerability.WithDir(options.dir), windowsVulnerability.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows vulnerability")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsProduct() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "product"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-product",
-		Short: "Fetch Microsoft Product data source",
-		Example: heredoc.Doc(`
-				$ vuls-data-update fetch windows-product
-			`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsProduct.Fetch(windowsProduct.WithDir(options.dir), windowsProduct.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows product")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsDeployment() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "deployment"),
-		retry: 3,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-deployment",
-		Short: "Fetch Microsoft Deployment data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-deployment
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsDeployment.Fetch(windowsDeployment.WithDir(options.dir), windowsDeployment.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows deployment")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-
-	return cmd
-}
-
-func newCmdWindowsWSUSSCN2() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"),
-			retry: 3,
-		},
-		concurrency: 2,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-wsusscn2",
-		Short: "Fetch Windows WSUSSCN2 data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update fetch windows-wsusscn2
-		`),
-		Args: cobra.NoArgs,
-		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := windowsWSUSSCN2.Fetch(windowsWSUSSCN2.WithDir(options.dir), windowsWSUSSCN2.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch windows wsusscn2")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "windows", "wsusscn2"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 2, "number of concurrency cabextract")
 
 	return cmd
 }
