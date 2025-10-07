@@ -84,7 +84,7 @@ func WithWait(wait int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "windows", "csaf"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1,
