@@ -1,0 +1,34 @@
+{
+	"type": "relationship",
+	"id": "relationship--f80cb0ae-96e7-4425-b9de-b8835a45e45b",
+	"created": "2018-04-18T17:59:24.739Z",
+	"created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"description": "The [Backdoor.Oldrea](https://collaborate.mitre.org/attackics/index.php/Software/S0003) payload gathers server information that includes CLSID, server name, Program ID, OPC version, vendor information, running state, group count, and server bandwidth. This information helps indicate the role the server has in the control process.(Citation: CISA Advisory (ICSA-14-178-01))(Citation: F-Secure Labs Jun 2014)",
+	"external_references": [
+		{
+			"description": "ICS-CERT. (2018, August 22). Advisory (ICSA-14-178-01). Retrieved April 1, 2019.",
+			"source_name": "CISA Advisory (ICSA-14-178-01)",
+			"url": "https://ics-cert.us-cert.gov/advisories/ICSA-14-178-01"
+		},
+		{
+			"description": "Daavid Hentunen, Antti Tikkanen. (2014, June 23). Havex Hunts For ICS/SCADA Systems. Retrieved April 1, 2019.",
+			"source_name": "F-Secure Labs Jun 2014",
+			"url": "https://www.f-secure.com/weblog/archives/00002718.html"
+		}
+	],
+	"modified": "2021-04-29T14:49:39.188Z",
+	"object_marking_refs": [
+		"marking-definition--fa42a846-8d90-4e51-bc29-71d5b4802168"
+	],
+	"relationship_type": "uses",
+	"source_ref": "malware--083bb47b-02c8-4423-81a2-f9ef58572974",
+	"spec_version": "2.1",
+	"target_ref": "attack-pattern--abb0a255-eb9c-48d0-8f5c-874bb84c0e45",
+	"x_mitre_attack_spec_version": "2.1.0",
+	"x_mitre_deprecated": true,
+	"x_mitre_domains": [
+		"ics-attack"
+	],
+	"x_mitre_modified_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"x_mitre_version": "1.0"
+}

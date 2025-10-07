@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -16,47 +17,30 @@ import (
 )
 
 func TestFetch(t *testing.T) {
+
 	tests := []struct {
 		name     string
-		testdata attack.DataURL
 		hasError bool
 	}{
 		{
-			name: "happy path",
-			testdata: attack.DataURL{
-				Enterprise: "testdata/fixtures/enterprise-attack.json",
-				ICS:        "testdata/fixtures/ics-attack.json",
-				Mobile:     "testdata/fixtures/mobile-attack.json",
-			},
+			name: "happy",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 			}))
 			defer ts.Close()
 
-			var urls attack.DataURL
-			u, err := url.JoinPath(ts.URL, tt.testdata.Enterprise)
+			u, err := url.JoinPath(ts.URL, "mitre/cti/master")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
-			urls.Enterprise = u
-			u, err = url.JoinPath(ts.URL, tt.testdata.ICS)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			urls.ICS = u
-			u, err = url.JoinPath(ts.URL, tt.testdata.Mobile)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			urls.Mobile = u
 
 			dir := t.TempDir()
-			err = attack.Fetch(attack.WithDataURL(&urls), attack.WithDir(dir), attack.WithRetry(0))
+			err = attack.Fetch(attack.WithBaseURL(u), attack.WithDir(dir), attack.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

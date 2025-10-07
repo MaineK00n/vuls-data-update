@@ -1,0 +1,22 @@
+{
+	"type": "relationship",
+	"id": "relationship--f836cab1-6c45-4ede-a220-40f88a80a14e",
+	"created": "2020-09-21T17:59:24.739Z",
+	"created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"description": "Limit access to network infrastructure and resources that can be used to reshape traffic or otherwise produce MiTM conditions.",
+	"modified": "2021-04-29T14:49:39.188Z",
+	"object_marking_refs": [
+		"marking-definition--fa42a846-8d90-4e51-bc29-71d5b4802168"
+	],
+	"relationship_type": "mitigates",
+	"source_ref": "course-of-action--1dcaeb21-9348-42ea-950a-f842aaf1ae1f",
+	"spec_version": "2.1",
+	"target_ref": "attack-pattern--9a505987-ab05-4f46-a9a6-6441442eec3b",
+	"x_mitre_attack_spec_version": "2.1.0",
+	"x_mitre_deprecated": true,
+	"x_mitre_domains": [
+		"ics-attack"
+	],
+	"x_mitre_modified_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"x_mitre_version": "1.0"
+}

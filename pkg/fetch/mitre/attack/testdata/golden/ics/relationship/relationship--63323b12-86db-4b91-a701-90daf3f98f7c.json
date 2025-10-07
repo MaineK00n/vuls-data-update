@@ -1,0 +1,21 @@
+{
+	"type": "relationship",
+	"id": "relationship--63323b12-86db-4b91-a701-90daf3f98f7c",
+	"created": "2020-09-21T17:59:24.739Z",
+	"created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"description": "Segment networks and systems appropriately to reduce access to critical system and services communications.\n",
+	"modified": "2022-05-06T17:47:24.122Z",
+	"object_marking_refs": [
+		"marking-definition--fa42a846-8d90-4e51-bc29-71d5b4802168"
+	],
+	"relationship_type": "mitigates",
+	"source_ref": "course-of-action--1e7ccfc0-94c8-496e-8d27-032120892291",
+	"spec_version": "2.1",
+	"target_ref": "attack-pattern--85a45294-08f1-4539-bf00-7da08aa7b0ee",
+	"x_mitre_attack_spec_version": "2.1.0",
+	"x_mitre_domains": [
+		"ics-attack"
+	],
+	"x_mitre_modified_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
+	"x_mitre_version": "1.0"
+}
