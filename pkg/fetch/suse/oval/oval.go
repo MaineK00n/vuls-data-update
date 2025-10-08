@@ -243,7 +243,6 @@ func (opts options) walkIndexOf() ([]string, error) {
 		switch {
 		case strings.HasPrefix(txt, "opensuse"), strings.HasPrefix(txt, "opensuse.leap"), strings.HasPrefix(txt, "opensuse.leap.micro"), strings.HasPrefix(txt, "opensuse.tumbleweed"),
 			strings.HasPrefix(txt, "suse.linux.enterprise.desktop"), strings.HasPrefix(txt, "suse.linux.enterprise.server"):
-			return
 		case strings.HasPrefix(txt, "suse.linux.enterprise.micro"):
 			switch txt {
 			case "suse.linux.enterprise.micro.5-affected.xml.gz", "suse.linux.enterprise.micro.5-patch.xml.gz", "suse.linux.enterprise.micro.5.xml.gz":
