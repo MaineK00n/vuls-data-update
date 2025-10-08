@@ -239,20 +239,20 @@ func (opts options) walkIndexOf() ([]string, error) {
 		if !strings.HasSuffix(txt, ".xml.gz") {
 			return
 		}
-		if !strings.HasPrefix(txt, "opensuse") &&
-			!strings.HasPrefix(txt, "opensuse.leap") &&
-			!strings.HasPrefix(txt, "opensuse.leap.micro") &&
-			!strings.HasPrefix(txt, "opensuse.tumbleweed") &&
-			!strings.HasPrefix(txt, "suse.linux.enterprise.desktop") &&
-			!strings.HasPrefix(txt, "suse.linux.enterprise.server") &&
-			!strings.HasPrefix(txt, "suse.linux.enterprise.micro") {
+
+		switch {
+		case strings.HasPrefix(txt, "opensuse"), strings.HasPrefix(txt, "opensuse.leap"), strings.HasPrefix(txt, "opensuse.leap.micro"), strings.HasPrefix(txt, "opensuse.tumbleweed"),
+			strings.HasPrefix(txt, "suse.linux.enterprise.desktop"), strings.HasPrefix(txt, "suse.linux.enterprise.server"):
 			return
-		}
-		switch txt {
-		case "suse.linux.enterprise.micro.5-affected.xml.gz", "suse.linux.enterprise.micro.5-patch.xml.gz", "suse.linux.enterprise.micro.5.xml.gz":
-			// SLEM 5 series has "5" and "5.y". SLEM 6 series has "6.y" only. Exclude "5" here.
-			return
+		case strings.HasPrefix(txt, "suse.linux.enterprise.micro"):
+			switch txt {
+			case "suse.linux.enterprise.micro.5-affected.xml.gz", "suse.linux.enterprise.micro.5-patch.xml.gz", "suse.linux.enterprise.micro.5.xml.gz":
+				// SLEM 5 series has "5" and "5.y". SLEM 6 series has "6.y" only. Exclude "5" here.
+				return
+			default:
+			}
 		default:
+			return
 		}
 
 		switch {
