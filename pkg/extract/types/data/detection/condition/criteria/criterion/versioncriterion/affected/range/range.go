@@ -27,6 +27,7 @@ const (
 	RangeTypeSEMVER
 	RangeTypeAPK
 	RangeTypeRPM
+	RangeTypeRPMVersionOnly
 	RangeTypeDPKG
 	RangeTypePacman
 	RangeTypeFreeBSDPkg
@@ -48,6 +49,8 @@ func (t RangeType) String() string {
 		return "apk"
 	case RangeTypeRPM:
 		return "rpm"
+	case RangeTypeRPMVersionOnly:
+		return "rpm-version-only"
 	case RangeTypeDPKG:
 		return "dpkg"
 	case RangeTypePacman:
@@ -89,6 +92,8 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypeAPK
 	case "rpm":
 		rt = RangeTypeRPM
+	case "rpm-version-only":
+		rt = RangeTypeRPMVersionOnly
 	case "dpkg":
 		rt = RangeTypeDPKG
 	case "pacman":
@@ -196,7 +201,7 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 		return va.Compare(vb), nil
 	case RangeTypeRPM:
 		switch family {
-		case ecosystemTypes.EcosytemCentOS:
+		case ecosystemTypes.EcosytemTypeCentOS:
 			if strings.Contains(v1, ".centos") != strings.Contains(v2, ".centos") {
 				return 0, &CompareError{Err: &CannotCompareError{Reason: fmt.Sprintf("non centos package and centos package cannot be compared. v1: %q, v2: %q", v1, v2)}}
 			}
@@ -245,6 +250,10 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			}
 			return rpm.NewVersion(v1).Compare(rpm.NewVersion(v2)), nil
 		}
+	case RangeTypeRPMVersionOnly:
+		va := rpm.NewVersion(v1)
+		vb := rpm.NewVersion(v2)
+		return rpm.NewVersion(va.Version()).Compare(rpm.NewVersion(vb.Version())), nil
 	case RangeTypeDPKG:
 		va, err := deb.NewVersion(v1)
 		if err != nil {
