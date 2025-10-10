@@ -161,6 +161,7 @@ func (c Criterion) Accept(query Query) (FilteredCriterion, error) {
 
 		var is []int
 		for i, q := range query.Version {
+
 			isAccepted, err := c.Version.Accept(q)
 			if err != nil {
 				return FilteredCriterion{}, errors.Wrap(err, "version criterion accept")
