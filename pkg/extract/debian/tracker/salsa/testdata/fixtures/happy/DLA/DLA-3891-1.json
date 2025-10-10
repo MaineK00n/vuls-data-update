@@ -1,0 +1,23 @@
+{
+	"header": {
+		"line": "[18 Sep 2024] DLA-3891-1 mariadb-10.5 - security update",
+		"name": "DLA-3891-1"
+	},
+	"annotations": [
+		{
+			"line": "\t{CVE-2024-21096}",
+			"type": "xref",
+			"bugs": [
+				"CVE-2024-21096"
+			]
+		},
+		{
+			"line": "\t[bullseye] - mariadb-10.5 1:10.5.26-0+deb11u2",
+			"type": "package",
+			"release": "bullseye",
+			"package": "mariadb-10.5",
+			"kind": "fixed",
+			"version": "1:10.5.26-0+deb11u2"
+		}
+	]
+}

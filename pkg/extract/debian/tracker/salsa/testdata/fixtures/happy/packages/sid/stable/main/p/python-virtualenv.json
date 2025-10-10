@@ -1,0 +1,65 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-virtualenv, virtualenv"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-python, pybuild-plugin-pyproject, python3-all, unzip <!nocheck>, zip <!nocheck>"
+	],
+	"Build-Depends-Indep": [
+		"python3-distlib (>= 0.3.1) <!nocheck>, python3-filelock <!nocheck>, python3-pip-whl <!nocheck>, python3-platformdirs <!nocheck>, python3-hatchling (>= 1.11.1), python3-hatch-vcs (>= 0.3), python3-setuptools-whl <!nocheck>"
+	],
+	"Checksums-Sha256": [
+		"ba33ba973bebf90d9ad21723f518f527516dc7ddd9f86594484e46fbbef2fab7 1992 python-virtualenv_20.36.1+ds-1.dsc 7c7354598912d86ba16029a69a9ea89f024f4f13a6a3097ce3c1d35bcaee6682 113340 python-virtualenv_20.36.1+ds.orig.tar.xz ed520cf8a45c33b2cbf07a399535cfc8e0cd3a50351a68f4e03ee32dffe60ab7 15704 python-virtualenv_20.36.1+ds-1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/p/python-virtualenv"
+	],
+	"Files": [
+		"55c315649cd929fa6483c6c6c462329d 1992 python-virtualenv_20.36.1+ds-1.dsc 03809ff417fb299dc895dbace9664c3b 113340 python-virtualenv_20.36.1+ds.orig.tar.xz 7fd8fe229316356c3090be580f72d23d 15704 python-virtualenv_20.36.1+ds-1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://virtualenv.pypa.io/"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"python-virtualenv"
+	],
+	"Package-List": [
+		"python3-virtualenv deb python optional arch=all virtualenv deb oldlibs optional arch=all"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.7.3"
+	],
+	"Testsuite": [
+		"autopkgtest"
+	],
+	"Testsuite-Triggers": [
+		"pypy3, python3-all, python3-setuptools, python3-six, shunit2"
+	],
+	"Uploaders": [
+		"Carl Chenet <chaica@ohmytux.com>, Stefano Rivera <stefanor@debian.org>,"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/python-virtualenv"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/python-virtualenv.git"
+	],
+	"Version": [
+		"20.36.1+ds-1"
+	]
+}

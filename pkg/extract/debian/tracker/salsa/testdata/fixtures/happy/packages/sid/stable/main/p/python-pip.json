@@ -1,0 +1,62 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-pip, python3-pip-whl"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-sequence-sphinxdoc <!nodoc>, flit, furo <!nodoc>, pybuild-plugin-pyproject, python3, python3-doc <!nodoc>, python3-myst-parser <!nodoc>, python3-sphinx (>= 7) <!nodoc>, python3-sphinx-copybutton <!nodoc>, python3-sphinx-inline-tabs <!nodoc>, python3-sphinx-issues <!nodoc>, towncrier <!nodoc>"
+	],
+	"Checksums-Sha256": [
+		"8de31621c56ecc7df0ba004d6f28fc3de45993e8f82a40b0f1ac6794775922cc 1857 python-pip_26.0.1+dfsg-1.dsc 0c488c004986fdd6f116ddb28a53273545a307f3e140b50716b8d8cfa302ca4a 1100384 python-pip_26.0.1+dfsg.orig.tar.xz fb6557d8e895d2f3a31ccf8f5f42ed427aa36e9bc4d8f5a0fcce4c347a742a91 21952 python-pip_26.0.1+dfsg-1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/p/python-pip"
+	],
+	"Files": [
+		"3528b59e23bbc7ae60b88f603266e1c9 1857 python-pip_26.0.1+dfsg-1.dsc 632cf754fc7600dff51da27ac17df717 1100384 python-pip_26.0.1+dfsg.orig.tar.xz 02da25ca962666b2def31fa883328ab2 21952 python-pip_26.0.1+dfsg-1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://pip.pypa.io/en/stable/"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"python-pip"
+	],
+	"Package-List": [
+		"python3-pip deb python optional arch=all python3-pip-whl deb python optional arch=all"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.7.3"
+	],
+	"Testsuite": [
+		"autopkgtest"
+	],
+	"Testsuite-Triggers": [
+		"python3-venv"
+	],
+	"Uploaders": [
+		"Carl Chenet <chaica@debian.org>, Stefano Rivera <stefanor@debian.org>"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/python-pip"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/python-pip.git"
+	],
+	"Version": [
+		"26.0.1+dfsg-1"
+	]
+}

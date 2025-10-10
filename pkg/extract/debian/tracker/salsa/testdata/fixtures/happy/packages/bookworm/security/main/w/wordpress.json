@@ -1,0 +1,53 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"wordpress, wordpress-l10n, wordpress-theme-twentytwentyone, wordpress-theme-twentytwentytwo, wordpress-theme-twentytwentythree"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-linktree"
+	],
+	"Build-Depends-Indep": [
+		"gettext, libjs-backbone, libjs-cropper, libjs-jquery (>= 1.11.3), libjs-jquery-form, libjs-jquery-ui, libjs-underscore, php-getid3 (>= 1.9.8-2), perl"
+	],
+	"Checksums-Sha256": [
+		"81a0b91c44410255d06acc74cce141d5ef16700d4a74d6084b0f1cf1ecf4b910 2465 wordpress_6.1.9+dfsg1-0+deb12u1.dsc 42faeb7b4c5cd0e57cfe9863ed6d2758ace8dcdb4e95f0e382dbe737464f36c0 15401324 wordpress_6.1.9+dfsg1.orig.tar.xz 48dd8ebc1390293cf37f0ad05ace86d0ace1b5f31d2afd22bdf494267d854652 6878216 wordpress_6.1.9+dfsg1-0+deb12u1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/updates/main/w/wordpress"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://wordpress.org"
+	],
+	"Maintainer": [
+		"Craig Small <csmall@debian.org>"
+	],
+	"Package": [
+		"wordpress"
+	],
+	"Package-List": [
+		"wordpress deb web optional arch=all wordpress-l10n deb localization optional arch=all wordpress-theme-twentytwentyone deb web optional arch=all wordpress-theme-twentytwentythree deb web optional arch=all wordpress-theme-twentytwentytwo deb web optional arch=all"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"web"
+	],
+	"Standards-Version": [
+		"4.6.1"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/debian/wordpress"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/debian/wordpress.git"
+	],
+	"Version": [
+		"6.1.9+dfsg1-0+deb12u1"
+	]
+}

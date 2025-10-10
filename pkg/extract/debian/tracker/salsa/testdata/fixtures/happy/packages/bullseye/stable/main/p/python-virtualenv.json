@@ -1,0 +1,65 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-virtualenv, virtualenv"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 12), dh-python, python3-all, unzip, zip"
+	],
+	"Build-Depends-Indep": [
+		"python-pip-whl (>= 20.0.2), python3-pip, python3-setuptools, python3-setuptools-scm, python3-wheel"
+	],
+	"Checksums-Sha256": [
+		"3f06b9541bf4199b6d7441bb243ef520967789bc12e2f23c9b9249b88e8e5771 1935 python-virtualenv_20.4.0+ds-2+deb11u1.dsc ec8bd56aae1f3692a1367ef536b79fbba9d62eb2ba488e4773699c452bfd85c3 3357504 python-virtualenv_20.4.0+ds.orig.tar.xz 2f36751654441d08b2f6bccd1c6db340b478c8f26f536dd4146dca8cbe14778e 14964 python-virtualenv_20.4.0+ds-2+deb11u1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/p/python-virtualenv"
+	],
+	"Files": [
+		"f7f0c440dbeb8a9e315a74ebc9751f2d 1935 python-virtualenv_20.4.0+ds-2+deb11u1.dsc 0d20efdb9ee67db30d1b62a4ca56239a 3357504 python-virtualenv_20.4.0+ds.orig.tar.xz 0df10acc72394f1915145fa40c87864e 14964 python-virtualenv_20.4.0+ds-2+deb11u1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://pypi.python.org/pypi/virtualenv"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"python-virtualenv"
+	],
+	"Package-List": [
+		"python3-virtualenv deb python optional arch=all virtualenv deb oldlibs optional arch=all"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.5.1"
+	],
+	"Testsuite": [
+		"autopkgtest"
+	],
+	"Testsuite-Triggers": [
+		"pypy, pypy-six, pypy3, python-six, python2, python3-all, python3-filelock, python3-six, shunit2"
+	],
+	"Uploaders": [
+		"Carl Chenet <chaica@ohmytux.com>, Stefano Rivera <stefanor@debian.org>, Scott Kitterman <scott@kitterman.com>,"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/python-virtualenv"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/python-virtualenv.git"
+	],
+	"Version": [
+		"20.4.0+ds-2+deb11u1"
+	]
+}

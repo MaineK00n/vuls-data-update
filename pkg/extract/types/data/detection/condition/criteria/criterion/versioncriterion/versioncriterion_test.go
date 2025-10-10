@@ -1,4 +1,4 @@
-package versoncriterion_test
+package versioncriterion_test
 
 import (
 	"testing"

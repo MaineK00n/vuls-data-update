@@ -1,4 +1,4 @@
-package versoncriterion
+package versioncriterion
 
 import (
 	"cmp"

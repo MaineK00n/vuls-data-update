@@ -1,0 +1,59 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-pip, python-pip-whl"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 11), dh-python, dirtbike (>= 0.3-7~), python3, python3-appdirs (>= 1.4.3), python3-cachecontrol (>= 0.12.6), python3-certifi (>= 2020.4.5.1), python3-chardet (>= 3.0.4), python3-colorama (>= 0.4.3), python3-contextlib2 (>= 0.6.0), python3-debian, python3-docutils, python3-distlib (>= 0.3.0), python3-distro (>= 1.5.0), python3-html5lib (>= 1.0.1), python3-idna (>= 2.9), python3-ipaddr, python3-mock, python3-msgpack (>= 0.6.2), python3-packaging (>= 20.3), python3-pep517 (>= 0.8.2), python-pkg-resources, python3-progress (>= 1.5), python3-pyparsing (>= 2.4.7), python3-pytest, python3-resolvelib (>= 0.5.4), python3-toml (>= 0.10.0), python3-requests (>= 2.23.0), python3-retrying (>= 1.3.3), python3-scripttest, python-setuptools (>= 44.0.0), python3-setuptools (>= 44.0.0), python3-six (>= 1.14.0), python3-urllib3 (>= 1.25.8), python3-webencodings (>= 0.5.1), python3-wheel"
+	],
+	"Checksums-Sha256": [
+		"b115ed01a38fccdbcfd950c48e03ab3b7aff43c9093dc55c89313f3f7181b7b5 2438 python-pip_20.3.4-4+deb11u1.dsc 6773934e5f5fc3eaa8c5a44949b5b924fc122daa0a8aa9f80c835b4ca2a543fc 1530646 python-pip_20.3.4.orig.tar.gz acfe53ee6f3e9b7a6bce5c5a86811ee8f2ee42b42afd17c02f10c8fccd3d8158 22680 python-pip_20.3.4-4+deb11u1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/p/python-pip"
+	],
+	"Files": [
+		"1a58bd60e107d55daf34fd9ca217aaf9 2438 python-pip_20.3.4-4+deb11u1.dsc 577a375b66ec109e0ac6a4c4aa99bbd0 1530646 python-pip_20.3.4.orig.tar.gz 57e78031a578af0872df9d9e09903f67 22680 python-pip_20.3.4-4+deb11u1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://pip.pypa.io/en/stable/"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"python-pip"
+	],
+	"Package-List": [
+		"python-pip-whl deb python optional arch=all python3-pip deb python optional arch=all"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.5.0"
+	],
+	"Testsuite": [
+		"autopkgtest"
+	],
+	"Uploaders": [
+		"Carl Chenet <chaica@debian.org>, Scott Kitterman <scott@kitterman.com>, Stefano Rivera <stefanor@debian.org>"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/python-pip"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/python-pip.git"
+	],
+	"Version": [
+		"20.3.4-4+deb11u1"
+	]
+}
