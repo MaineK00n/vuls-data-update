@@ -34,6 +34,21 @@ func (c Condition) Contains(query criterionTypes.Query) (bool, error) {
 	return isContained, nil
 }
 
+func (c Condition) Filter(query criterionTypes.Query) (*FilteredCondition, error) {
+	filtered, err := c.Criteria.Filter(query)
+	if err != nil {
+		return nil, errors.Wrap(err, "criteria filter")
+	}
+
+	if filtered == nil {
+		return nil, nil
+	}
+	return &FilteredCondition{
+		Criteria: *filtered,
+		Tag:      c.Tag,
+	}, nil
+}
+
 func (c Condition) Accept(query criterionTypes.Query) (FilteredCondition, error) {
 	filtered, err := c.Criteria.Accept(query)
 	if err != nil {
