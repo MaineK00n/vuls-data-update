@@ -9,14 +9,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://errata.build.resf.org/api/v2/advisories?page=%d&limit=100"
+const dataURL = "https://errata.build.resf.org/api/v2/advisories?page=%d&limit=25"
 
 type options struct {
 	dataURL string
@@ -61,7 +60,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "rocky"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
 		retry:   3,
 	}
 
@@ -75,7 +74,6 @@ func Fetch(opts ...Option) error {
 
 	log.Printf("[INFO] Fetch Rocky Linux")
 
-	var advs []Advisory
 	for i := 0; ; i++ {
 		as, err := func() ([]Advisory, error) {
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
@@ -100,30 +98,24 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "fetch")
 		}
 
+		for _, a := range as {
+			splitted, err := util.Split(a.Name, "-", ":")
+			if err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
+			}
+			if _, err := time.Parse("2006", splitted[1]); err != nil {
+				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
+			}
+
+			if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)), a); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)))
+			}
+		}
+
 		if len(as) == 0 {
 			break
 		}
-
-		advs = append(advs, as...)
 	}
-
-	bar := pb.StartNew(len(advs))
-	for _, a := range advs {
-		splitted, err := util.Split(a.Name, "-", ":")
-		if err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
-		}
-		if _, err := time.Parse("2006", splitted[1]); err != nil {
-			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
-		}
-
-		if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)), a); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)))
-		}
-
-		bar.Increment()
-	}
-	bar.Finish()
 
 	return nil
 }
