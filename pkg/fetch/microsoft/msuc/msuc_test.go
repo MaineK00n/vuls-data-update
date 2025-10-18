@@ -1,6 +1,7 @@
 package msuc_test
 
 import (
+	"io"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -18,12 +19,10 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata string
 		hasError bool
 	}{
 		{
-			name:     "happy path",
-			testdata: "testdata/fixtures",
+			name: "happy",
 		},
 	}
 
@@ -32,9 +31,21 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch path.Base(r.URL.Path) {
 				case "Search.aspx":
-					http.ServeFile(w, r, filepath.Join(tt.testdata, "search"))
+					bs, err := io.ReadAll(r.Body)
+					if err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+						return
+					}
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Search.aspx", strings.TrimPrefix(string(bs), "q=")))
 				case "ScopedViewInline.aspx":
-					http.ServeFile(w, r, filepath.Join(tt.testdata, r.URL.Query().Get("updateid")))
+					switch r.URL.Query().Get("updateid") {
+					case "00000000-1519-4df8-85c1-d985be7f49c3":
+						http.Redirect(w, r, "/Thanks.aspx?id=190", http.StatusFound)
+					default:
+						http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "ScopedViewInline.aspx", r.URL.Query().Get("updateid")))
+					}
+				case "Thanks.aspx":
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "Thanks.aspx", r.URL.Query().Get("id")))
 				default:
 					http.NotFound(w, r)
 				}
