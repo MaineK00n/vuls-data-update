@@ -52,6 +52,7 @@ import (
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/trickest"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
+	fortinetCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/csaf"
 	fortinetCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/gentoo"
@@ -218,7 +219,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
 		newCmdFedora(),
-		newCmdFortinetCVRF(),
+		newCmdFortinetCSAF(), newCmdFortinetCVRF(),
 		newCmdFreeBSD(),
 		newCmdGentoo(),
 		newCmdGHActionsOSV(),
@@ -1573,6 +1574,43 @@ func newCmdFedora() *cobra.Command {
 	return cmd
 }
 
+func newCmdFortinetCSAF() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "fortinet", "csaf"),
+			retry: 3,
+		},
+		concurrency: 3,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "fortinet-csaf <Fortinet Advisory ID>...",
+		Short: "Fetch Fortinet CSAF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch fortinet-csaf FG-IR-25-756
+		`),
+		Args: cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := fortinetCSAF.Fetch(args, fortinetCSAF.WithDir(options.dir), fortinetCSAF.WithRetry(options.retry), fortinetCSAF.WithConcurrency(options.concurrency), fortinetCSAF.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch fortinet csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
 func newCmdFortinetCVRF() *cobra.Command {
 	options := &struct {
 		base
@@ -1596,7 +1634,7 @@ func newCmdFortinetCVRF() *cobra.Command {
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := fortinetCVRF.Fetch(args, fortinetCVRF.WithDir(options.dir), fortinetCVRF.WithRetry(options.retry), fortinetCVRF.WithConcurrency(options.concurrency), fortinetCVRF.WithWait(options.wait)); err != nil {
-				return errors.Wrap(err, "failed to fetch fortinet")
+				return errors.Wrap(err, "failed to fetch fortinet cvrf")
 			}
 			return nil
 		},
