@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -125,22 +126,34 @@ func Fetch(queries []string, opts ...Option) error {
 				return errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
-			v, err := parseView(resp.Body, resp.Request.URL.Query().Get("updateid"))
-			if err != nil {
-				return errors.Wrap(err, "parse view")
-			}
+			switch path.Base(resp.Request.URL.Path) {
+			case "ScopedViewInline.aspx":
+				v, err := parseView(resp.Body, resp.Request.URL.Query().Get("updateid"))
+				if err != nil {
+					return errors.Wrap(err, "parse view")
+				}
 
-			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)), v); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)))
-			}
+				if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)), v); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.UpdateID)))
+				}
 
-			var next []string
-			for _, s := range v.Supersededby {
-				next = append(next, s.UpdateID)
-			}
-			uidChan <- next
+				var next []string
+				for _, s := range v.Supersededby {
+					next = append(next, s.UpdateID)
+				}
+				uidChan <- next
 
-			return nil
+				return nil
+			case "Thanks.aspx":
+				switch resp.Request.URL.Query().Get("id") {
+				case "190":
+					return nil
+				default:
+					return errors.Errorf("unexpected Thanks.aspx id. expected: %q, actual: %q", []string{"190"}, resp.Request.URL.Query().Get("id"))
+				}
+			default:
+				return errors.Errorf("unexpected url path. expected: %q, actual: %q", []string{"ScopedViewInline.aspx", "Thanks.aspx"}, path.Base(resp.Request.URL.Path))
+			}
 		}); err != nil {
 			return errors.Wrap(err, "pipeline get")
 		}
@@ -225,6 +238,10 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 }
 
 func parseView(rd io.Reader, updateID string) (*Update, error) {
+	if updateID == "" {
+		return nil, errors.New("updateID is empty")
+	}
+
 	doc, err := goquery.NewDocumentFromReader(rd)
 	if err != nil {
 		return nil, errors.Wrap(err, "create new document from reader")
