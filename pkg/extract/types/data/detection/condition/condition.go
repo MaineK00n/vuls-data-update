@@ -34,6 +34,21 @@ func (c Condition) Contains(query criterionTypes.Query) (bool, error) {
 	return isContained, nil
 }
 
+func (c Condition) Filter(query criterionTypes.Query) (*FilteredCondition, error) {
+	filtered, err := c.Criteria.Filter(query)
+	if err != nil {
+		return nil, errors.Wrap(err, "criteria filter")
+	}
+
+	if filtered == nil {
+		return nil, nil
+	}
+	return &FilteredCondition{
+		Criteria: *filtered,
+		Tag:      c.Tag,
+	}, nil
+}
+
 func (c Condition) Accept(query criterionTypes.Query) (FilteredCondition, error) {
 	filtered, err := c.Criteria.Accept(query)
 	if err != nil {
@@ -50,7 +65,7 @@ type FilteredCondition struct {
 	Tag      segmentTypes.DetectionTag      `json:"tag,omitempty"`
 }
 
-func (c FilteredCondition) Affected() (bool, error) {
+func (c *FilteredCondition) Affected() (bool, error) {
 	isAffected, err := c.Criteria.Affected()
 	if err != nil {
 		return false, errors.Wrap(err, "criteria affected")
