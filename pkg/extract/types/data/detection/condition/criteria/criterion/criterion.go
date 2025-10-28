@@ -152,55 +152,6 @@ type AcceptQueries struct {
 	NoneExist bool  `json:"none_exist,omitempty"`
 }
 
-func (c Criterion) Filter(query Query) (*FilteredCriterion, error) {
-	switch c.Type {
-	case CriterionTypeVersion:
-		if len(query.Version) == 0 {
-			return nil, errors.New("query is not set for version criterion")
-		}
-
-		var is []int
-		for i, q := range query.Version {
-			isAccepted, err := c.Version.Accept(q)
-			if err != nil {
-				return nil, errors.Wrap(err, "version criterion accept")
-			}
-
-			if isAccepted {
-				is = append(is, i)
-			}
-		}
-
-		if len(is) == 0 {
-			return nil, nil
-		}
-
-		return &FilteredCriterion{
-			Criterion: c,
-			Accepts:   AcceptQueries{Version: is},
-		}, nil
-	case CriterionTypeNoneExist:
-		if query.NoneExist == nil {
-			return nil, errors.New("query is not set for none exist criterion")
-		}
-		isAccepted, err := c.NoneExist.Accept(*query.NoneExist)
-		if err != nil {
-			return nil, errors.Wrap(err, "none exist criterion accept")
-		}
-
-		if !isAccepted {
-			return nil, nil
-		}
-
-		return &FilteredCriterion{
-			Criterion: c,
-			Accepts:   AcceptQueries{NoneExist: isAccepted},
-		}, nil
-	default:
-		return nil, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist}, c.Type)
-	}
-}
-
 func (c Criterion) Accept(query Query) (FilteredCriterion, error) {
 	switch c.Type {
 	case CriterionTypeVersion:
