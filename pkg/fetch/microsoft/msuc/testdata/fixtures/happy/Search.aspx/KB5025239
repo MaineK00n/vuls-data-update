@@ -662,6 +662,27 @@ You can only add one address at a time and you must click <span class="contentTe
                         
                             <input id="f39d68ab-1519-4df8-85c1-d985be7f49c3" class="flatBlueButtonDownload focus-only" type="button" value='Download' />
                         </td>
+	</tr><tr id="00000000-1519-4df8-85c1-d985be7f49c3_R3">
+		<td class="resultsbottomBorder resultspadding resultsIconWidth " id="00000000-1519-4df8-85c1-d985be7f49c3_C0_R3">
+                    </td><td class="resultsbottomBorder resultspadding" id="00000000-1519-4df8-85c1-d985be7f49c3_C1_R3">
+                        <a id='00000000-1519-4df8-85c1-d985be7f49c3_link' href= "javascript:void(0);" onclick='goToDetails("00000000-1519-4df8-85c1-d985be7f49c3");' class="contentTextItemSpacerNoBreakLink">
+                            2023-04 Cumulative Update for Windows 11 Version 22H2 for arm64-based Systems (KB5025239)
+                        </a>
+                    </td><td class="resultsbottomBorder resultspadding" id="00000000-1519-4df8-85c1-d985be7f49c3_C2_R3">
+                        Windows 11
+                    </td><td class="resultsbottomBorder resultspadding" id="00000000-1519-4df8-85c1-d985be7f49c3_C3_R3">
+                        Security Updates
+                    </td><td class="resultsbottomBorder resultspadding " id="00000000-1519-4df8-85c1-d985be7f49c3_C4_R3">
+                        4/11/2023
+                    </td><td class="resultsbottomBorder resultspadding" id="00000000-1519-4df8-85c1-d985be7f49c3_C5_R3">
+                        n/a
+                    </td><td class="resultsbottomBorder resultspadding resultsSizeWidth" id="00000000-1519-4df8-85c1-d985be7f49c3_C6_R3">
+                       <span id="00000000-1519-4df8-85c1-d985be7f49c3_size">401.5 MB</span> 
+                       <span class="noDisplay" id="00000000-1519-4df8-85c1-d985be7f49c3_originalSize">420959465</span>
+                    </td><td class="resultsbottomBorder resultsButtonWidth" id="00000000-1519-4df8-85c1-d985be7f49c3_C7_R3">
+                        
+                            <input id="00000000-1519-4df8-85c1-d985be7f49c3" class="flatBlueButtonDownload focus-only" type="button" value='Download' />
+                        </td>
 	</tr>
 </table>
     </div>
