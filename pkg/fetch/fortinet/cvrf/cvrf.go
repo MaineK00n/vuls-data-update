@@ -85,7 +85,7 @@ func WithWait(wait int) Option {
 func Fetch(args []string, opts ...Option) error {
 	options := &options{
 		dataURL:     dataURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fortinet", "cvrf"),
 		retry:       3,
 		concurrency: 4,
 		wait:        1,
@@ -99,7 +99,7 @@ func Fetch(args []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Fortinet")
+	log.Printf("[INFO] Fetch Fortinet CVRF")
 
 	urls := make([]string, 0, len(args))
 	for _, arg := range args {
