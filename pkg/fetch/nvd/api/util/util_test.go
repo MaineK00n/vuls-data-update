@@ -3,9 +3,11 @@ package util_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -37,8 +39,6 @@ func (rt *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-var errShouldNotRetry = errors.New("should not retry")
-
 func TestCheckRetry(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -46,7 +46,7 @@ func TestCheckRetry(t *testing.T) {
 		errRespCount int
 		errResponse  *http.Response
 		wantReqCount int
-		wantError    error
+		wantErrorMsg string
 	}{
 		{
 			name:         "No error",
@@ -62,7 +62,7 @@ func TestCheckRetry(t *testing.T) {
 				Body:       io.NopCloser(&errorReader{readError: io.ErrUnexpectedEOF}),
 			},
 			wantReqCount: 2,
-			wantError:    io.ErrUnexpectedEOF,
+			wantErrorMsg: "unexpected EOF",
 		},
 		{
 			name:         "1st: 200 OK, but Read() return unexpected EOF, 2nd: 200 OK, No error",
@@ -80,17 +80,30 @@ func TestCheckRetry(t *testing.T) {
 			errRespCount: 1,
 			errResponse: &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(&errorReader{readError: errShouldNotRetry}),
+				Body:       io.NopCloser(&errorReader{readError: errors.New("should not retry")}),
 			},
 			wantReqCount: 1,
-			wantError:    errShouldNotRetry,
+			wantErrorMsg: "should not retry",
 		},
 		{
-			name:         "1st: 403 Forbidden, 2nd: 200 OK",
+			name:         "1st: 403 Forbidden",
 			retry:        1,
 			errRespCount: 1,
 			errResponse: &http.Response{
+				Status:     fmt.Sprintf("%d %s", http.StatusForbidden, http.StatusText(http.StatusForbidden)),
 				StatusCode: http.StatusForbidden,
+				Body:       http.NoBody,
+			},
+			wantReqCount: 1,
+			wantErrorMsg: "unexpected HTTP status 403 Forbidden",
+		},
+		{
+			name:         "1st: 429 Too Many Requests, 2nd: 200 OK",
+			retry:        1,
+			errRespCount: 1,
+			errResponse: &http.Response{
+				StatusCode: http.StatusTooManyRequests,
+				Header:     http.Header{"Retry-After": []string{"5"}},
 				Body:       http.NoBody,
 			},
 			wantReqCount: 2,
@@ -117,16 +130,16 @@ func TestCheckRetry(t *testing.T) {
 			c := utilhttp.NewClient(utilhttp.WithClientRetryMax(tt.retry), utilhttp.WithClientRetryWaitMin(10*time.Millisecond), utilhttp.WithClientRetryWaitMax(20*time.Millisecond), utilhttp.WithClientCheckRetry(nvdutil.CheckRetry), utilhttp.WithClientHTTPClient(&http.Client{Transport: &roundTripper{errRespCount: tt.errRespCount, errResponse: tt.errResponse}}))
 			resp, err := c.Get(ts.URL)
 			if err != nil {
-				if tt.wantError == nil {
+				if tt.wantErrorMsg == "" {
 					t.Fatalf("unexpected error: %s", err)
 				}
-				if !errors.Is(err, tt.wantError) {
-					t.Errorf("err is not expected error, got: %+v, want: %+v", err, tt.wantError)
+				if !strings.HasSuffix(err.Error(), tt.wantErrorMsg) {
+					t.Errorf("err is not expected error, got: %+v, want: %+v", err, tt.wantErrorMsg)
 				}
 			} else {
 				defer resp.Body.Close()
 
-				if tt.wantError != nil {
+				if tt.wantErrorMsg != "" {
 					t.Fatal("expected error has not occurred")
 				}
 				bs, err := io.ReadAll(resp.Body)
@@ -173,7 +186,7 @@ func TestBackoff(t *testing.T) {
 				attemptNum: 0,
 				resp:       &http.Response{StatusCode: http.StatusForbidden},
 			},
-			want: 30 * time.Second,
+			want: 6 * time.Second,
 		},
 		{
 			name: "429 Too Many Requests, no Retry-After",
