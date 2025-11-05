@@ -3066,18 +3066,20 @@ func newCmdNVDAPICVE() *cobra.Command {
 		retryWaitMax     time.Duration
 		concurrency      int
 		wait             time.Duration
-		lastModStartDate string
-		lastModEndDate   string
+		lastModStartDate time.Time
+		lastModEndDate   time.Time
 		apiKey           string
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
 			retry: 20,
 		},
-		retryWaitMin: 6 * time.Second,
-		retryWaitMax: 30 * time.Second,
-		concurrency:  1,
-		wait:         6 * time.Second,
+		retryWaitMin:     6 * time.Second,
+		retryWaitMax:     30 * time.Second,
+		concurrency:      1,
+		wait:             6 * time.Second,
+		lastModStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		lastModEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	cmd := &cobra.Command{
@@ -3088,27 +3090,22 @@ func newCmdNVDAPICVE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			var lastModStartDate, lastModEndDate *time.Time
-			if options.lastModStartDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				}
-				lastModStartDate = &t
-			}
-			if options.lastModEndDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				}
-				lastModEndDate = &t
-			}
-
 			if err := nvdAPICVE.Fetch(
 				nvdAPICVE.WithDir(options.dir),
 				nvdAPICVE.WithRetry(options.retry), nvdAPICVE.WithRetryWaitMin(options.retryWaitMin), nvdAPICVE.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICVE.WithConcurrency(options.concurrency), nvdAPICVE.WithWait(options.wait),
-				nvdAPICVE.WithLastModStartDate(lastModStartDate), nvdAPICVE.WithLastModEndDate(lastModEndDate),
+				nvdAPICVE.WithLastModStartDate(func() *time.Time {
+					if options.lastModStartDate.IsZero() {
+						return nil
+					}
+					return &options.lastModStartDate
+				}()),
+				nvdAPICVE.WithLastModEndDate(func() *time.Time {
+					if options.lastModEndDate.IsZero() {
+						return nil
+					}
+					return &options.lastModEndDate
+				}()),
 				nvdAPICVE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cve")
@@ -3125,8 +3122,8 @@ func newCmdNVDAPICVE() *cobra.Command {
 	// Rate limit without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration between consecutive requests")
-	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
+	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
 	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd
@@ -3139,18 +3136,20 @@ func newCmdNVDAPICPE() *cobra.Command {
 		retryWaitMax     time.Duration
 		concurrency      int
 		wait             time.Duration
-		lastModStartDate string
-		lastModEndDate   string
+		lastModStartDate time.Time
+		lastModEndDate   time.Time
 		apiKey           string
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
 			retry: 20,
 		},
-		retryWaitMin: 6 * time.Second,
-		retryWaitMax: 30 * time.Second,
-		concurrency:  1,
-		wait:         6 * time.Second,
+		retryWaitMin:     6 * time.Second,
+		retryWaitMax:     30 * time.Second,
+		concurrency:      1,
+		wait:             6 * time.Second,
+		lastModStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		lastModEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	cmd := &cobra.Command{
@@ -3161,27 +3160,22 @@ func newCmdNVDAPICPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			var lastModStartDate, lastModEndDate *time.Time
-			if options.lastModStartDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				}
-				lastModStartDate = &t
-			}
-			if options.lastModEndDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				}
-				lastModEndDate = &t
-			}
-
 			if err := nvdAPICPE.Fetch(
 				nvdAPICPE.WithDir(options.dir),
 				nvdAPICPE.WithRetry(options.retry), nvdAPICPE.WithRetryWaitMin(options.retryWaitMin), nvdAPICPE.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICPE.WithConcurrency(options.concurrency), nvdAPICPE.WithWait(options.wait),
-				nvdAPICPE.WithLastModStartDate(lastModStartDate), nvdAPICPE.WithLastModEndDate(lastModEndDate),
+				nvdAPICPE.WithLastModStartDate(func() *time.Time {
+					if options.lastModStartDate.IsZero() {
+						return nil
+					}
+					return &options.lastModStartDate
+				}()),
+				nvdAPICPE.WithLastModEndDate(func() *time.Time {
+					if options.lastModEndDate.IsZero() {
+						return nil
+					}
+					return &options.lastModEndDate
+				}()),
 				nvdAPICPE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpe")
@@ -3198,8 +3192,8 @@ func newCmdNVDAPICPE() *cobra.Command {
 	// Rate limit without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration in seconds between consecutive requests")
-	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
+	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
 	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd
@@ -3212,18 +3206,20 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 		retryWaitMax     time.Duration
 		concurrency      int
 		wait             time.Duration
-		lastModStartDate string
-		lastModEndDate   string
+		lastModStartDate time.Time
+		lastModEndDate   time.Time
 		apiKey           string
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
 			retry: 20,
 		},
-		retryWaitMin: 6 * time.Second,
-		retryWaitMax: 30 * time.Second,
-		concurrency:  1,
-		wait:         6 * time.Second,
+		retryWaitMin:     6 * time.Second,
+		retryWaitMax:     30 * time.Second,
+		concurrency:      1,
+		wait:             6 * time.Second,
+		lastModStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		lastModEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	cmd := &cobra.Command{
@@ -3234,27 +3230,22 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			var lastModStartDate, lastModEndDate *time.Time
-			if options.lastModStartDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				}
-				lastModStartDate = &t
-			}
-			if options.lastModEndDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				}
-				lastModEndDate = &t
-			}
-
 			if err := nvdAPICPEMatch.Fetch(
 				nvdAPICPEMatch.WithDir(options.dir),
 				nvdAPICPEMatch.WithRetry(options.retry), nvdAPICPEMatch.WithRetryWaitMin(options.retryWaitMin), nvdAPICPEMatch.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICPEMatch.WithConcurrency(options.concurrency), nvdAPICPEMatch.WithWait(options.wait),
-				nvdAPICPEMatch.WithLastModStartDate(lastModStartDate), nvdAPICPEMatch.WithLastModEndDate(lastModEndDate),
+				nvdAPICPEMatch.WithLastModStartDate(func() *time.Time {
+					if options.lastModStartDate.IsZero() {
+						return nil
+					}
+					return &options.lastModStartDate
+				}()),
+				nvdAPICPEMatch.WithLastModEndDate(func() *time.Time {
+					if options.lastModEndDate.IsZero() {
+						return nil
+					}
+					return &options.lastModEndDate
+				}()),
 				nvdAPICPEMatch.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpematch")
@@ -3271,8 +3262,8 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 	// Rate limit without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration in seconds between consecutive requests")
-	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
+	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
 	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd
