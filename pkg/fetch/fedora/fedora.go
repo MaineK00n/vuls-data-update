@@ -34,7 +34,7 @@ type options struct {
 	dir         string
 	retry       int
 	concurrency int
-	wait        int
+	wait        time.Duration
 	rowsPerPage int
 }
 
@@ -89,13 +89,13 @@ func WithConcurrency(concurrency int) Option {
 	return concurrencyOption(concurrency)
 }
 
-type waitOption int
+type waitOption time.Duration
 
 func (w waitOption) apply(opts *options) {
-	opts.wait = int(w)
+	opts.wait = time.Duration(w)
 }
 
-func WithWait(wait int) Option {
+func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
@@ -120,7 +120,7 @@ func Fetch(releases []string, opts ...Option) error {
 		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora"),
 		retry:       20,
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 		rowsPerPage: 50,
 	}
 

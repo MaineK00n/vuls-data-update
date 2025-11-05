@@ -206,11 +206,11 @@ func (c *Client) Get(url string, opts ...RequestOption) (*http.Response, error) 
 	return c.Do(req)
 }
 
-func MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+func MultiGet(urls []string, concurrency int, wait time.Duration, opts ...RequestOption) ([]*http.Response, error) {
 	return defaultClient.MultiGet(urls, concurrency, wait, opts...)
 }
 
-func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestOption) ([]*http.Response, error) {
+func (c *Client) MultiGet(urls []string, concurrency int, wait time.Duration, opts ...RequestOption) ([]*http.Response, error) {
 	resps := make([]*http.Response, 0, len(urls))
 
 	respChan := make(chan *http.Response, len(urls))
@@ -224,7 +224,7 @@ func (c *Client) MultiGet(urls []string, concurrency, wait int, opts ...RequestO
 	return resps, nil
 }
 
-func (c *Client) PipelineGet(urls []string, concurrency, wait int, cont func(resp *http.Response) error, opts ...RequestOption) error {
+func (c *Client) PipelineGet(urls []string, concurrency int, wait time.Duration, cont func(resp *http.Response) error, opts ...RequestOption) error {
 	reqs := make([]*retryablehttp.Request, 0, len(urls))
 	for _, u := range urls {
 		req, err := NewRequest(http.MethodGet, u, opts...)
@@ -257,7 +257,7 @@ func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency, wait int, cont func(resp *http.Response) error) error {
+func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait time.Duration, cont func(resp *http.Response) error) error {
 	reqChan := make(chan *retryablehttp.Request)
 	go func() {
 		defer close(reqChan)
@@ -284,7 +284,7 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency, wait int
 				return ctx.Err()
 			default:
 				bar.Increment()
-				time.Sleep(time.Duration(wait) * time.Second)
+				time.Sleep(wait)
 				return nil
 			}
 		})

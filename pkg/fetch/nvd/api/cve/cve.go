@@ -28,10 +28,10 @@ type options struct {
 	baseURL          string
 	dir              string
 	retry            int
-	retryWaitMin     int
-	retryWaitMax     int
+	retryWaitMin     time.Duration
+	retryWaitMax     time.Duration
 	concurrency      int
-	wait             int
+	wait             time.Duration
 	lastModStartDate *time.Time
 	lastModEndDate   *time.Time
 	apiKey           string
@@ -74,43 +74,43 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
-type retryWaitMinOption int
+type retryWaitMinOption time.Duration
 
-func (r retryWaitMinOption) apply(opts *options) {
-	opts.retryWaitMin = int(r)
+func (w retryWaitMinOption) apply(opts *options) {
+	opts.retryWaitMin = time.Duration(w)
 }
 
-func WithRetryWaitMin(wait int) Option {
+func WithRetryWaitMin(wait time.Duration) Option {
 	return retryWaitMinOption(wait)
 }
 
-type retryWaitMaxOption int
+type retryWaitMaxOption time.Duration
 
-func (r retryWaitMaxOption) apply(opts *options) {
-	opts.retryWaitMax = int(r)
+func (w retryWaitMaxOption) apply(opts *options) {
+	opts.retryWaitMax = time.Duration(w)
 }
 
-func WithRetryWaitMax(wait int) Option {
+func WithRetryWaitMax(wait time.Duration) Option {
 	return retryWaitMaxOption(wait)
 }
 
 type concurrencyOption int
 
-func (r concurrencyOption) apply(opts *options) {
-	opts.concurrency = int(r)
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
 }
 
 func WithConcurrency(concurrency int) Option {
 	return concurrencyOption(concurrency)
 }
 
-type waitOption int
+type waitOption time.Duration
 
-func (r waitOption) apply(opts *options) {
-	opts.wait = int(r)
+func (w waitOption) apply(opts *options) {
+	opts.wait = time.Duration(w)
 }
 
-func WithWait(wait int) Option {
+func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
@@ -164,10 +164,10 @@ func Fetch(opts ...Option) error {
 		apiKey:         "",
 		dir:            filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
 		retry:          20,
-		retryWaitMin:   6,
-		retryWaitMax:   30,
+		retryWaitMin:   6 * time.Second,
+		retryWaitMax:   30 * time.Second,
 		concurrency:    1,
-		wait:           6,
+		wait:           6 * time.Second,
 		resultsPerPage: resultsPerPageMax,
 	}
 	for _, o := range opts {

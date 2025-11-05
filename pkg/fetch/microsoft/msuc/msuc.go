@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hashicorp/go-retryablehttp"
@@ -25,7 +26,7 @@ type options struct {
 	dir         string
 	retry       int
 	concurrency int
-	wait        int
+	wait        time.Duration
 }
 
 type Option interface {
@@ -72,13 +73,13 @@ func WithConcurrency(concurrency int) Option {
 	return concurrencyOption(concurrency)
 }
 
-type waitOption int
+type waitOption time.Duration
 
 func (w waitOption) apply(opts *options) {
-	opts.wait = int(w)
+	opts.wait = time.Duration(w)
 }
 
-func WithWait(wait int) Option {
+func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
@@ -88,7 +89,7 @@ func Fetch(queries []string, opts ...Option) error {
 		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
 		retry:       3,
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	for _, o := range opts {

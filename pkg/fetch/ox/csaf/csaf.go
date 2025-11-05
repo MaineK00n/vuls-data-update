@@ -24,7 +24,7 @@ type options struct {
 	dir         string
 	retry       int
 	concurrency int
-	wait        int
+	wait        time.Duration
 }
 
 type Option interface {
@@ -63,21 +63,21 @@ func WithRetry(retry int) Option {
 
 type concurrencyOption int
 
-func (r concurrencyOption) apply(opts *options) {
-	opts.concurrency = int(r)
+func (c concurrencyOption) apply(opts *options) {
+	opts.concurrency = int(c)
 }
 
 func WithConcurrency(concurrency int) Option {
 	return concurrencyOption(concurrency)
 }
 
-type waitOption int
+type waitOption time.Duration
 
-func (r waitOption) apply(opts *options) {
-	opts.wait = int(r)
+func (w waitOption) apply(opts *options) {
+	opts.wait = time.Duration(w)
 }
 
-func WithWait(wait int) Option {
+func WithWait(wait time.Duration) Option {
 	return waitOption(wait)
 }
 
@@ -87,7 +87,7 @@ func Fetch(opts ...Option) error {
 		dir:         filepath.Join(util.CacheDir(), "fetch", "ox", "csaf"),
 		retry:       3,
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	for _, o := range opts {
