@@ -734,14 +734,14 @@ func newCmdCertBundCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "cert-bund", "csaf"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -762,7 +762,7 @@ func newCmdCertBundCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -933,14 +933,14 @@ func newCmdCiscoCVRF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "cvrf"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -961,7 +961,7 @@ func newCmdCiscoCVRF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -970,14 +970,14 @@ func newCmdCiscoCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "cisco", "csaf"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -998,7 +998,7 @@ func newCmdCiscoCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -1277,14 +1277,14 @@ func newCmdEndOfLifeDateAPI() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "endoflife-date", "api"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -1305,7 +1305,7 @@ func newCmdEndOfLifeDateAPI() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -1341,14 +1341,14 @@ func newCmdEPSS() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "epss"),
 			retry: 3,
 		},
 		concurrency: 4,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -1369,7 +1369,7 @@ func newCmdEPSS() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -1540,14 +1540,14 @@ func newCmdFedora() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -1565,10 +1565,10 @@ func newCmdFedora() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "fedora"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 5, "number of concurrency process")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency process")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -1577,14 +1577,14 @@ func newCmdFortinetCVRF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "fortinet", "cvrf"),
 			retry: 3,
 		},
 		concurrency: 4,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -1602,10 +1602,10 @@ func newCmdFortinetCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "fortinet", "cvrf"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 4, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -2206,14 +2206,14 @@ func newCmdMicrosoftCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -2234,7 +2234,7 @@ func newCmdMicrosoftCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -2243,14 +2243,14 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "msuc"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -2271,7 +2271,7 @@ func newCmdMicrosoftMSUC() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -2719,14 +2719,14 @@ func newCmdNCSCCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "ncsc", "csaf"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -2747,7 +2747,7 @@ func newCmdNCSCCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -2783,14 +2783,14 @@ func newCmdNozomiNetworksCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nozominetworks", "csaf"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -2811,7 +2811,7 @@ func newCmdNozomiNetworksCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3062,22 +3062,24 @@ func newCmdNugetOSV() *cobra.Command {
 func newCmdNVDAPICVE() *cobra.Command {
 	options := &struct {
 		base
-		retryWaitMin     int
-		retryWaitMax     int
+		retryWaitMin     time.Duration
+		retryWaitMax     time.Duration
 		concurrency      int
-		wait             int
-		lastModStartDate string
-		lastModEndDate   string
+		wait             time.Duration
+		lastModStartDate time.Time
+		lastModEndDate   time.Time
 		apiKey           string
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"),
 			retry: 20,
 		},
-		retryWaitMin: 6,
-		retryWaitMax: 30,
-		concurrency:  1,
-		wait:         6,
+		retryWaitMin:     6 * time.Second,
+		retryWaitMax:     30 * time.Second,
+		concurrency:      1,
+		wait:             6 * time.Second,
+		lastModStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		lastModEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	cmd := &cobra.Command{
@@ -3088,27 +3090,22 @@ func newCmdNVDAPICVE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			var lastModStartDate, lastModEndDate *time.Time
-			if options.lastModStartDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				}
-				lastModStartDate = &t
-			}
-			if options.lastModEndDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				}
-				lastModEndDate = &t
-			}
-
 			if err := nvdAPICVE.Fetch(
 				nvdAPICVE.WithDir(options.dir),
 				nvdAPICVE.WithRetry(options.retry), nvdAPICVE.WithRetryWaitMin(options.retryWaitMin), nvdAPICVE.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICVE.WithConcurrency(options.concurrency), nvdAPICVE.WithWait(options.wait),
-				nvdAPICVE.WithLastModStartDate(lastModStartDate), nvdAPICVE.WithLastModEndDate(lastModEndDate),
+				nvdAPICVE.WithLastModStartDate(func() *time.Time {
+					if options.lastModStartDate.IsZero() {
+						return nil
+					}
+					return &options.lastModStartDate
+				}()),
+				nvdAPICVE.WithLastModEndDate(func() *time.Time {
+					if options.lastModEndDate.IsZero() {
+						return nil
+					}
+					return &options.lastModEndDate
+				}()),
 				nvdAPICVE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cve")
@@ -3117,17 +3114,17 @@ func newCmdNVDAPICVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cve"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
-	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
-	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
-	// Rate limet without API key: 5 requests in a rolling 30 second window, and
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().DurationVarP(&options.retryWaitMin, "retry-wait-min", "", options.retryWaitMin, "number of minimum time to retry wait")
+	cmd.Flags().DurationVarP(&options.retryWaitMax, "retry-wait-max", "", options.retryWaitMax, "number of maximum time to retry wait")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent API requests")
+	// Rate limit without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
-	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", "", "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", "", "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration between consecutive requests")
+	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd
 }
@@ -3135,22 +3132,24 @@ func newCmdNVDAPICVE() *cobra.Command {
 func newCmdNVDAPICPE() *cobra.Command {
 	options := &struct {
 		base
-		retryWaitMin     int
-		retryWaitMax     int
+		retryWaitMin     time.Duration
+		retryWaitMax     time.Duration
 		concurrency      int
-		wait             int
-		lastModStartDate string
-		lastModEndDate   string
+		wait             time.Duration
+		lastModStartDate time.Time
+		lastModEndDate   time.Time
 		apiKey           string
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"),
 			retry: 20,
 		},
-		retryWaitMin: 6,
-		retryWaitMax: 30,
-		concurrency:  1,
-		wait:         6,
+		retryWaitMin:     6 * time.Second,
+		retryWaitMax:     30 * time.Second,
+		concurrency:      1,
+		wait:             6 * time.Second,
+		lastModStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		lastModEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	cmd := &cobra.Command{
@@ -3161,27 +3160,22 @@ func newCmdNVDAPICPE() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			var lastModStartDate, lastModEndDate *time.Time
-			if options.lastModStartDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				}
-				lastModStartDate = &t
-			}
-			if options.lastModEndDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				}
-				lastModEndDate = &t
-			}
-
 			if err := nvdAPICPE.Fetch(
 				nvdAPICPE.WithDir(options.dir),
 				nvdAPICPE.WithRetry(options.retry), nvdAPICPE.WithRetryWaitMin(options.retryWaitMin), nvdAPICPE.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICPE.WithConcurrency(options.concurrency), nvdAPICPE.WithWait(options.wait),
-				nvdAPICPE.WithLastModStartDate(lastModStartDate), nvdAPICPE.WithLastModEndDate(lastModEndDate),
+				nvdAPICPE.WithLastModStartDate(func() *time.Time {
+					if options.lastModStartDate.IsZero() {
+						return nil
+					}
+					return &options.lastModStartDate
+				}()),
+				nvdAPICPE.WithLastModEndDate(func() *time.Time {
+					if options.lastModEndDate.IsZero() {
+						return nil
+					}
+					return &options.lastModEndDate
+				}()),
 				nvdAPICPE.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpe")
@@ -3190,17 +3184,17 @@ func newCmdNVDAPICPE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpe"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
-	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
-	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.concurrency, "number of retry http request")
+	cmd.Flags().DurationVarP(&options.retryWaitMin, "retry-wait-min", "", options.retryWaitMin, "number of minimum time to retry wait")
+	cmd.Flags().DurationVarP(&options.retryWaitMax, "retry-wait-max", "", options.retryWaitMax, "number of maximum time to retry wait")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
-	// Rate limet without API key: 5 requests in a rolling 30 second window, and
+	// Rate limit without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
-	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", "", "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", "", "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd
 }
@@ -3208,22 +3202,24 @@ func newCmdNVDAPICPE() *cobra.Command {
 func newCmdNVDAPICPEMatch() *cobra.Command {
 	options := &struct {
 		base
-		retryWaitMin     int
-		retryWaitMax     int
+		retryWaitMin     time.Duration
+		retryWaitMax     time.Duration
 		concurrency      int
-		wait             int
-		lastModStartDate string
-		lastModEndDate   string
+		wait             time.Duration
+		lastModStartDate time.Time
+		lastModEndDate   time.Time
 		apiKey           string
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"),
 			retry: 20,
 		},
-		retryWaitMin: 6,
-		retryWaitMax: 30,
-		concurrency:  1,
-		wait:         6,
+		retryWaitMin:     6 * time.Second,
+		retryWaitMax:     30 * time.Second,
+		concurrency:      1,
+		wait:             6 * time.Second,
+		lastModStartDate: time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		lastModEndDate:   time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	cmd := &cobra.Command{
@@ -3234,27 +3230,22 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			var lastModStartDate, lastModEndDate *time.Time
-			if options.lastModStartDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModStartDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModStartDate)
-				}
-				lastModStartDate = &t
-			}
-			if options.lastModEndDate != "" {
-				t, err := time.Parse("2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				if err != nil {
-					return errors.Wrapf(err, "failed to parse lastModEndDate option. expected: %q, actual: %q", "2006-01-02T15:04:05.000-07:00", options.lastModEndDate)
-				}
-				lastModEndDate = &t
-			}
-
 			if err := nvdAPICPEMatch.Fetch(
 				nvdAPICPEMatch.WithDir(options.dir),
 				nvdAPICPEMatch.WithRetry(options.retry), nvdAPICPEMatch.WithRetryWaitMin(options.retryWaitMin), nvdAPICPEMatch.WithRetryWaitMax(options.retryWaitMax),
 				nvdAPICPEMatch.WithConcurrency(options.concurrency), nvdAPICPEMatch.WithWait(options.wait),
-				nvdAPICPEMatch.WithLastModStartDate(lastModStartDate), nvdAPICPEMatch.WithLastModEndDate(lastModEndDate),
+				nvdAPICPEMatch.WithLastModStartDate(func() *time.Time {
+					if options.lastModStartDate.IsZero() {
+						return nil
+					}
+					return &options.lastModStartDate
+				}()),
+				nvdAPICPEMatch.WithLastModEndDate(func() *time.Time {
+					if options.lastModEndDate.IsZero() {
+						return nil
+					}
+					return &options.lastModEndDate
+				}()),
 				nvdAPICPEMatch.WithAPIKey(options.apiKey),
 			); err != nil {
 				return errors.Wrap(err, "failed to fetch nvd api cpematch")
@@ -3263,17 +3254,17 @@ func newCmdNVDAPICPEMatch() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "nvd", "api", "cpematch"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
-	cmd.Flags().IntVarP(&options.retryWaitMin, "retry-wait-min", "", 6, "number of minimum time to retry wait")
-	cmd.Flags().IntVarP(&options.retryWaitMax, "retry-wait-max", "", 30, "number of maximum time to retry wait")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 1, "number of concurrent API requests")
-	// Rate limet without API key: 5 requests in a rolling 30 second window, and
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().DurationVarP(&options.retryWaitMin, "retry-wait-min", "", options.retryWaitMin, "number of minimum time to retry wait")
+	cmd.Flags().DurationVarP(&options.retryWaitMax, "retry-wait-max", "", options.retryWaitMax, "number of maximum time to retry wait")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent API requests")
+	// Rate limit without API key: 5 requests in a rolling 30 second window, and
 	// with API key: 50 requests in a rolling 30 second window.
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 6, "sleep duration in seconds between consecutive requests")
-	cmd.Flags().StringVarP(&options.lastModStartDate, "last-mod-start-date", "", "", "lastModStartDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVarP(&options.lastModEndDate, "last-mod-end-date", "", "", "lastModEndDate. use extended ISO-8601 date/time format: 2021-08-04T13:00:00.000%2B01:00")
-	cmd.Flags().StringVar(&options.apiKey, "api-key", "", "API Key to increase rate limit")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "sleep duration in seconds between consecutive requests")
+	cmd.Flags().TimeVarP(&options.lastModStartDate, "last-mod-start-date", "", options.lastModStartDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().TimeVarP(&options.lastModEndDate, "last-mod-end-date", "", options.lastModEndDate, []string{time.DateOnly, time.DateTime, time.RFC3339, "2006-01-02T15:04:05.000-07:00"}, "return only the CVEs that were last modified during the specified period")
+	cmd.Flags().StringVarP(&options.apiKey, "api-key", "", options.apiKey, "API Key to increase rate limit")
 
 	return cmd
 }
@@ -3444,14 +3435,14 @@ func newCmdOpenEulerCVRF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "cvrf"),
 			retry: 5,
 		},
 		concurrency: 20,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3472,7 +3463,7 @@ func newCmdOpenEulerCVRF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3481,14 +3472,14 @@ func newCmdOpenEulerCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "csaf"),
 			retry: 5,
 		},
 		concurrency: 20,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3509,7 +3500,7 @@ func newCmdOpenEulerCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3572,14 +3563,14 @@ func newCmdOracleOpenStack() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "openstack"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3600,7 +3591,7 @@ func newCmdOracleOpenStack() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3609,14 +3600,14 @@ func newCmdOracleVM() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "oracle", "vm"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3637,7 +3628,7 @@ func newCmdOracleVM() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3673,14 +3664,14 @@ func newCmdOXCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "ox", "csaf"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3701,7 +3692,7 @@ func newCmdOXCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3737,14 +3728,14 @@ func newCmdPaloAltoJSON() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "json"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3765,7 +3756,7 @@ func newCmdPaloAltoJSON() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -3774,14 +3765,14 @@ func newCmdPaloAltoCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "paloalto", "csaf"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -3802,7 +3793,7 @@ func newCmdPaloAltoCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -4081,14 +4072,14 @@ func newCmdRedHatCVE() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"),
 			retry: 20,
 		},
 		concurrency: 15,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4109,7 +4100,7 @@ func newCmdRedHatCVE() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "cve"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 20, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 15, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -4118,14 +4109,14 @@ func newCmdRedHatCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"),
 			retry: 3,
 		},
 		concurrency: 10,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4146,7 +4137,7 @@ func newCmdRedHatCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "csaf"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -4263,14 +4254,14 @@ func newCmdRedHatVEX() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
 			retry: 3,
 		},
 		concurrency: 10,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4291,7 +4282,7 @@ func newCmdRedHatVEX() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 10, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -4597,14 +4588,14 @@ func newCmdSICKCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "sick", "csaf"),
 			retry: 3,
 		},
 		concurrency: 2,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4625,7 +4616,7 @@ func newCmdSICKCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -4634,7 +4625,7 @@ func newCmdSiemensCSAF() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "siemens", "csaf"),
@@ -4662,7 +4653,7 @@ func newCmdSiemensCSAF() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -4698,14 +4689,14 @@ func newCmdSUSEOVAL() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "suse", "oval"),
 			retry: 3,
 		},
 		concurrency: 3,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4726,7 +4717,7 @@ func newCmdSUSEOVAL() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "suse", "oval"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", 3, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", 1, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -5059,14 +5050,14 @@ func newCmdUbuntuCVE() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "cve"),
 			retry: 10,
 		},
 		concurrency: 10,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -5087,7 +5078,7 @@ func newCmdUbuntuCVE() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -5096,14 +5087,14 @@ func newCmdUbuntuNotice() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "ubuntu", "notice"),
 			retry: 10,
 		},
 		concurrency: 10,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -5124,7 +5115,7 @@ func newCmdUbuntuNotice() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -5133,14 +5124,14 @@ func newCmdVARIoTExploits() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "variot", "exploits"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -5161,7 +5152,7 @@ func newCmdVARIoTExploits() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
@@ -5170,14 +5161,14 @@ func newCmdVARIoTVulns() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
-		wait        int
+		wait        time.Duration
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "variot", "vulns"),
 			retry: 3,
 		},
 		concurrency: 5,
-		wait:        1,
+		wait:        1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -5198,7 +5189,7 @@ func newCmdVARIoTVulns() *cobra.Command {
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
-	cmd.Flags().IntVarP(&options.wait, "wait", "", options.wait, "wait seccond")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
