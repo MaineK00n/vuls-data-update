@@ -20,33 +20,33 @@ func CheckRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return shouldRetry, errors.Wrap(err, "retry policy")
 	}
 
-	// NVD JSON API returns 403 in rate limit excesses, should retry.
-	// Also, the API returns 408 infreqently.
 	switch resp.StatusCode {
-	case http.StatusForbidden, http.StatusRequestTimeout:
-		return true, errors.Errorf("unexpected HTTP status %s", resp.Status)
-	}
-
-	// NVD API rarely fails to send whole response body and results in unexpected EOF.
-	// Read whole body in advance, to let retryablehttp retry in case of errors.
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		if errors.Is(err, io.ErrUnexpectedEOF) {
-			return true, errors.Wrap(err, "read all response body")
+	case http.StatusOK:
+		// NVD API rarely fails to send whole response body and results in unexpected EOF.
+		// Read whole body in advance, to let retryablehttp retry in case of errors.
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			if errors.Is(err, io.ErrUnexpectedEOF) {
+				return true, errors.Wrap(err, "read all response body")
+			}
+			return false, errors.Wrap(err, "read all response body")
 		}
-		return false, errors.Wrap(err, "read all response body")
+
+		_ = resp.Body.Close()
+		resp.Body = io.NopCloser(bytes.NewBuffer(body))
+
+		return false, nil
+	case http.StatusRequestTimeout: // NVD JSON API returns 408 infreqently.
+		return true, errors.Errorf("unexpected HTTP status %s", resp.Status)
+	default:
+		return false, errors.Errorf("unexpected HTTP status %s", resp.Status)
 	}
-
-	_ = resp.Body.Close()
-	resp.Body = io.NopCloser(bytes.NewBuffer(body))
-
-	return false, nil
 }
 
 func Backoff(min, max time.Duration, attemptNum int, resp *http.Response) time.Duration {
 	if resp != nil {
 		switch resp.StatusCode {
-		case http.StatusForbidden, http.StatusTooManyRequests, http.StatusServiceUnavailable:
+		case http.StatusTooManyRequests, http.StatusServiceUnavailable:
 			if sleep, ok := parseRetryAfterHeader(resp.Header["Retry-After"]); ok {
 				return sleep
 			}
