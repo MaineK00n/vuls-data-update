@@ -270,8 +270,12 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 	g, ctx := errgroup.WithContext(context.Background())
 	g.SetLimit(concurrency)
 	for req := range reqChan {
-		req := req
 		g.Go(func() error {
+			defer func() {
+				time.Sleep(wait)
+				bar.Increment()
+			}()
+
 			resp, err := c.Do(req)
 			if err != nil {
 				return errors.Wrapf(err, "do %#v", req)
@@ -283,8 +287,6 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 			case <-ctx.Done():
 				return ctx.Err()
 			default:
-				bar.Increment()
-				time.Sleep(wait)
 				return nil
 			}
 		})
