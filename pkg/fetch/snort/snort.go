@@ -12,8 +12,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -82,14 +82,14 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch snort rules")
 	}
 
-	bar := pb.StartNew(len(rules))
+	bar := progressbar.Default(int64(len(rules)))
 	for _, r := range rules {
 		if err := util.Write(filepath.Join(options.dir, r.GID, r.SID, fmt.Sprintf("%s.json", r.Rev)), r); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, r.GID, r.SID, fmt.Sprintf("%s.json", r.Rev)))
 		}
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

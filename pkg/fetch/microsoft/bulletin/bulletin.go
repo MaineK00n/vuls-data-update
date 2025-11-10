@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"github.com/tealeg/xlsx"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -128,7 +128,7 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
-	bar := pb.StartNew(len(bulletins))
+	bar := progressbar.Default(int64(len(bulletins)))
 	for bid, bs := range bulletins {
 		splitted, err := util.Split(strings.TrimPrefix(strings.ToLower(bid), "ms"), "-")
 		if err != nil {
@@ -141,9 +141,9 @@ func Fetch(opts ...Option) error {
 		if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))), bs); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", strings.ToUpper(bid))))
 		}
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

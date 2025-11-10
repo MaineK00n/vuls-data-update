@@ -151,7 +151,7 @@ func (o options) fetchCVRF(client *utilhttp.Client, kind string, is []string) er
 		us = append(us, u)
 	}
 
-	if err := client.PipelineGet(us, o.concurrency, o.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(us, o.concurrency, o.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

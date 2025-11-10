@@ -106,7 +106,7 @@ func Fetch(args []string, opts ...Option) error {
 		urls = append(urls, fmt.Sprintf(options.dataURL, arg))
 	}
 
-	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(urls, options.concurrency, options.wait, func(resp *http.Response) error {
+	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(urls, options.concurrency, options.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

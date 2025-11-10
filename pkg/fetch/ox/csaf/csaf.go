@@ -139,7 +139,7 @@ func (o options) fetch(client *utilhttp.Client, dir string) error {
 		return errors.Wrap(err, "scanner encounter error")
 	}
 
-	if err := client.PipelineGet(us, o.concurrency, o.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(us, o.concurrency, o.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

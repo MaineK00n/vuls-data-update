@@ -1,11 +1,15 @@
 version: "2"
 
 linters:
-  exclusions:
-    rules:
-      - source: "defer .+\\.Close\\(\\)"
-        linters:
-          - errcheck
-      - source: "defer os.RemoveAll\\(.+\\)"
-        linters:
-          - errcheck
+  settings:
+    errcheck:
+      exclude-functions:
+        - os.RemoveAll
+        - (io.Closer).Close
+        - (*archive/tar.Writer).Close
+        - (*github.com/klauspost/compress/zstd.Encoder).Close
+        - (*os.File).Close
+        - (*archive/zip.File).Close
+        - (*compress/gzip.Reader).Close
+        - (*database/sql.DB).Close
+        - (*database/sql.Rows).Close

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -132,7 +132,7 @@ func Fetch(opts ...Option) error {
 	for code, advs := range m {
 		log.Printf("[INFO] Fetched Debian %s Advisory", code)
 
-		bar := pb.StartNew(len(advs))
+		bar := progressbar.Default(int64(len(advs)))
 		for _, a := range advs {
 			d := "TEMP"
 			if strings.HasPrefix(a.ID, "CVE-") {
@@ -150,9 +150,9 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, d, fmt.Sprintf("%s.json", a.ID)))
 			}
 
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 	}
 	return nil
 }

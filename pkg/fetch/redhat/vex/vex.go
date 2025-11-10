@@ -271,7 +271,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 		}
 	}
 
-	if err := client.PipelineGet(urls, o.concurrency, o.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(urls, o.concurrency, o.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		switch resp.StatusCode {

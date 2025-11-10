@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -162,7 +162,7 @@ func Fetch(opts ...Option) error {
 
 		for r, us := range advs {
 			log.Printf("[INFO] Fetched Amazon Linux %s %s", v, r)
-			bar := pb.StartNew(len(us))
+			bar := progressbar.Default(int64(len(us)))
 			for _, u := range us {
 				y, err := func() (string, error) {
 					switch len(strings.Split(u.ID, "-")) {
@@ -199,9 +199,9 @@ func Fetch(opts ...Option) error {
 					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, r, y, fmt.Sprintf("%s.json", u.ID)))
 				}
 
-				bar.Increment()
+				_ = bar.Add(1)
 			}
-			bar.Finish()
+			_ = bar.Close()
 		}
 	}
 

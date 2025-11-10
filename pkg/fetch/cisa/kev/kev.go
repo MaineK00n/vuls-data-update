@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -90,7 +90,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode json")
 	}
 
-	bar := pb.StartNew(len(catalog.Vulnerabilities))
+	bar := progressbar.Default(int64(len(catalog.Vulnerabilities)))
 	for _, v := range catalog.Vulnerabilities {
 		splitted, err := util.Split(v.CveID, "-", "-")
 		if err != nil {
@@ -104,8 +104,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CveID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
+
 	return nil
 }

@@ -11,10 +11,10 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/knqyf263/go-cpe/common"
 	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -85,7 +85,7 @@ func Fetch(opts ...Option) error {
 
 	dv := hash32([]byte("vendor:product"))
 
-	bar := pb.StartNew(len(cpeDict))
+	bar := progressbar.Default(int64(len(cpeDict)))
 	for _, cpe := range cpeDict {
 		d := dv
 
@@ -98,9 +98,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%x.json", hash64([]byte(cpe.Name)))))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

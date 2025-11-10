@@ -152,7 +152,7 @@ func (opts options) fetch(client *utilhttp.Client, header utilhttp.RequestOption
 		reqs = append(reqs, req)
 	}
 
-	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, func(resp *http.Response) error {
+	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

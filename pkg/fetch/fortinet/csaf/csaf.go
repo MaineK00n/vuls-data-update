@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -113,14 +113,14 @@ func (opts options) fetch(ids []string) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
 
-	bar := pb.StartNew(len(ids))
+	bar := progressbar.Default(int64(len(ids)))
 	g, _ := errgroup.WithContext(context.TODO())
 	g.SetLimit(opts.concurrency)
 	for _, id := range ids {
 		g.Go(func() error {
 			defer func() {
 				time.Sleep(opts.wait)
-				bar.Increment()
+				_ = bar.Add(1)
 			}()
 
 			u, err := opts.fetchCSAFURL(client, id)
@@ -139,7 +139,7 @@ func (opts options) fetch(ids []string) error {
 	if err := g.Wait(); err != nil {
 		return errors.Wrap(err, "err in goroutine")
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -91,7 +91,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode json")
 	}
 
-	bar := pb.StartNew(len(db))
+	bar := progressbar.Default(int64(len(db)))
 	for _, usn := range db {
 		s := int64(usn.Timestamp)
 		t := time.Unix(s, int64(usn.Timestamp-float64(s))*1e9)
@@ -100,9 +100,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", usn.ID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -206,15 +206,15 @@ func (c *Client) Get(url string, opts ...RequestOption) (*http.Response, error) 
 	return c.Do(req)
 }
 
-func MultiGet(urls []string, concurrency int, wait time.Duration, opts ...RequestOption) ([]*http.Response, error) {
-	return defaultClient.MultiGet(urls, concurrency, wait, opts...)
+func MultiGet(urls []string, concurrency int, wait time.Duration, noProgress bool, opts ...RequestOption) ([]*http.Response, error) {
+	return defaultClient.MultiGet(urls, concurrency, wait, noProgress, opts...)
 }
 
-func (c *Client) MultiGet(urls []string, concurrency int, wait time.Duration, opts ...RequestOption) ([]*http.Response, error) {
+func (c *Client) MultiGet(urls []string, concurrency int, wait time.Duration, noProgress bool, opts ...RequestOption) ([]*http.Response, error) {
 	resps := make([]*http.Response, 0, len(urls))
 
 	respChan := make(chan *http.Response, len(urls))
-	if err := c.PipelineGet(urls, concurrency, wait, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
+	if err := c.PipelineGet(urls, concurrency, wait, noProgress, func(resp *http.Response) error { respChan <- resp; return nil }, opts...); err != nil {
 		return nil, errors.Wrap(err, "pipeline get")
 	}
 	close(respChan)
@@ -224,7 +224,7 @@ func (c *Client) MultiGet(urls []string, concurrency int, wait time.Duration, op
 	return resps, nil
 }
 
-func (c *Client) PipelineGet(urls []string, concurrency int, wait time.Duration, cont func(resp *http.Response) error, opts ...RequestOption) error {
+func (c *Client) PipelineGet(urls []string, concurrency int, wait time.Duration, noProgress bool, cont func(resp *http.Response) error, opts ...RequestOption) error {
 	reqs := make([]*retryablehttp.Request, 0, len(urls))
 	for _, u := range urls {
 		req, err := NewRequest(http.MethodGet, u, opts...)
@@ -233,7 +233,7 @@ func (c *Client) PipelineGet(urls []string, concurrency int, wait time.Duration,
 		}
 		reqs = append(reqs, req)
 	}
-	return c.PipelineDo(reqs, concurrency, wait, cont)
+	return c.PipelineDo(reqs, concurrency, wait, noProgress, cont)
 }
 
 func POST(url string, opts ...RequestOption) (*http.Response, error) {
@@ -257,7 +257,7 @@ func (c *Client) Do(req *retryablehttp.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait time.Duration, cont func(resp *http.Response) error) error {
+func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait time.Duration, noProgress bool, cont func(resp *http.Response) error) error {
 	reqChan := make(chan *retryablehttp.Request)
 	go func() {
 		defer close(reqChan)
@@ -266,14 +266,20 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 		}
 	}()
 
-	bar := pb.Full.Start(len(reqs))
+	bar := func() *progressbar.ProgressBar {
+		if noProgress {
+			return progressbar.DefaultSilent(int64(len(reqs)))
+		}
+		return progressbar.Default(int64(len(reqs)))
+	}()
+
 	g, ctx := errgroup.WithContext(context.Background())
 	g.SetLimit(concurrency)
 	for req := range reqChan {
 		g.Go(func() error {
 			defer func() {
 				time.Sleep(wait)
-				bar.Increment()
+				_ = bar.Add(1)
 			}()
 
 			resp, err := c.Do(req)
@@ -294,6 +300,8 @@ func (c *Client) PipelineDo(reqs []*retryablehttp.Request, concurrency int, wait
 	if err := g.Wait(); err != nil {
 		return errors.Wrap(err, "err in goroutine")
 	}
-	bar.Finish()
+
+	_ = bar.Close()
+
 	return nil
 }

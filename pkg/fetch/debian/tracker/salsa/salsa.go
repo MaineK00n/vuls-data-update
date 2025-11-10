@@ -21,8 +21,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"github.com/ulikunitz/xz"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -207,14 +207,14 @@ func Fetch(opts ...Option) error {
 				for repo, mm := range m {
 					for section, mmm := range mm {
 						log.Printf("[INFO] Fetched Debian %s %s %s", codename, repo, section)
-						bar := pb.StartNew(len(mmm))
+						bar := progressbar.Default(int64(len(mmm)))
 						for name, source := range mmm {
 							if err := util.Write(filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)), source); err != nil {
 								return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)))
 							}
-							bar.Increment()
+							_ = bar.Add(1)
 						}
-						bar.Finish()
+						_ = bar.Close()
 					}
 				}
 			}
@@ -227,14 +227,14 @@ func Fetch(opts ...Option) error {
 					return errors.Wrap(err, "parse CPE/list")
 				}
 
-				bar := pb.StartNew(len(cpes))
+				bar := progressbar.Default(int64(len(cpes)))
 				for _, cpe := range cpes {
 					if err := util.Write(filepath.Join(options.dir, "CPE", cpe.Package[:1], fmt.Sprintf("%s.json", cpe.Package)), cpe); err != nil {
 						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "CPE", cpe.Package[:1], fmt.Sprintf("%s.json", cpe.Package)))
 					}
-					bar.Increment()
+					_ = bar.Add(1)
 				}
-				bar.Finish()
+				_ = bar.Close()
 			case "CVE":
 				log.Printf("[INFO] Read CVE/list")
 				bugs, err := cvelist(tr)
@@ -242,7 +242,7 @@ func Fetch(opts ...Option) error {
 					return errors.Wrap(err, "parse CVE/list")
 				}
 
-				bar := pb.StartNew(len(bugs))
+				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
 					switch {
 					case strings.HasPrefix(bug.Header.Name, "CVE-"):
@@ -250,17 +250,17 @@ func Fetch(opts ...Option) error {
 						if err := util.Write(filepath.Join(options.dir, "CVE", y, fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
 							return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "CVE", y, fmt.Sprintf("%s.json", bug.Header.Name)))
 						}
-						bar.Increment()
+						_ = bar.Add(1)
 					case strings.HasPrefix(bug.Header.Name, "TEMP-"):
 						if err := util.Write(filepath.Join(options.dir, "CVE", "TEMP", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
 							return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "CVE", "TEMP", fmt.Sprintf("%s.json", bug.Header.Name)))
 						}
-						bar.Increment()
+						_ = bar.Add(1)
 					default:
 						return errors.Errorf("invalid header name: %q", bug.Header.Name)
 					}
 				}
-				bar.Finish()
+				_ = bar.Close()
 			case "DLA":
 				log.Printf("[INFO] Read DLA/list")
 				bugs, err := dlalist(tr)
@@ -268,14 +268,14 @@ func Fetch(opts ...Option) error {
 					return errors.Wrap(err, "parse DLA/list")
 				}
 
-				bar := pb.StartNew(len(bugs))
+				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
 					if err := util.Write(filepath.Join(options.dir, "DLA", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
 						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "DLA", fmt.Sprintf("%s.json", bug.Header.Name)))
 					}
-					bar.Increment()
+					_ = bar.Add(1)
 				}
-				bar.Finish()
+				_ = bar.Close()
 			case "DSA":
 				log.Printf("[INFO] Read DSA/list")
 				bugs, err := dsalist(tr)
@@ -283,14 +283,14 @@ func Fetch(opts ...Option) error {
 					return errors.Wrap(err, "parse DSA/list")
 				}
 
-				bar := pb.StartNew(len(bugs))
+				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
 					if err := util.Write(filepath.Join(options.dir, "DSA", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
 						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "DSA", fmt.Sprintf("%s.json", bug.Header.Name)))
 					}
-					bar.Increment()
+					_ = bar.Add(1)
 				}
-				bar.Finish()
+				_ = bar.Close()
 			case "DTSA":
 				log.Printf("[INFO] Read DTSA/list")
 				bugs, err := dtsalist(tr)
@@ -298,14 +298,14 @@ func Fetch(opts ...Option) error {
 					return errors.Wrap(err, "parse DTSA/list")
 				}
 
-				bar := pb.StartNew(len(bugs))
+				bar := progressbar.Default(int64(len(bugs)))
 				for _, bug := range bugs {
 					if err := util.Write(filepath.Join(options.dir, "DTSA", fmt.Sprintf("%s.json", bug.Header.Name)), bug); err != nil {
 						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "DTSA", fmt.Sprintf("%s.json", bug.Header.Name)))
 					}
-					bar.Increment()
+					_ = bar.Add(1)
 				}
-				bar.Finish()
+				_ = bar.Close()
 			default:
 			}
 		default:
