@@ -188,7 +188,7 @@ type Weakness struct {
 	Description           string                 `json:"description,omitempty"`
 	ExtendedDescription   string                 `json:"extended_description,omitempty"`
 	RelatedWeaknesses     []RelatedWeakness      `json:"related_weaknesses,omitempty"`
-	ApplicablePlatforms   ApplicablePlatforms    `json:"applicable_platforms,omitempty"`
+	ApplicablePlatforms   ApplicablePlatforms    `json:"applicable_platforms,omitzero"`
 	BackgroundDetails     []string               `json:"background_details,omitempty"`
 	ModesOfIntroduction   []ModesOfIntroduction  `json:"modes_of_introduction,omitempty"`
 	LikelihoodOfExploit   string                 `json:"likelihood_of_exploit,omitempty"`
@@ -197,7 +197,7 @@ type Weakness struct {
 	DemonstrativeExamples []DemonstrativeExample `json:"demonstrative_examples,omitempty"`
 	ObservedExamples      []ObservedExample      `json:"observed_examples,omitempty"`
 	References            []Reference            `json:"references,omitempty"`
-	ContentHistory        ContentHistory         `json:"content_history,omitempty"`
+	ContentHistory        ContentHistory         `json:"content_history,omitzero"`
 	WeaknessOrdinalities  []WeaknessOrdinality   `json:"weakness_ordinalities,omitempty"`
 	AlternateTerms        []AlternateTerm        `json:"alternate_terms,omitempty"`
 	DetectionMethods      []DetectionMethods     `json:"detection_methods,omitempty"`
@@ -267,7 +267,7 @@ type Reference struct {
 }
 
 type ContentHistory struct {
-	Submission        Submission          `json:"submission,omitempty"`
+	Submission        Submission          `json:"submission,omitzero"`
 	Modification      []Modification      ` json:"modification,omitempty"`
 	PreviousEntryName []PreviousEntryName ` json:"previous_entry_name,omitempty"`
 	Contribution      []Contribution      `json:"contribution,omitempty"`
@@ -336,7 +336,7 @@ type Category struct {
 	Name             string            `json:"name,omitempty"`
 	Status           string            `json:"status,omitempty"`
 	Summary          string            `json:"summary,omitempty"`
-	ContentHistory   ContentHistory    `json:"content_history,omitempty"`
+	ContentHistory   ContentHistory    `json:"content_history,omitzero"`
 	Relationships    []HasMember       `json:"relationships,omitempty"`
 	References       []Reference       `json:"references,omitempty"`
 	Notes            []Note            `json:"notes,omitempty"`
@@ -364,7 +364,7 @@ type View struct {
 	Audience       []Audience     `json:"audience,omitempty"`
 	Members        []HasMember    `json:"members,omitempty"`
 	Notes          []Note         `json:"notes,omitempty"`
-	ContentHistory ContentHistory `json:"content_history,omitempty"`
+	ContentHistory ContentHistory `json:"content_history,omitzero"`
 	References     []Reference    `json:"references,omitempty"`
 	Filter         string         `json:"filter,omitempty"`
 }

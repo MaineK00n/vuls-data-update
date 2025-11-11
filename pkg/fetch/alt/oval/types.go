@@ -10,7 +10,7 @@ type root struct {
 		Timestamp     string `xml:"timestamp"`
 		ProductName   string `xml:"product_name"`
 		SchemaVersion string `xml:"schema_version"`
-	} `xml:"generator" json:"generator,omitempty"`
+	} `xml:"generator"`
 	Definitions struct {
 		Definition []Definition `xml:"definition"`
 	} `xml:"definitions"`
@@ -29,7 +29,7 @@ type Definition struct {
 			Family   string   `xml:"family,attr" json:"family,omitempty"`
 			Platform string   `xml:"platform" json:"platform,omitempty"`
 			Product  []string `xml:"product" json:"product,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Reference []struct {
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
@@ -42,10 +42,10 @@ type Definition struct {
 			Rights   string `xml:"rights" json:"rights,omitempty"`
 			Issued   struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"issued" json:"issued,omitempty"`
+			} `xml:"issued" json:"issued,omitzero"`
 			Updated struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"updated" json:"updated,omitempty"`
+			} `xml:"updated" json:"updated,omitzero"`
 			Bdu []struct {
 				Text   string `xml:",chardata" json:"text,omitempty"`
 				Cvss   string `xml:"cvss,attr" json:"cvss,omitempty"`
@@ -66,15 +66,15 @@ type Definition struct {
 			} `xml:"cve" json:"cve,omitempty"`
 			AffectedCpeList struct {
 				Cpe []string `xml:"cpe" json:"cpe,omitempty"`
-			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitempty"`
+			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitzero"`
 			Bugzilla []struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				ID   string `xml:"id,attr" json:"id,omitempty"`
 				Href string `xml:"href,attr" json:"href,omitempty"`
 			} `xml:"bugzilla" json:"bugzilla,omitempty"`
-		} `xml:"advisory" json:"advisory,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+		} `xml:"advisory" json:"advisory,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type Criteria struct {
@@ -96,10 +96,10 @@ type Tests struct {
 		Comment string `xml:"comment,attr" json:"comment,omitempty"`
 		Object  struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
 	RpminfoTest []struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
@@ -108,10 +108,10 @@ type Tests struct {
 		Comment string `xml:"comment,attr" json:"comment,omitempty"`
 		Object  struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
 }
 
@@ -123,20 +123,20 @@ type Objects struct {
 		Path    struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
 			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"path" json:"path,omitempty"`
+		} `xml:"path" json:"path,omitzero"`
 		Filepath struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
 			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"filepath" json:"filepath,omitempty"`
+		} `xml:"filepath" json:"filepath,omitzero"`
 		Pattern struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"pattern" json:"pattern,omitempty"`
+		} `xml:"pattern" json:"pattern,omitzero"`
 		Instance struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
 			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"instance" json:"instance,omitempty"`
+		} `xml:"instance" json:"instance,omitzero"`
 	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
 	RpminfoObject []struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
@@ -145,7 +145,7 @@ type Objects struct {
 		Name    struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
 			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"name" json:"name,omitempty"`
+		} `xml:"name" json:"name,omitzero"`
 	} `xml:"rpminfo_object" json:"rpminfo_object,omitempty"`
 }
 
@@ -157,7 +157,7 @@ type States struct {
 		Subexpression struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"subexpression" json:"subexpression,omitempty"`
+		} `xml:"subexpression" json:"subexpression,omitzero"`
 	} `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
 	RpminfoState []struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
@@ -167,6 +167,6 @@ type States struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"evr" json:"evr,omitempty"`
+		} `xml:"evr" json:"evr,omitzero"`
 	} `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
 }

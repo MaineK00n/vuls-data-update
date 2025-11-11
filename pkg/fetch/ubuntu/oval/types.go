@@ -12,14 +12,14 @@ type cveroot struct {
 		ProductVersion string `xml:"product_version"`
 		SchemaVersion  string `xml:"schema_version"`
 		Timestamp      string `xml:"timestamp"`
-	} `xml:"generator" json:"generator,omitempty"`
+	} `xml:"generator" json:"generator,omitzero"`
 	Definitions struct {
 		Definition []CVEDefinition `xml:"definition" json:"definition,omitempty"`
-	} `xml:"definitions" json:"definitions,omitempty"`
-	Tests     Tests     `xml:"tests" json:"tests,omitempty"`
-	Objects   Objects   `xml:"objects" json:"objects,omitempty"`
-	States    States    `xml:"states" json:"states,omitempty"`
-	Variables Variables `xml:"variables" json:"variables,omitempty"`
+	} `xml:"definitions" json:"definitions,omitzero"`
+	Tests     Tests     `xml:"tests" json:"tests,omitzero"`
+	Objects   Objects   `xml:"objects" json:"objects,omitzero"`
+	States    States    `xml:"states" json:"states,omitzero"`
+	Variables Variables `xml:"variables" json:"variables,omitzero"`
 }
 
 type CVEDefinition struct {
@@ -32,12 +32,12 @@ type CVEDefinition struct {
 		Affected    struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
 			Platform string `xml:"platform" json:"platform,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Reference struct {
 			Source string `xml:"source,attr" json:"source,omitempty"`
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
-		} `xml:"reference" json:"reference,omitempty"`
+		} `xml:"reference" json:"reference,omitzero"`
 		Advisory struct {
 			Severity   string   `xml:"severity" json:"severity,omitempty"`
 			Rights     string   `xml:"rights" json:"rights,omitempty"`
@@ -51,18 +51,18 @@ type CVEDefinition struct {
 				CvssScore  string `xml:"cvss_score,attr" json:"cvss_score,omitempty"`
 				CvssVector string `xml:"cvss_vector,attr" json:"cvss_vector,omitempty"`
 				Usns       string `xml:"usns,attr" json:"usns,omitempty"`
-			} `xml:"cve" json:"cve,omitempty"`
+			} `xml:"cve" json:"cve,omitzero"`
 			PublicDateAtUsn string   `xml:"public_date_at_usn" json:"public_date_at_usn,omitempty"`
 			AssignedTo      string   `xml:"assigned_to" json:"assigned_to,omitempty"`
 			DiscoveredBy    string   `xml:"discovered_by" json:"discovered_by,omitempty"`
 			Crd             string   `xml:"crd" json:"crd,omitempty"`
 			Ref             []string `xml:"ref" json:"ref,omitempty"`
-		} `xml:"advisory" json:"advisory,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
+		} `xml:"advisory" json:"advisory,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
 	Notes struct {
 		Note string `xml:"note" json:"note,omitempty"`
-	} `xml:"notes" json:"notes,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+	} `xml:"notes" json:"notes,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type pkgroot struct {
@@ -71,14 +71,14 @@ type pkgroot struct {
 		ProductVersion string `xml:"product_version"`
 		SchemaVersion  string `xml:"schema_version"`
 		Timestamp      string `xml:"timestamp"`
-	} `xml:"generator" json:"generator,omitempty"`
+	} `xml:"generator"`
 	Definitions struct {
-		Definition []PKGDefinition `xml:"definition" json:"definition,omitempty"`
-	} `xml:"definitions" json:"definitions,omitempty"`
-	Tests     Tests     `xml:"tests" json:"tests,omitempty"`
-	Objects   Objects   `xml:"objects" json:"objects,omitempty"`
-	States    States    `xml:"states" json:"states,omitempty"`
-	Variables Variables `xml:"variables" json:"variables,omitempty"`
+		Definition []PKGDefinition `xml:"definition"`
+	} `xml:"definitions"`
+	Tests     Tests     `xml:"tests"`
+	Objects   Objects   `xml:"objects"`
+	States    States    `xml:"states"`
+	Variables Variables `xml:"variables"`
 }
 
 type PKGDefinition struct {
@@ -91,12 +91,12 @@ type PKGDefinition struct {
 			Source string `xml:"source,attr" json:"source,omitempty"`
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
-		} `xml:"reference" json:"reference,omitempty"`
+		} `xml:"reference" json:"reference,omitzero"`
 		Description string `xml:"description" json:"description,omitempty"`
 		Affected    struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
 			Platform string `xml:"platform" json:"platform,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Advisory struct {
 			Rights         string `xml:"rights" json:"rights,omitempty"`
 			Component      string `xml:"component" json:"component,omitempty"`
@@ -112,9 +112,9 @@ type PKGDefinition struct {
 				TestRef      string `xml:"test_ref,attr" json:"test_ref,omitempty"`
 				Usns         string `xml:"usns,attr" json:"usns,omitempty"`
 			} `xml:"cve" json:"cve,omitempty"`
-		} `xml:"advisory" json:"advisory,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+		} `xml:"advisory" json:"advisory,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type usnroot struct {
@@ -124,14 +124,14 @@ type usnroot struct {
 		SchemaVersion  string `xml:"schema_version"`
 		Timestamp      string `xml:"timestamp"`
 		TermsOfUse     string `xml:"terms_of_use"`
-	} `xml:"generator" json:"generator,omitempty"`
+	} `xml:"generator"`
 	Definitions struct {
-		Definition []USNDefinition `xml:"definition" json:"definition,omitempty"`
-	} `xml:"definitions" json:"definitions,omitempty"`
-	Tests     Tests     `xml:"tests" json:"tests,omitempty"`
-	Objects   Objects   `xml:"objects" json:"objects,omitempty"`
-	States    States    `xml:"states" json:"states,omitempty"`
-	Variables Variables `xml:"variables" json:"variables,omitempty"`
+		Definition []USNDefinition `xml:"definition"`
+	} `xml:"definitions"`
+	Tests     Tests     `xml:"tests"`
+	Objects   Objects   `xml:"objects"`
+	States    States    `xml:"states"`
+	Variables Variables `xml:"variables"`
 }
 
 type USNDefinition struct {
@@ -144,7 +144,7 @@ type USNDefinition struct {
 		Affected    struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
 			Platform string `xml:"platform" json:"platform,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Reference []struct {
 			Source string `xml:"source,attr" json:"source,omitempty"`
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
@@ -155,7 +155,7 @@ type USNDefinition struct {
 			Severity string `xml:"severity" json:"severity,omitempty"`
 			Issued   struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"issued" json:"issued,omitempty"`
+			} `xml:"issued" json:"issued,omitzero"`
 			Cve []struct {
 				Text         string `xml:",chardata" json:"text,omitempty"`
 				Href         string `xml:"href,attr" json:"href,omitempty"`
@@ -169,9 +169,9 @@ type USNDefinition struct {
 			} `xml:"cve" json:"cve,omitempty"`
 			Bug []string `xml:"bug" json:"bug,omitempty"`
 			Ref []string `xml:"ref" json:"ref,omitempty"`
-		} `xml:"advisory" json:"advisory,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+		} `xml:"advisory" json:"advisory,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type Criteria struct {
@@ -194,10 +194,10 @@ type Tests struct {
 		Comment        string `xml:"comment,attr" json:"comment,omitempty"`
 		Object         struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
 }
 
@@ -213,12 +213,12 @@ type Objects struct {
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			VarRef    string `xml:"var_ref,attr" json:"var_ref,omitempty"`
 			VarCheck  string `xml:"var_check,attr" json:"var_check,omitempty"`
-		} `xml:"pattern" json:"pattern,omitempty"`
+		} `xml:"pattern" json:"pattern,omitzero"`
 		Instance struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"instance" json:"instance,omitempty"`
+		} `xml:"instance" json:"instance,omitzero"`
 	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
 }
 
@@ -231,7 +231,7 @@ type States struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"subexpression" json:"subexpression,omitempty"`
+		} `xml:"subexpression" json:"subexpression,omitzero"`
 	} `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
 }
 

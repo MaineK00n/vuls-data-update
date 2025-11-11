@@ -20,8 +20,8 @@ type CVRF struct {
 		Type             string `xml:"Type,attr" json:"type,omitempty"`
 		ContactDetails   string `xml:"ContactDetails" json:"contact_details,omitempty"`
 		IssuingAuthority string `xml:"IssuingAuthority" json:"issuing_authority,omitempty"`
-	} `xml:"DocumentPublisher" json:"documentpublisher,omitempty"`
-	DocumentTracking DocumentTracking `xml:"DocumentTracking" json:"documenttracking,omitempty"`
+	} `xml:"DocumentPublisher" json:"documentpublisher,omitzero"`
+	DocumentTracking DocumentTracking `xml:"DocumentTracking" json:"documenttracking,omitzero"`
 	DocumentNotes    struct {
 		Note []struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
@@ -30,12 +30,12 @@ type CVRF struct {
 			Type     string `xml:"Type,attr" json:"type,omitempty"`
 			Ordinal  string `xml:"Ordinal,attr" json:"ordinal,omitempty"`
 		} `xml:"Note" json:"note,omitempty"`
-	} `xml:"DocumentNotes" json:"documentnotes,omitempty"`
-	ProductTree   ProductTree     `xml:"ProductTree" json:"producttree,omitempty"`
+	} `xml:"DocumentNotes" json:"documentnotes,omitzero"`
+	ProductTree   ProductTree     `xml:"ProductTree" json:"producttree,omitzero"`
 	Vulnerability []Vulnerability `xml:"Vulnerability" json:"vulnerability,omitempty"`
 }
 type DocumentTracking struct {
-	Identification  Identification `xml:"Identification" json:"identification,omitempty"`
+	Identification  Identification `xml:"Identification" json:"identification,omitzero"`
 	Status          string         `xml:"Status" json:"status,omitempty"`
 	Version         string         `xml:"Version" json:"version,omitempty"`
 	RevisionHistory struct {
@@ -43,8 +43,8 @@ type DocumentTracking struct {
 			Number      string `xml:"Number" json:"number,omitempty"`
 			Date        string `xml:"Date" json:"date,omitempty"`
 			Description string `xml:"Description" json:"description,omitempty"`
-		} `xml:"Revision" json:"revision,omitempty"`
-	} `xml:"RevisionHistory" json:"revisionhistory,omitempty"`
+		} `xml:"Revision" json:"revision,omitzero"`
+	} `xml:"RevisionHistory" json:"revisionhistory,omitzero"`
 	InitialReleaseDate string `xml:"InitialReleaseDate" json:"initial_release_date,omitempty"`
 	CurrentReleaseDate string `xml:"CurrentReleaseDate" json:"current_release_date,omitempty"`
 }
@@ -55,7 +55,7 @@ type Identification struct {
 }
 
 type ProductTree struct {
-	Branch          Branch            `xml:"Branch" json:"branch,omitempty"`
+	Branch          Branch            `xml:"Branch" json:"branch,omitzero"`
 	FullProductName []FullProductName `xml:"FullProductName" json:"fullproductname,omitempty"`
 }
 
@@ -81,7 +81,7 @@ type Vulnerability struct {
 			Type    string `xml:"Type,attr" json:"type,omitempty"`
 			Ordinal string `xml:"Ordinal,attr" json:"ordinal,omitempty"`
 		} `xml:"Note" json:"note,omitempty"`
-	} `xml:"Notes" json:"notes,omitempty"`
+	} `xml:"Notes" json:"notes,omitzero"`
 	CVE string `xml:"CVE" json:"cve,omitempty"`
 	CWE *struct {
 		ID   string `xml:"ID,attr" json:"id,omitempty"`
@@ -91,15 +91,15 @@ type Vulnerability struct {
 		Status struct {
 			Type      string   `xml:"Type,attr" json:"type,omitempty"`
 			ProductID []string `xml:"ProductID" json:"product_id,omitempty"`
-		} `xml:"Status" json:"status,omitempty"`
-	} `xml:"ProductStatuses" json:"productstatuses,omitempty"`
+		} `xml:"Status" json:"status,omitzero"`
+	} `xml:"ProductStatuses" json:"productstatuses,omitzero"`
 	Threats struct {
 		Threat []struct {
 			Type        string `xml:"Type,attr" json:"type,omitempty"`
 			Description string `xml:"Description" json:"description,omitempty"`
 			ProductID   string `xml:"ProductID" json:"product_id,omitempty"`
 		} `xml:"Threat" json:"threat,omitempty"`
-	} `xml:"Threats" json:"threats,omitempty"`
+	} `xml:"Threats" json:"threats,omitzero"`
 	CVSSScoreSets struct {
 		ScoreSet []struct {
 			BaseScore     string `xml:"BaseScore" json:"base_score,omitempty"`
@@ -107,7 +107,7 @@ type Vulnerability struct {
 			Vector        string `xml:"Vector" json:"vector,omitempty"`
 			ProductID     string `xml:"ProductID" json:"product_id,omitempty"`
 		} `xml:"ScoreSet" json:"scoreset,omitempty"`
-	} `xml:"CVSSScoreSets" json:"cvssscoresets,omitempty"`
+	} `xml:"CVSSScoreSets" json:"cvssscoresets,omitzero"`
 	Remediations struct {
 		Remediation []struct {
 			Type          string   `xml:"Type,attr" json:"type,omitempty"`
@@ -120,23 +120,23 @@ type Vulnerability struct {
 					FileName         string `xml:"FileName" json:"file_name,omitempty"`
 					FileLastModified string `xml:"FileLastModified" json:"file_last_modified,omitempty"`
 				} `xml:"AffectedFile" json:"affectedfile,omitempty"`
-			} `xml:"AffectedFiles" json:"affectedfiles,omitempty"`
+			} `xml:"AffectedFiles" json:"affectedfiles,omitzero"`
 			RestartRequired string `xml:"RestartRequired" json:"restart_required,omitempty"`
 			SubType         string `xml:"SubType" json:"sub_type,omitempty"`
 			FixedBuild      string `xml:"FixedBuild" json:"fixed_build,omitempty"`
 		} `xml:"Remediation" json:"remediation,omitempty"`
-	} `xml:"Remediations" json:"remediations,omitempty"`
+	} `xml:"Remediations" json:"remediations,omitzero"`
 	Acknowledgments struct {
 		Acknowledgment []struct {
 			Name string `xml:"Name" json:"name,omitempty"`
 			URL  string `xml:"URL" json:"url,omitempty"`
 		} `xml:"Acknowledgment" json:"acknowledgment,omitempty"`
-	} `xml:"Acknowledgments" json:"acknowledgments,omitempty"`
+	} `xml:"Acknowledgments" json:"acknowledgments,omitzero"`
 	RevisionHistory struct {
 		Revision []struct {
 			Number      string `xml:"Number" json:"number,omitempty"`
 			Date        string `xml:"Date" json:"date,omitempty"`
 			Description string `xml:"Description" json:"description,omitempty"`
 		} `xml:"Revision" json:"revision,omitempty"`
-	} `xml:"RevisionHistory" json:"revisionhistory,omitempty"`
+	} `xml:"RevisionHistory" json:"revisionhistory,omitzero"`
 }

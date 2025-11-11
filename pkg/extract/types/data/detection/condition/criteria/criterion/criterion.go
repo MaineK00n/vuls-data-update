@@ -143,8 +143,8 @@ func (c Criterion) Contains(query Query) (bool, error) {
 }
 
 type FilteredCriterion struct {
-	Criterion Criterion     `json:"criterion,omitempty"`
-	Accepts   AcceptQueries `json:"accepts,omitempty"`
+	Criterion Criterion     `json:"criterion,omitzero"`
+	Accepts   AcceptQueries `json:"accepts,omitzero"`
 }
 
 type AcceptQueries struct {

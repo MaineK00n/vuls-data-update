@@ -143,17 +143,6 @@
 						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
 					]
 				}
-			},
-			"acknowledgments": {
-				"acknowledgment": {
-					"Description": ""
-				}
-			},
-			"cvssscoresets": {
-				"scoreset": {
-					"BaseScore": "",
-					"Vector": ""
-				}
 			}
 		},
 		{
@@ -230,17 +219,6 @@
 						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
 					]
 				}
-			},
-			"acknowledgments": {
-				"acknowledgment": {
-					"Description": ""
-				}
-			},
-			"cvssscoresets": {
-				"scoreset": {
-					"BaseScore": "",
-					"Vector": ""
-				}
 			}
 		},
 		{
@@ -312,17 +290,6 @@
 						"BaseOS-8.4.0.Z.E4S:kernel-0:4.18.0-305.108.1.el8_4",
 						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
 					]
-				}
-			},
-			"acknowledgments": {
-				"acknowledgment": {
-					"Description": ""
-				}
-			},
-			"cvssscoresets": {
-				"scoreset": {
-					"BaseScore": "",
-					"Vector": ""
 				}
 			}
 		},
@@ -396,17 +363,6 @@
 						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
 					]
 				}
-			},
-			"acknowledgments": {
-				"acknowledgment": {
-					"Description": ""
-				}
-			},
-			"cvssscoresets": {
-				"scoreset": {
-					"BaseScore": "",
-					"Vector": ""
-				}
 			}
 		},
 		{
@@ -479,17 +435,6 @@
 						"BaseOS-8.4.0.Z.TUS:kernel-0:4.18.0-305.108.1.el8_4"
 					]
 				}
-			},
-			"acknowledgments": {
-				"acknowledgment": {
-					"Description": ""
-				}
-			},
-			"cvssscoresets": {
-				"scoreset": {
-					"BaseScore": "",
-					"Vector": ""
-				}
 			}
 		}
 	],
@@ -527,8 +472,7 @@
 							"cpe": "cpe:/o:redhat:rhel_tus:8.4::baseos"
 						}
 					}
-				],
-				"fullproductname": {}
+				]
 			},
 			{
 				"type": "Product Version",

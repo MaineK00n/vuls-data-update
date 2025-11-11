@@ -4,6 +4,5 @@
 	"name": {
 		"text": "^almalinux-release",
 		"operation": "pattern match"
-	},
-	"version": {}
+	}
 }

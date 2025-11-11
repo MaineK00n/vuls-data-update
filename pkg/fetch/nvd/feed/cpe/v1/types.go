@@ -24,7 +24,7 @@ type CPEDictItem struct {
 	DeprecationDate string             `json:"deprecation_date,omitempty"`
 	Title           []CPEDictTitle     `json:"title,omitempty"`
 	References      []CPEDictReference `json:"references,omitempty"`
-	Cpe23Item       CPEDictCpe23Item   `json:"cpe_23_item,omitempty"`
+	Cpe23Item       CPEDictCpe23Item   `json:"cpe_23_item,omitzero"`
 }
 
 type CPEDictTitle struct {
@@ -44,7 +44,7 @@ type CPEDictCpe23Item struct {
 
 type CPEDictDeprecation struct {
 	Date         string             `json:"date,omitempty"`
-	DeprecatedBy CPEDictDeprectedBy `json:"deprecated_by,omitempty"`
+	DeprecatedBy CPEDictDeprectedBy `json:"deprecated_by,omitzero"`
 }
 
 type CPEDictDeprectedBy struct {

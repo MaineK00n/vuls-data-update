@@ -11,8 +11,8 @@ type KEV struct {
 	RequiredAction             string    `json:"requiredAction,omitempty"`
 	KnownRansomwareCampaignUse string    `json:"knownRansomwareCampaignUse,omitempty"`
 	Notes                      string    `json:"notes,omitempty"`
-	DateAdded                  time.Time `json:"dateAdded,omitempty"`
-	DueDate                    time.Time `json:"dueDate,omitempty"`
+	DateAdded                  time.Time `json:"dateAdded,omitzero"`
+	DueDate                    time.Time `json:"dueDate,omitzero"`
 }
 
 func Compare(x, y KEV) int {

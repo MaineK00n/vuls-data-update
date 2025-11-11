@@ -52,10 +52,8 @@
 					"cpe:/o:redhat:enterprise_linux:9",
 					"cpe:/o:redhat:enterprise_linux:9::baseos"
 				]
-			},
-			"issued": {}
-		},
-		"affected": {}
+			}
+		}
 	},
 	"criteria": {
 		"operator": "OR",

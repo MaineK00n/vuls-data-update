@@ -5,7 +5,5 @@
 	"version": {
 		"text": "^1[^\\d]",
 		"operation": "pattern match"
-	},
-	"evr": {},
-	"signature_keyid": {}
+	}
 }

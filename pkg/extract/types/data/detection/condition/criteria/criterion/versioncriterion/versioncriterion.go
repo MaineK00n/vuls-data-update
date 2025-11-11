@@ -21,7 +21,7 @@ import (
 type Criterion struct {
 	Vulnerable bool                      `json:"vulnerable,omitempty"`
 	FixStatus  *fixstatusTypes.FixStatus `json:"fix_status,omitempty"`
-	Package    packageTypes.Package      `json:"package,omitempty"`
+	Package    packageTypes.Package      `json:"package,omitzero"`
 	Affected   *affectedTypes.Affected   `json:"affected,omitempty"`
 }
 

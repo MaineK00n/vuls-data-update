@@ -32,8 +32,8 @@ type Result struct {
 	} `json:"classification,omitzero"`
 	Metadata    interface{} `json:"metadata,omitempty"`
 	Digest      string      `json:"digest,omitempty"`
-	CreatedAt   time.Time   `json:"created_at,omitempty"`
-	UpdatedAt   time.Time   `json:"updated_at,omitempty"`
+	CreatedAt   time.Time   `json:"created_at,omitzero"`
+	UpdatedAt   time.Time   `json:"updated_at,omitzero"`
 	ReleaseTag  string      `json:"release_tag,omitempty"`
 	IsEarly     bool        `json:"is_early,omitempty"`
 	Raw         string      `json:"raw,omitempty"`

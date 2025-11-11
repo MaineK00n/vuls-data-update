@@ -17,7 +17,7 @@ type Data struct {
 	Advisories      []advisoryTypes.Advisory           `json:"advisories,omitempty"`
 	Vulnerabilities []vulnerabilityTypes.Vulnerability `json:"vulnerabilities,omitempty"`
 	Detections      []detectionTypes.Detection         `json:"detections,omitempty"`
-	DataSource      sourceTypes.Source                 `json:"data_source,omitempty"`
+	DataSource      sourceTypes.Source                 `json:"data_source,omitzero"`
 }
 
 type RootID string

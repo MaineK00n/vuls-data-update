@@ -5,7 +5,7 @@ type CSAF struct {
 		AggregateSeverity struct {
 			Namespace string `json:"namespace,omitempty"`
 			Text      string `json:"text,omitempty"`
-		} `json:"aggregate_severity,omitempty"`
+		} `json:"aggregate_severity,omitzero"`
 		Category     string `json:"category,omitempty"`
 		CsafVersion  string `json:"csaf_version,omitempty"`
 		Distribution struct {
@@ -13,8 +13,8 @@ type CSAF struct {
 			Tlp  struct {
 				Label string `json:"label,omitempty"`
 				URL   string `json:"url,omitempty"`
-			} `json:"tlp,omitempty"`
-		} `json:"distribution,omitempty"`
+			} `json:"tlp,omitzero"`
+		} `json:"distribution,omitzero"`
 		Lang  string `json:"lang,omitempty"`
 		Notes []struct {
 			Category string `json:"category,omitempty"`
@@ -26,7 +26,7 @@ type CSAF struct {
 			ContactDetails string `json:"contact_details,omitempty"`
 			Name           string `json:"name,omitempty"`
 			Namespace      string `json:"namespace,omitempty"`
-		} `json:"publisher,omitempty"`
+		} `json:"publisher,omitzero"`
 		References []struct {
 			Category string `json:"category,omitempty"`
 			Summary  string `json:"summary,omitempty"`
@@ -40,8 +40,8 @@ type CSAF struct {
 				Engine struct {
 					Name    string `json:"name,omitempty"`
 					Version string `json:"version,omitempty"`
-				} `json:"engine,omitempty"`
-			} `json:"generator,omitempty"`
+				} `json:"engine,omitzero"`
+			} `json:"generator,omitzero"`
 			ID                 string `json:"id,omitempty"`
 			InitialReleaseDate string `json:"initial_release_date,omitempty"`
 			RevisionHistory    []struct {
@@ -51,8 +51,8 @@ type CSAF struct {
 			} `json:"revision_history,omitempty"`
 			Status  string `json:"status,omitempty"`
 			Version string `json:"version,omitempty"`
-		} `json:"tracking,omitempty"`
-	} `json:"document,omitempty"`
+		} `json:"tracking,omitzero"`
+	} `json:"document,omitzero"`
 	ProductTree struct {
 		Branches []struct {
 			Branches []struct {
@@ -65,7 +65,7 @@ type CSAF struct {
 						ProductIdentificationHelper *struct {
 							Cpe string `json:"cpe,omitempty"`
 						} `json:"product_identification_helper,omitempty"`
-					} `json:"product,omitempty"`
+					} `json:"product,omitzero"`
 				} `json:"branches,omitempty"`
 				Category string `json:"category,omitempty"`
 				Name     string `json:"name,omitempty"`
@@ -78,11 +78,11 @@ type CSAF struct {
 			FullProductName struct {
 				Name      string `json:"name,omitempty"`
 				ProductID string `json:"product_id,omitempty"`
-			} `json:"full_product_name,omitempty"`
+			} `json:"full_product_name,omitzero"`
 			ProductReference          string `json:"product_reference,omitempty"`
 			RelatesToProductReference string `json:"relates_to_product_reference,omitempty"`
 		} `json:"relationships,omitempty"`
-	} `json:"product_tree,omitempty"`
+	} `json:"product_tree,omitzero"`
 	Vulnerabilities []struct {
 		Cve string `json:"cve,omitempty"`
 		Ids []struct {
@@ -103,7 +103,7 @@ type CSAF struct {
 			LastAffected       []string `json:"last_affected,omitempty"`
 			Recommended        []string `json:"recommended,omitempty"`
 			UnderInvestigation []string `json:"under_investigation,omitempty"`
-		} `json:"product_status,omitempty"`
+		} `json:"product_status,omitzero"`
 		References []struct {
 			Category string `json:"category,omitempty"`
 			Summary  string `json:"summary,omitempty"`
@@ -120,7 +120,7 @@ type CSAF struct {
 				BaseSeverity string  `json:"baseSeverity,omitempty"`
 				VectorString string  `json:"vectorString,omitempty"`
 				Version      string  `json:"version,omitempty"`
-			} `json:"cvss_v3,omitempty"`
+			} `json:"cvss_v3,omitzero"`
 			Products []string `json:"products,omitempty"`
 		} `json:"scores,omitempty"`
 		Threats []struct {

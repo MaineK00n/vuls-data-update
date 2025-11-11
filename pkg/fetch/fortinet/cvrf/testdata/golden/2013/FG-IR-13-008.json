@@ -89,15 +89,6 @@
 					"description": "<a href=\"http://archives.neohapsis.com/archives/fulldisclosure/2013-05/0001.html\">Neohapsis</a>"
 				}
 			]
-		},
-		"product_statuses": {
-			"status": {}
-		},
-		"cvss_scoresets": {
-			"scoreset_v3": {}
 		}
-	},
-	"product_tree": {
-		"branch": {}
 	}
 }

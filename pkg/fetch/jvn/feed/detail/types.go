@@ -55,7 +55,7 @@ type Vulinfo struct {
 		Title              string `xml:"Title" json:"title,omitempty"`
 		VulinfoDescription struct {
 			Overview string `xml:"Overview" json:"overview,omitempty"`
-		} `xml:"VulinfoDescription" json:"vulinfodescription,omitempty"`
+		} `xml:"VulinfoDescription" json:"vulinfodescription,omitzero"`
 		Affected struct {
 			AffectedItem []struct {
 				Name        string `xml:"Name" json:"name,omitempty"`
@@ -66,26 +66,26 @@ type Vulinfo struct {
 				} `xml:"Cpe" json:"cpe,omitempty"`
 				VersionNumber []string `xml:"VersionNumber" json:"versionnumber,omitempty"`
 			} `xml:"AffectedItem" json:"affecteditem,omitempty"`
-		} `xml:"Affected" json:"affected,omitempty"`
+		} `xml:"Affected" json:"affected,omitzero"`
 		Impact struct {
 			Cvss []struct {
 				Version  string `xml:"version,attr" json:"version,omitempty"`
 				Severity struct {
 					Text string `xml:",chardata" json:"text,omitempty"`
 					Type string `xml:"type,attr" json:"type,omitempty"`
-				} `xml:"Severity" json:"severity,omitempty"`
+				} `xml:"Severity" json:"severity,omitzero"`
 				Base   string `xml:"Base" json:"base,omitempty"`
 				Vector string `xml:"Vector" json:"vector,omitempty"`
 			} `xml:"Cvss" json:"cvss,omitempty"`
 			ImpactItem struct {
 				Description string `xml:"Description" json:"description,omitempty"`
-			} `xml:"ImpactItem" json:"impactitem,omitempty"`
-		} `xml:"Impact" json:"impact,omitempty"`
+			} `xml:"ImpactItem" json:"impactitem,omitzero"`
+		} `xml:"Impact" json:"impact,omitzero"`
 		Solution struct {
 			SolutionItem struct {
 				Description string `xml:"Description" json:"description,omitempty"`
-			} `xml:"SolutionItem" json:"solutionitem,omitempty"`
-		} `xml:"Solution" json:"solution,omitempty"`
+			} `xml:"SolutionItem" json:"solutionitem,omitzero"`
+		} `xml:"Solution" json:"solution,omitzero"`
 		Related struct {
 			RelatedItem []struct {
 				Type      string `xml:"type,attr" json:"type,omitempty"`
@@ -94,16 +94,16 @@ type Vulinfo struct {
 				URL       string `xml:"URL" json:"url,omitempty"`
 				Title     string `xml:"Title" json:"title,omitempty"`
 			} `xml:"RelatedItem" json:"relateditem,omitempty"`
-		} `xml:"Related" json:"related,omitempty"`
+		} `xml:"Related" json:"related,omitzero"`
 		History struct {
 			HistoryItem []struct {
 				HistoryNo   string `xml:"HistoryNo" json:"historyno,omitempty"`
 				DateTime    string `xml:"DateTime" json:"datetime,omitempty"`
 				Description string `xml:"Description" json:"description,omitempty"`
 			} `xml:"HistoryItem" json:"historyitem,omitempty"`
-		} `xml:"History" json:"history,omitempty"`
+		} `xml:"History" json:"history,omitzero"`
 		DateFirstPublished string `xml:"DateFirstPublished" json:"datefirstpublished,omitempty"`
 		DateLastUpdated    string `xml:"DateLastUpdated" json:"datelastupdated,omitempty"`
 		DatePublic         string `xml:"DatePublic" json:"datepublic,omitempty"`
-	} `xml:"VulinfoData" json:"vulinfodata,omitempty"`
+	} `xml:"VulinfoData" json:"vulinfodata,omitzero"`
 }

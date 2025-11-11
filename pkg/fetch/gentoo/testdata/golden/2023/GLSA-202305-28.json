@@ -25,24 +25,17 @@
 				"Unaffected": [
 					{
 						"Text": "1.33",
-						"Range": "ge",
-						"Slot": ""
+						"Range": "ge"
 					}
 				],
 				"Vulnerable": [
 					{
 						"Text": "1.33",
-						"Range": "lt",
-						"Slot": ""
+						"Range": "lt"
 					}
 				]
 			}
-		],
-		"Service": {
-			"Text": "",
-			"Type": "",
-			"Fixed": ""
-		}
+		]
 	},
 	"Background": {
 		"Text": "\n        <p>snakeyaml is a YAML 1.1 parser and emitter for Java.</p>\n    "
@@ -61,15 +54,7 @@
 		"Text": "\n        \n        \n        \n    ",
 		"P": [
 			{
-				"Text": "All snakeyaml users should upgrade to the latest version:",
-				"URI": {
-					"Text": "",
-					"Link": ""
-				},
-				"Br": null,
-				"I": null,
-				"Code": "",
-				"P": ""
+				"Text": "All snakeyaml users should upgrade to the latest version:"
 			}
 		],
 		"Code": [

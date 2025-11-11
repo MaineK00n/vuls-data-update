@@ -7,11 +7,11 @@ type CVRF struct {
 		Type             string `xml:"Type,attr" json:"type,omitempty"`
 		ContactDetails   string `xml:"ContactDetails" json:"contact_details,omitempty"`
 		IssuingAuthority string `xml:"IssuingAuthority" json:"issuing_authority,omitempty"`
-	} `xml:"DocumentPublisher" json:"document_publisher,omitempty"`
+	} `xml:"DocumentPublisher" json:"document_publisher,omitzero"`
 	DocumentTracking struct {
 		Identification struct {
 			ID string `xml:"ID" json:"id,omitempty"`
-		} `xml:"Identification" json:"identification,omitempty"`
+		} `xml:"Identification" json:"identification,omitzero"`
 		Status          string `xml:"Status" json:"status,omitempty"`
 		Version         string `xml:"Version" json:"version,omitempty"`
 		RevisionHistory struct {
@@ -19,15 +19,15 @@ type CVRF struct {
 				Number      string `xml:"Number" json:"number,omitempty"`
 				Date        string `xml:"Date" json:"date,omitempty"`
 				Description string `xml:"Description" json:"description,omitempty"`
-			} `xml:"Revision" json:"revision,omitempty"`
-		} `xml:"RevisionHistory" json:"revision_history,omitempty"`
+			} `xml:"Revision" json:"revision,omitzero"`
+		} `xml:"RevisionHistory" json:"revision_history,omitzero"`
 		InitialReleaseDate string `xml:"InitialReleaseDate" json:"initial_release_date,omitempty"`
 		CurrentReleaseDate string `xml:"CurrentReleaseDate" json:"current_release_date,omitempty"`
 		Generator          struct {
 			Engine string `xml:"Engine" json:"engine,omitempty"`
 			Date   string `xml:"Date" json:"date,omitempty"`
-		} `xml:"Generator" json:"generator,omitempty"`
-	} `xml:"DocumentTracking" json:"document_tracking,omitempty"`
+		} `xml:"Generator" json:"generator,omitzero"`
+	} `xml:"DocumentTracking" json:"document_tracking,omitzero"`
 	DocumentNotes []struct {
 		Text  string `xml:",chardata" json:"text,omitempty"`
 		Title string `xml:"Title,attr" json:"title,omitempty"`
@@ -49,19 +49,19 @@ type CVRF struct {
 					Text      string `xml:",chardata" json:"text,omitempty"`
 					ProductID string `xml:"ProductID,attr" json:"product_id,omitempty"`
 					CPE       string `xml:"CPE,attr" json:"cpe,omitempty"`
-				} `xml:"FullProductName" json:"full_product_name,omitempty"`
+				} `xml:"FullProductName" json:"full_product_name,omitzero"`
 			} `xml:"Branch" json:"branch,omitempty"`
 			FullProductName struct {
 				Text      string `xml:",chardata" json:"text,omitempty"`
 				ProductID string `xml:"ProductID,attr" json:"product_id,omitempty"`
-			} `xml:"FullProductName" json:"full_product_name,omitempty"`
+			} `xml:"FullProductName" json:"full_product_name,omitzero"`
 		} `xml:"Branch" json:"branch,omitempty"`
 		Relationship []struct {
 			ProductReference          string `xml:"ProductReference,attr" json:"product_reference,omitempty"`
 			RelationType              string `xml:"RelationType,attr" json:"relation_type,omitempty"`
 			RelatesToProductReference string `xml:"RelatesToProductReference,attr" json:"relates_to_product_reference,omitempty"`
 		} `xml:"Relationship" json:"relationship,omitempty"`
-	} `xml:"ProductTree" json:"product_tree,omitempty"`
+	} `xml:"ProductTree" json:"product_tree,omitzero"`
 	Vulnerability []struct {
 		Notes []struct {
 			Text  string `xml:",chardata" json:"text,omitempty"`
@@ -81,11 +81,11 @@ type CVRF struct {
 			ScoreSetV2 struct {
 				BaseScoreV2 string `xml:"BaseScoreV2" json:"base_score_v_2,omitempty"`
 				VectorV2    string `xml:"VectorV2" json:"vector_v_2,omitempty"`
-			} `xml:"ScoreSetV2" json:"score_set_v_2,omitempty"`
+			} `xml:"ScoreSetV2" json:"score_set_v_2,omitzero"`
 			ScoreSetV3 struct {
 				BaseScoreV3 string `xml:"BaseScoreV3" json:"base_score_v_3,omitempty"`
 				VectorV3    string `xml:"VectorV3" json:"vector_v_3,omitempty"`
-			} `xml:"ScoreSetV3" json:"score_set_v_3,omitempty"`
-		} `xml:"CVSSScoreSets" json:"cvss_score_sets,omitempty"`
+			} `xml:"ScoreSetV3" json:"score_set_v_3,omitzero"`
+		} `xml:"CVSSScoreSets" json:"cvss_score_sets,omitzero"`
 	} `xml:"Vulnerability" json:"vulnerability,omitempty"`
 }

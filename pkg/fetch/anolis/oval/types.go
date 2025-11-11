@@ -27,7 +27,7 @@ type root struct {
 		ProductVersion string `xml:"product_version"`
 		SchemaVersion  string `xml:"schema_version"`
 		Timestamp      string `xml:"timestamp"`
-	} `xml:"generator" json:"generator,omitempty"`
+	} `xml:"generator"`
 	Definitions struct {
 		Definition []Definition `xml:"definition"`
 	} `xml:"definitions"`
@@ -45,7 +45,7 @@ type Definition struct {
 		Affected struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
 			Platform string `xml:"platform" json:"platform,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Reference []struct {
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
@@ -58,10 +58,10 @@ type Definition struct {
 			Rights   string `xml:"rights" json:"rights,omitempty"`
 			Issued   struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"issued" json:"issued,omitempty"`
+			} `xml:"issued" json:"issued,omitzero"`
 			Updated struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"updated" json:"updated,omitempty"`
+			} `xml:"updated" json:"updated,omitzero"`
 			Cve []struct {
 				Text   string `xml:",chardata" json:"text,omitempty"`
 				Cvss3  string `xml:"cvss3,attr" json:"cvss3,omitempty"`
@@ -72,10 +72,10 @@ type Definition struct {
 			} `xml:"cve" json:"cve,omitempty"`
 			AffectedCpeList struct {
 				Cpe []string `xml:"cpe" json:"cpe,omitempty"`
-			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitempty"`
-		} `xml:"advisory" json:"advisory,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitzero"`
+		} `xml:"advisory" json:"advisory,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type Criteria struct {
@@ -98,10 +98,10 @@ type Tests struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Object  struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"textfilecontent54_test" json:"textfilecontent54_test,omitempty"`
 	RpminfoTest []struct {
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
@@ -111,10 +111,10 @@ type Tests struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Object  struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
 }
 
@@ -128,11 +128,11 @@ type Objects struct {
 		Pattern  struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"pattern" json:"pattern,omitempty"`
+		} `xml:"pattern" json:"pattern,omitzero"`
 		Instance struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
 			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"instance" json:"instance,omitempty"`
+		} `xml:"instance" json:"instance,omitzero"`
 	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
 	RpminfoObject []struct {
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
@@ -150,7 +150,7 @@ type States struct {
 		Text    struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"text" json:"text,omitempty"`
+		} `xml:"text" json:"text,omitzero"`
 	} `xml:"textfilecontent54_state" json:"textfilecontent54_state,omitempty"`
 	RpminfoState []struct {
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
@@ -160,6 +160,6 @@ type States struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"evr" json:"evr,omitempty"`
+		} `xml:"evr" json:"evr,omitzero"`
 	} `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
 }

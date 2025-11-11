@@ -4,6 +4,5 @@
 	"name": {
 		"text": "^redhat-release",
 		"operation": "pattern match"
-	},
-	"version": {}
+	}
 }

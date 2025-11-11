@@ -317,9 +317,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4",
 					"vector_v_2": "AV:L/AC:L/Au:M/C:P/I:P/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{

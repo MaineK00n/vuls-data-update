@@ -28,7 +28,6 @@
 					"public": "20020309"
 				}
 			],
-			"affected": {},
 			"affected_cpe_list": {
 				"cpe": [
 					"cpe:/a:redhat:enterprise_linux:9",
@@ -44,10 +43,8 @@
 					"cpe:/o:redhat:enterprise_linux:9",
 					"cpe:/o:redhat:enterprise_linux:9::baseos"
 				]
-			},
-			"issued": {}
-		},
-		"affected": {}
+			}
+		}
 	},
 	"criteria": {
 		"operator": "OR",

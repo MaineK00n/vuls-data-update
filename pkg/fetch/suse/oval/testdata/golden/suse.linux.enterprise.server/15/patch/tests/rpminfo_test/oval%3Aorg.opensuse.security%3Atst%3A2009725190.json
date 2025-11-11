@@ -6,6 +6,5 @@
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
 	"object": {
 		"object_ref": "oval:org.opensuse.security:obj:2009046677"
-	},
-	"state": {}
+	}
 }

@@ -5,13 +5,13 @@ type root struct {
 		ProductName   string `xml:"product_name"`
 		SchemaVersion string `xml:"schema_version"`
 		Timestamp     string `xml:"timestamp"`
-	} `xml:"generator" json:"generator,omitempty"`
+	} `xml:"generator" json:"generator,omitzero"`
 	Definitions struct {
 		Definition []Definition `xml:"definition" json:"definition,omitempty"`
-	} `xml:"definitions" json:"definitions,omitempty"`
-	Tests   Tests   `xml:"tests" json:"tests,omitempty"`
-	Objects Objects `xml:"objects" json:"objects,omitempty"`
-	States  States  `xml:"states" json:"states,omitempty"`
+	} `xml:"definitions" json:"definitions,omitzero"`
+	Tests   Tests   `xml:"tests" json:"tests,omitzero"`
+	Objects Objects `xml:"objects" json:"objects,omitzero"`
+	States  States  `xml:"states" json:"states,omitzero"`
 }
 
 type Definition struct {
@@ -23,7 +23,7 @@ type Definition struct {
 		Affected struct {
 			Family   string   `xml:"family,attr" json:"family,omitempty"`
 			Platform []string `xml:"platform" json:"platform,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Reference []struct {
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
 			RefURL string `xml:"ref_url,attr" json:"ref_url,omitempty"`
@@ -46,16 +46,16 @@ type Definition struct {
 			} `xml:"bugzilla" json:"bugzilla,omitempty"`
 			Issued struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"issued" json:"issued,omitempty"`
+			} `xml:"issued" json:"issued,omitzero"`
 			Updated struct {
 				Date string `xml:"date,attr" json:"date,omitempty"`
-			} `xml:"updated" json:"updated,omitempty"`
+			} `xml:"updated" json:"updated,omitzero"`
 			AffectedCpeList struct {
 				Cpe []string `xml:"cpe" json:"cpe,omitempty"`
-			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitempty"`
-		} `xml:"advisory" json:"advisory,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+			} `xml:"affected_cpe_list" json:"affected_cpe_list,omitzero"`
+		} `xml:"advisory" json:"advisory,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type Criteria struct {
@@ -78,10 +78,10 @@ type Tests struct {
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
 		Object  struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"rpminfo_test" json:"rpminfo_test,omitempty"`
 	UnameTest []struct {
 		UnixDef string `xml:"unix-def,attr" json:"unix-def,omitempty"`
@@ -91,10 +91,10 @@ type Tests struct {
 		Check   string `xml:"check,attr" json:"check,omitempty"`
 		Object  struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"uname_test" json:"uname_test,omitempty"`
 }
 
@@ -109,7 +109,7 @@ type Objects struct {
 		UnixDef string `xml:"unix-def,attr" json:"unix-def,omitempty"`
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Version string `xml:"version,attr" json:"version,omitempty"`
-	} `xml:"uname_object" json:"uname_object,omitempty"`
+	} `xml:"uname_object" json:"uname_object,omitzero"`
 }
 
 type States struct {
@@ -120,21 +120,21 @@ type States struct {
 		Version     struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"version" json:"version,omitempty"`
+		} `xml:"version" json:"version,omitzero"`
 		Evr struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"evr" json:"evr,omitempty"`
+		} `xml:"evr" json:"evr,omitzero"`
 		SignatureKeyid struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"signature_keyid" json:"signature_keyid,omitempty"`
+		} `xml:"signature_keyid" json:"signature_keyid,omitzero"`
 		Arch struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"arch" json:"arch,omitempty"`
+		} `xml:"arch" json:"arch,omitzero"`
 	} `xml:"rpminfo_state" json:"rpminfo_state,omitempty"`
 	UnameState []struct {
 		UnixDef   string `xml:"unix-def,attr" json:"unix-def,omitempty"`
@@ -143,6 +143,6 @@ type States struct {
 		OSRelease struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"os_release" json:"os_release,omitempty"`
+		} `xml:"os_release" json:"os_release,omitzero"`
 	} `xml:"uname_state" json:"uname_state,omitempty"`
 }

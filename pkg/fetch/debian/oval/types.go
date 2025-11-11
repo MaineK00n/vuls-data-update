@@ -18,7 +18,7 @@ type Definition struct {
 			Family   string `xml:"family,attr" json:"family,omitempty"`
 			Platform string `xml:"platform" json:"platform,omitempty"`
 			Product  string `xml:"product" json:"product,omitempty"`
-		} `xml:"affected" json:"affected,omitempty"`
+		} `xml:"affected" json:"affected,omitzero"`
 		Reference []struct {
 			Source string `xml:"source,attr" json:"source,omitempty"`
 			RefID  string `xml:"ref_id,attr" json:"ref_id,omitempty"`
@@ -29,9 +29,9 @@ type Definition struct {
 			Moreinfo string `xml:"moreinfo" json:"moreinfo,omitempty"`
 			Dsa      string `xml:"dsa" json:"dsa,omitempty"`
 			Date     string `xml:"date" json:"date,omitempty"`
-		} `xml:"debian" json:"debian,omitempty"`
-	} `xml:"metadata" json:"metadata,omitempty"`
-	Criteria Criteria `xml:"criteria" json:"criteria,omitempty"`
+		} `xml:"debian" json:"debian,omitzero"`
+	} `xml:"metadata" json:"metadata,omitzero"`
+	Criteria Criteria `xml:"criteria" json:"criteria,omitzero"`
 }
 
 type Criteria struct {
@@ -55,11 +55,11 @@ type Tests struct {
 		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
 		Object         struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
-	} `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
+	} `xml:"textfilecontent54_test" json:"textfilecontent_54_test,omitzero"`
 	UnameTest struct {
 		ID             string `xml:"id,attr" json:"id,omitempty"`
 		Version        string `xml:"version,attr" json:"version,omitempty"`
@@ -69,8 +69,8 @@ type Tests struct {
 		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
 		Object         struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
-	} `xml:"uname_test" json:"uname_test,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
+	} `xml:"uname_test" json:"uname_test,omitzero"`
 	DpkginfoTest []struct {
 		ID             string `xml:"id,attr" json:"id,omitempty"`
 		Version        string `xml:"version,attr" json:"version,omitempty"`
@@ -80,10 +80,10 @@ type Tests struct {
 		Xmlns          string `xml:"xmlns,attr" json:"xmlns,omitempty"`
 		Object         struct {
 			ObjectRef string `xml:"object_ref,attr" json:"object_ref,omitempty"`
-		} `xml:"object" json:"object,omitempty"`
+		} `xml:"object" json:"object,omitzero"`
 		State struct {
 			StateRef string `xml:"state_ref,attr" json:"state_ref,omitempty"`
-		} `xml:"state" json:"state,omitempty"`
+		} `xml:"state" json:"state,omitzero"`
 	} `xml:"dpkginfo_test" json:"dpkginfo_test,omitempty"`
 }
 
@@ -97,17 +97,17 @@ type Objects struct {
 		Pattern  struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"pattern" json:"pattern,omitempty"`
+		} `xml:"pattern" json:"pattern,omitzero"`
 		Instance struct {
 			Text     string `xml:",chardata" json:"text,omitempty"`
 			Datatype string `xml:"datatype,attr" json:"datatype,omitempty"`
-		} `xml:"instance" json:"instance,omitempty"`
-	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitempty"`
+		} `xml:"instance" json:"instance,omitzero"`
+	} `xml:"textfilecontent54_object" json:"textfilecontent54_object,omitzero"`
 	UnameObject struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Version string `xml:"version,attr" json:"version,omitempty"`
 		Xmlns   string `xml:"xmlns,attr" json:"xmlns,omitempty"`
-	} `xml:"uname_object" json:"uname_object,omitempty"`
+	} `xml:"uname_object" json:"uname_object,omitzero"`
 	DpkginfoObject []struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Version string `xml:"version,attr" json:"version,omitempty"`
@@ -124,8 +124,8 @@ type States struct {
 		Subexpression struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"subexpression" json:"subexpression,omitempty"`
-	} `xml:"textfilecontent54_state" json:"textfilecontent_54_state,omitempty"`
+		} `xml:"subexpression" json:"subexpression,omitzero"`
+	} `xml:"textfilecontent54_state" json:"textfilecontent_54_state,omitzero"`
 	DpkginfoState []struct {
 		ID      string `xml:"id,attr" json:"id,omitempty"`
 		Version string `xml:"version,attr" json:"version,omitempty"`
@@ -134,6 +134,6 @@ type States struct {
 			Text      string `xml:",chardata" json:"text,omitempty"`
 			Datatype  string `xml:"datatype,attr" json:"datatype,omitempty"`
 			Operation string `xml:"operation,attr" json:"operation,omitempty"`
-		} `xml:"evr" json:"evr,omitempty"`
+		} `xml:"evr" json:"evr,omitzero"`
 	} `xml:"dpkginfo_state" json:"dpkginfo_state,omitempty"`
 }

@@ -666,7 +666,7 @@ func (opts options) bugzilla(client *utilhttp.Client, url string) (*Bugzilla, er
 			Who          struct {
 				Text string "json:\"text,omitempty\""
 				Name string "json:\"name,omitempty\""
-			} "json:\"who,omitempty\""
+			} "json:\"who,omitzero\""
 			BugWhen string "json:\"bug_when,omitempty\""
 			Thetext string "json:\"thetext,omitempty\""
 		}(b.Bug.LongDesc),

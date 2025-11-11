@@ -32,7 +32,7 @@ type advisoryPage struct {
 						Testcase  struct {
 							ID   int    `json:"id,omitempty"`
 							Name string `json:"name,omitempty"`
-						} `json:"testcase,omitempty"`
+						} `json:"testcase,omitzero"`
 						TestcaseID int `json:"testcase_id,omitempty"`
 					} `json:"testcase_feedback,omitempty"`
 					Text      string `json:"text,omitempty"`
@@ -47,9 +47,9 @@ type advisoryPage struct {
 						ID     int    `json:"id,omitempty"`
 						Name   string `json:"name,omitempty"`
 						Openid string `json:"openid,omitempty"`
-					} `json:"user,omitempty"`
+					} `json:"user,omitzero"`
 					UserID int `json:"user_id,omitempty"`
-				} `json:"comment,omitempty"`
+				} `json:"comment,omitzero"`
 				CommentID int `json:"comment_id,omitempty"`
 				Karma     int `json:"karma,omitempty"`
 			} `json:"feedback,omitempty"`
@@ -72,7 +72,7 @@ type advisoryPage struct {
 					Parent   bool   `json:"parent,omitempty"`
 					Security bool   `json:"security,omitempty"`
 					Title    string `json:"title,omitempty"`
-				} `json:"bug,omitempty"`
+				} `json:"bug,omitzero"`
 				BugID     int `json:"bug_id,omitempty"`
 				CommentID int `json:"comment_id,omitempty"`
 				Karma     int `json:"karma,omitempty"`
@@ -86,7 +86,7 @@ type advisoryPage struct {
 				Testcase  struct {
 					ID   int    `json:"id,omitempty"`
 					Name string `json:"name,omitempty"`
-				} `json:"testcase,omitempty"`
+				} `json:"testcase,omitzero"`
 				TestcaseID int `json:"testcase_id,omitempty"`
 			} `json:"testcase_feedback,omitempty"`
 			Text      string `json:"text,omitempty"`
@@ -101,7 +101,7 @@ type advisoryPage struct {
 				ID     int    `json:"id,omitempty"`
 				Name   string `json:"name,omitempty"`
 				Openid string `json:"openid,omitempty"`
-			} `json:"user,omitempty"`
+			} `json:"user,omitzero"`
 			UserID int `json:"user_id,omitempty"`
 		} `json:"comments,omitempty"`
 		ContentType              *string `json:"content_type,omitempty"`
@@ -141,7 +141,7 @@ type advisoryPage struct {
 			TestingRepository      *string `json:"testing_repository,omitempty"`
 			TestingTag             string  `json:"testing_tag,omitempty"`
 			Version                string  `json:"version,omitempty"`
-		} `json:"release,omitempty"`
+		} `json:"release,omitzero"`
 		Request          *string `json:"request,omitempty"`
 		RequireBugs      bool    `json:"require_bugs,omitempty"`
 		RequireTestcases bool    `json:"require_testcases,omitempty"`
@@ -170,7 +170,7 @@ type advisoryPage struct {
 			ID     int    `json:"id,omitempty"`
 			Name   string `json:"name,omitempty"`
 			Openid string `json:"openid,omitempty"`
-		} `json:"user,omitempty"`
+		} `json:"user,omitzero"`
 		VersionHash string `json:"version_hash,omitempty"`
 	} `json:"updates"`
 	Page           int  `json:"page"`
@@ -197,7 +197,7 @@ type Advisory struct {
 				Parent   bool   `json:"parent,omitempty"`
 				Security bool   `json:"security,omitempty"`
 				Title    string `json:"title,omitempty"`
-			} `json:"bug,omitempty"`
+			} `json:"bug,omitzero"`
 			BugID     int `json:"bug_id,omitempty"`
 			CommentID int `json:"comment_id,omitempty"`
 			Karma     int `json:"karma,omitempty"`
@@ -211,7 +211,7 @@ type Advisory struct {
 			Testcase  struct {
 				ID   int    `json:"id,omitempty"`
 				Name string `json:"name,omitempty"`
-			} `json:"testcase,omitempty"`
+			} `json:"testcase,omitzero"`
 			TestcaseID int `json:"testcase_id,omitempty"`
 		} `json:"testcase_feedback,omitempty"`
 		Text      string `json:"text,omitempty"`
@@ -226,7 +226,7 @@ type Advisory struct {
 			ID     int    `json:"id,omitempty"`
 			Name   string `json:"name,omitempty"`
 			Openid string `json:"openid,omitempty"`
-		} `json:"user,omitempty"`
+		} `json:"user,omitzero"`
 		UserID int `json:"user_id,omitempty"`
 	} `json:"comments,omitempty"`
 	ContentType              *string `json:"content_type,omitempty"`
@@ -266,7 +266,7 @@ type Advisory struct {
 		TestingRepository      *string `json:"testing_repository,omitempty"`
 		TestingTag             string  `json:"testing_tag,omitempty"`
 		Version                string  `json:"version,omitempty"`
-	} `json:"release,omitempty"`
+	} `json:"release,omitzero"`
 	Request          *string `json:"request,omitempty"`
 	RequireBugs      bool    `json:"require_bugs,omitempty"`
 	RequireTestcases bool    `json:"require_testcases,omitempty"`
@@ -295,7 +295,7 @@ type Advisory struct {
 		ID     int    `json:"id,omitempty"`
 		Name   string `json:"name,omitempty"`
 		Openid string `json:"openid,omitempty"`
-	} `json:"user,omitempty"`
+	} `json:"user,omitzero"`
 	VersionHash string `json:"version_hash,omitempty"`
 }
 
@@ -313,7 +313,7 @@ type Bug struct {
 				Testcase  struct {
 					ID   int    `json:"id,omitempty"`
 					Name string `json:"name,omitempty"`
-				} `json:"testcase,omitempty"`
+				} `json:"testcase,omitzero"`
 				TestcaseID int `json:"testcase_id,omitempty"`
 			} `json:"testcase_feedback,omitempty"`
 			Text      string `json:"text,omitempty"`
@@ -328,16 +328,16 @@ type Bug struct {
 				ID     int    `json:"id,omitempty"`
 				Name   string `json:"name,omitempty"`
 				Openid string `json:"openid,omitempty"`
-			} `json:"user,omitempty"`
+			} `json:"user,omitzero"`
 			UserID int `json:"user_id,omitempty"`
-		} `json:"comment,omitempty"`
+		} `json:"comment,omitzero"`
 		CommentID int `json:"comment_id,omitempty"`
 		Karma     int `json:"karma,omitempty"`
 	} `json:"feedback,omitempty"`
 	Parent   bool     `json:"parent,omitempty"`
 	Security bool     `json:"security,omitempty"`
 	Title    *string  `json:"title,omitempty"`
-	Bugzilla Bugzilla `json:"bugzilla,omitempty"`
+	Bugzilla Bugzilla `json:"bugzilla,omitzero"`
 }
 
 type Build struct {
@@ -455,7 +455,7 @@ type Bugzilla struct {
 		Who          struct {
 			Text string `json:"text,omitempty"`
 			Name string `json:"name,omitempty"`
-		} `json:"who,omitempty"`
+		} `json:"who,omitzero"`
 		BugWhen string `json:"bug_when,omitempty"`
 		Thetext string `json:"thetext,omitempty"`
 	} `json:"long_desc,omitempty"`
