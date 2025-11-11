@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -145,8 +144,7 @@ func (opts options) fetch() error {
 		us = append(us, u)
 	}
 
-	bar := pb.StartNew(len(us))
-	if err := client.PipelineGet(us, opts.concurrency, opts.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(us, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
@@ -197,13 +195,10 @@ func (opts options) fetch() error {
 			}
 		}
 
-		bar.Increment()
-
 		return nil
 	}); err != nil {
 		return errors.Wrap(err, "pipeline get")
 	}
-	bar.Finish()
 
 	return nil
 }

@@ -13,9 +13,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -150,7 +150,7 @@ func Fetch(opts ...Option) error {
 	})
 
 	log.Printf("[INFO] Fetched %d Updates", len(rIDtoUID))
-	bar := pb.StartNew(len(rIDtoUID))
+	bar := progressbar.Default(int64(len(rIDtoUID)))
 	for _, u := range pkg.Updates.Update {
 		if u.IsBundle != "true" || u.IsSoftware == "false" {
 			continue
@@ -221,9 +221,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }
@@ -295,11 +295,10 @@ func (opts options) extract(tmpDir string) error {
 	}
 
 	log.Printf("[INFO] extract %s - %s", filepath.Join(tmpDir, "wsusscn2", "package2.cab"), filepath.Join(tmpDir, "wsusscn2", fmt.Sprintf("package%d.cab", len(cabIndex.CABLIST.CAB))))
-	bar := pb.StartNew(len(cabIndex.CABLIST.CAB) - 1)
+	bar := progressbar.Default(int64(len(cabIndex.CABLIST.CAB) - 1))
 	eg, _ := errgroup.WithContext(context.Background())
 	eg.SetLimit(opts.concurrency)
 	for _, c := range cabIndex.CABLIST.CAB {
-		c := c
 		eg.Go(func() error {
 			if c.NAME == "package.cab" {
 				return nil
@@ -325,7 +324,7 @@ func (opts options) extract(tmpDir string) error {
 				}
 			}
 
-			bar.Increment()
+			_ = bar.Add(1)
 
 			return nil
 		})
@@ -333,7 +332,7 @@ func (opts options) extract(tmpDir string) error {
 	if err := eg.Wait(); err != nil {
 		return errors.Wrapf(err, "extract %s", filepath.Join(tmpDir, "wsusscn2", "package\\d{1,2}.cab"))
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

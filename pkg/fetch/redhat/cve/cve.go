@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -109,7 +109,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Println("[INFO] Fetch RedHat CVEs")
-	if err := client.PipelineGet(urls, options.concurrency, options.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(urls, options.concurrency, options.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
@@ -156,14 +156,16 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 		}
 	}()
 
-	bar := pb.Full.Start(len(ys))
+	bar := progressbar.Default(int64(len(ys)))
 	urlsChan := make(chan []string, len(ys))
 	g, ctx := errgroup.WithContext(context.Background())
 	g.SetLimit(opts.concurrency)
 	for y := range yearChan {
-		y := y
-
 		g.Go(func() error {
+			defer func() {
+				_ = bar.Add(1)
+			}()
+
 			var us []string
 			for page := 1; ; page++ {
 				es, err := func() ([]entry, error) {
@@ -205,7 +207,6 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 				return ctx.Err()
 			default:
 				urlsChan <- us
-				bar.Increment()
 				return nil
 			}
 		})
@@ -214,7 +215,7 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 		return nil, errors.Wrap(err, "err in goroutine")
 	}
 	close(urlsChan)
-	bar.Finish()
+	_ = bar.Close()
 
 	var urls []string
 	for us := range urlsChan {

@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -90,15 +90,15 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
-	bar := pb.StartNew(len(vuxml.Vuln))
+	bar := progressbar.Default(int64(len(vuxml.Vuln)))
 	for _, v := range vuxml.Vuln {
 		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%s.json", v.Vid)), v); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%s.json", v.Vid)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

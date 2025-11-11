@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/xmlrpc"
@@ -155,12 +155,15 @@ func Fetch(releases []string, opts ...Option) error {
 			}
 		}()
 
-		bar := pb.Full.Start(len(advs))
+		bar := progressbar.Default(int64(len(advs)))
 		g, ctx := errgroup.WithContext(context.Background())
 		g.SetLimit(options.concurrency)
 		for adv := range advChan {
-			adv := adv
 			g.Go(func() error {
+				defer func() {
+					_ = bar.Add(1)
+				}()
+
 				if err := options.advisory(client, &adv); err != nil {
 					return errors.Wrapf(err, "finish %s %s", release, adv.Alias)
 				}
@@ -181,7 +184,6 @@ func Fetch(releases []string, opts ...Option) error {
 				case <-ctx.Done():
 					return ctx.Err()
 				default:
-					bar.Increment()
 					return nil
 				}
 			})
@@ -189,7 +191,7 @@ func Fetch(releases []string, opts ...Option) error {
 		if err := g.Wait(); err != nil {
 			return errors.Wrap(err, "err in goroutine")
 		}
-		bar.Finish()
+		_ = bar.Close()
 	}
 
 	return nil
@@ -227,7 +229,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 	}
 
 	respChan := make(chan []release, len(urls))
-	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
@@ -299,7 +301,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 	}
 
 	respChan := make(chan []Advisory, len(urls))
-	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

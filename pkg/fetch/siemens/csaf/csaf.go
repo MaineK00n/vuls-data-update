@@ -133,7 +133,7 @@ func (opts options) fetchFeed(client *utilhttp.Client) ([]string, error) {
 }
 
 func (opts options) fetchCSAF(client *utilhttp.Client, urls []string) error {
-	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, func(resp *http.Response) error {
+	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

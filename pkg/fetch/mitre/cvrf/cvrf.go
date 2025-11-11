@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/net/html/charset"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -93,7 +93,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
-	bar := pb.StartNew(len(doc.Vulnerability))
+	bar := progressbar.Default(int64(len(doc.Vulnerability)))
 	for _, v := range doc.Vulnerability {
 		splitted, err := util.Split(v.CVE, "-", "-")
 		if err != nil {
@@ -107,9 +107,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", v.CVE)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

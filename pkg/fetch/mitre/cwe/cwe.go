@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -119,41 +119,41 @@ func Fetch(opts ...Option) error {
 	log.Printf(`[INFO] Weakness`)
 	weaknesses := convertWeaknesses(catalog.Weaknesses, exRefs)
 
-	bar := pb.StartNew(len(weaknesses))
+	bar := progressbar.Default(int64(len(weaknesses)))
 	for _, w := range weaknesses {
 		if err := util.Write(filepath.Join(options.dir, "weakness", fmt.Sprintf("%s.json", w.ID)), w); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "weakness", fmt.Sprintf("%s.json", w.ID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	log.Printf(`[INFO] Category`)
 	categories := convertCategories(catalog.Categories, exRefs)
 
-	bar = pb.StartNew(len(categories))
+	bar = progressbar.Default(int64(len(categories)))
 	for _, c := range categories {
 		if err := util.Write(filepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID)), c); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "category", fmt.Sprintf("%s.json", c.ID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	log.Printf(`[INFO] View`)
 	views := convertViews(catalog.Views, exRefs)
 
-	bar = pb.StartNew(len(views))
+	bar = progressbar.Default(int64(len(views)))
 	for _, v := range views {
 		if err := util.Write(filepath.Join(options.dir, "view", fmt.Sprintf("%s.json", v.ID)), v); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "view", fmt.Sprintf("%s.json", v.ID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

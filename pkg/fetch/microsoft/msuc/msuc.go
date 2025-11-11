@@ -119,7 +119,7 @@ func Fetch(queries []string, opts ...Option) error {
 		}
 
 		uidChan := make(chan []string, len(us))
-		if err := client.PipelineGet(us, options.concurrency, options.wait, func(resp *http.Response) error {
+		if err := client.PipelineGet(us, options.concurrency, options.wait, false, func(resp *http.Response) error {
 			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
@@ -195,7 +195,7 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 	}
 
 	uidChan := make(chan []string, len(reqs))
-	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, func(resp *http.Response) error {
+	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {

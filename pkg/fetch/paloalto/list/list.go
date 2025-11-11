@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -108,7 +108,7 @@ func Fetch(opts ...Option) error {
 		advs = append(advs, as...)
 	}
 
-	bar := pb.StartNew(len(advs))
+	bar := progressbar.Default(int64(len(advs)))
 	for _, a := range advs {
 		switch {
 		case strings.HasPrefix(a.ID, "PAN-SA-"):
@@ -139,9 +139,9 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("unexpected ID prefix. expected: %q, actual: %q", []string{"PAN-SA-", "CVE-"}, a.ID)
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

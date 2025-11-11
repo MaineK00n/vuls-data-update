@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	jvnutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -147,15 +147,15 @@ func Fetch(opts ...Option) error {
 		}
 	}
 
-	bar := pb.StartNew(len(ps))
+	bar := progressbar.Default(int64(len(ps)))
 	for _, p := range ps {
 		if err := util.Write(filepath.Join(options.dir, p.Vid, fmt.Sprintf("%s.json", p.Pid)), p); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, p.Vid, fmt.Sprintf("%s.json", p.Pid)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

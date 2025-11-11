@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 )
@@ -118,7 +118,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", cloneDir)
 	}
 
-	bar := pb.StartNew(len(as))
+	bar := progressbar.Default(int64(len(as)))
 	for _, a := range as {
 		splitted, err := util.Split(a.ID, "-")
 		if err != nil {
@@ -132,9 +132,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0][:4], fmt.Sprintf("GLSA-%s.json", a.ID)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

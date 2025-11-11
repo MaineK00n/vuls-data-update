@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -121,54 +121,54 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Ubuntu CVE %s/%s Definitions", release, service)
-		bar := pb.StartNew(len(r.Definitions.Definition))
+		bar := progressbar.Default(int64(len(r.Definitions.Definition)))
 		for _, def := range r.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, release, "cve", service, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "cve", service, "definitions", fmt.Sprintf("%s.json", def.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu CVE %s/%s Tests", release, service)
-		bar = pb.StartNew(len(r.Tests.Textfilecontent54Test))
+		bar = progressbar.Default(int64(len(r.Tests.Textfilecontent54Test)))
 		for _, test := range r.Tests.Textfilecontent54Test {
 			if err := util.Write(filepath.Join(options.dir, release, "cve", service, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "cve", service, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu CVE %s/%s Objects", release, service)
-		bar = pb.StartNew(len(r.Objects.Textfilecontent54Object))
+		bar = progressbar.Default(int64(len(r.Objects.Textfilecontent54Object)))
 		for _, object := range r.Objects.Textfilecontent54Object {
 			if err := util.Write(filepath.Join(options.dir, release, "cve", service, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "cve", service, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu CVE %s/%s States", release, service)
-		bar = pb.StartNew(len(r.States.Textfilecontent54State))
+		bar = progressbar.Default(int64(len(r.States.Textfilecontent54State)))
 		for _, state := range r.States.Textfilecontent54State {
 			if err := util.Write(filepath.Join(options.dir, release, "cve", service, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "cve", service, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu CVE %s/%s Variables", release, service)
-		bar = pb.StartNew(len(r.Variables.ConstantVariable))
+		bar = progressbar.Default(int64(len(r.Variables.ConstantVariable)))
 		for _, variable := range r.Variables.ConstantVariable {
 			if err := util.Write(filepath.Join(options.dir, release, "cve", service, "variables", "constant_variable", fmt.Sprintf("%s.json", variable.ID)), variable); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "cve", service, "variables", "constant_variable", fmt.Sprintf("%s.json", variable.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 	}
 
 	for name, href := range ovals.PKG {
@@ -207,54 +207,54 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Ubuntu PKG %s/%s Definitions", release, service)
-		bar := pb.StartNew(len(r.Definitions.Definition))
+		bar := progressbar.Default(int64(len(r.Definitions.Definition)))
 		for _, def := range r.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, release, "pkg", service, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "pkg", service, "definitions", fmt.Sprintf("%s.json", def.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu PKG %s/%s Tests", release, service)
-		bar = pb.StartNew(len(r.Tests.Textfilecontent54Test))
+		bar = progressbar.Default(int64(len(r.Tests.Textfilecontent54Test)))
 		for _, test := range r.Tests.Textfilecontent54Test {
 			if err := util.Write(filepath.Join(options.dir, release, "pkg", service, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "pkg", service, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu PKG %s/%s Objects", release, service)
-		bar = pb.StartNew(len(r.Objects.Textfilecontent54Object))
+		bar = progressbar.Default(int64(len(r.Objects.Textfilecontent54Object)))
 		for _, object := range r.Objects.Textfilecontent54Object {
 			if err := util.Write(filepath.Join(options.dir, release, "pkg", service, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "pkg", service, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu PKG %s/%s States", release, service)
-		bar = pb.StartNew(len(r.States.Textfilecontent54State))
+		bar = progressbar.Default(int64(len(r.States.Textfilecontent54State)))
 		for _, state := range r.States.Textfilecontent54State {
 			if err := util.Write(filepath.Join(options.dir, release, "pkg", service, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "pkg", service, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu PKG %s/%s Variables", release, service)
-		bar = pb.StartNew(len(r.Variables.ConstantVariable))
+		bar = progressbar.Default(int64(len(r.Variables.ConstantVariable)))
 		for _, variable := range r.Variables.ConstantVariable {
 			if err := util.Write(filepath.Join(options.dir, release, "pkg", service, "variables", "constant_variable", fmt.Sprintf("%s.json", variable.ID)), variable); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "pkg", service, "variables", "constant_variable", fmt.Sprintf("%s.json", variable.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 	}
 
 	for release, href := range ovals.USN {
@@ -288,54 +288,54 @@ func Fetch(opts ...Option) error {
 		}
 
 		log.Printf("[INFO] Fetch Ubuntu USN %s Definitions", release)
-		bar := pb.StartNew(len(r.Definitions.Definition))
+		bar := progressbar.Default(int64(len(r.Definitions.Definition)))
 		for _, def := range r.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, release, "usn", "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "usn", "definitions", fmt.Sprintf("%s.json", def.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu USN %s Tests", release)
-		bar = pb.StartNew(len(r.Tests.Textfilecontent54Test))
+		bar = progressbar.Default(int64(len(r.Tests.Textfilecontent54Test)))
 		for _, test := range r.Tests.Textfilecontent54Test {
 			if err := util.Write(filepath.Join(options.dir, release, "usn", "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "usn", "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", test.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu USN %s Objects", release)
-		bar = pb.StartNew(len(r.Objects.Textfilecontent54Object))
+		bar = progressbar.Default(int64(len(r.Objects.Textfilecontent54Object)))
 		for _, object := range r.Objects.Textfilecontent54Object {
 			if err := util.Write(filepath.Join(options.dir, release, "usn", "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "usn", "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", object.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu USN %s States", release)
-		bar = pb.StartNew(len(r.States.Textfilecontent54State))
+		bar = progressbar.Default(int64(len(r.States.Textfilecontent54State)))
 		for _, state := range r.States.Textfilecontent54State {
 			if err := util.Write(filepath.Join(options.dir, release, "usn", "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "usn", "states", "textfilecontent54_state", fmt.Sprintf("%s.json", state.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		log.Printf("[INFO] Fetch Ubuntu USN %s Variables", release)
-		bar = pb.StartNew(len(r.Variables.ConstantVariable))
+		bar = progressbar.Default(int64(len(r.Variables.ConstantVariable)))
 		for _, v := range r.Variables.ConstantVariable {
 			if err := util.Write(filepath.Join(options.dir, release, "usn", "variables", "constant_variable", fmt.Sprintf("%s.json", v.ID)), v); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, release, "usn", "variables", "constant_variable", fmt.Sprintf("%s.json", v.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 	}
 
 	return nil

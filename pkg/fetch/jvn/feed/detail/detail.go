@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	jvnutil "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/util"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -138,7 +138,7 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "fetch")
 		}
 
-		bar := pb.StartNew(len(vs))
+		bar := progressbar.Default(int64(len(vs)))
 		for _, a := range vs {
 			splitted, err := util.Split(a.VulinfoID, "-", "-")
 			if err != nil {
@@ -152,9 +152,9 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", a.VulinfoID)))
 			}
 
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 	}
 
 	return nil

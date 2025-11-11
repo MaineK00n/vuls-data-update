@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -189,7 +189,7 @@ func Fetch(opts ...Option) error {
 		modules = append(modules, module)
 	}
 
-	bar := pb.StartNew(len(modules))
+	bar := progressbar.Default(int64(len(modules)))
 	for _, m := range modules {
 		dir, file := filepath.Split(m.Fullname)
 
@@ -197,9 +197,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, dir, fmt.Sprintf("%s.json", file)))
 		}
 
-		bar.Increment()
+		_ = bar.Add(1)
 	}
-	bar.Finish()
+	_ = bar.Close()
 
 	return nil
 }

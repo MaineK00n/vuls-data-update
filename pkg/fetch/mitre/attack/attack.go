@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"path/filepath"
 
-	"github.com/cheggaaa/pb/v3"
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
@@ -96,14 +96,14 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		bar := pb.StartNew(len(enterprise.Objects))
+		bar := progressbar.Default(int64(len(enterprise.Objects)))
 		for _, o := range enterprise.Objects {
 			if err := util.Write(filepath.Join(options.dir, "enterprise", o.Type, fmt.Sprintf("%s.json", o.ID)), o); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "enterprise", o.Type, fmt.Sprintf("%s.json", o.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		return nil
 	}(); err != nil {
@@ -133,14 +133,14 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		bar := pb.StartNew(len(ics.Objects))
+		bar := progressbar.Default(int64(len(ics.Objects)))
 		for _, o := range ics.Objects {
 			if err := util.Write(filepath.Join(options.dir, "ics", o.Type, fmt.Sprintf("%s.json", o.ID)), o); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "ics", o.Type, fmt.Sprintf("%s.json", o.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		return nil
 	}(); err != nil {
@@ -170,14 +170,14 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "decode json")
 		}
 
-		bar := pb.StartNew(len(mobile.Objects))
+		bar := progressbar.Default(int64(len(mobile.Objects)))
 		for _, o := range mobile.Objects {
 			if err := util.Write(filepath.Join(options.dir, "mobile", o.Type, fmt.Sprintf("%s.json", o.ID)), o); err != nil {
 				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "mobile", o.Type, fmt.Sprintf("%s.json", o.ID)))
 			}
-			bar.Increment()
+			_ = bar.Add(1)
 		}
-		bar.Finish()
+		_ = bar.Close()
 
 		return nil
 	}(); err != nil {
