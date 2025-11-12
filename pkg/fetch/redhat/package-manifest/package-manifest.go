@@ -130,12 +130,6 @@ func writeTable(major string, s *goquery.Selection, rootDir string) error {
 		return errors.Wrap(err, "find reference")
 	}
 
-	// RHEL10's "2.6. The Resilient Storage add-on" table has "RHEL 9 Minor Release Version" column header
-	// even though it's for RHEL 10. The table should be removed in the future because it is deprecated in RHEL 10.
-	if major == "10" && ref == "resilient-storage-addon" {
-		return nil
-	}
-
 	var headers []string
 	s.Find("thead tr").Last().Find("th").Each(func(_ int, h *goquery.Selection) {
 		headers = append(headers, h.Text())
