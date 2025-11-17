@@ -47,7 +47,7 @@ type CVE struct {
 	CVETags               []CVETags       `json:"cveTags,omitempty"`
 	Descriptions          []LangString    `json:"descriptions"`
 	References            []Reference     `json:"references"`
-	Metrics               Metrics         `json:"metrics,omitempty"`
+	Metrics               Metrics         `json:"metrics,omitzero"`
 	Weaknesses            []Weakness      `json:"weaknesses,omitempty"`
 	Configurations        []Config        `json:"configurations,omitempty"`
 	VendorComments        []VendorComment `json:"vendorComments,omitempty"`

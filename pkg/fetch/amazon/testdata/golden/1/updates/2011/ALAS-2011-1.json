@@ -19,13 +19,11 @@
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192",
 				"ID": "CVE-2011-3192",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "https://rhn.redhat.com/errata/RHSA-2011:1245.html",
 				"ID": "RHSA-2011:1245",
-				"Title": "",
 				"Type": "redhat"
 			}
 		]

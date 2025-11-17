@@ -20,14 +20,14 @@ type offlineSyncPackage struct {
 	SourceId             string `xml:"SourceId,attr" json:"sourceid,omitempty"`
 	Updates              struct {
 		Update []Update `xml:"Update" json:"update,omitempty"`
-	} `xml:"Updates" json:"updates,omitempty"`
+	} `xml:"Updates" json:"updates,omitzero"`
 	FileLocations struct {
 		FileLocation []struct {
 			ID         string `xml:"Id,attr" json:"id,omitempty"`
 			URL        string `xml:"Url,attr" json:"url,omitempty"`
 			IsIncluded string `xml:"IsIncluded,attr" json:"isincluded,omitempty"`
 		} `xml:"FileLocation" json:"filelocation,omitempty"`
-	} `xml:"FileLocations" json:"filelocations,omitempty"`
+	} `xml:"FileLocations" json:"filelocations,omitzero"`
 }
 
 type Update struct {
@@ -55,7 +55,7 @@ type Update struct {
 			Type string `xml:"Type,attr" json:"type,omitempty"`
 			ID   string `xml:"Id,attr" json:"id,omitempty"`
 		} `xml:"Category" json:"category,omitempty"`
-	} `xml:"Categories" json:"categories,omitempty"`
+	} `xml:"Categories" json:"categories,omitzero"`
 	// PayloadFiles struct {
 	// 	File []struct {
 	// 		ID string `xml:"Id,attr" json:"id,omitempty"`
@@ -65,7 +65,7 @@ type Update struct {
 		Language []struct {
 			Name string `xml:"Name,attr" json:"name,omitempty"`
 		} `xml:"Language" json:"language,omitempty"`
-	} `xml:"Languages" json:"languages,omitempty"`
+	} `xml:"Languages" json:"languages,omitzero"`
 	// BundledBy struct {
 	// 	Revision []struct {
 	// 		ID string `xml:"Id,attr" json:"id,omitempty"`
@@ -75,7 +75,7 @@ type Update struct {
 		Revision []struct {
 			ID string `xml:"Id,attr" json:"id,omitempty"`
 		} `xml:"Revision" json:"revision,omitempty"`
-	} `xml:"SupersededBy" json:"supersededby,omitempty"`
+	} `xml:"SupersededBy" json:"supersededby,omitzero"`
 	// EulaFiles struct {
 	// 	File []struct {
 	// 		ID       string `xml:"Id,attr" json:"id,omitempty"`
@@ -101,22 +101,22 @@ type X struct {
 	InstallationBehavior       struct {
 		RebootBehavior      string `xml:"RebootBehavior,attr" json:"rebootbehavior,omitempty"`
 		CanRequestUserInput string `xml:"CanRequestUserInput,attr" json:"canrequestuserinput,omitempty"`
-	} `xml:"InstallationBehavior" json:"installationbehavior,omitempty"`
+	} `xml:"InstallationBehavior" json:"installationbehavior,omitzero"`
 	Language []struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
 	} `xml:"Language" json:"language,omitempty"`
 	SupportUrl struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
-	} `xml:"SupportUrl" json:"supporturl,omitempty"`
+	} `xml:"SupportUrl" json:"supporturl,omitzero"`
 	SecurityBulletinID struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
-	} `xml:"SecurityBulletinID" json:"securitybulletinid,omitempty"`
+	} `xml:"SecurityBulletinID" json:"securitybulletinid,omitzero"`
 	KBArticleID struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
-	} `xml:"KBArticleID" json:"kbarticleid,omitempty"`
+	} `xml:"KBArticleID" json:"kbarticleid,omitzero"`
 	UninstallationBehavior struct {
 		RebootBehavior string `xml:"RebootBehavior,attr" json:"rebootbehavior,omitempty"`
-	} `xml:"UninstallationBehavior" json:"uninstallationbehavior,omitempty"`
+	} `xml:"UninstallationBehavior" json:"uninstallationbehavior,omitzero"`
 	CveID []struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
 	} `xml:"CveID" json:"cveid,omitempty"`
@@ -125,11 +125,11 @@ type X struct {
 type L struct {
 	Language struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
-	} `xml:"Language" json:"language,omitempty"`
+	} `xml:"Language" json:"language,omitzero"`
 	Title struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
-	} `xml:"Title" json:"title,omitempty"`
+	} `xml:"Title" json:"title,omitzero"`
 	Description struct {
 		Text string `xml:",chardata" json:"text,omitempty"`
-	} `xml:"Description" json:"description,omitempty"`
+	} `xml:"Description" json:"description,omitzero"`
 }

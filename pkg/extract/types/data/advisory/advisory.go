@@ -9,7 +9,7 @@ import (
 )
 
 type Advisory struct {
-	Content  contentTypes.Content   `json:"content,omitempty"`
+	Content  contentTypes.Content   `json:"content,omitzero"`
 	Segments []segmentTypes.Segment `json:"segments,omitempty"`
 }
 

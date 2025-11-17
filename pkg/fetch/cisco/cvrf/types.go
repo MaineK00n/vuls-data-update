@@ -3,7 +3,7 @@ package cvrf
 import "encoding/xml"
 
 type CVRF struct {
-	XMLName           xml.Name `xml:"cvrfdoc" json:"xml_name,omitempty"`
+	XMLName           xml.Name `xml:"cvrfdoc" json:"xml_name,omitzero"`
 	DocumentTitle     string   `xml:"DocumentTitle" json:"document_title"`
 	DocumentType      string   `xml:"DocumentType" json:"document_type"`
 	DocumentPublisher struct {
@@ -11,7 +11,7 @@ type CVRF struct {
 		VendorID         *string `xml:"VendorID,attr,omitempty" json:"vendor_id,omitempty"`
 		ContactDetails   *string `xml:"ContactDetails,omitempty" json:"contact_details,omitempty"`
 		IssuingAuthority *string `xml:"IssuingAuthority,omitempty" json:"issuing_authority,omitempty"`
-	} `xml:"DocumentPublisher" json:"document_publisher,omitempty"`
+	} `xml:"DocumentPublisher" json:"document_publisher,omitzero"`
 	DocumentTracking struct {
 		Identification struct {
 			ID    string   `xml:"ID" json:"id"`

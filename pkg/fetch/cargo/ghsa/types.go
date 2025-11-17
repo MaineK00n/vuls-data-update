@@ -32,7 +32,7 @@ type Affected struct {
 		Ecosystem string `json:"ecosystem,omitempty"`
 		Name      string `json:"name,omitempty"`
 		PURL      string `json:"purl,omitempty"`
-	} `json:"package,omitempty"`
+	} `json:"package,omitzero"`
 	Severity []struct {
 		Type  string `json:"type,omitempty"`
 		Score string `json:"score,omitempty"`

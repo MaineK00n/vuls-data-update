@@ -5,6 +5,5 @@
 	"version": "636",
 	"object": {
 		"object_ref": "oval:com.redhat.cve:obj:202237434003"
-	},
-	"state": {}
+	}
 }

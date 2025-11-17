@@ -17,11 +17,6 @@
 		"title": "Authenticated Heap Overflow in SSL-VPN bookmarks",
 		"tracking": {
 			"current_release_date": "2025-09-30T08:52:10",
-			"generator": {
-				"engine": {
-					"name": ""
-				}
-			},
 			"id": "FG-IR-25-756",
 			"initial_release_date": "2025-09-30T08:52:10",
 			"revision_history": [

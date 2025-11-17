@@ -19,25 +19,21 @@
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778",
 				"ID": "CVE-2021-3778",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796",
 				"ID": "CVE-2021-3796",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872",
 				"ID": "CVE-2021-3872",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875",
 				"ID": "CVE-2021-3875",
-				"Title": "",
 				"Type": "cve"
 			}
 		]

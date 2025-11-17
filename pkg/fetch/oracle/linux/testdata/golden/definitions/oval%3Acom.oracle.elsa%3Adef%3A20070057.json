@@ -47,8 +47,7 @@
 					"cvss2": "4.3/AV:N/AC:M/Au:N/C:N/I:N/A:P",
 					"public": "20070125"
 				}
-			],
-			"affected_cpe_list": {}
+			]
 		}
 	},
 	"criteria": {

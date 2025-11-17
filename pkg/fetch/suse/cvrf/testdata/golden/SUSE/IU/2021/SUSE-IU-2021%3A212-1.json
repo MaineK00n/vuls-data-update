@@ -69,8 +69,7 @@
 							"product_id": "Public Cloud Image google/sles-12-sp3-byos-v20210303"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Version",
@@ -6744,8 +6743,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.6",
 					"vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P"
@@ -6779,8 +6776,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "5",
 					"vector": "AV:N/AC:L/Au:N/C:N/I:P/A:N"
@@ -6811,8 +6806,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "5.4",
 					"vector": "AV:L/AC:M/Au:N/C:P/I:N/A:C"
@@ -6843,8 +6836,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -6875,8 +6866,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -6907,8 +6896,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -6939,8 +6926,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "5.6",
 					"vector": "AV:L/AC:L/Au:N/C:N/I:P/A:C"
@@ -6971,8 +6956,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7003,8 +6986,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.9",
 					"vector": "AV:L/AC:L/Au:N/C:N/I:N/A:C"
@@ -7035,8 +7016,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "3.6",
 					"vector": "AV:L/AC:L/Au:N/C:N/I:P/A:P"
@@ -7067,8 +7046,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.4",
 					"vector": "AV:L/AC:M/Au:N/C:P/I:P/A:P"
@@ -7100,8 +7077,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7133,8 +7108,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7165,8 +7138,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7197,8 +7168,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "2.1",
 					"vector": "AV:L/AC:L/Au:N/C:P/I:N/A:N"
@@ -7229,8 +7198,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.9",
 					"vector": "AV:L/AC:L/Au:N/C:N/I:N/A:C"
@@ -7261,8 +7228,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.7",
 					"vector": "AV:L/AC:M/Au:N/C:N/I:N/A:C"
@@ -7294,8 +7259,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7326,8 +7289,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7359,8 +7320,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "6.9",
 					"vector": "AV:L/AC:M/Au:N/C:C/I:C/A:C"
@@ -7391,8 +7350,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7423,8 +7380,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "5.4",
 					"vector": "AV:L/AC:M/Au:N/C:P/I:N/A:C"
@@ -7455,8 +7410,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.9",
 					"vector": "AV:L/AC:L/Au:N/C:N/I:N/A:C"
@@ -7487,8 +7440,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "6.1",
 					"vector": "AV:L/AC:L/Au:N/C:P/I:P/A:C"
@@ -7519,8 +7470,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "6.1",
 					"vector": "AV:L/AC:L/Au:N/C:P/I:P/A:C"
@@ -7551,8 +7500,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.9",
 					"vector": "AV:L/AC:L/Au:N/C:N/I:N/A:C"
@@ -7583,8 +7530,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7615,8 +7560,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "2.1",
 					"vector": "AV:L/AC:L/Au:N/C:P/I:N/A:N"
@@ -7647,8 +7590,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7679,8 +7620,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7711,8 +7650,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "1.9",
 					"vector": "AV:L/AC:M/Au:N/C:P/I:N/A:N"
@@ -7744,8 +7681,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "6.8",
 					"vector": "AV:N/AC:M/Au:N/C:P/I:P/A:P"
@@ -7777,8 +7712,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7810,8 +7743,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"
@@ -7843,8 +7774,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "4.6",
 					"vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P"
@@ -7875,8 +7804,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.5",
 					"vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P"
@@ -7910,8 +7837,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.5",
 					"vector": "AV:N/AC:L/Au:N/C:P/I:P/A:P"
@@ -7942,8 +7867,6 @@
 				}
 			],
 			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
 				"scoreset": {
 					"basescore": "7.2",
 					"vector": "AV:L/AC:L/Au:N/C:C/I:C/A:C"

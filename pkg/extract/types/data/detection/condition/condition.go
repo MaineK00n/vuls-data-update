@@ -11,7 +11,7 @@ import (
 )
 
 type Condition struct {
-	Criteria criteriaTypes.Criteria    `json:"criteria,omitempty"`
+	Criteria criteriaTypes.Criteria    `json:"criteria,omitzero"`
 	Tag      segmentTypes.DetectionTag `json:"tag,omitempty"`
 }
 
@@ -46,7 +46,7 @@ func (c Condition) Accept(query criterionTypes.Query) (FilteredCondition, error)
 }
 
 type FilteredCondition struct {
-	Criteria criteriaTypes.FilteredCriteria `json:"criteria,omitempty"`
+	Criteria criteriaTypes.FilteredCriteria `json:"criteria,omitzero"`
 	Tag      segmentTypes.DetectionTag      `json:"tag,omitempty"`
 }
 

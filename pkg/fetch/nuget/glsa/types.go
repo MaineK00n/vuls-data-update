@@ -29,6 +29,6 @@ type GLSA struct {
 			Tags      []string `yaml:"tags" json:"tags,omitempty"`
 			SHA       string   `yaml:"sha" json:"sha,omitempty"`
 			Timestamp string   `yaml:"timestamp" json:"timestamp,omitempty"`
-		} `yaml:"commit" json:"commit,omitempty"`
+		} `yaml:"commit" json:"commit,omitzero"`
 	} `yaml:"versions" json:"versions,omitempty"`
 }

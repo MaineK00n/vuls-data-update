@@ -2,11 +2,9 @@
 	"id": "oval:com.vmware.phsa:ste:202410000112",
 	"attr_version": "633",
 	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
-	"version": {},
 	"evr": {
 		"text": "0:044-4.ph1",
 		"datatype": "evr_string",
 		"operation": "less than"
-	},
-	"signature_keyid": {}
+	}
 }

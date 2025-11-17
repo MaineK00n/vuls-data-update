@@ -1,79 +1,79 @@
 package gentoo
 
 type GLSA struct {
-	ID       string `xml:"id,attr"`
-	Title    string `xml:"title"`
-	Synopsis string `xml:"synopsis"`
+	ID       string `xml:"id,attr" json:"ID,omitempty"`
+	Title    string `xml:"title" json:"Title,omitempty"`
+	Synopsis string `xml:"synopsis" json:"Synopsis,omitempty"`
 	Product  struct {
-		Text string `xml:",chardata"`
-		Type string `xml:"type,attr"`
-	} `xml:"product"`
-	Announced string `xml:"announced"`
+		Text string `xml:",chardata" json:"Text,omitempty"`
+		Type string `xml:"type,attr" json:"Type,omitempty"`
+	} `xml:"product" json:"Product,omitzero"`
+	Announced string `xml:"announced" json:"Announced,omitempty"`
 	Revised   struct {
-		Text  string `xml:",chardata"`
-		Count string `xml:"count,attr"`
-	} `xml:"revised"`
-	Bug      []string `xml:"bug"`
-	Access   string   `xml:"access"`
+		Text  string `xml:",chardata" json:"Text,omitempty"`
+		Count string `xml:"count,attr" json:"Count,omitempty"`
+	} `xml:"revised" json:"Revised,omitzero"`
+	Bug      []string `xml:"bug" json:"Bug,omitempty"`
+	Access   string   `xml:"access" json:"Access,omitempty"`
 	Affected struct {
 		Package []struct {
-			Name       string `xml:"name,attr"`
-			Auto       string `xml:"auto,attr"`
-			Arch       string `xml:"arch,attr"`
+			Name       string `xml:"name,attr" json:"Name,omitempty"`
+			Auto       string `xml:"auto,attr" json:"Auto,omitempty"`
+			Arch       string `xml:"arch,attr" json:"Arch,omitempty"`
 			Unaffected []struct {
-				Text  string `xml:",chardata"`
-				Range string `xml:"range,attr"`
-				Slot  string `xml:"slot,attr"`
-			} `xml:"unaffected"`
+				Text  string `xml:",chardata" json:"Text,omitempty"`
+				Range string `xml:"range,attr" json:"Range,omitempty"`
+				Slot  string `xml:"slot,attr" json:"Slot,omitempty"`
+			} `xml:"unaffected" json:"Unaffected,omitempty"`
 			Vulnerable []struct {
-				Text  string `xml:",chardata"`
-				Range string `xml:"range,attr"`
-				Slot  string `xml:"slot,attr"`
-			} `xml:"vulnerable"`
-		} `xml:"package"`
+				Text  string `xml:",chardata" json:"Text,omitempty"`
+				Range string `xml:"range,attr" json:"Range,omitempty"`
+				Slot  string `xml:"slot,attr" json:"Slot,omitempty"`
+			} `xml:"vulnerable" json:"Vulnerable,omitempty"`
+		} `xml:"package" json:"Package,omitempty"`
 		Service struct {
-			Text  string `xml:",chardata"`
-			Type  string `xml:"type,attr"`
-			Fixed string `xml:"fixed,attr"`
-		} `xml:"service"`
-	} `xml:"affected"`
+			Text  string `xml:",chardata" json:"Text,omitempty"`
+			Type  string `xml:"type,attr" json:"Type,omitempty"`
+			Fixed string `xml:"fixed,attr" json:"Fixed,omitempty"`
+		} `xml:"service" json:"Service,omitzero"`
+	} `xml:"affected" json:"Affected,omitzero"`
 	Background struct {
-		Text string `xml:",innerxml"`
-	} `xml:"background"`
+		Text string `xml:",innerxml" json:"Text,omitempty"`
+	} `xml:"background" json:"Background,omitzero"`
 	Description struct {
-		Text string `xml:",innerxml"`
-	} `xml:"description"`
+		Text string `xml:",innerxml" json:"Text,omitempty"`
+	} `xml:"description" json:"Description,omitzero"`
 	Impact struct {
-		Type string `xml:"type,attr"`
-		Text string `xml:",innerxml"`
-	} `xml:"impact"`
+		Type string `xml:"type,attr" json:"Type,omitempty"`
+		Text string `xml:",innerxml" json:"Text,omitempty"`
+	} `xml:"impact" json:"Impact,omitzero"`
 	Workaround struct {
-		Text string `xml:",innerxml"`
-	} `xml:"workaround"`
+		Text string `xml:",innerxml" json:"Text,omitempty"`
+	} `xml:"workaround" json:"Workaround,omitzero"`
 	Resolution struct {
-		Text string `xml:",chardata"`
+		Text string `xml:",chardata" json:"Text,omitempty"`
 		P    []struct {
-			Text string `xml:",chardata"`
+			Text string `xml:",chardata" json:"Text,omitempty"`
 			URI  struct {
-				Text string `xml:",chardata"`
-				Link string `xml:"link,attr"`
-			} `xml:"uri"`
-			Br   []string `xml:"br"`
-			I    []string `xml:"i"`
-			Code string   `xml:"code"`
-			P    string   `xml:"p"`
-		} `xml:"p"`
-		Code []string `xml:"code"`
-	} `xml:"resolution"`
+				Text string `xml:",chardata" json:"Text,omitempty"`
+				Link string `xml:"link,attr" json:"Link,omitempty"`
+			} `xml:"uri" json:"URI,omitzero"`
+			Br   []string `xml:"br" json:"Br,omitempty"`
+			I    []string `xml:"i" json:"I,omitempty"`
+			Code string   `xml:"code" json:"Code,omitempty"`
+			P    string   `xml:"p" json:"P,omitempty"`
+		} `xml:"p" json:"P,omitempty"`
+		Code []string `xml:"code" json:"Code,omitempty"`
+	} `xml:"resolution" json:"Resolution,omitzero"`
 	References struct {
 		URI []struct {
-			Text string `xml:",chardata"`
-			Link string `xml:"link,attr"`
-		} `xml:"uri"`
-	} `xml:"references"`
+			Text string `xml:",chardata" json:"Text,omitempty"`
+			Link string `xml:"link,attr" json:"Link,omitempty"`
+		} `xml:"uri" json:"URI,omitempty"`
+	} `xml:"references" json:"References,omitzero"`
 	Metadata []struct {
-		Text      string `xml:",chardata"`
-		Tag       string `xml:"tag,attr"`
-		Timestamp string `xml:"timestamp,attr"`
-	} `xml:"metadata"`
+		Text      string `xml:",chardata" json:"Text,omitempty"`
+		Tag       string `xml:"tag,attr" json:"Tag,omitempty"`
+		Timestamp string `xml:"timestamp,attr" json:"Timestamp,omitempty"`
+	} `xml:"metadata" json:"Metadata,omitempty"`
 }

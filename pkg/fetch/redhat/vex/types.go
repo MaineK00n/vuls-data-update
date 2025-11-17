@@ -101,7 +101,7 @@ type Document struct {
 				Name    string `json:"name"`
 				Version string `json:"version,omitempty"`
 			} `json:"engine"`
-		} `json:"generator,omitempty"`
+		} `json:"generator,omitzero"`
 		ID                 string `json:"id"`
 		InitialReleaseDate string `json:"initial_release_date"`
 		RevisionHistory    []struct {
@@ -167,7 +167,7 @@ type Vulnerability struct {
 		LastAffected       []ProductID `json:"last_affected,omitempty"`
 		Recommended        []ProductID `json:"recommended,omitempty"`
 		UnderInvestigation []ProductID `json:"under_investigation,omitempty"`
-	} `json:"product_status,omitempty"`
+	} `json:"product_status,omitzero"`
 	References []struct {
 		Category string `json:"category,omitempty"`
 		Summary  string `json:"summary,omitempty"`

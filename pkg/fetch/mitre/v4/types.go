@@ -3,7 +3,7 @@ package v4
 import "encoding/xml"
 
 type root struct {
-	XMLName                   xml.Name        `xml:"cve" json:"cve,omitempty"`
+	XMLName                   xml.Name        `xml:"cve" json:"cve,omitzero"`
 	Xmlns                     string          `xml:"xmlns,attr" json:"xmlns,omitempty"`
 	Xsi                       string          `xml:"xsi,attr" json:"xsi,omitempty"`
 	NoNamespaceSchemaLocation string          `xml:"noNamespaceSchemaLocation,attr" json:"nonamespaceschemalocation,omitempty"`

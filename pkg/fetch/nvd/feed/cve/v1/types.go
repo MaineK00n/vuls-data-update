@@ -12,8 +12,8 @@ type doc struct {
 
 type CVEItem struct {
 	Cve              CVE            `json:"cve"`
-	Configurations   Configurations `json:"configurations,omitempty"`
-	Impact           Impact         `json:"impact,omitempty"`
+	Configurations   Configurations `json:"configurations,omitzero"`
+	Impact           Impact         `json:"impact,omitzero"`
 	PublishedDate    string         `json:"publishedDate,omitempty"`
 	LastModifiedDate string         `json:"lastModifiedDate,omitempty"`
 }
@@ -27,7 +27,7 @@ type CVE struct {
 		ID       string `json:"ID"`
 		ASSIGNER string `json:"ASSIGNER"`
 		STATE    string `json:"STATE,omitempty"`
-	} `json:"CVE_data_meta,omitempty"`
+	} `json:"CVE_data_meta,omitzero"`
 	Affects struct {
 		Vendor struct {
 			VendorData []struct {
@@ -45,7 +45,7 @@ type CVE struct {
 				} `json:"product"`
 			} `json:"vendor_data"`
 		} `json:"vendor"`
-	} `json:"affects,omitempty"`
+	} `json:"affects,omitzero"`
 	Problemtype struct {
 		ProblemtypeData []struct {
 			Description []struct {
@@ -119,7 +119,7 @@ type Impact struct {
 			IntegrityRequirement       string  `json:"integrityRequirement,omitempty"`
 			AvailabilityRequirement    string  `json:"availabilityRequirement,omitempty"`
 			EnvironmentalScore         float64 `json:"environmentalScore,omitempty"`
-		} `json:"cvssV2,omitempty"`
+		} `json:"cvssV2,omitzero"`
 		Severity                string  `json:"severity,omitempty"`
 		ExploitabilityScore     float64 `json:"exploitabilityScore,omitempty"`
 		ImpactScore             float64 `json:"impactScore,omitempty"`
@@ -161,7 +161,7 @@ type Impact struct {
 			ModifiedAvailabilityImpact    string  `json:"modifiedAvailabilityImpact,omitempty"`
 			EnvironmentalScore            float64 `json:"environmentalScore,omitempty"`
 			EnvironmentalSeverity         string  `json:"environmentalSeverity,omitempty"`
-		} `json:"cvssV3,omitempty"`
+		} `json:"cvssV3,omitzero"`
 		ExploitabilityScore float64 `json:"exploitabilityScore,omitempty"`
 		ImpactScore         float64 `json:"impactScore,omitempty"`
 	} `json:"baseMetricV3,omitempty"`

@@ -46,7 +46,6 @@
 					"public": "20220520"
 				}
 			],
-			"affected": {},
 			"affected_cpe_list": {
 				"cpe": [
 					"cpe:/a:redhat:enterprise_linux:9",

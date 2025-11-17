@@ -62,7 +62,7 @@ type Statement struct {
 	//
 	// [vul_id] MAY be URIs or URLs.
 	// [vul_id] MAY be arbitrary and MAY be created by the VEX statement [author].
-	Vulnerability Vulnerability `json:"vulnerability,omitempty"`
+	Vulnerability Vulnerability `json:"vulnerability,omitzero"`
 
 	// Timestamp is the time at which the information expressed in the Statement
 	// was known to be true.

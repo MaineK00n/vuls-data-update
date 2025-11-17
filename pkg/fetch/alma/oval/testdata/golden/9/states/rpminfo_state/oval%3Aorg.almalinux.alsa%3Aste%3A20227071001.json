@@ -10,6 +10,5 @@
 		"text": "0:102.4.0-1.el9_0.alma",
 		"datatype": "evr_string",
 		"operation": "less than"
-	},
-	"signature_keyid": {}
+	}
 }

@@ -20,7 +20,7 @@ type Vuln struct {
 	Description struct {
 		Xmlns string `xml:"xmlns,attr" json:"xmlns,omitempty"`
 		Text  string `xml:",innerxml" json:"text,omitempty"`
-	} `xml:"description>body" json:"description,omitempty"`
+	} `xml:"description>body" json:"description,omitzero"`
 	References struct {
 		URL       []string `xml:"url" json:"url,omitempty"`
 		Cvename   []string `xml:"cvename" json:"cvename,omitempty"`
@@ -35,12 +35,12 @@ type Vuln struct {
 		CertVU   []string `xml:"certvu" json:"cert_vu,omitempty"`
 		USCertSA []string `xml:"uscertsa" json:"us_cert_sa,omitempty"` // There is no data with tag "uscertsa" at 2024-04-21
 		USCertTA []string `xml:"uscertta" json:"us_cert_ta,omitempty"`
-	} `xml:"references" json:"references,omitempty"`
+	} `xml:"references" json:"references,omitzero"`
 	Dates struct {
 		Discovery string `xml:"discovery" json:"discovery,omitempty"`
 		Entry     string `xml:"entry" json:"entry,omitempty"`
 		Modified  string `xml:"modified" json:"modified,omitempty"`
-	} `xml:"dates" json:"dates,omitempty"`
+	} `xml:"dates" json:"dates,omitzero"`
 	Cancelled *struct {
 		Superseded string `xml:"superseded,attr" json:"superseded,omitempty"`
 	} `xml:"cancelled" json:"cancelled,omitempty"`

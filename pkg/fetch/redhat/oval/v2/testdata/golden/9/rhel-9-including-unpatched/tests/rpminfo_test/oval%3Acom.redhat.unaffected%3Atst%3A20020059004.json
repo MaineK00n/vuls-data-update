@@ -6,6 +6,5 @@
 	"check_existence": "none_exist",
 	"object": {
 		"object_ref": "oval:com.redhat.cve:obj:202237434006"
-	},
-	"state": {}
+	}
 }

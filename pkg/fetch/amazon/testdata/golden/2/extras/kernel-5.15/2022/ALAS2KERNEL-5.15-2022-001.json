@@ -19,79 +19,66 @@
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-0500",
 				"ID": "CVE-2022-0500",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1015",
 				"ID": "CVE-2022-1015",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1016",
 				"ID": "CVE-2022-1016",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1158",
 				"ID": "CVE-2022-1158",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1263",
 				"ID": "CVE-2022-1263",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1353",
 				"ID": "CVE-2022-1353",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-1729",
 				"ID": "CVE-2022-1729",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-23222",
 				"ID": "CVE-2022-23222",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-28893",
 				"ID": "CVE-2022-28893",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29581",
 				"ID": "CVE-2022-29581",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-29582",
 				"ID": "CVE-2022-29582",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-30594",
 				"ID": "CVE-2022-30594",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-3526",
 				"ID": "CVE-2022-3526",
-				"Title": "",
 				"Type": "cve"
 			}
 		]

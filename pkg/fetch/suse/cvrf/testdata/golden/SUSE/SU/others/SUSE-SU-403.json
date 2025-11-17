@@ -666,8 +666,7 @@
 							"cpe": "cpe:/o:suse:sled:12"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -682,8 +681,7 @@
 							"cpe": "cpe:/o:suse:sled:12:sp1"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -698,8 +696,7 @@
 							"cpe": "cpe:/o:suse:suse_sles_ltss:11:sp1"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -714,8 +711,7 @@
 							"cpe": "cpe:/o:suse:sles:11:sp1:teradata"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -730,8 +726,7 @@
 							"cpe": "cpe:/o:suse:sles:12"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -746,8 +741,7 @@
 							"cpe": "cpe:/o:suse:sles:12:sp1"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -762,8 +756,7 @@
 							"cpe": "cpe:/o:suse:sles_sap:12"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -778,8 +771,7 @@
 							"cpe": "cpe:/o:suse:sles_sap:12:sp1"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -794,8 +786,7 @@
 							"cpe": "cpe:/o:suse:sle-sdk:12"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -810,8 +801,7 @@
 							"cpe": "cpe:/o:suse:sle-sdk:12:sp1"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -826,8 +816,7 @@
 							"cpe": "cpe:/o:suse:sle-we:12"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Family",
@@ -842,8 +831,7 @@
 							"cpe": "cpe:/o:suse:sle-we:12:sp1"
 						}
 					}
-				],
-				"full_product_name": {}
+				]
 			},
 			{
 				"type": "Product Version",
@@ -1828,9 +1816,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -1999,11 +1985,6 @@
 					"description": "low"
 				}
 			],
-			"cvss_score_sets": {
-				"score_set_v_2": {},
-				"score_set_v_3": {},
-				"scoreset": {}
-			},
 			"remediations": [
 				{
 					"type": "Vendor Fix",
@@ -2179,9 +2160,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -2354,9 +2333,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "7.6",
 					"vector_v_2": "AV:N/AC:H/Au:N/C:C/I:C/A:C"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -2529,9 +2506,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:P/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -2716,9 +2691,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -2887,9 +2860,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "2.6",
 					"vector_v_2": "AV:N/AC:H/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -3058,9 +3029,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -3233,9 +3202,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -3420,9 +3387,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "9.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:C/I:C/A:C"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -3599,9 +3564,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -3782,9 +3745,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -3961,9 +3922,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -4144,9 +4103,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4",
 					"vector_v_2": "AV:N/AC:H/Au:N/C:P/I:P/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -4319,9 +4276,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -4498,9 +4453,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -4689,9 +4642,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -4876,9 +4827,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "7.5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:P/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -5055,9 +5004,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "6.8",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:P/I:P/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -5238,9 +5185,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -5433,9 +5378,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "2.6",
 					"vector_v_2": "AV:N/AC:H/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -5664,9 +5607,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "1.9",
 					"vector_v_2": "AV:L/AC:M/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -5851,9 +5792,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -6042,8 +5981,7 @@
 				"score_set_v_3": {
 					"base_score_v_3": "7.4",
 					"vector_v_3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
-				},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -6260,9 +6198,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -6447,9 +6383,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -6630,9 +6564,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -6813,9 +6745,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -6996,9 +6926,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -7179,9 +7107,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -7366,8 +7292,7 @@
 				"score_set_v_3": {
 					"base_score_v_3": "5.3",
 					"vector_v_3": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
-				},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -7540,8 +7465,7 @@
 				"score_set_v_3": {
 					"base_score_v_3": "3.4",
 					"vector_v_3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:N/A:N"
-				},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -7782,9 +7706,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "7.1",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:C"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -7961,9 +7883,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:P/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -8144,9 +8064,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:N/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -8331,9 +8249,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -8510,9 +8426,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:P/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -8693,9 +8607,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:P/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -8876,9 +8788,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "10",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:C/I:C/A:C"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -9071,9 +8981,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:P/A:N"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -9254,9 +9162,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "6.8",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:P/I:P/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -9433,9 +9339,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -9620,9 +9524,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -9811,9 +9713,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -9998,9 +9898,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -10181,9 +10079,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "7.5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:P/I:P/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -10360,9 +10256,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -10555,9 +10449,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -10746,8 +10638,7 @@
 				"score_set_v_3": {
 					"base_score_v_3": "7.5",
 					"vector_v_3": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
-				},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -10936,9 +10827,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -11119,9 +11008,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "6.8",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:P/I:P/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -11302,9 +11189,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "5",
 					"vector_v_2": "AV:N/AC:L/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -11485,9 +11370,7 @@
 				"score_set_v_2": {
 					"base_score_v_2": "4.3",
 					"vector_v_2": "AV:N/AC:M/Au:N/C:N/I:N/A:P"
-				},
-				"score_set_v_3": {},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{
@@ -11660,8 +11543,7 @@
 				"score_set_v_3": {
 					"base_score_v_3": "3.7",
 					"vector_v_3": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
-				},
-				"scoreset": {}
+				}
 			},
 			"remediations": [
 				{

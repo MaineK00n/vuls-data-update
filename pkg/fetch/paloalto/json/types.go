@@ -22,7 +22,7 @@ type CVE struct {
 			Credits          Credits          `json:"credits,omitempty"`
 			Source           interface{}      `json:"source,omitempty"`
 			Tags             []string         `json:"tags,omitempty"`
-			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitempty"`
+			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitzero"`
 			DateAssigned     *string          `json:"dateAssigned,omitempty"`
 			DatePublic       *string          `json:"datePublic,omitempty"`
 			RejectedReasons  []Description    `json:"rejectedReasons,omitempty"`
@@ -50,7 +50,7 @@ type CVE struct {
 			Credits          Credits          `json:"credits,omitempty"`
 			Source           interface{}      `json:"source,omitempty"`
 			Tags             []string         `json:"tags,omitempty"`
-			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitempty"`
+			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitzero"`
 			DatePublic       *string          `json:"datePublic,omitempty"`
 		} `json:"adp,omitempty"`
 	} `json:"containers"`
