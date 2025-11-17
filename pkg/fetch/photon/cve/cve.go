@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -97,19 +98,28 @@ func Fetch(opts ...Option) error {
 				return errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
 
-			var cs []CVE
+			var cs []cve
 			if err := json.NewDecoder(resp.Body).Decode(&cs); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 
 			for _, c := range cs {
-				splitted, err := util.Split(c.CveID, "-", "-")
-				if err != nil {
-					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", c.CveID)
-				}
+				switch {
+				case strings.HasPrefix(c.CVEID, "CVE-"), strings.HasPrefix(c.CVEID, "BDSA-"):
+					splitted, err := util.Split(c.CVEID, "-", "-")
+					if err != nil {
+						return errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"CVE-yyyy-\\d{4,}", "BDSA-yyyy-\\d{4,}"}, c.CVEID)
+					}
 
-				if err := util.Write(filepath.Join(options.dir, v, splitted[1], fmt.Sprintf("%s.json", c.CveID)), c); err != nil {
-					return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, splitted[1], fmt.Sprintf("%s.json", c.CveID)))
+					if err := util.Write(filepath.Join(options.dir, v, c.Pkg, splitted[1], fmt.Sprintf("%s.json", c.CVEID)), c); err != nil {
+						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, c.Pkg, splitted[1], fmt.Sprintf("%s.json", c.CVEID)))
+					}
+				case strings.HasPrefix(c.CVEID, "UNK-"), c.CVEID == "Re":
+					if err := util.Write(filepath.Join(options.dir, v, c.Pkg, "Others", fmt.Sprintf("%s.json", c.CVEID)), c); err != nil {
+						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, v, c.Pkg, "Others", fmt.Sprintf("%s.json", c.CVEID)))
+					}
+				default:
+					return errors.Errorf("unexpected ID format. expected: %q, actual: %q", []string{"CVE-yyyy-\\d{4,}", "BDSA-yyyy-\\d{4,}", "UNK-\\d+", "Re"}, c.CVEID)
 				}
 			}
 
