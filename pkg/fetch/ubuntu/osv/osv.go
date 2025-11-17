@@ -2,7 +2,7 @@ package osv
 
 import (
 	"archive/tar"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -111,7 +111,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var a OSV
-		if err := json.NewDecoder(tr).Decode(&a); err != nil {
+		if err := json.UnmarshalRead(tr, &a); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

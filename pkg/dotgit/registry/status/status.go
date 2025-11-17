@@ -2,7 +2,7 @@ package status
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"slices"
 
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
@@ -29,7 +29,7 @@ func Status(repository string) (ocispec.Manifest, error) {
 	defer r.Close()
 
 	var manifest ocispec.Manifest
-	if err := json.NewDecoder(r).Decode(&manifest); err != nil {
+	if err := json.UnmarshalRead(r, &manifest); err != nil {
 		return ocispec.Manifest{}, errors.Wrap(err, "decode manifest")
 	}
 

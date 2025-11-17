@@ -2,7 +2,7 @@ package vex
 
 import (
 	"archive/tar"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -106,7 +106,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var vex VEX
-		if err := json.NewDecoder(tr).Decode(&vex); err != nil {
+		if err := json.UnmarshalRead(tr, &vex); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

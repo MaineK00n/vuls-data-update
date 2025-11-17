@@ -2,7 +2,7 @@ package cpematch_test
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -101,7 +101,7 @@ func TestFetch(t *testing.T) {
 							MatchCriteria cpematch.MatchCriteria `json:"matchString"`
 						} `json:"matchStrings"`
 					}
-					if err := json.NewDecoder(f).Decode(&base); err != nil {
+					if err := json.UnmarshalRead(f, &base); err != nil {
 						http.Error(w, fmt.Sprintf("Internal Server Error. err: %s", err), http.StatusInternalServerError)
 					}
 

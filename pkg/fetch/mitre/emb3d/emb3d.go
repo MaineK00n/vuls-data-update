@@ -1,7 +1,7 @@
 package emb3d
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -108,7 +108,7 @@ func (opts options) fetchThreats(client *utilhttp.Client) error {
 	}
 
 	var ts threats
-	if err := json.NewDecoder(resp.Body).Decode(&ts); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &ts); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 
@@ -139,7 +139,7 @@ func (opts options) fetchMitigations(client *utilhttp.Client) error {
 	}
 
 	var ms mitigations
-	if err := json.NewDecoder(resp.Body).Decode(&ms); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &ms); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 
@@ -170,7 +170,7 @@ func (opts options) fetchProperties(client *utilhttp.Client) error {
 	}
 
 	var ps properties
-	if err := json.NewDecoder(resp.Body).Decode(&ps); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &ps); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

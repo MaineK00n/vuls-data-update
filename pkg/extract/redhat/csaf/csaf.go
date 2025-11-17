@@ -2,7 +2,7 @@ package csaf
 
 import (
 	"encoding/hex"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"hash/fnv"
 	"io/fs"
@@ -781,7 +781,7 @@ func invertVassGroup(vassm map[string]map[csaf.ProductID]ass, pm map[csaf.Produc
 	vassGroupToPids := make(map[string][]csaf.ProductID)
 
 	for pid, vassGroup := range pidToVassGroup {
-		bs, err := json.Marshal(vassGroup)
+		bs, err := json.Marshal(vassGroup, json.Deterministic(true), json.OmitZeroStructFields(true))
 		if err != nil {
 			return nil, errors.Wrap(err, "json marshal")
 		}

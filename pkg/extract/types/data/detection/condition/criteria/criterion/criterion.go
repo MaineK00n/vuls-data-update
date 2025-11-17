@@ -2,7 +2,7 @@ package criterion
 
 import (
 	"cmp"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 
 	"github.com/pkg/errors"

@@ -3,7 +3,7 @@ package v2
 import (
 	"cmp"
 	"compress/gzip"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -155,7 +155,7 @@ func (opts options) fetch(feedURL string, cves map[string]map[string]CVE) error 
 	defer r.Close()
 
 	var feed api20
-	if err := json.NewDecoder(r).Decode(&feed); err != nil {
+	if err := json.UnmarshalRead(r, &feed); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

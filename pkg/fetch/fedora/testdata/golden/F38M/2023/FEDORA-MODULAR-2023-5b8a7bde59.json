@@ -5,6 +5,7 @@
 	"bugs": [
 		{
 			"bug_id": 2142973,
+			"parent": false,
 			"security": true,
 			"title": "CVE-2022-21594 CVE-2022-21599 CVE-2022-21604 CVE-2022-21608 CVE-2022-21611 CVE-2022-21617 CVE-2022-21625 CVE-2022-21632 CVE-2022-21633 CVE-2022-21637 CVE-2022-21640 CVE-2022-39400 CVE-2022-39408 ... mysql:8.0/community-mysql: various flaws [fedora-all]",
 			"bugzilla": {
@@ -3375,6 +3376,8 @@
 	"comments": [
 		{
 			"id": 3189714,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for testing by mschorm. ",
 			"timestamp": "2023-09-07 10:08:39",
 			"update_id": 546418,
@@ -3388,6 +3391,8 @@
 		},
 		{
 			"id": 3189715,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'ignored'.",
 			"timestamp": "2023-09-07 10:08:39",
 			"update_id": 546418,
@@ -3401,6 +3406,8 @@
 		},
 		{
 			"id": 3190697,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to testing.",
 			"timestamp": "2023-09-08 01:39:29",
 			"update_id": 546418,
@@ -3414,6 +3421,8 @@
 		},
 		{
 			"id": 3198500,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for stable by bodhi. ",
 			"timestamp": "2023-09-15 01:40:30",
 			"update_id": 546418,
@@ -3427,6 +3436,8 @@
 		},
 		{
 			"id": 3200372,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to stable.",
 			"timestamp": "2023-09-16 00:28:43",
 			"update_id": 546418,
@@ -3440,12 +3451,14 @@
 		}
 	],
 	"content_type": "module",
-	"critpath_groups": "",
+	"critpath": false,
 	"date_approved": "2023-09-15 01:40:30",
 	"date_pushed": "2023-09-16 00:28:32",
 	"date_stable": "2023-09-16 00:28:32",
 	"date_submitted": "2023-09-07 10:08:39",
 	"date_testing": "2023-09-08 01:39:18",
+	"karma": 0,
+	"locked": false,
 	"meets_testing_requirements": true,
 	"notes": "**MySQL 8.0.34**\n\nRelease notes:\n\n    https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-34.html",
 	"pushed": true,
@@ -3470,7 +3483,8 @@
 		"testing_tag": "f38-modular-updates-testing",
 		"version": "38"
 	},
-	"requirements": "",
+	"require_bugs": false,
+	"require_testcases": false,
 	"severity": "medium",
 	"stable_days": 7,
 	"stable_karma": 2,

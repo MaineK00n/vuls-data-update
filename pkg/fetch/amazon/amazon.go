@@ -3,7 +3,7 @@ package amazon
 import (
 	"bufio"
 	"compress/gzip"
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -119,7 +119,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			var c catalog
-			if err := json.NewDecoder(resp.Body).Decode(&c); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &c); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 

@@ -177,6 +177,8 @@
 	"comments": [
 		{
 			"id": 3292082,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for testing by erack. ",
 			"timestamp": "2023-11-24 17:15:39",
 			"update_id": 566369,
@@ -190,6 +192,8 @@
 		},
 		{
 			"id": 3292083,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'ignored'.",
 			"timestamp": "2023-11-24 17:15:39",
 			"update_id": 566369,
@@ -203,6 +207,8 @@
 		},
 		{
 			"id": 3292084,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "erack edited this update.",
 			"timestamp": "2023-11-24 17:16:14",
 			"update_id": 566369,
@@ -216,6 +222,8 @@
 		},
 		{
 			"id": 3292293,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to testing.",
 			"timestamp": "2023-11-25 01:49:11",
 			"update_id": 566369,
@@ -229,11 +237,14 @@
 		}
 	],
 	"content_type": "rpm",
-	"critpath_groups": "",
+	"critpath": false,
 	"date_modified": "2023-11-24 17:16:14",
 	"date_pushed": "2023-11-25 01:48:48",
 	"date_submitted": "2023-11-24 17:15:38",
 	"date_testing": "2023-11-25 01:48:48",
+	"karma": 0,
+	"locked": false,
+	"meets_testing_requirements": false,
 	"notes": "Update to 115.5.0\n\n* https://www.mozilla.org/en-US/security/advisories/mfsa2023-52/\n* https://www.thunderbird.net/en-US/thunderbird/115.5.0/releasenotes/\n",
 	"pushed": true,
 	"release": {

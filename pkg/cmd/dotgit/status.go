@@ -1,7 +1,7 @@
 package dotgit
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"os"
 
 	"github.com/MakeNowJust/heredoc"
@@ -24,7 +24,7 @@ func newCmdStatus() *cobra.Command {
 			if err != nil {
 				return errors.Wrap(err, "failed to get local dotgit status")
 			}
-			if err := json.NewEncoder(os.Stdout).Encode(s); err != nil {
+			if err := json.MarshalWrite(os.Stdout, s, json.Deterministic(true)); err != nil {
 				return errors.Wrap(err, "failed to print local dotgit status")
 			}
 			return nil

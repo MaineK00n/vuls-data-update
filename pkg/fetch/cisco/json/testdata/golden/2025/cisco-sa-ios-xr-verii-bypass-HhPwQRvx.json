@@ -1,14 +1,14 @@
 {
-	"advisoryID": "cisco-sa-ios-xr-verii-bypass-HhPwQRvx",
+	"advisoryId": "cisco-sa-ios-xr-verii-bypass-HhPwQRvx",
 	"advisoryTitle": "Cisco IOS XR Software Image Verification Bypass Vulnerability",
 	"bugIDs": [
 		"CSCwk67262"
 	],
-	"csafURL": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx/csaf/cisco-sa-ios-xr-verii-bypass-HhPwQRvx.json",
+	"csafUrl": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx/csaf/cisco-sa-ios-xr-verii-bypass-HhPwQRvx.json",
 	"cves": [
 		"CVE-2025-20177"
 	],
-	"cvrfURL": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx/cvrf/cisco-sa-ios-xr-verii-bypass-HhPwQRvx_cvrf.xml",
+	"cvrfUrl": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx/cvrf/cisco-sa-ios-xr-verii-bypass-HhPwQRvx_cvrf.xml",
 	"cvssBaseScore": "6.7",
 	"cwe": [
 		"CWE-274"
@@ -21,7 +21,7 @@
 	"productNames": [
 		"Cisco IOS XR Software "
 	],
-	"publicationURL": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx",
+	"publicationUrl": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx",
 	"sir": "High",
 	"status": "Final",
 	"summary": "\r\n<p>A vulnerability in the boot process of Cisco IOS XR Software could allow an authenticated, local attacker to bypass Cisco IOS XR image signature verification and load unverified software on an affected device. To exploit this vulnerability, the attacker must have <em>root-system</em> privileges on the affected device.</p>\r\n<p>This vulnerability is due to incomplete validation of files in the boot verification process. An attacker could exploit this vulnerability by manipulating the system configuration options to bypass some of the integrity checks that are performed during the boot process. A successful exploit could allow the attacker to control the boot configuration, which could enable them to bypass the requirement to run Cisco-signed images or alter the security properties of the running system.</p>\r\n<p><strong>Note:</strong> Because exploitation of this vulnerability could result in the attacker bypassing Cisco image verification, Cisco has raised the Security Impact Rating (SIR) of this advisory from Medium to High.</p>\r\n\r\n<p>Cisco has released software updates that address this vulnerability. There are no workarounds that address this vulnerability.</p>\r\n<p>This advisory is available at the following link:<br><a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-ios-xr-verii-bypass-HhPwQRvx</a></p>\r\n\r\n<p>This advisory is part of the March 2025 release of the Cisco IOS XR Software Security Advisory Bundled Publication. For a complete list of the advisories and links to them, see <a href=\"https://sec.cloudapps.cisco.com/security/center/viewErp.x?alertId=ERP-75548\">Cisco Event Response: March 2025 Semiannual Cisco IOS XR Software Security Advisory Bundled Publication</a>.</p>\r\n",

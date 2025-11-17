@@ -14,6 +14,8 @@
 	"comments": [
 		{
 			"id": 3237151,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for testing by kalev. ",
 			"timestamp": "2023-10-06 22:52:09",
 			"update_id": 555673,
@@ -27,6 +29,8 @@
 		},
 		{
 			"id": 3237152,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'ignored'.",
 			"timestamp": "2023-10-06 22:52:10",
 			"update_id": 555673,
@@ -40,6 +44,8 @@
 		},
 		{
 			"id": 3237294,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to testing.",
 			"timestamp": "2023-10-07 02:05:58",
 			"update_id": 555673,
@@ -54,9 +60,11 @@
 		{
 			"id": 3240902,
 			"karma": 1,
+			"karma_critpath": 0,
 			"testcase_feedback": [
 				{
 					"comment_id": 3240902,
+					"karma": 0,
 					"testcase": {
 						"id": 68,
 						"name": "QA:Testcase firefox addons"
@@ -65,6 +73,7 @@
 				},
 				{
 					"comment_id": 3240902,
+					"karma": 0,
 					"testcase": {
 						"id": 69,
 						"name": "QA:Testcase firefox browse"
@@ -73,6 +82,7 @@
 				},
 				{
 					"comment_id": 3240902,
+					"karma": 0,
 					"testcase": {
 						"id": 70,
 						"name": "QA:Testcase firefox media"
@@ -81,6 +91,7 @@
 				},
 				{
 					"comment_id": 3240902,
+					"karma": 0,
 					"testcase": {
 						"id": 437,
 						"name": "QA:Testcase firefox screenshot"
@@ -110,6 +121,8 @@
 		},
 		{
 			"id": 3240903,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for stable by bodhi. ",
 			"timestamp": "2023-10-10 11:36:11",
 			"update_id": 555673,
@@ -123,6 +136,8 @@
 		},
 		{
 			"id": 3241690,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to stable.",
 			"timestamp": "2023-10-11 00:40:00",
 			"update_id": 555673,
@@ -136,13 +151,14 @@
 		}
 	],
 	"content_type": "flatpak",
-	"critpath_groups": "",
+	"critpath": false,
 	"date_approved": "2023-10-10 11:36:11",
 	"date_pushed": "2023-10-11 00:39:59",
 	"date_stable": "2023-10-11 00:39:59",
 	"date_submitted": "2023-10-06 22:52:09",
 	"date_testing": "2023-10-07 02:05:58",
 	"karma": 1,
+	"locked": false,
 	"meets_testing_requirements": true,
 	"notes": "This update provides the latest release of Firefox, with an important security fix.",
 	"pushed": true,
@@ -167,7 +183,6 @@
 	},
 	"require_bugs": true,
 	"require_testcases": true,
-	"requirements": "",
 	"severity": "urgent",
 	"stable_days": 7,
 	"stable_karma": 1,

@@ -1,7 +1,7 @@
 package oval
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -173,7 +173,7 @@ func (opts options) fetchList() ([]string, error) {
 	}
 
 	var l list
-	if err := json.NewDecoder(resp.Body).Decode(&l); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &l); err != nil {
 		return nil, errors.Wrap(err, "decode json")
 	}
 

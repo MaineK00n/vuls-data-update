@@ -2,7 +2,7 @@ package v2
 
 import (
 	"compress/bzip2"
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -89,7 +89,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var f feed
-	if err := json.NewDecoder(resp.Body).Decode(&f); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &f); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

@@ -2,7 +2,7 @@ package pull
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"log"
 	"os"
@@ -105,7 +105,7 @@ func Pull(repository string, opts ...Option) error {
 	defer r.Close()
 
 	var manifest ocispec.Manifest
-	if err := json.NewDecoder(r).Decode(&manifest); err != nil {
+	if err := json.UnmarshalRead(r, &manifest); err != nil {
 		return errors.Wrap(err, "decode manifest")
 	}
 

@@ -70,7 +70,7 @@ type CVEMetadata struct {
 }
 
 type ProviderMetadata struct {
-	OrgID       string  `json:"orgID"`
+	OrgID       string  `json:"orgId"`
 	ShortName   *string `json:"shortName,omitempty"`
 	DateUpdated *string `json:"dateUpdated,omitempty"`
 }

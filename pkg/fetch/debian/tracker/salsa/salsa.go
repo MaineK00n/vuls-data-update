@@ -8,7 +8,7 @@ import (
 	"compress/bzip2"
 	"compress/gzip"
 	"crypto/md5"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -735,7 +735,7 @@ func parseinner(inner string) []interface{} {
 
 func parseConfig(r io.Reader) (archives []string, releases []string, err error) {
 	var c config
-	if err := json.NewDecoder(r).Decode(&c); err != nil {
+	if err := json.UnmarshalRead(r, &c); err != nil {
 		return nil, nil, errors.Wrap(err, "decode json")
 	}
 

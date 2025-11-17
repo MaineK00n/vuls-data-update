@@ -1,7 +1,7 @@
 package json
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -113,7 +113,7 @@ func Fetch(ids []string, opts ...Option) error {
 		}
 
 		var v CVE
-		if err := json.NewDecoder(resp.Body).Decode(&v); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &v); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

@@ -130,7 +130,6 @@
 					}
 				]
 			},
-			"cvss_score_sets": {},
 			"remediations": {
 				"remediation": [
 					{

@@ -20,7 +20,6 @@
 	"related_notices": [
 		"USN-14-1"
 	],
-	"ReleasePackages": null,
 	"releases": [
 		{
 			"codename": "warty",

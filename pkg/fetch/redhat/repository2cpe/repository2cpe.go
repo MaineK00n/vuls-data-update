@@ -1,7 +1,7 @@
 package repository2cpe
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"log"
 	"net/http"
@@ -85,7 +85,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var repo2cpe RepositoryToCPE
-	if err := json.NewDecoder(resp.Body).Decode(&repo2cpe); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &repo2cpe); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

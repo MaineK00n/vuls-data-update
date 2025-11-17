@@ -3,7 +3,6 @@
 	"id": "relationship--d648b3c7-77d2-42f3-a367-620621b714ab",
 	"created": "2023-09-28T21:11:29.314Z",
 	"created_by_ref": "identity--c78cb6e5-0c4b-4611-8297-d1b8b55e40b5",
-	"description": "",
 	"modified": "2023-09-28T21:11:29.314Z",
 	"object_marking_refs": [
 		"marking-definition--fa42a846-8d90-4e51-bc29-71d5b4802168"

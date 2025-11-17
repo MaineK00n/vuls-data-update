@@ -1,7 +1,7 @@
 package detail
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -89,7 +89,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var cs []checksum
-	if err := json.NewDecoder(resp.Body).Decode(&cs); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &cs); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

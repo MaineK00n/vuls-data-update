@@ -2,7 +2,7 @@ package list
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -140,7 +140,7 @@ func (opts options) fetch() error {
 				}
 
 				var res response
-				if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+				if err := json.UnmarshalRead(resp.Body, &res); err != nil {
 					return errors.Wrap(err, "decode json")
 				}
 

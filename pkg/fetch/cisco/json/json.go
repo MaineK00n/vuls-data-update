@@ -1,7 +1,7 @@
 package json
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -120,7 +120,7 @@ func Fetch(id, secret string, opts ...Option) error {
 	}
 
 	var as advisories
-	if err := json.NewDecoder(resp.Body).Decode(&as); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &as); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 
@@ -163,7 +163,7 @@ func fetchAccessToken(client *utilhttp.Client, baseURL, clientID, clientSecret s
 	}
 
 	var r accessTokenResponse
-	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &r); err != nil {
 		return "", errors.Wrap(err, "decode json")
 	}
 

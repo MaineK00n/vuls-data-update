@@ -1,7 +1,7 @@
 package api_test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -71,7 +71,7 @@ func TestFetch(t *testing.T) {
 						}
 
 						var rs []api.Result
-						if err := json.NewDecoder(f).Decode(&rs); err != nil {
+						if err := json.UnmarshalRead(f, &rs); err != nil {
 							http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 							return
 						}
@@ -79,7 +79,7 @@ func TestFetch(t *testing.T) {
 						w.WriteHeader(http.StatusOK)
 						start := min(offset, len(rs))
 						end := min(offset+limit, len(rs))
-						if err := json.NewEncoder(w).Encode(response{
+						if err := json.MarshalWrite(w, response{
 							Message: "successfully retrieved public templates",
 							Count:   end - start,
 							Total: func() int {
@@ -122,7 +122,7 @@ func TestFetch(t *testing.T) {
 						}
 
 						var rs []api.Result
-						if err := json.NewDecoder(f).Decode(&rs); err != nil {
+						if err := json.UnmarshalRead(f, &rs); err != nil {
 							http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 							return
 						}
@@ -130,7 +130,7 @@ func TestFetch(t *testing.T) {
 						w.WriteHeader(http.StatusOK)
 						start := min(offset, len(rs))
 						end := min(offset+limit, len(rs))
-						if err := json.NewEncoder(w).Encode(response{
+						if err := json.MarshalWrite(w, response{
 							Message: "successfully retrieved early templates",
 							Count:   end - start,
 							Total: func() int {

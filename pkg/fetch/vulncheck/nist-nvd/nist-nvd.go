@@ -3,7 +3,7 @@ package nistnvd
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -136,7 +136,7 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 			defer f.Close()
 
 			var feed doc
-			if err := json.NewDecoder(f).Decode(&feed); err != nil {
+			if err := json.UnmarshalRead(f, &feed); err != nil {
 				return doc{}, errors.Wrap(err, "decode json")
 			}
 			return feed, nil
@@ -188,7 +188,7 @@ func fetchBackupURL(client *utilhttp.Client, baseURL, apiToken string) (string, 
 	}
 
 	var r backupResponse
-	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &r); err != nil {
 		return "", errors.Wrap(err, "decode json")
 	}
 

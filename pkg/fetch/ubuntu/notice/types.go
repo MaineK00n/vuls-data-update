@@ -31,7 +31,7 @@ type Notice struct {
 		SourceLink  *string `json:"source_link,omitempty"`
 		Version     string  `json:"version"`
 		VersionLink *string `json:"version_link,omitempty"`
-	}
+	} `json:"ReleasePackages,omitempty"`
 	Releases []struct {
 		Codename   string `json:"codename"`
 		SupportTag string `json:"support_tag"`

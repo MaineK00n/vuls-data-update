@@ -1,7 +1,8 @@
 package dotgit
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 
@@ -52,9 +53,8 @@ func newCmdFind() *cobra.Command {
 					return nil
 				}
 
-				e := json.NewEncoder(os.Stdout)
-				e.SetIndent("", "  ")
-				if err := e.Encode(fs); err != nil {
+				e := jsontext.NewEncoder(os.Stdout, jsontext.WithIndent("  "), json.Deterministic(true))
+				if err := json.MarshalEncode(e, fs); err != nil {
 					return errors.Wrap(err, "failed to encode json")
 				}
 				return nil

@@ -2,7 +2,7 @@ package fedora_test
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -58,7 +58,7 @@ func TestFetch(t *testing.T) {
 					defer f.Close()
 
 					var p releasePage
-					if err := json.NewDecoder(f).Decode(&p); err != nil {
+					if err := json.UnmarshalRead(f, &p); err != nil {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 						return
 					}
@@ -122,7 +122,7 @@ func TestFetch(t *testing.T) {
 					defer f.Close()
 
 					var us []any
-					if err := json.NewDecoder(f).Decode(&us); err != nil {
+					if err := json.UnmarshalRead(f, &us); err != nil {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 						return
 					}
@@ -160,9 +160,7 @@ func TestFetch(t *testing.T) {
 					p.Updates = p.Updates[start:end]
 
 					buf := new(bytes.Buffer)
-					e := json.NewEncoder(buf)
-					e.SetEscapeHTML(false)
-					if err := e.Encode(p); err != nil {
+					if err := json.MarshalWrite(buf, p); err != nil {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 						return
 					}

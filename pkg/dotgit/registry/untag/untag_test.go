@@ -2,7 +2,7 @@ package untag_test
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"maps"
@@ -63,7 +63,7 @@ func TestUntag(t *testing.T) {
 					switch r.Method {
 					case http.MethodGet:
 						w.WriteHeader(http.StatusOK)
-						if err := json.NewEncoder(w).Encode(user{Login: owner, Type: "Organization"}); err != nil {
+						if err := json.MarshalWrite(w, user{Login: owner, Type: "Organization"}); err != nil {
 							t.Errorf("write response: %v", err)
 						}
 					default:
@@ -93,7 +93,7 @@ func TestUntag(t *testing.T) {
 						}
 
 						w.WriteHeader(http.StatusOK)
-						if err := json.NewEncoder(w).Encode(vs); err != nil {
+						if err := json.MarshalWrite(w, vs); err != nil {
 							t.Errorf("write response: %v", err)
 						}
 					case http.MethodDelete:

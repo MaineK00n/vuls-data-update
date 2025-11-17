@@ -5,6 +5,7 @@
 	"bugs": [
 		{
 			"bug_id": 2210635,
+			"parent": false,
 			"security": true,
 			"title": "CVE-2023-2603 libcap: Integer Overflow in _libcap_strdup() [fedora-38]",
 			"bugzilla": {
@@ -204,6 +205,7 @@
 		},
 		{
 			"bug_id": 2210643,
+			"parent": false,
 			"security": true,
 			"title": "CVE-2023-2602 libcap: Memory Leak on pthread_create() Error [fedora-38]",
 			"bugzilla": {
@@ -584,6 +586,8 @@
 	"comments": [
 		{
 			"id": 3291220,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for testing by carlosrodrifernandez. ",
 			"timestamp": "2023-11-23 18:58:51",
 			"update_id": 566203,
@@ -597,6 +601,8 @@
 		},
 		{
 			"id": 3291221,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'waiting'.",
 			"timestamp": "2023-11-23 18:58:53",
 			"update_id": 566203,
@@ -610,6 +616,8 @@
 		},
 		{
 			"id": 3291310,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'failed'.",
 			"timestamp": "2023-11-23 21:04:33",
 			"update_id": 566203,
@@ -623,6 +631,8 @@
 		},
 		{
 			"id": 3291565,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to testing.",
 			"timestamp": "2023-11-24 02:19:10",
 			"update_id": 566203,
@@ -636,6 +646,8 @@
 		},
 		{
 			"id": 3291576,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'passed'.",
 			"timestamp": "2023-11-24 02:25:15",
 			"update_id": 566203,
@@ -654,6 +666,9 @@
 	"date_pushed": "2023-11-24 02:18:33",
 	"date_submitted": "2023-11-23 18:58:51",
 	"date_testing": "2023-11-24 02:18:33",
+	"karma": 0,
+	"locked": false,
+	"meets_testing_requirements": false,
 	"notes": "Backport fix for CVE-2023-2602 and CVE-2023-2603 ",
 	"pushed": true,
 	"release": {
@@ -678,8 +693,8 @@
 		"testing_tag": "f38-updates-testing",
 		"version": "38"
 	},
+	"require_bugs": false,
 	"require_testcases": true,
-	"requirements": "",
 	"severity": "high",
 	"stable_days": 14,
 	"stable_karma": 3,

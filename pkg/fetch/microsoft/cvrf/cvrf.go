@@ -1,7 +1,7 @@
 package cvrf
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -90,7 +90,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var us updates
-	if err := json.NewDecoder(resp.Body).Decode(&us); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &us); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

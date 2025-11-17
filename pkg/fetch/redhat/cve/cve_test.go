@@ -1,7 +1,7 @@
 package cve_test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -43,7 +43,7 @@ func TestFetch(t *testing.T) {
 					defer f.Close()
 
 					var entries []any
-					if err := json.NewDecoder(f).Decode(&entries); err != nil {
+					if err := json.UnmarshalRead(f, &entries); err != nil {
 						http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 					}
 

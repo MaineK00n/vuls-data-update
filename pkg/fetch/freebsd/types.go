@@ -43,5 +43,5 @@ type Vuln struct {
 	} `xml:"dates" json:"dates,omitzero"`
 	Cancelled *struct {
 		Superseded string `xml:"superseded,attr" json:"superseded,omitempty"`
-	} `xml:"cancelled" json:"cancelled,omitempty"`
+	} `xml:"cancelled" json:"cancelled,omitzero"`
 }

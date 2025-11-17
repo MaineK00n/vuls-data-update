@@ -2,7 +2,7 @@ package fedora
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -214,7 +214,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 	}
 
 	var p releasePage
-	if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &p); err != nil {
 		return nil, errors.Wrap(err, "decode json")
 	}
 
@@ -238,7 +238,7 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 		}
 
 		var p releasePage
-		if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &p); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 		respChan <- p.Releases
@@ -286,7 +286,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 	}
 
 	var p advisoryPage
-	if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &p); err != nil {
 		return nil, errors.Wrap(err, "decode json")
 	}
 
@@ -310,7 +310,7 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 		}
 
 		var p advisoryPage
-		if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &p); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

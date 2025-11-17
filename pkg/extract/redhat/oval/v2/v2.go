@@ -1,7 +1,7 @@
 package v2
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"log"
@@ -172,7 +172,7 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 						defer f.Close()
 
 						var base dataTypes.Data
-						if err := json.NewDecoder(f).Decode(&base); err != nil {
+						if err := json.UnmarshalRead(f, &base); err != nil {
 							return errors.Wrapf(err, "decode %s", filepath.Join(options.dir, "data", prefix, y, fmt.Sprintf("%s.json", extracted.ID)))
 						}
 

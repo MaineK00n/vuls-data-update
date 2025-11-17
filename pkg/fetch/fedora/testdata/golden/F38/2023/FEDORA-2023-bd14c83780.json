@@ -1,5 +1,7 @@
 {
 	"alias": "FEDORA-2023-bd14c83780",
+	"autokarma": false,
+	"autotime": false,
 	"bugs": [
 		{
 			"bug_id": 2213132,
@@ -9,6 +11,7 @@
 					"comment": {
 						"id": 3291799,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291799,
@@ -52,13 +55,15 @@
 						},
 						"user_id": 200
 					},
-					"comment_id": 3291799
+					"comment_id": 3291799,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291322,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291322,
@@ -90,13 +95,15 @@
 						},
 						"user_id": 5886
 					},
-					"comment_id": 3291322
+					"comment_id": 3291322,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291254,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291254,
@@ -128,13 +135,15 @@
 						},
 						"user_id": 449
 					},
-					"comment_id": 3291254
+					"comment_id": 3291254,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291272,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291272,
@@ -166,16 +175,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291272
+					"comment_id": 3291272,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3290993,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3290993,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -202,13 +214,15 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3290993
+					"comment_id": 3290993,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291271,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291271,
@@ -240,15 +254,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291273,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291273,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -276,13 +294,15 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3291273
+					"comment_id": 3291273,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291300,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291300,
@@ -311,16 +331,19 @@
 						},
 						"user_id": 7765
 					},
-					"comment_id": 3291300
+					"comment_id": 3291300,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291865,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291865,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -344,16 +367,19 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291865
+					"comment_id": 3291865,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3292165,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292165,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -381,16 +407,19 @@
 						},
 						"user_id": 840
 					},
-					"comment_id": 3292165
+					"comment_id": 3292165,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3292215,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292215,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -414,13 +443,15 @@
 						},
 						"user_id": 7481
 					},
-					"comment_id": 3292215
+					"comment_id": 3292215,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291288,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291288,
@@ -451,16 +482,19 @@
 						},
 						"user_id": 5222
 					},
-					"comment_id": 3291288
+					"comment_id": 3291288,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291419,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291419,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -488,13 +522,15 @@
 						},
 						"user_id": 3175
 					},
-					"comment_id": 3291419
+					"comment_id": 3291419,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291469,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291469,
@@ -531,16 +567,19 @@
 						},
 						"user_id": 2935
 					},
-					"comment_id": 3291469
+					"comment_id": 3291469,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291807,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291807,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -565,13 +604,15 @@
 						},
 						"user_id": 2343
 					},
-					"comment_id": 3291807
+					"comment_id": 3291807,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291861,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291861,
@@ -624,16 +665,19 @@
 						},
 						"user_id": 5881
 					},
-					"comment_id": 3291861
+					"comment_id": 3291861,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291864,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291864,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -657,12 +701,15 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291864
+					"comment_id": 3291864,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291901,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291901,
@@ -777,6 +824,7 @@
 					"comment": {
 						"id": 3292092,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292092,
@@ -805,13 +853,15 @@
 						},
 						"user_id": 1962
 					},
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3292201,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292201,
@@ -840,15 +890,19 @@
 						},
 						"user_id": 7557
 					},
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3292208,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292208,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -876,16 +930,19 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3292208
+					"comment_id": 3292208,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3292228,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292228,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -925,12 +982,15 @@
 						},
 						"user_id": 7249
 					},
-					"comment_id": 3292228
+					"comment_id": 3292228,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291877,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291877,
@@ -962,16 +1022,19 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3291877
+					"comment_id": 3291877,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213132,
 					"comment": {
 						"id": 3291902,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291902,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1074,7 +1137,8 @@
 						},
 						"user_id": 96
 					},
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				}
 			],
 			"parent": true,
@@ -1145,6 +1209,7 @@
 					"comment": {
 						"id": 3291799,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291799,
@@ -1188,13 +1253,15 @@
 						},
 						"user_id": 200
 					},
-					"comment_id": 3291799
+					"comment_id": 3291799,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291322,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291322,
@@ -1226,13 +1293,15 @@
 						},
 						"user_id": 5886
 					},
-					"comment_id": 3291322
+					"comment_id": 3291322,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291254,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291254,
@@ -1264,13 +1333,15 @@
 						},
 						"user_id": 449
 					},
-					"comment_id": 3291254
+					"comment_id": 3291254,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291272,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291272,
@@ -1302,16 +1373,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291272
+					"comment_id": 3291272,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3290993,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3290993,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1338,13 +1412,15 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3290993
+					"comment_id": 3290993,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291271,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291271,
@@ -1376,15 +1452,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291273,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291273,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1412,13 +1492,15 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3291273
+					"comment_id": 3291273,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291300,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291300,
@@ -1447,16 +1529,19 @@
 						},
 						"user_id": 7765
 					},
-					"comment_id": 3291300
+					"comment_id": 3291300,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291865,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291865,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1480,16 +1565,19 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291865
+					"comment_id": 3291865,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3292165,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292165,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1517,16 +1605,19 @@
 						},
 						"user_id": 840
 					},
-					"comment_id": 3292165
+					"comment_id": 3292165,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3292215,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292215,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1550,13 +1641,15 @@
 						},
 						"user_id": 7481
 					},
-					"comment_id": 3292215
+					"comment_id": 3292215,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291288,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291288,
@@ -1587,16 +1680,19 @@
 						},
 						"user_id": 5222
 					},
-					"comment_id": 3291288
+					"comment_id": 3291288,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291419,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291419,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1624,13 +1720,15 @@
 						},
 						"user_id": 3175
 					},
-					"comment_id": 3291419
+					"comment_id": 3291419,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291469,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291469,
@@ -1667,16 +1765,19 @@
 						},
 						"user_id": 2935
 					},
-					"comment_id": 3291469
+					"comment_id": 3291469,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291807,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291807,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1701,13 +1802,15 @@
 						},
 						"user_id": 2343
 					},
-					"comment_id": 3291807
+					"comment_id": 3291807,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291861,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291861,
@@ -1760,16 +1863,19 @@
 						},
 						"user_id": 5881
 					},
-					"comment_id": 3291861
+					"comment_id": 3291861,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291864,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291864,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -1793,12 +1899,15 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291864
+					"comment_id": 3291864,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291901,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291901,
@@ -1913,6 +2022,7 @@
 					"comment": {
 						"id": 3292092,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292092,
@@ -1941,13 +2051,15 @@
 						},
 						"user_id": 1962
 					},
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3292201,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292201,
@@ -1976,15 +2088,19 @@
 						},
 						"user_id": 7557
 					},
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3292208,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292208,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2012,16 +2128,19 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3292208
+					"comment_id": 3292208,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3292228,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292228,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2061,12 +2180,15 @@
 						},
 						"user_id": 7249
 					},
-					"comment_id": 3292228
+					"comment_id": 3292228,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291877,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291877,
@@ -2098,16 +2220,19 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3291877
+					"comment_id": 3291877,
+					"karma": 0
 				},
 				{
 					"bug_id": 2213133,
 					"comment": {
 						"id": 3291902,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291902,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2210,9 +2335,11 @@
 						},
 						"user_id": 96
 					},
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				}
 			],
+			"parent": false,
 			"security": true,
 			"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]",
 			"bugzilla": {
@@ -2388,9 +2515,11 @@
 					"comment": {
 						"id": 3288751,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288751,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2418,16 +2547,19 @@
 						},
 						"user_id": 3953
 					},
-					"comment_id": 3288751
+					"comment_id": 3288751,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288902,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288902,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2467,12 +2599,15 @@
 						},
 						"user_id": 7249
 					},
-					"comment_id": 3288902
+					"comment_id": 3288902,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288918,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288918,
@@ -2513,15 +2648,19 @@
 						},
 						"user_id": 4756
 					},
-					"comment_id": 3288918
+					"comment_id": 3288918,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3289997,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3289997,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2546,13 +2685,15 @@
 						},
 						"user_id": 7963
 					},
-					"comment_id": 3289997
+					"comment_id": 3289997,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291799,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291799,
@@ -2596,13 +2737,15 @@
 						},
 						"user_id": 200
 					},
-					"comment_id": 3291799
+					"comment_id": 3291799,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288916,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288916,
@@ -2643,13 +2786,15 @@
 						},
 						"user_id": 4756
 					},
-					"comment_id": 3288916
+					"comment_id": 3288916,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3289817,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3289817,
@@ -2678,16 +2823,19 @@
 						},
 						"user_id": 7557
 					},
-					"comment_id": 3289817
+					"comment_id": 3289817,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3290323,
 						"karma": -1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3290323,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2715,13 +2863,15 @@
 						},
 						"user_id": 1164
 					},
-					"comment_id": 3290323
+					"comment_id": 3290323,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291322,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291322,
@@ -2753,13 +2903,15 @@
 						},
 						"user_id": 5886
 					},
-					"comment_id": 3291322
+					"comment_id": 3291322,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288383,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288383,
@@ -2791,13 +2943,15 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3288383
+					"comment_id": 3288383,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288920,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288920,
@@ -2838,13 +2992,15 @@
 						},
 						"user_id": 4756
 					},
-					"comment_id": 3288920
+					"comment_id": 3288920,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288359,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288359,
@@ -2876,13 +3032,15 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3288359
+					"comment_id": 3288359,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288360,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288360,
@@ -2914,16 +3072,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3288360
+					"comment_id": 3288360,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288366,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288366,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2950,16 +3111,19 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3288366
+					"comment_id": 3288366,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288495,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288495,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -2992,16 +3156,19 @@
 						},
 						"user_id": 2935
 					},
-					"comment_id": 3288495
+					"comment_id": 3288495,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288921,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288921,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3038,16 +3205,19 @@
 						},
 						"user_id": 4756
 					},
-					"comment_id": 3288921
+					"comment_id": 3288921,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288922,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288922,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3071,13 +3241,15 @@
 						},
 						"user_id": 7481
 					},
-					"comment_id": 3288922
+					"comment_id": 3288922,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3289194,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3289194,
@@ -3109,13 +3281,15 @@
 						},
 						"user_id": 3140
 					},
-					"comment_id": 3289194
+					"comment_id": 3289194,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3289504,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3289504,
@@ -3168,13 +3342,15 @@
 						},
 						"user_id": 5881
 					},
-					"comment_id": 3289504
+					"comment_id": 3289504,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3289505,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3289505,
@@ -3227,15 +3403,19 @@
 						},
 						"user_id": 5881
 					},
-					"comment_id": 3289505
+					"comment_id": 3289505,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3289682,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3289682,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3263,13 +3443,15 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3289682
+					"comment_id": 3289682,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291254,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291254,
@@ -3301,13 +3483,15 @@
 						},
 						"user_id": 449
 					},
-					"comment_id": 3291254
+					"comment_id": 3291254,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291272,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291272,
@@ -3339,13 +3523,15 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291272
+					"comment_id": 3291272,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3288808,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3288808,
@@ -3374,16 +3560,19 @@
 						},
 						"user_id": 7765
 					},
-					"comment_id": 3288808
+					"comment_id": 3288808,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3290993,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3290993,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3410,13 +3599,15 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3290993
+					"comment_id": 3290993,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291271,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291271,
@@ -3448,15 +3639,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291273,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291273,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3484,13 +3679,15 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3291273
+					"comment_id": 3291273,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291300,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291300,
@@ -3519,16 +3716,19 @@
 						},
 						"user_id": 7765
 					},
-					"comment_id": 3291300
+					"comment_id": 3291300,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291865,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291865,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3552,16 +3752,19 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291865
+					"comment_id": 3291865,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3292165,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292165,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3597,9 +3800,11 @@
 					"comment": {
 						"id": 3292215,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292215,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3623,13 +3828,15 @@
 						},
 						"user_id": 7481
 					},
-					"comment_id": 3292215
+					"comment_id": 3292215,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291288,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291288,
@@ -3660,16 +3867,19 @@
 						},
 						"user_id": 5222
 					},
-					"comment_id": 3291288
+					"comment_id": 3291288,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291419,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291419,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3697,13 +3907,15 @@
 						},
 						"user_id": 3175
 					},
-					"comment_id": 3291419
+					"comment_id": 3291419,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291469,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291469,
@@ -3740,16 +3952,19 @@
 						},
 						"user_id": 2935
 					},
-					"comment_id": 3291469
+					"comment_id": 3291469,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291807,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291807,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3774,13 +3989,15 @@
 						},
 						"user_id": 2343
 					},
-					"comment_id": 3291807
+					"comment_id": 3291807,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291861,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291861,
@@ -3833,16 +4050,19 @@
 						},
 						"user_id": 5881
 					},
-					"comment_id": 3291861
+					"comment_id": 3291861,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291864,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291864,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -3866,12 +4086,15 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291864
+					"comment_id": 3291864,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291901,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291901,
@@ -3978,13 +4201,15 @@
 						},
 						"user_id": 96
 					},
-					"comment_id": 3291901
+					"comment_id": 3291901,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3292092,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292092,
@@ -4013,16 +4238,19 @@
 						},
 						"user_id": 1962
 					},
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3292166,
 						"karma": -1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292166,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4050,13 +4278,15 @@
 						},
 						"user_id": 7965
 					},
-					"comment_id": 3292166
+					"comment_id": 3292166,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3292201,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292201,
@@ -4085,15 +4315,19 @@
 						},
 						"user_id": 7557
 					},
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3292208,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292208,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4121,16 +4355,19 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3292208
+					"comment_id": 3292208,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3292228,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292228,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4170,12 +4407,15 @@
 						},
 						"user_id": 7249
 					},
-					"comment_id": 3292228
+					"comment_id": 3292228,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291877,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291877,
@@ -4207,16 +4447,19 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3291877
+					"comment_id": 3291877,
+					"karma": 0
 				},
 				{
 					"bug_id": 2249952,
 					"comment": {
 						"id": 3291902,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291902,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4319,9 +4562,12 @@
 						},
 						"user_id": 96
 					},
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				}
 			],
+			"parent": false,
+			"security": false,
 			"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm",
 			"bugzilla": {
 				"bug_id": "2249952",
@@ -4561,6 +4807,7 @@
 					"comment": {
 						"id": 3291799,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291799,
@@ -4604,13 +4851,15 @@
 						},
 						"user_id": 200
 					},
-					"comment_id": 3291799
+					"comment_id": 3291799,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291322,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291322,
@@ -4642,13 +4891,15 @@
 						},
 						"user_id": 5886
 					},
-					"comment_id": 3291322
+					"comment_id": 3291322,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291254,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291254,
@@ -4680,13 +4931,15 @@
 						},
 						"user_id": 449
 					},
-					"comment_id": 3291254
+					"comment_id": 3291254,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291272,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291272,
@@ -4718,16 +4971,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291272
+					"comment_id": 3291272,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3290993,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3290993,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4754,13 +5010,15 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3290993
+					"comment_id": 3290993,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291271,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291271,
@@ -4792,15 +5050,19 @@
 						},
 						"user_id": 5390
 					},
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291273,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291273,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4828,13 +5090,15 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3291273
+					"comment_id": 3291273,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291300,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291300,
@@ -4863,16 +5127,19 @@
 						},
 						"user_id": 7765
 					},
-					"comment_id": 3291300
+					"comment_id": 3291300,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291865,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291865,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4896,16 +5163,19 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291865
+					"comment_id": 3291865,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3292165,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292165,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4933,16 +5203,19 @@
 						},
 						"user_id": 840
 					},
-					"comment_id": 3292165
+					"comment_id": 3292165,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3292215,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292215,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -4966,13 +5239,15 @@
 						},
 						"user_id": 7481
 					},
-					"comment_id": 3292215
+					"comment_id": 3292215,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291288,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291288,
@@ -5003,16 +5278,19 @@
 						},
 						"user_id": 5222
 					},
-					"comment_id": 3291288
+					"comment_id": 3291288,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291419,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291419,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -5040,13 +5318,15 @@
 						},
 						"user_id": 3175
 					},
-					"comment_id": 3291419
+					"comment_id": 3291419,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291469,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291469,
@@ -5083,16 +5363,19 @@
 						},
 						"user_id": 2935
 					},
-					"comment_id": 3291469
+					"comment_id": 3291469,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291807,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291807,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -5117,13 +5400,15 @@
 						},
 						"user_id": 2343
 					},
-					"comment_id": 3291807
+					"comment_id": 3291807,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291861,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291861,
@@ -5176,16 +5461,19 @@
 						},
 						"user_id": 5881
 					},
-					"comment_id": 3291861
+					"comment_id": 3291861,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291864,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291864,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -5209,12 +5497,15 @@
 						},
 						"user_id": 7536
 					},
-					"comment_id": 3291864
+					"comment_id": 3291864,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291901,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291901,
@@ -5329,6 +5620,7 @@
 					"comment": {
 						"id": 3292092,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292092,
@@ -5357,13 +5649,15 @@
 						},
 						"user_id": 1962
 					},
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3292201,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292201,
@@ -5392,15 +5686,19 @@
 						},
 						"user_id": 7557
 					},
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3292208,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292208,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -5428,16 +5726,19 @@
 						},
 						"user_id": 6532
 					},
-					"comment_id": 3292208
+					"comment_id": 3292208,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3292228,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3292228,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -5477,12 +5778,15 @@
 						},
 						"user_id": 7249
 					},
-					"comment_id": 3292228
+					"comment_id": 3292228,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291877,
+						"karma": 0,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291877,
@@ -5514,16 +5818,19 @@
 						},
 						"user_id": 3703
 					},
-					"comment_id": 3291877
+					"comment_id": 3291877,
+					"karma": 0
 				},
 				{
 					"bug_id": 2250955,
 					"comment": {
 						"id": 3291902,
 						"karma": 1,
+						"karma_critpath": 0,
 						"testcase_feedback": [
 							{
 								"comment_id": 3291902,
+								"karma": 0,
 								"testcase": {
 									"id": 372,
 									"name": "QA:Testcase kernel regression"
@@ -5626,9 +5933,12 @@
 						},
 						"user_id": 96
 					},
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				}
 			],
+			"parent": false,
+			"security": false,
 			"title": "dwc3 and associated modules missing on x86-64",
 			"bugzilla": {
 				"bug_id": "2250955",
@@ -6645,6 +6955,8 @@
 	"comments": [
 		{
 			"id": 3290931,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for testing by jforbes. ",
 			"timestamp": "2023-11-23 14:11:15",
 			"update_id": 566127,
@@ -6658,6 +6970,8 @@
 		},
 		{
 			"id": 3290932,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'waiting'.",
 			"timestamp": "2023-11-23 14:11:17",
 			"update_id": 566127,
@@ -6671,6 +6985,8 @@
 		},
 		{
 			"id": 3291022,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'passed'.",
 			"timestamp": "2023-11-23 15:57:10",
 			"update_id": 566127,
@@ -6692,36 +7008,46 @@
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
 					},
 					"bug_id": 2213132,
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2213133,
+						"parent": false,
 						"security": true,
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
 					},
 					"bug_id": 2213133,
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2249952,
+						"parent": false,
+						"security": false,
 						"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
 					},
 					"bug_id": 2249952,
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2250955,
+						"parent": false,
+						"security": false,
 						"title": "dwc3 and associated modules missing on x86-64"
 					},
 					"bug_id": 2250955,
-					"comment_id": 3291271
+					"comment_id": 3291271,
+					"karma": 0
 				}
 			],
 			"id": 3291271,
 			"karma": 1,
+			"karma_critpath": 0,
 			"testcase_feedback": [
 				{
 					"comment_id": 3291271,
@@ -6755,6 +7081,8 @@
 		},
 		{
 			"id": 3291559,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to testing.",
 			"timestamp": "2023-11-24 02:19:09",
 			"update_id": 566127,
@@ -6776,39 +7104,50 @@
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
 					},
 					"bug_id": 2213132,
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2213133,
+						"parent": false,
 						"security": true,
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
 					},
 					"bug_id": 2213133,
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2249952,
+						"parent": false,
+						"security": false,
 						"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
 					},
 					"bug_id": 2249952,
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2250955,
+						"parent": false,
+						"security": false,
 						"title": "dwc3 and associated modules missing on x86-64"
 					},
 					"bug_id": 2250955,
-					"comment_id": 3291902
+					"comment_id": 3291902,
+					"karma": 0
 				}
 			],
 			"id": 3291902,
 			"karma": 1,
+			"karma_critpath": 0,
 			"testcase_feedback": [
 				{
 					"comment_id": 3291902,
+					"karma": 0,
 					"testcase": {
 						"id": 372,
 						"name": "QA:Testcase kernel regression"
@@ -6913,6 +7252,8 @@
 		},
 		{
 			"id": 3291903,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update can be pushed to stable now if the maintainer wishes",
 			"timestamp": "2023-11-24 13:21:36",
 			"update_id": 566127,
@@ -6934,36 +7275,46 @@
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
 					},
 					"bug_id": 2213132,
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2213133,
+						"parent": false,
 						"security": true,
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
 					},
 					"bug_id": 2213133,
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2249952,
+						"parent": false,
+						"security": false,
 						"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
 					},
 					"bug_id": 2249952,
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2250955,
+						"parent": false,
+						"security": false,
 						"title": "dwc3 and associated modules missing on x86-64"
 					},
 					"bug_id": 2250955,
-					"comment_id": 3292092
+					"comment_id": 3292092,
+					"karma": 0
 				}
 			],
 			"id": 3292092,
 			"karma": 1,
+			"karma_critpath": 0,
 			"testcase_feedback": [
 				{
 					"comment_id": 3292092,
@@ -7002,36 +7353,46 @@
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl"
 					},
 					"bug_id": 2213132,
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2213133,
+						"parent": false,
 						"security": true,
 						"title": "CVE-2023-31083 kernel: race condition between HCIUARTSETPROTO and HCIUARTGETPROTO in hci_uart_tty_ioctl [fedora-all]"
 					},
 					"bug_id": 2213133,
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2249952,
+						"parent": false,
+						"security": false,
 						"title": "Request to have patch applied to kernel to address rtc_cmos is not configured to use ACPI alarm"
 					},
 					"bug_id": 2249952,
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				},
 				{
 					"bug": {
 						"bug_id": 2250955,
+						"parent": false,
+						"security": false,
 						"title": "dwc3 and associated modules missing on x86-64"
 					},
 					"bug_id": 2250955,
-					"comment_id": 3292201
+					"comment_id": 3292201,
+					"karma": 0
 				}
 			],
 			"id": 3292201,
 			"karma": 1,
+			"karma_critpath": 0,
 			"testcase_feedback": [
 				{
 					"comment_id": 3292201,
@@ -7069,6 +7430,7 @@
 	"date_submitted": "2023-11-23 14:11:15",
 	"date_testing": "2023-11-24 02:18:31",
 	"karma": 4,
+	"locked": false,
 	"meets_testing_requirements": true,
 	"notes": "The 6.6.2 kernel rebase contains new features, additional hardware support, and a number of important fixes across the tree.",
 	"pushed": true,
@@ -7096,7 +7458,6 @@
 	},
 	"require_bugs": true,
 	"require_testcases": true,
-	"requirements": "",
 	"severity": "unspecified",
 	"stable_days": 14,
 	"stable_karma": 3,

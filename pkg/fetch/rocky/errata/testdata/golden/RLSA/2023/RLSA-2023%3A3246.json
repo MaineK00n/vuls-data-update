@@ -74,6 +74,7 @@
 	],
 	"name": "RLSA-2023:3246",
 	"publishedAt": "2023-05-25T02:36:20.895508Z",
+	"rebootSuggested": false,
 	"rpms": {
 		"Rocky Linux 8": {
 			"nvras": [

@@ -2,7 +2,7 @@ package csaf
 
 import (
 	"bufio"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -148,7 +148,7 @@ func (o options) fetch(client *utilhttp.Client, dir string) error {
 		}
 
 		var csaf CSAF
-		if err := json.NewDecoder(resp.Body).Decode(&csaf); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &csaf); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

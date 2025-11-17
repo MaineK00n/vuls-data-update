@@ -40,7 +40,6 @@
 		"Process: Process Creation"
 	],
 	"x_mitre_deprecated": false,
-	"x_mitre_detection": "",
 	"x_mitre_domains": [
 		"ics-attack"
 	],

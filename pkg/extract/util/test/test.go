@@ -1,7 +1,7 @@
 package test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"net/url"
@@ -59,12 +59,12 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 			switch name {
 			case "datasource.json":
 				var want, got datasourceTypes.DataSource
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
 				want.Sort()
 
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				got.Sort()
@@ -72,12 +72,12 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 				diff = cmp.Diff(want, got)
 			case "data":
 				var want, got dataTypes.Data
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
 				want.Sort()
 
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				got.Sort()
@@ -85,55 +85,55 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 				diff = cmp.Diff(want, got)
 			case "cpe":
 				var want, got cpeTypes.CPE
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				diff = cmp.Diff(want, got)
 			case "cwe":
 				var want, got cweTypes.CWE
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				diff = cmp.Diff(want, got)
 			case "capec":
 				var want, got capecTypes.CAPEC
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				diff = cmp.Diff(want, got)
 			case "attack":
 				var want, got attackTypes.Attack
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				diff = cmp.Diff(want, got)
 			case "windowskb":
 				var want, got windowskbTypes.WindowsKB
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				diff = cmp.Diff(want, got)
 			case "eol":
 				var want, got map[string]eolTypes.EOL
-				if err := json.NewDecoder(ef).Decode(&want); err != nil {
+				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
-				if err := json.NewDecoder(gf).Decode(&got); err != nil {
+				if err := json.UnmarshalRead(gf, &got); err != nil {
 					return err
 				}
 				diff = cmp.Diff(want, got)

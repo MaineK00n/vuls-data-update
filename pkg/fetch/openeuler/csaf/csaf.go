@@ -2,7 +2,8 @@ package csaf
 
 import (
 	"bufio"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -164,8 +165,8 @@ func (o options) fetchCSAF(client *utilhttp.Client, kind string, is []string) er
 			}
 
 			var csaf CSAF
-			if err := json.NewDecoder(resp.Body).Decode(&csaf); err != nil {
-				var syntaxErr *json.SyntaxError
+			if err := json.UnmarshalRead(resp.Body, &csaf); err != nil {
+				var syntaxErr *jsontext.SyntacticError
 				if errors.As(err, &syntaxErr) {
 					// e.g.
 					// https://repo.openeuler.org/security/data/csaf/cve/2024/csaf-openeuler-cve-2024-50187.json

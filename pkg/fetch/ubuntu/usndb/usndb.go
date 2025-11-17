@@ -2,7 +2,7 @@ package usndb
 
 import (
 	"compress/bzip2"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -87,7 +87,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var db map[string]USN
-	if err := json.NewDecoder(bzip2.NewReader(resp.Body)).Decode(&db); err != nil {
+	if err := json.UnmarshalRead(bzip2.NewReader(resp.Body), &db); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

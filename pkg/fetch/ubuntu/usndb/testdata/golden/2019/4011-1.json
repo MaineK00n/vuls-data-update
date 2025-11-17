@@ -9,7 +9,7 @@
 		"CVE-2016-10745",
 		"CVE-2019-10906"
 	],
-	"Releases": {
+	"releases": {
 		"bionic": {
 			"allbinaries": {
 				"python-jinja2": {

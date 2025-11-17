@@ -3,7 +3,7 @@ package csaf
 import (
 	"archive/tar"
 	"encoding/csv"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"io/fs"
@@ -206,7 +206,7 @@ func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error
 		}
 
 		var csaf CSAF
-		if err := json.NewDecoder(tr).Decode(&csaf); err != nil {
+		if err := json.UnmarshalRead(tr, &csaf); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
@@ -277,7 +277,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var csaf CSAF
-			if err := json.NewDecoder(resp.Body).Decode(&csaf); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &csaf); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 
