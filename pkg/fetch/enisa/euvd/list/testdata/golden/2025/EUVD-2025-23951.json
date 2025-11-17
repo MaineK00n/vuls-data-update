@@ -1,0 +1,976 @@
+{
+	"id": "EUVD-2025-23951",
+	"enisaUuid": "cd072336-5336-3c51-8083-7208e80ec989",
+	"description": "Early versions of Operator-SDK provided an insecure method to allow operator containers to run in environments that used a random UID. Operator-SDK before 0.15.2 provided a script, user_setup, which modifies the permissions of the /etc/passwd file to 664 during build time. Developers who used Operator-SDK before 0.15.2 to scaffold their operator may still be impacted by this if the insecure user_setup script is still being used to build new container images. \n\nIn affected images, the /etc/passwd file is created during build time with group-writable permissions and a group ownership of root (gid=0). An attacker who can execute commands within an affected container, even as a non-root user, may be able to leverage their membership in the root group to modify the /etc/passwd file. This could allow the attacker to add a new user with any arbitrary UID, including UID 0, leading to full root privileges within the container.",
+	"datePublished": "Aug 7, 2025, 7:05:08 PM",
+	"dateUpdated": "Nov 15, 2025, 8:55:25 AM",
+	"baseScore": 5.2,
+	"baseScoreVersion": "3.1",
+	"baseScoreVector": "CVSS:3.1/AV:L/AC:H/PR:H/UI:N/S:U/C:L/I:H/A:L",
+	"references": "https://access.redhat.com/security/cve/CVE-2025-7195\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2376300\nhttps://nvd.nist.gov/vuln/detail/CVE-2025-7195\nhttps://github.com/operator-framework/operator-sdk\nhttps://access.redhat.com/errata/RHSA-2025:19335\nhttps://access.redhat.com/errata/RHSA-2025:19332\nhttps://access.redhat.com/errata/RHSA-2025:19958\nhttps://access.redhat.com/errata/RHSA-2025:19961\nhttps://access.redhat.com/errata/RHSA-2025:21368\n",
+	"aliases": "CVE-2025-7195\n",
+	"assigner": "redhat",
+	"epss": 0,
+	"enisaIdProduct": [
+		{
+			"id": "009222b5-9383-3cdb-a683-bf544c8504b3",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:b8e9e8ba56e74a8ca955d5e552ee7177c7468f7d32f0b0cecd5ec712641db09e"
+		},
+		{
+			"id": "0105b550-a9ca-3098-b60a-66bdc2f514bb",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:e9f1e2743fe9930ccb470c6eb8d9e9577640fe6a9ab7a013648e513b6216fa74"
+		},
+		{
+			"id": "0168bcb7-41fe-3e9f-9bc5-4aa656b019d8",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:40f8584e7ed0be1742fc3d40ee639dfd5323e38c55c7fcae4146d4246abf6cf0"
+		},
+		{
+			"id": "021aa3bf-f4b0-35ba-851c-b7afe2481d91",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:74b1659b62a5d75ef62f8fc46701445a51a1e78e8d7d96ccccab47cdd67acacb"
+		},
+		{
+			"id": "04b906b6-5937-343c-b332-5e57641944db",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:2e11b27b9d6884dcb846865d632c141a038f85163b0c4db63a1f29cb8d277125"
+		},
+		{
+			"id": "079ac283-baf7-3b76-a94d-ef8c27cb07ae",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:2987990bc63fa58ced038084921bdf168a017bd0b94b296a7c79dc264388339a"
+		},
+		{
+			"id": "088a4051-cb29-3ed0-acbc-d60d03d9d3bb",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:3d3c96fd84e118f8236161bf16f22e2456a84fb38b0cd80406e97ada5149d30f"
+		},
+		{
+			"id": "0d738101-d699-3611-bd26-9d5142b0262b",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:0a5ac166f5ebddae21dcf2ce8a5932494209533ac4a92ff5551a402291f27ff9"
+		},
+		{
+			"id": "0e3ed43b-8045-3456-9658-a193238be27c",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:f588f9517ac72fb92989f929ad6e643440f709cb4d311974d0e201bfd6b17958"
+		},
+		{
+			"id": "0e6b451d-c95b-3751-8767-05c3c4cd1b21",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:6bc690f8da30efaae06ffa36524c17ce5a0e513876184e9b7c8e066ff5756640"
+		},
+		{
+			"id": "0ebeccb0-cb79-310d-b93f-1e7154a6aecd",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:ac8d47727a66b68185bf77848b27b8e5a9c41a023cb6f424a75369b6e4b500a7"
+		},
+		{
+			"id": "108a9d1d-ccfb-33d7-9262-8ff51dfb8faf",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.14"
+			},
+			"product_version": "patch: sha256:55dd4696828ab8a7546481b8124406d858b9a43563e14599d06f5e5b1ac030f5"
+		},
+		{
+			"id": "14f545f2-b9d7-312e-8a40-6a72cba6af04",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:c988f8015f90581e97bb97210853d417b7f090e62d39a0469865e1628a9dbbd3"
+		},
+		{
+			"id": "15b0e095-e510-389e-bfb0-8a4cd7706250",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:b488d0482849357ec15b94803eba470bd3c96a3aa70eb401e5e010d939996fd5"
+		},
+		{
+			"id": "179443b2-e085-36bb-b48d-255e1ce1b02b",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:eb1067cf493864c4ca48459b2f9adf0964b3849564743a17e7a3686e925e448f"
+		},
+		{
+			"id": "19a8e6a5-e7d3-3b4d-924a-120231180845",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:c8dce4a25f10645edc649576e995b2b6619c8bc39c2c30d3cffbe3a3c3a86b35"
+		},
+		{
+			"id": "1a3c91ed-cbcb-3b30-bdd5-64a87f23b49e",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:4122c38381cc2bc9fe06efee1b3d2d8ea908a5cfcaf74686734f9933c1f033ce"
+		},
+		{
+			"id": "1b547747-b1ea-3c73-80be-a3187e1e1734",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:526abc72ccfa1729a5962911f92da64a3dda4a689421ecdb21c7ad2a049f53ef"
+		},
+		{
+			"id": "1cb93672-70be-3f7e-b97c-4631fd086059",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:4c60d0415004cc994bc68aae4e38bfa17bb0b67df3213a670dcd1ab7dbfd55af"
+		},
+		{
+			"id": "1d90f071-b9d4-363f-9b6d-60e52966baee",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:be638cfd0897aa7c66b1c56b8dee8ba9a30c3497dbfbf1e7855cecf4a00c73b0"
+		},
+		{
+			"id": "1e78342e-d655-32bd-b49e-cfbb21fc1fe5",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:d2cc16ec9cc1f40da3b1967bc9a7b208062c5bc4a2753213ae2c41c62c5115aa"
+		},
+		{
+			"id": "2252e88d-86b8-3ccd-903e-341364a00f67",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:49f1e7092bdd19f318580b3d4dfc37dbec8435f814b7d1b863ed34a6ba6157ee"
+		},
+		{
+			"id": "2298ab35-9069-3770-bcf0-056a5915e8c6",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:33ba95658e6628be853182a24007d0eef69c350f344e01d24296396eaba1e0e9"
+		},
+		{
+			"id": "23f2002e-c0f5-3802-a215-598244487c58",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:d56cef998bb118950349234aacabc55dd066bb065b3502206505b1f7b01534c4"
+		},
+		{
+			"id": "2787848a-0364-3dd2-878c-20eafe3a0535",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:e9a01f91576307ab1e618ce7e4db1c116b2eb9701c5f5a48b0ad671fa57dc18d"
+		},
+		{
+			"id": "27bcd523-e25b-3927-8694-768d02e33b2f",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.12"
+			},
+			"product_version": "patch: sha256:e1ed0e73c99eb402fe547d9c112e3c2b9d23ff1fc5dda797638eebb42f4791be"
+		},
+		{
+			"id": "27d0638e-9a3b-3594-8590-9f764612e55b",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:fdb74e11ba60926cf6abfe7898ffec199d3efe07fb0273e794ba4e10c9f7ad70"
+		},
+		{
+			"id": "2a0e4f9c-7fab-3f1d-a674-e89d6bbdec22",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:e268332aeeeebd1d10688d513fa422c1ddf6d2e448f558ddae25ac719dc4f608"
+		},
+		{
+			"id": "2cafd782-7c41-3ce5-bfd9-32a323209264",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:1d10099e7b5e3a3c4444569f6af365f90494c71b758aad1dad53f5aecf788ca5"
+		},
+		{
+			"id": "2dc6dbd2-2318-36b7-9412-bd49238d7a89",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:ea4c2c1e333eb04d8d5514d255336aa7f0d20fa462b595ebcadcf2929acf9909"
+		},
+		{
+			"id": "2ee431e8-5327-3c57-9f3e-0ad1a7b6442c",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:857bfb293633ec85b774c07b2413f1e184155e5b7a5f63a99073ea419a671e17"
+		},
+		{
+			"id": "31494dd7-c6e5-3fe3-87f5-e8623cfc8932",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:eb4386e6dfb4a2277085dbc44190243c40d973b80e9985fe42378098eb35e6e7"
+		},
+		{
+			"id": "32160c6a-3cc0-392c-a4ce-f97962aa36fc",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.14"
+			},
+			"product_version": "patch: sha256:e780559caf89469f58e9d6646c389031a4cb080853aad7d471a5e7339c39f28c"
+		},
+		{
+			"id": "33c81b15-b8d2-35e2-9661-3ef2abd529a3",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:a492d94ceced107b6b8dc7339cca181875d2245c5f8ac9ecc51979160a341d76"
+		},
+		{
+			"id": "367706ad-f089-3e6e-a779-9e8e8017bc59",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:f2b3e838d78b6bd89e5c9f401326d08696fb29b862fa99b701a3b0aa8b705fe4"
+		},
+		{
+			"id": "36ab8b2b-de29-3175-8e00-590380158798",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:ff0c848b18b366afbe60b4fe97c876c0f71999262c9b92eae89db03b1158496f"
+		},
+		{
+			"id": "37f23e6f-e082-3fe6-a2d6-e12a9fdd0362",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:da96f0e217a418accd74f8958444423cb4baca7311ee8d3bf70d22c42597f5cb"
+		},
+		{
+			"id": "3962e4ea-eba7-3dcc-973f-468d4904a987",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:ecc54bc4e8be6f3bfade15c23827e84445acc12c63b4e133cee73e57ac5a42aa"
+		},
+		{
+			"id": "3db1875f-6b1c-3d75-978a-438114ae0932",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:b815590412ff4a47e299f5d30703bc292ba70744d58f4a90eabcf4089e50e2d5"
+		},
+		{
+			"id": "3dd0aacb-9bdc-31f1-a498-840f4c9038b8",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:95172347459900115fd67d22daa025b8545a9ee9ec05d1098f9196710c720d76"
+		},
+		{
+			"id": "3e96c859-14ad-3edb-a65f-70d3d3d3953c",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:cb4d70c84e2d58e9a4f8108a16ad6f7e1ab78fc4ef7a96dc96f8b5ba788ece0e"
+		},
+		{
+			"id": "3eba68f8-cca8-3edf-9ed1-03d0a3e18b54",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:1645b8ebfe127ec4a9b8c7c7a2d2ae6723bf1c02d49920a7f579197e8d21366f"
+		},
+		{
+			"id": "40fbf3fd-c3bc-33f6-9055-a01db039e619",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:072da24a7a4f1b61822ae7c86f8cc0b07462591168ad8a8dd89a02cf3bb33fa5"
+		},
+		{
+			"id": "423758e9-d4d9-31e3-abf6-c89db60165a4",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:c59f7905c54d41103305ecef9883cbe5f37f8a1921572773d9fd783c35026be3"
+		},
+		{
+			"id": "43cb4024-8a50-3516-94f4-6bd82831ca3e",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:d6daba3c061a1405e127105d9cd8d719bf793c3c375bdbdd839f0d0ae5517fe9"
+		},
+		{
+			"id": "447cc03c-310f-3940-821c-cbd6ebe7a11a",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:1c49bf643ea000a0f92a1d93114a4a866ff51f47947c6a7102fb8e200ae57e8a"
+		},
+		{
+			"id": "44c0e797-73d2-3327-9aa8-17a4a891d09a",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:c5e4d50a9c4ee10b0e7f9bba3d4d21bf479b19423ef3e0530a6637be85acc1ed"
+		},
+		{
+			"id": "45198484-09ef-377d-8205-7d9f8a1109ed",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:4f7a00583f8fe10b6fb076c75123c3fa49d9cfa0c89081d3bb39ed347f4c0993"
+		},
+		{
+			"id": "4af166d7-cc5e-3621-8c18-8df3358eb85f",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:053ad72159390ad37825015b051252dc162f46ebeeab4866e1568af1f0084cab"
+		},
+		{
+			"id": "594caf23-f748-3f6d-83ed-4e3b8471643d",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:116f99072859f76161266a538d92d7e19e3b463fc18e6084cf7faf7a6b311116"
+		},
+		{
+			"id": "5b1a7076-bb44-3784-9ca2-2df07660ab8e",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:487d5f2fae53dde288db6981d2e6373d0be4ac440abc7683147d64fce28976de"
+		},
+		{
+			"id": "5eb287e8-1f81-3bb3-b082-d5993ada9500",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:228bbd789e0de72a48a3673fab02aa53b14485fce3b27d2e4cd30eb30f5ac1b6"
+		},
+		{
+			"id": "5ff81ae1-fc64-372d-8b8b-c48b52290193",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:55e5df211a2eeb146596e833572cfe74bad9b16ebc95ec0f38908daac118d8b9"
+		},
+		{
+			"id": "628e683f-db47-3439-a08b-585bb04e5ed3",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:f33b87fa6e230bcea8a1ee1a8818aafb3ffb929fe728a62ee6d4a32a4bd45176"
+		},
+		{
+			"id": "62d5d591-42d3-34d8-b344-e342f9ffce89",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:869e84f8f70932a52daa3e2ab00edf51d307c5e765e96f4f60959f9f048299ff"
+		},
+		{
+			"id": "643f91fb-f67a-3c3e-b9bb-521a22c20734",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:f4ca2e5bc681d665e6234a1713ac02ea7460ed8fc5204c363a93eb758521189a"
+		},
+		{
+			"id": "64bc015f-470b-3bef-8f45-7c2c95a00c07",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:840fbf02ac4883ef94a41476eb3ab46ffd105726ccd4b02b9b48b6606dcfd8f8"
+		},
+		{
+			"id": "6639e65b-5b2d-3b82-be05-44ba5dc900a1",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:65c4003dfb7180e015ec74fe9e599bcc313501ab9b9c67d61fc59a68e6c89349"
+		},
+		{
+			"id": "66f7c70f-5fa1-3512-bb23-80c946889c34",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:2b5deb8c15ca85aec11aa24b3c7cdc200e7ece6b8e53cdf0b073898c8f3c87a5"
+		},
+		{
+			"id": "6851041b-797d-38bf-b0ba-0a19323b6f4d",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:1690d6c99f4626289bcdd78c8521edffb61c91da1a45aa2eb2b6ab2af137b7c1"
+		},
+		{
+			"id": "699cbeb9-d45e-3195-9e4c-aa6879e0f8c5",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:20c7a4f70f6000f204a3c53c153aaa3c08be94c98c09b90f538b2a19156a00e0"
+		},
+		{
+			"id": "6c8fc801-e17e-3de4-bac1-c8887c96ec6b",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:87f5569806a8960520bab78d69514f2e2061b2ad69040cf7c164a5037c27e6bf"
+		},
+		{
+			"id": "6ef1dfa7-8c47-3cf0-98e4-4e6428618bdb",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:00bdcca61bc8765fbbc838deeb86392ce25c72f0170241c270484ec9b77bd263"
+		},
+		{
+			"id": "73657861-b73b-3ac2-af0c-eca225050d7c",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:37d0208891259e9d725fb4146d023c1f0cd0dafbff8e322b7c12621ea25f8c85"
+		},
+		{
+			"id": "753206a1-9fc0-3553-b6a7-5a59340af215",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:b996388849ae27f7721c24987d19e8f0b561ba3c0d03496c89fe1d987a64fe7e"
+		},
+		{
+			"id": "757318a6-0cca-349c-bb35-e99e1dc8d8c3",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:d72bc2058e6fe68d79add2423d6ec95baf531f4d3e6a542f6e9d9a07f52bd9c9"
+		},
+		{
+			"id": "771d7e85-d4ec-3b2a-baa9-6867bae717fe",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:746daa9bb14b25657d06f1f812597c9af23bfc3609f5886073350b1ceb76a0a1"
+		},
+		{
+			"id": "778dc55e-7b37-3845-82b7-485feee88a4c",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:495c95d1a2df101e0bf9c0eaa3caeb575f596d6098782c3a0a1dcb0342589886"
+		},
+		{
+			"id": "7fa7925d-cfc3-362b-b52b-5f76a07b2c9f",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:af41dc511a4fba130590c8528e555fa331d0fea3c617a3f942e98216900d6773"
+		},
+		{
+			"id": "80773f27-d98d-334b-bef6-ae399a354487",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:b14c3a7c4cc6531ed0d9701fe1b07ddc8c85e702ef8b058f0eaaadb1e8852a04"
+		},
+		{
+			"id": "829a0a84-aaf4-3e1f-9f82-7b61db2c5d74",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:6ea6ea4f6425b574d708dabec4dc9f42e39b9553d4969b91663e2ffd866d8bb7"
+		},
+		{
+			"id": "82fbcf44-1701-31a7-ba83-aa0ac943d4cf",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:3a315a6e64edc354b066358fb29a64e9c7661d1ee9e634c084cb972d87329dc9"
+		},
+		{
+			"id": "8412ff26-fb89-3f44-a443-efc21b2d9329",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:5f920fdd7a8222e575e3be8108f35053199041f51ea5aef10afdf16270d2c2e5"
+		},
+		{
+			"id": "85c7fd10-67fc-3478-bedf-ffe46e75f0c8",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:88c20a3db23ec8edb463c9aba6340522118967db2a220b95d86a7fcc8c6462cb"
+		},
+		{
+			"id": "86a158a5-99e5-342c-b254-49560375d061",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:7c02ce667bc7b6693596ba249e34d7233a95fdb1966ce317927b2363518a564f"
+		},
+		{
+			"id": "86b31dc1-ae59-38dc-9fd2-9cc5749abace",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:0755c4e05987fce669d4fb7d021b9202efe9b5da35fc4776441a6a963a4e7f05"
+		},
+		{
+			"id": "8a057e6d-5ada-30de-9ed5-634f6f09f1ee",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:c5e7e0f82b73bcdfc594b25ecb2273819fd28dfbbecb4045f997da3d18a398dd"
+		},
+		{
+			"id": "8c25d403-0160-3745-85a5-52836563a1cd",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:8bd6b32078b7aceea003fdcd90f51a963e056a16dbe5ea54d56cbdfc6de029d5"
+		},
+		{
+			"id": "8f751f3e-48c4-327d-b49a-898e4b4accf6",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:4364624686c53f5996960296f8ce496ee819d500eab396f35f7bf417dfdf08b9"
+		},
+		{
+			"id": "8f8e0bb2-ab66-379d-b0fa-3832675f2602",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:2d8992c950833e7aacad7cf7ec1cded29c2092f7509bf50dfbfcce06a4bd149a"
+		},
+		{
+			"id": "90bd4443-edf1-32f5-9214-80c2e2406269",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:1ff67f3ff46b59b86c2f29596008440da7da8d594005881c65d6d4ab645aefc6"
+		},
+		{
+			"id": "92a65df2-c7e1-329b-a6d4-50b52466c102",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:25b4647a37692cde90c499460a62a78342827265992adc0740bef650028fc2df"
+		},
+		{
+			"id": "9508f686-2817-3156-8dd3-2e14e4912907",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:92dcf853dee08f8f68d43d6928df81e0e03cb95ed1c7b9035de089ec831ac12f"
+		},
+		{
+			"id": "97a081ad-d125-3063-bb68-338df4564d5b",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.12"
+			},
+			"product_version": "patch: sha256:dbb96a4e7584a48e7a61a00485ccbcb23919dcbdd47af01cec452bd4f0fd0bdc"
+		},
+		{
+			"id": "981156c3-8a90-35ff-ba85-49d54f3ae997",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:c09f09d492589e985ade4c480b5bcefa5ee8d5fd819c6a4953d581f60b609738"
+		},
+		{
+			"id": "9896a8f4-bbcb-3ffc-b891-3f520b5336ea",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.14"
+			},
+			"product_version": "patch: sha256:1b56fc6c4b897bb8a62b1fa176af6bace8282b2de38e3e69b5673c5ae3e6848c"
+		},
+		{
+			"id": "9c6c0c5a-d01d-3472-a681-d1e9cc53f7b1",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:d64f8dd4bc9c3c9cd4cde0d9c824a5554d3e3bad10cc45259f0cae1b49d60d72"
+		},
+		{
+			"id": "a6bd3fa2-e749-3243-b358-4ec46fa5d201",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:c786effa06598ecb80690644d1c9075588e123ad200db05686568a80a1feeb56"
+		},
+		{
+			"id": "a7b90372-0858-3860-a53a-74d089b17785",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:abaf77e6b461da4ae52774dfc2816c619c0bb9a2199024742ec173f3401c9981"
+		},
+		{
+			"id": "aa7204fe-0478-3a7e-aa3a-607ccd00a93f",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:b2fbb75c7054d13ff54575b398d6d70b5f0348c9777fcb88611b95c0dc18db4e"
+		},
+		{
+			"id": "ac8ec7a4-a2d0-30ba-a02b-a4e22c94bab0",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:c124e98be5de4a56ea655e4beca79f2858b32465fd20e07773e7a1395ab698bf"
+		},
+		{
+			"id": "ad09b618-b44e-3d6b-8067-fbfde92ba9e9",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:173a4998c70c4c8ff9d0d4f90fb48e8e3d3f8fbc4deeb4f742cbaa38dda61215"
+		},
+		{
+			"id": "adec94fa-8849-3948-b6f3-f767440c117e",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:5aad1d226292a42c700e97575eec56040108869acdcb720a9c5b32d02a0035b3"
+		},
+		{
+			"id": "aed2cd71-d640-3b82-b840-a722ae1cc004",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:66e773cf82a564ebe81af3d5206e6b24ddf9559ccb1e9f90646f0203b5da6863"
+		},
+		{
+			"id": "b00bd3ba-9ef9-3dbc-87ba-354a5f96e504",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:d40189f09ff39240e5e49412c1314d9911fcb957459c7496b215da8c9f758b8e"
+		},
+		{
+			"id": "b2137f0c-dc56-3acf-b213-cbced0605005",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:8e766e6892e3f3e4b97b2af195c359e5c388d5d5cd23bf82b571d0f8c40c674a"
+		},
+		{
+			"id": "b39b54fe-d5b9-3da1-b640-56eb68131563",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:ca0284c10827905e1576ea0a01bb09425acbf96d30b2e556b34e22e2d0115196"
+		},
+		{
+			"id": "b7714171-f42c-3077-8417-a973c66c32cc",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:36c26ae9529d584fbd4ed24376ff8a83fd583190d4b13461a484e8f49c3ac3b3"
+		},
+		{
+			"id": "b8de5cac-4d51-36ce-9be4-3de56cbd0d6f",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:f6f42a735efb43df610a27239c0ef952e50666dbb8934be136d9f164f92c2207"
+		},
+		{
+			"id": "b94b4b01-e52a-3443-99e3-1e00a96a4b5c",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.12"
+			},
+			"product_version": "patch: sha256:125a0d04b6b5c6c2338ef18b53860d4118f005c1d0f3691f32baccce4ce9b21b"
+		},
+		{
+			"id": "baa5a2cd-fd55-3798-97c2-be40046e439c",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:4c8def04b4b3d5eb619a67c199c543e637582bfd8dbf59785bc7ebdb190a6511"
+		},
+		{
+			"id": "bdc6a07b-30cb-3818-919e-fd54c6b7d994",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:7ea7c9adce3bb022e345cffcb939e4d4d03e44717ac32a00cbef60d3fb5eb2b3"
+		},
+		{
+			"id": "bed66203-ff8c-300e-a825-01543661df4a",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:46a940727ab0bb654158deab9b9fa85a768b2fd6bdcf32f9eb0c0b061317be72"
+		},
+		{
+			"id": "bfdaa38b-a0d5-3940-9ca2-947e0f4b80f2",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:ddd7acae1c7918ec983e18cb6000a6050fd80eb5e57d2f3b9754de3713ba877b"
+		},
+		{
+			"id": "c290369a-90fa-3b25-9e1d-0fafa3e2b352",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:f4615211c16cc89f94043e2588400957b8fd225f233c86096542ac1364678cf4"
+		},
+		{
+			"id": "c4a4b052-eb50-3fc3-bf57-813a7cf5066a",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:7c5b233911109f0a218b634d8d317229a3949b2ea5936b7ec91ebfcdd6f15060"
+		},
+		{
+			"id": "cb8b6ec2-6024-37d5-8e23-0008bb906e62",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:295cce4181249098c7903b70ef34afe257731e062c9cb944845663929ca8075c"
+		},
+		{
+			"id": "cf2ecaf3-2f49-30bd-8744-8ca73968c7d1",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:2abd2d479416e66c6f85e4e883d5e4987bc38f476f907766374784107b89de9a"
+		},
+		{
+			"id": "cf857a0a-f1a1-3daa-a277-39a676721d5f",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.12"
+			},
+			"product_version": "patch: sha256:ba2a04ce8cd5cc8221049896d4e1a46b4912e6f8213316020b3f40dfdacd7954"
+		},
+		{
+			"id": "d3367550-1856-371e-9b30-c81c5aacec96",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:9164cc380719f38594bfef8cd590c16c53b066809ceecfc04ebef36355f42ce9"
+		},
+		{
+			"id": "d50f7289-2fe9-3115-b41f-c4265815e8fa",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:65176cfc11dcc49e7b175404475dd0fcd9ad14e3b3e8ab85816cf52d64c51512"
+		},
+		{
+			"id": "d5681334-cfa6-39d6-80ea-dbb8ee4fc4c7",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:5ad05f728a9409bccca7af882d0bb7161a2269d8336ad3e63c3236c9023e017a"
+		},
+		{
+			"id": "d83494bb-5cc7-349e-935a-78e68c83cf60",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:2bd4927011a029a1dd7ba2baa2fdc759d431550879eddc8813d89cb44cdb2767"
+		},
+		{
+			"id": "d9b342b6-40a3-3034-bd1e-33b156067c76",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:b251e7b26d4a6f3443d6d795a4d92992b5f79d56e5561477648eabae286d7641"
+		},
+		{
+			"id": "dafe2e33-5695-369a-b3a1-14f4696798d0",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:53532c4f8a3328788f7ad9ce1de7e94fe3c590dcdf367e04a4e47c190a0d39c7"
+		},
+		{
+			"id": "dddd8941-cf49-350f-94e1-b631bd525bd5",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:5ee6284d6354e4e55f1ee7eb5a79b833aae6e31bf42bf185c4192e5d373f06e7"
+		},
+		{
+			"id": "dedbb713-9865-324c-b824-fab2c7e3e282",
+			"product": {
+				"name": "Red Hat Advanced Cluster Management for Kubernetes 2.14"
+			},
+			"product_version": "patch: sha256:c13595e478ea28b6ba8d146d5a93c6f271babf253653d914139000e5af34d022"
+		},
+		{
+			"id": "e135976a-5845-3051-8a81-40c21edc83c4",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:c6eb556ecea92be74c6175061678d06bb3006a6ccfc5927d2327ddcf244c934b"
+		},
+		{
+			"id": "e358d0e5-3ef0-3f98-8b24-bfcf23d5c7e5",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:ae7818eab65947f74badec716268053224a27b53d704d89c455380d54009c10c"
+		},
+		{
+			"id": "e3ff62af-4a43-3408-9bf0-11bb4021759f",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:4280a31c94268bb421798385104196fcbf69d6821344601af246fd087e93ca63"
+		},
+		{
+			"id": "e53d70c4-4b9b-3345-853d-e7edfa478dc8",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:7ef2d434ff3b461181f4fbead426143e21524bf70e42efb2e5f945f1a4b64b51"
+		},
+		{
+			"id": "e7485e9f-17fd-34d2-88c0-09b3d9507ed0",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:16f8baa1271b313bb4bbfb4321a1d1ffe2c4b377a237f317640a8129d324b418"
+		},
+		{
+			"id": "e8b93c8f-198a-3b4c-a0f4-0f7cbe2c70c8",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:7ccd6c3cf13980e73689da2a969cb29c1875e3bd4a76999a76f588f9f0cde8dd"
+		},
+		{
+			"id": "e9be8888-3aec-32e6-8a45-b509447d1cb3",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:1a2ef170407505193e8d1ab4832ae0b945ec2fd9245c5a93134ce73f959ea34c"
+		},
+		{
+			"id": "ea3edb22-56a0-38b2-86b0-31656ff2f8fe",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:4da2afb698447df4a45a8bc1b479e57a5da7cd7a3ace09e131717a31155ec8a5"
+		},
+		{
+			"id": "ecdca08a-e2d0-3277-bbbf-301bae34a340",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:4d0f4fe708b4aea53b1bbf71fb10a41fd50313d62fb380b7cafd6abb130b5024"
+		},
+		{
+			"id": "ee7b7b76-e436-3359-ac97-10942a319031",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:f0fc8196ffce6f355f06c0157a38e36109eaa9be1f3e91ad71fdd72bc33ee509"
+		},
+		{
+			"id": "f18fe55d-56db-31f6-a2b0-198584998a40",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:c1537bc0126b2cabce127ec3d719b9ea6341302cde316cf37f5348ae1e287124"
+		},
+		{
+			"id": "f531eb1b-e568-3269-9a7a-653819b663be",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.9"
+			},
+			"product_version": "patch: sha256:08038f377c65aefa81d3c7ecae4994d28d052bd4bad585e18e8a1a68ab17cae7"
+		},
+		{
+			"id": "f6f17d7d-2549-3e52-91f3-11b9c0e803f3",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:17ff83445d5f6c2296f1b5c5061734a7866c84f6951e140f194bb5a1b2c981a2"
+		},
+		{
+			"id": "f82354e8-c42c-3db0-a128-ff3120a601d8",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:3aca4b3b0ee0e2a80cb9f30c64d6f098ba44aa47b599d403a5a2e6215c23e4a2"
+		},
+		{
+			"id": "fa443c3c-4f71-3ea4-b5eb-1b060ba35803",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:4e0d8a47e840f27038d6290dab730d7115dc1b1a5fe2c2fe7c2307211253a96a"
+		},
+		{
+			"id": "fc010bfa-8649-3c74-870d-d3b26f9b410b",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:0488dca3cb2db097732fe153483af7c4b2acdb7b0bc241f30e78cdb0474d11bb"
+		},
+		{
+			"id": "fc1b065b-b88d-3e75-a26e-40caaa611cfc",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:e0d3839cbb1734c0e224e0c076c7c8b4d0e0888e31989b8a6a611418ea2c72bc"
+		},
+		{
+			"id": "fcdf9833-837a-3ee9-a7db-9ef02a18e66f",
+			"product": {
+				"name": "multicluster engine for Kubernetes 2.7"
+			},
+			"product_version": "patch: sha256:dd99548b21e36ba637fbf8e44f6062d2fec98abd536dba16e10475648664984e"
+		},
+		{
+			"id": "fe815e0e-7e9d-3012-9652-6f78740145aa",
+			"product": {
+				"name": "Red Hat Openshift Data Foundation 4.18"
+			},
+			"product_version": "patch: sha256:599bfb2b83e095f88d90a408d4e8bf66bf10070255c5d174ca9ed8668111d25f"
+		}
+	],
+	"enisaIdVendor": [
+		{
+			"id": "b9b088f2-1ef8-36ef-af0d-f044925dd3c9",
+			"vendor": {
+				"name": "Red Hat"
+			}
+		}
+	]
+}

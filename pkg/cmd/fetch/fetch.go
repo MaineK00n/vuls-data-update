@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/MakeNowJust/heredoc"
@@ -44,6 +45,8 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
 	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
 	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
+	enisaEUVDDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/euvd/detail"
+	enisaEUVDList "github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/euvd/list"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
 	erlangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/osv"
@@ -215,6 +218,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdEcho(),
 		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
+		newCmdENISAEUVDDetail(), newCmdENISAEUVDList(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
@@ -1334,6 +1338,83 @@ func newCmdEndOfLifeDateProducts() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdENISAEUVDDetail() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "detail"),
+			retry: 5,
+		},
+		concurrency: 2,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "enisa-euvd-detail <EUVD ID>...",
+		Short: "Fetch ENISA EUVD Detail data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch enisa-euvd-detail EUVD-2025-0001
+		`),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			r := cmd.InOrStdin()
+			if len(args) > 0 && args[0] != "-" {
+				r = strings.NewReader(strings.Join(args, "\n"))
+			}
+			if err := enisaEUVDDetail.Fetch(r, enisaEUVDDetail.WithDir(options.dir), enisaEUVDDetail.WithRetry(options.retry), enisaEUVDDetail.WithConcurrency(options.concurrency), enisaEUVDDetail.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch enisa euvd detail")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdENISAEUVDList() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "enisa", "euvd", "list"),
+			retry: 5,
+		},
+		concurrency: 2,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "enisa-euvd-list",
+		Short: "Fetch ENISA EUVD List data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch enisa-euvd-list
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := enisaEUVDList.Fetch(enisaEUVDList.WithDir(options.dir), enisaEUVDList.WithRetry(options.retry), enisaEUVDList.WithConcurrency(options.concurrency), enisaEUVDList.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch enisa euvd")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }
