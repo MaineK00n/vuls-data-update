@@ -3,6 +3,9 @@ name: Test
 on:
   pull_request:
 
+env:
+  GOEXPERIMENT: jsonv2
+
 jobs:
   test:
     name: Test
