@@ -6,35 +6,34 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/osv"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/hackage/osv"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata string
 		hasError bool
 	}{
 		{
-			name:     "happy path",
-			testdata: "testdata/fixtures/all.zip",
+			name: "happy",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, tt.testdata)
+			u, err := url.JoinPath(ts.URL, "Hackage", "all.zip")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
