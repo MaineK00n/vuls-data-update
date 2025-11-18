@@ -17,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://osv-vulnerabilities.storage.googleapis.com/Hackage/all.zip"
+const dataURL = "https://osv-vulnerabilities.storage.googleapis.com/GHC/all.zip"
 
 type options struct {
 	dataURL string
@@ -62,7 +62,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "haskell", "ghc", "osv"),
 		retry:   3,
 	}
 
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Haskell OSV")
+	log.Println("[INFO] Fetch Haskell GHC OSV")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch osv data")
