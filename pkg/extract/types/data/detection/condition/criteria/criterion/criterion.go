@@ -2,6 +2,7 @@ package criterion
 
 import (
 	"cmp"
+	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
 
@@ -30,6 +31,32 @@ func (t CriterionType) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+func (t CriterionType) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.String(t.String()))
+}
+
+func (t *CriterionType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != '"' {
+		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
+	}
+
+	switch token.String() {
+	case "version":
+		*t = CriterionTypeVersion
+	case "none-exist":
+		*t = CriterionTypeNoneExist
+	case "unknown":
+		*t = CriterionTypeUnknown
+	default:
+		return fmt.Errorf("invalid CriterionType %s", token.String())
+	}
+	return nil
 }
 
 func (t CriterionType) MarshalJSON() ([]byte, error) {

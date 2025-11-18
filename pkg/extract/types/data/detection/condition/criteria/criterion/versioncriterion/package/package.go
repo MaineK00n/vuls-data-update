@@ -2,6 +2,7 @@ package criterionpackage
 
 import (
 	"cmp"
+	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
 
@@ -38,6 +39,36 @@ func (t PackageType) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+func (t PackageType) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.String(t.String()))
+}
+
+func (t *PackageType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != '"' {
+		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
+	}
+
+	switch token.String() {
+	case "binary":
+		*t = PackageTypeBinary
+	case "source":
+		*t = PackageTypeSource
+	case "cpe":
+		*t = PackageTypeCPE
+	case "language":
+		*t = PackageTypeLanguage
+	case "unknown":
+		*t = PackageTypeUnknown
+	default:
+		return fmt.Errorf("invalid PackageType %s", token.String())
+	}
+	return nil
 }
 
 func (t PackageType) MarshalJSON() ([]byte, error) {
