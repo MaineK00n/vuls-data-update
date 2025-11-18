@@ -1,6 +1,7 @@
 package csaf_test
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -49,6 +50,17 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasPrefix(r.URL.Path, "/csaf/"):
+					f, err := os.Open(filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
+					if err != nil {
+						if errors.Is(err, fs.ErrNotExist) {
+							http.Error(w, `{"error": "Failed to generate CSAF"}`, http.StatusInternalServerError)
+							return
+						}
+						http.Error(w, "internal server error", http.StatusInternalServerError)
+						return
+					}
+					defer f.Close()
+
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", path.Base(r.URL.Path)))
 				default:
 					http.NotFound(w, r)

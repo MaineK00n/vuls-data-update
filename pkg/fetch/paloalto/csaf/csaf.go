@@ -1,6 +1,8 @@
 package csaf
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -103,7 +106,7 @@ func Fetch(ids []string, opts ...Option) error {
 		us = append(us, fmt.Sprintf(options.dataURL, id))
 	}
 
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 	if err := client.PipelineGet(us, options.concurrency, options.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
@@ -144,7 +147,7 @@ func Fetch(ids []string, opts ...Option) error {
 			}
 
 			return nil
-		case http.StatusNotFound:
+		case http.StatusInternalServerError:
 			// ignore the error because there is no way to check in advance that there is no CSAF
 			// e.g. https://security.paloaltonetworks.com/csaf/CVE-2016-2219
 			_, _ = io.Copy(io.Discard, resp.Body)
@@ -158,4 +161,32 @@ func Fetch(ids []string, opts ...Option) error {
 	}
 
 	return nil
+}
+
+func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	switch resp.StatusCode {
+	case http.StatusInternalServerError:
+		bs, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return false, errors.Wrap(err, "read all response body")
+		}
+
+		var e struct {
+			Error string `json:"error"`
+		}
+		if err := json.Unmarshal(bs, &e); err != nil {
+			return false, errors.Wrap(err, "unmarshal json")
+		}
+
+		if e.Error != "Failed to generate CSAF" {
+			return true, fmt.Errorf("unexpected HTTP status %s", resp.Status)
+		}
+
+		_ = resp.Body.Close()
+		resp.Body = io.NopCloser(bytes.NewBuffer(bs))
+
+		return false, nil
+	default:
+		return retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err)
+	}
 }
