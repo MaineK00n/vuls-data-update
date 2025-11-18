@@ -97,8 +97,7 @@ func newCmdRegistryLs() *cobra.Command {
 			if err != nil {
 				return errors.Wrap(err, "failed to list registry dotgits")
 			}
-			e := jsontext.NewEncoder(os.Stdout, jsontext.WithIndent("  "), json.Deterministic(true))
-			if err := json.MarshalEncode(e, ps); err != nil {
+			if err := json.MarshalWrite(os.Stdout, ps, jsontext.WithIndent("  "), json.Deterministic(true)); err != nil {
 				return errors.Wrap(err, "failed to print registry dotgits")
 			}
 			return nil

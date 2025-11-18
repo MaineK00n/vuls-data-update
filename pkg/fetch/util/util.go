@@ -62,8 +62,7 @@ func Write(path string, content any) error {
 	}
 	defer f.Close()
 
-	e := jsontext.NewEncoder(f, jsontext.WithIndent("\t"), json.Deterministic(true))
-	if err := json.MarshalEncode(e, content); err != nil {
+	if err := json.MarshalWrite(f, content, jsontext.WithIndent("\t"), json.Deterministic(true)); err != nil {
 		return errors.Wrap(err, "encode json")
 	}
 

@@ -53,8 +53,7 @@ func newCmdFind() *cobra.Command {
 					return nil
 				}
 
-				e := jsontext.NewEncoder(os.Stdout, jsontext.WithIndent("  "), json.Deterministic(true))
-				if err := json.MarshalEncode(e, fs); err != nil {
+				if err := json.MarshalWrite(os.Stdout, fs, jsontext.WithIndent("  "), json.Deterministic(true)); err != nil {
 					return errors.Wrap(err, "failed to encode json")
 				}
 				return nil
