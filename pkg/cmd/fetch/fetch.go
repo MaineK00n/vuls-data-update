@@ -42,7 +42,8 @@ import (
 	debianOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/oval"
 	debianSecurityTrackerAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/api"
 	debianSecurityTrackerSalsa "github.com/MaineK00n/vuls-data-update/pkg/fetch/debian/tracker/salsa"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
+	echoData "github.com/MaineK00n/vuls-data-update/pkg/fetch/echo/data"
+	echoOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/echo/osv"
 	endOfLifeDateAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/api"
 	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
 	enisaEUVDDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/euvd/detail"
@@ -218,7 +219,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdComposerGHSA(), newCmdComposerGLSA(), newCmdComposerOSV(), newCmdComposerDB(),
 		newCmdConanGLSA(),
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
-		newCmdEcho(),
+		newCmdEchoData(), newCmdEchoOSV(),
 		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
 		newCmdENISAEUVDDetail(), newCmdENISAEUVDList(), newCmdENISAKEV(),
 		newCmdEPSS(),
@@ -1254,22 +1255,49 @@ func newCmdDebianOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdEcho() *cobra.Command {
+func newCmdEchoData() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "echo"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "echo", "data"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "echo",
+		Use:   "echo-data",
 		Short: "Fetch Echo data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch echo
+			$ vuls-data-update fetch echo-data
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := echo.Fetch(echo.WithDir(options.dir), echo.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch echo")
+			if err := echoData.Fetch(echoData.WithDir(options.dir), echoData.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch echo data")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdEchoOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "echo", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "echo-osv",
+		Short: "Fetch Echo OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch echo-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := echoOSV.Fetch(echoOSV.WithDir(options.dir), echoOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch echo osv")
 			}
 			return nil
 		},

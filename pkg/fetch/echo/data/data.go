@@ -1,4 +1,4 @@
-package echo
+package data
 
 import (
 	"encoding/json/v2"
@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -61,7 +59,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "echo"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "echo", "data"),
 		retry:   3,
 	}
 
@@ -73,7 +71,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Echo")
+	log.Println("[INFO] Fetch Echo Data")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
@@ -90,45 +88,19 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode json")
 	}
 
-	m := make(map[string]Vulnerability)
-	for pkg, vm := range as {
-		for id, a := range vm {
-			base, ok := m[id]
-			if !ok {
-				base = Vulnerability{ID: id}
-			}
-			base.Packages = append(base.Packages, Package{
-				Name:         pkg,
-				Severity:     a.Severity,
-				FixedVersion: a.FixedVersion,
-			})
-			m[id] = base
+	for name, vm := range as {
+		if name == "" {
+			continue
 		}
-	}
-
-	for _, v := range m {
-		switch {
-		case strings.HasPrefix(v.ID, "CVE-"):
-			splitted, err := util.Split(v.ID, "-", "-")
-			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.ID)
-			}
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", v.ID)
-			}
-
-			if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", v.ID)), v); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", v.ID)))
-			}
-		default:
-			splitted, err := util.Split(v.ID, "-")
-			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "TEMP-<ID>", v.ID)
-			}
-
-			if err := util.Write(filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", v.ID)), v); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], fmt.Sprintf("%s.json", v.ID)))
-			}
+		p := Package{Name: name}
+		for id, v := range vm {
+			p.Vulnerabilities = append(p.Vulnerabilities, Vulnerability{
+				ID:           id,
+				FixedVersion: v.FixedVersion,
+			})
+		}
+		if err := util.Write(filepath.Join(options.dir, p.Name[:1], fmt.Sprintf("%s.json", p.Name)), p); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, p.Name[:1], fmt.Sprintf("%s.json", p.Name)))
 		}
 	}
 

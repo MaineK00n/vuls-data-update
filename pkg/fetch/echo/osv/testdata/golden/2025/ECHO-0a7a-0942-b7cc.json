@@ -1,0 +1,37 @@
+{
+	"schema_version": "1.7.3",
+	"id": "ECHO-0a7a-0942-b7cc",
+	"modified": "2025-09-15T01:16:09.396507Z",
+	"published": "2025-09-15T01:10:16.775749Z",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Echo",
+				"name": "linux",
+				"purl": "pkg:deb/echo/linux"
+			},
+			"ranges": [
+				{
+					"type": "SEMVER",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://advisory.echohq.com/osv/ECHO-0a7a-0942-b7cc.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "WEB",
+			"url": "https://advisory.echohq.com/cve/CVE-2023-31082"
+		}
+	]
+}
