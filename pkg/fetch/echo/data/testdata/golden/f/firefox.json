@@ -1,0 +1,8 @@
+{
+	"name": "firefox",
+	"vulnerabilities": [
+		{
+			"id": "CVE-2025-4091"
+		}
+	]
+}
