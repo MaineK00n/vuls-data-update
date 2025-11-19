@@ -65,6 +65,7 @@ import (
 	golangGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/glsa"
 	golangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/osv"
 	haskellOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/osv"
+	juliaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/julia/osv"
 	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
 	jvnFeedProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/product"
 	jvnFeedRSS "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/rss"
@@ -230,6 +231,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdGitOSV(),
 		newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangOSV(), newCmdGolangDB(), newCmdGolangVulnDB(),
 		newCmdHaskellOSV(),
+		newCmdJuliaOSV(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdK8sJSON(), newCmdK8sOSV(),
 		newCmdLinuxOSV(),
@@ -1993,6 +1995,33 @@ func newCmdHaskellOSV() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdJuliaOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "julia", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "julia-osv",
+		Short: "Fetch Julia OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch julia-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := juliaOSV.Fetch(juliaOSV.WithDir(options.dir), juliaOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch julia osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
