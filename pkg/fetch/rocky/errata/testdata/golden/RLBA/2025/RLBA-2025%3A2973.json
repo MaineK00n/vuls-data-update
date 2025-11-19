@@ -22,6 +22,7 @@
 	],
 	"name": "RLBA-2025:2973",
 	"publishedAt": "2025-07-29T13:40:19.644888Z",
+	"rebootSuggested": false,
 	"rpms": {
 		"Rocky Linux 9": {
 			"nvras": [

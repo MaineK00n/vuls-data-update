@@ -2,7 +2,7 @@ package csaf
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -211,7 +211,7 @@ func (opts options) fetchCSAF(client *utilhttp.Client, url string) error {
 	}
 
 	var a CSAF
-	if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &a); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

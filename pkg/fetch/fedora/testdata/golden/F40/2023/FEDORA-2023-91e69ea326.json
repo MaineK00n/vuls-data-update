@@ -1,9 +1,12 @@
 {
 	"alias": "FEDORA-2023-91e69ea326",
+	"autokarma": false,
 	"autotime": true,
 	"bugs": [
 		{
 			"bug_id": 2152954,
+			"parent": false,
+			"security": false,
 			"title": "rubygem-rails-html-sanitizer-1.6.0 is available",
 			"bugzilla": {
 				"bug_id": "2152954",
@@ -148,6 +151,7 @@
 		},
 		{
 			"bug_id": 2153702,
+			"parent": false,
 			"security": true,
 			"title": "CVE-2022-23518 rubygem-rails-html-sanitizer: Improper neutralization of data URIs leading to Cross site scripting [fedora-all]",
 			"bugzilla": {
@@ -317,6 +321,8 @@
 		},
 		{
 			"bug_id": 2153703,
+			"parent": false,
+			"security": false,
 			"title": "Review Request: rust-yrs - High performance implementation of the Yjs CRDT",
 			"bugzilla": {
 				"bug_id": "2153703",
@@ -3773,6 +3779,7 @@
 		},
 		{
 			"bug_id": 2153747,
+			"parent": false,
 			"security": true,
 			"title": "CVE-2022-23519 rubygem-rails-html-sanitizer: Cross site scripting vulnerability with certain configurations [fedora-37]",
 			"bugzilla": {
@@ -3944,6 +3951,7 @@
 		},
 		{
 			"bug_id": 2153753,
+			"parent": false,
 			"security": true,
 			"title": "CVE-2022-23520 rubygem-rails-html-sanitizer: Cross site scripting vulnerability with certain configurations [fedora-37]",
 			"bugzilla": {
@@ -4150,6 +4158,8 @@
 	"comments": [
 		{
 			"id": 3290855,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update was automatically created",
 			"timestamp": "2023-11-23 12:31:23",
 			"update_id": 566108,
@@ -4163,6 +4173,8 @@
 		},
 		{
 			"id": 3290856,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'waiting'.",
 			"timestamp": "2023-11-23 12:31:27",
 			"update_id": 566108,
@@ -4176,6 +4188,8 @@
 		},
 		{
 			"id": 3290857,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update's test gating status has been changed to 'ignored'.",
 			"timestamp": "2023-11-23 12:31:27",
 			"update_id": 566108,
@@ -4189,6 +4203,8 @@
 		},
 		{
 			"id": 3290858,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for stable by bodhi",
 			"timestamp": "2023-11-23 12:33:37",
 			"update_id": 566108,
@@ -4202,18 +4218,21 @@
 		}
 	],
 	"content_type": "rpm",
-	"critpath_groups": "",
+	"critpath": false,
 	"date_approved": "2023-11-23 12:33:36",
 	"date_pushed": "2023-11-23 12:33:36",
 	"date_stable": "2023-11-23 12:33:36",
 	"date_submitted": "2023-11-23 12:31:23",
 	"date_testing": "2023-11-23 12:31:27",
+	"karma": 0,
+	"locked": false,
 	"meets_testing_requirements": true,
 	"notes": "Automatic update for rubygem-rails-html-sanitizer-1.6.0-1.fc40.\n\n##### **Changelog**\n\n```\n* Thu Nov 23 2023 Vít Ondruch <vondruch@redhat.com> - 1.6.0-1\n- Update to rails-html-sanitizer 1.6.0.\n  Resolves: rhbz#2152954\n  Resolves: rhbz#2153702\n  Resolves: rhbz#2153703\n  Resolves: rhbz#2153747\n  Resolves: rhbz#2153753\n\n```",
 	"pushed": true,
 	"release": {
 		"branch": "rawhide",
 		"candidate_tag": "f40-updates-candidate",
+		"composed_by_bodhi": false,
 		"create_automatic_updates": true,
 		"dist_tag": "f40",
 		"id_prefix": "FEDORA",
@@ -4231,7 +4250,10 @@
 		"testing_tag": "f40-updates-testing",
 		"version": "40"
 	},
+	"require_bugs": false,
+	"require_testcases": false,
 	"severity": "unspecified",
+	"stable_days": 0,
 	"stable_karma": 3,
 	"status": "stable",
 	"suggest": "unspecified",

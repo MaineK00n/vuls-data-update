@@ -1,7 +1,7 @@
 package cve
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -99,7 +99,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			var cs []cve
-			if err := json.NewDecoder(resp.Body).Decode(&cs); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &cs); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 
@@ -149,7 +149,7 @@ func (opts options) fetchVersions() ([]string, error) {
 	}
 
 	var vs versions
-	if err := json.NewDecoder(resp.Body).Decode(&vs); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &vs); err != nil {
 		return nil, errors.Wrap(err, "decode json")
 	}
 

@@ -1,7 +1,8 @@
 package util
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"maps"
 	"os"
 	"path/filepath"
@@ -61,10 +62,7 @@ func Write(path string, content any) error {
 	}
 	defer f.Close()
 
-	e := json.NewEncoder(f)
-	e.SetEscapeHTML(false)
-	e.SetIndent("", "\t")
-	if err := e.Encode(content); err != nil {
+	if err := json.MarshalWrite(f, content, jsontext.WithIndent("\t"), json.Deterministic(true)); err != nil {
 		return errors.Wrap(err, "encode json")
 	}
 

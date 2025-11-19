@@ -1,7 +1,8 @@
 package dotgit
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"os"
 	"strings"
 
@@ -96,9 +97,7 @@ func newCmdRegistryLs() *cobra.Command {
 			if err != nil {
 				return errors.Wrap(err, "failed to list registry dotgits")
 			}
-			e := json.NewEncoder(os.Stdout)
-			e.SetIndent("", "  ")
-			if err := e.Encode(ps); err != nil {
+			if err := json.MarshalWrite(os.Stdout, ps, jsontext.WithIndent("  "), json.Deterministic(true)); err != nil {
 				return errors.Wrap(err, "failed to print registry dotgits")
 			}
 			return nil
@@ -125,7 +124,7 @@ func newCmdRegistryStatus() *cobra.Command {
 			if err != nil {
 				return errors.Wrap(err, "failed to get registry dotgit status")
 			}
-			if err := json.NewEncoder(os.Stdout).Encode(s); err != nil {
+			if err := json.MarshalWrite(os.Stdout, s, json.Deterministic(true)); err != nil {
 				return errors.Wrap(err, "failed to print registry dotgit status")
 			}
 			return nil

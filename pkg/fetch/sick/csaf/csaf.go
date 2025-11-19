@@ -1,7 +1,7 @@
 package csaf
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -120,7 +120,7 @@ func (opts options) fetchFeed(client *utilhttp.Client) ([]string, error) {
 	}
 
 	var feed feed
-	if err := json.NewDecoder(resp.Body).Decode(&feed); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &feed); err != nil {
 		return nil, errors.Wrap(err, "decode json")
 	}
 
@@ -142,7 +142,7 @@ func (opts options) fetchCSAF(client *utilhttp.Client, urls []string) error {
 		}
 
 		var csaf CSAF
-		if err := json.NewDecoder(resp.Body).Decode(&csaf); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &csaf); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

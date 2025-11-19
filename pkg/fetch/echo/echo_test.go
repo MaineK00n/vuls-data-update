@@ -1,7 +1,7 @@
 package echo_test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -55,7 +55,7 @@ func TestFetch(t *testing.T) {
 					defer f.Close()
 
 					var v echo.Vulnerability
-					if err := json.NewDecoder(f).Decode(&v); err != nil {
+					if err := json.UnmarshalRead(f, &v); err != nil {
 						return echo.Vulnerability{}, err
 					}
 					return v, nil

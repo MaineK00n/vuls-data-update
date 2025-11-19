@@ -1,7 +1,7 @@
 package list
 
 type Advisory struct {
-	ID      string `json:"id"`
+	ID      string `json:"ID"`
 	Title   string `json:"title"`
 	Problem []struct {
 		Lang  string `json:"lang"`

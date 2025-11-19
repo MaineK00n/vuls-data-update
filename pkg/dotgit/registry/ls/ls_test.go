@@ -1,7 +1,7 @@
 package ls_test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -377,7 +377,7 @@ func TestList(t *testing.T) {
 							return strings.Join(ss, ", ")
 						}())
 						w.WriteHeader(http.StatusOK)
-						if err := json.NewEncoder(w).Encode(func() []ls.Version {
+						if err := json.MarshalWrite(w, func() []ls.Version {
 							start := (page - 1) * perpage
 							end := start + perpage
 

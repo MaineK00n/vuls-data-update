@@ -3,7 +3,7 @@ package list_test
 import (
 	"bytes"
 	"cmp"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -55,7 +55,7 @@ func TestFetch(t *testing.T) {
 					}
 
 					var data []list.Advisory
-					if err := json.NewDecoder(f).Decode(&data); err != nil {
+					if err := json.UnmarshalRead(f, &data); err != nil {
 						http.Error(w, fmt.Sprintf("decode testdata: %v", err), http.StatusInternalServerError)
 						return
 					}

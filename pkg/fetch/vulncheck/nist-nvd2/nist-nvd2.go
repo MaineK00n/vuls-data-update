@@ -4,7 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"compress/gzip"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -143,7 +143,7 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 			defer gr.Close()
 
 			var feed api20
-			if err := json.NewDecoder(gr).Decode(&feed); err != nil {
+			if err := json.UnmarshalRead(gr, &feed); err != nil {
 				return api20{}, errors.Wrap(err, "decode json")
 			}
 			return feed, nil
@@ -195,7 +195,7 @@ func fetchBackupURL(client *utilhttp.Client, baseURL, apiToken string) (string, 
 	}
 
 	var r backupResponse
-	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &r); err != nil {
 		return "", errors.Wrap(err, "decode json")
 	}
 

@@ -2,7 +2,7 @@ package nistnvd_test
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"net/http"

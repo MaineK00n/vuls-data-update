@@ -3,7 +3,7 @@ package v2
 import (
 	"archive/tar"
 	"compress/gzip"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"hash/fnv"
 	"io"
@@ -113,7 +113,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var feed api20
-		if err := json.NewDecoder(tr).Decode(&feed); err != nil {
+		if err := json.UnmarshalRead(tr, &feed); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

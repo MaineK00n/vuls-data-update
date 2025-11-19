@@ -2,7 +2,8 @@ package severity
 
 import (
 	"cmp"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 
 	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
@@ -48,6 +49,36 @@ func (t SeverityType) String() string {
 	default:
 		return ""
 	}
+}
+
+func (t SeverityType) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.String(t.String()))
+}
+
+func (t *SeverityType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != '"' {
+		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
+	}
+
+	switch token.String() {
+	case "vendor":
+		*t = SeverityTypeVendor
+	case "cvss_v2":
+		*t = SeverityTypeCVSSv2
+	case "cvss_v30":
+		*t = SeverityTypeCVSSv30
+	case "cvss_v31":
+		*t = SeverityTypeCVSSv31
+	case "cvss_v40":
+		*t = SeverityTypeCVSSv40
+	default:
+		return fmt.Errorf("invalid SeverityType %s", token.String())
+	}
+	return nil
 }
 
 func (t SeverityType) MarshalJSON() ([]byte, error) {

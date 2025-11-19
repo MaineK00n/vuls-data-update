@@ -1,7 +1,7 @@
 package kev
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -86,7 +86,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var catalog catalog
-	if err := json.NewDecoder(resp.Body).Decode(&catalog); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &catalog); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

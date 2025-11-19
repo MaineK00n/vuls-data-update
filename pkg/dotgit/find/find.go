@@ -3,7 +3,7 @@ package find
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"os/exec"
 	"regexp"

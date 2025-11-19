@@ -1,7 +1,7 @@
 package errata
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -95,7 +95,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			var root root
-			if err := json.NewDecoder(resp.Body).Decode(&root); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &root); err != nil {
 				return nil, errors.Wrapf(err, "decode almalinux %s", v)
 			}
 

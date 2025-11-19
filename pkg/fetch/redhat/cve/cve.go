@@ -2,7 +2,7 @@ package cve
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -118,7 +118,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var cve CVE
-		if err := json.NewDecoder(resp.Body).Decode(&cve); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &cve); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
@@ -181,7 +181,7 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 					}
 
 					var es []entry
-					if err := json.NewDecoder(resp.Body).Decode(&es); err != nil {
+					if err := json.UnmarshalRead(resp.Body, &es); err != nil {
 						return nil, errors.Wrap(err, "decode json")
 					}
 

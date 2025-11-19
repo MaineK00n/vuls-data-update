@@ -3,7 +3,7 @@ package vex
 import (
 	"archive/tar"
 	"encoding/csv"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"io/fs"
@@ -206,7 +206,7 @@ func (o options) fetchArchive(client *utilhttp.Client, archived time.Time) error
 		}
 
 		var vex VEX
-		if err := json.NewDecoder(tr).Decode(&vex); err != nil {
+		if err := json.UnmarshalRead(tr, &vex); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
@@ -277,7 +277,7 @@ func (o options) fetchChanges(client *utilhttp.Client, archived time.Time) error
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var vex VEX
-			if err := json.NewDecoder(resp.Body).Decode(&vex); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &vex); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 

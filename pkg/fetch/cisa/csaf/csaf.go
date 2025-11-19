@@ -4,7 +4,7 @@ import (
 	"archive/tar"
 	"bufio"
 	"compress/gzip"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -166,7 +166,7 @@ func Fetch(opts ...Option) error {
 				defer f.Close()
 
 				var advisory CSAF
-				if err := json.NewDecoder(f).Decode(&advisory); err != nil {
+				if err := json.UnmarshalRead(f, &advisory); err != nil {
 					return errors.Wrap(err, "decode json")
 				}
 

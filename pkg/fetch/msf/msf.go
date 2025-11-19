@@ -1,7 +1,7 @@
 package msf
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -86,7 +86,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var ms map[string]module
-	if err := json.NewDecoder(resp.Body).Decode(&ms); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &ms); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

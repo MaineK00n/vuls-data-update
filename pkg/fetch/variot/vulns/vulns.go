@@ -1,7 +1,7 @@
 package vulns
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -133,7 +133,7 @@ func (opts options) fetch(client *utilhttp.Client, header utilhttp.RequestOption
 	}
 
 	var r vulns
-	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &r); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 
@@ -161,7 +161,7 @@ func (opts options) fetch(client *utilhttp.Client, header utilhttp.RequestOption
 		}
 
 		var vs vulns
-		if err := json.NewDecoder(resp.Body).Decode(&vs); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &vs); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

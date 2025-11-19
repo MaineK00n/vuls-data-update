@@ -1,7 +1,7 @@
 package git
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"io/fs"
 	"os"
@@ -24,7 +24,7 @@ type repository struct {
 	Remotes []struct {
 		Name string   `json:"name"`
 		URLs []string `json:"urls"`
-	}
+	} `json:"remotes"`
 	Commits []struct {
 		Path   string `json:"path"`
 		Msg    string `json:"msg"`
@@ -33,7 +33,7 @@ type repository struct {
 			Email string    `json:"email"`
 			When  time.Time `json:"when"`
 		} `json:"author"`
-	}
+	} `json:"commits"`
 }
 
 func Populate(dir, datapath string) (string, error) {
@@ -44,7 +44,7 @@ func Populate(dir, datapath string) (string, error) {
 	defer f.Close()
 
 	var fixtures repository
-	if err := json.NewDecoder(f).Decode(&fixtures); err != nil {
+	if err := json.UnmarshalRead(f, &fixtures); err != nil {
 		return "", errors.Wrap(err, "decode json")
 	}
 

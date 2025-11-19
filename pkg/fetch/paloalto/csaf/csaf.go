@@ -3,7 +3,7 @@ package csaf
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -113,7 +113,7 @@ func Fetch(ids []string, opts ...Option) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var csaf CSAF
-			if err := json.NewDecoder(resp.Body).Decode(&csaf); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &csaf); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 

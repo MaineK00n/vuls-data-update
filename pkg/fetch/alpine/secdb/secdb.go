@@ -1,7 +1,7 @@
 package secdb
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -105,7 +105,7 @@ func Fetch(opts ...Option) error {
 				}
 
 				var a Advisory
-				if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
+				if err := json.UnmarshalRead(resp.Body, &a); err != nil {
 					return nil, errors.Wrap(err, "decode json")
 				}
 

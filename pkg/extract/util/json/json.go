@@ -1,7 +1,7 @@
 package json
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"maps"
 	"os"
 	"path/filepath"
@@ -38,7 +38,7 @@ func (j *JSONReader) Read(path, prefix string, v any) error {
 	}
 	defer f.Close()
 
-	if err := json.NewDecoder(f).Decode(v); err != nil {
+	if err := json.UnmarshalRead(f, v); err != nil {
 		return errors.Wrapf(err, "decode %s", path)
 	}
 

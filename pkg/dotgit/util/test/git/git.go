@@ -1,7 +1,7 @@
 package git
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"io/fs"
 	"os"
@@ -52,7 +52,7 @@ func Populate(dir, datapath string) (string, error) {
 	defer f.Close()
 
 	var commits []commit
-	if err := json.NewDecoder(f).Decode(&commits); err != nil {
+	if err := json.UnmarshalRead(f, &commits); err != nil {
 		return "", errors.Wrap(err, "decode json")
 	}
 

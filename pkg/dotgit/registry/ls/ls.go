@@ -1,7 +1,7 @@
 package ls
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -109,7 +109,7 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 							Type string `json:"type"`
 						}
 						var us users
-						if err := json.NewDecoder(resp.Body).Decode(&us); err != nil {
+						if err := json.UnmarshalRead(resp.Body, &us); err != nil {
 							return errors.Wrap(err, "decode response")
 						}
 						switch us.Type {
@@ -151,7 +151,7 @@ func List(repositories []Repository, token string, opts ...Option) ([]Response, 
 					switch resp.StatusCode {
 					case http.StatusOK:
 						var vs []Version
-						if err := json.NewDecoder(resp.Body).Decode(&vs); err != nil {
+						if err := json.UnmarshalRead(resp.Body, &vs); err != nil {
 							return errors.Wrap(err, "decode response")
 						}
 

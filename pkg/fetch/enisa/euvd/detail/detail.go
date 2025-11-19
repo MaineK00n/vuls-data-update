@@ -3,7 +3,7 @@ package detail
 import (
 	"bufio"
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -135,7 +135,7 @@ func (opts options) fetch(r io.Reader) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var a any
-			if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &a); err != nil {
 				return errors.Wrap(err, "decode json")
 			}
 

@@ -29,6 +29,6 @@ type USN struct {
 			Version     string `json:"version"`
 			Description string `json:"description"`
 		} `json:"sources"`
-	}
+	} `json:"releases,omitempty"`
 	Timestamp float64 `json:"timestamp"`
 }

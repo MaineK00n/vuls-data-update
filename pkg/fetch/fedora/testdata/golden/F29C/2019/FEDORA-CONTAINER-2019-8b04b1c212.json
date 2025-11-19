@@ -1,6 +1,7 @@
 {
 	"alias": "FEDORA-CONTAINER-2019-8b04b1c212",
 	"autokarma": true,
+	"autotime": false,
 	"bugs": [
 		{
 			"bug_id": 1657563,
@@ -10,6 +11,7 @@
 					"comment": {
 						"id": 882476,
 						"karma": 1,
+						"karma_critpath": 0,
 						"timestamp": "2019-01-08 16:04:51",
 						"update_id": 129310,
 						"user": {
@@ -92,7 +94,8 @@
 						},
 						"user_id": 341
 					},
-					"comment_id": 882476
+					"comment_id": 882476,
+					"karma": 0
 				}
 			],
 			"parent": true,
@@ -254,6 +257,8 @@
 	"comments": [
 		{
 			"id": 887168,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for testing by jcajka. ",
 			"timestamp": "2019-01-22 15:15:49",
 			"update_id": 130329,
@@ -267,6 +272,8 @@
 		},
 		{
 			"id": 887413,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to testing.",
 			"timestamp": "2019-01-23 02:34:03",
 			"update_id": 130329,
@@ -280,6 +287,8 @@
 		},
 		{
 			"id": 889616,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has reached 7 days in testing and can be pushed to stable now if the maintainer wishes",
 			"timestamp": "2019-01-30 06:00:33",
 			"update_id": 130329,
@@ -293,6 +302,8 @@
 		},
 		{
 			"id": 889648,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for batched by jcajka. ",
 			"timestamp": "2019-01-30 07:46:04",
 			"update_id": 130329,
@@ -306,6 +317,8 @@
 		},
 		{
 			"id": 889855,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been submitted for stable by bodhi. ",
 			"timestamp": "2019-01-30 23:45:40",
 			"update_id": 130329,
@@ -319,6 +332,8 @@
 		},
 		{
 			"id": 889886,
+			"karma": 0,
+			"karma_critpath": 0,
 			"text": "This update has been pushed to stable.",
 			"timestamp": "2019-01-31 00:04:36",
 			"update_id": 130329,
@@ -332,10 +347,13 @@
 		}
 	],
 	"content_type": "container",
+	"critpath": false,
 	"date_pushed": "2019-01-31 00:04:17",
 	"date_stable": "2019-01-31 00:04:17",
 	"date_submitted": "2019-01-22 15:15:49",
 	"date_testing": "2019-01-23 02:33:51",
+	"karma": 0,
+	"locked": false,
 	"meets_testing_requirements": true,
 	"notes": "* Rebase to go1.11.4\n* Security fix for CVE-2018-16875, CVE-2018-16874 and CVE-2018-16873",
 	"pushed": true,
@@ -358,8 +376,10 @@
 		"testing_tag": "f29-container-updates-testing",
 		"version": "29"
 	},
-	"requirements": "",
+	"require_bugs": false,
+	"require_testcases": false,
 	"severity": "medium",
+	"stable_days": 0,
 	"stable_karma": 3,
 	"status": "stable",
 	"suggest": "unspecified",

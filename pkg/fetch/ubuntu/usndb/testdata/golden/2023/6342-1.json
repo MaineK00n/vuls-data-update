@@ -13,7 +13,7 @@
 		"CVE-2023-3611",
 		"CVE-2023-3776"
 	],
-	"Releases": {
+	"releases": {
 		"bionic": {
 			"allbinaries": {
 				"linux-aws-cloud-tools-4.15.0-1160": {

@@ -1,7 +1,7 @@
 package list
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -91,7 +91,7 @@ func Fetch(opts ...Option) error {
 			}
 
 			var as []Advisory
-			if err := json.NewDecoder(resp.Body).Decode(&as); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &as); err != nil {
 				return nil, errors.Wrap(err, "decode json")
 			}
 

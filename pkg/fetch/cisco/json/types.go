@@ -12,19 +12,19 @@ type advisories struct {
 }
 
 type Advisory struct {
-	AdvisoryID     string      `json:"advisoryID"`
+	AdvisoryID     string      `json:"advisoryId"`
 	AdvisoryTitle  string      `json:"advisoryTitle"`
 	BugIDs         []string    `json:"bugIDs"`
-	CsafURL        string      `json:"csafURL"`
+	CsafURL        string      `json:"csafUrl"`
 	Cves           []string    `json:"cves"`
-	CvrfURL        string      `json:"cvrfURL"`
+	CvrfURL        string      `json:"cvrfUrl"`
 	CvssBaseScore  string      `json:"cvssBaseScore"`
 	Cwe            []string    `json:"cwe"`
 	FirstPublished string      `json:"firstPublished"`
 	IpsSignatures  interface{} `json:"ipsSignatures"`
 	LastUpdated    string      `json:"lastUpdated"`
 	ProductNames   []string    `json:"productNames"`
-	PublicationURL string      `json:"publicationURL"`
+	PublicationURL string      `json:"publicationUrl"`
 	Sir            string      `json:"sir"`
 	Status         string      `json:"status"`
 	Summary        string      `json:"summary"`

@@ -170,7 +170,6 @@
 					}
 				]
 			},
-			"cvss_score_sets": {},
 			"remediations": {
 				"remediation": [
 					{
@@ -213,7 +212,6 @@
 					}
 				]
 			},
-			"cvss_score_sets": {},
 			"remediations": {
 				"remediation": [
 					{

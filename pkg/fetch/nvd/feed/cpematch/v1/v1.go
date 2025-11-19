@@ -2,7 +2,8 @@ package v1
 
 import (
 	"compress/gzip"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"hash/fnv"
 	"io"
@@ -124,27 +125,29 @@ func (opts options) fetch() (map[string][]CpeMatchItem, error) {
 	}
 	defer r.Close()
 
-	d := json.NewDecoder(r)
-	if _, err := d.Token(); err != nil {
+	d := jsontext.NewDecoder(r)
+	if _, err := d.ReadToken(); err != nil {
 		return nil, errors.Wrap(err, `return next JSON token. expected: "json.Delim: {"`)
 	}
-	if _, err := d.Token(); err != nil {
+	if _, err := d.ReadToken(); err != nil {
 		return nil, errors.Wrap(err, `return next JSON token. expected: "string: matches"`)
 	}
-	if _, err := d.Token(); err != nil {
+	if _, err := d.ReadToken(); err != nil {
 		return nil, errors.Wrap(err, `return next JSON token. expected: "json.Delim: ["`)
 	}
-	for d.More() {
+
+	for d.PeekKind() != ']' {
 		var e CpeMatchItem
-		if err := d.Decode(&e); err != nil {
+		if err := json.UnmarshalDecode(d, &e); err != nil {
 			return nil, errors.Wrap(err, "decode element")
 		}
 		cpes[e.Cpe23URI] = append(cpes[e.Cpe23URI], e)
 	}
-	if _, err := d.Token(); err != nil {
+
+	if _, err := d.ReadToken(); err != nil {
 		return nil, errors.Wrap(err, `return next JSON token. expected: "json.Delim: ]"`)
 	}
-	if _, err := d.Token(); err != nil {
+	if _, err := d.ReadToken(); err != nil {
 		return nil, errors.Wrap(err, `return next JSON token. expected: "json.Delim: }"`)
 	}
 

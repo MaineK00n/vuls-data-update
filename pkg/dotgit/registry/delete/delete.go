@@ -1,7 +1,7 @@
 package delete
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"log"
 	"net/http"
@@ -98,7 +98,7 @@ func Delete(image, token string, opts ...Option) error {
 						Type string `json:"type"`
 					}
 					var us users
-					if err := json.NewDecoder(resp.Body).Decode(&us); err != nil {
+					if err := json.UnmarshalRead(resp.Body, &us); err != nil {
 						return errors.Wrap(err, "decode response")
 					}
 					switch us.Type {

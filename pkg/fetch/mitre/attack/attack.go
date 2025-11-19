@@ -1,7 +1,7 @@
 package attack
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -92,7 +92,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var enterprise enterprise
-		if err := json.NewDecoder(resp.Body).Decode(&enterprise); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &enterprise); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
@@ -129,7 +129,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var ics ics
-		if err := json.NewDecoder(resp.Body).Decode(&ics); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &ics); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
@@ -166,7 +166,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var mobile mobile
-		if err := json.NewDecoder(resp.Body).Decode(&mobile); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &mobile); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

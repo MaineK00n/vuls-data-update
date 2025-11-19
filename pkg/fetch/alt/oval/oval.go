@@ -3,7 +3,7 @@ package oval
 import (
 	"archive/zip"
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -110,7 +110,7 @@ func (opts options) fetchBranches() ([]string, error) {
 	}
 
 	var bs branches
-	if err := json.NewDecoder(resp.Body).Decode(&bs); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &bs); err != nil {
 		return nil, errors.Wrap(err, "decode json")
 	}
 

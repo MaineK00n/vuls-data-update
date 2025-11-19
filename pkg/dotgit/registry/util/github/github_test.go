@@ -1,7 +1,7 @@
 package github_test
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -46,7 +46,7 @@ func TestDo(t *testing.T) {
 				token: "token",
 				fn: func(resp *http.Response) error {
 					var got response
-					if err := json.NewDecoder(resp.Body).Decode(&got); err != nil {
+					if err := json.UnmarshalRead(resp.Body, &got); err != nil {
 						return err
 					}
 

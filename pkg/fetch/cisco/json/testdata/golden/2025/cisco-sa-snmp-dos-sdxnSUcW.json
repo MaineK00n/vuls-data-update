@@ -1,5 +1,5 @@
 {
-	"advisoryID": "cisco-sa-snmp-dos-sdxnSUcW",
+	"advisoryId": "cisco-sa-snmp-dos-sdxnSUcW",
 	"advisoryTitle": "Cisco IOS, IOS XE, and IOS XR Software SNMP Denial of Service Vulnerabilities",
 	"bugIDs": [
 		"CSCwm79554",
@@ -12,7 +12,7 @@
 		"CSCwm89600",
 		"CSCwn08493"
 	],
-	"csafURL": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW/csaf/cisco-sa-snmp-dos-sdxnSUcW.json",
+	"csafUrl": "https://sec.cloudapps.cisco.com/security/center/contentjson/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW/csaf/cisco-sa-snmp-dos-sdxnSUcW.json",
 	"cves": [
 		"CVE-2025-20169",
 		"CVE-2025-20170",
@@ -23,7 +23,7 @@
 		"CVE-2025-20175",
 		"CVE-2025-20176"
 	],
-	"cvrfURL": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW/cvrf/cisco-sa-snmp-dos-sdxnSUcW_cvrf.xml",
+	"cvrfUrl": "https://sec.cloudapps.cisco.com/security/center/contentxml/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW/cvrf/cisco-sa-snmp-dos-sdxnSUcW_cvrf.xml",
 	"cvssBaseScore": "7.7",
 	"cwe": [
 		"CWE-805"
@@ -3876,7 +3876,7 @@
 		"Cisco IOS XE Software 17.16.1",
 		"Cisco IOS XE Software 17.16.1a"
 	],
-	"publicationURL": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW",
+	"publicationUrl": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW",
 	"sir": "High",
 	"status": "Final",
 	"summary": "<p>Multiple vulnerabilities in the Simple Network Management Protocol (SNMP) subsystem of Cisco IOS Software, Cisco IOS XE Software, and Cisco IOS XR Software could allow an authenticated, remote attacker to cause a denial of service (DoS) condition on an affected device.</p>\r\n<p>For more information about these vulnerabilities, see the <a href=\"#details\">Details</a> section of this advisory.&nbsp;</p>\r\n<p>Cisco plans to release software updates that address these vulnerabilities. There are no workarounds that address these vulnerabilities. There are mitigations that address these vulnerabilities.</p>\r\n<p>This advisory is available at the following link:<br><a href=\"https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW\">https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-dos-sdxnSUcW</a></p>",

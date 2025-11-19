@@ -8,7 +8,7 @@
 	"cves": [
 		"CVE-2014-4699"
 	],
-	"Releases": {
+	"releases": {
 		"trusty": {
 			"allbinaries": {
 				"linux-image-3.13.0-30-generic": {

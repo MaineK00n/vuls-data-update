@@ -16,5 +16,11 @@
 	"template_id": "phoenix-contact-workflow",
 	"description": "A simple workflow that runs all Phoenix Contact related nuclei templates on a given target.",
 	"filename": "phoenix-contact-workflow.yaml",
-	"template_type": "public"
+	"template_type": "public",
+	"is_draft": false,
+	"is_github": false,
+	"is_new": false,
+	"is_pdresearch": false,
+	"is_pdteam": false,
+	"is_pdtemplate": false
 }

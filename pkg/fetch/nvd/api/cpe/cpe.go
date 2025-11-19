@@ -1,7 +1,7 @@
 package cpe
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"hash/fnv"
 	"io"
@@ -210,7 +210,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var preliminary api20
-	if err := json.NewDecoder(resp.Body).Decode(&preliminary); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &preliminary); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 
@@ -240,7 +240,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var response api20
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &response); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 

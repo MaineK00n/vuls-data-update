@@ -28,6 +28,9 @@
 	"path": "/modules/auxiliary/cloud/kubernetes/enum_kubernetes.rb",
 	"is_install_path": true,
 	"ref_name": "cloud/kubernetes/enum_kubernetes",
+	"check": false,
+	"post_auth": false,
+	"default_credential": false,
 	"notes": {
 		"SideEffects": [
 			"ioc-in-logs"

@@ -2,7 +2,8 @@ package affectedrange
 
 import (
 	"cmp"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"strings"
 
@@ -67,6 +68,50 @@ func (t RangeType) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+func (t RangeType) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.String(t.String()))
+}
+
+func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != '"' {
+		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
+	}
+
+	switch token.String() {
+	case "version":
+		*t = RangeTypeVersion
+	case "semver":
+		*t = RangeTypeSEMVER
+	case "apk":
+		*t = RangeTypeAPK
+	case "rpm":
+		*t = RangeTypeRPM
+	case "dpkg":
+		*t = RangeTypeDPKG
+	case "pacman":
+		*t = RangeTypePacman
+	case "freebsd-pkg":
+		*t = RangeTypeFreeBSDPkg
+	case "npm":
+		*t = RangeTypeNPM
+	case "rubygems":
+		*t = RangeTypeRubyGems
+	case "pypi":
+		*t = RangeTypePyPI
+	case "maven":
+		*t = RangeTypeMaven
+	case "unknown":
+		*t = RangeTypeUnknown
+	default:
+		return fmt.Errorf("invalid CriterionType %s", token.String())
+	}
+	return nil
 }
 
 func (t RangeType) MarshalJSON() ([]byte, error) {

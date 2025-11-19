@@ -10,7 +10,7 @@
 	"containers": {
 		"cna": {
 			"providerMetadata": {
-				"orgID": "00000000-0000-4000-9000-000000000000"
+				"orgId": "00000000-0000-4000-9000-000000000000"
 			},
 			"title": "Chromium: Monthly Vulnerability Update (March 2025)",
 			"descriptions": [

@@ -1,7 +1,7 @@
 package arch
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -85,7 +85,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var vs vulnerabilityGroups
-	if err := json.NewDecoder(resp.Body).Decode(&vs); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &vs); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

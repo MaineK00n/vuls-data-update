@@ -1,7 +1,7 @@
 package json
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"log"
@@ -85,7 +85,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	var doc document
-	if err := json.NewDecoder(resp.Body).Decode(&doc); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &doc); err != nil {
 		return errors.Wrap(err, "decode json")
 	}
 

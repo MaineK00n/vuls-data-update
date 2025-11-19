@@ -2,7 +2,8 @@ package noneexistcriterion
 
 import (
 	"cmp"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -30,6 +31,32 @@ func (t PackageType) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+func (t PackageType) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.String(t.String()))
+}
+
+func (t *PackageType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != '"' {
+		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
+	}
+
+	switch token.String() {
+	case "binary":
+		*t = PackageTypeBinary
+	case "source":
+		*t = PackageTypeSource
+	case "unknown":
+		*t = PackageTypeUnknown
+	default:
+		return fmt.Errorf("invalid PackageType %s", token.String())
+	}
+	return nil
 }
 
 func (t PackageType) MarshalJSON() ([]byte, error) {

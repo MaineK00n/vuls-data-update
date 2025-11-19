@@ -31,5 +31,11 @@
 	"references": [
 		"https://www.phoenixcontact.com/en-us/products/ac-charging-controllers"
 	],
-	"template_type": "public"
+	"template_type": "public",
+	"is_draft": false,
+	"is_github": false,
+	"is_new": false,
+	"is_pdresearch": false,
+	"is_pdteam": false,
+	"is_pdtemplate": false
 }

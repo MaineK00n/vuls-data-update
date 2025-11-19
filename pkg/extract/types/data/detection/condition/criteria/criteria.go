@@ -2,7 +2,8 @@ package criteria
 
 import (
 	"cmp"
-	"encoding/json"
+	"encoding/json/v2"
+	"encoding/json/jsontext"
 	"fmt"
 	"slices"
 
@@ -28,6 +29,30 @@ func (t CriteriaOperatorType) String() string {
 	default:
 		return ""
 	}
+}
+
+func (t CriteriaOperatorType) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.String(t.String()))
+}
+
+func (t *CriteriaOperatorType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != '"' {
+		return fmt.Errorf("unexpected type. expected: %s, got %s", "string", token.Kind())
+	}
+
+	switch token.String() {
+	case "OR":
+		*t = CriteriaOperatorTypeOR
+	case "AND":
+		*t = CriteriaOperatorTypeAND
+	default:
+		return fmt.Errorf("invalid CriteriaOperatorType %s", token.String())
+	}
+	return nil
 }
 
 func (t CriteriaOperatorType) MarshalJSON() ([]byte, error) {
