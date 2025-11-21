@@ -47,6 +47,7 @@ import (
 	endOfLifeDateProducts "github.com/MaineK00n/vuls-data-update/pkg/fetch/endoflife-date/products"
 	enisaEUVDDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/euvd/detail"
 	enisaEUVDList "github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/euvd/list"
+	enisaKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/enisa/kev"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/epss"
 	erlangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/ghsa"
 	erlangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/erlang/osv"
@@ -219,7 +220,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdDebianOVAL(), newCmdDebianSecurityTrackerAPI(), newCmdDebianSecurityTrackerSalsa(), newCmdDebianOSV(),
 		newCmdEcho(),
 		newCmdEndOfLifeDateAPI(), newCmdEndOfLifeDateProducts(),
-		newCmdENISAEUVDDetail(), newCmdENISAEUVDList(),
+		newCmdENISAEUVDDetail(), newCmdENISAEUVDList(), newCmdENISAKEV(),
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
@@ -1417,6 +1418,33 @@ func newCmdENISAEUVDList() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdENISAKEV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "enisa", "kev"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "enisa-kev",
+		Short: "Fetch ENISA KEV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch enisa-kev
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := enisaKEV.Fetch(enisaKEV.WithDir(options.dir), enisaKEV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch enisa kev")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
