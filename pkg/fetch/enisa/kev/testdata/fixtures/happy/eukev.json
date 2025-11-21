@@ -1,0 +1,17 @@
+[
+  {
+    "cveID": "CVE-2024-9380",
+    "euvdID": "EUVD-2024-49898",
+    "vendorProject": "Ivanti",
+    "product": "CSA (Cloud Services Appliance)",
+    "vulnerabilityName": "-",
+    "dateReported": "17/01/25",
+    "patchedSince": "tbc",
+    "originSource": "cnw",
+    "shortDescription": "-",
+    "exploitationType": "-",
+    "threatActorsExploiting": "-",
+    "cwes": "-",
+    "notes": "-"
+  }
+]
