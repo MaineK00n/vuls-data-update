@@ -372,6 +372,41 @@ func TestRangeType_Compare(t *testing.T) {
 			want: -1,
 		},
 		{
+			name: "rpm version only v1: 0.0.1, v2: 0.0.1",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				v1: "0.0.1",
+				v2: "0.0.1",
+			},
+			want: 0,
+		},
+		{
+			name: "rpm version only v1: 1:0.0.1-1, v2: 0.0.2",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				v1: "1:0.0.1-1",
+				v2: "0.0.2",
+			},
+			want: -1,
+		},
+		{
+			name: "rpm version only v1: 1:0.0.2, v2: 0.0.1",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				v1: "1:0.0.2",
+				v2: "0.0.1",
+			},
+			want: +1,
+		},
+		{
+			name: "rpm version only v1: 1:0.0.1-1, v2: 0.0.1",
+			rt:   affectedrangeTypes.RangeTypeRPMVersionOnly,
+			args: args{
+				v1: "1:0.0.1-1",
+				v2: "0.0.1",
+			},
+			want: 0,
+		}, {
 			name: "unknown type",
 			rt:   affectedrangeTypes.RangeTypeUnknown,
 			args: args{
