@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
@@ -274,7 +275,15 @@ func (opts options) releases(client *utilhttp.Client, releases []string) ([]stri
 }
 
 func (opts options) advisories(client *utilhttp.Client, release string) ([]Advisory, error) {
-	resp, err := client.Get(fmt.Sprintf(opts.dataURL.Advisory, release, 1, 1))
+	header := make(http.Header)
+	header.Set("Accept", "application/json")
+
+	req, err := utilhttp.NewRequest(http.MethodGet, fmt.Sprintf(opts.dataURL.Advisory, release, 1, 1), utilhttp.WithRequestHeader(header))
+	if err != nil {
+		return nil, errors.Wrap(err, "from request")
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", fmt.Sprintf(opts.dataURL.Advisory, release, 1))
 	}
@@ -295,13 +304,17 @@ func (opts options) advisories(client *utilhttp.Client, release string) ([]Advis
 		pages++
 	}
 
-	urls := make([]string, 0, pages)
+	reqs := make([]*retryablehttp.Request, 0, pages)
 	for i := 1; i <= pages; i++ {
-		urls = append(urls, fmt.Sprintf(opts.dataURL.Advisory, release, i, opts.rowsPerPage))
+		req, err := utilhttp.NewRequest(http.MethodGet, fmt.Sprintf(opts.dataURL.Advisory, release, i, opts.rowsPerPage), utilhttp.WithRequestHeader(header))
+		if err != nil {
+			return nil, errors.Wrap(err, "from request")
+		}
+		reqs = append(reqs, req)
 	}
 
-	respChan := make(chan []Advisory, len(urls))
-	if err := client.PipelineGet(urls, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
+	respChan := make(chan []Advisory, len(reqs))
+	if err := client.PipelineDo(reqs, opts.concurrency, opts.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
@@ -473,7 +486,8 @@ func findBuildID(client *utilhttp.Client, url, nvr string) (int, error) {
 	}
 
 	header := make(http.Header)
-	header.Set("Content-Type", "text/xml")
+	header.Set("Accept", "application/xml")
+	header.Set("Content-Type", "application/xml")
 
 	req, err := utilhttp.NewRequest(http.MethodPost, url, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody(bs))
 	if err != nil {
@@ -511,7 +525,8 @@ func getBuild(client *utilhttp.Client, url string, nvr string) (build, error) {
 	}
 
 	header := make(http.Header)
-	header.Set("Content-Type", "text/xml")
+	header.Set("Accept", "application/xml")
+	header.Set("Content-Type", "application/xml")
 
 	req, err := utilhttp.NewRequest(http.MethodPost, url, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody(bs))
 	if err != nil {
@@ -549,7 +564,8 @@ func listArchives(client *utilhttp.Client, url string, buildID int) ([]archive, 
 	}
 
 	header := make(http.Header)
-	header.Set("Content-Type", "text/xml")
+	header.Set("Accept", "application/xml")
+	header.Set("Content-Type", "application/xml")
 
 	req, err := utilhttp.NewRequest(http.MethodPost, url, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody(bs))
 	if err != nil {
@@ -587,7 +603,8 @@ func listRPMs(client *utilhttp.Client, url string, buildID, imageID *int) ([]Pac
 	}
 
 	header := make(http.Header)
-	header.Set("Content-Type", "text/xml")
+	header.Set("Accept", "application/xml")
+	header.Set("Content-Type", "application/xml")
 
 	req, err := utilhttp.NewRequest(http.MethodPost, url, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody(bs))
 	if err != nil {
@@ -619,7 +636,15 @@ func listRPMs(client *utilhttp.Client, url string, buildID, imageID *int) ([]Pac
 }
 
 func (opts options) bugzilla(client *utilhttp.Client, url string) (*Bugzilla, error) {
-	resp, err := client.Get(url)
+	header := make(http.Header)
+	header.Set("Accept", "application/xml")
+
+	req, err := utilhttp.NewRequest(http.MethodGet, url, utilhttp.WithRequestHeader(header))
+	if err != nil {
+		return nil, errors.Wrap(err, "from request")
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetch %s", url)
 	}
