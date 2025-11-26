@@ -1,0 +1,13 @@
+{
+	"name": "firefox-esr",
+	"vulnerabilities": [
+		{
+			"id": "CVE-2025-4084",
+			"fixed_version": "0"
+		},
+		{
+			"id": "CVE-2025-4091",
+			"fixed_version": "128.10.0esr-1~deb12u1"
+		}
+	]
+}

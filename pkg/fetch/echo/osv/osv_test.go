@@ -1,7 +1,6 @@
-package echo_test
+package osv_test
 
 import (
-	"encoding/json/v2"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -13,9 +12,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/echo/osv"
 )
 
 func TestFetch(t *testing.T) {
@@ -27,6 +25,7 @@ func TestFetch(t *testing.T) {
 			name: "happy",
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -34,33 +33,19 @@ func TestFetch(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "data.json")
+			u, err := url.JoinPath(ts.URL, "Echo", "all.zip")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = echo.Fetch(echo.WithDataURL(u), echo.WithDir(dir), echo.WithRetry(0))
+			err = osv.Fetch(osv.WithDataURL(u), osv.WithDir(dir), osv.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			default:
-				fn := func(path string) (echo.Vulnerability, error) {
-					f, err := os.Open(path)
-					if err != nil {
-						return echo.Vulnerability{}, err
-					}
-					defer f.Close()
-
-					var v echo.Vulnerability
-					if err := json.UnmarshalRead(f, &v); err != nil {
-						return echo.Vulnerability{}, err
-					}
-					return v, nil
-				}
-
 				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 					if err != nil {
 						return err
@@ -71,17 +56,17 @@ func TestFetch(t *testing.T) {
 					}
 
 					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := fn(filepath.Join("testdata", "golden", dir, file))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}
 
-					got, err := fn(path)
+					got, err := os.ReadFile(path)
 					if err != nil {
 						return err
 					}
 
-					if diff := cmp.Diff(want, got, cmpopts.SortSlices(func(a, b echo.Package) bool { return a.Name < b.Name })); diff != "" {
+					if diff := cmp.Diff(want, got); diff != "" {
 						t.Errorf("Fetch(). (-expected +got):\n%s", diff)
 					}
 
