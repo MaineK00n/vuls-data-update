@@ -67,7 +67,8 @@ import (
 	golangGHSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/ghsa"
 	golangGLSA "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/glsa"
 	golangOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/golang/osv"
-	haskellOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/osv"
+	haskellGHCOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/ghc/osv"
+	haskellHackageOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/haskell/hackage/osv"
 	juliaOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/julia/osv"
 	jvnFeedDetail "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
 	jvnFeedProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/product"
@@ -234,7 +235,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdGHActionsOSV(),
 		newCmdGitOSV(),
 		newCmdGolangGHSA(), newCmdGolangGLSA(), newCmdGolangOSV(), newCmdGolangDB(), newCmdGolangVulnDB(),
-		newCmdHaskellOSV(),
+		newCmdHaskellGHCOSV(), newCmdHaskellHackageOSV(),
 		newCmdJuliaOSV(),
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdK8sJSON(), newCmdK8sOSV(),
@@ -2057,29 +2058,56 @@ func newCmdGolangVulnDB() *cobra.Command {
 	return cmd
 }
 
-func newCmdHaskellOSV() *cobra.Command {
+func newCmdHaskellGHCOSV() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "haskell", "ghc", "osv"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "haskell-osv",
-		Short: "Fetch Haskell OSV data source",
+		Use:   "haskell-ghc-osv",
+		Short: "Fetch Haskell GHC OSV data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch haskell-osv
+			$ vuls-data-update fetch haskell-ghc-osv
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := haskellOSV.Fetch(haskellOSV.WithDir(options.dir), haskellOSV.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch haskell osv")
+			if err := haskellGHCOSV.Fetch(haskellGHCOSV.WithDir(options.dir), haskellGHCOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch haskell ghc osv")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdHaskellHackageOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "haskell", "hackage", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "haskell-hackage-osv",
+		Short: "Fetch Haskell Hackage OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch haskell-hackage-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := haskellHackageOSV.Fetch(haskellHackageOSV.WithDir(options.dir), haskellHackageOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch haskell hackage osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

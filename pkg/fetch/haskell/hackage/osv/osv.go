@@ -62,7 +62,7 @@ func WithRetry(retry int) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		dataURL: dataURL,
-		dir:     filepath.Join(util.CacheDir(), "fetch", "haskell", "osv"),
+		dir:     filepath.Join(util.CacheDir(), "fetch", "haskell", "hackage", "osv"),
 		retry:   3,
 	}
 
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Haskell OSV")
+	log.Println("[INFO] Fetch Haskell Hackage OSV")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch osv data")
