@@ -16,6 +16,7 @@ import (
 	alpineSecDB "github.com/MaineK00n/vuls-data-update/pkg/fetch/alpine/secdb"
 	altOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/alt/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/amazon"
+	anchoreEnrichment "github.com/MaineK00n/vuls-data-update/pkg/fetch/anchore/enrichment"
 	androidOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/android/osv"
 	anolisOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/anolis/oval"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/arch"
@@ -205,6 +206,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdAlpineSecDB(), newCmdAlpineOSV(),
 		newCmdAltOVAL(),
 		newCmdAmazon(),
+		newCmdAnchoreEnrichment(),
 		newCmdAndroidOSV(),
 		newCmdAnolisOVAL(),
 		newCmdArch(),
@@ -465,6 +467,33 @@ func newCmdAmazon() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "amazon"), "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdAnchoreEnrichment() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "anchore", "enrichment"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "anchore-enrichment",
+		Short: "Fetch Anchore Enrichment data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch anchore-enrichment
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := anchoreEnrichment.Fetch(anchoreEnrichment.WithDir(options.dir), anchoreEnrichment.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch anchore enrichment")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
