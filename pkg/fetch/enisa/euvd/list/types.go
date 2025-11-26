@@ -18,6 +18,7 @@ type Item struct {
 	Aliases          string    `json:"aliases"`
 	Assigner         string    `json:"assigner"`
 	EPSS             float64   `json:"epss"`
+	ExploitedSince   string    `json:"exploitedSince,omitempty"`
 	EnisaIDProduct   []Product `json:"enisaIdProduct"`
 	EnisaIDVendor    []Vendor  `json:"enisaIdVendor"`
 }
