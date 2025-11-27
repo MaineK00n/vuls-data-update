@@ -1,0 +1,93 @@
+{
+	"schema_version": "1.7.3",
+	"id": "RLSA-2024:8121",
+	"modified": "2024-10-25T17:18:45.488851Z",
+	"published": "2024-10-25T17:16:21.716473Z",
+	"related": [
+		"CVE-2023-48161",
+		"CVE-2024-21208",
+		"CVE-2024-21210",
+		"CVE-2024-21217",
+		"CVE-2024-21235"
+	],
+	"summary": "Moderate: java-11-openjdk security update",
+	"details": "The java-11-openjdk packages provide the OpenJDK 11 Java Runtime Environment and the OpenJDK 11 Java Software Development Kit.\n\nSecurity Fix(es):\n\n* giflib: Heap-Buffer Overflow during Image Saving in DumpScreen2RGB Function (CVE-2023-48161)\n\n* JDK: Array indexing integer overflow (8328544) (CVE-2024-21210)\n\n* JDK: HTTP client improper handling of maxHeaderSize (8328286) (CVE-2024-21208)\n\n* JDK: Unbounded allocation leads to out-of-memory error (8331446) (CVE-2024-21217)\n\n* JDK: Integer conversion error leads to incorrect range check (8332644) (CVE-2024-21235)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:9",
+				"name": "java-11-openjdk",
+				"purl": "pkg:rpm/rocky-linux/java-11-openjdk?distro=rocky-linux-9&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:11.0.25.0.9-2.el9"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2024:8121.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "java-11-openjdk",
+				"purl": "pkg:rpm/rocky-linux/java-11-openjdk?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:11.0.25.0.9-2.el8"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2024:8121.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.rockylinux.org/RLSA-2024:8121"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2251025"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2318524"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2318530"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2318534"
+		}
+	],
+	"credits": [
+		{
+			"name": "Rocky Enterprise Software Foundation"
+		},
+		{
+			"name": "Red Hat"
+		}
+	]
+}

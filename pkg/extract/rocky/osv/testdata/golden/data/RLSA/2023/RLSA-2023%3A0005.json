@@ -1,0 +1,106 @@
+{
+	"id": "RLSA-2023:0005",
+	"advisories": [
+		{
+			"content": {
+				"id": "RLSA-2023:0005",
+				"title": "Important: bcel security update",
+				"description": "The Byte Code Engineering Library (Apache Commons BCEL) is intended to give users a convenient way to analyze, create, and manipulate (binary) Java class files (those ending with .class).\n\nSecurity Fix(es):\n\n* Apache-Commons-BCEL: arbitrary bytecode produced via out-of-bounds writing (CVE-2022-42920)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "osv.dev/Rocky-Linux",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 8.1,
+							"base_severity": "HIGH",
+							"temporal_score": 8.1,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.1,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2142707"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://errata.rockylinux.org/RLSA-2023:0005"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://storage.googleapis.com/resf-osv-data/RLSA-2023:0005.json"
+					}
+				],
+				"published": "2023-01-02T06:07:03Z",
+				"modified": "2023-02-02T14:08:58.894629Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-42920"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:9"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "rocky:9",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "bcel"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.4.1-9.el9_1"
+											}
+										],
+										"fixed": [
+											"0:6.4.1-9.el9_1"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "rocky-osv",
+		"raws": [
+			"fixtures/RLSA/2023/RLSA-2023:0005.json"
+		]
+	}
+}
