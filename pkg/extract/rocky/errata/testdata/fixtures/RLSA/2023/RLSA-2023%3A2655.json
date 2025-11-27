@@ -1,139 +1,486 @@
 {
-	"affectedProducts": [
-		"Rocky Linux 9"
+	"id": 5299,
+	"created_at": "2023-05-25T19:53:57.360666+00:00",
+	"updated_at": "2023-05-25T19:53:57.384585+00:00",
+	"published_at": "2023-05-25T19:53:09.847906+00:00",
+	"name": "RLSA-2023:2655",
+	"synopsis": "Moderate: nodejs and nodejs-nodemon security, bug fix, and enhancement update",
+	"description": "Node.js is a software development platform for building fast and scalable network applications in the JavaScript programming language. \n\nThe following packages have been upgraded to a later upstream version: nodejs (16.19.1), nodejs-nodemon (2.0.20).\n\nSecurity Fix(es):\n\n* c-ares: buffer overflow in config_sortlist() due to missing string length check (CVE-2022-4904)\n\n* http-cache-semantics: Regular Expression Denial of Service (ReDoS) vulnerability (CVE-2022-25881)\n\n* Node.js: Permissions policies can be bypassed via process.mainModule (CVE-2023-23918)\n\n* Node.js: Fetch API did not protect against CRLF injection in host headers (CVE-2023-23936)\n\n* Node.js: insecure loading of ICU data through ICU_DATA environment variable (CVE-2023-23920)\n\n* Node.js: Regular Expression Denial of Service in Headers fetch API (CVE-2023-24807)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"kind": "Security",
+	"severity": "Moderate",
+	"topic": "An update is available for nodejs, nodejs-nodemon.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"red_hat_advisory_id": 14368,
+	"affected_products": [
+		{
+			"id": 42500,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 aarch64",
+			"major_version": 9,
+			"arch": "aarch64"
+		},
+		{
+			"id": 42501,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 s390x",
+			"major_version": 9,
+			"arch": "s390x"
+		},
+		{
+			"id": 42845,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 x86_64",
+			"major_version": 9,
+			"arch": "x86_64"
+		},
+		{
+			"id": 42848,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 ppc64le",
+			"major_version": 9,
+			"arch": "ppc64le"
+		}
 	],
 	"cves": [
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2022-25881",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-25881"
+			"id": 10966,
+			"cve": "CVE-2022-25881",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2022-4904",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-4904"
+			"id": 10967,
+			"cve": "CVE-2022-4904",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-23918",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23918"
+			"id": 10968,
+			"cve": "CVE-2023-23918",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-23920",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23920"
+			"id": 10969,
+			"cve": "CVE-2023-23920",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-23936",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23936"
+			"id": 10970,
+			"cve": "CVE-2023-23936",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-24807",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24807"
+			"id": 10971,
+			"cve": "CVE-2023-24807",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		}
 	],
-	"description": "Node.js is a software development platform for building fast and scalable network applications in the JavaScript programming language. \n\nThe following packages have been upgraded to a later upstream version: nodejs (16.19.1), nodejs-nodemon (2.0.20).\n\nSecurity Fix(es):\n\n* c-ares: buffer overflow in config_sortlist() due to missing string length check (CVE-2022-4904)\n\n* http-cache-semantics: Regular Expression Denial of Service (ReDoS) vulnerability (CVE-2022-25881)\n\n* Node.js: Permissions policies can be bypassed via process.mainModule (CVE-2023-23918)\n\n* Node.js: Fetch API did not protect against CRLF injection in host headers (CVE-2023-23936)\n\n* Node.js: insecure loading of ICU data through ICU_DATA environment variable (CVE-2023-23920)\n\n* Node.js: Regular Expression Denial of Service in Headers fetch API (CVE-2023-24807)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
 	"fixes": [
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2165824",
-			"ticket": "2165824"
+			"id": 30162,
+			"ticket_id": "2165824",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2165824"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2168631",
-			"ticket": "2168631"
+			"id": 30163,
+			"ticket_id": "2168631",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2168631"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2171935",
-			"ticket": "2171935"
+			"id": 30164,
+			"ticket_id": "2171935",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2171935"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2172190",
-			"ticket": "2172190"
+			"id": 30165,
+			"ticket_id": "2172190",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2172190"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2172204",
-			"ticket": "2172204"
+			"id": 30166,
+			"ticket_id": "2172204",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2172204"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2172217",
-			"ticket": "2172217"
+			"id": 30167,
+			"ticket_id": "2172217",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2172217"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2178076",
-			"ticket": "2178076"
+			"id": 30168,
+			"ticket_id": "2178076",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2178076"
 		}
 	],
-	"name": "RLSA-2023:2655",
-	"publishedAt": "2023-05-25T19:53:09.847906Z",
-	"rpms": {
-		"Rocky Linux 9": {
-			"nvras": [
-				"nodejs-1:16.19.1-1.el9_2.aarch64.rpm",
-				"nodejs-1:16.19.1-1.el9_2.s390x.rpm",
-				"nodejs-1:16.19.1-1.el9_2.src.rpm",
-				"nodejs-debuginfo-1:16.19.1-1.el9_2.aarch64.rpm",
-				"nodejs-debuginfo-1:16.19.1-1.el9_2.s390x.rpm",
-				"nodejs-debugsource-1:16.19.1-1.el9_2.aarch64.rpm",
-				"nodejs-debugsource-1:16.19.1-1.el9_2.s390x.rpm",
-				"nodejs-docs-1:16.19.1-1.el9_2.noarch.rpm",
-				"nodejs-full-i18n-1:16.19.1-1.el9_2.aarch64.rpm",
-				"nodejs-full-i18n-1:16.19.1-1.el9_2.s390x.rpm",
-				"nodejs-libs-1:16.19.1-1.el9_2.aarch64.rpm",
-				"nodejs-libs-1:16.19.1-1.el9_2.s390x.rpm",
-				"nodejs-libs-debuginfo-1:16.19.1-1.el9_2.aarch64.rpm",
-				"nodejs-libs-debuginfo-1:16.19.1-1.el9_2.s390x.rpm",
-				"nodejs-nodemon-0:2.0.20-3.el9_2.noarch.rpm",
-				"nodejs-nodemon-0:2.0.20-3.el9_2.src.rpm",
-				"npm-1:8.19.3-1.16.19.1.1.el9_2.aarch64.rpm",
-				"npm-1:8.19.3-1.16.19.1.1.el9_2.s390x.rpm",
-				"nodejs-1:16.19.1-1.el9_2.ppc64le.rpm",
-				"nodejs-1:16.19.1-1.el9_2.x86_64.rpm",
-				"nodejs-debuginfo-1:16.19.1-1.el9_2.ppc64le.rpm",
-				"nodejs-debuginfo-1:16.19.1-1.el9_2.x86_64.rpm",
-				"nodejs-debugsource-1:16.19.1-1.el9_2.ppc64le.rpm",
-				"nodejs-debugsource-1:16.19.1-1.el9_2.x86_64.rpm",
-				"nodejs-full-i18n-1:16.19.1-1.el9_2.ppc64le.rpm",
-				"nodejs-full-i18n-1:16.19.1-1.el9_2.x86_64.rpm",
-				"nodejs-libs-1:16.19.1-1.el9_2.i686.rpm",
-				"nodejs-libs-1:16.19.1-1.el9_2.ppc64le.rpm",
-				"nodejs-libs-1:16.19.1-1.el9_2.x86_64.rpm",
-				"nodejs-libs-debuginfo-1:16.19.1-1.el9_2.ppc64le.rpm",
-				"nodejs-libs-debuginfo-1:16.19.1-1.el9_2.x86_64.rpm",
-				"npm-1:8.19.3-1.16.19.1.1.el9_2.ppc64le.rpm",
-				"npm-1:8.19.3-1.16.19.1.1.el9_2.x86_64.rpm"
-			]
+	"packages": [
+		{
+			"id": 1368130,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.aarch64.rpm",
+			"checksum": "617802e5cf5735a993437b8145d2fea22da626ef3c55b82cb8fba04271e3eadc",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368131,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.s390x.rpm",
+			"checksum": "22f43a17ce1c542553081a0d43d3dbbc5272d70a51b0277447482f5dd92ded59",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368132,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.src.rpm",
+			"checksum": "8e2c72b017d5e30d71b76c0ffe602cb7b7018a3a6c795ad743c58b96275331e4",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368133,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.src.rpm",
+			"checksum": "8e2c72b017d5e30d71b76c0ffe602cb7b7018a3a6c795ad743c58b96275331e4",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368134,
+			"nevra": "nodejs-debuginfo-1:16.19.1-1.el9_2.aarch64.rpm",
+			"checksum": "83ed842263bea8c4398a75ca5b69d30dc463cf1511982ff716f92d07885372a4",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368135,
+			"nevra": "nodejs-debuginfo-1:16.19.1-1.el9_2.s390x.rpm",
+			"checksum": "4107f2323958ddc64c9d8ad3ad753aa945dd5d5b2345c10056a06af630811a58",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368136,
+			"nevra": "nodejs-debugsource-1:16.19.1-1.el9_2.aarch64.rpm",
+			"checksum": "5b8fa1fd9ae97794e59ff3a86b8bb4e5e2f32c98f24fb72b66ecdcd165a387b9",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368137,
+			"nevra": "nodejs-debugsource-1:16.19.1-1.el9_2.s390x.rpm",
+			"checksum": "0a53b8f38deff93cf234c8dfb3f916af351eccb3481fac98d5616a5938a3c3ff",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368138,
+			"nevra": "nodejs-docs-1:16.19.1-1.el9_2.noarch.rpm",
+			"checksum": "3f03aea4f319170206cf7312fb3edc0d20e95e7c196ff2a9638b04d4cdfdabda",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368139,
+			"nevra": "nodejs-docs-1:16.19.1-1.el9_2.noarch.rpm",
+			"checksum": "3f03aea4f319170206cf7312fb3edc0d20e95e7c196ff2a9638b04d4cdfdabda",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368140,
+			"nevra": "nodejs-full-i18n-1:16.19.1-1.el9_2.aarch64.rpm",
+			"checksum": "9ee037f2258f907613f6f5f554f101659f94dc0c4dc5ce7129c9d77b2776e1d3",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368141,
+			"nevra": "nodejs-full-i18n-1:16.19.1-1.el9_2.s390x.rpm",
+			"checksum": "01386afa04fb9898cfe78101096784f5553b060b8f3d3d62b671660748ea0378",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368142,
+			"nevra": "nodejs-libs-1:16.19.1-1.el9_2.aarch64.rpm",
+			"checksum": "e65df9ed0675db27c7b90aabd09b5f77c2188972f19fbf74debf975281d826cf",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368143,
+			"nevra": "nodejs-libs-1:16.19.1-1.el9_2.s390x.rpm",
+			"checksum": "304ca2288d5e9571a0edf50cf3345a095dd95f54cb0bb540f6337ad5f07d0c0e",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368144,
+			"nevra": "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.aarch64.rpm",
+			"checksum": "3c7f3861d8d40f39663060b7dad7befcc0c4aa6b93356b80103d63ad27b14094",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368145,
+			"nevra": "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.s390x.rpm",
+			"checksum": "bbbb7eaf7d3de8f79a4ce2f14708403ddd40701d698e3dfd1649b9d1d4c8791d",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368146,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.noarch.rpm",
+			"checksum": "c31ae00cb453cf07ab8e679c615fd412c87d8faab3b24a1f162824a6310dc4a5",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368147,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.noarch.rpm",
+			"checksum": "c31ae00cb453cf07ab8e679c615fd412c87d8faab3b24a1f162824a6310dc4a5",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368148,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.src.rpm",
+			"checksum": "44c03c9503377ec7cfd2a935b6c7fe492d82325de1b72b62c4dea6755ebb82bd",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368149,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.src.rpm",
+			"checksum": "44c03c9503377ec7cfd2a935b6c7fe492d82325de1b72b62c4dea6755ebb82bd",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1368150,
+			"nevra": "npm-1:8.19.3-1.16.19.1.1.el9_2.aarch64.rpm",
+			"checksum": "76624dd2ed7dc11462a7e8b14879491c62ddc2a23643c5353e1e5eb447436887",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1368151,
+			"nevra": "npm-1:8.19.3-1.16.19.1.1.el9_2.s390x.rpm",
+			"checksum": "c7ee610a83565c636b478257b03938dda7df67a038c2eec367c5daa9e951727e",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1372733,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.ppc64le.rpm",
+			"checksum": "379f2f0e347f57dbadc61da9b5e556d09299ed9b82d2f850ebe4b64e6f6bfca6",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372735,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.src.rpm",
+			"checksum": "8e2c72b017d5e30d71b76c0ffe602cb7b7018a3a6c795ad743c58b96275331e4",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372738,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.src.rpm",
+			"checksum": "8e2c72b017d5e30d71b76c0ffe602cb7b7018a3a6c795ad743c58b96275331e4",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372739,
+			"nevra": "nodejs-1:16.19.1-1.el9_2.x86_64.rpm",
+			"checksum": "d8e13a42016b0781b34e399c82b13809912968b98a5acea57ccb5b32b0441d90",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372741,
+			"nevra": "nodejs-debuginfo-1:16.19.1-1.el9_2.ppc64le.rpm",
+			"checksum": "3da661aa1970d87bffd4e151db40b63dd49e0c9006e4041220ff38a4b69736f5",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372743,
+			"nevra": "nodejs-debuginfo-1:16.19.1-1.el9_2.x86_64.rpm",
+			"checksum": "595a64af7672700ec1745bfdbcece2f8f2a13523fa40fa5ce69b6b3a218e957f",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372745,
+			"nevra": "nodejs-debugsource-1:16.19.1-1.el9_2.ppc64le.rpm",
+			"checksum": "db8141e4fe8fd9c5c4c15794d7fcb8e648132b7adf8477047f89771b5843d222",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372747,
+			"nevra": "nodejs-debugsource-1:16.19.1-1.el9_2.x86_64.rpm",
+			"checksum": "78a23508b6c257e9ab2323760df882ed7c6428ba03942ca3bd7be27a834a1a75",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372748,
+			"nevra": "nodejs-docs-1:16.19.1-1.el9_2.noarch.rpm",
+			"checksum": "3f03aea4f319170206cf7312fb3edc0d20e95e7c196ff2a9638b04d4cdfdabda",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372751,
+			"nevra": "nodejs-docs-1:16.19.1-1.el9_2.noarch.rpm",
+			"checksum": "3f03aea4f319170206cf7312fb3edc0d20e95e7c196ff2a9638b04d4cdfdabda",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372753,
+			"nevra": "nodejs-full-i18n-1:16.19.1-1.el9_2.ppc64le.rpm",
+			"checksum": "1dab17f9e75e6d12a9255bad13f7b06a03c58e3d09d60c44ee0750e681231adf",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372755,
+			"nevra": "nodejs-full-i18n-1:16.19.1-1.el9_2.x86_64.rpm",
+			"checksum": "212c18f45e0ab01a82c15fc4df739eb095519182b10efcf468ed98397d83ccf2",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372757,
+			"nevra": "nodejs-libs-1:16.19.1-1.el9_2.i686.rpm",
+			"checksum": "8bde566a861d88c8eefb820fb6ce9e31d7fe5939306026d4c21721535f48e3b0",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372758,
+			"nevra": "nodejs-libs-1:16.19.1-1.el9_2.ppc64le.rpm",
+			"checksum": "c0b11693dbd7884dc638a9aade08bd158ba29da77d48d5f2a0fa03ba89d113e5",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372760,
+			"nevra": "nodejs-libs-1:16.19.1-1.el9_2.x86_64.rpm",
+			"checksum": "dd864feb184b7b6fa3393b554a18f6627f463a23e285f208ca6c47aa67b116ec",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372762,
+			"nevra": "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.ppc64le.rpm",
+			"checksum": "8a38a06d6cc4097dbe5fb3c35b6bb3b9957ef042af2b050dab62372ec62d54ed",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372764,
+			"nevra": "nodejs-libs-debuginfo-1:16.19.1-1.el9_2.x86_64.rpm",
+			"checksum": "3b6446a6a231e168efc70848a4c9c46a18e429971f6f08b42d2469fa7317416e",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372765,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.noarch.rpm",
+			"checksum": "c31ae00cb453cf07ab8e679c615fd412c87d8faab3b24a1f162824a6310dc4a5",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372768,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.noarch.rpm",
+			"checksum": "c31ae00cb453cf07ab8e679c615fd412c87d8faab3b24a1f162824a6310dc4a5",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372769,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.src.rpm",
+			"checksum": "44c03c9503377ec7cfd2a935b6c7fe492d82325de1b72b62c4dea6755ebb82bd",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372772,
+			"nevra": "nodejs-nodemon-0:2.0.20-3.el9_2.src.rpm",
+			"checksum": "44c03c9503377ec7cfd2a935b6c7fe492d82325de1b72b62c4dea6755ebb82bd",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372774,
+			"nevra": "npm-1:8.19.3-1.16.19.1.1.el9_2.ppc64le.rpm",
+			"checksum": "7ce8d26229150c361b8ddb6e0f334566e643cf9361782c9b1db2bf51670d2457",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372776,
+			"nevra": "npm-1:8.19.3-1.16.19.1.1.el9_2.x86_64.rpm",
+			"checksum": "f4e210497e2cc86395dc1c042489cb8279854b459b1fa355b6b204c2e6e7c584",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
 		}
-	},
-	"severity": "SEVERITY_MODERATE",
-	"shortCode": "RL",
-	"synopsis": "Moderate: nodejs and nodejs-nodemon security, bug fix, and enhancement update",
-	"topic": "An update is available for nodejs, nodejs-nodemon.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
-	"type": "TYPE_SECURITY"
+	]
 }

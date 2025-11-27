@@ -1,49 +1,159 @@
 {
-	"affectedProducts": [
-		"Rocky Linux 8"
+	"id": 5304,
+	"created_at": "2023-05-25T20:23:25.090979+00:00",
+	"updated_at": "2023-05-25T20:23:25.110822+00:00",
+	"published_at": "2023-05-25T20:21:42.526431+00:00",
+	"name": "RLSA-2023:2076",
+	"synopsis": "Important: libwebp security update",
+	"description": "The libwebp packages provide a library and tools for the WebP graphics format. WebP is an image format with a lossy compression of digital photographic images. WebP consists of a codec based on the VP8 format, and a container based on the Resource Interchange File Format (RIFF). Webmasters, web developers and browser developers can use WebP to compress, archive, and distribute digital images more efficiently.\n\nSecurity Fix(es):\n\n* Mozilla: libwebp: Double-free in libwebp (CVE-2023-1999)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"kind": "Security",
+	"severity": "Important",
+	"topic": "An update is available for libwebp.\nThis update affects Rocky Linux 8.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"red_hat_advisory_id": 14285,
+	"affected_products": [
+		{
+			"id": 43348,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 8 x86_64",
+			"major_version": 8,
+			"arch": "x86_64"
+		},
+		{
+			"id": 43349,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 8 aarch64",
+			"major_version": 8,
+			"arch": "aarch64"
+		}
 	],
 	"cves": [
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-1999",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-1999"
+			"id": 11167,
+			"cve": "CVE-2023-1999",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		}
 	],
-	"description": "The libwebp packages provide a library and tools for the WebP graphics format. WebP is an image format with a lossy compression of digital photographic images. WebP consists of a codec based on the VP8 format, and a container based on the Resource Interchange File Format (RIFF). Webmasters, web developers and browser developers can use WebP to compress, archive, and distribute digital images more efficiently.\n\nSecurity Fix(es):\n\n* Mozilla: libwebp: Double-free in libwebp (CVE-2023-1999)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
 	"fixes": [
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2186102",
-			"ticket": "2186102"
+			"id": 33746,
+			"ticket_id": "2186102",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2186102"
 		}
 	],
-	"name": "RLSA-2023:2076",
-	"publishedAt": "2023-05-25T20:21:42.526431Z",
-	"rpms": {
-		"Rocky Linux 8": {
-			"nvras": [
-				"libwebp-0:1.0.0-8.el8_7.aarch64.rpm",
-				"libwebp-0:1.0.0-8.el8_7.i686.rpm",
-				"libwebp-0:1.0.0-8.el8_7.src.rpm",
-				"libwebp-0:1.0.0-8.el8_7.x86_64.rpm",
-				"libwebp-debuginfo-0:1.0.0-8.el8_7.aarch64.rpm",
-				"libwebp-debuginfo-0:1.0.0-8.el8_7.i686.rpm",
-				"libwebp-debuginfo-0:1.0.0-8.el8_7.x86_64.rpm",
-				"libwebp-debugsource-0:1.0.0-8.el8_7.aarch64.rpm",
-				"libwebp-debugsource-0:1.0.0-8.el8_7.i686.rpm",
-				"libwebp-debugsource-0:1.0.0-8.el8_7.x86_64.rpm",
-				"libwebp-devel-0:1.0.0-8.el8_7.aarch64.rpm",
-				"libwebp-devel-0:1.0.0-8.el8_7.i686.rpm",
-				"libwebp-devel-0:1.0.0-8.el8_7.x86_64.rpm"
-			]
+	"packages": [
+		{
+			"id": 1378799,
+			"nevra": "libwebp-0:1.0.0-8.el8_7.aarch64.rpm",
+			"checksum": "c574588c30da596ff5a10ae93a21ab8f89bbf8a8c1029817b82bbbf980a89e13",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1378800,
+			"nevra": "libwebp-0:1.0.0-8.el8_7.i686.rpm",
+			"checksum": "9b34dcfc60a94c6725c1cc5a469c394ceabdd131db07735327805e3a25a80e8d",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378801,
+			"nevra": "libwebp-0:1.0.0-8.el8_7.src.rpm",
+			"checksum": "575dba33d47635bf7e178a7466de4615e835a4b68e53720db90984b9f4e498e3",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378802,
+			"nevra": "libwebp-0:1.0.0-8.el8_7.src.rpm",
+			"checksum": "575dba33d47635bf7e178a7466de4615e835a4b68e53720db90984b9f4e498e3",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1378803,
+			"nevra": "libwebp-0:1.0.0-8.el8_7.x86_64.rpm",
+			"checksum": "969f7c6c2eb9544ec0612189f026bb35f737e385bef08edb6993948e4446b41a",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378804,
+			"nevra": "libwebp-debuginfo-0:1.0.0-8.el8_7.aarch64.rpm",
+			"checksum": "c6e77ba6b8d749cf2327ad7bac5c92b8444a534a6a6623cf242c7a5e928efd8f",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1378805,
+			"nevra": "libwebp-debuginfo-0:1.0.0-8.el8_7.i686.rpm",
+			"checksum": "8ce954061c535a0b7194866e77feff1d2387d52befe9a17d71e0bce314b252b7",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378806,
+			"nevra": "libwebp-debuginfo-0:1.0.0-8.el8_7.x86_64.rpm",
+			"checksum": "526a99a07545633b2871c2720aa9e1923f1c489d735002124b40a65a64d73005",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378807,
+			"nevra": "libwebp-debugsource-0:1.0.0-8.el8_7.aarch64.rpm",
+			"checksum": "ce5abe8583b583eee7fd2ce5f797e75d88809def282d6588d3c4b835747a6678",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1378808,
+			"nevra": "libwebp-debugsource-0:1.0.0-8.el8_7.i686.rpm",
+			"checksum": "8576b74886143497689afa6fe6728c45c3c5108fe5fcab3b74ef44df16bc4527",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378809,
+			"nevra": "libwebp-debugsource-0:1.0.0-8.el8_7.x86_64.rpm",
+			"checksum": "b1421217cd8c806e8039c720fdc38cc15b1889f71d8bba2ff45d2ff323258aa2",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378810,
+			"nevra": "libwebp-devel-0:1.0.0-8.el8_7.aarch64.rpm",
+			"checksum": "fbd82863d06b9677f4521cc756fa44938a26e034e96bef8fadad9f17e203feef",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1378811,
+			"nevra": "libwebp-devel-0:1.0.0-8.el8_7.i686.rpm",
+			"checksum": "d4074eb199a57a3fd8ee22409cd6d9df961f88bd1143248bb9bc77c78564d04c",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1378812,
+			"nevra": "libwebp-devel-0:1.0.0-8.el8_7.x86_64.rpm",
+			"checksum": "b69214916051e04aae0404aab094f6cdd8dc2b6cfd3503882d67d83ed73acf45",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
 		}
-	},
-	"severity": "SEVERITY_IMPORTANT",
-	"shortCode": "RL",
-	"synopsis": "Important: libwebp security update",
-	"topic": "An update is available for libwebp.\nThis update affects Rocky Linux 8.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
-	"type": "TYPE_SECURITY"
+	]
 }

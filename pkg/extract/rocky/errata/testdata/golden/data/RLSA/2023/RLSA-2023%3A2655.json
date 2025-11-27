@@ -10,65 +10,65 @@
 					{
 						"type": "vendor",
 						"source": "errata.rockylinux.org",
-						"vendor": "MODERATE"
+						"vendor": "Moderate"
 					}
 				],
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-25881"
-					},
-					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-4904"
-					},
-					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23918"
-					},
-					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23920"
-					},
-					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23936"
-					},
-					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24807"
-					},
-					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2165824"
 					},
 					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2168631"
 					},
 					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2171935"
 					},
 					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2172190"
 					},
 					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2172204"
 					},
 					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2172217"
 					},
 					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2178076"
 					},
 					{
 						"source": "errata.rockylinux.org",
 						"url": "https://errata.rockylinux.org/RLSA-2023:2655"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25881"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-4904"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23918"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23920"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23936"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24807"
 					}
 				],
 				"published": "2023-05-25T19:53:09.847906Z"
@@ -86,8 +86,8 @@
 				"id": "CVE-2022-25881",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-25881"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25881"
 					}
 				]
 			},
@@ -102,8 +102,8 @@
 				"id": "CVE-2022-4904",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-4904"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-4904"
 					}
 				]
 			},
@@ -118,8 +118,8 @@
 				"id": "CVE-2023-23918",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23918"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23918"
 					}
 				]
 			},
@@ -134,8 +134,8 @@
 				"id": "CVE-2023-23920",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23920"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23920"
 					}
 				]
 			},
@@ -150,8 +150,8 @@
 				"id": "CVE-2023-23936",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-23936"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23936"
 					}
 				]
 			},
@@ -166,8 +166,8 @@
 				"id": "CVE-2023-24807",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24807"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24807"
 					}
 				]
 			},

@@ -1,84 +1,274 @@
 {
-	"affectedProducts": [
-		"Rocky Linux 9"
+	"id": 5277,
+	"created_at": "2023-05-25T19:53:56.512172+00:00",
+	"updated_at": "2023-05-25T19:53:56.526130+00:00",
+	"published_at": "2023-05-25T19:53:02.753307+00:00",
+	"name": "RLSA-2023:2652",
+	"synopsis": "Important: pcs security and bug fix update",
+	"description": "The pcs packages provide a command-line configuration system for the Pacemaker and Corosync utilities.\n\nSecurity Fix(es):\n\n* pcs: webpack: Regression of CVE-2023-28154 fixes in the Rocky Linux (CVE-2023-2319)\n\n* rubygem-rack: Denial of service in Multipart MIME parsing (CVE-2023-27530)\n\n* rubygem-rack: denial of service in header parsing (CVE-2023-27539)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints (BZ#2180697)\n\n* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources (BZ#2180704)\n\n* [WebUI] fence levels prevent loading of cluster status (BZ#2183180)",
+	"kind": "Security",
+	"severity": "Important",
+	"topic": "An update is available for pcs.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"red_hat_advisory_id": 14367,
+	"affected_products": [
+		{
+			"id": 42467,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 x86_64",
+			"major_version": 9,
+			"arch": "x86_64"
+		},
+		{
+			"id": 42468,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 aarch64",
+			"major_version": 9,
+			"arch": "aarch64"
+		},
+		{
+			"id": 42855,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 s390x",
+			"major_version": 9,
+			"arch": "s390x"
+		},
+		{
+			"id": 42856,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9 ppc64le",
+			"major_version": 9,
+			"arch": "ppc64le"
+		}
 	],
 	"cves": [
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-2319",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-2319"
+			"id": 10963,
+			"cve": "CVE-2023-2319",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-27530",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-27530"
+			"id": 10964,
+			"cve": "CVE-2023-27530",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		},
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-27539",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-27539"
+			"id": 10965,
+			"cve": "CVE-2023-27539",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		}
 	],
-	"description": "The pcs packages provide a command-line configuration system for the Pacemaker and Corosync utilities.\n\nSecurity Fix(es):\n\n* pcs: webpack: Regression of CVE-2023-28154 fixes in the Rocky Linux (CVE-2023-2319)\n\n* rubygem-rack: Denial of service in Multipart MIME parsing (CVE-2023-27530)\n\n* rubygem-rack: denial of service in header parsing (CVE-2023-27539)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.\n\nBug Fix(es):\n\n* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints (BZ#2180697)\n\n* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources (BZ#2180704)\n\n* [WebUI] fence levels prevent loading of cluster status (BZ#2183180)",
 	"fixes": [
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2176477",
-			"ticket": "2176477"
+			"id": 30134,
+			"ticket_id": "2176477",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2176477"
 		},
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2179649",
-			"ticket": "2179649"
+			"id": 30135,
+			"ticket_id": "2179649",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2179649"
 		},
 		{
-			"description": "* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints",
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2180697",
-			"ticket": "2180697"
+			"id": 30136,
+			"ticket_id": "2180697",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2180697",
+			"description": "* Command 'pcs config checkpoint diff' does not show configuration differences between checkpoints"
 		},
 		{
-			"description": "* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources",
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2180704",
-			"ticket": "2180704"
+			"id": 30137,
+			"ticket_id": "2180704",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2180704",
+			"description": "* Need a way to add a scsi fencing device to a cluster without requiring a restart of all cluster resources"
 		},
 		{
-			"description": "* [WebUI] fence levels prevent loading of cluster status",
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2183180",
-			"ticket": "2183180"
+			"id": 30138,
+			"ticket_id": "2183180",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2183180",
+			"description": "* [WebUI] fence levels prevent loading of cluster status"
 		}
 	],
-	"name": "RLSA-2023:2652",
-	"publishedAt": "2023-05-25T19:53:02.753307Z",
-	"rpms": {
-		"Rocky Linux 9": {
-			"nvras": [
-				"pcs-0:0.11.4-7.el9_2.aarch64.rpm",
-				"pcs-0:0.11.4-7.el9_2.src.rpm",
-				"pcs-0:0.11.4-7.el9_2.x86_64.rpm",
-				"pcs-snmp-0:0.11.4-7.el9_2.aarch64.rpm",
-				"pcs-snmp-0:0.11.4-7.el9_2.x86_64.rpm",
-				"pcs-0:0.11.4-7.el9_2.ppc64le.rpm",
-				"pcs-0:0.11.4-7.el9_2.s390x.rpm",
-				"pcs-snmp-0:0.11.4-7.el9_2.ppc64le.rpm",
-				"pcs-snmp-0:0.11.4-7.el9_2.s390x.rpm"
-			]
+	"packages": [
+		{
+			"id": 1367671,
+			"nevra": "pcs-0:0.11.4-7.el9_2.aarch64.rpm",
+			"checksum": "6d0dc8ff539e6a46f07fd38aa5396ece4f06c5270c23f66c7363f02c88eff950",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1367672,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1367673,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1367674,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1367675,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1367676,
+			"nevra": "pcs-0:0.11.4-7.el9_2.x86_64.rpm",
+			"checksum": "a381ad637fd8bcc34435a3e2739cb5862d843f7a7259770209749bd27c893a3d",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1367677,
+			"nevra": "pcs-0:0.11.4-7.el9_2.x86_64.rpm",
+			"checksum": "a381ad637fd8bcc34435a3e2739cb5862d843f7a7259770209749bd27c893a3d",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1367678,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.aarch64.rpm",
+			"checksum": "af36c75e8b1ab8fe10df387ce684f4330260f80a0ca5cf11b19c18c7bb5a5739",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1367679,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.x86_64.rpm",
+			"checksum": "a37eb7bf2d54246d45a2f794833af850d0d61521e926eae391ab54536bc775a3",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1367680,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.x86_64.rpm",
+			"checksum": "a37eb7bf2d54246d45a2f794833af850d0d61521e926eae391ab54536bc775a3",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1372862,
+			"nevra": "pcs-0:0.11.4-7.el9_2.ppc64le.rpm",
+			"checksum": "f13475d90354a16f04be20dd94a457acee30e3398b361da0fd26ea9f628c490f",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372863,
+			"nevra": "pcs-0:0.11.4-7.el9_2.ppc64le.rpm",
+			"checksum": "f13475d90354a16f04be20dd94a457acee30e3398b361da0fd26ea9f628c490f",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372864,
+			"nevra": "pcs-0:0.11.4-7.el9_2.s390x.rpm",
+			"checksum": "2ad723a7b5216a8e48d4bdafaa2c2cfc80ee35b86406162f9207c32917f827d2",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1372865,
+			"nevra": "pcs-0:0.11.4-7.el9_2.s390x.rpm",
+			"checksum": "2ad723a7b5216a8e48d4bdafaa2c2cfc80ee35b86406162f9207c32917f827d2",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1372870,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1372871,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1372872,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372873,
+			"nevra": "pcs-0:0.11.4-7.el9_2.src.rpm",
+			"checksum": "eb3df3c52acad646355165d23c290818dc580fcf04820d25802696992e6a9fd7",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372877,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.ppc64le.rpm",
+			"checksum": "2a7f9b602e77bdb8908ac468ef431a5d56f57d38e5574e97a08e7ba44f8edf51",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372878,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.ppc64le.rpm",
+			"checksum": "2a7f9b602e77bdb8908ac468ef431a5d56f57d38e5574e97a08e7ba44f8edf51",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1372879,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.s390x.rpm",
+			"checksum": "6945618f94be31cef42cbb814508102014ab87d436b84cb65a7d9b80d52b1c1c",
+			"checksum_type": "sha256",
+			"repo_name": "HighAvailability",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1372880,
+			"nevra": "pcs-snmp-0:0.11.4-7.el9_2.s390x.rpm",
+			"checksum": "6945618f94be31cef42cbb814508102014ab87d436b84cb65a7d9b80d52b1c1c",
+			"checksum_type": "sha256",
+			"repo_name": "ResilientStorage",
+			"product_name": "Rocky Linux 9 s390x"
 		}
-	},
-	"severity": "SEVERITY_IMPORTANT",
-	"shortCode": "RL",
-	"synopsis": "Important: pcs security and bug fix update",
-	"topic": "An update is available for pcs.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
-	"type": "TYPE_SECURITY"
+	]
 }

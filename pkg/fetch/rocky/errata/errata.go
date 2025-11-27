@@ -6,35 +6,38 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/schollz/progressbar/v3"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const dataURL = "https://errata.build.resf.org/api/v2/advisories?page=%d&limit=25"
+const baseURL = "https://apollo.build.resf.org/"
 
 type options struct {
-	dataURL string
+	baseURL string
 	dir     string
 	retry   int
+	wait    time.Duration
 }
 
 type Option interface {
 	apply(*options)
 }
 
-type dataURLOption string
+type baseURLOption string
 
-func (u dataURLOption) apply(opts *options) {
-	opts.dataURL = string(u)
+func (u baseURLOption) apply(opts *options) {
+	opts.baseURL = string(u)
 }
 
-func WithDataURL(url string) Option {
-	return dataURLOption(url)
+func WithBaseURL(url string) Option {
+	return baseURLOption(url)
 }
 
 type dirOption string
@@ -57,11 +60,22 @@ func WithRetry(retry int) Option {
 	return retryOption(retry)
 }
 
+type waitOption time.Duration
+
+func (w waitOption) apply(opts *options) {
+	opts.wait = time.Duration(w)
+}
+
+func WithWait(wait time.Duration) Option {
+	return waitOption(wait)
+}
+
 func Fetch(opts ...Option) error {
 	options := &options{
-		dataURL: dataURL,
+		baseURL: baseURL,
 		dir:     filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
 		retry:   3,
+		wait:    1 * time.Second,
 	}
 
 	for _, o := range opts {
@@ -72,50 +86,80 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Rocky Linux")
+	log.Printf("[INFO] Fetch Rocky Linux Errata")
 
-	for i := 0; ; i++ {
-		as, err := func() ([]Advisory, error) {
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	bar := progressbar.Default(-1, "Paging Rocky Linux Errata")
+	base, err := url.Parse(options.baseURL)
+	if err != nil {
+		return errors.Wrap(err, "parse base url")
+	}
+	next := "/api/v3/advisories/?page=1&size=100"
+	for next != "" {
+		if err := func() error {
+			ref, err := url.Parse(next)
 			if err != nil {
-				return nil, errors.Wrap(err, "fetch advisory")
+				return errors.Wrap(err, "join url path")
+			}
+			u := base.ResolveReference(ref)
+
+			resp, err := client.Get(u.String())
+			if err != nil {
+				return errors.Wrap(err, "fetch advisory")
 			}
 			defer resp.Body.Close()
 
-			if resp.StatusCode != http.StatusOK {
+			switch resp.StatusCode {
+			case http.StatusOK:
+				var a advisories
+				if err := json.UnmarshalRead(resp.Body, &a); err != nil {
+					return errors.Wrap(err, "decode json")
+				}
+
+				for _, a := range a.Advisories {
+					splitted, err := util.Split(a.Name, "-", ":")
+					if err != nil {
+						return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RLSA|RLBA|RLEA|RXSA)-yyyy:\\d{4,}", a.Name)
+					}
+					if _, err := time.Parse("2006", splitted[1]); err != nil {
+						return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "(RLSA|RLBA|RLEA|RXSA)-yyyy:\\d{4,}", a.Name)
+					}
+
+					if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)), a); err != nil {
+						return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)))
+					}
+				}
+
+				_ = bar.Add(len(a.Advisories))
+
+				next = a.Links.Next
+
+				return nil
+			case http.StatusUnprocessableEntity:
+				type validationError struct {
+					Detail []struct {
+						Loc  []any  `json:"loc"`
+						Msg  string `json:"msg"`
+						Type string `json:"type"`
+					} `json:"detail"`
+				}
+
+				var e validationError
+				if err := json.UnmarshalRead(resp.Body, &e); err != nil {
+					return errors.Wrap(err, "decode json")
+				}
+
+				return errors.Errorf("validation error: %+v", e)
+			default:
 				_, _ = io.Copy(io.Discard, resp.Body)
-				return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
+				return errors.Errorf("error response with status code %d", resp.StatusCode)
 			}
-
-			var a advisories
-			if err := json.UnmarshalRead(resp.Body, &a); err != nil {
-				return nil, errors.Wrap(err, "decode json")
-			}
-
-			return a.Advisories, nil
-		}()
-		if err != nil {
+		}(); err != nil {
 			return errors.Wrap(err, "fetch")
 		}
-
-		for _, a := range as {
-			splitted, err := util.Split(a.Name, "-", ":")
-			if err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
-			}
-			if _, err := time.Parse("2006", splitted[1]); err != nil {
-				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "RLSA-yyyy:\\d{4}", a.Name)
-			}
-
-			if err := util.Write(filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)), a); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[0], splitted[1], fmt.Sprintf("%s.json", a.Name)))
-			}
-		}
-
-		if len(as) == 0 {
-			break
-		}
+		time.Sleep(options.wait)
 	}
+	_ = bar.Close()
 
 	return nil
 }

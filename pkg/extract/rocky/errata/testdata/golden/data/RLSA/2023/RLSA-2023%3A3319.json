@@ -10,25 +10,30 @@
 					{
 						"type": "vendor",
 						"source": "errata.rockylinux.org",
-						"vendor": "IMPORTANT"
+						"vendor": "Important"
 					}
 				],
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24540"
-					},
-					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027"
 					},
 					{
 						"source": "errata.rockylinux.org",
 						"url": "https://errata.rockylinux.org/RLSA-2023:3319"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24540"
 					}
 				],
 				"published": "2023-05-25T17:22:28.20243Z"
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
 		}
 	],
 	"vulnerabilities": [
@@ -37,11 +42,352 @@
 				"id": "CVE-2023-24540",
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24540"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-24540"
 					}
 				]
-			}
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "rocky:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::delve",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.9.1-1.module+el8.8.0+1263+19d1a562"
+											}
+										],
+										"fixed": [
+											"0:1.9.1-1.module+el8.8.0+1263+19d1a562"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::delve-debuginfo",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.9.1-1.module+el8.8.0+1263+19d1a562"
+											}
+										],
+										"fixed": [
+											"0:1.9.1-1.module+el8.8.0+1263+19d1a562"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::delve-debugsource",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.9.1-1.module+el8.8.0+1263+19d1a562"
+											}
+										],
+										"fixed": [
+											"0:1.9.1-1.module+el8.8.0+1263+19d1a562"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::go-toolset",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang-bin",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang-docs",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang-misc",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang-race",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang-src",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "go-toolset:rhel8::golang-tests",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.19.9-1.module+el8.8.0+1298+7af20600"
+											}
+										],
+										"fixed": [
+											"0:1.19.9-1.module+el8.8.0+1298+7af20600"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
 		}
 	],
 	"data_source": {

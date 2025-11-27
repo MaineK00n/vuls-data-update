@@ -19,27 +19,27 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata string
 		hasError bool
 	}{
 		{
-			name:     "happy path",
-			testdata: "testdata/fixtures/",
+			name: "happy",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				p := r.URL.Query().Get("page")
-				if p == "" {
+				fmt.Println(r.URL.Path)
+				switch r.URL.Path {
+				case "/api/v3/advisories/":
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("page%s.json", r.URL.Query().Get("page"))))
+				default:
 					http.NotFound(w, r)
 				}
-				http.ServeFile(w, r, filepath.Join(tt.testdata, fmt.Sprintf("page%s.json", p)))
 			}))
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := errata.Fetch(errata.WithDataURL(fmt.Sprintf("%s/api/v2/advisories?page=%%d", ts.URL)), errata.WithDir(dir), errata.WithRetry(0))
+			err := errata.Fetch(errata.WithBaseURL(ts.URL), errata.WithDir(dir), errata.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
