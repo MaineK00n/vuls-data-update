@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"encoding/json/v2"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -46,6 +47,20 @@ func TestFetch(t *testing.T) {
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
 			default:
+				fn := func(path string) (data.Package, error) {
+					f, err := os.Open(path)
+					if err != nil {
+						return data.Package{}, err
+					}
+					defer f.Close()
+
+					var v data.Package
+					if err := json.UnmarshalRead(f, &v); err != nil {
+						return data.Package{}, err
+					}
+					return v, nil
+				}
+
 				if err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 					if err != nil {
 						return err
@@ -56,12 +71,12 @@ func TestFetch(t *testing.T) {
 					}
 
 					dir, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", dir, file))
+					want, err := fn(filepath.Join("testdata", "golden", dir, file))
 					if err != nil {
 						return err
 					}
 
-					got, err := os.ReadFile(path)
+					got, err := fn(path)
 					if err != nil {
 						return err
 					}
