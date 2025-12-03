@@ -3,6 +3,9 @@
 	"id": "ECHO-0a7a-0942-b7cc",
 	"modified": "2025-09-15T01:16:09.396507Z",
 	"published": "2025-09-15T01:10:16.775749Z",
+	"upstream": [
+		"CVE-2023-31082"
+	],
 	"affected": [
 		{
 			"package": {

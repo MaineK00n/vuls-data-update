@@ -7,6 +7,7 @@ type OSV struct {
 	Published     string   `json:"published,omitempty"`
 	Withdrawn     string   `json:"withdrawn,omitempty"`
 	Aliases       []string `json:"aliases,omitempty"`
+	Upstream      []string `json:"upstream,omitempty"`
 	Related       []string `json:"related,omitempty"`
 	Summary       string   `json:"summary,omitempty"`
 	Details       string   `json:"details,omitempty"`
@@ -33,6 +34,7 @@ type OSV struct {
 				LastAffected string `json:"last_affected,omitempty"`
 				Limit        string `json:"limit,omitempty"`
 			} `json:"events,omitempty"`
+			DatabaseSpecific interface{} `json:"database_specific,omitempty"`
 		} `json:"ranges,omitempty"`
 		Versions          []string    `json:"versions,omitempty"`
 		EcosystemSpecific interface{} `json:"ecosystem_specific,omitempty"`
