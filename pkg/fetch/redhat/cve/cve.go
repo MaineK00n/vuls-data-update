@@ -199,7 +199,7 @@ func (opts options) list(client *utilhttp.Client) ([]string, error) {
 					us = append(us, e.ResourceURL)
 				}
 
-				time.Sleep(time.Duration(opts.wait) * time.Second)
+				time.Sleep(opts.wait)
 			}
 
 			select {
