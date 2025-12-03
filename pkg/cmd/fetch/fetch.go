@@ -4630,9 +4630,15 @@ func newCmdRedHatPackageManifest() *cobra.Command {
 }
 
 func newCmdRockyErrata() *cobra.Command {
-	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
-		retry: 3,
+	options := &struct {
+		base
+		wait time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"),
+			retry: 3,
+		},
+		wait: 1 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -4643,15 +4649,16 @@ func newCmdRockyErrata() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := rockyErrata.Fetch(rockyErrata.WithDir(options.dir), rockyErrata.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch rocky")
+			if err := rockyErrata.Fetch(rockyErrata.WithDir(options.dir), rockyErrata.WithRetry(options.retry), rockyErrata.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch rocky errata")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "rocky", "errata"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

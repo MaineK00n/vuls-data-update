@@ -1,44 +1,64 @@
 package errata
 
-import "time"
-
+// https://apollo.build.resf.org/docs#/advisories/get_advisory_api_v3_advisories__advisory_name__get
 type advisories struct {
-	Advisories  []Advisory `json:"advisories"`
-	LastUpdated time.Time  `json:"lastUpdated"`
-	Page        int        `json:"page"`
-	Size        int        `json:"size"`
-	Total       int        `json:"total"`
+	Advisories []Advisory `json:"advisories"`
+	Total      int        `json:"total"`
+	Page       int        `json:"page"`
+	Size       int        `json:"size"`
+	Links      struct {
+		First string `json:"first"`
+		Last  string `json:"last"`
+		Self  string `json:"self"`
+		Next  string `json:"next,omitempty"`
+		Prev  string `json:"prev,omitempty"`
+	} `json:"links"`
+	LastUpdatedAt string `json:"last_updated_at,omitempty"`
 }
 
 type Advisory struct {
-	AffectedProducts []string `json:"affectedProducts,omitempty"`
-	BuildReferences  []any    `json:"buildReferences,omitempty"`
-	Cves             []struct {
-		Cvss3BaseScore     string `json:"cvss3BaseScore,omitempty"`
-		Cvss3ScoringVector string `json:"cvss3ScoringVector,omitempty"`
-		Cwe                string `json:"cwe,omitempty"`
-		Name               string `json:"name,omitempty"`
-		SourceBy           string `json:"sourceBy,omitempty"`
-		SourceLink         string `json:"sourceLink,omitempty"`
-	} `json:"cves,omitempty"`
-	Description string `json:"description,omitempty"`
-	Fixes       []struct {
+	ID               int    `json:"id"`
+	CreatedAt        string `json:"created_at"`
+	UpdatedAt        string `json:"updated_at,omitempty"`
+	PublishedAt      string `json:"published_at"`
+	Name             string `json:"name"`
+	Synopsis         string `json:"synopsis"`
+	Description      string `json:"description"`
+	Kind             string `json:"kind"`
+	Severity         string `json:"severity"`
+	Topic            string `json:"topic"`
+	RedHatAdvisoryID int    `json:"red_hat_advisory_id"`
+	AffectedProducts []struct {
+		ID           int    `json:"id"`
+		Variant      string `json:"variant"`
+		Name         string `json:"name"`
+		MajorVersion int    `json:"major_version"`
+		MinorVersion int    `json:"minor_version,omitzero"`
+		Arch         string `json:"arch"`
+	} `json:"affected_products"`
+	CVEs []struct {
+		ID                 int    `json:"id"`
+		CVE                string `json:"cve"`
+		CVSS3ScoringVector string `json:"cvss3_scoring_vector,omitempty"`
+		CVSS3BaseScore     string `json:"cvss3_base_score,omitempty"`
+		CWE                string `json:"cwe,omitempty"`
+	} `json:"cves"`
+	Fixes []struct {
+		ID          int    `json:"id"`
+		TicketID    string `json:"ticket_id"`
+		Source      string `json:"source"`
 		Description string `json:"description,omitempty"`
-		SourceBy    string `json:"sourceBy,omitempty"`
-		SourceLink  string `json:"sourceLink,omitempty"`
-		Ticket      string `json:"ticket,omitempty"`
-	} `json:"fixes,omitempty"`
-	Name            string `json:"name,omitempty"`
-	PublishedAt     string `json:"publishedAt,omitempty"`
-	RebootSuggested bool   `json:"rebootSuggested,omitempty"`
-	References      []any  `json:"references,omitempty"`
-	Rpms            map[string]struct {
-		NVRAS []string `json:"nvras,omitempty"`
-	} `json:"rpms,omitempty"`
-	Severity  string `json:"severity,omitempty"`
-	ShortCode string `json:"shortCode,omitempty"`
-	Solution  any    `json:"solution,omitempty"`
-	Synopsis  string `json:"synopsis,omitempty"`
-	Topic     string `json:"topic,omitempty"`
-	Type      string `json:"type,omitempty"`
+	} `json:"fixes"`
+	Packages []struct {
+		ID            int     `json:"id"`
+		NEVRA         string  `json:"nevra"`
+		Checksum      string  `json:"checksum"`
+		ChecksumType  string  `json:"checksum_type"`
+		ModuleContext *string `json:"module_context,omitempty"`
+		ModuleName    *string `json:"module_name,omitempty"`
+		ModuleStream  *string `json:"module_stream,omitempty"`
+		ModuleVersion *string `json:"module_version,omitempty"`
+		RepoName      string  `json:"repo_name"`
+		ProductName   string  `json:"product_name"`
+	} `json:"packages"`
 }

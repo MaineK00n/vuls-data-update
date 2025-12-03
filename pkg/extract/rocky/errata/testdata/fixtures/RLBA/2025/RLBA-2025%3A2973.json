@@ -1,49 +1,189 @@
 {
-	"affectedProducts": [
-		"Rocky Linux 9"
+	"id": 7511,
+	"created_at": "2025-07-29T13:43:46.569258+00:00",
+	"updated_at": "2025-10-14T08:17:25.757483+00:00",
+	"published_at": "2025-07-29T13:40:19.644888+00:00",
+	"name": "RLBA-2025:2973",
+	"synopsis": "Moderate:mod_proxy_cluster bug fix update",
+	"description": "The mod_proxy_cluster module is a plugin for the Apache HTTP Server that provides load-balancer functionality.\n\nBug Fix(es):\n\n* Rebuild mod_proxy_cluster against httpd 2.4.62 (JIRA:Rocky Linux-70140)\n\n* Rebase mod_proxy_cluster to upstream 1.3.22.Final release (JIRA:Rocky Linux-80435)\n\n* Update deprecated misspeled EnableMCPMReceive directive (JIRA:Rocky Linux-82135)",
+	"kind": "Bug Fix",
+	"severity": "Moderate",
+	"topic": "An update is available for mod_proxy_cluster.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"red_hat_advisory_id": 23114,
+	"affected_products": [
+		{
+			"id": 57819,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9.6 ppc64le",
+			"major_version": 9,
+			"arch": "ppc64le"
+		},
+		{
+			"id": 57820,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9.6 s390x",
+			"major_version": 9,
+			"arch": "s390x"
+		},
+		{
+			"id": 57821,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9.6 x86_64",
+			"major_version": 9,
+			"arch": "x86_64"
+		},
+		{
+			"id": 57822,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 9.6 aarch64",
+			"major_version": 9,
+			"arch": "aarch64"
+		}
 	],
 	"cves": [
 		{
-			"cvss3BaseScore": "5.4",
-			"cvss3ScoringVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
-			"cwe": "CWE-863",
-			"name": "CVE-2024-10306",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-10306"
+			"id": 17562,
+			"cve": "CVE-2024-10306",
+			"cvss3_scoring_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+			"cvss3_base_score": "5.4",
+			"cwe": "CWE-863"
 		}
 	],
-	"description": "The mod_proxy_cluster module is a plugin for the Apache HTTP Server that provides load-balancer functionality.\n\nBug Fix(es):\n\n* Rebuild mod_proxy_cluster against httpd 2.4.62 (JIRA:Rocky Linux-70140)\n\n* Rebase mod_proxy_cluster to upstream 1.3.22.Final release (JIRA:Rocky Linux-80435)\n\n* Update deprecated misspeled EnableMCPMReceive directive (JIRA:Rocky Linux-82135)",
 	"fixes": [
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2321302",
-			"ticket": "2321302"
+			"id": 42353,
+			"ticket_id": "2321302",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2321302"
 		}
 	],
-	"name": "RLBA-2025:2973",
-	"publishedAt": "2025-07-29T13:40:19.644888Z",
-	"rpms": {
-		"Rocky Linux 9": {
-			"nvras": [
-				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.aarch64.rpm",
-				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.ppc64le.rpm",
-				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.s390x.rpm",
-				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.src.rpm",
-				"mod_proxy_cluster-0:1.3.22-1.el9_5.2.x86_64.rpm",
-				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.aarch64.rpm",
-				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.ppc64le.rpm",
-				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.s390x.rpm",
-				"mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.x86_64.rpm",
-				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.aarch64.rpm",
-				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.ppc64le.rpm",
-				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.s390x.rpm",
-				"mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.x86_64.rpm"
-			]
+	"packages": [
+		{
+			"id": 1540616,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.aarch64.rpm",
+			"checksum": "55f12b8ab6d2361cddd9fc8a61a5952cdb390e12aa1c0d544349889b5183209d",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1540617,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.ppc64le.rpm",
+			"checksum": "3860cb76f02dafea6b2d7c991162fbeffa322c4cb288dfb3bddac5a06ed6ea60",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1540618,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.s390x.rpm",
+			"checksum": "60422472fe9f4f1c6e8dcf7111ef0ff43fa5bc00249f079508dd04e5e5f11670",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1540619,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.src.rpm",
+			"checksum": "816164d835692d4eaf7b5a88005b70673498bdd1165e8e7da9479df0406bc2a7",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1540620,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.src.rpm",
+			"checksum": "816164d835692d4eaf7b5a88005b70673498bdd1165e8e7da9479df0406bc2a7",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1540621,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.src.rpm",
+			"checksum": "816164d835692d4eaf7b5a88005b70673498bdd1165e8e7da9479df0406bc2a7",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1540622,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.src.rpm",
+			"checksum": "816164d835692d4eaf7b5a88005b70673498bdd1165e8e7da9479df0406bc2a7",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1540623,
+			"nevra": "mod_proxy_cluster-0:1.3.22-1.el9_5.2.x86_64.rpm",
+			"checksum": "c6bd6e1ad674b8ceb49efee4c06ed72125b1303c0372590e4f8892aa3c1b5715",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1540624,
+			"nevra": "mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.aarch64.rpm",
+			"checksum": "c74c531526c0f2dfb180e3fa03800fbca848073d006507eefc2aa72507f4501d",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1540625,
+			"nevra": "mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.ppc64le.rpm",
+			"checksum": "6195bc599c8a00d0f2e44f18c685cab3b2e7f5434013b66741a9e5ec732daf19",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1540626,
+			"nevra": "mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.s390x.rpm",
+			"checksum": "251486d20be5174da940258124a99cb0c37c73d43e6e7a1dcfe9f19a67ed726f",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1540627,
+			"nevra": "mod_proxy_cluster-debuginfo-0:1.3.22-1.el9_5.2.x86_64.rpm",
+			"checksum": "c993403bf06e0a57d3174f2579dcdea3c4c5d8adf504e53d039a320dd7a39734",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
+		},
+		{
+			"id": 1540628,
+			"nevra": "mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.aarch64.rpm",
+			"checksum": "59784cedc80af96f9c2f752d25d124ce69fb5e57b5414fc89f02b544e44332fc",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 aarch64"
+		},
+		{
+			"id": 1540629,
+			"nevra": "mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.ppc64le.rpm",
+			"checksum": "3b1082455cf9b45ddb5a5bf25dfb8c5bbe87cb71119e94dbb1d7db66096e19a3",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 ppc64le"
+		},
+		{
+			"id": 1540630,
+			"nevra": "mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.s390x.rpm",
+			"checksum": "df2008ef6bff85e3be564a9daf0f19a5a816e3706545093ffec3190ea416f7f9",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 s390x"
+		},
+		{
+			"id": 1540631,
+			"nevra": "mod_proxy_cluster-debugsource-0:1.3.22-1.el9_5.2.x86_64.rpm",
+			"checksum": "bd14a7567a04793e0a2de629eac0586f3a5cfe016d602930a07d78ae849a551c",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 9 x86_64"
 		}
-	},
-	"severity": "SEVERITY_MODERATE",
-	"shortCode": "RL",
-	"synopsis": "Moderate:mod_proxy_cluster bug fix update",
-	"topic": "An update is available for mod_proxy_cluster.\nThis update affects Rocky Linux 9.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
-	"type": "TYPE_BUGFIX"
+	]
 }

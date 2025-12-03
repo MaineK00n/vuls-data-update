@@ -1,53 +1,331 @@
 {
-	"affectedProducts": [
-		"Rocky Linux 8"
+	"id": 5247,
+	"created_at": "2023-05-25T17:23:40.372973+00:00",
+	"updated_at": "2023-05-25T17:23:40.399839+00:00",
+	"published_at": "2023-05-25T17:22:28.202430+00:00",
+	"name": "RLSA-2023:3319",
+	"synopsis": "Important: go-toolset:Rocky Linux8 security update",
+	"description": "Go Toolset provides the Go programming language tools and libraries. Go is alternatively known as golang. \n\nSecurity Fix(es):\n\n* golang: html/template: improper handling of JavaScript whitespace (CVE-2023-24540)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"kind": "Security",
+	"severity": "Important",
+	"topic": "An update is available for module.go-toolset, golang, module.golang, go-toolset, module.delve.\nThis update affects Rocky Linux 8.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
+	"red_hat_advisory_id": 14529,
+	"affected_products": [
+		{
+			"id": 42200,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 8 aarch64",
+			"major_version": 8,
+			"arch": "aarch64"
+		},
+		{
+			"id": 42618,
+			"variant": "Rocky Linux",
+			"name": "Rocky Linux 8 x86_64",
+			"major_version": 8,
+			"arch": "x86_64"
+		}
 	],
 	"cves": [
 		{
-			"cvss3BaseScore": "UNKNOWN",
-			"cvss3ScoringVector": "UNKNOWN",
-			"cwe": "UNKNOWN",
-			"name": "CVE-2023-24540",
-			"sourceBy": "MITRE",
-			"sourceLink": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-24540"
+			"id": 10886,
+			"cve": "CVE-2023-24540",
+			"cvss3_scoring_vector": "UNKNOWN",
+			"cvss3_base_score": "UNKNOWN",
+			"cwe": "UNKNOWN"
 		}
 	],
-	"description": "Go Toolset provides the Go programming language tools and libraries. Go is alternatively known as golang. \n\nSecurity Fix(es):\n\n* golang: html/template: improper handling of JavaScript whitespace (CVE-2023-24540)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
 	"fixes": [
 		{
-			"sourceBy": "Red Hat",
-			"sourceLink": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027",
-			"ticket": "2196027"
+			"id": 29680,
+			"ticket_id": "2196027",
+			"source": "https://bugzilla.redhat.com/show_bug.cgi?id=2196027"
 		}
 	],
-	"name": "RLSA-2023:3319",
-	"publishedAt": "2023-05-25T17:22:28.202430Z",
-	"rpms": {
-		"Rocky Linux 8": {
-			"nvras": [
-				"delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.src.rpm",
-				"golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
-				"golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
-				"golang-bin-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
-				"golang-docs-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
-				"golang-misc-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
-				"golang-src-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
-				"golang-tests-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
-				"go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
-				"go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
-				"delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
-				"delve-debuginfo-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
-				"delve-debugsource-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
-				"golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
-				"golang-bin-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
-				"golang-race-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
-				"go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm"
-			]
+	"packages": [
+		{
+			"id": 1364030,
+			"nevra": "delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.src.rpm",
+			"checksum": "6f36868f702c5341d49f50f25d421b10858f986122d05520757f1c1a9322c4e6",
+			"checksum_type": "sha256",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364032,
+			"nevra": "golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
+			"checksum": "fb8fb7c8fdbe59c0c2394601fc5d984f85b703658c5128162dadff530068cc12",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364033,
+			"nevra": "golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
+			"checksum": "3a8a8610506956fb5504c56e3042615669b87f42713ebcd388f9608bd376759a",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364034,
+			"nevra": "golang-bin-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
+			"checksum": "fd81d53e7794d661cdd3cbfb6cfd37ffbc50951f8479feb6c8c3f628896ad83f",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364035,
+			"nevra": "golang-docs-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "b169b31abb2e5af6529b31f68e75aad6f2ec2d1af6356fbe518c3014a6a0adf2",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364036,
+			"nevra": "golang-misc-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "a318ea78d74d471cd536fae1e83cd7137daf1ae5d01e37fe5da0d23dd3cc0968",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364037,
+			"nevra": "golang-src-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "425434e70ef89aaec27d52abaaae841cd6f58e295328b331b1c21733b3eb9368",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364038,
+			"nevra": "golang-tests-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "8cb2030cf320bfdaf44596d9f36a3ea25aff3a1c3f13f76cbb17e2d3fa0157f1",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364039,
+			"nevra": "go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.aarch64.rpm",
+			"checksum": "59aaa3964fd488b31af0e6057a11e51c4199bbbb61e3d3dce725644e9fdcbe14",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1364040,
+			"nevra": "go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
+			"checksum": "9f07fa650d6cf2df21108e24955d5c7f7de5129fe07fe6ff1f449bd1b4f3b673",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 aarch64"
+		},
+		{
+			"id": 1369867,
+			"nevra": "delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.src.rpm",
+			"checksum": "6f36868f702c5341d49f50f25d421b10858f986122d05520757f1c1a9322c4e6",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369871,
+			"nevra": "delve-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
+			"checksum": "f712c69546bc09fc08feb8a6148338f4d7850aed2b7ee9ca5a74ca207f584ed5",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369873,
+			"nevra": "delve-debuginfo-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
+			"checksum": "ce3ea91c8a9f9180b38723f3a07764cae8b1a8b5a355fa56febd0d831da9ed4d",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369875,
+			"nevra": "delve-debugsource-0:1.9.1-1.module+el8.8.0+1263+19d1a562.x86_64.rpm",
+			"checksum": "ae21abcf076c81c3de387fe19cc3414662d8d11f7cfa7ce0bd84591aee660db6",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369878,
+			"nevra": "golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
+			"checksum": "3a8a8610506956fb5504c56e3042615669b87f42713ebcd388f9608bd376759a",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369880,
+			"nevra": "golang-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+			"checksum": "9aaf8f85325603f7df43d06180b2f2409b895071dfc2c97d835b6912d1c67fb8",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369882,
+			"nevra": "golang-bin-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+			"checksum": "d7a7bd06d411618f2ebd5d2a39a65f1202bd11188d156e8f8585bbf4c92bf604",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369883,
+			"nevra": "golang-docs-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "b169b31abb2e5af6529b31f68e75aad6f2ec2d1af6356fbe518c3014a6a0adf2",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369885,
+			"nevra": "golang-misc-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "a318ea78d74d471cd536fae1e83cd7137daf1ae5d01e37fe5da0d23dd3cc0968",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369887,
+			"nevra": "golang-race-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+			"checksum": "a93b876a782787e28c18ca96f1f53806eed7987369284b893ac5365a0513067a",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369888,
+			"nevra": "golang-src-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "425434e70ef89aaec27d52abaaae841cd6f58e295328b331b1c21733b3eb9368",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369890,
+			"nevra": "golang-tests-0:1.19.9-1.module+el8.8.0+1298+7af20600.noarch.rpm",
+			"checksum": "8cb2030cf320bfdaf44596d9f36a3ea25aff3a1c3f13f76cbb17e2d3fa0157f1",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369893,
+			"nevra": "go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.src.rpm",
+			"checksum": "9f07fa650d6cf2df21108e24955d5c7f7de5129fe07fe6ff1f449bd1b4f3b673",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
+		},
+		{
+			"id": 1369895,
+			"nevra": "go-toolset-0:1.19.9-1.module+el8.8.0+1298+7af20600.x86_64.rpm",
+			"checksum": "ec92737c408fa33fa79ffa128f40b99483313e1382bb9d9b53fdac6ac8d62353",
+			"checksum_type": "sha256",
+			"module_context": "17f3f959",
+			"module_name": "go-toolset",
+			"module_stream": "rhel8",
+			"module_version": "8080020230525074802",
+			"repo_name": "AppStream",
+			"product_name": "Rocky Linux 8 x86_64"
 		}
-	},
-	"severity": "SEVERITY_IMPORTANT",
-	"shortCode": "RL",
-	"synopsis": "Important: go-toolset:Rocky Linux8 security update",
-	"topic": "An update is available for module.go-toolset, golang, module.golang, go-toolset, module.delve.\nThis update affects Rocky Linux 8.\nA Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE list",
-	"type": "TYPE_SECURITY"
+	]
 }

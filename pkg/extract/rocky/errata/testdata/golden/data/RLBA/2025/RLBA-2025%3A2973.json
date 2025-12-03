@@ -10,21 +10,21 @@
 					{
 						"type": "vendor",
 						"source": "errata.rockylinux.org",
-						"vendor": "MODERATE"
+						"vendor": "Moderate"
 					}
 				],
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-10306"
-					},
-					{
-						"source": "Red Hat",
+						"source": "errata.rockylinux.org",
 						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2321302"
 					},
 					{
 						"source": "errata.rockylinux.org",
 						"url": "https://errata.rockylinux.org/RLBA-2025:2973"
+					},
+					{
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-10306"
 					}
 				],
 				"published": "2025-07-29T13:40:19.644888Z"
@@ -43,7 +43,7 @@
 				"severity": [
 					{
 						"type": "cvss_v31",
-						"source": "MITRE",
+						"source": "errata.rockylinux.org",
 						"cvss_v31": {
 							"vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
 							"base_score": 5.4,
@@ -57,7 +57,7 @@
 				],
 				"cwe": [
 					{
-						"source": "MITRE",
+						"source": "errata.rockylinux.org",
 						"cwe": [
 							"CWE-863"
 						]
@@ -65,8 +65,8 @@
 				],
 				"references": [
 					{
-						"source": "MITRE",
-						"url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-10306"
+						"source": "errata.rockylinux.org",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2024-10306"
 					}
 				]
 			},
