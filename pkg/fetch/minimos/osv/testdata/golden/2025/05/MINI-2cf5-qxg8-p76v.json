@@ -3,6 +3,10 @@
 	"id": "MINI-2cf5-qxg8-p76v",
 	"modified": "2025-05-29T01:14:42.432736Z",
 	"published": "2025-05-29T01:05:35.642269Z",
+	"upstream": [
+		"CVE-2024-21140",
+		"GHSA-7prq-r42m-wfcx"
+	],
 	"affected": [
 		{
 			"package": {
