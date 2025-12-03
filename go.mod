@@ -13,7 +13,7 @@ require (
 	github.com/google/go-containerregistry v0.20.7
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.8
-	github.com/hashicorp/go-version v1.7.0
+	github.com/hashicorp/go-version v1.8.0
 	github.com/klauspost/compress v1.18.1
 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f
 	github.com/knqyf263/go-cpe v0.0.0-20230627041855-cb0794d06872
