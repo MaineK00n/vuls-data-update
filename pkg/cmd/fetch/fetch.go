@@ -4900,7 +4900,7 @@ func newCmdSiemensCSAF() *cobra.Command {
 			retry: 3,
 		},
 		concurrency: 1,
-		wait:        3,
+		wait:        3 * time.Second,
 	}
 
 	cmd := &cobra.Command{
