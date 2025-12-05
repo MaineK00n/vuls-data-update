@@ -1,6 +1,7 @@
 package csaf
 
 import (
+	"context"
 	"encoding/json/v2"
 	"fmt"
 	"io"
@@ -9,6 +10,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
@@ -96,7 +98,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	log.Printf("[INFO] Fetch Siemens Security Advisories (CSAF)")
-	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 	us, err := options.fetchFeed(client)
 	if err != nil {
 		return errors.Wrap(err, "fetch feed")
@@ -161,4 +163,19 @@ func (opts options) fetchCSAF(client *utilhttp.Client, urls []string) error {
 	}
 
 	return nil
+}
+
+func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	if shouldRetry, err := retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err); shouldRetry {
+		return shouldRetry, errors.Wrap(err, "retry policy")
+	}
+
+	switch resp.StatusCode {
+	case http.StatusOK:
+		return false, nil
+	case http.StatusForbidden:
+		return true, errors.Errorf("unexpected HTTP status %s", resp.Status)
+	default:
+		return false, errors.Errorf("unexpected HTTP status %s", resp.Status)
+	}
 }
