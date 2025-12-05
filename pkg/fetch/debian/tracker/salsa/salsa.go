@@ -209,7 +209,7 @@ func Fetch(opts ...Option) error {
 						log.Printf("[INFO] Fetched Debian %s %s %s", codename, repo, section)
 						bar := progressbar.Default(int64(len(mmm)))
 						for name, source := range mmm {
-							if err := util.Write(filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)), source); err != nil {
+							if err := util.Write(filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)), source, util.WithAllowInvalidUTF8(true)); err != nil {
 								return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)))
 							}
 							_ = bar.Add(1)

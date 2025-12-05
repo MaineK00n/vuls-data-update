@@ -1,6 +1,7 @@
 package util_test
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -128,6 +129,65 @@ func TestSplit(t *testing.T) {
 			}
 			if diff := cmp.Diff(tt.want, got, cmpopts.SortSlices(func(i, j int) bool { return i < j })); diff != "" {
 				t.Errorf("Split(). (-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestWrite(t *testing.T) {
+	type content struct {
+		Message string `json:"message,omitempty"`
+	}
+	type args struct {
+		path    string
+		content any
+		opts    []util.WriteOption
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []byte
+		wantErr bool
+	}{
+		{
+			name: "happy",
+			args: args{
+				path:    "test.json",
+				content: content{Message: "hello"},
+			},
+			want: []byte("{\n\t\"message\": \"hello\"\n}"),
+		},
+		{
+			name: "invalid utf-8",
+			args: args{
+				path:    "test.json",
+				content: content{Message: string([]byte{0x66, 0xfc, 0x72})},
+			},
+			want:    []byte{},
+			wantErr: true,
+		},
+		{
+			name: "allow invalid utf-8",
+			args: args{
+				path:    "test.json",
+				content: content{Message: string([]byte{0x66, 0xfc, 0x72})},
+				opts:    []util.WriteOption{util.WithAllowInvalidUTF8(true)},
+			},
+			want: []byte(fmt.Sprintf("{\n\t\"message\": \"%s\"\n}", string([]byte{0x66, 0xef, 0xbf, 0xbd, 0x72}))),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), tt.args.path)
+			if err := util.Write(path, tt.args.content, tt.args.opts...); (err != nil) != tt.wantErr {
+				t.Errorf("Write() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			got, err := os.ReadFile(path)
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("Write(). (-expected +got):\n%s", diff)
 			}
 		})
 	}
