@@ -1,0 +1,6984 @@
+{
+	"id": "RLSA-2025:9318",
+	"advisories": [
+		{
+			"content": {
+				"id": "RLSA-2025:9318",
+				"title": "Important: javapackages-tools:201801 security update",
+				"description": "The javapackages-tools packages provide macros and scripts to support Java packaging.\n\nSecurity Fix(es):\n\n* apache-commons-beanutils: does not suppresses the class property in PropertyUtilsBean by default (CVE-2019-10086)\n\n* commons-beanutils: Apache Commons BeanUtils: PropertyUtilsBean does not suppresses an enum's declaredClass property by default (CVE-2025-48734)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "osv.dev/Rocky-Linux",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 8.8,
+							"base_severity": "HIGH",
+							"temporal_score": 8.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 8.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1767483"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2368956"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://errata.rockylinux.org/RLSA-2025:9318"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+					}
+				],
+				"published": "2025-07-29T13:38:41.630147Z",
+				"modified": "2025-07-29T15:00:23.703339Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2019-10086"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-48734"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "rocky:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "ant"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.10.5-1.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.10.5-1.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "ant"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.10.5-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.10.5-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "ant-contrib"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.32.b3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.32.b3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "antlr"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.7.7-56.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.7.7-56.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "aopalliance"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-17.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.0-17.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "aopalliance"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-17.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-17.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "aopalliance"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-17.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.0-17.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-beanutils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.9.3-5.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.9.3-5.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-cli"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4-4.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.4-4.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-cli"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.4-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-cli"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4-4.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.4-4.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-codec"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11-3.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.11-3.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-codec"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.11-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-codec"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11-3.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.11-3.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-collections"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.2.2-10.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:3.2.2-10.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-collections"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.2.2-10.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.2.2-10.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-compress"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.18-1.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.18-1.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-compress"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.18-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.18-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-exec"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.3-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.3-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-io"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:2.6-3.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"1:2.6-3.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-io"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:2.6-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:2.6-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-io"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:2.6-3.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"1:2.6-3.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-jxpath"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.3-29.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.3-29.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-jxpath"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.3-29.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.3-29.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-lang"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.6-21.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:2.6-21.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-lang"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.6-21.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.6-21.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-lang3"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.7-3.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.7-3.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-lang3"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.7-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.7-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-lang3"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.7-3.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:3.7-3.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-logging"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-13.module+el8.3.0+133+b8b54b58"
+											}
+										],
+										"fixed": [
+											"0:1.2-13.module+el8.3.0+133+b8b54b58"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-logging"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-13.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-13.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-net"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.6-3.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:3.6-3.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-net"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.6-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.6-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-commons-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:43-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:43-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-ivy"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.4.0-14.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.4.0-14.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:19-2.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:19-2.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:19-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:19-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "apache-resource-bundles"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2-20.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2-20.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "aqute-bnd"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.5.0-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.5.0-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "assertj-core"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.8.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.8.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "atinject"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1-28.20100611svn86.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1-28.20100611svn86.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "atinject"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1-28.20100611svn86.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1-28.20100611svn86.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "atinject"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1-28.20100611svn86.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1-28.20100611svn86.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "bcel"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.2-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:6.2-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "beust-jcommander"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.71-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.71-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "bsf"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.4.0-30.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.4.0-30.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "bsh"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.0-13.b6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.0-13.b6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "byaccj"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.15-17.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.15-17.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "byaccj"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.15-17.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.15-17.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "cal10n"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.8.1-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:0.8.1-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "cdi-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-8.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.2-8.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "cdi-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "cdi-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-8.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.2-8.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "cglib"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.2.4-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.2.4-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "easymock"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.5-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.5-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "exec-maven-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6.0-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6.0-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "felix-osgi-compendium"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4.0-26.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.4.0-26.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "felix-osgi-core"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4.0-23.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.4.0-23.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "felix-osgi-foundation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2.0-23.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2.0-23.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "felix-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:4-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "felix-utils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.10.4-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.10.4-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "forge-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:38-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:38-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "fusesource-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.11-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "geronimo-annotation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-23.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.0-23.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "geronimo-annotation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-23.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-23.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "geronimo-annotation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-23.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.0-23.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "geronimo-jms"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1.1-25.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1.1-25.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "geronimo-jpa"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1.1-21.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1.1-21.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "geronimo-parent-poms"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6-25.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6-25.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-annotation-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-13.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.2-13.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-annotation-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-13.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-13.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-el"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.1-0.7.b08.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.0.1-0.7.b08.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-el"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.1-0.7.b08.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.1-0.7.b08.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-el"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.1-0.7.b08.module+el8.6.0+975+c0ed2db8"
+											}
+										],
+										"fixed": [
+											"0:3.0.1-0.7.b08.module+el8.6.0+975+c0ed2db8"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-jsp-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.3.2-0.9.b01.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:2.3.2-0.9.b01.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-jsp-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.3.2-0.9.b01.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.3.2-0.9.b01.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-legal"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-master-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:8-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-servlet-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-14.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-14.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "glassfish-servlet-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-14.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-14.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "google-guice"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.1-11.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:4.1-11.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "google-guice"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.1-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:4.1-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "google-guice"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.1-11.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:4.1-11.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "guava20"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20.0-8.module+el8.3.0+133+b8b54b58"
+											}
+										],
+										"fixed": [
+											"0:20.0-8.module+el8.3.0+133+b8b54b58"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "guava20"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20.0-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:20.0-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "hamcrest"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.3-23.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.3-23.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "hamcrest"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.3-23.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.3-23.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "hawtjni"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.16-2.module+el8.3.0+133+b8b54b58"
+											}
+										],
+										"fixed": [
+											"0:1.16-2.module+el8.3.0+133+b8b54b58"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "hawtjni"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.16-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.16-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "httpcomponents-client"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.5.5-4.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:4.5.5-4.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "httpcomponents-client"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.5.5-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:4.5.5-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "httpcomponents-core"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.4.10-4.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:4.4.10-4.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "httpcomponents-project"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:9-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:9-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "isorelax"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:0-0.23.release20050331.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:0-0.23.release20050331.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jakarta-commons-httpclient"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.1-28.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"1:3.1-28.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jakarta-commons-httpclient"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.1-28.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:3.1-28.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jakarta-oro"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.0.8-23.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.0.8-23.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jansi"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.17.1-1.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.17.1-1.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jansi"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.17.1-1.module+el8.3.0+241+f23502a8"
+											}
+										],
+										"fixed": [
+											"0:1.17.1-1.module+el8.3.0+241+f23502a8"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jansi"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.17.1-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.17.1-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jansi"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.17.1-1.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.17.1-1.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jansi-native"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-7.module+el8.3.0+133+b8b54b58"
+											}
+										],
+										"fixed": [
+											"0:1.7-7.module+el8.3.0+133+b8b54b58"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jansi-native"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "java_cup"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:0.11b-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:0.11b-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javacc"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:7.0.2-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:7.0.2-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javacc-maven-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.6-25.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.6-25.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javamail"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.5.2-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.5.2-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javapackages-tools"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.3.0-2.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:5.3.0-2.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javapackages-tools"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.3.0-2.module+el8.3.0+125+5da1ae29"
+											}
+										],
+										"fixed": [
+											"0:5.3.0-2.module+el8.3.0+125+5da1ae29"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javapackages-tools"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.3.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:5.3.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javassist"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.18.1-8.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:3.18.1-8.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "javassist"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.18.1-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.18.1-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jaxen"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1.6-18.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1.6-18.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jboss-interceptors-1.2-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.0-8.module+el8.3.0+133+b8b54b58"
+											}
+										],
+										"fixed": [
+											"0:1.0.0-8.module+el8.3.0+133+b8b54b58"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jboss-interceptors-1.2-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0.0-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0.0-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jboss-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:20-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:20-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jdepend"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.9.1-18.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.9.1-18.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jdependency"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jdom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1.3-17.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1.3-17.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jdom2"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.0.6-12.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.0.6-12.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jflex"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6.1-12.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6.1-12.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jline"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.14.6-2.module+el8.3.0+241+f23502a8"
+											}
+										],
+										"fixed": [
+											"0:2.14.6-2.module+el8.3.0+241+f23502a8"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jline"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.14.6-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.14.6-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jsch"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.1.54-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:0.1.54-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jsoup"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11.3-3.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.11.3-3.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jsoup"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11.3-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.11.3-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jsoup"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.11.3-3.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.11.3-3.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jsr-305"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0-0.22.20130910svn.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:0-0.22.20130910svn.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jsr-305"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0-0.22.20130910svn.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:0-0.22.20130910svn.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jtidy"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:1.0-0.28.20100930svn1125.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"2:1.0-0.28.20100930svn1125.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "junit"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:4.12-9.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"1:4.12-9.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "junit"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:4.12-9.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:4.12-9.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jvnet-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4-10.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:4-10.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jzlib"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1.3-8.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.1.3-8.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "jzlib"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1.3-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1.3-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "log4j12"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2.17-22.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2.17-22.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.5.4-5.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"1:3.5.4-5.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.5.4-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:3.5.4-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.5.4-5.module+el8.6.0+975+c0ed2db8"
+											}
+										],
+										"fixed": [
+											"1:3.5.4-5.module+el8.6.0+975+c0ed2db8"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-antrun-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.8-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.8-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-archiver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.2.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.2.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-artifact-resolver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.0-18.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:1.0-18.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-artifact-transfer"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:0.9.0-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:0.9.0-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-assembly-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-clean-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.0-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.0-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-common-artifact-filters"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.1-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.1-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-compiler-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.7.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.7.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-dependency-analyzer"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.8-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.8-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-dependency-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.2-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.2-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-dependency-tree"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-doxia"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-doxia-sitetools"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.5-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7.5-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-enforcer"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4.1-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.4.1-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-file-management"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.0.0-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:3.0.0-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-filtering"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.1-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.1-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-install-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.5.2-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.5.2-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-invoker"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.2-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.2-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-invoker-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.10-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.10-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-jar-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:27-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:27-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-plugin-build-helper"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.9.1-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.9.1-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-plugin-bundle"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.5.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.5.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-plugin-testing"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.3.0-12.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.3.0-12.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-plugin-tools"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.5.1-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.5.1-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-plugins-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:28-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:28-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-remote-resources-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.5-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.5-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-reporting-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.0-14.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:3.0-14.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-reporting-impl"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.0-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.0-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-resolver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.1.1-2.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"1:1.1.1-2.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-resolver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.1.1-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:1.1.1-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-resolver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.1.1-2.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"1:1.1.1-2.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-resources-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-script-interpreter"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-shade-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-shared"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:22-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:22-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-shared-incremental"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.1-14.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.1-14.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-shared-io"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:3.0.0-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:3.0.0-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-shared-utils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.2.1-0.1.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.2.1-0.1.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-shared-utils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.2.1-0.1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.2.1-0.1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-source-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.1-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.1-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-surefire"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.22.0-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.22.0-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-verifier"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-wagon"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-1.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-1.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-wagon"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven-wagon"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-1.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-1.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "maven2"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.2.1-59.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.2.1-59.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "mockito"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.10.19-17.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.10.19-17.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "modello"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.9.1-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.9.1-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "mojo-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:40-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:40-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "munge-maven-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "objectweb-asm"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.2-5.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:6.2-5.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "objectweb-asm"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.2-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:6.2-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "objectweb-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.5-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.5-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "objenesis"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.6-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.6-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "os-maven-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2.3-9.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2.3-9.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "osgi-annotation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.0.0-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:6.0.0-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "osgi-compendium"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.0.0-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:6.0.0-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "osgi-core"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.0.0-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:6.0.0-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-ant-factory"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.20.a2.2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.20.a2.2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-archiver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.6.0-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.6.0-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-bsh-factory"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.19.a7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.19.a7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-build-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.0.7-20.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:0.0.7-20.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-cipher"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-14.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.7-14.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-cipher"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-14.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7-14.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-cipher"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-14.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.7-14.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-classworlds"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.5.2-9.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:2.5.2-9.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-classworlds"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.5.2-9.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.5.2-9.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-classworlds"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.5.2-9.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:2.5.2-9.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-cli"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6-6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6-6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-compiler"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.8.2-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.8.2-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-component-api"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.24.alpha15.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.24.alpha15.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-component-factories-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.15.alpha11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.15.alpha11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-components-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.3.1-10.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.3.1-10.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-containers"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.1-8.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.7.1-8.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-containers"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.1-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7.1-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-containers"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.1-8.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.7.1-8.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-i18n"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.11.b10.4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.11.b10.4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-interactivity"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.27.alpha6.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.27.alpha6.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-interpolation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.22-9.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.22-9.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-interpolation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.22-9.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.22-9.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-interpolation"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.22-9.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.22-9.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-io"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-languages"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.9.10-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:0.9.10-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-pom"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:5.0-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:5.0-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-resources"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.23.a7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.23.a7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-sec-dispatcher"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4-26.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.4-26.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-sec-dispatcher"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4-26.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.4-26.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-sec-dispatcher"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4-26.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.4-26.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-utils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-3.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-3.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-utils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-utils"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.1.0-3.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:3.1.0-3.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "plexus-velocity"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "powermock"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6.5-9.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6.5-9.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "qdox"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.0-3.M9.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:2.0-3.M9.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "qdox"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.0-3.M9.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.0-3.M9.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "regexp"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:1.5-26.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"1:1.5-26.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "sisu"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "1:0.3.3-7.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"1:0.3.3-7.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "sisu-mojos"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.3.1-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:0.3.1-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "slf4j"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.25-4.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:1.7.25-4.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "slf4j"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.25-4.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.7.25-4.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "slf4j"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.25-4.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7.25-4.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "slf4j"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7.25-4.module+el8.6.0+843+5a13dac3"
+											}
+										],
+										"fixed": [
+											"0:1.7.25-4.module+el8.6.0+843+5a13dac3"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "sonatype-oss-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:7-14.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:7-14.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "sonatype-plugins-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:8-12.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:8-12.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "spec-version-maven-plugin"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-11.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-11.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "spice-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:26-8.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:26-8.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "testng"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.14.3-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:6.14.3-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "velocity"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-24.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:1.7-24.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "velocity"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.7-24.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.7-24.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "weld-parent"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:34-5.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:34-5.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xalan-j2"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.7.1-38.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:2.7.1-38.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xalan-j2"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.7.1-38.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.7.1-38.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xbean"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.8-1.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:4.8-1.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xerces-j2"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.11.0-34.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:2.11.0-34.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xerces-j2"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:2.11.0-34.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:2.11.0-34.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xml-commons-apis"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4.01-25.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:1.4.01-25.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xml-commons-apis"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4.01-25.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.4.01-25.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xml-commons-apis"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.4.01-25.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.4.01-25.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xml-commons-resolver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-26.module+el8.10.0+1763+c7c02164"
+											}
+										],
+										"fixed": [
+											"0:1.2-26.module+el8.10.0+1763+c7c02164"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xml-commons-resolver"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.2-26.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.2-26.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xmlunit"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.6-7.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.6-7.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xmvn"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.0-21.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:3.0.0-21.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xmvn"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:3.0.0-21.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:3.0.0-21.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xz-java"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.8-2.module+el8.10.0+2003+8aeac9cb"
+											}
+										],
+										"fixed": [
+											"0:1.8-2.module+el8.10.0+2003+8aeac9cb"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "xz-java"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.8-2.module+el8.3.0+74+855e3f5d"
+											}
+										],
+										"fixed": [
+											"0:1.8-2.module+el8.3.0+74+855e3f5d"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "rocky-osv",
+		"raws": [
+			"fixtures/RLSA/2025/RLSA-2025:9318.json"
+		]
+	}
+}

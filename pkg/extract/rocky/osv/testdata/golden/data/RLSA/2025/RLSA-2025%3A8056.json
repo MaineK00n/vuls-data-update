@@ -1,0 +1,134 @@
+{
+	"id": "RLSA-2025:8056",
+	"advisories": [
+		{
+			"content": {
+				"id": "RLSA-2025:8056",
+				"title": "Important: kernel security update",
+				"description": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: net/mlx5: Always stop health timer during driver removal (CVE-2024-40906)\n\n* kernel: net/mlx5e: SHAMPO, Fix invalid WQ linked list unlink (CVE-2024-44970)\n\n* kernel: vsock: Keep the binding until socket destruction (CVE-2025-21756)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+				"severity": [
+					{
+						"type": "cvss_v31",
+						"source": "osv.dev/Rocky-Linux",
+						"cvss_v31": {
+							"vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 7.8,
+							"base_severity": "HIGH",
+							"temporal_score": 7.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"references": [
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2297490"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2309801"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2348609"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://errata.rockylinux.org/RLSA-2025:8056"
+					},
+					{
+						"source": "osv.dev/Rocky-Linux",
+						"url": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:8056.json"
+					}
+				],
+				"published": "2025-07-29T13:38:26.98262Z",
+				"modified": "2025-07-29T14:59:56.199156Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-40906"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-44970"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-21756"
+			},
+			"segments": [
+				{
+					"ecosystem": "rocky:8"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "rocky:8",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "kernel"
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:4.18.0-553.53.1.el8_10"
+											}
+										],
+										"fixed": [
+											"0:4.18.0-553.53.1.el8_10"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "rocky-osv",
+		"raws": [
+			"fixtures/RLSA/2025/RLSA-2025:8056.json"
+		]
+	}
+}

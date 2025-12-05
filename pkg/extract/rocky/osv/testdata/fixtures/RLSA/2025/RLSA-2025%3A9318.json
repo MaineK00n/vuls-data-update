@@ -1,0 +1,6137 @@
+{
+	"schema_version": "1.7.3",
+	"id": "RLSA-2025:9318",
+	"modified": "2025-07-29T15:00:23.703339Z",
+	"published": "2025-07-29T13:38:41.630147Z",
+	"upstream": [
+		"CVE-2019-10086",
+		"CVE-2025-48734"
+	],
+	"summary": "Important: javapackages-tools:201801 security update",
+	"details": "The javapackages-tools packages provide macros and scripts to support Java packaging.\n\nSecurity Fix(es):\n\n* apache-commons-beanutils: does not suppresses the class property in PropertyUtilsBean by default (CVE-2019-10086)\n\n* commons-beanutils: Apache Commons BeanUtils: PropertyUtilsBean does not suppresses an enum's declaredClass property by default (CVE-2025-48734)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"severity": [
+		{
+			"type": "CVSS_V3",
+			"score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"
+		}
+	],
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "ant",
+				"purl": "pkg:rpm/rocky-linux/ant?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.10.5-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "ant",
+				"purl": "pkg:rpm/rocky-linux/ant?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.10.5-1.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "ant-contrib",
+				"purl": "pkg:rpm/rocky-linux/ant-contrib?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.32.b3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "antlr",
+				"purl": "pkg:rpm/rocky-linux/antlr?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.7.7-56.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "aopalliance",
+				"purl": "pkg:rpm/rocky-linux/aopalliance?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-17.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "aopalliance",
+				"purl": "pkg:rpm/rocky-linux/aopalliance?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-17.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "aopalliance",
+				"purl": "pkg:rpm/rocky-linux/aopalliance?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-17.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-beanutils",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-beanutils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.9.3-5.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-cli",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-cli?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4-4.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-cli",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-cli?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4-4.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-cli",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-cli?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-codec",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-codec?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11-3.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-codec",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-codec?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11-3.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-codec",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-codec?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-collections",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-collections?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.2.2-10.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-collections",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-collections?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.2.2-10.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-compress",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-compress?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.18-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-compress",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-compress?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.18-1.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-exec",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-exec?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.3-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-io",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-io?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:2.6-3.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-io",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-io?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:2.6-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-io",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-io?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:2.6-3.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-jxpath",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-jxpath?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.3-29.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-jxpath",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-jxpath?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.3-29.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-lang",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-lang?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.6-21.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-lang",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-lang?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.6-21.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-lang3",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-lang3?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.7-3.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-lang3",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-lang3?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.7-3.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-lang3",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-lang3?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.7-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-logging",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-logging?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-13.module+el8.3.0+133+b8b54b58"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-logging",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-logging?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-13.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-net",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-net?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.6-3.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-net",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-net?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.6-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-commons-parent",
+				"purl": "pkg:rpm/rocky-linux/apache-commons-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:43-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-ivy",
+				"purl": "pkg:rpm/rocky-linux/apache-ivy?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.4.0-14.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-parent",
+				"purl": "pkg:rpm/rocky-linux/apache-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:19-2.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-parent",
+				"purl": "pkg:rpm/rocky-linux/apache-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:19-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "apache-resource-bundles",
+				"purl": "pkg:rpm/rocky-linux/apache-resource-bundles?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2-20.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "aqute-bnd",
+				"purl": "pkg:rpm/rocky-linux/aqute-bnd?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.5.0-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "assertj-core",
+				"purl": "pkg:rpm/rocky-linux/assertj-core?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.8.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "atinject",
+				"purl": "pkg:rpm/rocky-linux/atinject?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1-28.20100611svn86.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "atinject",
+				"purl": "pkg:rpm/rocky-linux/atinject?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1-28.20100611svn86.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "atinject",
+				"purl": "pkg:rpm/rocky-linux/atinject?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1-28.20100611svn86.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "bcel",
+				"purl": "pkg:rpm/rocky-linux/bcel?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.2-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "beust-jcommander",
+				"purl": "pkg:rpm/rocky-linux/beust-jcommander?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.71-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "bsf",
+				"purl": "pkg:rpm/rocky-linux/bsf?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.4.0-30.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "bsh",
+				"purl": "pkg:rpm/rocky-linux/bsh?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.0-13.b6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "byaccj",
+				"purl": "pkg:rpm/rocky-linux/byaccj?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.15-17.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "byaccj",
+				"purl": "pkg:rpm/rocky-linux/byaccj?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.15-17.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "cal10n",
+				"purl": "pkg:rpm/rocky-linux/cal10n?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0.8.1-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "cdi-api",
+				"purl": "pkg:rpm/rocky-linux/cdi-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-8.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "cdi-api",
+				"purl": "pkg:rpm/rocky-linux/cdi-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-8.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "cdi-api",
+				"purl": "pkg:rpm/rocky-linux/cdi-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "cglib",
+				"purl": "pkg:rpm/rocky-linux/cglib?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.2.4-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "easymock",
+				"purl": "pkg:rpm/rocky-linux/easymock?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.5-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "exec-maven-plugin",
+				"purl": "pkg:rpm/rocky-linux/exec-maven-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6.0-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "felix-osgi-compendium",
+				"purl": "pkg:rpm/rocky-linux/felix-osgi-compendium?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4.0-26.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "felix-osgi-core",
+				"purl": "pkg:rpm/rocky-linux/felix-osgi-core?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4.0-23.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "felix-osgi-foundation",
+				"purl": "pkg:rpm/rocky-linux/felix-osgi-foundation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2.0-23.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "hawtjni",
+				"purl": "pkg:rpm/rocky-linux/hawtjni?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.16-2.module+el8.3.0+133+b8b54b58"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "hawtjni",
+				"purl": "pkg:rpm/rocky-linux/hawtjni?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.16-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "felix-parent",
+				"purl": "pkg:rpm/rocky-linux/felix-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "felix-utils",
+				"purl": "pkg:rpm/rocky-linux/felix-utils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.10.4-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "forge-parent",
+				"purl": "pkg:rpm/rocky-linux/forge-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:38-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "fusesource-pom",
+				"purl": "pkg:rpm/rocky-linux/fusesource-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "geronimo-annotation",
+				"purl": "pkg:rpm/rocky-linux/geronimo-annotation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-23.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "geronimo-annotation",
+				"purl": "pkg:rpm/rocky-linux/geronimo-annotation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-23.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "geronimo-annotation",
+				"purl": "pkg:rpm/rocky-linux/geronimo-annotation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-23.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "geronimo-jms",
+				"purl": "pkg:rpm/rocky-linux/geronimo-jms?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1.1-25.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "geronimo-jpa",
+				"purl": "pkg:rpm/rocky-linux/geronimo-jpa?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1.1-21.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "geronimo-parent-poms",
+				"purl": "pkg:rpm/rocky-linux/geronimo-parent-poms?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6-25.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-annotation-api",
+				"purl": "pkg:rpm/rocky-linux/glassfish-annotation-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-13.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-annotation-api",
+				"purl": "pkg:rpm/rocky-linux/glassfish-annotation-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-13.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-el",
+				"purl": "pkg:rpm/rocky-linux/glassfish-el?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.1-0.7.b08.module+el8.6.0+975+c0ed2db8"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-el",
+				"purl": "pkg:rpm/rocky-linux/glassfish-el?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.1-0.7.b08.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-el",
+				"purl": "pkg:rpm/rocky-linux/glassfish-el?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.1-0.7.b08.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-jsp-api",
+				"purl": "pkg:rpm/rocky-linux/glassfish-jsp-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.3.2-0.9.b01.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-jsp-api",
+				"purl": "pkg:rpm/rocky-linux/glassfish-jsp-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.3.2-0.9.b01.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-legal",
+				"purl": "pkg:rpm/rocky-linux/glassfish-legal?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-master-pom",
+				"purl": "pkg:rpm/rocky-linux/glassfish-master-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:8-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-servlet-api",
+				"purl": "pkg:rpm/rocky-linux/glassfish-servlet-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-14.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "glassfish-servlet-api",
+				"purl": "pkg:rpm/rocky-linux/glassfish-servlet-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-14.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "google-guice",
+				"purl": "pkg:rpm/rocky-linux/google-guice?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.1-11.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "google-guice",
+				"purl": "pkg:rpm/rocky-linux/google-guice?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.1-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "google-guice",
+				"purl": "pkg:rpm/rocky-linux/google-guice?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.1-11.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "guava20",
+				"purl": "pkg:rpm/rocky-linux/guava20?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:20.0-8.module+el8.3.0+133+b8b54b58"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "guava20",
+				"purl": "pkg:rpm/rocky-linux/guava20?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:20.0-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "hamcrest",
+				"purl": "pkg:rpm/rocky-linux/hamcrest?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.3-23.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "hamcrest",
+				"purl": "pkg:rpm/rocky-linux/hamcrest?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.3-23.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "httpcomponents-client",
+				"purl": "pkg:rpm/rocky-linux/httpcomponents-client?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.5.5-4.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "httpcomponents-client",
+				"purl": "pkg:rpm/rocky-linux/httpcomponents-client?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.5.5-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "httpcomponents-core",
+				"purl": "pkg:rpm/rocky-linux/httpcomponents-core?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.4.10-4.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "httpcomponents-project",
+				"purl": "pkg:rpm/rocky-linux/httpcomponents-project?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:9-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "isorelax",
+				"purl": "pkg:rpm/rocky-linux/isorelax?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:0-0.23.release20050331.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jakarta-commons-httpclient",
+				"purl": "pkg:rpm/rocky-linux/jakarta-commons-httpclient?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.1-28.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jakarta-commons-httpclient",
+				"purl": "pkg:rpm/rocky-linux/jakarta-commons-httpclient?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.1-28.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jakarta-oro",
+				"purl": "pkg:rpm/rocky-linux/jakarta-oro?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.0.8-23.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jansi",
+				"purl": "pkg:rpm/rocky-linux/jansi?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.17.1-1.module+el8.3.0+241+f23502a8"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jansi",
+				"purl": "pkg:rpm/rocky-linux/jansi?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.17.1-1.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jansi",
+				"purl": "pkg:rpm/rocky-linux/jansi?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.17.1-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jansi",
+				"purl": "pkg:rpm/rocky-linux/jansi?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.17.1-1.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jansi-native",
+				"purl": "pkg:rpm/rocky-linux/jansi-native?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-7.module+el8.3.0+133+b8b54b58"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jansi-native",
+				"purl": "pkg:rpm/rocky-linux/jansi-native?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javacc",
+				"purl": "pkg:rpm/rocky-linux/javacc?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:7.0.2-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javacc-maven-plugin",
+				"purl": "pkg:rpm/rocky-linux/javacc-maven-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.6-25.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "java_cup",
+				"purl": "pkg:rpm/rocky-linux/java_cup?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:0.11b-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javamail",
+				"purl": "pkg:rpm/rocky-linux/javamail?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.5.2-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javapackages-tools",
+				"purl": "pkg:rpm/rocky-linux/javapackages-tools?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:5.3.0-2.module+el8.3.0+125+5da1ae29"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javapackages-tools",
+				"purl": "pkg:rpm/rocky-linux/javapackages-tools?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:5.3.0-2.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javapackages-tools",
+				"purl": "pkg:rpm/rocky-linux/javapackages-tools?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:5.3.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javassist",
+				"purl": "pkg:rpm/rocky-linux/javassist?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.18.1-8.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "javassist",
+				"purl": "pkg:rpm/rocky-linux/javassist?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.18.1-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jaxen",
+				"purl": "pkg:rpm/rocky-linux/jaxen?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1.6-18.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jboss-interceptors-1.2-api",
+				"purl": "pkg:rpm/rocky-linux/jboss-interceptors-1.2-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0.0-8.module+el8.3.0+133+b8b54b58"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jboss-interceptors-1.2-api",
+				"purl": "pkg:rpm/rocky-linux/jboss-interceptors-1.2-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0.0-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jboss-parent",
+				"purl": "pkg:rpm/rocky-linux/jboss-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:20-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jdepend",
+				"purl": "pkg:rpm/rocky-linux/jdepend?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.9.1-18.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jdependency",
+				"purl": "pkg:rpm/rocky-linux/jdependency?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jdom",
+				"purl": "pkg:rpm/rocky-linux/jdom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1.3-17.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jdom2",
+				"purl": "pkg:rpm/rocky-linux/jdom2?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.0.6-12.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jflex",
+				"purl": "pkg:rpm/rocky-linux/jflex?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6.1-12.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jline",
+				"purl": "pkg:rpm/rocky-linux/jline?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.14.6-2.module+el8.3.0+241+f23502a8"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jline",
+				"purl": "pkg:rpm/rocky-linux/jline?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.14.6-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jsch",
+				"purl": "pkg:rpm/rocky-linux/jsch?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0.1.54-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jsoup",
+				"purl": "pkg:rpm/rocky-linux/jsoup?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11.3-3.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jsoup",
+				"purl": "pkg:rpm/rocky-linux/jsoup?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11.3-3.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jsoup",
+				"purl": "pkg:rpm/rocky-linux/jsoup?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.11.3-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jsr-305",
+				"purl": "pkg:rpm/rocky-linux/jsr-305?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0-0.22.20130910svn.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jsr-305",
+				"purl": "pkg:rpm/rocky-linux/jsr-305?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0-0.22.20130910svn.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jtidy",
+				"purl": "pkg:rpm/rocky-linux/jtidy?distro=rocky-linux-8&epoch=2"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "2:1.0-0.28.20100930svn1125.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "junit",
+				"purl": "pkg:rpm/rocky-linux/junit?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:4.12-9.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "junit",
+				"purl": "pkg:rpm/rocky-linux/junit?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:4.12-9.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jvnet-parent",
+				"purl": "pkg:rpm/rocky-linux/jvnet-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4-10.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jzlib",
+				"purl": "pkg:rpm/rocky-linux/jzlib?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1.3-8.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "jzlib",
+				"purl": "pkg:rpm/rocky-linux/jzlib?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1.3-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "log4j12",
+				"purl": "pkg:rpm/rocky-linux/log4j12?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2.17-22.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven",
+				"purl": "pkg:rpm/rocky-linux/maven?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.5.4-5.module+el8.6.0+975+c0ed2db8"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven",
+				"purl": "pkg:rpm/rocky-linux/maven?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.5.4-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven",
+				"purl": "pkg:rpm/rocky-linux/maven?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.5.4-5.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven2",
+				"purl": "pkg:rpm/rocky-linux/maven2?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.2.1-59.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-antrun-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-antrun-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.8-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-archiver",
+				"purl": "pkg:rpm/rocky-linux/maven-archiver?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.2.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-artifact-resolver",
+				"purl": "pkg:rpm/rocky-linux/maven-artifact-resolver?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:1.0-18.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-artifact-transfer",
+				"purl": "pkg:rpm/rocky-linux/maven-artifact-transfer?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:0.9.0-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-assembly-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-assembly-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-clean-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-clean-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.0-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-common-artifact-filters",
+				"purl": "pkg:rpm/rocky-linux/maven-common-artifact-filters?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.1-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-compiler-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-compiler-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.7.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-dependency-analyzer",
+				"purl": "pkg:rpm/rocky-linux/maven-dependency-analyzer?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.8-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-dependency-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-dependency-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.2-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-dependency-tree",
+				"purl": "pkg:rpm/rocky-linux/maven-dependency-tree?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-doxia",
+				"purl": "pkg:rpm/rocky-linux/maven-doxia?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-doxia-sitetools",
+				"purl": "pkg:rpm/rocky-linux/maven-doxia-sitetools?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.5-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-enforcer",
+				"purl": "pkg:rpm/rocky-linux/maven-enforcer?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4.1-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-file-management",
+				"purl": "pkg:rpm/rocky-linux/maven-file-management?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.0.0-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-filtering",
+				"purl": "pkg:rpm/rocky-linux/maven-filtering?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.1-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-install-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-install-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.5.2-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-invoker",
+				"purl": "pkg:rpm/rocky-linux/maven-invoker?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.2-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-invoker-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-invoker-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.10-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-jar-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-jar-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-parent",
+				"purl": "pkg:rpm/rocky-linux/maven-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:27-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-plugin-build-helper",
+				"purl": "pkg:rpm/rocky-linux/maven-plugin-build-helper?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.9.1-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-plugin-bundle",
+				"purl": "pkg:rpm/rocky-linux/maven-plugin-bundle?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.5.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-plugins-pom",
+				"purl": "pkg:rpm/rocky-linux/maven-plugins-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:28-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-plugin-testing",
+				"purl": "pkg:rpm/rocky-linux/maven-plugin-testing?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.3.0-12.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-plugin-tools",
+				"purl": "pkg:rpm/rocky-linux/maven-plugin-tools?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.5.1-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-remote-resources-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-remote-resources-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.5-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-reporting-api",
+				"purl": "pkg:rpm/rocky-linux/maven-reporting-api?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.0-14.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-reporting-impl",
+				"purl": "pkg:rpm/rocky-linux/maven-reporting-impl?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.0-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-resolver",
+				"purl": "pkg:rpm/rocky-linux/maven-resolver?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:1.1.1-2.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-resolver",
+				"purl": "pkg:rpm/rocky-linux/maven-resolver?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:1.1.1-2.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-resolver",
+				"purl": "pkg:rpm/rocky-linux/maven-resolver?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:1.1.1-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-resources-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-resources-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-script-interpreter",
+				"purl": "pkg:rpm/rocky-linux/maven-script-interpreter?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-shade-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-shade-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-shared",
+				"purl": "pkg:rpm/rocky-linux/maven-shared?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:22-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-shared-incremental",
+				"purl": "pkg:rpm/rocky-linux/maven-shared-incremental?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.1-14.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-shared-io",
+				"purl": "pkg:rpm/rocky-linux/maven-shared-io?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:3.0.0-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-shared-utils",
+				"purl": "pkg:rpm/rocky-linux/maven-shared-utils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.2.1-0.1.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-shared-utils",
+				"purl": "pkg:rpm/rocky-linux/maven-shared-utils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.2.1-0.1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-source-plugin",
+				"purl": "pkg:rpm/rocky-linux/maven-source-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.1-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-surefire",
+				"purl": "pkg:rpm/rocky-linux/maven-surefire?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.22.0-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-verifier",
+				"purl": "pkg:rpm/rocky-linux/maven-verifier?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-wagon",
+				"purl": "pkg:rpm/rocky-linux/maven-wagon?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-1.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-wagon",
+				"purl": "pkg:rpm/rocky-linux/maven-wagon?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "maven-wagon",
+				"purl": "pkg:rpm/rocky-linux/maven-wagon?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-1.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "mockito",
+				"purl": "pkg:rpm/rocky-linux/mockito?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.10.19-17.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "modello",
+				"purl": "pkg:rpm/rocky-linux/modello?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.9.1-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "mojo-parent",
+				"purl": "pkg:rpm/rocky-linux/mojo-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:40-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "munge-maven-plugin",
+				"purl": "pkg:rpm/rocky-linux/munge-maven-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "objectweb-asm",
+				"purl": "pkg:rpm/rocky-linux/objectweb-asm?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.2-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "objectweb-asm",
+				"purl": "pkg:rpm/rocky-linux/objectweb-asm?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.2-5.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "objectweb-pom",
+				"purl": "pkg:rpm/rocky-linux/objectweb-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.5-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "objenesis",
+				"purl": "pkg:rpm/rocky-linux/objenesis?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.6-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "osgi-annotation",
+				"purl": "pkg:rpm/rocky-linux/osgi-annotation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.0.0-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "osgi-compendium",
+				"purl": "pkg:rpm/rocky-linux/osgi-compendium?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.0.0-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "osgi-core",
+				"purl": "pkg:rpm/rocky-linux/osgi-core?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.0.0-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "os-maven-plugin",
+				"purl": "pkg:rpm/rocky-linux/os-maven-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2.3-9.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-ant-factory",
+				"purl": "pkg:rpm/rocky-linux/plexus-ant-factory?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.20.a2.2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-archiver",
+				"purl": "pkg:rpm/rocky-linux/plexus-archiver?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.6.0-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-bsh-factory",
+				"purl": "pkg:rpm/rocky-linux/plexus-bsh-factory?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.19.a7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-build-api",
+				"purl": "pkg:rpm/rocky-linux/plexus-build-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0.0.7-20.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-cipher",
+				"purl": "pkg:rpm/rocky-linux/plexus-cipher?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-14.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-cipher",
+				"purl": "pkg:rpm/rocky-linux/plexus-cipher?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-14.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-cipher",
+				"purl": "pkg:rpm/rocky-linux/plexus-cipher?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-14.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-classworlds",
+				"purl": "pkg:rpm/rocky-linux/plexus-classworlds?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.5.2-9.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-classworlds",
+				"purl": "pkg:rpm/rocky-linux/plexus-classworlds?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.5.2-9.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-classworlds",
+				"purl": "pkg:rpm/rocky-linux/plexus-classworlds?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.5.2-9.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-cli",
+				"purl": "pkg:rpm/rocky-linux/plexus-cli?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6-6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-compiler",
+				"purl": "pkg:rpm/rocky-linux/plexus-compiler?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.8.2-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-component-api",
+				"purl": "pkg:rpm/rocky-linux/plexus-component-api?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.24.alpha15.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-component-factories-pom",
+				"purl": "pkg:rpm/rocky-linux/plexus-component-factories-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.15.alpha11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-components-pom",
+				"purl": "pkg:rpm/rocky-linux/plexus-components-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.3.1-10.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-containers",
+				"purl": "pkg:rpm/rocky-linux/plexus-containers?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.1-8.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-containers",
+				"purl": "pkg:rpm/rocky-linux/plexus-containers?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.1-8.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-containers",
+				"purl": "pkg:rpm/rocky-linux/plexus-containers?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.1-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-i18n",
+				"purl": "pkg:rpm/rocky-linux/plexus-i18n?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.11.b10.4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-interactivity",
+				"purl": "pkg:rpm/rocky-linux/plexus-interactivity?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.27.alpha6.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-interpolation",
+				"purl": "pkg:rpm/rocky-linux/plexus-interpolation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.22-9.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-interpolation",
+				"purl": "pkg:rpm/rocky-linux/plexus-interpolation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.22-9.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-interpolation",
+				"purl": "pkg:rpm/rocky-linux/plexus-interpolation?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.22-9.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-io",
+				"purl": "pkg:rpm/rocky-linux/plexus-io?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-languages",
+				"purl": "pkg:rpm/rocky-linux/plexus-languages?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0.9.10-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-pom",
+				"purl": "pkg:rpm/rocky-linux/plexus-pom?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:5.0-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-resources",
+				"purl": "pkg:rpm/rocky-linux/plexus-resources?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.0-0.23.a7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-sec-dispatcher",
+				"purl": "pkg:rpm/rocky-linux/plexus-sec-dispatcher?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4-26.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-sec-dispatcher",
+				"purl": "pkg:rpm/rocky-linux/plexus-sec-dispatcher?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4-26.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-sec-dispatcher",
+				"purl": "pkg:rpm/rocky-linux/plexus-sec-dispatcher?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4-26.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-utils",
+				"purl": "pkg:rpm/rocky-linux/plexus-utils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-3.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-utils",
+				"purl": "pkg:rpm/rocky-linux/plexus-utils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-3.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-utils",
+				"purl": "pkg:rpm/rocky-linux/plexus-utils?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.1.0-3.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "plexus-velocity",
+				"purl": "pkg:rpm/rocky-linux/plexus-velocity?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "powermock",
+				"purl": "pkg:rpm/rocky-linux/powermock?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6.5-9.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "qdox",
+				"purl": "pkg:rpm/rocky-linux/qdox?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.0-3.M9.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "qdox",
+				"purl": "pkg:rpm/rocky-linux/qdox?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.0-3.M9.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "regexp",
+				"purl": "pkg:rpm/rocky-linux/regexp?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:1.5-26.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "sisu",
+				"purl": "pkg:rpm/rocky-linux/sisu?distro=rocky-linux-8&epoch=1"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "1:0.3.3-7.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "sisu-mojos",
+				"purl": "pkg:rpm/rocky-linux/sisu-mojos?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:0.3.1-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "slf4j",
+				"purl": "pkg:rpm/rocky-linux/slf4j?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.25-4.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "slf4j",
+				"purl": "pkg:rpm/rocky-linux/slf4j?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.25-4.module+el8.6.0+843+5a13dac3"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "slf4j",
+				"purl": "pkg:rpm/rocky-linux/slf4j?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.25-4.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "slf4j",
+				"purl": "pkg:rpm/rocky-linux/slf4j?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7.25-4.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "sonatype-oss-parent",
+				"purl": "pkg:rpm/rocky-linux/sonatype-oss-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:7-14.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "sonatype-plugins-parent",
+				"purl": "pkg:rpm/rocky-linux/sonatype-plugins-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:8-12.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "spec-version-maven-plugin",
+				"purl": "pkg:rpm/rocky-linux/spec-version-maven-plugin?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-11.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "spice-parent",
+				"purl": "pkg:rpm/rocky-linux/spice-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:26-8.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "testng",
+				"purl": "pkg:rpm/rocky-linux/testng?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:6.14.3-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "velocity",
+				"purl": "pkg:rpm/rocky-linux/velocity?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-24.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "velocity",
+				"purl": "pkg:rpm/rocky-linux/velocity?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.7-24.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "weld-parent",
+				"purl": "pkg:rpm/rocky-linux/weld-parent?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:34-5.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xalan-j2",
+				"purl": "pkg:rpm/rocky-linux/xalan-j2?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.7.1-38.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xalan-j2",
+				"purl": "pkg:rpm/rocky-linux/xalan-j2?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.7.1-38.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xbean",
+				"purl": "pkg:rpm/rocky-linux/xbean?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.8-1.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xerces-j2",
+				"purl": "pkg:rpm/rocky-linux/xerces-j2?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.11.0-34.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xerces-j2",
+				"purl": "pkg:rpm/rocky-linux/xerces-j2?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:2.11.0-34.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xml-commons-apis",
+				"purl": "pkg:rpm/rocky-linux/xml-commons-apis?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4.01-25.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xml-commons-apis",
+				"purl": "pkg:rpm/rocky-linux/xml-commons-apis?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4.01-25.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xml-commons-apis",
+				"purl": "pkg:rpm/rocky-linux/xml-commons-apis?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.4.01-25.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xml-commons-resolver",
+				"purl": "pkg:rpm/rocky-linux/xml-commons-resolver?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-26.module+el8.10.0+1763+c7c02164"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xml-commons-resolver",
+				"purl": "pkg:rpm/rocky-linux/xml-commons-resolver?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.2-26.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xmlunit",
+				"purl": "pkg:rpm/rocky-linux/xmlunit?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.6-7.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xmvn",
+				"purl": "pkg:rpm/rocky-linux/xmvn?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.0-21.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xmvn",
+				"purl": "pkg:rpm/rocky-linux/xmvn?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:3.0.0-21.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xz-java",
+				"purl": "pkg:rpm/rocky-linux/xz-java?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.8-2.module+el8.10.0+2003+8aeac9cb"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		},
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "xz-java",
+				"purl": "pkg:rpm/rocky-linux/xz-java?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:1.8-2.module+el8.3.0+74+855e3f5d"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:9318.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.rockylinux.org/RLSA-2025:9318"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=1767483"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2368956"
+		}
+	],
+	"credits": [
+		{
+			"name": "Rocky Enterprise Software Foundation"
+		},
+		{
+			"name": "Red Hat"
+		}
+	]
+}
