@@ -51,7 +51,33 @@ func ChunkSlice(length int, chunkSize int) <-chan IndexChunk {
 	return ch
 }
 
-func Write(path string, content any) error {
+type writeOption struct {
+	allowInvalidUTF8 bool
+}
+
+type WriteOption interface {
+	apply(*writeOption)
+}
+
+type allowInvalidUTF8Option bool
+
+func (o allowInvalidUTF8Option) apply(opts *writeOption) {
+	opts.allowInvalidUTF8 = bool(o)
+}
+
+func WithAllowInvalidUTF8(allow bool) WriteOption {
+	return allowInvalidUTF8Option(allow)
+}
+
+func Write(path string, content any, opts ...WriteOption) error {
+	options := &writeOption{
+		allowInvalidUTF8: false,
+	}
+
+	for _, o := range opts {
+		o.apply(options)
+	}
+
 	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
 		return errors.Wrapf(err, "mkdir %s", filepath.Dir(path))
 	}
@@ -62,7 +88,7 @@ func Write(path string, content any) error {
 	}
 	defer f.Close()
 
-	if err := json.MarshalWrite(f, content, jsontext.WithIndent("\t"), json.Deterministic(true)); err != nil {
+	if err := json.MarshalWrite(f, content, jsontext.WithIndent("\t"), json.Deterministic(true), jsontext.AllowInvalidUTF8(options.allowInvalidUTF8)); err != nil {
 		return errors.Wrap(err, "encode json")
 	}
 
