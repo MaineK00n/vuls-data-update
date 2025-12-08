@@ -1,13 +1,12 @@
 package osv
 
 import (
+	"encoding/json/v2"
 	"fmt"
 	"io/fs"
 	"log"
-	"maps"
 	"os"
 	"path/filepath"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -161,56 +160,55 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 		return dataTypes.Data{}, errors.Errorf("unexpected aliases. expected: nil, actual: %+v", fetched.Aliases)
 	}
 
-	cs := map[string][]criterionTypes.Criterion{} // major -> []Criterion
+	cs := make(map[int][]criterionTypes.Criterion) // major -> []Criterion
 
 	for _, a := range fetched.Affected {
 		if len(a.Versions) != 0 {
-			return dataTypes.Data{}, errors.Errorf("unexpected versions in affected. expected: empty, actual: %+v", a.Versions)
+			return dataTypes.Data{}, errors.Errorf("unexpected versions count in affected. expected: %d, actual: %d", 0, len(a.Versions))
 		}
 		if a.EcosystemSpecific != nil {
-			return dataTypes.Data{}, errors.Errorf("unexpected ecosystem_specific in affected. expected: nil, actual: %+v", a.EcosystemSpecific)
+			return dataTypes.Data{}, errors.Errorf("unexpected ecosystem_specific in affected. expected: %v, actual: %+v", nil, a.EcosystemSpecific)
 		}
 		// At this time, limit the ranges to just single element.
 		// If there appear OSVs with multiple ranges, it should have additional information to distinguish them. We will investigate it at that time, errors that occur here will trigger us.
 		if len(a.Ranges) != 1 {
-			return dataTypes.Data{}, errors.Errorf("unexpected ranges count. expected: 1, actual: %+v", len(a.Ranges))
+			return dataTypes.Data{}, errors.Errorf("unexpected ranges count. expected: %d, actual: %d", 1, len(a.Ranges))
 		}
 		if len(a.Severity) != 0 {
-			return dataTypes.Data{}, errors.Errorf("unexpected severity count in affected. expected: 0, actual: %+v", len(a.Severity))
+			return dataTypes.Data{}, errors.Errorf("unexpected severity count in affected. expected: %d, actual: %d", 0, len(a.Severity))
 		}
 
-		splitted, err := util.Split(a.Package.Ecosystem, ":")
-		if err != nil || splitted[0] != "Rocky Linux" {
-			return dataTypes.Data{}, errors.Wrapf(err, "unexpected ecosystem format. expected: %q, actual: %q", "Rocky Linux:<major>", a.Package.Ecosystem)
+		lhs, rhs, ok := strings.Cut(a.Package.Ecosystem, ":")
+		if !ok {
+			return dataTypes.Data{}, errors.Errorf("unexpected ecosystem format. expected: %q, actual: %q", "Rocky Linux:<major>", a.Package.Ecosystem)
 		}
-		major := splitted[1]
-		if _, err := strconv.Atoi(major); err != nil {
-			return dataTypes.Data{}, errors.Wrapf(err, "unexpected major format. expected: <number>, actual: %q", major)
+		if lhs != "Rocky Linux" {
+			return dataTypes.Data{}, errors.Errorf("unexpected ecosystem. expected: %q, actual: %q", "Rocky Linux", lhs)
+		}
+		major, err := strconv.Atoi(rhs)
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrapf(err, "unexpected major format. expected: %s, actual: %T", "int", rhs)
 		}
 
-		fixed := ""
+		var fixed string
 		for _, e := range a.Ranges[0].Events {
 			if e.Introduced != "" && e.Introduced != "0" {
-				return dataTypes.Data{}, errors.Errorf("unexpected introduced. expected: %s, actual: %s", "0", e.Introduced)
+				return dataTypes.Data{}, errors.Errorf("unexpected introduced. expected: %q, actual: %q", []string{"", "0"}, e.Introduced)
 			}
 			if e.Fixed != "" {
 				fixed = e.Fixed
 			}
 			if e.Limit != "" {
-				return dataTypes.Data{}, errors.Errorf("unexpected limit: %s", e.Limit)
+				return dataTypes.Data{}, errors.Errorf("unexpected limit: %q", e.Limit)
 			}
 			if e.LastAffected != "" {
-				return dataTypes.Data{}, errors.Errorf("unexpected last_affected: %s", e.LastAffected)
+				return dataTypes.Data{}, errors.Errorf("unexpected last_affected: %q", e.LastAffected)
 			}
 		}
-
 		if fixed == "" {
 			return dataTypes.Data{}, errors.New("fixed version not found")
 		}
 
-		if _, ok := cs[major]; !ok {
-			cs[major] = []criterionTypes.Criterion{}
-		}
 		cs[major] = append(cs[major], criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &vcTypes.Criterion{
@@ -240,7 +238,7 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 		ss := make([]segment.Segment, 0, len(cs))
 		for major := range cs {
 			ss = append(ss, segment.Segment{
-				Ecosystem: ecosystem.Ecosystem(fmt.Sprintf("%s:%s", ecosystem.EcosystemTypeRocky, major)),
+				Ecosystem: ecosystem.Ecosystem(fmt.Sprintf("%s:%d", ecosystem.EcosystemTypeRocky, major)),
 			})
 		}
 		return ss
@@ -286,23 +284,21 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 				us[r.URL] = struct{}{}
 			}
 
-			s, err := databaseSpecificSource(fetched.DatabaseSpecific)
+			dbs, err := parseDatabaseSpecific(fetched.DatabaseSpecific)
 			if err != nil {
 				return nil, errors.Wrap(err, "get database specific source")
 			}
-
-			if s != "" {
-				us[s] = struct{}{}
+			if dbs.Source != "" {
+				us[dbs.Source] = struct{}{}
 			}
 
 			for _, a := range fetched.Affected {
-				s, err := databaseSpecificSource(a.DatabaseSpecific)
+				dbs, err := parseDatabaseSpecific(a.DatabaseSpecific)
 				if err != nil {
 					return nil, errors.Wrap(err, "get database specific source")
 				}
-
-				if s != "" {
-					us[s] = struct{}{}
+				if dbs.Source != "" {
+					us[dbs.Source] = struct{}{}
 				}
 			}
 
@@ -337,16 +333,13 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 	}
 
 	vulns, err := func() ([]vulnerability.Vulnerability, error) {
-		var cves []string
-		if len(fetched.Upstream) > 0 {
-			cves = append(cves, fetched.Upstream...)
-		} else {
+		cves := fetched.Upstream
+		if len(fetched.Upstream) == 0 {
 			// "upstream" is more appropriate but some (many) OSVs use only "related", fallback to it
 			cves = fetched.Related
 		}
-
 		if len(cves) == 0 {
-			return nil, errors.Errorf("no CVE ID found in \"related\" nor \"upstream\" fields. ID: %s", fetched.ID)
+			return nil, errors.Errorf("no CVE ID found in \"related\" or \"upstream\" fields. ID: %s", fetched.ID)
 		}
 
 		vs := make([]vulnerability.Vulnerability, 0, len(cves))
@@ -372,7 +365,7 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 			ds := make([]detectionTypes.Detection, 0, len(cs))
 			for major, criterions := range cs {
 				ds = append(ds, detectionTypes.Detection{
-					Ecosystem: ecosystem.Ecosystem(fmt.Sprintf("%s:%s", ecosystem.EcosystemTypeRocky, major)),
+					Ecosystem: ecosystem.Ecosystem(fmt.Sprintf("%s:%d", ecosystem.EcosystemTypeRocky, major)),
 					Conditions: []condition.Condition{
 						{
 							Criteria: criteria.Criteria{
@@ -392,24 +385,16 @@ func extract(fetched osv.OSV, raws []string) (dataTypes.Data, error) {
 	}, nil
 }
 
-func databaseSpecificSource(dbs any) (string, error) {
-	if dbs != nil {
-		m, ok := dbs.(map[string]any)
-		if !ok {
-			return "", errors.Errorf("unexpected database_specific format. expected: %T, actual: %T", map[string]any{}, dbs)
-		}
-
-		if len(slices.Collect(maps.Keys(m))) > 1 {
-			return "", errors.Errorf("unexpected database_specific fields. expected: %q, actual: %+v", []string{"source"}, slices.Collect(maps.Keys(m)))
-		}
-
-		source, ok := m["source"].(string)
-		if !ok {
-			return "", errors.Errorf("unexpected database_specific.source format. expected: %T, actual: %T", "", m["source"])
-		}
-
-		return source, nil
+func parseDatabaseSpecific(dbs any) (osv.DatabaseSpecific, error) {
+	bs, err := json.Marshal(dbs)
+	if err != nil {
+		return osv.DatabaseSpecific{}, errors.Wrapf(err, "marshal database_specific: %+v", dbs)
 	}
 
-	return "", nil
+	var parsed osv.DatabaseSpecific
+	if err := json.Unmarshal(bs, &parsed, json.RejectUnknownMembers(true)); err != nil {
+		return osv.DatabaseSpecific{}, errors.Wrapf(err, "unmarshal database_specific: %+v", dbs)
+	}
+
+	return parsed, nil
 }
