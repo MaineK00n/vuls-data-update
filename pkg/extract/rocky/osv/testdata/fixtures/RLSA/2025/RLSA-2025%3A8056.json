@@ -1,0 +1,70 @@
+{
+	"schema_version": "1.7.3",
+	"id": "RLSA-2025:8056",
+	"modified": "2025-07-29T14:59:56.199156Z",
+	"published": "2025-07-29T13:38:26.982620Z",
+	"upstream": [
+		"CVE-2024-40906",
+		"CVE-2024-44970",
+		"CVE-2025-21756"
+	],
+	"summary": "Important: kernel security update",
+	"details": "The kernel packages contain the Linux kernel, the core of any Linux operating system.\n\nSecurity Fix(es):\n\n* kernel: net/mlx5: Always stop health timer during driver removal (CVE-2024-40906)\n\n* kernel: net/mlx5e: SHAMPO, Fix invalid WQ linked list unlink (CVE-2024-44970)\n\n* kernel: vsock: Keep the binding until socket destruction (CVE-2025-21756)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+	"severity": [
+		{
+			"type": "CVSS_V3",
+			"score": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"
+		}
+	],
+	"affected": [
+		{
+			"package": {
+				"ecosystem": "Rocky Linux:8",
+				"name": "kernel",
+				"purl": "pkg:rpm/rocky-linux/kernel?distro=rocky-linux-8&epoch=0"
+			},
+			"ranges": [
+				{
+					"type": "ECOSYSTEM",
+					"events": [
+						{
+							"introduced": "0"
+						},
+						{
+							"fixed": "0:4.18.0-553.53.1.el8_10"
+						}
+					]
+				}
+			],
+			"database_specific": {
+				"source": "https://storage.googleapis.com/resf-osv-data/RLSA-2025:8056.json"
+			}
+		}
+	],
+	"references": [
+		{
+			"type": "ADVISORY",
+			"url": "https://errata.rockylinux.org/RLSA-2025:8056"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2297490"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2309801"
+		},
+		{
+			"type": "REPORT",
+			"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2348609"
+		}
+	],
+	"credits": [
+		{
+			"name": "Rocky Enterprise Software Foundation"
+		},
+		{
+			"name": "Red Hat"
+		}
+	]
+}

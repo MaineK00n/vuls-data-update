@@ -51,3 +51,7 @@ type OSV struct {
 	} `json:"credits,omitempty"`
 	DatabaseSpecific interface{} `json:"database_specific,omitempty"`
 }
+
+type DatabaseSpecific struct {
+	Source string `json:"source,omitempty"`
+}
