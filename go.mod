@@ -26,7 +26,7 @@ require (
 	github.com/pandatix/go-cvss v0.6.2
 	github.com/pkg/errors v0.9.1
 	github.com/schollz/progressbar/v3 v3.18.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/tealeg/xlsx v1.0.5
 	github.com/ulikunitz/xz v0.5.15
 	golang.org/x/net v0.47.0
