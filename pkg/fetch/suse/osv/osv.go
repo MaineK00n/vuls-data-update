@@ -3,6 +3,7 @@ package osv
 import (
 	"archive/tar"
 	"compress/bzip2"
+	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
 	"io"
@@ -106,7 +107,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		var adv OSV
-		if err := json.UnmarshalRead(tr, &adv); err != nil {
+		if err := json.UnmarshalRead(tr, &adv, jsontext.AllowInvalidUTF8(true)); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
