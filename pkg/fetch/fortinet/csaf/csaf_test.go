@@ -40,6 +40,12 @@ func TestFetch(t *testing.T) {
 			},
 			hasError: true,
 		},
+		{
+			name: "invalid-csaf",
+			args: args{
+				args: []string{"FG-IR-25-771"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

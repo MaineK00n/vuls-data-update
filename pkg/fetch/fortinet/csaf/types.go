@@ -1,9 +1,15 @@
 package csaf
 
+import (
+	"encoding/json/jsontext"
+	"encoding/json/v2"
+	"fmt"
+)
+
 type CSAF struct {
 	Document        Document        `json:"document"`
 	ProductTree     ProductTree     `json:"product_tree"`
-	Vulnerabilities []Vulnerability `json:"vulnerabilities,omitempty"`
+	Vulnerabilities Vulnerabilities `json:"vulnerabilities,omitempty"`
 }
 
 type Acknowledgment struct {
@@ -131,6 +137,45 @@ type Relationship struct {
 	FullProductName           FullProductName `json:"full_product_name"`
 	ProductReference          ProductID       `json:"product_reference"`
 	RelatesToProductReference ProductID       `json:"relates_to_product_reference"`
+}
+
+type Vulnerabilities []Vulnerability
+
+// Although this is a CSAF format violation, Fortinet provides such a CSAF
+func (vs *Vulnerabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	if k := dec.PeekKind(); k != '[' {
+		return fmt.Errorf("expected array start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	var out []Vulnerability
+
+	for dec.PeekKind() != ']' {
+		switch dec.PeekKind() {
+		case '{':
+			var v Vulnerability
+			if err := json.UnmarshalDecode(dec, &v); err != nil {
+				return err
+			}
+			out = append(out, v)
+		case '[':
+			var s []Vulnerability
+			if err := json.UnmarshalDecode(dec, &s); err != nil {
+				return err
+			}
+			out = append(out, s...)
+		default:
+			return fmt.Errorf("expected object start or array start, but encountered %v", dec.PeekKind())
+		}
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	*vs = out
+	return nil
 }
 
 type Vulnerability struct {
