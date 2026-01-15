@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" property="title" content="PSIRT | FortiGuard Labs" />
+    <meta name="description" property="description" content="None" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="twitter:card" property="twitter:card" content="summary" />
+    <meta name="twitter:title" property="twitter:title" content="PSIRT | FortiGuard Labs" />
+    <meta name="twitter:url" property="twitter:url" content="https://fortiguard.fortinet.com/psirt/FG-IR-25-771" />
+    <meta name="twitter:description" property="twitter:url" content="None" />
+    
+<meta name="og:type" property="og:type" content="article" />
+    <meta name="og:site_name" property="og:site_name" content="FortiGuard Labs" />
+    <meta name="og:locale" property="og:locale" content="" />
+<meta name="og:title" property="og:title" content="PSIRT | FortiGuard Labs" />
+    <meta name="og:url" property="og:url" content="https://fortiguard.fortinet.com/psirt/FG-IR-25-771" />
+    <meta name="og:description" property="og:description" content="None" />
+<meta name="og:image" property="og:image" content="https://filestore.fortinet.com/fortiguard/static/images/fortiguard-logo-dark-theme.svg?v=43125" />
+    <meta name="twitter:image" property="twitter:image" content="https://filestore.fortinet.com/fortiguard/static/images/fortiguard-logo-dark-theme.svg?v=43125" />
+
+
+<link rel="shortcut icon" href="https://filestore.fortinet.com/fortiguard/static/images/favicon.ico?v=43125" type="image/x-icon" />
+
+    <title>PSIRT | FortiGuard Labs</title>
+
+<link rel="stylesheet" href="https://filestore.fortinet.com/fortiguard/static/styles/bootstrap.min.css?v=43125">
+    <link rel="stylesheet" href="https://filestore.fortinet.com/fortiguard/static/styles/vendor.min.css?v=43125">
+    
+
+        <link rel="stylesheet" href="https://filestore.fortinet.com/fortiguard/static/styles/style.min.css?v=43125">
+       
+        <style>
+            /* Hacks to deal with mm-slider and bootstrap colliding with eachother */
+            .mm-slideout {
+                z-index: inherit;
+            }
+            .modal {
+                color: #000;
+            }
+            /* End Hacks */
+        </style>
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-64GHK0036C"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-64GHK0036C');
+        </script>
+
+
+
+</head>
+
+
+<body ng-app="fgd" class="detail  dark-theme">
+
+<header>
+
+    <div id="main-nav">
+        <nav class="desktop-nav d-none d-xl-block" aria-label="desktop navigation menu">
+            <div class="container-xxl">
+                <div class="row">
+                    <div class="col-xxl-3 col-xl-3 col-lg-3 logo">
+                        <a href="/">
+                            <img src="https://filestore.fortinet.com/fortiguard/static/images/fortiguard-logo-dark-theme.svg?v=43125"
+                                 alt="fortiguard-logo" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="col-xxl-7 col-xl-7 col-lg-7 ps-0">
+                        <ul class="main-menu-bar" role="menu">
+                            <li role="menuitem">
+                                <a aria-haspopup="true" aria-expanded="false" aria-label="News / Research" class="main-menu" tabindex="0" id="heading-news-item">Research</a>
+                                
+                                <div class="header-hover md header-hover-news  header-hover-no-topbar">
+<div class="menu-panel dropdown-news">
+    <div class="container-xxl h-100 dropdown-menu-wrapper">
+        <div class="row h-100">
+            <div class="col-xl-3 col-lg-2 news-research-psirt pt-4 pe-0 services-category-wrapper">
+                <h2 class="text-start">Research Center</h2>
+            </div>
+            <div class="col-xl-7 col-lg-8 pt-4 ps-4" role="region" aria-labelledby="heading-news-item">
+                <div class="row">
+                    <div class="col-md-5 research-center">
+                        <div class="description text-start mb-3">
+                            <span>Explore latest research and threat reports on emerging cyber threats.</span>
+                    </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3"><a href="/outbreak-alert"
+                        >Outbreak Alerts</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/blog/threat-research.html"
+                       target = _blank
+                        >Security Blog<i class='ps-2 fa fa-external-link' aria-hidden='true'></i></a></li>
+                <li class="border-start border-3"><a href="/threat-signal-report"
+                        >Threat Signal</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                                </div>
+                            </li>
+                            <li role="menuitem">
+                                <a aria-haspopup="true" aria-expanded="false" class="main-menu" tabindex="0" id="heading-services-item">Services</a>
+                                
+                                <div class="header-hover lg header-hover-services  header-hover-no-topbar">
+<div class="menu-panel dropdown-services">
+    <div class="container-xxl h-100 dropdown-menu-wrapper">
+        <div class="row h-100">
+            <div class="col-xl-2 col-lg-2 services-category-wrapper pt-4 pe-0">
+                <h2 class="text-start">Services</h2>
+                <button type="button" class="services-outbreak menu-category-selector active" data-category="outbreak">By Outbreak</button>
+                <button type="button" class="services-solution menu-category-selector" data-category="solution">By Solution</button>
+                <button type="button" class="services-product menu-category-selector toggles-category" data-category="product">By Product</button>
+            </div>
+            <div class="col-xl-10 col-lg-10 ps-0">
+                <div class="menu-overflow services-outbreak pt-4 ps-4">
+                    <div role="region" aria-labelledby="heading-services-item">
+                        <div class="row">
+                            <div class="col">
+                                <h3 class="mb-2 title text-uppercase border-3 border-start">Protect</h3>
+                                <div class="description text-start"><span>
+                            Counter measures across the security fabric for protecting assets, data and network.
+                        </span></div>
+                                <ul class="col-md-12 mt-3">
+                                                    <li class="border-start border-3"><a href="/services/ai-protect-security-services"
+                        >AI-Protect Security</a></li>
+                <li class="border-start border-3"><a href="/services/botnet"
+                        >Anti-Botnet</a></li>
+                <li class="border-start border-3"><a href="/services/antivirus"
+                        >AntiMalware</a></li>
+                <li class="border-start border-3"><a href="/services/antispam"
+                        >AntiSpam</a></li>
+                <li class="border-start border-3"><a href="/services/appcontrol"
+                        >Application Control</a></li>
+                <li class="border-start border-3"><a href="/services/ips"
+                        >Intrusion Protection</a></li>
+                <li class="border-start border-3"><a href="/services/operational-technology-security-service"
+                        >Operational Technology Security</a></li>
+                <li class="border-start border-3"><a href="/services/sandbox"
+                        >Sandbox Behavior Engine</a></li>
+                <li class="border-start border-3"><a href="/services/ws"
+                        >Web Application Security</a></li>
+                <li class="border-start border-3"><a href="/services/wf"
+                        >Web Filtering</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <h3 class="mb-2 title text-uppercase border-3 border-start">Detect</h3>
+                                <div class="description text-start">
+                                    <span>Find and correlate important information to identify an outbreak.<span
+                                            class="invisible">Find and correlate</span></span>
+                                </div>
+                                <ul class="col-md-12 mt-3">
+                                                    <li class="border-start border-3"><a href="/services/arae"
+                        >Anti-Recon and Anti-Exploit</a></li>
+                <li class="border-start border-3"><a href="/services/cloud-vulnerability-and-threat-detection"
+                        >Cloud Threat Detection</a></li>
+                <li class="border-start border-3"><a href="/services/fedr"
+                        >Endpoint Detection &amp; Response</a></li>
+                <li class="border-start border-3"><a href="/services/ioc"
+                        >Indicators of Compromise</a></li>
+                <li class="border-start border-3"><a href="/services/odcs"
+                        >Outbreak Deception</a></li>
+                <li class="border-start border-3"><a href="/services/outbreak-detection-service"
+                        >Outbreak Detection</a></li>
+                <li class="border-start border-3"><a href="/services/security-automation-service"
+                        >Security Automation</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-md-12 mb-2"><h3
+                                            class="mb-2 title text-uppercase border-3 border-start">
+                                        Respond</h3>
+                                        <div class="description text-start">
+                                            <span>Develop containment techniques to mitigate impacts of security events.<span
+                                                    class="invisible">Develop containment</span></span>
+                                        </div>
+                                        <ul class="col-md-12 mt-3">
+                                                            <li class="border-start border-3"><a href="https://www.fortinet.com/products/fortixdr"
+                       target = _blank
+                        >Endpoint Detection and Response</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/products/endpoint-security/forticlient#support-services"
+                       target = _blank
+                        >Endpoint Forensics</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/solutions/enterprise-midsize-business/security-as-a-service/respond"
+                       target = _blank
+                        >Incident Response</a></li>
+
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h3 class="mb-2 mt-4  text-uppercase title border-3 border-start">Recover</h3>
+                                        <div class="description text-start">
+                                            <span>Improve security posture and processes by implementing security awareness and training.</span>
+                                        </div>
+                                        <ul class="col-md-12 mt-3">
+                                                            <li class="border-start border-3"><a href="https://www.fortinet.com/solutions/enterprise-midsize-business/security-as-a-service/assess"
+                       target = _blank
+                        >Assessment Services</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/training/cybersecurity-professionals"
+                       target = _blank
+                        >NSE Training</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/training/security-awareness-training"
+                       target = _blank
+                        >Security Awareness Training</a></li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h3 class="mb-2 title text-uppercase border-3 border-start">Identify</h3>
+                                <div class="description text-start">
+                                    <span>Identify processes and assets that need protection.<span class="invisible">Identify processes and assets that</span></span>
+
+                                </div>
+                                <ul class="col-md-12 mt-3">
+                                                    <li class="border-start border-3"><a href="https://www.fortinet.com/products/fortirecon"
+                       target = _blank
+                        >Adversary Centric Intelligence</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/products/fortirecon"
+                       target = _blank
+                        >Attack Surface Management</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/products/fortirecon"
+                       target = _blank
+                        >Brand Protection</a></li>
+                <li class="border-start border-3"><a href="/services/breach-attack-simulation"
+                        >Breach Attack Simulation</a></li>
+                <li class="border-start border-3"><a href="/services/cloud-access-security"
+                        >Cloud Access Security</a></li>
+                <li class="border-start border-3"><a href="/services/cloud-vulnerability-and-threat-detection"
+                        >Cloud Vulnerability</a></li>
+                <li class="border-start border-3"><a href="/services/dynamic-application-security-testing"
+                        >DAST</a></li>
+                <li class="border-start border-3"><a href="/services/fortidevsec"
+                        >DevSecOps</a></li>
+                <li class="border-start border-3"><a href="/services/ev"
+                        >Endpoint Vulnerability</a></li>
+                <li class="border-start border-3"><a href="/services/dds"
+                        >IoT Device Detection</a></li>
+                <li class="border-start border-3"><a href="/services/pentesting"
+                        >Pen Testing</a></li>
+                <li class="border-start border-3"><a href="/services/secr"
+                        >Security Rating</a></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-overflow services-solution pt-4 ps-4 d-none">
+                    <div role="region" aria-labelledby="heading-services-item">
+                        <div class="row">
+                            <div class="col">
+                                <ul>
+                                            <li>
+            <h3 class="text-uppercase">Network Security</h3>
+            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/network.svg?v=43125" alt="Network Security icon" loading="lazy">
+        </li>
+                <li class="border-start border-3"><a href="/services/botnet"
+                        >Anti-Botnet</a></li>
+                <li class="border-start border-3"><a href="/services/arae"
+                        >Anti-Recon and Anti-Exploit</a></li>
+                <li class="border-start border-3"><a href="/services/dlp"
+                        >Data Loss Prevention</a></li>
+                <li class="border-start border-3"><a href="/services/ioc"
+                        >Indicators of Compromise</a></li>
+                <li class="border-start border-3"><a href="/services/isdb"
+                        >Internet Services</a></li>
+                <li class="border-start border-3"><a href="/services/ips"
+                        >Intrusion Protection</a></li>
+                <li class="border-start border-3"><a href="/services/ipge"
+                        >IP Geolocation</a></li>
+                <li class="border-start border-3"><a href="/services/fortindr"
+                        >Network Detection and Response</a></li>
+                <li class="border-start border-3"><a href="/services/operational-technology-security-service"
+                        >Operational Technology Security</a></li>
+                <li class="border-start border-3"><a href="/services/sdns"
+                        >Secure DNS</a></li>
+                <li class="border-start border-3"><a href="/services/wf"
+                        >Web Filtering</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul>
+                                            <li>
+            <h3 class="text-uppercase">Cloud &amp; Application Security</h3>
+            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/cloud-application-security.svg?v=43125" alt="Cloud &amp; Application Security icon" loading="lazy">
+        </li>
+                <li class="border-start border-3"><a href="/services/ai-protect-security-services"
+                        >AI-Protect Security</a></li>
+                <li class="border-start border-3"><a href="/services/appcontrol"
+                        >Application Control</a></li>
+                <li class="border-start border-3"><a href="/services/fct-app"
+                        >Client Application Firewall</a></li>
+                <li class="border-start border-3"><a href="/services/cloud-access-security"
+                        >Cloud Access Security</a></li>
+                <li class="border-start border-3"><a href="/services/cloud-vulnerability-and-threat-detection"
+                        >Cloud Threat Detection</a></li>
+                <li class="border-start border-3"><a href="/services/cloud-vulnerability-and-threat-detection"
+                        >Cloud Vulnerability</a></li>
+                <li class="border-start border-3"><a href="/services/csd"
+                        >Credential Stuffing Defense</a></li>
+                <li class="border-start border-3"><a href="/services/dynamic-application-security-testing"
+                        >DAST</a></li>
+                <li class="border-start border-3"><a href="/services/ws"
+                        >Web Application Security</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul>
+                                            <li>
+            <h3 class="text-uppercase">Endpoint Security</h3>
+            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/contentendpoint.svg?v=43125" alt="Endpoint Security icon" loading="lazy">
+        </li>
+                <li class="border-start border-3"><a href="/services/antispam"
+                        >AntiSpam</a></li>
+                <li class="border-start border-3"><a href="/services/antivirus"
+                        >AntiVirus</a></li>
+                <li class="border-start border-3"><a href="/services/fedr"
+                        >Endpoint Detection &amp; Response</a></li>
+                <li class="border-start border-3"><a href="/services/ev"
+                        >Endpoint Vulnerability</a></li>
+                <li class="border-start border-3"><a href="/services/dds"
+                        >IoT Device Detection</a></li>
+                <li class="border-start border-3"><a href="/services/sandbox"
+                        >Sandbox Behavior Engine</a></li>
+                <li class="border-start border-3"><a href="/services/wf"
+                        >Web Filtering</a></li>
+
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul>
+                                            <li>
+            <h3 class="text-uppercase">Security Operations</h3>
+            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/response.svg?v=43125" alt="Security Operations icon" loading="lazy">
+        </li>
+                <li class="border-start border-3"><a href="/services/breach-attack-simulation"
+                        >Breach Attack Simulation</a></li>
+                <li class="border-start border-3"><a href="/services/fortidevsec"
+                        >DevSecOps</a></li>
+                <li class="border-start border-3"><a href="/services/odcs"
+                        >Outbreak Deception</a></li>
+                <li class="border-start border-3"><a href="/services/outbreak-detection-service"
+                        >Outbreak Detection</a></li>
+                <li class="border-start border-3"><a href="/services/pentesting"
+                        >Pen Testing</a></li>
+                <li class="border-start border-3"><a href="/services/security-automation-service"
+                        >Security Automation</a></li>
+                <li class="border-start border-3"><a href="/services/secr"
+                        >Security Rating</a></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-overflow services-product d-none">
+                    <div class="row h-100">
+                        <div class="col-4 products pe-0">
+                            <ul>
+                                        <li data-product-id="0"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortigate.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiGate</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="1"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortianalyzer.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiAnalyzer</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="2"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/forticlient.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiClient</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="3"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortiweb.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiWeb</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="4"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fadc.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiADC</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="5"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortiauthenticator.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiAuthenticator</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="6"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/cnp.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiCNP</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="7"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortiddos.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiDDoS</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="8"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortideceptor.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiDeceptor</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="9"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fedr.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiEDR</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="10"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortimail.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiMail</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="11"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortindr.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiNDR</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                <li class="invisible">empty</li>
+                            </ul>
+                        </div>
+                        <div class="col-4 products pe-0 ps-0">
+                            <ul>
+                                        <li data-product-id="12"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortipam.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiPAM</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="13"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortipolicy.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiPolicy</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="14"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortiproxy.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiProxy</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="15"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortirecon.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiRecon</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="16"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortisandbox.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiSandBox</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="17"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortisase.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiSASE</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="18"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortisiem.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiSIEM</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="19"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortitester.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiTester</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="20"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortidast.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiDAST</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="21"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/cnpvuln.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiCNAPP</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                        <li data-product-id="22"
+                                            class="align-items-center user-select-none">
+                                            <img src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/fortidlp.svg?v=43125"
+                                                 alt=""/>
+                                            <p class="mb-0 me-3">FortiDLP</p>
+                                            <img
+                                                    src="https://filestore.fortinet.com/fortiguard/static/images/arrow-white.svg?v=43125" alt=""
+                                                    class="order-0 ms-auto me-0"/></li>
+                                <li class="invisible">empty</li>
+                            </ul>
+                        </div>
+                        <div class="col-4 services">
+                                <ul data-product-id="0" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/ai-protect-security-services">AI-Protect Security</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/appcontrol">Application Control</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/cloud-access-security">Cloud Access Security</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ips">Intrusion Protection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/dds">IoT Device Detection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ipge">IP Geolocation</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/operational-technology-security-service">Operational Technology Security</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sdns">Secure DNS</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/secr">Security Rating</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="1" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/ioc">Indicators of Compromise</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/outbreak-detection-service">Outbreak Detection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/security-automation-service">Security Automation</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="2" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/arae">Anti-Recon and Anti-Exploit</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/fct-app">Application Firewall</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/csd">Credential Stuffing Defense</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ev">Endpoint Vulnerability</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ips">Intrusion Protection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/eoap">Outbreak Detection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="3" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/appcontrol">Application Control</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/csd">Credential Stuffing Defense</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/updates/webshell">Fuzzy Webshell</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ipge">IP Geolocation</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ws">Web Application Security</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="4" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/csd">Credential Stuffing Defense</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ips">Intrusion Protection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ipge">IP Geolocation</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ws">Web Application Security</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="5" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/ipge">IP Geolocation</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="6" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/dlp">Data Loss Prevention</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ipge">IP Geolocation</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/cloud-vulnerability-and-threat-detection">Vulnerability</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="7" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="8" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/arae">Anti-Recon and Anti-Exploit</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ips">Intrusion Protection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/odcs">Outbreak Deception</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="9" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/fedr">EndPoint Detection and Response</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ev">Endpoint Vulnerability</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ioc">Indicators of Compromise</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="10" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/antispam">AntiSpam</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="11" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/fortindr">Network Detection and Response</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="12" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/dlp">Data Loss Prevention</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="13" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/appcontrol">Application Control</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="14" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/appcontrol">Application Control</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/operational-technology-security-service">Industrial Security</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="15" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="https://www.fortinet.com/products/fortirecon">Digital Risk Protection</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="16" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ips">Intrusion Protection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="17" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/botnet">Anti-Botnet</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/antivirus">AntiVirus</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/appcontrol">Application Control</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/dlp">Data Loss Prevention</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ev">Endpoint Vulnerability</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ips">Intrusion Protection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sdns">Secure DNS</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/wf">Web Filtering</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="18" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/ioc">Indicators of Compromise</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/ipge">IP Geolocation</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/fortisiem">Outbreak Detection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/sandbox">Sandbox Behavior Engine</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="19" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/breach-attack-simulation">Breach Attack Simulation</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="20" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/dynamic-application-security-testing">DAST</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="21" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/cloud-vulnerability-and-threat-detection">Cloud Threat Detection</a>
+                                        </li>
+                                        <li class="mb-0"><a
+                                                href="/services/cloud-vulnerability-and-threat-detection">Cloud Vulnerability</a>
+                                        </li>
+                                </ul>
+                                <ul data-product-id="22" class="services-list d-none">
+                                        <li class="mb-0"><a
+                                                href="/services/dlp">Data Loss Prevention</a>
+                                        </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                                </div>
+                            </li>
+                            <li role="menuitem">
+                                <a aria-haspopup="true" aria-expanded="false" class="main-menu" tabindex="0" id="heading-threats-item">Threat Intelligence</a>
+                                
+                                <div class="header-hover sm single header-hover-threats  header-hover-no-topbar">
+<div class="menu-panel dropdown-threats">
+    <div class="container-xxl h-100 dropdown-menu-wrapper">
+        <div class="row h-100">
+            <div class="col-xl-3 col-lg-2 pt-4 pe-0 services-category-wrapper">
+                <h2 class="text-start">Threat Intelligence<br> Center</h2>
+            </div>
+            <div class="col-xl-7 col-lg-8 pt-4 ps-4" role="region" aria-labelledby="heading-threats-item">
+                <div class="row">
+                    <div class="col-md-5 position-relative">
+                        <div class="description text-start mb-3">
+                            <span>
+                                Browse the FortiGuard Labs extensive encyclopedia and Threat Analytics.
+                            </span>
+                        </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3"><a href="/encyclopedia"
+                        >FortiGuard Encyclopedia</a></li>
+                <li class="border-start border-3"><a href="/threat-map"
+                        >Outbreak Threat Map</a></li>
+                <li class="border-start border-3"><a href="/threat-actor"
+                        >Threat Actor Encyclopedia</a></li>
+                <li class="border-start border-3"><a href="/threatintel-search"
+                        >Threat Intel Search</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+        </div>
+    </div>
+</div>                                </div>
+                            </li>
+                            <li role="menuitem">
+                                <a aria-haspopup="true" aria-expanded="false" class="main-menu" tabindex="0" id="heading-support-item">Support</a>
+                                <div class="header-hover sm single header-hover-support  header-hover-no-topbar">
+<div class="menu-panel dropdown-resources">
+    <div class="container-xxl h-100 dropdown-menu-wrapper">
+        <div class="row h-100">
+            <div class="col-xl-3 col-lg-2 pt-4 pe-0 services-category-wrapper">
+                <h2 class="text-start">Support Center</h2>
+                <button type="button" class="support-psirt menu-category-selector active" data-category="psirt">PSIRT
+                    Center
+                </button>
+                <button type="button" class="support-product menu-category-selector" data-category="support">Product
+                    Support
+                </button>
+            </div>
+            <div class="col-xl-7 col-lg-8 pt-4 ps-4">
+                <div class="row">
+                    <div class="col-md-5 menu-overflow services-psirt" role="region" aria-labelledby="heading-support-item">
+                        <div class="description text-start mb-3">
+                            <span>
+                                Fortinet Product Security Incident Response Team (PSIRT) updates.
+                            </span>
+                        </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3"><a href="/psirt"
+                        >Advisories</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/blog/psirt-blogs"
+                       target = _blank
+                        >PSIRT Blog</a></li>
+                <li class="border-start border-3"><a href="/faq/psirt-contact"
+                        >PSIRT Contact</a></li>
+                <li class="border-start border-3"><a href="/psirt_policy"
+                        >Security Vulnerability Policy</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="col-md-5 menu-overflow services-support d-none" role="region" aria-labelledby="heading-support-item">
+                        <div class="description text-start mb-3">
+                            <span>
+                                Get the support whenever you need it.
+                            </span>
+                        </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3 d-flex align-items-center"><a href="https://www.fortinet.com/support/contact"
+                       target = _blank
+                        >FortiCare Support<i class='ps-2 fa fa-external-link' aria-hidden='true'></i></a></li>
+                <li class="border-start border-3 d-flex align-items-center"><a href="https://community.fortinet.com/"
+                       target = _blank
+                        >Fortinet Community<i class='ps-2 fa fa-external-link' aria-hidden='true'></i></a></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                                </div>
+                            </li>
+                            <li role="menuitem">
+
+                                <a aria-haspopup="true" aria-expanded="false" class="main-menu" tabindex="0"
+                                   id="heading-resources-item">Resources</a>
+
+                                <div class="header-hover md header-hover-resources  header-hover-no-topbar">
+<div class="menu-panel dropdown-resources">
+    <div class="container-xxl h-100 dropdown-menu-wrapper">
+        <div class="row h-100">
+            <div class="col-xl-3 col-lg-2 pt-4 pe-0 services-category-wrapper">
+                <h2 class="text-start">Resource Center</h2>
+            </div>
+            <div class="col-xl-7 col-lg-8 pt-4 ps-4">
+                <div class="row">
+                    <div class="col-md-5 position-relative" role="region" aria-labelledby="heading-resources-item">
+                        <div class="description text-start mb-3">
+                            <span>
+                                Learn about service status, publications and other available resources.
+                            </span>
+                        </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3"><a href="/threat-landscape-report"
+                        >2025 Threat Landscape Report</a></li>
+                <li class="border-start border-3"><a href="/sample-files"
+                        >FortiGuard Sample Files</a></li>
+                <li class="border-start border-3"><a href="/mitre-matrix"
+                        >MITRE ATT&amp;CK Matrix</a></li>
+                <li class="border-start border-3"><a href="/nist-csf"
+                        >NIST Cybersecurity Framework</a></li>
+                <li class="border-start border-3"><a href="/outbreak-annual-report"
+                        >Outbreak Alert Annual Report</a></li>
+                <li class="border-start border-3"><a href="/events"
+                        >Publications</a></li>
+                <li class="border-start border-3"><a href="/security-best-practices"
+                        >Security Best Practices</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="col-md-5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                                </div>
+                            </li>
+                            <li role="menuitem">
+                                <a aria-haspopup="true" aria-expanded="false" class="main-menu" tabindex="0"
+                                   id="heading-about-item">About</a>
+
+                                <div class="header-hover sm single header-hover-about  header-hover-no-topbar">
+<div class="menu-panel dropdown-aboutus">
+    <div class="container-xxl h-100 dropdown-menu-wrapper">
+        <div class="row h-100">
+            <div class="col-xl-3 col-lg-2 pt-4 pe-0 services-category-wrapper">
+                <h2 class="text-start">About</h2>
+                <button type="button" ng-click="isAboutUs=true" class="aboutus-fortiguard menu-category-selector active" data-category="aboutus">FortiGuard Labs</button>
+                <button type="button" ng-click="isAboutUs=false" class="aboutus-partners menu-category-selector" data-category="partners">Partners</button>
+            </div>
+            <div class="col-xl-7 col-lg-8 pt-4 ps-4" role="region" aria-labelledby="heading-news-item services-partner">
+                <div class="row">
+                    <div data-category="aboutus" class="col-md-5 position-relative menu-overflow services-aboutus">
+                        <div class="description text-start mb-3">
+                            <span>AI-Powered Threat Intelligence for an Evolving Digital World.</span>
+                    </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3"><a href="/contactus"
+                        >Contact Us</a></li>
+                <li class="border-start border-3"><a href="/faq"
+                        >Frequently Asked Questions</a></li>
+                <li class="border-start border-3"><a href="/premium-services"
+                        >Premium Services</a></li>
+                <li class="border-start border-3"><a href="/rss-feeds"
+                        >RSS Feeds</a></li>
+
+                        </ul>
+                    </div>
+                    <div data-category="partners" class="col-md-5 position-relative menu-overflow services-partners d-none">
+                        <div class="description text-start mb-3">
+                            <span>Leveraging cyber security industry partner relationships.</span>
+                        </div>
+                        <ul class="w-100">
+                                            <li class="border-start border-3"><a href="/cta"
+                        >Cyber Threat Alliance</a></li>
+                <li class="border-start border-3"><a href="https://www.fortinet.com/corporate/about-us/product-certifications/mitre-att-ck"
+                       target = _blank
+                        >MITRE Engenuity</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>                                </div>
+                            </li>
+                            <li  role="menuitem">
+                                <div class="header-search-btn">
+                                    <img id="header_search_btn" src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/search.svg?v=43125" alt="search">
+                                    <i id="header_search_close_btn" class="fa fa-times d-none" aria-hidden="true" style="color: white; font-size: 20px; margin-top:2px;"></i>
+                                </div>
+                                <div class="header-search  animated zoomIn faster d-none">
+                                    <form action="/search" method="get">
+                                        <div class="input-group">
+                                            <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    placeholder="Search FortiGuard"
+                                                    name="q"
+                                                    required="required"
+                                                    autocomplete="off"
+                                                    aria-labelledby="label-search_field-header"
+                                                    value=""
+                                            />
+                                            <button type="button" id="threatIntelSearchBtn" class="btn btn-sm btn-try-new" aria-label="Try Threat Intel Search"><span>Try Threat Intel Search</span></button>
+                                            <button type="submit" value=" " class="btn btn-sm" aria-label="Submit your search"><i class="fa fa-search ms-1 me-1" aria-hidden="true"></i></button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="header-search-curtain d-none"></div>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                    <div class="col-xxl-2 col-xl-2 col-lg-2">
+                        <ul class="float-end">
+                            <li class="fortinet-item">
+                                <a href="https://www.fortinet.com" target="_blank">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-xl navbar-light d-block d-xl-none mobile-nav" aria-label="mobile navigation menu">
+            <div class="container-fluid p-0">
+                <button class="navbar-toggler ms-3 collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNavDropdownMain"
+                        aria-controls="navbarNavDropdownMain"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <a class="navbar-brand" href="/">
+                            <img src="https://filestore.fortinet.com/fortiguard/static/images/fortiguard-logo-dark-theme.svg?v=43125"
+                                alt="fortiguard-logo" loading="lazy">
+                </a>
+
+                <img id="mobile_global_header_search_btn" src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/search.svg?v=43125" alt="search" class="me-3" width="25px">
+                <div class="collapse navbar-collapse" id="navbarNavDropdownMain"><ul class="navbar-nav">
+    <li class="nav-item">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="navbarScrollingDropdownNews"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Research</a>
+        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdownNews">
+                            <li class=""><a href="/outbreak-alert"
+                        class=dropdown-item>Outbreak Alerts</a></li>
+                <li class=""><a href="https://www.fortinet.com/blog/threat-research.html"
+                       target = _blank
+                        class=dropdown-item>Security Blog<i class='ps-2 fa fa-external-link' aria-hidden='true'></i></a></li>
+                <li class=""><a href="/threat-signal-report"
+                        class=dropdown-item>Threat Signal</a></li>
+
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="navbarScrollingDropdownServices"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">Services</a>
+        <ul class="dropdown-menu"
+            aria-labelledby="navbarScrollingDropdownServices">
+                            <li class=""><a href="https://www.fortinet.com/products/fortirecon"
+                       target = _blank
+                        class=dropdown-item>Adversary Centric Intelligence</a></li>
+                <li class=""><a href="/services/ai-protect-security-services"
+                        class=dropdown-item>AI-Protect Security</a></li>
+                <li class=""><a href="/services/botnet"
+                        class=dropdown-item>Anti-Botnet</a></li>
+                <li class=""><a href="/services/arae"
+                        class=dropdown-item>Anti-Recon and Anti-Exploit</a></li>
+                <li class=""><a href="/services/antivirus"
+                        class=dropdown-item>AntiMalware</a></li>
+                <li class=""><a href="/services/antispam"
+                        class=dropdown-item>AntiSpam</a></li>
+                <li class=""><a href="/services/appcontrol"
+                        class=dropdown-item>Application Control</a></li>
+                <li class=""><a href="https://www.fortinet.com/solutions/enterprise-midsize-business/security-as-a-service/assess"
+                       target = _blank
+                        class=dropdown-item>Assessment Services</a></li>
+                <li class=""><a href="https://www.fortinet.com/products/fortirecon"
+                       target = _blank
+                        class=dropdown-item>Attack Surface Management</a></li>
+                <li class=""><a href="https://www.fortinet.com/products/fortirecon"
+                       target = _blank
+                        class=dropdown-item>Brand Protection</a></li>
+                <li class=""><a href="/services/breach-attack-simulation"
+                        class=dropdown-item>Breach Attack Simulation</a></li>
+                <li class=""><a href="/services/cloud-access-security"
+                        class=dropdown-item>Cloud Access Security</a></li>
+                <li class=""><a href="/services/cloud-vulnerability-and-threat-detection"
+                        class=dropdown-item>Cloud Threat Detection</a></li>
+                <li class=""><a href="/services/cloud-vulnerability-and-threat-detection"
+                        class=dropdown-item>Cloud Vulnerability</a></li>
+                <li class=""><a href="/services/dynamic-application-security-testing"
+                        class=dropdown-item>DAST</a></li>
+                <li class=""><a href="/services/fortidevsec"
+                        class=dropdown-item>DevSecOps</a></li>
+                <li class=""><a href="/services/fedr"
+                        class=dropdown-item>Endpoint Detection &amp; Response</a></li>
+                <li class=""><a href="https://www.fortinet.com/products/fortixdr"
+                       target = _blank
+                        class=dropdown-item>Endpoint Detection and Response</a></li>
+                <li class=""><a href="https://www.fortinet.com/products/endpoint-security/forticlient#support-services"
+                       target = _blank
+                        class=dropdown-item>Endpoint Forensics</a></li>
+                <li class=""><a href="/services/ev"
+                        class=dropdown-item>Endpoint Vulnerability</a></li>
+                <li class=""><a href="https://www.fortinet.com/solutions/enterprise-midsize-business/security-as-a-service/respond"
+                       target = _blank
+                        class=dropdown-item>Incident Response</a></li>
+                <li class=""><a href="/services/ioc"
+                        class=dropdown-item>Indicators of Compromise</a></li>
+                <li class=""><a href="/services/ips"
+                        class=dropdown-item>Intrusion Protection</a></li>
+                <li class=""><a href="/services/dds"
+                        class=dropdown-item>IoT Device Detection</a></li>
+                <li class=""><a href="https://www.fortinet.com/training/cybersecurity-professionals"
+                       target = _blank
+                        class=dropdown-item>NSE Training</a></li>
+                <li class=""><a href="/services/operational-technology-security-service"
+                        class=dropdown-item>Operational Technology Security</a></li>
+                <li class=""><a href="/services/odcs"
+                        class=dropdown-item>Outbreak Deception</a></li>
+                <li class=""><a href="/services/outbreak-detection-service"
+                        class=dropdown-item>Outbreak Detection</a></li>
+                <li class=""><a href="/services/pentesting"
+                        class=dropdown-item>Pen Testing</a></li>
+                <li class=""><a href="/services/sandbox"
+                        class=dropdown-item>Sandbox Behavior Engine</a></li>
+                <li class=""><a href="/services/security-automation-service"
+                        class=dropdown-item>Security Automation</a></li>
+                <li class=""><a href="https://www.fortinet.com/training/security-awareness-training"
+                       target = _blank
+                        class=dropdown-item>Security Awareness Training</a></li>
+                <li class=""><a href="/services/secr"
+                        class=dropdown-item>Security Rating</a></li>
+                <li class=""><a href="/services/ws"
+                        class=dropdown-item>Web Application Security</a></li>
+                <li class=""><a href="/services/wf"
+                        class=dropdown-item>Web Filtering</a></li>
+
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="navbarScrollingDropdownThreatLookup"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">Threat Intelligence</a>
+        <ul class="dropdown-menu"
+            aria-labelledby="navbarScrollingDropdownThreatLookup">
+                            <li class=""><a href="/encyclopedia"
+                        class=dropdown-item>FortiGuard Encyclopedia</a></li>
+                <li class=""><a href="/threat-map"
+                        class=dropdown-item>Outbreak Threat Map</a></li>
+                <li class=""><a href="/threat-actor"
+                        class=dropdown-item>Threat Actor Encyclopedia</a></li>
+                <li class=""><a href="/threatintel-search"
+                        class=dropdown-item>Threat Intel Search</a></li>
+
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="navbarScrollingDropdownResources"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">Resources</a>
+        <ul class="dropdown-menu"
+            aria-labelledby="navbarScrollingDropdownResources">
+                            <li class=""><a href="/threat-landscape-report"
+                        class=dropdown-item>2025 Threat Landscape Report</a></li>
+                <li class=""><a href="/sample-files"
+                        class=dropdown-item>FortiGuard Sample Files</a></li>
+                <li class=""><a href="/mitre-matrix"
+                        class=dropdown-item>MITRE ATT&amp;CK Matrix</a></li>
+                <li class=""><a href="/nist-csf"
+                        class=dropdown-item>NIST Cybersecurity Framework</a></li>
+                <li class=""><a href="/outbreak-annual-report"
+                        class=dropdown-item>Outbreak Alert Annual Report</a></li>
+                <li class=""><a href="/events"
+                        class=dropdown-item>Publications</a></li>
+                <li class=""><a href="/security-best-practices"
+                        class=dropdown-item>Security Best Practices</a></li>
+
+        </ul>
+    </li>
+    <li class="nav-item support-nav-item">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="navbarScrollingDropdownSupport"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">Support</a>
+        <div class="dropdown-menu p-2 bg-black border-0 rounded-0 mt-0">
+            <h3 class="ps-2 text-white h6 mb-0">PSIRT Center</h3>
+            <ul class="list-unstyled bg-black py-3"
+                aria-labelledby="navbarScrollingDropdownSupport">
+                                <li class=""><a href="/psirt"
+                        class=dropdown-item bg-black>Advisories</a></li>
+                <li class=""><a href="https://www.fortinet.com/blog/psirt-blogs"
+                       target = _blank
+                        class=dropdown-item bg-black>PSIRT Blog</a></li>
+                <li class=""><a href="/faq/psirt-contact"
+                        class=dropdown-item bg-black>PSIRT Contact</a></li>
+                <li class=""><a href="/psirt_policy"
+                        class=dropdown-item bg-black>Security Vulnerability Policy</a></li>
+
+            </ul>
+            <h3 class="ps-2 text-white h6 mb-0">Product Support</h3>
+            <ul class="list-unstyled bg-black py-3"
+                aria-labelledby="navbarScrollingDropdownSupport">
+                                <li class=""><a href="https://www.fortinet.com/support/contact"
+                       target = _blank
+                        class=dropdown-item>FortiCare Support<i class='ps-2 fa fa-external-link' aria-hidden='true'></i></a></li>
+                <li class=""><a href="https://community.fortinet.com/"
+                       target = _blank
+                        class=dropdown-item>Fortinet Community<i class='ps-2 fa fa-external-link' aria-hidden='true'></i></a></li>
+
+            </ul>
+        </div>
+    </li>
+    <li class="nav-item about-nav-item">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="navbarScrollingDropdownAbout"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">About</a>
+        <div class="dropdown-menu p-2 bg-black border-0 rounded-0 mt-0">
+            <h3 class="ps-2 text-white h6 mb-0">FortiGuard Labs</h3>
+            <ul class="list-unstyled bg-black py-3"
+                aria-labelledby="navbarScrollingDropdownAbout">
+                                <li class=""><a href="/contactus"
+                        class=dropdown-item>Contact Us</a></li>
+                <li class=""><a href="/faq"
+                        class=dropdown-item>Frequently Asked Questions</a></li>
+                <li class=""><a href="/premium-services"
+                        class=dropdown-item>Premium Services</a></li>
+                <li class=""><a href="/rss-feeds"
+                        class=dropdown-item>RSS Feeds</a></li>
+
+            </ul>
+            <h3 class="ps-2 text-white h6 mb-0">Partners</h3>
+            <ul class="list-unstyled bg-black py-3"
+                aria-labelledby="navbarScrollingDropdownAbout">
+                                <li class=""><a href="/cta"
+                        class=dropdown-item>Cyber Threat Alliance</a></li>
+                <li class=""><a href="https://www.fortinet.com/corporate/about-us/product-certifications/mitre-att-ck"
+                       target = _blank
+                        class=dropdown-item>MITRE Engenuity</a></li>
+
+            </ul>
+        </div>
+    </li>
+    <li class="nav-item"><a href="https://fortinet.com">FORTINET</a></li>
+</ul></div>
+            </div>
+        </nav>
+        <div class="mobile-search-bar d-xl-none d-none">
+            <form action="/search" method="get" class="mobile-search-form col-12 ">
+                <div class="input-group">
+                    <input id="search_field_header"
+                        type="text"
+                        class="form-control"
+                        placeholder="Search FortiGuard"
+                        name="q"
+                        required="required"
+                        autocomplete="off"
+                        aria-labelledby="label-search_field-header"
+                        value=""
+/>
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">GO</button>
+                </div>
+            </form>
+        </div>
+
+        
+    </div>
+</header><main >
+<div class="page-content">
+
+
+        <div class="page-section  ">
+
+    <div class=" ">
+
+        <div class="container-xxl">
+            <div class="row">
+                <div class="col-md-12">
+                </div>
+            </div>
+        </div>
+        
+
+    <div id="full-page" class="col-md-12">
+<section class="intro"
+style="background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url('https://filestore.fortinet.com/fortiguard/static/images/services/psirt.jpg?v=43125') no-repeat left 0px top 0px;"
+>
+    <div class="container-xxl">
+        <div class="row">
+            <div class="col-xxl-7 col-xl-8 col-lg-8 col-md-12">
+<div class="mb-2">
+    <a href="/psirt">
+        <h2><img class="me-2" src="https://filestore.fortinet.com/fortiguard/static/images/icons_white/psirt.svg?v=43125" width="35" class="pull-left" alt="virus logo" loading="lazy"/> PSIRT</h2>
+    </a>
+</div>
+<h1 class="title" style="word-break: unset !important;">Apache Tika CVE-2025-54988</h1>
+             </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-xxl">
+        <div class="row">
+            <div class="col-lg-9 order-lg-1 order-sm-2 order-2">
+
+
+            <div lang="en" class="detail-item">
+                <h3>Summary</h3>
+                <p>Critical XXE in Apache Tika (tika-parser-pdf-module) in Apache Tika 1.13 through and including 3.2.1 on all platforms allows an attacker to carry out XML External Entity injection via a crafted XFA file inside of a PDF. An attacker may be able to read sensitive data or trigger malicious requests to internal resources or third-party servers. Note that the tika-parser-pdf-module is used as a dependency in several Tika packages including at least: tika-parsers-standard-modules, tika-parsers-standard-package, tika-app, tika-grpc and tika-server-standard. Users are recommended to upgrade to version 3.2.2, which fixes this issue.</p>
+            </div>
+
+
+
+        <div lang="en" class="detail-item">
+                <div class="table-responsive ">
+                    <table class="table table-borderless table-striped table-dark">
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Affected</th>
+                                <th>Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FortiDLP 12.2</td>
+                                <td>12.2.1 through 12.2.2</td>
+                                <td>Upgrade to 12.2.3 or above</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 12.1</td>
+                                <td>12.1 all versions</td>
+                                <td>Migrate to a fixed release</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 12.0</td>
+                                <td>12.0 all versions</td>
+                                <td>Migrate to a fixed release</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 11.5</td>
+                                <td>11.5 all versions</td>
+                                <td>Migrate to a fixed release</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 11.4</td>
+                                <td>11.4 all versions</td>
+                                <td>Migrate to a fixed release</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 11.3</td>
+                                <td>11.3 all versions</td>
+                                <td>Migrate to a fixed release</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 11.2</td>
+                                <td>Not affected</td>
+                                <td>Not Applicable</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 10.4</td>
+                                <td>Not affected</td>
+                                <td>Not Applicable</td>
+                            </tr>
+                            <tr>
+                                <td>FortiDLP 6.0</td>
+                                <td>Not affected</td>
+                                <td>Not Applicable</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        
+
+            <div lang="en" class="detail-item">
+                <h3>Timeline</h3>
+                2025-10-14: Initial publication
+            </div>
+
+            <div lang="en" class="detail-item">
+                <h3>References</h3>
+                <ul>
+                            <li>
+                                <a rel="nofollow noopener noreferrer" target="_blank" href="https://www.cve.org/CVERecord?id=CVE-2025-54988">https://www.cve.org/CVERecord?id=CVE-2025-54988</a>
+                            </li>
+                </ul>
+            </div>
+
+            </div>
+            <div class="col-lg-3 order-lg-2 order-sm-1 order-1">
+                <div class="sidebar">
+        <table lang="en" class="table table-responsive table-borderless meta">
+                <tr>
+                    <td>IR Number</td>
+                    <td>FG-IR-25-771</td>
+                </tr>
+                <tr>
+                    <td>Published Date</td>
+                    <td>Oct 14, 2025</td>
+                </tr>
+                <tr>
+                    <td>Component</td>
+                    <td>CLI</td>
+                </tr>
+                <tr>
+                    <td>Severity</td>
+                    <td>   <i class="fa fa-exclamation-triangle" style="color:#FF5733;font-size:15px; vertical-align: middle;" aria-hidden="true"></i>
+         High
+</td>
+                </tr>
+                <tr>
+                    <td>CVSSv3 Score</td>
+                        <td><a target="_blank"
+                               href=" https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator?vector=AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:X/RL:O/RC:C&amp;version=3.1">8.0</a>
+                        </td>
+                </tr>
+                <tr>
+                    <td>Impact</td>
+                    <td>Execute unauthorized code or commands</td>
+                </tr>
+                <tr>
+                    <td>CVE ID</td>
+                    <td>
+                        <button type="button" class="fg-green cve-button" rel="nofollow noopener noreferrer" target="_blank" data-bs-toggle="cve-popover" data-bs-placement="auto" data-bs-trigger="click" data-bs-content="Loading..." data-cveid="CVE-2025-54988" data-cvelink="https://www.cve.org/CVERecord?id=CVE-2025-54988" data-bs-custom-class="cve-popover">CVE-2025-54988</button>
+                    </td>
+                </tr>
+            <tr>
+                <td>Download</td>
+                <td>
+                    <p><a href="/psirt/cvrf/FG-IR-25-771"><i class="fa fa-download" aria-hidden="true"></i> CVRF</a></p>
+                
+                        <p><a href="/psirt/csaf/FG-IR-25-771?csaf_url=https://filestore.fortinet.com/fortiguard/psirt/csaf_apache-tika-cve-2025-54988.json"><i class="fa fa-download" aria-hidden="true"></i> CSAF</a></p>
+                </td>
+              </tr>
+        </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+    </div>
+
+    </div>
+        </div>
+
+</div>
+</main>
+
+<footer>
+    <div class=container-xxl>
+        <div class="row">
+            <div class="col-md-4">
+                <p class="footer-logo"><a href="https://www.fortinet.com" target="_blank">
+                    <img src="https://filestore.fortinet.com/fortiguard/static/images/fortinet-footer-logo.svg?v=43125" alt="fortinet logo in the footer" loading="lazy"/>
+                </a></p>
+            </div>
+            <div class="col-md-5">
+                <div class="bottom-nav">
+                    <ul role="list" aria aria-label="list of links namely contact us, Legal, Privacy, faq, partners, feedback ">
+                        <li class="contact" role="listitem">
+                            <a href="/contactus">Contact Us</a>
+                        </li>
+                        <li class="legal" role="listitem">
+                            <a href="https://www.fortinet.com/corporate/about-us/legal.html" target="_blank">Legal</a>
+                        </li>
+                        <li class="privacy" role="listitem">
+                            <a href="https://www.fortinet.com/corporate/about-us/privacy.html" target="_blank">Privacy</a>
+                        </li>
+                        <li class="partners" role="listitem">
+                            <a href="/partners">Partners</a>
+                        </li>
+                        <li class="feedback" role="listitem">
+                            <a href="/faq/general-contact">Feedback</a>
+                        </li>
+                        <!--
+                        <li class="language"><a href="#">Language: EN</a>
+                            <div class="footer-hover lang-selector">
+                                English
+                            </div>
+                        </li>
+                        -->
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-3">    
+                <ul class="social">
+                    <li><a href="https://www.facebook.com/FortiGuard.Labs" target="_blank"><img
+                                    src="https://filestore.fortinet.com/fortiguard/static/images/facebook_icon_footer.svg?v=43125" alt="facebook-icon-footer" loading="lazy"/></a></li>
+                    <li><a href="https://x.com/FortiGuardLabs" target="_blank"><img
+                                    src="https://filestore.fortinet.com/fortiguard/static/images/x_icon_footer.svg?v=43125" alt="twitter-icon-footer" style="width:25px !important;" loading="lazy"/></a></li>
+                    <li><a href="https://www.linkedin.com/showcase/3668640/" target="_blank"><img
+                                    src="https://filestore.fortinet.com/fortiguard/static/images/linkedin_icon_footer.svg?v=43125" alt="linkedin-icon-footer" loading="lazy"/></a></li>
+                    <li><a href="https://www.instagram.com/fortinet/" target="_blank"><img
+                                    src="https://filestore.fortinet.com/fortiguard/static/images/instagram_icon_footer.svg?v=43125" alt="linkedin-icon-footer" loading="lazy"/></a></li>
+                    <li><a href="/rss-feeds"><img src="https://filestore.fortinet.com/fortiguard/static/images/rss_icon_footer.svg?v=43125" alt="rss-icon-footer" loading="lazy"/></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>Copyright © 2026 Fortinet, Inc. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="https://filestore.fortinet.com/fortiguard/static/scripts/vendor.min.js?v=43125"></script>
+
+<script rel="prefetch" as="script" src="https://filestore.fortinet.com/fortiguard/static/scripts/script.min.js?v=43125"></script>
+<script rel="prefetch" as="script" src="https://filestore.fortinet.com/fortiguard/static/scripts/bundle.min.js?v=43125"></script>
+
+
+    
+  <script src="https://filestore.fortinet.com/fortiguard/static/vendor/jquery.cookie.min.js?v=43125"></script>
+    <script>
+        $('#language_select').change(function () {
+            let lang_code = $(this).val()
+            $.cookie('lang_code_cookie', lang_code, {path: '/'});
+            console.log(lang_code)
+            if (lang_code == 'en') {
+                window.location.href = "/psirt/" + "FG-IR-25-771";
+            } else {
+                window.location.href = "/" + lang_code + "/psirt" + "/" + "FG-IR-25-771";
+            }
+
+        });
+    </script>
+
+
+    <script src="https://filestore.fortinet.com/scripts/privacy-v2.min.js?c=40663631" async></script>
+
+
+    <script async defer src="https://filestore.fortinet.com/fortiguard/dist/altcha.min.js" type="module"></script>
+
+
+
+</body>
+</html>
