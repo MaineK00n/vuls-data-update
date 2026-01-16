@@ -38,7 +38,6 @@ func TestFetch(t *testing.T) {
 			args: args{
 				args: []string{"FG-IR-24-437"},
 			},
-			hasError: true,
 		},
 		{
 			name: "invalid-csaf",
