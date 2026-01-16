@@ -923,7 +923,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 			default:
 				return criteriaTypes.Criteria{}, errors.Errorf("unexpected evr operation. expected: %q, actual: %q", []string{"equals"}, s.Evr.Operation)
 			}
-		case strings.Contains(t1.Comment, " is installed"):
+		case strings.HasSuffix(t1.Comment, " is installed"):
 			var o v2.RpminfoObject
 			if err := e.read(name, stream, "objects", "rpminfo_object", t1.Object.ObjectRef, &o); err != nil {
 				return criteriaTypes.Criteria{}, errors.Wrapf(err, "read %s", filepath.Join("objects", "rpminfo_object", t1.Object.ObjectRef))
@@ -943,7 +943,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 					},
 				},
 			})
-		case strings.Contains(t1.Comment, " is not installed"): // unaffected only
+		case strings.HasSuffix(t1.Comment, " is not installed"): // unaffected only
 		case strings.Contains(t1.Comment, " not installed for "):
 			var o v2.RpminfoObject
 			if err := e.read(name, stream, "objects", "rpminfo_object", t1.Object.ObjectRef, &o); err != nil {
@@ -960,8 +960,9 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 					},
 				},
 			})
-		case strings.Contains(t1.Comment, " is signed with Red Hat redhatrelease key"):
-		case strings.Contains(t1.Comment, " is signed with Red Hat redhatrelease2 key"):
+		case strings.HasSuffix(t1.Comment, " is signed with Red Hat redhatrelease key"),
+			strings.HasSuffix(t1.Comment, " is signed with Red Hat redhatrelease2 key"),
+			strings.HasSuffix(t1.Comment, " is signed with Red Hat release4,release2,ima key"):
 		default:
 			return criteriaTypes.Criteria{}, errors.Errorf("unexpected comment format. expected: %q, actual: %q", []string{
 				"<package> is earlier than <version>",
@@ -971,6 +972,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 				"<package> not installed for <version>",
 				"<package> is signed with Red Hat redhatrelease key",
 				"<package> is signed with Red Hat redhatrelease2 key",
+				"<package> is signed with Red Hat release4,release2,ima key",
 			}, t1.Comment)
 		}
 	}
