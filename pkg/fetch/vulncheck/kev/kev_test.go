@@ -41,14 +41,8 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case strings.HasSuffix(r.URL.Path, "vulncheck-kev"):
-					c, err := r.Cookie("token")
-					if err != nil {
-						http.Error(w, fmt.Sprintf("Bad Request. err: %s", err), http.StatusBadRequest)
-						return
-					}
-					if c.Value != "vulncheck_token" {
+					if s := r.Header.Get("Authorization"); s != "Bearer vulncheck_token" {
 						http.Error(w, "Unauthorized", http.StatusUnauthorized)
-						return
 					}
 
 					bs, err := json.Marshal(struct {
