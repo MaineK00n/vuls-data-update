@@ -127,6 +127,10 @@ func (opts options) fetch(ids []string) error {
 			if err != nil {
 				return errors.Wrap(err, "fetch csaf url")
 			}
+			if u == "" {
+				return nil
+			}
+
 			time.Sleep(opts.wait)
 
 			if err := opts.fetchCSAF(client, u); err != nil {
@@ -191,9 +195,6 @@ func (opts options) fetchCSAFURL(client *utilhttp.Client, id string) (string, er
 		default:
 			continue
 		}
-	}
-	if u == "" {
-		return "", errors.New("CSAF download URL not found")
 	}
 	return u, nil
 }
