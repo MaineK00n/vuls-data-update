@@ -166,17 +166,9 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 func fetchBackupURL(client *utilhttp.Client, baseURL, apiToken string) (string, error) {
 	header := make(http.Header)
 	header.Set("Accept", "application/json")
+	header.Set("Authorization", fmt.Sprintf("Bearer %s", apiToken))
 
-	req, err := utilhttp.NewRequest(http.MethodGet, baseURL, utilhttp.WithRequestHeader(header))
-	if err != nil {
-		return "", errors.Wrap(err, "new request")
-	}
-	req.AddCookie(&http.Cookie{
-		Name:  "token",
-		Value: apiToken,
-	})
-
-	resp, err := client.Do(req)
+	resp, err := client.Get(baseURL, utilhttp.WithRequestHeader(header))
 	if err != nil {
 		return "", errors.Wrap(err, "fetch vulncheck nist-nvd backup")
 	}
