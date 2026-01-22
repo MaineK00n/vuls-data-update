@@ -145,6 +145,8 @@ func Fetch(opts ...Option) error {
 				return ovaltype, "suse.linux.enterprise.server", strings.TrimPrefix(lhs, "suse.linux.enterprise.server."), nil
 			case strings.HasPrefix(lhs, "suse.linux.enterprise.micro"):
 				return ovaltype, "suse.linux.enterprise.micro", strings.TrimPrefix(lhs, "suse.linux.enterprise.micro."), nil
+			case strings.HasPrefix(lhs, "suse.linux.enterprise"):
+				return ovaltype, "suse.linux.enterprise", strings.TrimPrefix(lhs, "suse.linux.enterprise."), nil
 			case strings.HasPrefix(lhs, "opensuse.leap.micro"):
 				return ovaltype, "opensuse.leap.micro", strings.TrimPrefix(lhs, "opensuse.leap.micro."), nil
 			case strings.HasPrefix(lhs, "opensuse.leap"):
@@ -243,13 +245,25 @@ func (opts options) walkIndexOf() ([]string, error) {
 
 		switch {
 		case strings.HasPrefix(txt, "opensuse"), strings.HasPrefix(txt, "opensuse.leap"), strings.HasPrefix(txt, "opensuse.leap.micro"), strings.HasPrefix(txt, "opensuse.tumbleweed"),
-			strings.HasPrefix(txt, "suse.linux.enterprise.desktop"), strings.HasPrefix(txt, "suse.linux.enterprise.server"):
+			strings.HasPrefix(txt, "suse.linux.enterprise.server.9"), strings.HasPrefix(txt, "suse.linux.enterprise.server.10"),
+			strings.HasPrefix(txt, "suse.linux.enterprise.desktop.10"):
 		case strings.HasPrefix(txt, "suse.linux.enterprise.micro"):
 			switch txt {
 			case "suse.linux.enterprise.micro.5-affected.xml.gz", "suse.linux.enterprise.micro.5-patch.xml.gz", "suse.linux.enterprise.micro.5.xml.gz":
 				// SLEM 5 series has "5" and "5.y". SLEM 6 series has "6.y" only. Exclude "5" here.
 				return
 			default:
+			}
+		case strings.HasPrefix(txt, "suse.linux.enterprise"):
+			if strings.HasPrefix(txt, "suse.linux.enterprise.server") || strings.HasPrefix(txt, "suse.linux.enterprise.desktop") {
+				return
+			}
+			// suse.linux.enterprise 12 and 15 has "-sp<minor>" and 16 has ".<minor>" in filenames
+			if strings.Contains(txt, "-sp") {
+				return
+			}
+			if _, _, ok := strings.Cut(strings.TrimSuffix(strings.TrimPrefix(txt, "suse.linux.enterprise."), ".xml.gz"), "."); ok {
+				return
 			}
 		default:
 			return

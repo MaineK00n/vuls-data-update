@@ -1,0 +1,94 @@
+{
+	"id": "oval:org.opensuse.security:def:88828",
+	"version": "1",
+	"class": "patch",
+	"metadata": {
+		"title": "FastCGI-2.4.6-160000.2.2 on GA media (Moderate)",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"SUSE Linux Enterprise Server 16.0"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "CVE-2011-2766",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2011-2766/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2025-23016",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2025-23016/",
+				"source": "CVE"
+			}
+		],
+		"description": "\nThese are all security issues fixed in the FastCGI-2.4.6-160000.2.2 package on the GA media of SUSE Linux Enterprise Server 16.0.\t\t",
+		"advisory": {
+			"from": "security@suse.de",
+			"severity": "Moderate",
+			"cve": [
+				{
+					"text": "CVE-2011-2766 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2011-2766/"
+				},
+				{
+					"text": "CVE-2011-2766 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2011-2766"
+				},
+				{
+					"text": "CVE-2025-23016 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2025-23016/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2025-23016 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2025-23016"
+				}
+			],
+			"issued": {
+				"date": "2025-11-01"
+			},
+			"updated": {
+				"date": "2025-11-01"
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:suse:sles:16:16.0:server"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025977",
+						"comment": "FastCGI-2.4.6-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025978",
+						"comment": "FastCGI-devel-2.4.6-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025979",
+						"comment": "libfcgi0-2.4.6-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025980",
+						"comment": "perl-FCGI-2.4.6-160000.2.2 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.opensuse.security:tst:2010025976",
+				"comment": "SUSE Linux Enterprise Server 16.0 is installed"
+			}
+		]
+	}
+}

@@ -1,5 +1,0 @@
-{
-	"unix-def": "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix",
-	"id": "oval:org.opensuse.security:obj:2009060496",
-	"version": "1"
-}
