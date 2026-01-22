@@ -88,6 +88,7 @@ import (
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
 	microsoftProduct "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/product"
+	microsoftVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 	microsoftVulnerability "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vulnerability"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
 	minimOSOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/minimos/osv"
@@ -242,7 +243,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2471,7 +2472,7 @@ func newCmdMicrosoftCSAF() *cobra.Command {
 	}{
 		base: base{
 			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
-			retry: 3,
+			retry: 10,
 		},
 		concurrency: 5,
 		wait:        1 * time.Second,
@@ -2641,6 +2642,43 @@ func newCmdMicrosoftDeployment() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftVEX() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "vex"),
+			retry: 10,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-vex",
+		Short: "Fetch Microsoft CSAF VEX data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-vex
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftVEX.Fetch(microsoftVEX.WithDir(options.dir), microsoftVEX.WithRetry(options.retry), microsoftVEX.WithConcurrency(options.concurrency), microsoftVEX.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft vex")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

@@ -1,4 +1,4 @@
-package csaf_test
+package vex_test
 
 import (
 	"io/fs"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/csaf"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/vex"
 )
 
 func TestFetch(t *testing.T) {
@@ -27,17 +27,17 @@ func TestFetch(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, strings.TrimPrefix(r.URL.Path, "/csaf/advisories/")))
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, strings.TrimPrefix(r.URL.Path, "/csaf/vex/")))
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, "csaf", "advisories")
+			u, err := url.JoinPath(ts.URL, "csaf", "vex")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
 
 			dir := t.TempDir()
-			err = csaf.Fetch(csaf.WithBaseURL(u), csaf.WithDir(dir), csaf.WithRetry(0), csaf.WithConcurrency(2))
+			err = vex.Fetch(vex.WithBaseURL(u), vex.WithDir(dir), vex.WithRetry(0), vex.WithConcurrency(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

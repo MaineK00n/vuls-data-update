@@ -1,4 +1,4 @@
-package csaf
+package vex
 
 import (
 	"bufio"
@@ -17,7 +17,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://msrc.microsoft.com/csaf/advisories/"
+const baseURL = "https://msrc.microsoft.com/csaf/vex/"
 
 type options struct {
 	baseURL     string
@@ -84,7 +84,7 @@ func WithWait(wait time.Duration) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "csaf"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "vex"),
 		retry:       10,
 		concurrency: 5,
 		wait:        1 * time.Second,
@@ -98,7 +98,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Microsoft CSAF")
+	log.Println("[INFO] Fetch Microsoft VEX")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	ls, err := options.fetchIndex(client)
@@ -123,18 +123,18 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("error response with status code %d", resp.StatusCode)
 		}
 
-		var csaf CSAF
-		if err := json.UnmarshalRead(resp.Body, &csaf); err != nil {
+		var vex VEX
+		if err := json.UnmarshalRead(resp.Body, &vex); err != nil {
 			return errors.Wrap(err, "decode json")
 		}
 
-		t, err := time.Parse(time.RFC3339, csaf.Document.Tracking.InitialReleaseDate)
+		t, err := time.Parse(time.RFC3339, vex.Document.Tracking.InitialReleaseDate)
 		if err != nil {
-			return errors.Wrapf(err, "failed to parse InitialReleaseDate option. expected: %q, actual: %q", time.RFC3339, csaf.Document.Tracking.InitialReleaseDate)
+			return errors.Wrapf(err, "failed to parse InitialReleaseDate option. expected: %q, actual: %q", time.RFC3339, vex.Document.Tracking.InitialReleaseDate)
 		}
 
-		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)), csaf); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", csaf.Document.Tracking.ID)))
+		if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", vex.Document.Tracking.ID)), vex); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, fmt.Sprintf("%d", t.Year()), fmt.Sprintf("%s.json", vex.Document.Tracking.ID)))
 		}
 
 		return nil
