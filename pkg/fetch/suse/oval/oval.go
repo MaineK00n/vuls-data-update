@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"maps"
 	"net/http"
 	"net/url"
 	"path"
 	"path/filepath"
-	"slices"
 	"strings"
 	"time"
 
@@ -110,12 +108,15 @@ func Fetch(opts ...Option) error {
 	}
 
 	us := make([]string, 0, len(ovals))
-	for _, oval := range ovals {
-		u, err := url.JoinPath(options.baseURL, oval)
+	fnByURL := make(map[string]FileName, len(ovals))
+	for _, fn := range ovals {
+		fullURL, err := url.JoinPath(options.baseURL, fn.Raw)
 		if err != nil {
 			return errors.Wrap(err, "join url path")
 		}
-		us = append(us, u)
+
+		us = append(us, fullURL)
+		fnByURL[fullURL] = fn
 	}
 
 	if err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).PipelineGet(us, options.concurrency, options.wait, false, func(resp *http.Response) error {
@@ -123,43 +124,17 @@ func Fetch(opts ...Option) error {
 
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
-			return errors.Errorf("error response with status code %d", resp.StatusCode)
+			return errors.Errorf("unexpected error response. expected: %d, actual: %d", http.StatusOK, resp.StatusCode)
 		}
 
-		ovaltype, osname, version, err := func() (string, string, string, error) {
-			lhs, rhs, _ := strings.Cut(strings.TrimSuffix(path.Base(resp.Request.URL.Path), ".xml.gz"), "-")
-			var ovaltype string
-			switch rhs {
-			case "affected", "":
-				ovaltype = "vulnerability"
-			case "patch":
-				ovaltype = "patch"
-			default:
-				return "", "", "", errors.Errorf("unexpected ovaltype. accepts: %q, received: %q", "<osname>.<version>(-<type>).xml.gz", path.Base(resp.Request.URL.Path))
-			}
-
-			switch {
-			case strings.HasPrefix(lhs, "suse.linux.enterprise.desktop"):
-				return ovaltype, "suse.linux.enterprise.desktop", strings.TrimPrefix(lhs, "suse.linux.enterprise.desktop."), nil
-			case strings.HasPrefix(lhs, "suse.linux.enterprise.server"):
-				return ovaltype, "suse.linux.enterprise.server", strings.TrimPrefix(lhs, "suse.linux.enterprise.server."), nil
-			case strings.HasPrefix(lhs, "suse.linux.enterprise.micro"):
-				return ovaltype, "suse.linux.enterprise.micro", strings.TrimPrefix(lhs, "suse.linux.enterprise.micro."), nil
-			case strings.HasPrefix(lhs, "suse.linux.enterprise"):
-				return ovaltype, "suse.linux.enterprise", strings.TrimPrefix(lhs, "suse.linux.enterprise."), nil
-			case strings.HasPrefix(lhs, "opensuse.leap.micro"):
-				return ovaltype, "opensuse.leap.micro", strings.TrimPrefix(lhs, "opensuse.leap.micro."), nil
-			case strings.HasPrefix(lhs, "opensuse.leap"):
-				return ovaltype, "opensuse.leap", strings.TrimPrefix(lhs, "opensuse.leap."), nil
-			case strings.HasPrefix(lhs, "opensuse"):
-				return ovaltype, "opensuse", strings.TrimPrefix(lhs, "opensuse."), nil
-			default:
-				return "", "", "", errors.Errorf("unexpected ovalname. accepts: %q, received: %q", "<osname>.<version>", lhs)
-			}
-		}()
-		if err != nil {
-			return errors.Wrap(err, "parse oval name")
+		fn, ok := fnByURL[resp.Request.URL.String()]
+		if !ok {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			return errors.Errorf("unexpected response url: %s", resp.Request.URL.String())
 		}
+		ovaltype := fn.OvalType()
+		osname := fn.OS
+		version := fn.Version
 
 		r, err := gzip.NewReader(resp.Body)
 		if err != nil {
@@ -219,7 +194,7 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (opts options) walkIndexOf() ([]string, error) {
+func (opts options) walkIndexOf() ([]FileName, error) {
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(opts.baseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch index of")
@@ -236,49 +211,63 @@ func (opts options) walkIndexOf() ([]string, error) {
 		return nil, errors.Wrap(err, "parse as html")
 	}
 
-	ovals := make(map[string]string)
-	d.Find("a").Each(func(_ int, selection *goquery.Selection) {
-		txt := selection.Text()
-		if !strings.HasSuffix(txt, ".xml.gz") {
-			return
+	grouped, err := collectOVALFiles(d)
+	if err != nil {
+		return nil, errors.Wrap(err, "collect oval files")
+	}
+
+	fns := make([]FileName, 0, len(grouped)*2)
+	for _, variants := range grouped {
+		if fn, ok := variants[VariantAffected]; ok {
+			fns = append(fns, fn)
+		} else if fn, ok := variants[VariantNone]; ok {
+			fns = append(fns, fn)
+		}
+		if fn, ok := variants[VariantPatch]; ok {
+			fns = append(fns, fn)
+		}
+	}
+	return fns, nil
+}
+
+// collectOVALFiles parses HTML and groups filenames by OS/Version and Variant.
+func collectOVALFiles(d *goquery.Document) (map[FileKey]map[Variant]FileName, error) {
+	grouped := make(map[FileKey]map[Variant]FileName)
+	var parseErr error
+	d.Find("a").EachWithBreak(func(_ int, selection *goquery.Selection) bool {
+		href, ok := selection.Attr("href")
+		if !ok {
+			return true
+		}
+		if strings.HasSuffix(href, "/") || href == "../" {
+			return true
+		}
+		if !strings.HasSuffix(href, ".xml.gz") {
+			return true
 		}
 
-		switch {
-		case strings.HasPrefix(txt, "opensuse"), strings.HasPrefix(txt, "opensuse.leap"), strings.HasPrefix(txt, "opensuse.leap.micro"), strings.HasPrefix(txt, "opensuse.tumbleweed"),
-			strings.HasPrefix(txt, "suse.linux.enterprise.server.9"), strings.HasPrefix(txt, "suse.linux.enterprise.server.10"),
-			strings.HasPrefix(txt, "suse.linux.enterprise.desktop.10"):
-		case strings.HasPrefix(txt, "suse.linux.enterprise.micro"):
-			switch txt {
-			case "suse.linux.enterprise.micro.5-affected.xml.gz", "suse.linux.enterprise.micro.5-patch.xml.gz", "suse.linux.enterprise.micro.5.xml.gz":
-				// SLEM 5 series has "5" and "5.y". SLEM 6 series has "6.y" only. Exclude "5" here.
-				return
-			default:
-			}
-		case strings.HasPrefix(txt, "suse.linux.enterprise"):
-			if strings.HasPrefix(txt, "suse.linux.enterprise.server") || strings.HasPrefix(txt, "suse.linux.enterprise.desktop") {
-				return
-			}
-			// suse.linux.enterprise 12 and 15 has "-sp<minor>" and 16 has ".<minor>" in filenames
-			if strings.Contains(txt, "-sp") {
-				return
-			}
-			if _, _, ok := strings.Cut(strings.TrimSuffix(strings.TrimPrefix(txt, "suse.linux.enterprise."), ".xml.gz"), "."); ok {
-				return
-			}
-		default:
-			return
+		fn, err := ParseFileName(path.Base(href))
+		if err != nil {
+			parseErr = errors.Wrapf(err, "parse filename: %s", href)
+			return false
 		}
 
-		switch {
-		case strings.Contains(txt, "-affected"):
-			ovals[strings.TrimSuffix(txt, "-affected.xml.gz")] = txt
-		case strings.Contains(txt, "-patch"):
-			ovals[strings.TrimSuffix(txt, ".xml.gz")] = txt
-		default:
-			if _, ok := ovals[strings.TrimSuffix(txt, ".xml.gz")]; !ok {
-				ovals[strings.TrimSuffix(txt, ".xml.gz")] = txt
-			}
+		if fn == nil {
+			return true
 		}
+		if !fn.ShouldInclude() {
+			return true
+		}
+
+		key := fn.Key()
+		if grouped[key] == nil {
+			grouped[key] = make(map[Variant]FileName)
+		}
+		grouped[key][fn.Variant] = *fn
+		return true
 	})
-	return slices.Collect(maps.Values(ovals)), nil
+	if parseErr != nil {
+		return nil, parseErr
+	}
+	return grouped, nil
 }
