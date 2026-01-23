@@ -645,7 +645,7 @@
 		}
 	],
 	"data_source": {
-		"id": "fedora",
+		"id": "fedora-api",
 		"raws": [
 			"fixtures/F40/2025/FEDORA-2025-fd490bcdcd.json"
 		]

@@ -969,7 +969,7 @@
 		}
 	],
 	"data_source": {
-		"id": "fedora",
+		"id": "fedora-api",
 		"raws": [
 			"fixtures/F38M/2023/FEDORA-MODULAR-2023-5b8a7bde59.json"
 		]

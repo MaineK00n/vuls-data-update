@@ -1,4 +1,4 @@
-package fedora_test
+package api_test
 
 import (
 	"bytes"
@@ -18,18 +18,18 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api"
 )
 
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata fedora.DataURL
+		testdata api.DataURL
 		hasError bool
 	}{
 		{
 			name: "happy",
-			testdata: fedora.DataURL{
+			testdata: api.DataURL{
 				Release:  "testdata/fixtures/releases?page=%d&rows_per_page=%d",
 				Advisory: "testdata/fixtures/updates/?releases=%s&type=security&page=%d&rows_per_page=%d",
 				Package:  "testdata/fixtures/kojihub",
@@ -279,13 +279,13 @@ func TestFetch(t *testing.T) {
 			defer ts.Close()
 
 			dir := t.TempDir()
-			err := fedora.Fetch([]string{"__current__", "__pending__", "__archived__"},
-				fedora.WithDataURL(fedora.DataURL{
+			err := api.Fetch([]string{"__current__", "__pending__", "__archived__"},
+				api.WithDataURL(api.DataURL{
 					Release:  fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Release),
 					Advisory: fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Advisory),
 					Package:  fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Package),
 					Bugzilla: fmt.Sprintf("%s/%s", ts.URL, tt.testdata.Bugzilla),
-				}), fedora.WithDir(dir), fedora.WithRetry(0), fedora.WithConcurrency(1), fedora.WithWait(0), fedora.WithRowsPerPage(2))
+				}), api.WithDir(dir), api.WithRetry(0), api.WithConcurrency(1), api.WithWait(0), api.WithRowsPerPage(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

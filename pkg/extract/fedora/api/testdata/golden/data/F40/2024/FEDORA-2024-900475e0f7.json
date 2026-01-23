@@ -1,38 +1,11 @@
 {
-	"id": "FEDORA-2023-5911638116",
+	"id": "FEDORA-2024-900475e0f7",
 	"advisories": [
 		{
 			"content": {
-				"id": "FEDORA-2023-5911638116",
-				"title": "libcap-2.48-7.fc38",
-				"description": "Backport fix for CVE-2023-2602 and CVE-2023-2603 ",
-				"severity": [
-					{
-						"type": "vendor",
-						"source": "fedoraproject.org",
-						"vendor": "high"
-					}
-				],
-				"references": [
-					{
-						"source": "fedoraproject.org",
-						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2023-5911638116"
-					}
-				],
-				"published": "2023-11-23T18:58:51Z"
-			},
-			"segments": [
-				{
-					"ecosystem": "fedora:38"
-				}
-			]
-		}
-	],
-	"vulnerabilities": [
-		{
-			"content": {
-				"id": "CVE-2023-2603",
-				"title": "CVE-2023-2603 libcap: Integer Overflow in _libcap_strdup()",
+				"id": "FEDORA-2024-900475e0f7",
+				"title": "netatalk-3.2.1-1.fc40",
+				"description": "Security fix for CVE-2024-38439, CVE-2024-38440, and CVE-2024-38441",
 				"severity": [
 					{
 						"type": "vendor",
@@ -43,48 +16,101 @@
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209113"
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2024-900475e0f7"
 					}
 				],
-				"published": "2023-05-22T16:54:28Z",
-				"modified": "2023-11-21T11:41:35Z"
+				"published": "2024-06-30T17:41:52Z"
 			},
 			"segments": [
 				{
-					"ecosystem": "fedora:38"
+					"ecosystem": "fedora:40"
 				}
 			]
-		},
+		}
+	],
+	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2023-2602",
-				"title": "CVE-2023-2602 libcap: Memory Leak on pthread_create() Error",
+				"id": "CVE-2024-38439",
+				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
 				"severity": [
 					{
 						"type": "vendor",
 						"source": "fedoraproject.org",
-						"vendor": "low"
+						"vendor": "medium"
 					}
 				],
 				"references": [
 					{
 						"source": "fedoraproject.org",
-						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2209114"
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
 					}
 				],
-				"published": "2023-05-22T16:54:30Z",
-				"modified": "2023-11-21T11:41:39Z"
+				"published": "2024-06-18T03:21:00Z",
+				"modified": "2024-06-29T16:25:44Z"
 			},
 			"segments": [
 				{
-					"ecosystem": "fedora:38"
+					"ecosystem": "fedora:40"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-38440",
+				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
+					}
+				],
+				"published": "2024-06-18T03:21:00Z",
+				"modified": "2024-06-29T16:25:44Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-38441",
+				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
+					}
+				],
+				"published": "2024-06-18T03:21:00Z",
+				"modified": "2024-06-29T16:25:44Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
 				}
 			]
 		}
 	],
 	"detections": [
 		{
-			"ecosystem": "fedora:38",
+			"ecosystem": "fedora:40",
 			"conditions": [
 				{
 					"criteria": {
@@ -100,12 +126,45 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "libcap",
+											"name": "netatalk",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"src"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk-debugsource",
 											"architectures": [
 												"i686",
 												"ppc64le",
 												"s390x",
-												"src",
 												"x86_64",
 												"aarch64"
 											]
@@ -115,11 +174,11 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:2.48-7.fc38"
+												"lt": "5:3.2.1-1.fc40"
 											}
 										],
 										"fixed": [
-											"0:2.48-7.fc38"
+											"5:3.2.1-1.fc40"
 										]
 									}
 								}
@@ -134,112 +193,13 @@
 									"package": {
 										"type": "binary",
 										"binary": {
-											"name": "libcap-debuginfo",
+											"name": "netatalk-debuginfo",
 											"architectures": [
-												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:2.48-7.fc38"
-											}
-										],
-										"fixed": [
-											"0:2.48-7.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "libcap-static",
-											"architectures": [
-												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:2.48-7.fc38"
-											}
-										],
-										"fixed": [
-											"0:2.48-7.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "libcap-debugsource",
-											"architectures": [
-												"x86_64",
-												"aarch64",
-												"i686",
-												"ppc64le",
-												"s390x"
-											]
-										}
-									},
-									"affected": {
-										"type": "rpm",
-										"range": [
-											{
-												"lt": "0:2.48-7.fc38"
-											}
-										],
-										"fixed": [
-											"0:2.48-7.fc38"
-										]
-									}
-								}
-							},
-							{
-								"type": "version",
-								"version": {
-									"vulnerable": true,
-									"fix_status": {
-										"class": "fixed"
-									},
-									"package": {
-										"type": "binary",
-										"binary": {
-											"name": "libcap-devel",
-											"architectures": [
-												"aarch64",
 												"i686",
 												"ppc64le",
 												"s390x",
-												"x86_64"
+												"x86_64",
+												"aarch64"
 											]
 										}
 									},
@@ -247,11 +207,44 @@
 										"type": "rpm",
 										"range": [
 											{
-												"lt": "0:2.48-7.fc38"
+												"lt": "5:3.2.1-1.fc40"
 											}
 										],
 										"fixed": [
-											"0:2.48-7.fc38"
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk-devel",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
 										]
 									}
 								}
@@ -263,9 +256,9 @@
 		}
 	],
 	"data_source": {
-		"id": "fedora",
+		"id": "fedora-api",
 		"raws": [
-			"fixtures/F38/2023/FEDORA-2023-5911638116.json"
+			"fixtures/F40/2024/FEDORA-2024-900475e0f7.json"
 		]
 	}
 }

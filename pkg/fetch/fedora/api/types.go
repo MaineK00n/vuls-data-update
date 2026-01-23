@@ -1,4 +1,4 @@
-package fedora
+package api
 
 type releasePage struct {
 	Releases    []release `json:"releases"`

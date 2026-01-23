@@ -101,7 +101,7 @@
 		}
 	],
 	"data_source": {
-		"id": "fedora",
+		"id": "fedora-api",
 		"raws": [
 			"fixtures/EPEL-10.0/2025/FEDORA-EPEL-2025-0d08cf47ee.json"
 		]

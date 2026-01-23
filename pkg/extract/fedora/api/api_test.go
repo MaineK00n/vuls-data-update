@@ -1,10 +1,10 @@
-package fedora_test
+package api_test
 
 import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/fedora"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/fedora/api"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := fedora.Extract(tt.args, fedora.WithDir(dir))
+			err := api.Extract(tt.args, api.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

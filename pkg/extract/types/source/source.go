@@ -56,7 +56,7 @@ const (
 	ExploitGitHub         SourceID = "exploit-github"
 	ExploitInTheWild      SourceID = "exploit-inthewild"
 	ExploitTrickest       SourceID = "exploit-trickest"
-	Fedora                SourceID = "fedora"
+	FedoraAPI             SourceID = "fedora-api"
 	Fortinet              SourceID = "fortinet"
 	FortinetCVRF          SourceID = "fortinet-cvrf"
 	FreeBSD               SourceID = "freebsd"

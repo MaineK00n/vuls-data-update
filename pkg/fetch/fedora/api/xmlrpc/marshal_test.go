@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/xmlrpc"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api/xmlrpc"
 )
 
 func TestMarshal(t *testing.T) {

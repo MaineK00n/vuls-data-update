@@ -9,8 +9,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/xmlrpc"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api/xmlrpc"
 )
 
 func TestUnmarshal(t *testing.T) {
@@ -302,7 +302,7 @@ func TestUnmarshal(t *testing.T) {
 					ID    int `xmlrpc:"id"`
 					Extra struct {
 						TypeInfo struct {
-							Module fedora.Module `xmlrpc:"module"`
+							Module api.Module `xmlrpc:"module"`
 						} `xmlrpc:"typeinfo"`
 					} `xmlrpc:"extra"`
 				}),
@@ -311,20 +311,20 @@ func TestUnmarshal(t *testing.T) {
 				ID    int `xmlrpc:"id"`
 				Extra struct {
 					TypeInfo struct {
-						Module fedora.Module `xmlrpc:"module"`
+						Module api.Module `xmlrpc:"module"`
 					} `xmlrpc:"typeinfo"`
 				} `xmlrpc:"extra"`
 			}{
 				ID: 2284719,
 				Extra: struct {
 					TypeInfo struct {
-						Module fedora.Module `xmlrpc:"module"`
+						Module api.Module `xmlrpc:"module"`
 					} `xmlrpc:"typeinfo"`
 				}{
 					TypeInfo: struct {
-						Module fedora.Module `xmlrpc:"module"`
+						Module api.Module `xmlrpc:"module"`
 					}{
-						Module: fedora.Module{
+						Module: api.Module{
 							Name:    "mysql",
 							Stream:  "8.0",
 							Version: "3820230907003352",
@@ -358,9 +358,9 @@ func TestUnmarshal(t *testing.T) {
 			name: "listRPMs(2234486)",
 			args: args{
 				testdata: "testdata/fixtures/listRPMs-rpm.xml",
-				v:        new([]fedora.Package),
+				v:        new([]api.Package),
 			},
-			want: []fedora.Package{
+			want: []api.Package{
 				{
 					Name:    "iperf3",
 					Epoch:   nil,
@@ -388,9 +388,9 @@ func TestUnmarshal(t *testing.T) {
 			name: "listRPMs(2234486)",
 			args: args{
 				testdata: "testdata/fixtures/listRPMs-module.xml",
-				v:        new([]fedora.Package),
+				v:        new([]api.Package),
 			},
-			want: []fedora.Package{
+			want: []api.Package{
 				{
 					Name:    "community-mysql",
 					Epoch:   func(n int) *int { return &n }(0),

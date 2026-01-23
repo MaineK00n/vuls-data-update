@@ -1,4 +1,4 @@
-package fedora
+package api
 
 import (
 	"fmt"
@@ -38,7 +38,7 @@ import (
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api"
 )
 
 type options struct {
@@ -84,7 +84,7 @@ func Extract(args string, opts ...Option) error {
 
 		r := utiljson.NewJSONReader()
 
-		var fetched fedora.Advisory
+		var fetched api.Advisory
 		if err := r.Read(path, args, &fetched); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
@@ -115,7 +115,7 @@ func Extract(args string, opts ...Option) error {
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-		ID:   sourceTypes.Fedora,
+		ID:   sourceTypes.FedoraAPI,
 		Name: func() *string { t := "Fedora Update System"; return &t }(),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
@@ -141,7 +141,7 @@ func Extract(args string, opts ...Option) error {
 
 var cveIDPattern = regexp.MustCompile(`CVE-\d{4}-\d{4,}`)
 
-func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
+func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 	switch ct := func() string {
 		if fetched.ContentType == nil {
 			switch fetched.Release.IDPrefix {
@@ -311,11 +311,11 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 				Segments: []segmentTypes.Segment{{Ecosystem: eco}},
 			}},
 			Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
-				m := make(map[string]fedora.Bugzilla)
+				m := make(map[string]api.Bugzilla)
 				for _, bug := range fetched.Bugs {
-					var f func(b fedora.Bugzilla) []fedora.Bugzilla
-					f = func(b fedora.Bugzilla) []fedora.Bugzilla {
-						var bugs []fedora.Bugzilla
+					var f func(b api.Bugzilla) []api.Bugzilla
+					f = func(b api.Bugzilla) []api.Bugzilla {
+						var bugs []api.Bugzilla
 						for _, b := range b.Blocked {
 							bugs = append(bugs, f(b)...)
 						}
@@ -377,7 +377,7 @@ func extract(fetched fedora.Advisory, raws []string) (*dataTypes.Data, error) {
 			}(),
 			Detections: []detectionTypes.Detection{d},
 			DataSource: sourceTypes.Source{
-				ID:   sourceTypes.Fedora,
+				ID:   sourceTypes.FedoraAPI,
 				Raws: raws,
 			},
 		}, nil

@@ -1,4 +1,4 @@
-package fedora
+package api
 
 import (
 	"context"
@@ -18,7 +18,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/xmlrpc"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api/xmlrpc"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
@@ -118,7 +118,7 @@ func Fetch(releases []string, opts ...Option) error {
 			Package:  packageURL,
 			Bugzilla: bugzillaURL,
 		},
-		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "fedora", "api"),
 		retry:       20,
 		concurrency: 5,
 		wait:        1 * time.Second,

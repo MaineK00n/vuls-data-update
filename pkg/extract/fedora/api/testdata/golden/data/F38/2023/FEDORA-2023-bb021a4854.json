@@ -237,7 +237,7 @@
 		}
 	],
 	"data_source": {
-		"id": "fedora",
+		"id": "fedora-api",
 		"raws": [
 			"fixtures/F38/2023/FEDORA-2023-bb021a4854.json"
 		]

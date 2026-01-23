@@ -42,7 +42,7 @@ import (
 	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/github"
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/extract/exploit/trickest"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/fedora"
+	fedoraAPI "github.com/MaineK00n/vuls-data-update/pkg/extract/fedora/api"
 	fortinetCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/cvrf"
 	fortinetHandmade "github.com/MaineK00n/vuls-data-update/pkg/extract/fortinet/handmade"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/freebsd"
@@ -160,7 +160,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitTrickest(),
-		newCmdFedora(),
+		newCmdFedoraAPI(),
 		newCmdFortinetHandmade(), newCmdFortinetCVRF(),
 		newCmdFreeBSD(),
 		newCmdGentoo(),
@@ -1048,21 +1048,21 @@ func newCmdExploitTrickest() *cobra.Command {
 	return cmd
 }
 
-func newCmdFedora() *cobra.Command {
+func newCmdFedoraAPI() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "fedora"),
+		dir: filepath.Join(util.CacheDir(), "extract", "fedora", "api"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fedora <Raw Fedora Repository PATH>",
-		Short: "Extract Fedora data source",
+		Use:   "fedora-api <Raw Fedora Repository PATH>",
+		Short: "Extract Fedora API data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract fedora vuls-data-raw-fedora
+			$ vuls-data-update extract fedora-api vuls-data-raw-fedora-api
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := fedora.Extract(args[0], fedora.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract fedora")
+			if err := fedoraAPI.Extract(args[0], fedoraAPI.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract fedora api")
 			}
 			return nil
 		},
