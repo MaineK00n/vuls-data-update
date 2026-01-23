@@ -51,7 +51,7 @@ func (f FileName) ShouldInclude() bool {
 		// SLEM 5 series has "5" and "5.y". SLEM 6 series has "6.y" only. Exclude "5" here.
 		return f.Version != "5"
 	case "suse.linux.enterprise":
-		// suse.linux.enterprise 12 and 15 has "-sp<minor>" and 16 has ".<minor>" in filenames.
+		// suse.linux.enterprise 11, 12, and 15 have "-sp<minor>" format, and 16 has ".<minor>" format in filenames for service packs.
 		if strings.Contains(f.Version, "-sp") || strings.Contains(f.Version, ".") {
 			return false
 		}
