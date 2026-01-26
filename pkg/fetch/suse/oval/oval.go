@@ -374,6 +374,7 @@ func (opts options) walkIndexOf() ([]ovalfile, error) {
 			// sanity check, but opensuse.leap:13.2 has -patch variant only
 			switch e {
 			case "opensuse.leap:13.2":
+				continue
 			default:
 				return nil, errors.Errorf("no vulnerability oval found for %s", e)
 			}
