@@ -1,0 +1,97 @@
+{
+	"name": "cri-o",
+	"stream": "1.22",
+	"version": 3820220816125954,
+	"static_context": false,
+	"context": "75741a8b",
+	"arch": "x86_64",
+	"summary": "Kubernetes Container Runtime Interface for OCI-based containers",
+	"description": "CRI-O is the Kubernetes Container Runtime Interface for OCI-based containers.",
+	"license": {
+		"module": [
+			"ASL 2.0"
+		],
+		"content": [
+			"ASL 2.0"
+		]
+	},
+	"dependencies": [
+		{
+			"build_requires": {
+				"platform": [
+					"f38"
+				]
+			},
+			"requires": {
+				"platform": [
+					"f38"
+				]
+			}
+		}
+	],
+	"references": {
+		"community": "https://github.com/cri-o/cri-o",
+		"documentation": "https://cri-o.io",
+		"tracker": "https://github.com/cri-o/cri-o"
+	},
+	"profiles": {
+		"default": {
+			"rpms": [
+				"cri-o",
+				"cri-tools"
+			]
+		}
+	},
+	"api": {
+		"rpms": [
+			"cri-o",
+			"cri-tools"
+		]
+	},
+	"components": {
+		"rpms": {
+			"cri-o": {
+				"rationale": "Primary component of this module.",
+				"ref": "1.22",
+				"buildonly": false,
+				"buildroot": false,
+				"srpm_buildroot": false,
+				"buildorder": 0,
+				"arches": [
+					"aarch64",
+					"i686",
+					"ppc64le",
+					"s390x",
+					"x86_64"
+				]
+			},
+			"cri-tools": {
+				"rationale": "Primary component of this module.",
+				"ref": "1.22",
+				"buildonly": false,
+				"buildroot": false,
+				"srpm_buildroot": false,
+				"buildorder": 0,
+				"arches": [
+					"aarch64",
+					"i686",
+					"ppc64le",
+					"s390x",
+					"x86_64"
+				]
+			}
+		}
+	},
+	"artifacts": {
+		"rpms": [
+			"cri-o-0:1.22.5-1.module_f38+14967+36288aa7.src",
+			"cri-o-0:1.22.5-1.module_f38+14967+36288aa7.x86_64",
+			"cri-o-debuginfo-0:1.22.5-1.module_f38+14967+36288aa7.x86_64",
+			"cri-o-debugsource-0:1.22.5-1.module_f38+14967+36288aa7.x86_64",
+			"cri-tools-0:1.22.0-3.module_f38+14967+36288aa7.src",
+			"cri-tools-0:1.22.0-3.module_f38+14967+36288aa7.x86_64",
+			"cri-tools-debuginfo-0:1.22.0-3.module_f38+14967+36288aa7.x86_64",
+			"cri-tools-debugsource-0:1.22.0-3.module_f38+14967+36288aa7.x86_64"
+		]
+	}
+}
