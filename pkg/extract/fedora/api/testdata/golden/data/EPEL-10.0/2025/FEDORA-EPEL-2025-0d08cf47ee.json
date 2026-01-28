@@ -1,0 +1,109 @@
+{
+	"id": "FEDORA-EPEL-2025-0d08cf47ee",
+	"advisories": [
+		{
+			"content": {
+				"id": "FEDORA-EPEL-2025-0d08cf47ee",
+				"title": "perl-File-Find-Rule-0.35-1.el10_0",
+				"description": "This update fixes an arbitrary code execution vulnerability (CVE-2011-10007) by using a 3-argument version of `open()` instead of the old-fashioned 2-argument version.\n",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-EPEL-2025-0d08cf47ee"
+					}
+				],
+				"published": "2025-06-06T09:39:42Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "epel:10"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2011-10007",
+				"title": "CVE-2011-10007 perl-file-find-rule: File::Find::Rule Arbitrary Code Execution",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "high"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2370424"
+					}
+				],
+				"published": "2025-06-05T13:01:14Z",
+				"modified": "2025-08-13T13:10:11Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "epel:10"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "epel:10",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "perl-File-Find-Rule",
+											"architectures": [
+												"noarch",
+												"src"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:0.35-1.el10_0"
+											}
+										],
+										"fixed": [
+											"0:0.35-1.el10_0"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fedora-api",
+		"raws": [
+			"fixtures/EPEL-10.0/2025/FEDORA-EPEL-2025-0d08cf47ee.json"
+		]
+	}
+}

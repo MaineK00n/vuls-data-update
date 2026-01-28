@@ -1,0 +1,264 @@
+{
+	"id": "FEDORA-2024-900475e0f7",
+	"advisories": [
+		{
+			"content": {
+				"id": "FEDORA-2024-900475e0f7",
+				"title": "netatalk-3.2.1-1.fc40",
+				"description": "Security fix for CVE-2024-38439, CVE-2024-38440, and CVE-2024-38441",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bodhi.fedoraproject.org/updates/FEDORA-2024-900475e0f7"
+					}
+				],
+				"published": "2024-06-30T17:41:52Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-38439",
+				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
+					}
+				],
+				"published": "2024-06-18T03:21:00Z",
+				"modified": "2024-06-29T16:25:44Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-38440",
+				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
+					}
+				],
+				"published": "2024-06-18T03:21:00Z",
+				"modified": "2024-06-29T16:25:44Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2024-38441",
+				"title": "CVE-2024-38439 CVE-2024-38441 CVE-2024-38440 netatalk: multiple vulnerabilities",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "fedoraproject.org",
+						"vendor": "medium"
+					}
+				],
+				"references": [
+					{
+						"source": "fedoraproject.org",
+						"url": "https://bugzilla.redhat.com/show_bug.cgi?id=2292817"
+					}
+				],
+				"published": "2024-06-18T03:21:00Z",
+				"modified": "2024-06-29T16:25:44Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "fedora:40"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "fedora:40",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk",
+											"architectures": [
+												"x86_64",
+												"aarch64",
+												"i686",
+												"ppc64le",
+												"s390x",
+												"src"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk-debugsource",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk-debuginfo",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "netatalk-devel",
+											"architectures": [
+												"i686",
+												"ppc64le",
+												"s390x",
+												"x86_64",
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "5:3.2.1-1.fc40"
+											}
+										],
+										"fixed": [
+											"5:3.2.1-1.fc40"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "fedora-api",
+		"raws": [
+			"fixtures/F40/2024/FEDORA-2024-900475e0f7.json"
+		]
+	}
+}

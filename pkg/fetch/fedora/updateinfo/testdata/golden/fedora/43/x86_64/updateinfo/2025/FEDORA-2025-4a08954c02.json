@@ -1,0 +1,80 @@
+{
+	"from": "updates@fedoraproject.org",
+	"status": "stable",
+	"type": "bugfix",
+	"version": "2.0",
+	"id": "FEDORA-2025-4a08954c02",
+	"title": "python-boto3-1.42.0-1.fc43 python-botocore-1.41.6-1.fc43 python-s3transfer-0.16.0-1.fc43",
+	"issued": {
+		"date": "2025-12-01 18:15:47"
+	},
+	"updated": {
+		"date": "2025-12-03 00:52:00"
+	},
+	"rights": "Copyright (C) 2026 Red Hat, Inc. and others.",
+	"release": "Fedora 43",
+	"severity": "Low",
+	"description": "Latest updates.",
+	"pkglist": {
+		"collection": {
+			"short": "F43",
+			"name": "Fedora 43",
+			"package": [
+				{
+					"name": "python-boto3",
+					"epoch": "0",
+					"version": "1.42.0",
+					"release": "1.fc43",
+					"arch": "src",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/43/SRPMS/p/python-boto3-1.42.0-1.fc43.src.rpm",
+					"filename": "python-boto3-1.42.0-1.fc43.src.rpm"
+				},
+				{
+					"name": "python3-boto3",
+					"epoch": "0",
+					"version": "1.42.0",
+					"release": "1.fc43",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/43/i386/p/python3-boto3-1.42.0-1.fc43.noarch.rpm",
+					"filename": "python3-boto3-1.42.0-1.fc43.noarch.rpm"
+				},
+				{
+					"name": "python-botocore",
+					"epoch": "0",
+					"version": "1.41.6",
+					"release": "1.fc43",
+					"arch": "src",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/43/SRPMS/p/python-botocore-1.41.6-1.fc43.src.rpm",
+					"filename": "python-botocore-1.41.6-1.fc43.src.rpm"
+				},
+				{
+					"name": "python3-botocore",
+					"epoch": "0",
+					"version": "1.41.6",
+					"release": "1.fc43",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/43/i386/p/python3-botocore-1.41.6-1.fc43.noarch.rpm",
+					"filename": "python3-botocore-1.41.6-1.fc43.noarch.rpm"
+				},
+				{
+					"name": "python-s3transfer",
+					"epoch": "0",
+					"version": "0.16.0",
+					"release": "1.fc43",
+					"arch": "src",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/43/SRPMS/p/python-s3transfer-0.16.0-1.fc43.src.rpm",
+					"filename": "python-s3transfer-0.16.0-1.fc43.src.rpm"
+				},
+				{
+					"name": "python3-s3transfer",
+					"epoch": "0",
+					"version": "0.16.0",
+					"release": "1.fc43",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/43/i386/p/python3-s3transfer-0.16.0-1.fc43.noarch.rpm",
+					"filename": "python3-s3transfer-0.16.0-1.fc43.noarch.rpm"
+				}
+			]
+		}
+	}
+}

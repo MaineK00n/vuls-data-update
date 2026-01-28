@@ -1,0 +1,42 @@
+[Version]
+
+[Files]
+1716317954	d	4096	fedora/linux/updates/38/Modular/x86_64/debug
+1716317945	d	4096	fedora/linux/updates/38/Modular/x86_64/drpms
+1716317981	f	345225	fedora/linux/updates/38/Modular/x86_64/repodata/0ccf6d1cd5df5984dc533b21f88ce4fd6898f618c3b16a0a21f71fb070e80b93-other.xml.zck
+1716317981	f	251789	fedora/linux/updates/38/Modular/x86_64/repodata/2f45ee822d109a7fa04b1efdae8ba18a0a78d77dbb5dbccdfc9026050f42519c-primary.xml.gz
+1716317981	f	1774053	fedora/linux/updates/38/Modular/x86_64/repodata/4ab542a1d5e4f8f8d4720be5188b5941789405491a629f9f570a970786e248a6-filelists.xml.zck
+1716317981	f	1524	fedora/linux/updates/38/Modular/x86_64/repodata/5018295245e031a2d51db78a23935461d067cdbc1b6e43d8575983c5f6893252-updateinfo.xml.xz
+1716317981	f	114656	fedora/linux/updates/38/Modular/x86_64/repodata/6f7ba46e42d46372113effcfdd487cac36af82e20eb4fa3213a7d96190db40af-other.xml.gz
+1716317981	f	1724	fedora/linux/updates/38/Modular/x86_64/repodata/91130971cbd19f4064acc8b009ca4c6c14c074afb9dc9838cac0c0e48046435f-updateinfo.xml.zck
+1716317981	f	32317	fedora/linux/updates/38/Modular/x86_64/repodata/94bf64c1dcb8a99560d1c57ae4814ea5a1736e822976ca3d8e11228c19a8be79-modules.yaml.gz
+1716317981	f	476469	fedora/linux/updates/38/Modular/x86_64/repodata/cbadcdfb4e7f2b358a6311e02cce69931239a3b6a2dcb80d7d6100181bb85d87-primary.xml.zck
+1716317981	f	1688709	fedora/linux/updates/38/Modular/x86_64/repodata/f8babff8439553ddc44ddcec64f1b2cc395f352e3417161d2639bb73d17435d3-filelists.xml.gz
+1716317981	f	4975	fedora/linux/updates/38/Modular/x86_64/repodata/repomd.xml
+1716317981	d	4096	fedora/linux/updates/38/Modular/x86_64/repodata
+1716317930	d	4096	fedora/linux/updates/38/Modular/x86_64
+1716317859	f	62	fedora/linux/updates/38/Modular/state
+1716317859	d	4096	fedora/linux/updates/38/Modular
+1716314691	d	4096	fedora/linux/updates/38
+1617825797	d	4096	epel/6.2017-11-07/SRPMS/Packages
+1617825912	f	665359	epel/6.2017-11-07/SRPMS/repodata/0c2ac8fb8e851438d79533b71b90386a3b4e96641ac2c969fb3fa990357ad8bd-filelists.sqlite.bz2
+1617825912	f	1941837	epel/6.2017-11-07/SRPMS/repodata/243f3997fd48a4f8b238698922b863d25c0e3b7c56d9ccbaeb226e9c303fcf90-primary.sqlite.bz2
+1617825912	f	474732	epel/6.2017-11-07/SRPMS/repodata/7a6244feabcffd3dee27899989f1bad0e3ea3c61cec8d75bc9b4ad07bfa52759-filelists.xml.gz
+1617825912	f	834954	epel/6.2017-11-07/SRPMS/repodata/804c7236e6d341cbb68a257bf8b984a140c1f1d2006e35ba9f6d2383b1a50ab0-updateinfo.xml.bz2
+1617825912	f	1766235	epel/6.2017-11-07/SRPMS/repodata/81c54c5f7e783803ae8b4933d17a313f84cd55d5d70c9d62f568c13948a19146-other.sqlite.bz2
+1617825912	f	1651664	epel/6.2017-11-07/SRPMS/repodata/a354f458b2b7a13546c338abf413fb6be939f5636f66e90801ee57522673a7eb-primary.xml.gz
+1617825912	f	1227966	epel/6.2017-11-07/SRPMS/repodata/cb8e4ee8f3eb2fce514d7f4e10afc1813b390779201667917b45921f483840f8-updateinfo.xml.zck
+1617825912	f	1563163	epel/6.2017-11-07/SRPMS/repodata/da685abc14ec128bcbd5834ba906ad700cda8050c4e6bba6799d032e6be5769f-other.xml.gz
+1617825912	f	3730	epel/6.2017-11-07/SRPMS/repodata/repomd.xml
+1617825912	d	4096	epel/6.2017-11-07/SRPMS/repodata
+1617825797	d	4096	epel/6.2017-11-07/SRPMS
+
+[Checksums SHA1]
+
+[Checksums MD5]
+
+[Checksums SHA256]
+
+[Checksums SHA512]
+
+[End]
