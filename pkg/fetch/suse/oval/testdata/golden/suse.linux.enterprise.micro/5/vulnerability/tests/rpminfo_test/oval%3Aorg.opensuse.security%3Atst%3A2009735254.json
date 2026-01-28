@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009735254",
+	"version": "1",
+	"comment": "vim-small is <9.0.1234-150000.5.34.1 for aarch64,ppc64le,s390x,x86_64",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009052260"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009174513"
+	}
+}

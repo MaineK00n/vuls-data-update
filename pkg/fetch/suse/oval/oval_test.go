@@ -1,7 +1,6 @@
 package oval_test
 
 import (
-	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
@@ -20,25 +19,21 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		indexof  string
 		hasError bool
 	}{
 		{
-			name:    "happy path",
-			indexof: "testdata/fixtures/indexof_valid.html",
+			name: "happy",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if strings.HasSuffix(r.URL.Path, "/") {
-					http.ServeFile(w, r, tt.indexof)
-				} else if strings.HasSuffix(r.URL.Path, ".xml.gz") {
-					_, f := path.Split(r.URL.Path)
-					http.ServeFile(w, r, fmt.Sprintf("testdata/fixtures/%s", f))
-				} else {
-					http.NotFound(w, r)
+				switch {
+				case strings.HasSuffix(r.URL.Path, "/"):
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "indexof.html"))
+				default:
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}
 			}))
 			defer ts.Close()

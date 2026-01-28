@@ -1,0 +1,576 @@
+{
+	"id": "oval:org.opensuse.security:def:88827",
+	"version": "1",
+	"class": "patch",
+	"metadata": {
+		"title": "389-ds-3.0.6~git86.dce421a0d-160000.2.2 on GA media (Moderate)",
+		"affected": {
+			"family": "unix",
+			"platform": [
+				"SUSE Linux Enterprise Server 16.0"
+			]
+		},
+		"reference": [
+			{
+				"ref_id": "CVE-2014-8105",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2014-8105/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2014-8112",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2014-8112/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-1854",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2015-1854/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2015-3230",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2015-3230/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2016-4992",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2016-4992/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2016-5416",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2016-5416/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2017-15134",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2017-15134/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2017-15135",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2017-15135/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-1054",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-1054/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-10850",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-10850/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-10871",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-10871/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-1089",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-1089/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-10935",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-10935/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-14624",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-14624/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-14638",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-14638/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2018-14648",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2018-14648/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2019-14824",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2019-14824/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2019-3883",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2019-3883/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2021-3652",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2021-3652/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2021-4091",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2021-4091/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2021-45710",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2021-45710/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2022-0918",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2022-0918/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2022-0996",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2022-0996/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2022-1949",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2022-1949/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2022-2850",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2022-2850/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2024-1062",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2024-1062/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2024-2199",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2024-2199/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2024-3657",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2024-3657/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2024-5953",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2024-5953/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2024-6237",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2024-6237/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2025-2487",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2025-2487/",
+				"source": "CVE"
+			},
+			{
+				"ref_id": "CVE-2025-3416",
+				"ref_url": "https://www.suse.com/security/cve/CVE-2025-3416/",
+				"source": "CVE"
+			}
+		],
+		"description": "\nThese are all security issues fixed in the 389-ds-3.0.6~git86.dce421a0d-160000.2.2 package on the GA media of SUSE Linux Enterprise Server 16.0.\t\t",
+		"advisory": {
+			"from": "security@suse.de",
+			"severity": "Moderate",
+			"cve": [
+				{
+					"text": "CVE-2014-8105 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2014-8105/"
+				},
+				{
+					"text": "CVE-2014-8105 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2014-8105"
+				},
+				{
+					"text": "CVE-2014-8112 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2014-8112/"
+				},
+				{
+					"text": "CVE-2014-8112 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2014-8112"
+				},
+				{
+					"text": "CVE-2015-1854 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2015-1854/"
+				},
+				{
+					"text": "CVE-2015-1854 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2015-1854",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+				},
+				{
+					"text": "CVE-2015-3230 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2015-3230/"
+				},
+				{
+					"text": "CVE-2015-3230 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2015-3230"
+				},
+				{
+					"text": "CVE-2016-4992 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2016-4992/"
+				},
+				{
+					"text": "CVE-2016-4992 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2016-4992",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2016-5416 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2016-5416/"
+				},
+				{
+					"text": "CVE-2016-5416 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2016-5416",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2017-15134 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2017-15134/"
+				},
+				{
+					"text": "CVE-2017-15134 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2017-15134",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2017-15135 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2017-15135/"
+				},
+				{
+					"text": "CVE-2017-15135 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2017-15135",
+					"impact": "high",
+					"cvss3": "8.1/CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2018-1054 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-1054/"
+				},
+				{
+					"text": "CVE-2018-1054 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-1054",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-10850 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-10850/",
+					"impact": "medium",
+					"cvss3": "5.9/CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-10850 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-10850",
+					"impact": "medium",
+					"cvss3": "5.9/CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-10871 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-10871/",
+					"impact": "low",
+					"cvss3": "3.8/CVSS:3.0/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:N"
+				},
+				{
+					"text": "CVE-2018-10871 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-10871",
+					"impact": "high",
+					"cvss3": "7.2/CVSS:3.0/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2018-1089 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-1089/"
+				},
+				{
+					"text": "CVE-2018-1089 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-1089",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-10935 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-10935/",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-10935 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-10935",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-14624 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-14624/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-14624 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-14624",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-14638 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-14638/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-14638 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-14638",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-14648 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2018-14648/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2018-14648 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2018-14648",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2019-14824 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2019-14824/"
+				},
+				{
+					"text": "CVE-2019-14824 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2019-14824",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2019-3883 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2019-3883/",
+					"impact": "medium",
+					"cvss3": "5.3/CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+				},
+				{
+					"text": "CVE-2019-3883 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2019-3883",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2021-3652 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2021-3652/",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+				},
+				{
+					"text": "CVE-2021-3652 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2021-3652",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+				},
+				{
+					"text": "CVE-2021-4091 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2021-4091/",
+					"impact": "medium",
+					"cvss3": "5.9/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2021-4091 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2021-4091",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2021-45710 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2021-45710/",
+					"impact": "low",
+					"cvss3": "3.3/CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L"
+				},
+				{
+					"text": "CVE-2021-45710 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2021-45710",
+					"impact": "high",
+					"cvss3": "8.1/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+				},
+				{
+					"text": "CVE-2022-0918 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2022-0918/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2022-0918 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2022-0918",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2022-0996 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2022-0996/",
+					"impact": "medium",
+					"cvss3": "5.7/CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2022-0996 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2022-0996",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2022-1949 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2022-1949/",
+					"impact": "critical",
+					"cvss3": "9.1/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+				},
+				{
+					"text": "CVE-2022-1949 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2022-1949",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+				},
+				{
+					"text": "CVE-2022-2850 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2022-2850/",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2022-2850 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2022-2850",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2024-1062 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2024-1062/",
+					"impact": "medium",
+					"cvss3": "5.5/CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2024-1062 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2024-1062"
+				},
+				{
+					"text": "CVE-2024-2199 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2024-2199/",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2024-2199 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2024-2199"
+				},
+				{
+					"text": "CVE-2024-3657 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2024-3657/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2024-3657 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2024-3657"
+				},
+				{
+					"text": "CVE-2024-5953 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2024-5953/",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2024-5953 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2024-5953"
+				},
+				{
+					"text": "CVE-2024-6237 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2024-6237/",
+					"impact": "medium",
+					"cvss3": "5.3/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+				},
+				{
+					"text": "CVE-2024-6237 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2024-6237",
+					"impact": "medium",
+					"cvss3": "6.5/CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"
+				},
+				{
+					"text": "CVE-2025-2487 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2025-2487/",
+					"impact": "high",
+					"cvss3": "7.5/CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+					"cvss4": "8.7/CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+				},
+				{
+					"text": "CVE-2025-2487 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2025-2487"
+				},
+				{
+					"text": "CVE-2025-3416 at SUSE",
+					"href": "https://www.suse.com/security/cve/CVE-2025-3416/",
+					"impact": "low",
+					"cvss3": "3.7/CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+					"cvss4": "6.3/CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N"
+				},
+				{
+					"text": "CVE-2025-3416 at NVD",
+					"href": "https://nvd.nist.gov/vuln/detail/CVE-2025-3416"
+				}
+			],
+			"issued": {
+				"date": "2025-11-01"
+			},
+			"updated": {
+				"date": "2025-11-01"
+			},
+			"affected_cpe_list": {
+				"cpe": [
+					"cpe:/o:suse:sles:16:16.0:server"
+				]
+			}
+		}
+	},
+	"criteria": {
+		"operator": "AND",
+		"criterias": [
+			{
+				"operator": "OR",
+				"criterions": [
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025971",
+						"comment": "389-ds-3.0.6~git86.dce421a0d-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025972",
+						"comment": "389-ds-devel-3.0.6~git86.dce421a0d-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025973",
+						"comment": "389-ds-snmp-3.0.6~git86.dce421a0d-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025974",
+						"comment": "lib389-3.0.6~git86.dce421a0d-160000.2.2 is installed"
+					},
+					{
+						"test_ref": "oval:org.opensuse.security:tst:2010025975",
+						"comment": "libsvrcore0-3.0.6~git86.dce421a0d-160000.2.2 is installed"
+					}
+				]
+			}
+		],
+		"criterions": [
+			{
+				"test_ref": "oval:org.opensuse.security:tst:2010025976",
+				"comment": "SUSE Linux Enterprise Server 16.0 is installed"
+			}
+		]
+	}
+}

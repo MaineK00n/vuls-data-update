@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2010025972",
+	"version": "1",
+	"comment": "389-ds-devel is <3.0.6~git86.dce421a0d-160000.2.2 for aarch64,ppc64le,s390x,x86_64",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009042095"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009244130"
+	}
+}
