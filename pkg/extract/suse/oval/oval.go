@@ -224,6 +224,11 @@ func (e extractor) extract(path, outdir string) error {
 		return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-YYYY-ZZZZ", data.ID)
 	}
 
+	// Merge with existing data if exists.
+	// This read-modify-read happens per "definitions/" directory, the files in it has CVE IDs in its names,
+	// then no concurrency issue should happen in the bunch.
+	// Other "definitions/" directorries are processed in sequentially in Extract function.
+	// So, no locks are required here.
 	filename := filepath.Join(outdir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID))
 	if _, err := os.Stat(filename); err == nil {
 		f, err := os.Open(filename)
@@ -972,7 +977,7 @@ func (e extractor) translateEVRCriterion(oc oval.Criterion, t oval.RpminfoTest, 
 				},
 			}, nil
 		default:
-			return translated{}, errors.Errorf("unexpected rpminfo_test check. test: %s, expected: %q, actual: %q", oc.TestRef, []string{"at least one", "all", "none_satisfy"}, t.Check)
+			return translated{}, errors.Errorf("unexpected rpminfo_test check. test: %s, expected: %q, actual: %q", oc.TestRef, []string{"at least one", "all", "none satisfy"}, t.Check)
 		}
 	default:
 		return translated{}, errors.Errorf("unexpected evr operation. test: %s, check: %q, expected: %q, actual: %q", oc.TestRef, "at least one", []string{"less than", "equals", "greater than", "greater than or equal"}, s.Evr.Operation)
