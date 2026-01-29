@@ -429,13 +429,32 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 	refs := make(map[referenceTypes.Reference]struct{})
 
 	for _, cve := range def.Metadata.Advisory.Cve {
-		ss, cveRef, err := buildSeverities(cve)
+		source, err := func() (string, error) {
+			switch {
+			case strings.HasSuffix(strings.TrimSpace(cve.Text), " at SUSE"),
+				strings.HasPrefix(strings.TrimSpace(cve.Href), "https://www.suse.com/security/cve/"):
+				return "SUSE", nil
+			case strings.HasSuffix(strings.TrimSpace(cve.Text), " at NVD"):
+				return "NVD", nil
+			default:
+				return "", errors.Errorf("unexpected CVE source. expected: %q, actual: %q, href: %q", []string{"SUSE", "NVD"}, cve.Text, cve.Href)
+			}
+		}()
+		if err != nil {
+			return nil, vulnerabilityContentTypes.Content{}, errors.Wrap(err, "determine CVE source")
+		}
+
+		refs[referenceTypes.Reference{
+			Source: source,
+			URL:    strings.TrimSuffix(strings.TrimSpace(cve.Href), "/"),
+		}] = struct{}{}
+
+		ss, err := buildSeverities(source, cve)
 		if err != nil {
 			return nil, vulnerabilityContentTypes.Content{}, errors.Wrapf(err, "build severity %s", cve.Text)
 		}
 
 		v.Severity = append(v.Severity, ss...)
-		refs[cveRef] = struct{}{}
 	}
 
 	for _, b := range def.Metadata.Advisory.Bugzilla {
@@ -481,22 +500,7 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 	return advs, v, nil
 }
 
-func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Reference, error) {
-	source, err := func() (string, error) {
-		switch {
-		case strings.HasSuffix(strings.TrimSpace(cve.Text), " at SUSE"),
-			strings.HasPrefix(strings.TrimSpace(cve.Href), "https://www.suse.com/security/cve/"):
-			return "SUSE", nil
-		case strings.HasSuffix(strings.TrimSpace(cve.Text), " at NVD"):
-			return "NVD", nil
-		default:
-			return "", errors.Errorf("unexpected CVE source. expected: %q, actual: %q, href: %q", []string{"SUSE", "NVD"}, cve.Text, cve.Href)
-		}
-	}()
-	if err != nil {
-		return nil, referenceTypes.Reference{}, errors.Wrap(err, "determine CVE source")
-	}
-
+func buildSeverities(source string, cve oval.CVE) ([]severityTypes.Severity, error) {
 	var ss []severityTypes.Severity
 
 	if cve.Cvss3 != "" {
@@ -505,7 +509,7 @@ func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Ref
 		case strings.HasPrefix(rhs, "CVSS:3.0"):
 			v30, err := cvssV30Types.Parse(rhs)
 			if err != nil {
-				return nil, referenceTypes.Reference{}, errors.Wrap(err, "parse cvss3.0")
+				return nil, errors.Wrap(err, "parse cvss3.0")
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:    severityTypes.SeverityTypeCVSSv30,
@@ -515,7 +519,7 @@ func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Ref
 		case strings.HasPrefix(rhs, "CVSS:3.1"):
 			v31, err := cvssV31Types.Parse(rhs)
 			if err != nil {
-				return nil, referenceTypes.Reference{}, errors.Wrap(err, "parse cvss3.1")
+				return nil, errors.Wrap(err, "parse cvss3.1")
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:    severityTypes.SeverityTypeCVSSv31,
@@ -523,7 +527,7 @@ func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Ref
 				CVSSv31: v31,
 			})
 		default:
-			return nil, referenceTypes.Reference{}, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", cve.Cvss3)
+			return nil, errors.Errorf("unexpected CVSSv3 string. expected: %q, actual: %q", "<score>/CVSS:3.[01]/<vector>", cve.Cvss3)
 		}
 	}
 
@@ -533,7 +537,7 @@ func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Ref
 		case strings.HasPrefix(rhs, "CVSS:4.0"):
 			v40, err := cvssV40Types.Parse(rhs)
 			if err != nil {
-				return nil, referenceTypes.Reference{}, errors.Wrap(err, "parse cvss4.0")
+				return nil, errors.Wrap(err, "parse cvss4.0")
 			}
 			ss = append(ss, severityTypes.Severity{
 				Type:    severityTypes.SeverityTypeCVSSv40,
@@ -541,7 +545,7 @@ func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Ref
 				CVSSv40: v40,
 			})
 		default:
-			return nil, referenceTypes.Reference{}, errors.Errorf("unexpected CVSSv4 string. expected: %q, actual: %q", "<score>/CVSS:4.0/<vector>", cve.Cvss4)
+			return nil, errors.Errorf("unexpected CVSSv4 string. expected: %q, actual: %q", "<score>/CVSS:4.0/<vector>", cve.Cvss4)
 		}
 	}
 
@@ -556,10 +560,7 @@ func buildSeverities(cve oval.CVE) ([]severityTypes.Severity, referenceTypes.Ref
 		})
 	}
 
-	return ss, referenceTypes.Reference{
-		Source: source,
-		URL:    strings.TrimSuffix(strings.TrimSpace(cve.Href), "/"),
-	}, nil
+	return ss, nil
 }
 
 type translated struct {
