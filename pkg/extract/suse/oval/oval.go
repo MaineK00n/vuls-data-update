@@ -302,7 +302,7 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 
 	ds, err := func() ([]detectionTypes.Detection, error) {
 		if t.alwaysSatisfied {
-			return nil, errors.Wrapf(err, "root criteria must not be always-satisfied. id: %s", id)
+			return nil, errors.Errorf("root criteria must not be always-satisfied. id: %s", id)
 		}
 
 		if t.neverSatisfied {
@@ -455,12 +455,10 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 				URL:    strings.TrimSuffix(strings.TrimSpace(r.RefURL), "/"),
 			}] = struct{}{}
 		case "CVE":
-			if !slices.ContainsFunc(v.References, func(ref referenceTypes.Reference) bool { return ref.URL == r.RefURL }) {
-				refs[referenceTypes.Reference{
-					Source: "CVE",
-					URL:    strings.TrimSuffix(strings.TrimSpace(r.RefURL), "/"),
-				}] = struct{}{}
-			}
+			refs[referenceTypes.Reference{
+				Source: "CVE",
+				URL:    strings.TrimSuffix(strings.TrimSpace(r.RefURL), "/"),
+			}] = struct{}{}
 		case "SUSE-SU":
 			advs = append(advs, advisoryContentTypes.Content{
 				ID:    advisoryContentTypes.AdvisoryID(strings.TrimSpace(r.RefID)),
