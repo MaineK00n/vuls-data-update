@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009962940",
+	"version": "1",
+	"comment": "kernel-source is <6.4.0-24.1 for noarch",
+	"check": "all",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009030418"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009230492"
+	}
+}

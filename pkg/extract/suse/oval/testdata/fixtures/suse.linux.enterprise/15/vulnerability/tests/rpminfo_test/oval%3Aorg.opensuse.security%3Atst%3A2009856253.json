@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009856253",
+	"version": "1",
+	"comment": "sle-module-development-tools-release is ==15.6",
+	"check": "at least one",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009046397"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009202136"
+	}
+}

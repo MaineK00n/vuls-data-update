@@ -1,0 +1,6 @@
+{
+	"id": "oval:org.opensuse.security:obj:2009067304",
+	"version": "1",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"name": "SL-Micro-release"
+}

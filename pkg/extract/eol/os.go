@@ -7,6 +7,11 @@ import (
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
 )
 
+const (
+	EcosystemTypeSUSEEnterpriseServer  = "suse.linux.enterprise.server"
+	EcosystemTypeSUSEEnterpriseDesktop = "suse.linux.enterprise.desktop"
+)
+
 var os = map[string]map[string]eolTypes.EOL{
 	ecosystemTypes.EcosystemTypeAlma: {
 		"8": {
@@ -958,9 +963,8 @@ var os = map[string]map[string]eolTypes.EOL{
 				"Standard": time.Date(2017, 1, 17, 23, 59, 59, 0, time.UTC),
 			},
 		},
-		"tumbleweed": {Ended: false},
 	},
-	"opensuse leap": {
+	ecosystemTypes.EcosystemTypeOpenSUSELeap: {
 		"42.1": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1016,7 +1020,10 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	ecosystemTypes.EcosystemTypeSUSEServer: {
+	ecosystemTypes.EcosystemTypeOpenSUSETumbleweed: {
+		"tumbleweed": {Ended: false},
+	},
+	EcosystemTypeSUSEEnterpriseServer: {
 		"10": {
 			Ended: true,
 			Date: map[string]time.Time{
@@ -1174,7 +1181,7 @@ var os = map[string]map[string]eolTypes.EOL{
 			},
 		},
 	},
-	ecosystemTypes.EcosystemTypeSUSEDesktop: {
+	EcosystemTypeSUSEEnterpriseDesktop: {
 		"11": {
 			Ended: true,
 			Date: map[string]time.Time{

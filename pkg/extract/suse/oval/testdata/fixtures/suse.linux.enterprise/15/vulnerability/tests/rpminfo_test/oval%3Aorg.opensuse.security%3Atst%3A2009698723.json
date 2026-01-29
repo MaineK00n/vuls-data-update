@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009698723",
+	"version": "1",
+	"comment": "kernel-livepatch-4_12_14-150_75-default is >=13-150000.2.1",
+	"check": "none satisfy",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009052200"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009166511"
+	}
+}
