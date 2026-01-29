@@ -30,7 +30,7 @@ const (
 	EcosystemTypeOpenSUSELeapMicro     = "opensuse.leap.micro"
 	EcosystemTypeOpenSUSETumbleweed    = "opensuse.tumbleweed"
 	EcosystemTypeSUSELinuxEnterprise        = "suse.linux.enterprise"
-	EcosystemTypeSUSEMicro             = "suse.linux.micro"
+	EcosystemTypeSUSELinuxMicro             = "suse.linux.micro"
 	EcosystemTypeUbuntu                = "ubuntu"
 	EcosystemTypeWindows               = "windows"
 
