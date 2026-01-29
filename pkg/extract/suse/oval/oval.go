@@ -211,9 +211,6 @@ func (e extractor) extract(path, outdir string) error {
 	if err != nil {
 		return errors.Wrapf(err, "build data %s", path)
 	}
-	if data == nil {
-		return nil
-	}
 
 	splitted, err := util.Split(string(data.ID), "-", "-")
 	if err != nil {
@@ -245,16 +242,16 @@ func (e extractor) extract(path, outdir string) error {
 		data.Merge(base)
 	}
 
-	if err := util.Write(filename, *data, true); err != nil {
+	if err := util.Write(filename, data, true); err != nil {
 		return errors.Wrapf(err, "write %s", filename)
 	}
 
 	return nil
 }
 
-func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
+func (e extractor) buildData(def oval.Definition) (dataTypes.Data, error) {
 	if !strings.HasPrefix(strings.TrimSpace(def.Metadata.Title), "CVE-") {
-		return nil, errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-YYYY-ZZZZ", def.Metadata.Title)
+		return dataTypes.Data{}, errors.Errorf("unexpected ID format. expected: %q, actual: %q", "CVE-YYYY-ZZZZ", def.Metadata.Title)
 	}
 
 	id := strings.TrimSpace(def.Metadata.Title)
@@ -281,15 +278,15 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 		}
 	}()
 	if err != nil {
-		return nil, errors.Wrapf(err, "build ecosystem. osname: %q, version: %q", e.osname, e.version)
+		return dataTypes.Data{}, errors.Wrapf(err, "build ecosystem. osname: %q, version: %q", e.osname, e.version)
 	}
 
 	tag := func() segmentTypes.DetectionTag {
 		switch e.osname {
 		case "suse.linux.enterprise.server":
-			return segmentTypes.DetectionTag("suse.linux.enterprise.server")
+			return segmentTypes.DetectionTag("server")
 		case "suse.linux.enterprise.desktop":
-			return segmentTypes.DetectionTag("suse.linux.enterprise.desktop")
+			return segmentTypes.DetectionTag("desktop")
 		default:
 			return segmentTypes.DetectionTag("")
 		}
@@ -297,12 +294,12 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 
 	as, v, err := buildAdvisoryAndVulnerability(def)
 	if err != nil {
-		return nil, errors.Wrapf(err, "build vulnerability %s", def.Metadata.Title)
+		return dataTypes.Data{}, errors.Wrapf(err, "build vulnerability %s", def.Metadata.Title)
 	}
 
 	t, err := e.translateCriteria(def.Criteria)
 	if err != nil {
-		return nil, errors.Wrapf(err, "eval criteria")
+		return dataTypes.Data{}, errors.Wrapf(err, "eval criteria")
 	}
 
 	ds, err := func() ([]detectionTypes.Detection, error) {
@@ -370,10 +367,10 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 		}, nil
 	}()
 	if err != nil {
-		return nil, errors.Wrapf(err, "build detection")
+		return dataTypes.Data{}, errors.Wrapf(err, "build detection")
 	}
 
-	return &dataTypes.Data{
+	return dataTypes.Data{
 		ID: dataTypes.RootID(id),
 		Advisories: func() []advisoryTypes.Advisory {
 			advs := make([]advisoryTypes.Advisory, 0, len(as))
