@@ -257,9 +257,9 @@ func (e extractor) buildData(def oval.Definition) (*dataTypes.Data, error) {
 	es, err := func() (ecosystemTypes.Ecosystem, error) {
 		switch e.osname {
 		case "suse.linux.enterprise", "suse.linux.enterprise.server", "suse.linux.enterprise.desktop":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEEnterprise, strings.Split(e.version, ".")[0])), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSELinuxEnterprise, strings.Split(e.version, ".")[0])), nil
 		case "suse.linux.micro", "suse.linux.enterprise.micro":
-			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSEMicro, strings.Split(e.version, ".")[0])), nil
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSELinuxMicro, strings.Split(e.version, ".")[0])), nil
 		case "opensuse":
 			switch e.version {
 			case "tumbleweed":

@@ -10,29 +10,29 @@ import (
 type Ecosystem string
 
 const (
-	EcosystemTypeAlma                  = "alma"
-	EcosystemTypeAlpine                = "alpine"
-	EcosystemTypeAmazon                = "amazon"
-	EcosystemTypeArch                  = "arch"
-	EcosystemTypeCentOS                = "centos"
-	EcosystemTypeDebian                = "debian"
-	EcosystemTypeEPEL                  = "epel"
-	EcosystemTypeEPELNext              = "epel-next"
-	EcosystemTypeFedora                = "fedora"
-	EcosystemTypeFreeBSD               = "freebsd"
-	EcosystemTypeGentoo                = "gentoo"
-	EcosystemTypeNetBSD                = "netbsd"
-	EcosystemTypeOracle                = "oracle"
-	EcosystemTypeRedHat                = "redhat"
-	EcosystemTypeRocky                 = "rocky"
-	EcosystemTypeOpenSUSE              = "opensuse"
-	EcosystemTypeOpenSUSELeap          = "opensuse.leap"
-	EcosystemTypeOpenSUSELeapMicro     = "opensuse.leap.micro"
-	EcosystemTypeOpenSUSETumbleweed    = "opensuse.tumbleweed"
-	EcosystemTypeSUSELinuxEnterprise        = "suse.linux.enterprise"
-	EcosystemTypeSUSELinuxMicro             = "suse.linux.micro"
-	EcosystemTypeUbuntu                = "ubuntu"
-	EcosystemTypeWindows               = "windows"
+	EcosystemTypeAlma                = "alma"
+	EcosystemTypeAlpine              = "alpine"
+	EcosystemTypeAmazon              = "amazon"
+	EcosystemTypeArch                = "arch"
+	EcosystemTypeCentOS              = "centos"
+	EcosystemTypeDebian              = "debian"
+	EcosystemTypeEPEL                = "epel"
+	EcosystemTypeEPELNext            = "epel-next"
+	EcosystemTypeFedora              = "fedora"
+	EcosystemTypeFreeBSD             = "freebsd"
+	EcosystemTypeGentoo              = "gentoo"
+	EcosystemTypeNetBSD              = "netbsd"
+	EcosystemTypeOracle              = "oracle"
+	EcosystemTypeRedHat              = "redhat"
+	EcosystemTypeRocky               = "rocky"
+	EcosystemTypeOpenSUSE            = "opensuse"
+	EcosystemTypeOpenSUSELeap        = "opensuse.leap"
+	EcosystemTypeOpenSUSELeapMicro   = "opensuse.leap.micro"
+	EcosystemTypeOpenSUSETumbleweed  = "opensuse.tumbleweed"
+	EcosystemTypeSUSELinuxEnterprise = "suse.linux.enterprise"
+	EcosystemTypeSUSELinuxMicro      = "suse.linux.micro"
+	EcosystemTypeUbuntu              = "ubuntu"
+	EcosystemTypeWindows             = "windows"
 
 	EcosystemTypeCPE = "cpe"
 
@@ -99,9 +99,9 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
 	case EcosystemTypeOpenSUSETumbleweed:
 		return EcosystemTypeOpenSUSETumbleweed, nil
-	case EcosystemTypeSUSEEnterprise, EcosystemTypeSUSEEnterpriseServer, EcosystemTypeSUSEEnterpriseDesktop:
-		return Ecosystem(fmt.Sprintf("%s:%s", EcosystemTypeSUSEEnterprise, strings.Split(release, ".")[0])), nil
-	case EcosystemTypeSUSEMicro:
+	case EcosystemTypeSUSELinuxEnterprise:
+		return Ecosystem(fmt.Sprintf("%s:%s", EcosystemTypeSUSELinuxEnterprise, strings.Split(release, ".")[0])), nil
+	case EcosystemTypeSUSELinuxMicro:
 		return Ecosystem(fmt.Sprintf("%s:%s", family, strings.Split(release, ".")[0])), nil
 	case EcosystemTypeUbuntu:
 		ss := strings.Split(release, ".")
@@ -146,6 +146,6 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 	case EcosystemTypeSwift:
 		return Ecosystem(family), nil
 	default:
-		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeCentOS, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeOpenSUSELeap, EcosystemTypeOpenSUSELeapMicro, EcosystemTypeOpenSUSETumbleweed, EcosystemTypeSUSEEnterpriseServer, EcosystemTypeSUSEEnterpriseDesktop, EcosystemTypeSUSEMicro, EcosystemTypeUbuntu, EcosystemTypeWindows, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
+		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeCentOS, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeOpenSUSELeap, EcosystemTypeOpenSUSELeapMicro, EcosystemTypeOpenSUSETumbleweed, EcosystemTypeSUSELinuxMicro, EcosystemTypeUbuntu, EcosystemTypeWindows, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
 	}
 }
