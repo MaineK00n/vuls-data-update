@@ -1,0 +1,323 @@
+{
+	"from": "updates@fedoraproject.org",
+	"status": "stable",
+	"type": "bugfix",
+	"version": "2.0",
+	"id": "FEDORA-EPEL-2018-abe0e978c0",
+	"title": "zabbix22-2.2.23-1.el6",
+	"issued": {
+		"date": "2018-10-12 19:42:16"
+	},
+	"updated": {
+		"date": "2019-05-29 02:01:55"
+	},
+	"rights": "Copyright (C) 2019 Red Hat, Inc. and others.",
+	"release": "Fedora EPEL 6",
+	"severity": "None",
+	"description": "IMPORTANT: This update removes support for native Jabber (XMPP) messaging! This was necessary because the used library, iksemel, is practically unmaintained upstream and was therefore dropped from the package collection. You may be interested in following https://support.zabbix.com/browse/ZBXNEXT-2842 on this matter.\n\nhttps://www.zabbix.com/rn/rn2.2.23",
+	"pkglist": {
+		"collection": {
+			"short": "EL-6",
+			"name": "Fedora EPEL 6",
+			"package": [
+				{
+					"name": "zabbix22-agent",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-agent-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-agent-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-proxy-pgsql-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-proxy-pgsql-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-server-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-server-mysql-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-server-mysql-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-sqlite3",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-proxy-sqlite3-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-proxy-sqlite3-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-server-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-server-pgsql-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-server-pgsql-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-debuginfo",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-debuginfo-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-debuginfo-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "i686",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-proxy-mysql-2.2.23-1.el6.i686.rpm",
+					"filename": "zabbix22-proxy-mysql-2.2.23-1.el6.i686.rpm"
+				},
+				{
+					"name": "zabbix22-agent",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-agent-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-agent-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-debuginfo",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-debuginfo-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-debuginfo-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-server-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-server-mysql-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-server-mysql-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-server-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-server-pgsql-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-server-pgsql-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-proxy-pgsql-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-proxy-pgsql-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-proxy-mysql-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-proxy-mysql-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-sqlite3",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "ppc64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/ppc64/z/zabbix22-proxy-sqlite3-2.2.23-1.el6.ppc64.rpm",
+					"filename": "zabbix22-proxy-sqlite3-2.2.23-1.el6.ppc64.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-sqlite3",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-proxy-sqlite3-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-proxy-sqlite3-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-proxy-mysql-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-proxy-mysql-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-dbfiles-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-dbfiles-pgsql-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-dbfiles-pgsql-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-proxy-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-proxy-pgsql-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-proxy-pgsql-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-dbfiles-sqlite3",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-dbfiles-sqlite3-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-dbfiles-sqlite3-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-web-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-web-mysql-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-web-mysql-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-web",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-web-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-web-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-server",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-server-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-server-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-server-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-server-pgsql-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-server-pgsql-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-web-pgsql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-web-pgsql-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-web-pgsql-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-agent",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-agent-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-agent-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-dbfiles-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-dbfiles-mysql-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-dbfiles-mysql-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22-debuginfo",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-debuginfo-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-debuginfo-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-server-mysql",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "x86_64",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/x86_64/z/zabbix22-server-mysql-2.2.23-1.el6.x86_64.rpm",
+					"filename": "zabbix22-server-mysql-2.2.23-1.el6.x86_64.rpm"
+				},
+				{
+					"name": "zabbix22-proxy",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "noarch",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/i386/z/zabbix22-proxy-2.2.23-1.el6.noarch.rpm",
+					"filename": "zabbix22-proxy-2.2.23-1.el6.noarch.rpm"
+				},
+				{
+					"name": "zabbix22",
+					"epoch": "0",
+					"version": "2.2.23",
+					"release": "1.el6",
+					"arch": "src",
+					"src": "https://download.fedoraproject.org/pub/fedora/linux/updates/6/SRPMS/z/zabbix22-2.2.23-1.el6.src.rpm",
+					"filename": "zabbix22-2.2.23-1.el6.src.rpm"
+				}
+			]
+		}
+	}
+}

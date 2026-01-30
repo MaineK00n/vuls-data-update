@@ -1,0 +1,46 @@
+{
+	"from": "updates@fedoraproject.org",
+	"status": "stable",
+	"type": "security",
+	"version": "2.0",
+	"id": "FEDORA-MODULAR-2024-deafa21e1d",
+	"title": "nginx-mainline-3820240218193500.f38",
+	"issued": {
+		"date": "2024-02-27 02:07:15"
+	},
+	"updated": {
+		"date": "2024-02-28 01:27:47"
+	},
+	"rights": "Copyright (C) 2024 Red Hat, Inc. and others.",
+	"release": "Fedora 38 Modular",
+	"severity": "Important",
+	"description": "Contains fixes for [vulnerabilities in HTTP/3](http://nginx.org/en/security_advisories.html) (CVE-2024-24989, CVE-2024-24990).",
+	"references": {
+		"reference": [
+			{
+				"href": "https://bugzilla.redhat.com/show_bug.cgi?id=2232217",
+				"id": "2232217",
+				"type": "bugzilla",
+				"title": "nginx-1.25.4 is available"
+			},
+			{
+				"href": "https://bugzilla.redhat.com/show_bug.cgi?id=2264297",
+				"id": "2264297",
+				"type": "bugzilla",
+				"title": "TRIAGE CVE-2024-24989 nginx:mainline/nginx: NULL pointer dereference in HTTP/3 [fedora-all]"
+			},
+			{
+				"href": "https://bugzilla.redhat.com/show_bug.cgi?id=2264303",
+				"id": "2264303",
+				"type": "bugzilla",
+				"title": "TRIAGE CVE-2024-24990 nginx:mainline/nginx: Use-after-free in HTTP/3 [fedora-all]"
+			}
+		]
+	},
+	"pkglist": {
+		"collection": {
+			"short": "F38M",
+			"name": "Fedora 38 Modular"
+		}
+	}
+}

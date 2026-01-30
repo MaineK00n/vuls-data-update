@@ -57,7 +57,8 @@ import (
 	exploitGitHub "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/github"
 	exploitInTheWild "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/inthewild"
 	exploitTrickest "github.com/MaineK00n/vuls-data-update/pkg/fetch/exploit/trickest"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora"
+	fedoraAPI "github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/api"
+	fedoraUpdateinfo "github.com/MaineK00n/vuls-data-update/pkg/fetch/fedora/updateinfo"
 	fortinetCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/csaf"
 	fortinetCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/fortinet/cvrf"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/freebsd"
@@ -229,7 +230,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdEPSS(),
 		newCmdErlangGHSA(), newCmdErlangOSV(),
 		newCmdExploitExploitDB(), newCmdExploitGitHub(), newCmdExploitInTheWild(), newCmdExploitExploitTrickest(),
-		newCmdFedora(),
+		newCmdFedoraAPI(), newCmdFedoraUpdateinfo(),
 		newCmdFortinetCSAF(), newCmdFortinetCVRF(),
 		newCmdFreeBSD(),
 		newCmdGentoo(),
@@ -1707,14 +1708,14 @@ func newCmdExploitExploitTrickest() *cobra.Command {
 	return cmd
 }
 
-func newCmdFedora() *cobra.Command {
+func newCmdFedoraAPI() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
 		wait        time.Duration
 	}{
 		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora"),
+			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora", "api"),
 			retry: 3,
 		},
 		concurrency: 5,
@@ -1722,15 +1723,52 @@ func newCmdFedora() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "fedora <release>...",
-		Short: "Fetch Fedora data source",
+		Use:   "fedora-api <release>...",
+		Short: "Fetch Fedora API data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch fedora F39
+			$ vuls-data-update fetch fedora-api F39
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := fedora.Fetch(args, fedora.WithDir(options.dir), fedora.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch fedora")
+			if err := fedoraAPI.Fetch(args, fedoraAPI.WithDir(options.dir), fedoraAPI.WithRetry(options.retry), fedoraAPI.WithConcurrency(options.concurrency), fedoraAPI.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch fedora api")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency process")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdFedoraUpdateinfo() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "fedora", "updateinfo"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "fedora-updateinfo",
+		Short: "Fetch Fedora Updateinfo data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch fedora-updateinfo
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := fedoraUpdateinfo.Fetch(fedoraUpdateinfo.WithDir(options.dir), fedoraUpdateinfo.WithRetry(options.retry), fedoraUpdateinfo.WithConcurrency(options.concurrency), fedoraUpdateinfo.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch fedora updateinfo")
 			}
 			return nil
 		},
