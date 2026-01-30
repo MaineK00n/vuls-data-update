@@ -22,23 +22,25 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := oval.Extract(tt.args, oval.WithDir(dir))
+			err := oval.Extract(utiltest.QueryUnescapeFileTree(t, tt.args), oval.WithDir(dir))
 			switch {
-			case err != nil && !tt.hasError:
-				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
-			}
-
-			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
-			if err != nil {
+			case err != nil && tt.hasError:
+				return
+			case err != nil:
 				t.Error("unexpected error:", err)
+			default:
+				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				gp, err := filepath.Abs(dir)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				utiltest.Diff(t, ep, gp)
 			}
-			gp, err := filepath.Abs(dir)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			utiltest.Diff(t, ep, gp)
 		})
 	}
 }

@@ -1,0 +1,13 @@
+{
+	"id": "oval:org.opensuse.security:tst:2009953370",
+	"version": "1",
+	"comment": "kernel-syms-azure is <6.4.0-150600.6.1 for aarch64,ppc64le,s390x,x86_64",
+	"check": "all",
+	"xmlns": "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux",
+	"object": {
+		"object_ref": "oval:org.opensuse.security:obj:2009046534"
+	},
+	"state": {
+		"state_ref": "oval:org.opensuse.security:ste:2009228020"
+	}
+}

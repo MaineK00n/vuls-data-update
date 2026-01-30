@@ -45,7 +45,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: non centos package, v2: non centos package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.el8",
 				v2:     "0.0.1-0.0.1.el8",
 			},
@@ -55,7 +55,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: centos package, v2: non centos package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.el8.centos",
 				v2:     "0.0.1-0.0.1.el8",
 			},
@@ -65,7 +65,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: non modular package, v2: modular package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.el8",
 				v2:     "0.0.1-0.0.1.module_el8",
 			},
@@ -75,7 +75,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: modular package, v2: modular package",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.module_el8",
 				v2:     "0.0.1-0.0.1.module_el8",
 			},
@@ -85,7 +85,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: el7, v2: el8",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.el7",
 				v2:     "0.0.1-0.0.1.el8",
 			},
@@ -95,7 +95,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: el8, v2: el8_10",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.el8",
 				v2:     "0.0.1-0.0.1.el8_10",
 			},
@@ -105,7 +105,7 @@ func TestRangeType_Compare(t *testing.T) {
 			name: "centos v1: module+el8, v2: module+el8_10",
 			rt:   affectedrangeTypes.RangeTypeRPM,
 			args: args{
-				family: ecosystemTypes.EcosytemCentOS,
+				family: ecosystemTypes.EcosystemTypeCentOS,
 				v1:     "0.0.1-0.0.1.module+el8",
 				v2:     "0.0.1-0.0.1.module+el8_10",
 			},
@@ -406,7 +406,8 @@ func TestRangeType_Compare(t *testing.T) {
 				v2: "0.0.1",
 			},
 			want: 0,
-		}, {
+		},
+		{
 			name: "unknown type",
 			rt:   affectedrangeTypes.RangeTypeUnknown,
 			args: args{
