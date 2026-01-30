@@ -481,6 +481,13 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 				URL:    strings.TrimSuffix(strings.TrimSpace(r.RefURL), "/"),
 			}] = struct{}{}
 		case "SUSE-SU":
+			if r.RefID == "" {
+				if r.RefURL == "" {
+					continue
+				}
+				return nil, vulnerabilityContentTypes.Content{}, errors.New("unexpected empty SUSE-SU ID.")
+			}
+
 			advs = append(advs, advisoryContentTypes.Content{
 				ID:    advisoryContentTypes.AdvisoryID(strings.TrimSpace(r.RefID)),
 				Title: r.RefID,
