@@ -81,8 +81,8 @@ func Fetch(opts ...Option) error {
 	}
 	defer os.RemoveAll(cloneDir)
 
-	if err := exec.Command("git", "clone", "--depth", "1", options.repoURL, cloneDir).Run(); err != nil {
-		return errors.Wrapf(err, "git clone --depth 1 %s %s", options.repoURL, cloneDir)
+	if output, err := exec.Command("git", "clone", "--depth", "1", options.repoURL, cloneDir).CombinedOutput(); err != nil {
+		return errors.Wrapf(err, "git clone --depth 1 %s %s. output:\n%s", options.repoURL, cloneDir, string(output))
 	}
 
 	for _, target := range []string{"active", "retired", "ignored"} {
