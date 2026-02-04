@@ -77,9 +77,10 @@ func Fetch(opts ...Option) error {
 	log.Printf("[INFO] Fetch Palo Alto Networks Security Advisories (list)")
 
 	var advs []Advisory
+	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	for i := 1; ; i++ {
 		as, err := func() ([]Advisory, error) {
-			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(fmt.Sprintf(options.dataURL, i))
+			resp, err := client.Get(fmt.Sprintf(options.dataURL, i))
 			if err != nil {
 				return nil, errors.Wrap(err, "fetch advisory")
 			}
@@ -106,6 +107,9 @@ func Fetch(opts ...Option) error {
 		}
 
 		advs = append(advs, as...)
+	}
+	if len(advs) == 0 {
+		return errors.Errorf("no advisories found")
 	}
 
 	bar := progressbar.Default(int64(len(advs)))
