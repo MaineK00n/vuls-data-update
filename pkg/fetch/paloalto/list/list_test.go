@@ -22,12 +22,14 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		testdata string
 		hasError bool
 	}{
 		{
-			name:     "happy path",
-			testdata: "testdata/fixtures/",
+			name: "happy",
+		},
+		{
+			name:     "no-advisories",
+			hasError: true,
 		},
 	}
 	for _, tt := range tests {
@@ -41,7 +43,7 @@ func TestFetch(t *testing.T) {
 
 				switch r.URL.Query().Get("sort") {
 				case "doc":
-					f, err := os.Open(filepath.Join(tt.testdata, fmt.Sprintf("page%s.json", p)))
+					f, err := os.Open(filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("page%s.json", p)))
 					if err != nil {
 						http.Error(w, fmt.Sprintf("open testdata: %v", err), http.StatusInternalServerError)
 						return
@@ -72,7 +74,7 @@ func TestFetch(t *testing.T) {
 
 					http.ServeContent(w, r, fmt.Sprintf("page%s.json", p), stat.ModTime(), bytes.NewReader(bs))
 				default:
-					http.ServeFile(w, r, filepath.Join(tt.testdata, fmt.Sprintf("page%s.json", p)))
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("page%s.json", p)))
 				}
 			}))
 			defer ts.Close()
