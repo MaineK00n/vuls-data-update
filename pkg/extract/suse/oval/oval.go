@@ -109,20 +109,20 @@ func Extract(inputDir string, opts ...Option) error {
 		return errors.Wrapf(err, "glob directories. pattern: %q", filepath.Join(inputDir, "*", "*", "vulnerability", "definitions"))
 	}
 
+	defDirs = append(defDirs, filepath.Join(inputDir, "opensuse.tumbleweed", "vulnerability", "definitions"))
+
 	for _, defDir := range defDirs {
-		rel, err := filepath.Rel(inputDir, defDir)
-		if err != nil {
-			return errors.Wrapf(err, "get relative path. base: %q, target: %q", inputDir, defDir)
-		}
-
-		parts, err := util.Split(strings.TrimPrefix(rel, string(os.PathSeparator)), string(os.PathSeparator), string(os.PathSeparator), string(os.PathSeparator))
-		if err != nil {
-			return errors.Wrapf(err, "split %s", rel)
-		}
-
-		baseDir := filepath.Join(inputDir, parts[0], parts[1], parts[2])
-
+		baseDir := strings.TrimSuffix(defDir, "/definitions")
 		log.Printf("[INFO] extract OVAL files. dir: %s", baseDir)
+
+		parent, version := filepath.Split(strings.TrimSuffix(baseDir, "/vulnerability"))
+		_, osname := filepath.Split(strings.TrimSuffix(parent, "/"))
+
+		// opensuse.tumbleweed is a special case, no version directory exists.
+		if version == "opensuse.tumbleweed" {
+			osname = "opensuse.tumbleweed"
+			version = ""
+		}
 
 		g, ctx := errgroup.WithContext(context.Background())
 		g.SetLimit(options.concurrency)
@@ -160,8 +160,8 @@ func Extract(inputDir string, opts ...Option) error {
 					if err := (extractor{
 						inputDir: inputDir,
 						baseDir:  baseDir,
-						osname:   parts[0],
-						version:  parts[1],
+						osname:   osname,
+						version:  version,
 						r:        utiljson.NewJSONReader(),
 					}).extract(path, options.dir); err != nil {
 						return errors.Wrapf(err, "extract %s", path)
@@ -263,18 +263,15 @@ func (e extractor) buildData(def oval.Definition) (dataTypes.Data, error) {
 		case "suse.linux.micro", "suse.linux.enterprise.micro":
 			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeSUSELinuxMicro, strings.Split(e.version, ".")[0])), nil
 		case "opensuse":
-			switch e.version {
-			case "tumbleweed":
-				return ecosystemTypes.EcosystemTypeOpenSUSETumbleweed, nil
-			default:
-				return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSE, e.version)), nil
-			}
+			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSE, e.version)), nil
 		case "opensuse.leap":
 			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeap, e.version)), nil
 		case "opensuse.leap.micro":
 			return ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeOpenSUSELeapMicro, e.version)), nil
+		case "opensuse.tumbleweed":
+			return ecosystemTypes.EcosystemTypeOpenSUSETumbleweed, nil
 		default:
-			return "", errors.Errorf("unexpected osname. expected: %q, actual: %q", []string{"suse.linux.enterprise", "suse.linux.enterprise.server", "suse.linux.enterprise.desktop", "suse.linux.micro", "suse.linux.enterprise.micro", "opensuse", "opensuse.leap", "opensuse.leap.micro"}, e.osname)
+			return "", errors.Errorf("unexpected osname. expected: %q, actual: %q", []string{"suse.linux.enterprise", "suse.linux.enterprise.server", "suse.linux.enterprise.desktop", "suse.linux.micro", "suse.linux.enterprise.micro", "opensuse", "opensuse.leap", "opensuse.leap.micro", "opensuse.tumbleweed"}, e.osname)
 		}
 	}()
 	if err != nil {
