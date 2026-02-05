@@ -271,7 +271,7 @@ func (e extractor) buildData(def oval.Definition) (dataTypes.Data, error) {
 		case "opensuse.tumbleweed":
 			return ecosystemTypes.EcosystemTypeOpenSUSETumbleweed, nil
 		default:
-			return "", errors.Errorf("unexpected osname. expected: %q, actual: %q", []string{"suse.linux.enterprise", "suse.linux.enterprise.server", "suse.linux.enterprise.desktop", "suse.linux.micro", "suse.linux.enterprise.micro", "opensuse", "opensuse.leap", "opensuse.leap.micro"}, e.osname)
+			return "", errors.Errorf("unexpected osname. expected: %q, actual: %q", []string{"suse.linux.enterprise", "suse.linux.enterprise.server", "suse.linux.enterprise.desktop", "suse.linux.micro", "suse.linux.enterprise.micro", "opensuse", "opensuse.leap", "opensuse.leap.micro", "opensuse.tumbleweed"}, e.osname)
 		}
 	}()
 	if err != nil {
