@@ -334,8 +334,8 @@ func (opts options) walkIndexOf() ([]ovalfile, error) {
 			case strings.HasPrefix(stem, "opensuse.tumbleweed"):
 				return &ovalfile{
 					raw:     href,
-					os:      "opensuse.tumbleweed",
-					version: "",
+					os:      "opensuse",
+					version: "tumbleweed",
 					variant: variant,
 				}
 			case strings.HasPrefix(stem, "opensuse"):
