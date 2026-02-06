@@ -294,6 +294,8 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 				"noble":    "24.04",
 				"oracular": "24.10",
 				"plucky":   "25.04",
+				"questing": "25.10",
+				"resolute": "26.04",
 			}
 
 			for s := range strings.SplitSeq(release, "/") {
