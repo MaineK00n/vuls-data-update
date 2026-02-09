@@ -104,25 +104,55 @@ func Extract(inputDir string, opts ...Option) error {
 
 	log.Printf("[INFO] Extract SUSE OVAL")
 
-	defDirs, err := filepath.Glob(filepath.Join(inputDir, "*", "*", "vulnerability", "definitions"))
-	if err != nil {
-		return errors.Wrapf(err, "glob directories. pattern: %q", filepath.Join(inputDir, "*", "*", "vulnerability", "definitions"))
+	type osver struct {
+		osname  string
+		version string
 	}
 
-	defDirs = append(defDirs, filepath.Join(inputDir, "opensuse.tumbleweed", "vulnerability", "definitions"))
-
-	for _, defDir := range defDirs {
-		baseDir := strings.TrimSuffix(defDir, "/definitions")
-		log.Printf("[INFO] extract OVAL files. dir: %s", baseDir)
-
-		parent, version := filepath.Split(strings.TrimSuffix(baseDir, "/vulnerability"))
-		_, osname := filepath.Split(strings.TrimSuffix(parent, "/"))
-
-		// opensuse.tumbleweed is a special case, no version directory exists.
-		if version == "opensuse.tumbleweed" {
-			osname = "opensuse.tumbleweed"
-			version = ""
+	ovs, err := func() ([]osver, error) {
+		var ovs []osver
+		es, err := os.ReadDir(inputDir)
+		if err != nil {
+			return nil, errors.Wrapf(err, "read os directories. path: %s", inputDir)
 		}
+
+		for _, e := range es {
+			if !e.IsDir() {
+				continue
+			}
+
+			switch e.Name() {
+			case ".git":
+				continue
+			case "opensuse.tumbleweed":
+				ovs = append(ovs, osver{
+					osname: "opensuse.tumbleweed",
+				})
+			default:
+				vs, err := os.ReadDir(filepath.Join(inputDir, e.Name()))
+				if err != nil {
+					return nil, errors.Wrapf(err, "read version directories. path: %s", filepath.Join(inputDir, e.Name()))
+				}
+				for _, v := range vs {
+					if !v.IsDir() {
+						continue
+					}
+					ovs = append(ovs, osver{
+						osname:  e.Name(),
+						version: v.Name(),
+					})
+				}
+			}
+		}
+		return ovs, nil
+	}()
+	if err != nil {
+		return errors.Wrapf(err, " os/version directories. path: %s", inputDir)
+	}
+
+	for _, ov := range ovs {
+		baseDir := filepath.Join(inputDir, ov.osname, ov.version, "vulnerability")
+		log.Printf("[INFO] extract OVAL files. dir: %s", baseDir)
 
 		g, ctx := errgroup.WithContext(context.Background())
 		g.SetLimit(options.concurrency)
@@ -134,6 +164,11 @@ func Extract(inputDir string, opts ...Option) error {
 
 			if err := filepath.WalkDir(filepath.Join(baseDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
+					if errors.Is(err, os.ErrNotExist) && ov.osname == "opensuse.leap" && ov.version == "13.2" {
+						// opensuse.leap 13.2 has only the "patch" type.
+						return nil
+					}
+
 					return err
 				}
 
@@ -160,8 +195,8 @@ func Extract(inputDir string, opts ...Option) error {
 					if err := (extractor{
 						inputDir: inputDir,
 						baseDir:  baseDir,
-						osname:   osname,
-						version:  version,
+						osname:   ov.osname,
+						version:  ov.version,
 						r:        utiljson.NewJSONReader(),
 					}).extract(path, options.dir); err != nil {
 						return errors.Wrapf(err, "extract %s", path)
