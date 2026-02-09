@@ -111,34 +111,34 @@ func Extract(inputDir string, opts ...Option) error {
 
 	ovs, err := func() ([]osver, error) {
 		var ovs []osver
-		es, err := os.ReadDir(inputDir)
+		osDirs, err := os.ReadDir(inputDir)
 		if err != nil {
 			return nil, errors.Wrapf(err, "read os directories. path: %s", inputDir)
 		}
 
-		for _, e := range es {
-			if !e.IsDir() {
+		for _, osDir := range osDirs {
+			if !osDir.IsDir() {
 				continue
 			}
 
-			switch e.Name() {
+			switch osDir.Name() {
 			case ".git":
 			case "opensuse.tumbleweed":
 				ovs = append(ovs, osver{
 					osname: "opensuse.tumbleweed",
 				})
 			default:
-				vs, err := os.ReadDir(filepath.Join(inputDir, e.Name()))
+				versionDirs, err := os.ReadDir(filepath.Join(inputDir, osDir.Name()))
 				if err != nil {
-					return nil, errors.Wrapf(err, "read version directories. path: %s", filepath.Join(inputDir, e.Name()))
+					return nil, errors.Wrapf(err, "read version directories. path: %s", filepath.Join(inputDir, osDir.Name()))
 				}
-				for _, v := range vs {
-					if !v.IsDir() {
+				for _, versionDir := range versionDirs {
+					if !versionDir.IsDir() {
 						continue
 					}
 					ovs = append(ovs, osver{
-						osname:  e.Name(),
-						version: v.Name(),
+						osname:  osDir.Name(),
+						version: versionDir.Name(),
 					})
 				}
 			}
