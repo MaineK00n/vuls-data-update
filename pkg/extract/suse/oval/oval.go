@@ -123,7 +123,6 @@ func Extract(inputDir string, opts ...Option) error {
 
 			switch e.Name() {
 			case ".git":
-				continue
 			case "opensuse.tumbleweed":
 				ovs = append(ovs, osver{
 					osname: "opensuse.tumbleweed",
