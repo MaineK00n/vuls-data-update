@@ -982,7 +982,7 @@ func (e extractor) translateEVRCriterion(oc oval.Criterion, t oval.RpminfoTest, 
 						{
 							Type: criterionTypes.CriterionTypeVersion,
 							Version: &vcTypes.Criterion{
-								Vulnerable: false,
+								Vulnerable: true,
 								Package: criterionpackageTypes.Package{
 									Type: criterionpackageTypes.PackageTypeBinary,
 									Binary: &vcbinaryTypes.Package{
