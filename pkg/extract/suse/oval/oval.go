@@ -875,7 +875,7 @@ func (e extractor) translateEVRCriterion(oc oval.Criterion, t oval.RpminfoTest, 
 				Version: &vcTypes.Criterion{
 					Vulnerable: true,
 					FixStatus: &fixstatusTypes.FixStatus{
-						Class: fixstatusTypes.ClassUnknown,
+						Class: fixstatusTypes.ClassFixed,
 					},
 					Package: pkg,
 					Affected: &affectedTypes.Affected{
