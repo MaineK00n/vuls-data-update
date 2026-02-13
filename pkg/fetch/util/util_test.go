@@ -173,7 +173,7 @@ func TestWrite(t *testing.T) {
 				content: content{Message: string([]byte{0x66, 0xfc, 0x72})},
 				opts:    []util.WriteOption{util.WithAllowInvalidUTF8(true)},
 			},
-			want: []byte(fmt.Sprintf("{\n\t\"message\": \"%s\"\n}", string([]byte{0x66, 0xef, 0xbf, 0xbd, 0x72}))),
+			want: fmt.Appendf(nil, "{\n\t\"message\": \"%s\"\n}", string([]byte{0x66, 0xef, 0xbf, 0xbd, 0x72})),
 		},
 	}
 	for _, tt := range tests {

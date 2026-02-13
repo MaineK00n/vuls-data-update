@@ -498,7 +498,7 @@ func (o options) fetchModules(client *utilhttp.Client, u string) error {
 						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, d, fmt.Sprintf("%s-%s-%d.%s.json", md.Name, md.Stream, md.Version, md.Context)))
 					}
 				default:
-					return errors.Errorf("unexpected modulemd version. expected: %q, actual: %q", 2, ms.Version)
+					return errors.Errorf("unexpected modulemd version. expected: %q, actual: %q", "2", fmt.Sprintf("%d", ms.Version))
 				}
 			default:
 			}

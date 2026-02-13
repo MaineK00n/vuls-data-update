@@ -138,9 +138,9 @@ type Vuln struct {
 	} `json:"iot"`
 	IotTaxonomy *struct {
 		Data []struct {
-			Category    interface{} `json:"category"`
-			SubCategory *string     `json:"sub_category"`
-			Trust       float64     `json:"trust"`
+			Category    any     `json:"category"`
+			SubCategory *string `json:"sub_category"`
+			Trust       float64 `json:"trust"`
 		} `json:"data"`
 		Sources []struct {
 			Db string  `json:"db"`

@@ -56,7 +56,7 @@ func TestFetch(t *testing.T) {
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 						return
 					}
-					http.ServeContent(w, r, path.Base(r.URL.Path), time.Now(), bytes.NewReader(bytes.ReplaceAll(bs, []byte("?csaf_url=https://filestore.fortinet.com"), []byte(fmt.Sprintf("?csaf_url=http://%s", r.Host)))))
+					http.ServeContent(w, r, path.Base(r.URL.Path), time.Now(), bytes.NewReader(bytes.ReplaceAll(bs, []byte("?csaf_url=https://filestore.fortinet.com"), fmt.Appendf(nil, "?csaf_url=http://%s", r.Host))))
 				default:
 					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 				}

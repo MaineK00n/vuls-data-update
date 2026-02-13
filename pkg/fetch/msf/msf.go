@@ -144,7 +144,7 @@ func Fetch(opts ...Option) error {
 				module.Notes[k] = append(module.Notes[k], v)
 			case []string:
 				module.Notes[k] = append(module.Notes[k], v...)
-			case []interface{}:
+			case []any:
 				for _, e := range v {
 					s, ok := e.(string)
 					if !ok {
@@ -161,7 +161,7 @@ func Fetch(opts ...Option) error {
 		switch v := m.SessionTypes.(type) {
 		case []string:
 			module.SessionTypes = v
-		case []interface{}:
+		case []any:
 			for _, e := range v {
 				s, ok := e.(string)
 				if !ok {

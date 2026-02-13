@@ -6,12 +6,12 @@ type list struct {
 		Message string `json:"message"`
 	} `json:"status"`
 	Data struct {
-		Total     int         `json:"total"`
-		PageNum   int         `json:"page_num"`
-		TotalPage int         `json:"total_page"`
-		PageSize  int         `json:"page_size"`
-		Previous  interface{} `json:"previous"`
-		Next      interface{} `json:"next"`
+		Total     int `json:"total"`
+		PageNum   int `json:"page_num"`
+		TotalPage int `json:"total_page"`
+		PageSize  int `json:"page_size"`
+		Previous  any `json:"previous"`
+		Next      any `json:"next"`
 		Data      []struct {
 			Name     string  `json:"name"`
 			Size     float64 `json:"size"`

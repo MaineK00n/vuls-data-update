@@ -1030,7 +1030,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 			// To extract "stream" value, the regexp pattern of reversed order ("state" at the beginning) is also considered,
 			// e.g. \nstate\s*=\s*(enabled|1|true)[\w\W]*\nstream\s*=\s*3.0\b|\nstream\s*=\s*3.0\b[\w\W]*\nstate\s*=\s*(enabled|1|true)
 			var ss []string
-			for _, s := range strings.Split(s.Text.Text, `\n`) {
+			for s := range strings.SplitSeq(s.Text.Text, `\n`) {
 				if s == "" {
 					continue
 				}

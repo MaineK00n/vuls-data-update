@@ -129,10 +129,7 @@ func TestFetch(t *testing.T) {
 					}
 
 					base.TotalResults = len(filtered)
-					end := base.StartIndex + base.ResultsPerPage
-					if end > base.TotalResults {
-						end = base.TotalResults
-					}
+					end := min(base.StartIndex+base.ResultsPerPage, base.TotalResults)
 					base.MatchData = filtered[base.StartIndex:end]
 
 					bs, err := json.Marshal(base)

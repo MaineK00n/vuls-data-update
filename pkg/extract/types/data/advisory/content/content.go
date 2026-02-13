@@ -19,7 +19,7 @@ type Content struct {
 	References  []referenceTypes.Reference `json:"references,omitempty"`
 	Published   *time.Time                 `json:"published,omitempty"`
 	Modified    *time.Time                 `json:"modified,omitempty"`
-	Optional    map[string]interface{}     `json:"optional,omitempty"`
+	Optional    map[string]any             `json:"optional,omitempty"`
 }
 
 type AdvisoryID string

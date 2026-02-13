@@ -24,7 +24,7 @@ type GHSA struct {
 		Contact []string `json:"contact,omitempty"`
 		Type    string   `json:"type,omitempty"`
 	} `json:"credits,omitempty"`
-	DatabaseSpecific interface{} `json:"database_specific,omitempty"`
+	DatabaseSpecific any `json:"database_specific,omitempty"`
 }
 
 type Affected struct {
@@ -42,9 +42,9 @@ type Affected struct {
 		Repo   string  `json:"repo,omitempty"`
 		Events []Event `json:"events,omitempty"`
 	} `json:"ranges,omitempty"`
-	Versions          []string    `json:"versions,omitempty"`
-	EcosystemSpecific interface{} `json:"ecosystem_specific,omitempty"`
-	DatabaseSpecific  interface{} `json:"database_specific,omitempty"`
+	Versions          []string `json:"versions,omitempty"`
+	EcosystemSpecific any      `json:"ecosystem_specific,omitempty"`
+	DatabaseSpecific  any      `json:"database_specific,omitempty"`
 }
 
 type Event struct {

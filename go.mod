@@ -1,6 +1,6 @@
 module github.com/MaineK00n/vuls-data-update
 
-go 1.25
+go 1.26
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0

@@ -20,7 +20,7 @@ type Client retryablehttp.Client
 
 type clientOptions struct {
 	httpClient   *http.Client
-	logger       interface{}
+	logger       any
 	retryWaitMin time.Duration
 	retryWaitMax time.Duration
 	retryMax     int
@@ -45,14 +45,14 @@ func WithClientHTTPClient(client *http.Client) ClientOption {
 }
 
 type clientLoggerOption struct {
-	Log interface{}
+	Log any
 }
 
 func (l clientLoggerOption) apply(opts *clientOptions) {
 	opts.logger = l.Log
 }
 
-func WithClientLogger(log interface{}) ClientOption {
+func WithClientLogger(log any) ClientOption {
 	return clientLoggerOption{Log: log}
 }
 

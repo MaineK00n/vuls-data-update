@@ -146,7 +146,7 @@ func (opts options) fetch() ([]Rule, error) {
 					Header: match[re.SubexpIndex("header")],
 					Option: strings.TrimSpace(match[re.SubexpIndex("option")]),
 				}
-				for _, op := range strings.Split(r.Option, ";") {
+				for op := range strings.SplitSeq(r.Option, ";") {
 					lhs, rhs, _ := strings.Cut(strings.TrimSpace(op), ":")
 					switch lhs {
 					case "gid":
