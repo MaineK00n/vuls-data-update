@@ -62,8 +62,8 @@ func TestFetch(t *testing.T) {
 		{
 			name: "specify start and end mod date",
 			args: []cpematch.Option{
-				cpematch.WithLastModStartDate(func() *time.Time { t := time.Date(2023, time.November, 15, 23, 0, 0, 0, time.UTC); return &t }()),
-				cpematch.WithLastModEndDate(func() *time.Time { t := time.Date(2023, time.November, 15, 23, 30, 0, 0, time.UTC); return &t }()),
+				cpematch.WithLastModStartDate(new(time.Date(2023, time.November, 15, 23, 0, 0, 0, time.UTC))),
+				cpematch.WithLastModEndDate(new(time.Date(2023, time.November, 15, 23, 30, 0, 0, time.UTC))),
 			},
 			fixturePrefix: "moddate",
 			expectedCount: 3,

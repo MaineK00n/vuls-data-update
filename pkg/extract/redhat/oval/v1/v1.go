@@ -162,7 +162,7 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.RedHatOVALv1,
-		Name: func() *string { t := "RedHat Enterprise Linux OVALv1"; return &t }(),
+		Name: new("RedHat Enterprise Linux OVALv1"),
 		Raw: func() []repositoryTypes.Repository {
 			var rs []repositoryTypes.Repository
 			r1, _ := utilgit.GetDataSourceRepository(ovalDir)

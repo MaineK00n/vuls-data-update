@@ -92,7 +92,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.MitreV5,
-		Name: func() *string { t := "MITRE CVE v5"; return &t }(),
+		Name: new("MITRE CVE v5"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {

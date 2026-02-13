@@ -107,7 +107,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.Arch,
-		Name: func() *string { t := "Arch Linux Vulnrability Group"; return &t }(),
+		Name: new("Arch Linux Vulnerability Group"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {

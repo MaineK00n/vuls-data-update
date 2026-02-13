@@ -130,7 +130,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.EPSS,
-		Name: func() *string { t := "EPSS: Exploit Prediction Scoring System"; return &t }(),
+		Name: new("EPSS: Exploit Prediction Scoring System"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {

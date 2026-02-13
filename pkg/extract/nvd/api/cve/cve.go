@@ -144,7 +144,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.NVDAPICVE,
-		Name: func() *string { t := "NVD API CVE"; return &t }(),
+		Name: new("NVD API CVE"),
 		Raw: func() []repositoryTypes.Repository {
 			var res []repositoryTypes.Repository
 			cveGit, _ := utilgit.GetDataSourceRepository(cveDir)
@@ -391,7 +391,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 				}(),
 				Package: criterionpackageTypes.Package{
 					Type: criterionpackageTypes.PackageTypeCPE,
-					CPE:  func() *cpePackageTypes.CPE { s := cpePackageTypes.CPE(match.Criteria); return &s }(),
+					CPE:  new(cpePackageTypes.CPE(match.Criteria)),
 				},
 				Affected: func() *affectedTypes.Affected {
 					if match.VersionStartIncluding == "" && match.VersionStartExcluding == "" &&
@@ -433,7 +433,7 @@ func (e extractor) nodeToCriteria(n cveTypes.Node) (criteriaTypes.Criteria, erro
 						}(),
 						Package: criterionpackageTypes.Package{
 							Type: criterionpackageTypes.PackageTypeCPE,
-							CPE:  func() *cpePackageTypes.CPE { s := cpePackageTypes.CPE(n); return &s }(),
+							CPE:  new(cpePackageTypes.CPE(n)),
 						},
 					},
 				})

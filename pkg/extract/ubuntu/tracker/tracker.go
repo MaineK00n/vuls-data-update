@@ -108,7 +108,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.UbuntuCVETracker,
-		Name: func() *string { t := "Ubuntu CVE Tracker"; return &t }(),
+		Name: new("Ubuntu CVE Tracker"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {

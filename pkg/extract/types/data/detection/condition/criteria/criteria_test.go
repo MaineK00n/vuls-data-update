@@ -171,7 +171,7 @@ func TestCriteria_Contains(t *testing.T) {
 							Vulnerable: true,
 							Package: vcPackageTypes.Package{
 								Type: vcPackageTypes.PackageTypeCPE,
-								CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+								CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 							},
 						},
 					},
@@ -180,7 +180,7 @@ func TestCriteria_Contains(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
-						CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+						CPE: new("cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"),
 					}},
 				},
 			},
@@ -623,7 +623,7 @@ func TestCriteria_Accept(t *testing.T) {
 							Vulnerable: true,
 							Package: vcPackageTypes.Package{
 								Type: vcPackageTypes.PackageTypeCPE,
-								CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+								CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 							},
 						},
 					},
@@ -632,7 +632,7 @@ func TestCriteria_Accept(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
-						CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"; return &s }(),
+						CPE: new("cpe:2.3:a:vendor:product:0.0.0:*:*:*:*:*:*:*"),
 					}},
 				},
 			},
@@ -660,7 +660,7 @@ func TestCriteria_Accept(t *testing.T) {
 								Vulnerable: true,
 								Package: vcPackageTypes.Package{
 									Type: vcPackageTypes.PackageTypeCPE,
-									CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+									CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 								},
 							},
 						},
@@ -1273,7 +1273,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 								Vulnerable: true,
 								Package: vcPackageTypes.Package{
 									Type: vcPackageTypes.PackageTypeCPE,
-									CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+									CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 								},
 							},
 						},
@@ -1309,7 +1309,7 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 								Vulnerable: true,
 								Package: vcPackageTypes.Package{
 									Type: vcPackageTypes.PackageTypeCPE,
-									CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+									CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 								},
 							},
 						},

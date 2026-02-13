@@ -226,7 +226,7 @@ func TestCriterion_Accept(t *testing.T) {
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeCPE,
-					CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 				},
 				Affected: &affectedTypes.Affected{
 					Type:  affectedrangeTypes.RangeTypeSEMVER,
@@ -235,7 +235,7 @@ func TestCriterion_Accept(t *testing.T) {
 			},
 			args: args{
 				query: vcTypes.Query{
-					CPE: func() *string { s := "cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"; return &s }(),
+					CPE: new("cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"),
 				},
 			},
 			want: true,

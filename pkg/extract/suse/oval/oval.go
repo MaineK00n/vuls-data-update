@@ -212,7 +212,7 @@ func Extract(inputDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.SUSEOVAL,
-		Name: func() *string { t := "SUSE OVAL"; return &t }(),
+		Name: new("SUSE OVAL"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(inputDir)
 			if r == nil {
@@ -450,10 +450,7 @@ func buildAdvisoryAndVulnerability(def oval.Definition) ([]advisoryContentTypes.
 		v.Severity = append(v.Severity, severityTypes.Severity{
 			Type:   severityTypes.SeverityTypeVendor,
 			Source: "SUSE Severity",
-			Vendor: func() *string {
-				s := strings.TrimSpace(def.Metadata.Advisory.Severity)
-				return &s
-			}(),
+			Vendor: new(strings.TrimSpace(def.Metadata.Advisory.Severity)),
 		})
 	}
 
@@ -591,10 +588,7 @@ func buildSeverities(source string, cve oval.CVE) ([]severityTypes.Severity, err
 		ss = append(ss, severityTypes.Severity{
 			Type:   severityTypes.SeverityTypeVendor,
 			Source: fmt.Sprintf("%s impact", source),
-			Vendor: func() *string {
-				s := strings.TrimSpace(cve.Impact)
-				return &s
-			}(),
+			Vendor: new(strings.TrimSpace(cve.Impact)),
 		})
 	}
 

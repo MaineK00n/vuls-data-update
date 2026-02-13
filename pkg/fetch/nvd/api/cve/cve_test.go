@@ -62,8 +62,8 @@ func TestFetch(t *testing.T) {
 		{
 			name: "specify start and end mod date",
 			args: []cve.Option{
-				cve.WithLastModStartDate(func() *time.Time { t := time.Date(2023, time.November, 10, 04, 0, 0, 0, time.UTC); return &t }()),
-				cve.WithLastModEndDate(func() *time.Time { t := time.Date(2023, time.November, 10, 07, 0, 0, 0, time.UTC); return &t }()),
+				cve.WithLastModStartDate(new(time.Date(2023, time.November, 10, 04, 0, 0, 0, time.UTC))),
+				cve.WithLastModEndDate(new(time.Date(2023, time.November, 10, 07, 0, 0, 0, time.UTC))),
 			},
 			fixturePrefix: "moddate",
 			expectedCount: 3,

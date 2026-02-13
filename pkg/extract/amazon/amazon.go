@@ -103,7 +103,7 @@ func Extract(args string, opts ...Option) error {
 
 		if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 			ID:   sourceTypes.Amazon,
-			Name: func() *string { t := "Amazon Linux Security Center"; return &t }(),
+			Name: new("Amazon Linux Security Center"),
 			Raw: func() []repositoryTypes.Repository {
 				r, _ := utilgit.GetDataSourceRepository(args)
 				if r == nil {

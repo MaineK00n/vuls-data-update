@@ -51,10 +51,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
 					CreatedAt: "2025-07-14T13:05:30Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898921",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"),
 				},
 				{
 					ID:        460898773,
@@ -62,10 +59,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
 					CreatedAt: "2025-07-14T13:05:21Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"),
 				},
 				{
 					ID:        460909762,
@@ -73,10 +67,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:a8c9980b712acd74578c4e52aed513170d92577e3e2d6f53ae2fd25fad1ec7f1",
 					CreatedAt: "2025-07-14T13:16:15Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460909762",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460909762"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460909762"),
 				},
 				{
 					ID:        460900055,
@@ -84,10 +75,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:9e8ddef444ffde76dd764eeb4a5323353e603700f5412c86d0a6fe160a982a28",
 					CreatedAt: "2025-07-14T13:06:37Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460900055",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460900055"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460900055"),
 				},
 				{
 					ID:        460033050,
@@ -95,10 +83,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573af",
 					CreatedAt: "2025-07-12T18:34:54Z",
 					URL:       "https://api.github.com/users/vuls/packages/container/vuls-data-db/versions/460033050",
-					HTMLURL: func() *string {
-						s := "https://github.com/users/vuls/packages/container/vuls-data-db/460033050"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/users/vuls/packages/container/vuls-data-db/460033050"),
 				},
 				{
 					ID:        460033049,
@@ -106,10 +91,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573aa",
 					CreatedAt: "2025-07-12T06:34:54Z",
 					URL:       "https://api.github.com/users/vuls/packages/container/vuls-data-db/versions/460033049",
-					HTMLURL: func() *string {
-						s := "https://github.com/users/vuls/packages/container/vuls-data-db/460033049"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/users/vuls/packages/container/vuls-data-db/460033049"),
 				},
 			},
 		},
@@ -140,10 +122,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:6413c62920ab027e680d7adf44bec195e9f2ec7a299140ff9a5d2193a626b673",
 					CreatedAt: "2025-07-14T13:05:30Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898921",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"),
 				},
 				{
 					ID:        460898773,
@@ -151,10 +130,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:6cb985595c5e29861b266ae89ac42946dc5451557b8fd949ad08df12f9615efb",
 					CreatedAt: "2025-07-14T13:05:21Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460898773",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"),
 				},
 				{
 					ID:        460909762,
@@ -162,10 +138,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:a8c9980b712acd74578c4e52aed513170d92577e3e2d6f53ae2fd25fad1ec7f1",
 					CreatedAt: "2025-07-14T13:16:15Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460909762",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460909762"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460909762"),
 				},
 				{
 					ID:        460900055,
@@ -173,10 +146,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:9e8ddef444ffde76dd764eeb4a5323353e603700f5412c86d0a6fe160a982a28",
 					CreatedAt: "2025-07-14T13:06:37Z",
 					URL:       "https://api.github.com/orgs/vulsio/packages/container/vuls-data-db/versions/460900055",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460900055"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460900055"),
 				},
 				{
 					ID:        460033050,
@@ -184,10 +154,7 @@ func TestList(t *testing.T) {
 					Digest:    "sha256:29c88e701ac502d431e318a82b327d73f220b82714852b6942bcaffbb4e573af",
 					CreatedAt: "2025-07-12T18:34:54Z",
 					URL:       "https://api.github.com/users/vuls/packages/container/vuls-data-db/versions/460033050",
-					HTMLURL: func() *string {
-						s := "https://github.com/users/vuls/packages/container/vuls-data-db/460033050"
-						return &s
-					}(),
+					HTMLURL:   new("https://github.com/users/vuls/packages/container/vuls-data-db/460033050"),
 				},
 			},
 		},
@@ -228,10 +195,7 @@ func TestList(t *testing.T) {
 									PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 									CreatedAt:      "2025-07-14T13:05:30Z",
 									UpdatedAt:      "2025-07-14T13:05:30Z",
-									HTMLURL: func() *string {
-										s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"
-										return &s
-									}(),
+									HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"),
 									Metadata: &ls.Metadata{
 										PackageType: "container",
 										Container: &ls.Container{
@@ -246,10 +210,7 @@ func TestList(t *testing.T) {
 									PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 									CreatedAt:      "2025-07-14T13:05:21Z",
 									UpdatedAt:      "2025-07-14T13:05:21Z",
-									HTMLURL: func() *string {
-										s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"
-										return &s
-									}(),
+									HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"),
 									Metadata: &ls.Metadata{
 										PackageType: "container",
 										Container: &ls.Container{
@@ -264,10 +225,7 @@ func TestList(t *testing.T) {
 									PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 									CreatedAt:      "2025-07-14T13:16:15Z",
 									UpdatedAt:      "2025-07-14T13:16:15Z",
-									HTMLURL: func() *string {
-										s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460909762"
-										return &s
-									}(),
+									HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460909762"),
 									Metadata: &ls.Metadata{
 										PackageType: "container",
 										Container: &ls.Container{
@@ -282,10 +240,7 @@ func TestList(t *testing.T) {
 									PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 									CreatedAt:      "2025-07-14T13:06:37Z",
 									UpdatedAt:      "2025-07-14T13:06:37Z",
-									HTMLURL: func() *string {
-										s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460900055"
-										return &s
-									}(),
+									HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460900055"),
 									Metadata: &ls.Metadata{
 										PackageType: "container",
 										Container: &ls.Container{
@@ -302,10 +257,7 @@ func TestList(t *testing.T) {
 									PackageHTMLURL: "https://github.com/users/vuls/packages/container/package/vuls-data-db",
 									CreatedAt:      "2025-07-12T18:34:54Z",
 									UpdatedAt:      "2025-07-12T18:34:54Z",
-									HTMLURL: func() *string {
-										s := "https://github.com/users/vuls/packages/container/vuls-data-db/460033050"
-										return &s
-									}(),
+									HTMLURL:        new("https://github.com/users/vuls/packages/container/vuls-data-db/460033050"),
 									Metadata: &ls.Metadata{
 										PackageType: "container",
 										Container: &ls.Container{
@@ -320,10 +272,7 @@ func TestList(t *testing.T) {
 									PackageHTMLURL: "https://github.com/users/vuls/packages/container/package/vuls-data-db",
 									CreatedAt:      "2025-07-12T06:34:54Z",
 									UpdatedAt:      "2025-07-12T06:34:54Z",
-									HTMLURL: func() *string {
-										s := "https://github.com/users/vuls/packages/container/vuls-data-db/460033049"
-										return &s
-									}(),
+									HTMLURL:        new("https://github.com/users/vuls/packages/container/vuls-data-db/460033049"),
 									Metadata: &ls.Metadata{
 										PackageType: "container",
 										Container: &ls.Container{

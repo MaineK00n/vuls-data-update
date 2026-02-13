@@ -160,10 +160,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 			return false, nil
 		}
 		isAccepted, err := c.Package.Accept(packageTypes.Query{
-			CPE: func() *cpeTypes.Query {
-				q := cpeTypes.Query(*query.CPE)
-				return &q
-			}(),
+			CPE: new(cpeTypes.Query(*query.CPE)),
 		})
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")

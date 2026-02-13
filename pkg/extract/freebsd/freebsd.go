@@ -99,7 +99,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.FreeBSD,
-		Name: func() *string { t := "FreeBSD VuXML"; return &t }(),
+		Name: new("FreeBSD VuXML"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {

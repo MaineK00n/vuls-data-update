@@ -129,7 +129,7 @@ func Extract(inputDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.RockyOSV,
-		Name: func() *string { t := "Rocky Linux OSV"; return &t }(),
+		Name: new("Rocky Linux OSV"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(inputDir)
 			if r == nil {

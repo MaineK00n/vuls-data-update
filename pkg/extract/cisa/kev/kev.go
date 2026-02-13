@@ -84,7 +84,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.CISAKEV,
-		Name: func() *string { t := "CISA Catalog of Known Exploited Vulnerabilities"; return &t }(),
+		Name: new("CISA Catalog of Known Exploited Vulnerabilities"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {
