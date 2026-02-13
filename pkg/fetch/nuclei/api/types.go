@@ -30,17 +30,17 @@ type Result struct {
 		EPSSPercentile float64  `json:"epss-percentile,omitempty"`
 		CPE            string   `json:"cpe,omitempty"`
 	} `json:"classification,omitzero"`
-	Metadata    interface{} `json:"metadata,omitempty"`
-	Digest      string      `json:"digest,omitempty"`
-	CreatedAt   time.Time   `json:"created_at,omitzero"`
-	UpdatedAt   time.Time   `json:"updated_at,omitzero"`
-	ReleaseTag  string      `json:"release_tag,omitempty"`
-	IsEarly     bool        `json:"is_early,omitempty"`
-	Raw         string      `json:"raw,omitempty"`
-	TemplateID  string      `json:"template_id,omitempty"`
-	Description string      `json:"description,omitempty"`
-	Filename    string      `json:"filename,omitempty"`
-	Impact      string      `json:"impact,omitempty"`
+	Metadata    any       `json:"metadata,omitempty"`
+	Digest      string    `json:"digest,omitempty"`
+	CreatedAt   time.Time `json:"created_at,omitzero"`
+	UpdatedAt   time.Time `json:"updated_at,omitzero"`
+	ReleaseTag  string    `json:"release_tag,omitempty"`
+	IsEarly     bool      `json:"is_early,omitempty"`
+	Raw         string    `json:"raw,omitempty"`
+	TemplateID  string    `json:"template_id,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Filename    string    `json:"filename,omitempty"`
+	Impact      string    `json:"impact,omitempty"`
 	AIMeta      struct {
 		ModelUsed         string `json:"model_used,omitempty"`
 		IsPromptByHuman   bool   `json:"is_prompt_by_human,omitempty"`

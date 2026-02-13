@@ -62,8 +62,8 @@ func TestFetch(t *testing.T) {
 		{
 			name: "specify start and end mod date",
 			args: []cpe.Option{
-				cpe.WithLastModStartDate(func() *time.Time { t := time.Date(2023, time.November, 14, 21, 35, 0, 0, time.UTC); return &t }()),
-				cpe.WithLastModEndDate(func() *time.Time { t := time.Date(2023, time.November, 14, 21, 40, 0, 0, time.UTC); return &t }()),
+				cpe.WithLastModStartDate(new(time.Date(2023, time.November, 14, 21, 35, 0, 0, time.UTC))),
+				cpe.WithLastModEndDate(new(time.Date(2023, time.November, 14, 21, 40, 0, 0, time.UTC))),
 			},
 			fixturePrefix: "moddate",
 			expectedCount: 1,
@@ -129,10 +129,7 @@ func TestFetch(t *testing.T) {
 					}
 
 					base.TotalResults = len(filtered)
-					end := base.StartIndex + base.ResultsPerPage
-					if end > base.TotalResults {
-						end = base.TotalResults
-					}
+					end := min(base.StartIndex+base.ResultsPerPage, base.TotalResults)
 					base.Products = filtered[base.StartIndex:end]
 
 					bs, err := json.Marshal(base)

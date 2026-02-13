@@ -132,7 +132,7 @@ func Extract(inputDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.Oracle,
-		Name: func() *string { t := "Oracle Linux OVAL"; return &t }(),
+		Name: new("Oracle Linux OVAL"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(inputDir)
 			if r == nil {
@@ -475,7 +475,7 @@ func (e extractor) evalCriterions(pkgs []ovalPackage, criterions []linux.Criteri
 			// To extract "stream" value, the regexp pattern of reversed order ("state" at the beginning) is also considered,
 			// e.g. \nstate\s*=\s*(enabled|1|true)[\w\W]*\nstream\s*=\s*ol8\b|\nstream\s*=\s*ol8\b[\w\W]*\nstate\s*=\s*(enabled|1|true)
 			var ss []string
-			for _, s := range strings.Split(state.Text.Text, `\n`) {
+			for s := range strings.SplitSeq(state.Text.Text, `\n`) {
 				if s == "" {
 					continue
 				}

@@ -11,7 +11,7 @@ import (
 func TestMarshal(t *testing.T) {
 	type args struct {
 		method string
-		args   []interface{}
+		args   []any
 	}
 	tests := []struct {
 		name    string
@@ -23,7 +23,7 @@ func TestMarshal(t *testing.T) {
 			name: "findBuildID(iperf3-3.14-1.fc39)",
 			args: args{
 				method: "findBuildID",
-				args:   []interface{}{"iperf3-3.14-1.fc39"},
+				args:   []any{"iperf3-3.14-1.fc39"},
 			},
 			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>findBuildID</methodName><params><param><value><string>iperf3-3.14-1.fc39</string></value></param></params></methodCall>"),
 		},
@@ -31,7 +31,7 @@ func TestMarshal(t *testing.T) {
 			name: "getBuild(mysql-8.0-3820230907003352.75741a8b)",
 			args: args{
 				method: "getBuild",
-				args:   []interface{}{"mysql-8.0-3820230907003352.75741a8b"},
+				args:   []any{"mysql-8.0-3820230907003352.75741a8b"},
 			},
 			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>getBuild</methodName><params><param><value><string>mysql-8.0-3820230907003352.75741a8b</string></value></param></params></methodCall>"),
 		},
@@ -39,7 +39,7 @@ func TestMarshal(t *testing.T) {
 			name: "listArchives(2284719)",
 			args: args{
 				method: "listArchives",
-				args:   []interface{}{2284719},
+				args:   []any{2284719},
 			},
 			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>listArchives</methodName><params><param><value><int>2284719</int></value></param></params></methodCall>"),
 		},
@@ -47,7 +47,7 @@ func TestMarshal(t *testing.T) {
 			name: "listRPMs(2234486)",
 			args: args{
 				method: "listRPMs",
-				args:   []interface{}{2234486},
+				args:   []any{2234486},
 			},
 			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>listRPMs</methodName><params><param><value><int>2234486</int></value></param></params></methodCall>"),
 		},
@@ -55,7 +55,7 @@ func TestMarshal(t *testing.T) {
 			name: "listRPMs(nil,nil,766629)",
 			args: args{
 				method: "listRPMs",
-				args:   []interface{}{nil, nil, 766629},
+				args:   []any{nil, nil, 766629},
 			},
 			want: []byte("<?xml version='1.0' encoding='UTF-8'?><methodCall><methodName>listRPMs</methodName><params><param><value><nil/></value></param><param><value><nil/></value></param><param><value><int>766629</int></value></param></params></methodCall>"),
 		},

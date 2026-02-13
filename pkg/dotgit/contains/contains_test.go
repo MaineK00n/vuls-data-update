@@ -21,7 +21,7 @@ func TestContains(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantErr interface{}
+		wantErr any
 	}{
 		{
 			name: "contains full commit hash, native git",
@@ -53,7 +53,7 @@ func TestContains(t *testing.T) {
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
 			},
-			wantErr: func() interface{} {
+			wantErr: func() any {
 				var err *contains.CommitNotFoundError
 				return err
 			},

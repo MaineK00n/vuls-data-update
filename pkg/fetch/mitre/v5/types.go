@@ -20,18 +20,18 @@ type CVE struct {
 			References       []Reference      `json:"references,omitempty"`
 			Timeline         Timeline         `json:"timeline,omitempty"`
 			Credits          Credits          `json:"credits,omitempty"`
-			Source           interface{}      `json:"source,omitempty"`
+			Source           any              `json:"source,omitempty"`
 			Tags             []string         `json:"tags,omitempty"`
 			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitzero"`
 			DateAssigned     *string          `json:"dateAssigned,omitempty"`
 			DatePublic       *string          `json:"datePublic,omitempty"`
 			RejectedReasons  []Description    `json:"rejectedReasons,omitempty"`
 			ReplacedBy       []string         `json:"replacedBy,omitempty"`
-			XGenerator       interface{}      `json:"x_generator,omitempty"`
-			XLegacyV4Record  interface{}      `json:"x_legacyV4Record,omitempty"`
-			XRedhatCweChain  interface{}      `json:"x_redhatCweChain,omitempty"`
-			XAffectedList    interface{}      `json:"x_affectedList,omitempty"`
-			XConverterErrors interface{}      `json:"x_ConverterErrors,omitempty"`
+			XGenerator       any              `json:"x_generator,omitempty"`
+			XLegacyV4Record  any              `json:"x_legacyV4Record,omitempty"`
+			XRedhatCweChain  any              `json:"x_redhatCweChain,omitempty"`
+			XAffectedList    any              `json:"x_affectedList,omitempty"`
+			XConverterErrors any              `json:"x_ConverterErrors,omitempty"`
 		} `json:"cna"`
 		ADP []struct {
 			ProviderMetadata ProviderMetadata `json:"providerMetadata"`
@@ -48,7 +48,7 @@ type CVE struct {
 			References       []Reference      `json:"references,omitempty"`
 			Timeline         Timeline         `json:"timeline,omitempty"`
 			Credits          Credits          `json:"credits,omitempty"`
-			Source           interface{}      `json:"source,omitempty"`
+			Source           any              `json:"source,omitempty"`
 			Tags             []string         `json:"tags,omitempty"`
 			TaxonomyMappings TaxonomyMappings `json:"taxonomyMappings,omitzero"`
 			DatePublic       *string          `json:"datePublic,omitempty"`
@@ -138,8 +138,8 @@ type Metric struct {
 	CVSSv31 *CVSSv31 `json:"cvssV3_1,omitempty"`
 	CVSSv40 *CVSSv40 `json:"cvssV4_0,omitempty"`
 	Other   *struct {
-		Type    string      `json:"type"`
-		Content interface{} `json:"content"`
+		Type    string `json:"type"`
+		Content any    `json:"content"`
 	} `json:"other,omitempty"`
 }
 
@@ -276,18 +276,18 @@ type CVSSv40 struct {
 
 // https://github.com/CERTCC/SSVC/blob/a34a9768ef75209f8c1dd1bc2cf0523ba4d243c8/data/schema/SSVC_Computed.schema.json for other:ssvc
 type SSVC struct {
-	ID           string        `json:"id"`
-	Role         string        `json:"role"`
-	Version      string        `json:"version"`
-	Schema       *string       `json:"$schema,omitempty"`
-	Computed     *string       `json:"computed,omitempty"`
-	Options      []interface{} `json:"options"`
+	ID           string  `json:"id"`
+	Role         string  `json:"role"`
+	Version      string  `json:"version"`
+	Schema       *string `json:"$schema,omitempty"`
+	Computed     *string `json:"computed,omitempty"`
+	Options      []any   `json:"options"`
 	DecisionTree *struct {
-		Version        string        `json:"version"`
-		Lang           string        `json:"lang"`
-		Title          *string       `json:"title,omitempty"`
-		Roles          []string      `json:"roles,omitempty"`
-		DecisionTable  []interface{} `json:"decision_table"`
+		Version        string   `json:"version"`
+		Lang           string   `json:"lang"`
+		Title          *string  `json:"title,omitempty"`
+		Roles          []string `json:"roles,omitempty"`
+		DecisionTable  []any    `json:"decision_table"`
 		DecisionPoints []struct {
 			DecisionType string  `json:"decision_type"`
 			Label        string  `json:"label"`

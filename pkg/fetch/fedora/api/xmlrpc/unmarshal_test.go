@@ -16,14 +16,14 @@ import (
 func TestUnmarshal(t *testing.T) {
 	type args struct {
 		testdata string
-		v        interface{}
+		v        any
 	}
 
 	tests := []struct {
 		name    string
 		args    args
 		cmpopts []cmp.Option
-		want    interface{}
+		want    any
 		wantErr bool
 	}{
 		{
@@ -126,7 +126,7 @@ func TestUnmarshal(t *testing.T) {
 			name: "<base64>dGVzdA==</base64>",
 			args: args{
 				testdata: "<value><base64>dGVzdA==</base64></value>",
-				v:        new(interface{}),
+				v:        new(any),
 			},
 			want: []byte("test"),
 		},
@@ -142,9 +142,9 @@ func TestUnmarshal(t *testing.T) {
 			name: "<base64>dGVzdA==</base64>",
 			args: args{
 				testdata: "<value><base64>dGVzdA==</base64></value>",
-				v:        new([4]interface{}),
+				v:        new([4]any),
 			},
-			want: [4]interface{}{byte(0x74), byte(0x65), byte(0x73), byte(0x74)},
+			want: [4]any{byte(0x74), byte(0x65), byte(0x73), byte(0x74)},
 		},
 		{
 			name: "<base64>dGVzdA==</base64>",
@@ -158,9 +158,9 @@ func TestUnmarshal(t *testing.T) {
 			name: "<base64>dGVzdA==</base64>",
 			args: args{
 				testdata: "<value><base64>dGVzdA==</base64></value>",
-				v:        new([]interface{}),
+				v:        new([]any),
 			},
-			want: []interface{}{byte(0x74), byte(0x65), byte(0x73), byte(0x74)},
+			want: []any{byte(0x74), byte(0x65), byte(0x73), byte(0x74)},
 		},
 		{
 			name: "<dateTime.iso8601></dateTime.iso8601>",
@@ -182,7 +182,7 @@ func TestUnmarshal(t *testing.T) {
 			name: "<nil/>",
 			args: args{
 				testdata: "<value><nil/></value>",
-				v:        new(interface{}),
+				v:        new(any),
 			},
 			want: nil,
 		},
@@ -190,9 +190,9 @@ func TestUnmarshal(t *testing.T) {
 			name: "<array><data></data></array>",
 			args: args{
 				testdata: "<value><array><data></data></array></value>",
-				v:        new([]interface{}),
+				v:        new([]any),
 			},
-			want: []interface{}(nil),
+			want: []any(nil),
 		},
 		{
 			name: "<array><data><value><int>1</int></value></data></array>",
@@ -214,9 +214,9 @@ func TestUnmarshal(t *testing.T) {
 			name: "<array><data><value><boolean>0</boolean></value><value><int>0</int></value><value><string>0</string></value></data></array>",
 			args: args{
 				testdata: "<value><array><data><value><boolean>0</boolean></value><value><int>0</int></value><value><string>0</string></value></data></array></value>",
-				v:        new([]interface{}),
+				v:        new([]any),
 			},
-			want: []interface{}{false, int64(0), "0"},
+			want: []any{false, int64(0), "0"},
 		},
 		{
 			name: "<struct><member><name>foo</name><value><int>1</int></value></member><member><name>bar</name><value><string>2</string></value></member></struct>",
@@ -274,17 +274,17 @@ func TestUnmarshal(t *testing.T) {
 			name: "<struct><member><name>foo</name><value><int>1</int></value></member><member><name>bar</name><value><string>2</string></value></member></struct>",
 			args: args{
 				testdata: "<value><struct><member><name>foo</name><value><int>1</int></value></member><member><name>bar</name><value><string>2</string></value></member></struct></value>",
-				v:        new(map[string]interface{}),
+				v:        new(map[string]any),
 			},
-			want: map[string]interface{}{"foo": int64(1), "bar": "2"},
+			want: map[string]any{"foo": int64(1), "bar": "2"},
 		},
 		{
 			name: "<struct><member><name>foo</name><value><int>1</int></value></member><member><name>bar</name><value><string>2</string></value></member></struct>",
 			args: args{
 				testdata: "<value><struct><member><name>foo</name><value><int>1</int></value></member><member><name>bar</name><value><string>2</string></value></member></struct></value>",
-				v:        new(interface{}),
+				v:        new(any),
 			},
-			want: map[string]interface{}{"foo": int64(1), "bar": "2"},
+			want: map[string]any{"foo": int64(1), "bar": "2"},
 		},
 		{
 			name: "findBuildID(iperf3-3.14-1.fc39)",
@@ -418,7 +418,7 @@ func TestUnmarshal(t *testing.T) {
 			name: "fault",
 			args: args{
 				testdata: "testdata/fixtures/fault.xml",
-				v:        new(interface{}),
+				v:        new(any),
 			},
 			want:    nil,
 			wantErr: true,

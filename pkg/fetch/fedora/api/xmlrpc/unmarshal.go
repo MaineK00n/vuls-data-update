@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"io"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ type decoder struct {
 	*xml.Decoder
 }
 
-func Unmarshal(body []byte, v interface{}) error {
+func Unmarshal(body []byte, v any) error {
 	var resp struct {
 		Fault *struct{} `xml:"fault,omitempty"`
 	}
@@ -42,7 +43,7 @@ func Unmarshal(body []byte, v interface{}) error {
 	return nil
 }
 
-func unmarshal(body []byte, v interface{}) error {
+func unmarshal(body []byte, v any) error {
 	d := decoder{xml.NewDecoder(bytes.NewReader(body))}
 	for {
 		t, err := d.Token()
@@ -115,8 +116,7 @@ LOOP:
 		switch {
 		case checkType(value, reflect.Struct) == nil:
 			fields = make(map[string]reflect.Value)
-			for i := 0; i < valType.NumField(); i++ {
-				field := valType.Field(i)
+			for field := range valType.Fields() {
 				fieldVal := value.FieldByName(field.Name)
 
 				if fieldVal.CanSet() {
@@ -138,8 +138,7 @@ LOOP:
 			pmap.Set(reflect.MakeMap(valType))
 			ismap = true
 		case checkType(value, reflect.Interface) == nil && value.IsNil():
-			var dummy map[string]interface{}
-			valType = reflect.TypeOf(dummy)
+			valType = reflect.TypeFor[map[string]any]()
 			pmap = reflect.New(valType).Elem()
 			value.Set(pmap)
 			pmap.Set(reflect.MakeMap(valType))
@@ -249,7 +248,7 @@ LOOP:
 
 		slice := value
 		if checkType(value, reflect.Interface) == nil && value.IsNil() {
-			slice = reflect.ValueOf([]interface{}{})
+			slice = reflect.ValueOf([]any{})
 		}
 		if err := checkType(slice, reflect.Slice); err != nil {
 			return errors.Wrap(err, "check type")
@@ -287,7 +286,7 @@ LOOP:
 							if v.Kind() == reflect.Interface {
 								v = v.Elem()
 							}
-							if v.Kind() != reflect.Ptr {
+							if v.Kind() != reflect.Pointer {
 								return errors.New("cannot write to non-pointer array element")
 							}
 							if err := d.decodeValue(v); err != nil {
@@ -335,7 +334,7 @@ LOOP:
 					if err != nil {
 						return errors.Wrap(err, "parse bool")
 					}
-					pv := reflect.New(reflect.TypeOf(v)).Elem()
+					pv := reflect.New(reflect.TypeFor[bool]()).Elem()
 					pv.SetBool(v)
 					value.Set(pv)
 				case checkType(value, reflect.Bool) == nil:
@@ -354,7 +353,7 @@ LOOP:
 					if err != nil {
 						return errors.Wrap(err, "parse int")
 					}
-					pv := reflect.New(reflect.TypeOf(v)).Elem()
+					pv := reflect.New(reflect.TypeFor[int64]()).Elem()
 					pv.SetInt(v)
 					value.Set(pv)
 				case checkType(value, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64) == nil:
@@ -373,7 +372,7 @@ LOOP:
 					if err != nil {
 						return errors.Wrap(err, "parse float")
 					}
-					pv := reflect.New(reflect.TypeOf(v)).Elem()
+					pv := reflect.New(reflect.TypeFor[float64]()).Elem()
 					pv.SetFloat(v)
 					value.Set(pv)
 				case checkType(value, reflect.Float32, reflect.Float64) == nil:
@@ -389,7 +388,7 @@ LOOP:
 				switch {
 				case checkType(value, reflect.Interface) == nil && value.IsNil():
 					v := string(data)
-					pv := reflect.New(reflect.TypeOf(v)).Elem()
+					pv := reflect.New(reflect.TypeFor[string]()).Elem()
 					pv.SetString(v)
 					value.Set(pv)
 				case checkType(value, reflect.String) == nil:
@@ -405,7 +404,7 @@ LOOP:
 					if err != nil {
 						return errors.Wrap(err, "decode base64")
 					}
-					pv := reflect.New(reflect.TypeOf(v)).Elem()
+					pv := reflect.New(reflect.TypeFor[[]byte]()).Elem()
 					pv.SetBytes(v)
 					value.Set(pv)
 				case checkType(value, reflect.Array) == nil:
@@ -424,7 +423,7 @@ LOOP:
 							return errors.Wrap(err, "decode base64")
 						}
 						for i := 0; i < value.Len(); i++ {
-							pv := reflect.New(reflect.TypeOf(v[i])).Elem()
+							pv := reflect.New(reflect.TypeFor[byte]()).Elem()
 							pv.SetUint(uint64(v[i]))
 							value.Index(i).Set(pv)
 						}
@@ -445,7 +444,7 @@ LOOP:
 							return errors.Wrap(err, "decode base64")
 						}
 						for _, e := range v {
-							pv := reflect.New(reflect.TypeOf(e)).Elem()
+							pv := reflect.New(reflect.TypeFor[byte]()).Elem()
 							pv.SetUint(uint64(e))
 							value.Set(reflect.Append(value, pv))
 						}
@@ -474,7 +473,7 @@ LOOP:
 					if err != nil {
 						return errors.Wrap(err, "parse time")
 					}
-					pv := reflect.New(reflect.TypeOf(*v)).Elem()
+					pv := reflect.New(reflect.TypeFor[time.Time]()).Elem()
 					pv.Set(reflect.ValueOf(v))
 					value.Set(pv)
 				default:
@@ -507,18 +506,11 @@ func checkType(val reflect.Value, kinds ...reflect.Kind) error {
 		return nil
 	}
 
-	if val.Kind() == reflect.Ptr {
+	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
 
-	match := false
-
-	for _, kind := range kinds {
-		if val.Kind() == kind {
-			match = true
-			break
-		}
-	}
+	match := slices.Contains(kinds, val.Kind())
 
 	if !match {
 		return errors.Errorf("no match for %v in %v", val.Kind(), kinds)
@@ -562,7 +554,7 @@ func indirect(v reflect.Value) reflect.Value {
 		}
 
 		// Prevent infinite loop if v is an interface pointing to its own address:
-		//     var v interface{}
+		//     var v any
 		//     v = &v
 		if v.Elem().Kind() == reflect.Interface && v.Elem().Elem() == v {
 			v = v.Elem()

@@ -64,12 +64,12 @@ func TestCompare(t *testing.T) {
 				x: severityTypes.Severity{
 					Type:   severityTypes.SeverityTypeVendor,
 					Source: "source1",
-					Vendor: func() *string { s := "low"; return &s }(),
+					Vendor: new("low"),
 				},
 				y: severityTypes.Severity{
 					Type:   severityTypes.SeverityTypeVendor,
 					Source: "source1",
-					Vendor: func() *string { s := "medium"; return &s }(),
+					Vendor: new("medium"),
 				},
 			},
 			want: -1,

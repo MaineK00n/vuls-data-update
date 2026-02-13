@@ -146,7 +146,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.AlmaErrata,
-		Name: func() *string { t := "AlmaLinux Errata"; return &t }(),
+		Name: new("AlmaLinux Errata"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {
@@ -196,8 +196,8 @@ func extract(fetched errata.Erratum, osver string, raws []string) dataTypes.Data
 					}
 					return slices.Collect(maps.Keys(m))
 				}(),
-				Published: func() *time.Time { t := time.Unix(int64(fetched.IssuedDate), 0); return &t }(),
-				Modified:  func() *time.Time { t := time.Unix(int64(fetched.UpdatedDate), 0); return &t }(),
+				Published: new(time.Unix(int64(fetched.IssuedDate), 0)),
+				Modified:  new(time.Unix(int64(fetched.UpdatedDate), 0)),
 			},
 			Segments: []segmentTypes.Segment{{
 				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlma, osver)),

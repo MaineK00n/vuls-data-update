@@ -108,7 +108,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.UbuntuCVETracker,
-		Name: func() *string { t := "Ubuntu CVE Tracker"; return &t }(),
+		Name: new("Ubuntu CVE Tracker"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {
@@ -237,9 +237,9 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 			return rs
 		}(),
 		Published: utiltime.Parse([]string{"2006-01-02 15:04:05 MST", "2006-01-02"}, fetched.PublicDate),
-		Optional: func() map[string]interface{} {
+		Optional: func() map[string]any {
 			if fetched.UbuntuDescription != "" {
-				return map[string]interface{}{"ubuntu_description": fetched.UbuntuDescription}
+				return map[string]any{"ubuntu_description": fetched.UbuntuDescription}
 			}
 			return nil
 		}(),

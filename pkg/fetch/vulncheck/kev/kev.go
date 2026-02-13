@@ -147,8 +147,8 @@ Notably, you must show "prominent attribution" to show the data is from VulnChec
 
 		bar := progressbar.Default(int64(len(ks)))
 		for _, k := range ks {
-			if err := util.Write(filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum([]byte(fmt.Sprintf("%s %q", k.Name, k.CVE))))), k); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum([]byte(fmt.Sprintf("%s %q", k.Name, k.CVE))))))
+			if err := util.Write(filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum(fmt.Appendf(nil, "%s %q", k.Name, k.CVE)))), k); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, k.DateAdded.Format("2006"), fmt.Sprintf("%x.json", md5.Sum(fmt.Appendf(nil, "%s %q", k.Name, k.CVE)))))
 			}
 			_ = bar.Add(1)
 		}

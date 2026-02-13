@@ -7,8 +7,8 @@ type CPE struct {
 }
 
 type Bug struct {
-	Header      *Header       `json:"header,omitempty"`
-	Annotations []interface{} `json:"annotations,omitempty"`
+	Header      *Header `json:"header,omitempty"`
+	Annotations []any   `json:"annotations,omitempty"`
 }
 
 type Header struct {
@@ -35,14 +35,14 @@ type XrefAnnotation struct {
 }
 
 type PackageAnnotation struct {
-	Line        string        `json:"line,omitempty"`
-	Type        string        `json:"type,omitempty"`
-	Release     string        `json:"release,omitempty"`
-	Package     string        `json:"package,omitempty"`
-	Kind        string        `json:"kind,omitempty"`
-	Version     string        `json:"version,omitempty"`
-	Description string        `json:"description,omitempty"`
-	Flags       []interface{} `json:"flags,omitempty"`
+	Line        string `json:"line,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Release     string `json:"release,omitempty"`
+	Package     string `json:"package,omitempty"`
+	Kind        string `json:"kind,omitempty"`
+	Version     string `json:"version,omitempty"`
+	Description string `json:"description,omitempty"`
+	Flags       []any  `json:"flags,omitempty"`
 }
 
 type PackageBugAnnotation struct {

@@ -58,7 +58,7 @@ func TestFetch(t *testing.T) {
 
 					var filtered []any
 					for _, e := range entries {
-						t, err := time.Parse("2006-01-02T00:00:00Z", e.(map[string]interface{})["public_date"].(string))
+						t, err := time.Parse("2006-01-02T00:00:00Z", e.(map[string]any)["public_date"].(string))
 						if err != nil {
 							http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 						}

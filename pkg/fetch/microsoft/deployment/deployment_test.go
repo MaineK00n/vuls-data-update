@@ -40,7 +40,7 @@ func TestFetch(t *testing.T) {
 					return
 				}
 
-				if _, err := fmt.Fprintf(w, "%s", bytes.ReplaceAll(bs, []byte("https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/deployment?$skip="), []byte(fmt.Sprintf("http://%s/sug/v2.0/sugodata/v2.0/en-US/deployment?$skip=", r.Host)))); err != nil {
+				if _, err := fmt.Fprintf(w, "%s", bytes.ReplaceAll(bs, []byte("https://api.msrc.microsoft.com/sug/v2.0/sugodata/v2.0/en-US/deployment?$skip="), fmt.Appendf(nil, "http://%s/sug/v2.0/sugodata/v2.0/en-US/deployment?$skip=", r.Host))); err != nil {
 					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				}
 			}))

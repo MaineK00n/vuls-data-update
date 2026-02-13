@@ -43,10 +43,7 @@ func TestDelete(t *testing.T) {
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-14T13:05:30Z",
 					UpdatedAt:      "2025-07-14T13:05:30Z",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"
-						return &s
-					}(),
+					HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898921"),
 					Metadata: &ls.Metadata{
 						PackageType: "container",
 						Container: &ls.Container{
@@ -61,10 +58,7 @@ func TestDelete(t *testing.T) {
 					PackageHTMLURL: "https://github.com/orgs/vulsio/packages/container/package/vuls-data-db",
 					CreatedAt:      "2025-07-14T13:05:21Z",
 					UpdatedAt:      "2025-07-14T13:05:21Z",
-					HTMLURL: func() *string {
-						s := "https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"
-						return &s
-					}(),
+					HTMLURL:        new("https://github.com/orgs/vulsio/packages/container/vuls-data-db/460898773"),
 					Metadata: &ls.Metadata{
 						PackageType: "container",
 						Container: &ls.Container{

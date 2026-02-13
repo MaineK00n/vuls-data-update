@@ -109,11 +109,11 @@ func TestPackage_Accept(t *testing.T) {
 			name: "cpe",
 			fields: fields{
 				Type: packageTypes.PackageTypeCPE,
-				CPE:  func() *cpeTypes.CPE { s := cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+				CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 			},
 			args: args{
 				query: packageTypes.Query{
-					CPE: func() *cpeTypes.Query { s := cpeTypes.Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"); return &s }(),
+					CPE: new(cpeTypes.Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
 				},
 			},
 			want: true,

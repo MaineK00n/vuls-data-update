@@ -360,7 +360,7 @@ func cvelist(r io.Reader) ([]Bug, error) {
 		return match
 	}
 
-	finish := func(header []string, line string, anns []interface{}) Bug {
+	finish := func(header []string, line string, anns []any) Bug {
 		name, desc := header[reHeader.SubexpIndex("name")], header[reHeader.SubexpIndex("description")]
 
 		// https://salsa.debian.org/security-tracker-team/security-tracker/-/blob/670f51ade33e395efbee1490eb13893c41830441/lib/python/bugs.py#L402
@@ -420,7 +420,7 @@ func dsalist(r io.Reader) ([]Bug, error) {
 		return match
 	}
 
-	finish := func(header []string, line string, anns []interface{}) Bug {
+	finish := func(header []string, line string, anns []any) Bug {
 		_, _, _, name, _ := header[reHeader.SubexpIndex("day")], header[reHeader.SubexpIndex("month")], header[reHeader.SubexpIndex("year")], header[reHeader.SubexpIndex("name")], header[reHeader.SubexpIndex("description")]
 		checkrelease(anns, "DSA")
 		return Bug{Header: &Header{
@@ -449,7 +449,7 @@ func dtsalist(r io.Reader) ([]Bug, error) {
 		return match
 	}
 
-	finish := func(header []string, line string, anns []interface{}) Bug {
+	finish := func(header []string, line string, anns []any) Bug {
 		_, _, _, name, _ := header[reHeader.SubexpIndex("day")], header[reHeader.SubexpIndex("month")], header[reHeader.SubexpIndex("year")], header[reHeader.SubexpIndex("name")], header[reHeader.SubexpIndex("description")]
 		checkrelease(anns, "DTSA")
 		return Bug{Header: &Header{
@@ -478,7 +478,7 @@ func dlalist(r io.Reader) ([]Bug, error) {
 		return match
 	}
 
-	finish := func(header []string, line string, anns []interface{}) Bug {
+	finish := func(header []string, line string, anns []any) Bug {
 		_, _, _, name, _ := header[reHeader.SubexpIndex("day")], header[reHeader.SubexpIndex("month")], header[reHeader.SubexpIndex("year")], header[reHeader.SubexpIndex("name")], header[reHeader.SubexpIndex("description")]
 		checkrelease(anns, "DLA")
 		return Bug{Header: &Header{
@@ -497,7 +497,7 @@ func dlalist(r io.Reader) ([]Bug, error) {
 }
 
 // https://salsa.debian.org/security-tracker-team/security-tracker/-/blob/670f51ade33e395efbee1490eb13893c41830441/lib/python/sectracker/parsers.py#L378
-func checkrelease(anns []interface{}, kind string) {
+func checkrelease(anns []any, kind string) {
 	for _, ann := range anns {
 		if a, ok := ann.(PackageAnnotation); ok && a.Type == "package" && a.Release == "" {
 			log.Printf("[WARN] release annotation required in %q file", kind)
@@ -506,12 +506,12 @@ func checkrelease(anns []interface{}, kind string) {
 }
 
 // https://salsa.debian.org/security-tracker-team/security-tracker/-/blob/670f51ade33e395efbee1490eb13893c41830441/lib/python/sectracker/parsers.py#L238
-func parselist(r io.Reader, parseheader func(line string) []string, finish func(header []string, line string, anns []interface{}) Bug) ([]Bug, error) {
+func parselist(r io.Reader, parseheader func(line string) []string, finish func(header []string, line string, anns []any) Bug) ([]Bug, error) {
 	var (
 		bugs       []Bug
 		header     []string
 		headerline string
-		anns       []interface{}
+		anns       []any
 		anns_types = map[string]struct{}{}
 		relpkg     = map[string]map[string]struct{}{}
 	)
@@ -594,7 +594,7 @@ func parselist(r io.Reader, parseheader func(line string) []string, finish func(
 }
 
 // https://salsa.debian.org/security-tracker-team/security-tracker/-/blob/670f51ade33e395efbee1490eb13893c41830441/lib/python/sectracker/parsers.py#L116
-func annotationdispatcher(line string) interface{} {
+func annotationdispatcher(line string) any {
 	switch {
 	case pkgVersionRegexp.MatchString(line):
 		groups := pkgVersionRegexp.FindStringSubmatch(line)
@@ -634,7 +634,7 @@ func annotationdispatcher(line string) interface{} {
 			}
 		case slices.Contains(pseudoStruct, kind):
 			flags := parseinner(inner)
-			if kind == "itp" && !slices.ContainsFunc(flags, func(i interface{}) bool { _, ok := i.(PackageBugAnnotation); return ok }) {
+			if kind == "itp" && !slices.ContainsFunc(flags, func(i any) bool { _, ok := i.(PackageBugAnnotation); return ok }) {
 				log.Printf("[WARN] <itp> needs Debian bug reference: %q", line)
 			}
 			return PackageAnnotation{
@@ -682,18 +682,18 @@ func annotationdispatcher(line string) interface{} {
 }
 
 // https://salsa.debian.org/security-tracker-team/security-tracker/-/blob/670f51ade33e395efbee1490eb13893c41830441/lib/python/sectracker/parsers.py#L137
-func parseinner(inner string) []interface{} {
+func parseinner(inner string) []any {
 	if inner == "" {
 		return nil
 	}
 
-	var flags []interface{}
-	for _, innerann := range strings.Split(inner, ";") {
+	var flags []any
+	for innerann := range strings.SplitSeq(inner, ";") {
 		switch {
 		case pkgUrgencyRegexp.MatchString(innerann):
 			groups := pkgUrgencyRegexp.FindStringSubmatch(innerann)
 			f := groups[pkgUrgencyRegexp.SubexpIndex("flag")]
-			if slices.ContainsFunc(flags, func(i interface{}) bool {
+			if slices.ContainsFunc(flags, func(i any) bool {
 				a, ok := i.(PackageUrgencyAnnotation)
 				return ok && a.Severity == f
 			}) {
@@ -707,11 +707,11 @@ func parseinner(inner string) []interface{} {
 			if err != nil {
 				log.Printf("[WARN] atoi err: %s", err)
 			}
-			if slices.ContainsFunc(flags, func(i interface{}) bool {
+			if slices.ContainsFunc(flags, func(i any) bool {
 				a, ok := i.(PackageBugAnnotation)
 				return ok && a.Bug == no
 			}) {
-				log.Printf("[WARN] duplicate bug number(%q): %q", no, inner)
+				log.Printf("[WARN] duplicate bug number(%q): %q", fmt.Sprintf("%d", no), inner)
 			} else {
 				flags = append(flags, PackageBugAnnotation{Bug: no})
 			}

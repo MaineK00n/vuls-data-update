@@ -271,7 +271,7 @@ func Fetch(opts ...Option) error {
 
 			wfn, err := naming.UnbindFS(p.CPE.Name)
 			if err == nil {
-				d = hash32([]byte(fmt.Sprintf("%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct))))
+				d = hash32(fmt.Appendf(nil, "%s:%s", wfn.GetString(common.AttributeVendor), wfn.GetString(common.AttributeProduct)))
 			}
 
 			if err := util.Write(filepath.Join(options.dir, fmt.Sprintf("%x", d), fmt.Sprintf("%s.json", p.CPE.NameID)), p.CPE); err != nil {

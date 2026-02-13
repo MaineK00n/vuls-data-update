@@ -4,14 +4,14 @@ package repository
 type Template struct {
 	ID   string `yaml:"id" json:"id"`
 	Info struct {
-		Name           string                  `yaml:"name" json:"name"`
-		Authors        interface{}             `yaml:"author" json:"author"`                 // string or slice
-		Tags           *interface{}            `yaml:"tags,omitempty" json:"tags,omitempty"` // string or slice
-		Description    *string                 `yaml:"description,omitempty" json:"description,omitempty"`
-		Impact         *string                 `yaml:"impact,omitempty" json:"impact,omitempty"`
-		References     *interface{}            `yaml:"reference,omitempty" json:"reference,omitempty"` // string or slice
-		Severity       *string                 `yaml:"severity,omitempty" json:"severity,omitempty"`   // enum: info, low, medium, high, critical, unknown
-		Metadata       *map[string]interface{} `yaml:"metadata,omitempty" json:"metadata,omitempty"`
+		Name           string          `yaml:"name" json:"name"`
+		Authors        any             `yaml:"author" json:"author"`                 // string or slice
+		Tags           *any            `yaml:"tags,omitempty" json:"tags,omitempty"` // string or slice
+		Description    *string         `yaml:"description,omitempty" json:"description,omitempty"`
+		Impact         *string         `yaml:"impact,omitempty" json:"impact,omitempty"`
+		References     *any            `yaml:"reference,omitempty" json:"reference,omitempty"` // string or slice
+		Severity       *string         `yaml:"severity,omitempty" json:"severity,omitempty"`   // enum: info, low, medium, high, critical, unknown
+		Metadata       *map[string]any `yaml:"metadata,omitempty" json:"metadata,omitempty"`
 		Classification *struct {
 			CVEID          *string  `yaml:"cve-id,omitempty" json:"cve-id,omitempty"`
 			CWEID          *string  `yaml:"cwe-id,omitempty" json:"cwe-id,omitempty"`
@@ -23,50 +23,50 @@ type Template struct {
 		} `yaml:"classification,omitempty" json:"classification,omitempty"`
 		Remediation *string `yaml:"remediation,omitempty" json:"remediation,omitempty"`
 	} `yaml:"info" json:"info"`
-	Flow               *string                 `yaml:"flow,omitempty" json:"flow,omitempty"`
-	RequestsHTTP       *[]HTTPRequest          `yaml:"requests,omitempty" json:"requests,omitempty"`
-	RequestsWithHTTP   *[]HTTPRequest          `yaml:"http,omitempty" json:"http,omitempty"`
-	RequestsDNS        *[]DNSRequest           `yaml:"dns,omitempty" json:"dns,omitempty"`
-	RequestsFile       *[]FileRequest          `yaml:"file,omitempty" json:"file,omitempty"`
-	RequestsNetwork    *[]NetworkRequest       `yaml:"network,omitempty" json:"network,omitempty"`
-	RequestsWithTCP    *[]NetworkRequest       `yaml:"tcp,omitempty" json:"tcp,omitempty"`
-	RequestsHeadless   *[]HeadlessRequest      `yaml:"headless,omitempty" json:"headless,omitempty"`
-	RequestsSSL        *[]SSLRequest           `yaml:"ssl,omitempty" json:"ssl,omitempty"`
-	RequestsWebsocket  *[]WebsocketRequest     `yaml:"websocket,omitempty" json:"websocket,omitempty"`
-	RequestsWHOIS      *[]WhoisRequest         `yaml:"whois,omitempty" json:"whois,omitempty"`
-	RequestsCode       *[]CodeRequest          `yaml:"code,omitempty" json:"code,omitempty"`
-	RequestsJavascript *[]JavascriptRequest    `yaml:"javascript,omitempty" json:"javascript,omitempty"`
-	Workflows          *[]WorkflowTemplate     `yaml:"workflows,omitempty" json:"workflows,omitempty"`
-	SelfContained      *bool                   `yaml:"self-contained,omitempty" json:"self-contained,omitempty"`
-	StopAtFirstMatch   *bool                   `yaml:"stop-at-first-match,omitempty" json:"stop-at-first-match,omitempty"`
-	Signature          *string                 `yaml:"signature,omitempty" json:"signature,omitempty"` // enum: AWS
-	Variables          *map[string]interface{} `yaml:"variables,omitempty" json:"variables,omitempty"`
-	Constants          *map[string]interface{} `yaml:"constants,omitempty" json:"constants,omitempty"`
+	Flow               *string              `yaml:"flow,omitempty" json:"flow,omitempty"`
+	RequestsHTTP       *[]HTTPRequest       `yaml:"requests,omitempty" json:"requests,omitempty"`
+	RequestsWithHTTP   *[]HTTPRequest       `yaml:"http,omitempty" json:"http,omitempty"`
+	RequestsDNS        *[]DNSRequest        `yaml:"dns,omitempty" json:"dns,omitempty"`
+	RequestsFile       *[]FileRequest       `yaml:"file,omitempty" json:"file,omitempty"`
+	RequestsNetwork    *[]NetworkRequest    `yaml:"network,omitempty" json:"network,omitempty"`
+	RequestsWithTCP    *[]NetworkRequest    `yaml:"tcp,omitempty" json:"tcp,omitempty"`
+	RequestsHeadless   *[]HeadlessRequest   `yaml:"headless,omitempty" json:"headless,omitempty"`
+	RequestsSSL        *[]SSLRequest        `yaml:"ssl,omitempty" json:"ssl,omitempty"`
+	RequestsWebsocket  *[]WebsocketRequest  `yaml:"websocket,omitempty" json:"websocket,omitempty"`
+	RequestsWHOIS      *[]WhoisRequest      `yaml:"whois,omitempty" json:"whois,omitempty"`
+	RequestsCode       *[]CodeRequest       `yaml:"code,omitempty" json:"code,omitempty"`
+	RequestsJavascript *[]JavascriptRequest `yaml:"javascript,omitempty" json:"javascript,omitempty"`
+	Workflows          *[]WorkflowTemplate  `yaml:"workflows,omitempty" json:"workflows,omitempty"`
+	SelfContained      *bool                `yaml:"self-contained,omitempty" json:"self-contained,omitempty"`
+	StopAtFirstMatch   *bool                `yaml:"stop-at-first-match,omitempty" json:"stop-at-first-match,omitempty"`
+	Signature          *string              `yaml:"signature,omitempty" json:"signature,omitempty"` // enum: AWS
+	Variables          *map[string]any      `yaml:"variables,omitempty" json:"variables,omitempty"`
+	Constants          *map[string]any      `yaml:"constants,omitempty" json:"constants,omitempty"`
 }
 
 type HTTPRequest struct {
-	Matchers                      *[]MatchersMatcher      `yaml:"matchers,omitempty" json:"matchers,omitempty"`
-	Extractors                    *[]ExtractorsExtractor  `yaml:"extractors,omitempty" json:"extractors,omitempty"`
-	MatchersCondition             *string                 `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
-	Path                          *[]string               `yaml:"path,omitempty" json:"path,omitempty"`
-	Raw                           *[]string               `yaml:"raw,omitempty" json:"raw,omitempty"`
-	ID                            *string                 `yaml:"id,omitempty" json:"id,omitempty"`
-	Name                          *string                 `yaml:"name,omitempty" json:"name,omitempty"`
-	Attack                        *string                 `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
-	Method                        *string                 `yaml:"method,omitempty" json:"method,omitempty"` // enum: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH, PURGE, DEBUG
-	Body                          *string                 `yaml:"body,omitempty" json:"body,omitempty"`
-	Payloads                      *map[string]interface{} `yaml:"payloads,omitempty" json:"payloads,omitempty"`
-	Headers                       *map[string]string      `yaml:"headers,omitempty" json:"headers,omitempty"`
-	RaceCount                     *int                    `yaml:"race_count,omitempty" json:"race_count,omitempty"`
-	MaxRedirects                  *int                    `yaml:"max-redirects,omitempty" json:"max-redirects,omitempty"`
-	PipelineConcurrentConnections *int                    `yaml:"pipeline-concurrent-connections,omitempty" json:"pipeline-concurrent-connections,omitempty"`
-	PipelineRequestsPerConnection *int                    `yaml:"pipeline-requests-per-connection,omitempty" json:"pipeline-requests-per-connection,omitempty"`
-	Threads                       *int                    `yaml:"threads,omitempty" json:"threads,omitempty"`
-	MaxSize                       *int                    `yaml:"max-size,omitempty" json:"max-size,omitempty"`
-	Fuzzing                       *[]FuzzRule             `yaml:"fuzzing,omitempty" json:"fuzzing,omitempty"`
+	Matchers                      *[]MatchersMatcher     `yaml:"matchers,omitempty" json:"matchers,omitempty"`
+	Extractors                    *[]ExtractorsExtractor `yaml:"extractors,omitempty" json:"extractors,omitempty"`
+	MatchersCondition             *string                `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
+	Path                          *[]string              `yaml:"path,omitempty" json:"path,omitempty"`
+	Raw                           *[]string              `yaml:"raw,omitempty" json:"raw,omitempty"`
+	ID                            *string                `yaml:"id,omitempty" json:"id,omitempty"`
+	Name                          *string                `yaml:"name,omitempty" json:"name,omitempty"`
+	Attack                        *string                `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
+	Method                        *string                `yaml:"method,omitempty" json:"method,omitempty"` // enum: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH, PURGE, DEBUG
+	Body                          *string                `yaml:"body,omitempty" json:"body,omitempty"`
+	Payloads                      *map[string]any        `yaml:"payloads,omitempty" json:"payloads,omitempty"`
+	Headers                       *map[string]string     `yaml:"headers,omitempty" json:"headers,omitempty"`
+	RaceCount                     *int                   `yaml:"race_count,omitempty" json:"race_count,omitempty"`
+	MaxRedirects                  *int                   `yaml:"max-redirects,omitempty" json:"max-redirects,omitempty"`
+	PipelineConcurrentConnections *int                   `yaml:"pipeline-concurrent-connections,omitempty" json:"pipeline-concurrent-connections,omitempty"`
+	PipelineRequestsPerConnection *int                   `yaml:"pipeline-requests-per-connection,omitempty" json:"pipeline-requests-per-connection,omitempty"`
+	Threads                       *int                   `yaml:"threads,omitempty" json:"threads,omitempty"`
+	MaxSize                       *int                   `yaml:"max-size,omitempty" json:"max-size,omitempty"`
+	Fuzzing                       *[]FuzzRule            `yaml:"fuzzing,omitempty" json:"fuzzing,omitempty"`
 	Analyzer                      *struct {
-		Name       string                 `yaml:"name" json:"name"`
-		Parameters map[string]interface{} `yaml:"parameters" json:"parameters"`
+		Name       string         `yaml:"name" json:"name"`
+		Parameters map[string]any `yaml:"parameters" json:"parameters"`
 	} `yaml:"analyzer,omitempty" json:"analyzer,omitempty"`
 	SelfContained        *bool              `yaml:"self-contained,omitempty" json:"self-contained,omitempty"`
 	Signature            *string            `yaml:"signature,omitempty" json:"signature,omitempty"` // enum: AWS
@@ -92,21 +92,21 @@ type HTTPRequest struct {
 }
 
 type DNSRequest struct {
-	Matchers          *[]MatchersMatcher      `yaml:"matchers,omitempty" json:"matchers,omitempty"`
-	Extractors        *[]ExtractorsExtractor  `yaml:"extractors,omitempty" json:"extractors,omitempty"`
-	MatchersCondition *string                 `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
-	ID                *string                 `yaml:"id,omitempty" json:"id,omitempty"`
-	Name              *string                 `yaml:"name,omitempty" json:"name,omitempty"`
-	Type              *string                 `yaml:"type,omitempty" json:"type,omitempty"`   // enum: A, NS, DS, CNAME, SOA, PTR, MX, TXT, AAAA, CAA, TLSA, ANY, SRV
-	Class             *string                 `yaml:"class,omitempty" json:"class,omitempty"` // enum: inet, csnet, chaos, hesiod, none, any
-	Retries           *int                    `yaml:"retries,omitempty" json:"retries,omitempty"`
-	Trace             *bool                   `yaml:"trace,omitempty" json:"trace,omitempty"`
-	TraceMaxRecursion *int                    `yaml:"trace-max-recursion,omitempty" json:"trace-max-recursion,omitempty"`
-	Attack            *string                 `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
-	Payloads          *map[string]interface{} `yaml:"payloads,omitempty" json:"payloads,omitempty"`
-	Threads           *int                    `yaml:"threads,omitempty" json:"threads,omitempty"`
-	Recursion         *bool                   `yaml:"recursion,omitempty" json:"recursion,omitempty"`
-	Resolvers         *[]string               `yaml:"resolvers,omitempty" json:"resolvers,omitempty"`
+	Matchers          *[]MatchersMatcher     `yaml:"matchers,omitempty" json:"matchers,omitempty"`
+	Extractors        *[]ExtractorsExtractor `yaml:"extractors,omitempty" json:"extractors,omitempty"`
+	MatchersCondition *string                `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
+	ID                *string                `yaml:"id,omitempty" json:"id,omitempty"`
+	Name              *string                `yaml:"name,omitempty" json:"name,omitempty"`
+	Type              *string                `yaml:"type,omitempty" json:"type,omitempty"`   // enum: A, NS, DS, CNAME, SOA, PTR, MX, TXT, AAAA, CAA, TLSA, ANY, SRV
+	Class             *string                `yaml:"class,omitempty" json:"class,omitempty"` // enum: inet, csnet, chaos, hesiod, none, any
+	Retries           *int                   `yaml:"retries,omitempty" json:"retries,omitempty"`
+	Trace             *bool                  `yaml:"trace,omitempty" json:"trace,omitempty"`
+	TraceMaxRecursion *int                   `yaml:"trace-max-recursion,omitempty" json:"trace-max-recursion,omitempty"`
+	Attack            *string                `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
+	Payloads          *map[string]any        `yaml:"payloads,omitempty" json:"payloads,omitempty"`
+	Threads           *int                   `yaml:"threads,omitempty" json:"threads,omitempty"`
+	Recursion         *bool                  `yaml:"recursion,omitempty" json:"recursion,omitempty"`
+	Resolvers         *[]string              `yaml:"resolvers,omitempty" json:"resolvers,omitempty"`
 }
 
 type FileRequest struct {
@@ -123,18 +123,18 @@ type FileRequest struct {
 }
 
 type NetworkRequest struct {
-	ID       *string                 `yaml:"id,omitempty" json:"id,omitempty"`
-	Host     *[]string               `yaml:"host,omitempty" json:"host,omitempty"`
-	Attack   *string                 `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
-	Payloads *map[string]interface{} `yaml:"payloads,omitempty" json:"payloads,omitempty"`
-	Threads  *int                    `yaml:"threads,omitempty" json:"threads,omitempty"`
+	ID       *string         `yaml:"id,omitempty" json:"id,omitempty"`
+	Host     *[]string       `yaml:"host,omitempty" json:"host,omitempty"`
+	Attack   *string         `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
+	Payloads *map[string]any `yaml:"payloads,omitempty" json:"payloads,omitempty"`
+	Threads  *int            `yaml:"threads,omitempty" json:"threads,omitempty"`
 	Inputs   *[]struct {
-		Data *interface{} `yaml:"data,omitempty" json:"data,omitempty"` // string or int
-		Type *string      `yaml:"type,omitempty" json:"type,omitempty"` // enum: hex, text
-		Read *int         `yaml:"read,omitempty" json:"read,omitempty"`
-		Name *string      `yaml:"name,omitempty" json:"name,omitempty"`
+		Data *any    `yaml:"data,omitempty" json:"data,omitempty"` // string or int
+		Type *string `yaml:"type,omitempty" json:"type,omitempty"` // enum: hex, text
+		Read *int    `yaml:"read,omitempty" json:"read,omitempty"`
+		Name *string `yaml:"name,omitempty" json:"name,omitempty"`
 	} `yaml:"inputs,omitempty" json:"inputs,omitempty"`
-	Port              *interface{}           `yaml:"port,omitempty" json:"port,omitempty"` // string or int
+	Port              *any                   `yaml:"port,omitempty" json:"port,omitempty"` // string or int
 	ExcludePorts      *string                `yaml:"exclude-ports,omitempty" json:"exclude-ports,omitempty"`
 	ReadSize          *int                   `yaml:"read-size,omitempty" json:"read-size,omitempty"`
 	ReadAll           *bool                  `yaml:"read-all,omitempty" json:"read-all,omitempty"`
@@ -145,19 +145,19 @@ type NetworkRequest struct {
 }
 
 type HeadlessRequest struct {
-	ID                *string                 `yaml:"id,omitempty" json:"id,omitempty"`
-	Attack            *string                 `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
-	Payloads          *map[string]interface{} `yaml:"payloads,omitempty" json:"payloads,omitempty"`
-	Steps             *[]EngineAction         `yaml:"steps,omitempty" json:"steps,omitempty"`
-	UserAgent         *string                 `yaml:"user_agent,omitempty" json:"user_agent,omitempty"` // enum: off, default, custom
-	CustomUserAgent   *string                 `yaml:"custom_user_agent,omitempty" json:"custom_user_agent,omitempty"`
-	StopAtFirstMatch  *bool                   `yaml:"stop-at-first-match,omitempty" json:"stop-at-first-match,omitempty"`
-	Matchers          *[]MatchersMatcher      `yaml:"matchers,omitempty" json:"matchers,omitempty"`
-	Extractors        *[]ExtractorsExtractor  `yaml:"extractors,omitempty" json:"extractors,omitempty"`
-	MatchersCondition *string                 `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
-	Fuzzing           *[]FuzzRule             `yaml:"fuzzing,omitempty" json:"fuzzing,omitempty"`
-	CookieReuse       *bool                   `yaml:"cookie-reuse,omitempty" json:"cookie-reuse,omitempty"`
-	DisableCookie     *bool                   `yaml:"disable-cookie,omitempty" json:"disable-cookie,omitempty"`
+	ID                *string                `yaml:"id,omitempty" json:"id,omitempty"`
+	Attack            *string                `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
+	Payloads          *map[string]any        `yaml:"payloads,omitempty" json:"payloads,omitempty"`
+	Steps             *[]EngineAction        `yaml:"steps,omitempty" json:"steps,omitempty"`
+	UserAgent         *string                `yaml:"user_agent,omitempty" json:"user_agent,omitempty"` // enum: off, default, custom
+	CustomUserAgent   *string                `yaml:"custom_user_agent,omitempty" json:"custom_user_agent,omitempty"`
+	StopAtFirstMatch  *bool                  `yaml:"stop-at-first-match,omitempty" json:"stop-at-first-match,omitempty"`
+	Matchers          *[]MatchersMatcher     `yaml:"matchers,omitempty" json:"matchers,omitempty"`
+	Extractors        *[]ExtractorsExtractor `yaml:"extractors,omitempty" json:"extractors,omitempty"`
+	MatchersCondition *string                `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
+	Fuzzing           *[]FuzzRule            `yaml:"fuzzing,omitempty" json:"fuzzing,omitempty"`
+	CookieReuse       *bool                  `yaml:"cookie-reuse,omitempty" json:"cookie-reuse,omitempty"`
+	DisableCookie     *bool                  `yaml:"disable-cookie,omitempty" json:"disable-cookie,omitempty"`
 }
 
 type SSLRequest struct {
@@ -185,9 +185,9 @@ type WebsocketRequest struct {
 		Data *string `yaml:"data,omitempty" json:"data,omitempty"`
 		Name *string `yaml:"name,omitempty" json:"name,omitempty"`
 	} `yaml:"inputs,omitempty" json:"inputs,omitempty"`
-	Headers  *map[string]string      `yaml:"headers,omitempty" json:"headers,omitempty"`
-	Attack   *string                 `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
-	Payloads *map[string]interface{} `yaml:"payloads,omitempty" json:"payloads,omitempty"`
+	Headers  *map[string]string `yaml:"headers,omitempty" json:"headers,omitempty"`
+	Attack   *string            `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
+	Payloads *map[string]any    `yaml:"payloads,omitempty" json:"payloads,omitempty"`
 }
 
 type WhoisRequest struct {
@@ -212,18 +212,18 @@ type CodeRequest struct {
 }
 
 type JavascriptRequest struct {
-	Matchers          *[]MatchersMatcher      `yaml:"matchers,omitempty" json:"matchers,omitempty"`
-	Extractors        *[]ExtractorsExtractor  `yaml:"extractors,omitempty" json:"extractors,omitempty"`
-	MatchersCondition *string                 `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
-	ID                *string                 `yaml:"id,omitempty" json:"id,omitempty"`
-	Init              *string                 `yaml:"init,omitempty" json:"init,omitempty"`
-	PreCondition      *string                 `yaml:"pre-condition,omitempty" json:"pre-condition,omitempty"`
-	Args              *map[string]interface{} `yaml:"args,omitempty" json:"args,omitempty"`
-	Code              *string                 `yaml:"code,omitempty" json:"code,omitempty"`
-	StopAtFirstMatch  *bool                   `yaml:"stop-at-first-match,omitempty" json:"stop-at-first-match,omitempty"`
-	Attack            **string                `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
-	Threads           *int                    `yaml:"threads,omitempty" json:"threads,omitempty"`
-	Payloads          *map[string]interface{} `yaml:"payloads,omitempty" json:"payloads,omitempty"`
+	Matchers          *[]MatchersMatcher     `yaml:"matchers,omitempty" json:"matchers,omitempty"`
+	Extractors        *[]ExtractorsExtractor `yaml:"extractors,omitempty" json:"extractors,omitempty"`
+	MatchersCondition *string                `yaml:"matchers-condition,omitempty" json:"matchers-condition,omitempty"` // enum: and, or
+	ID                *string                `yaml:"id,omitempty" json:"id,omitempty"`
+	Init              *string                `yaml:"init,omitempty" json:"init,omitempty"`
+	PreCondition      *string                `yaml:"pre-condition,omitempty" json:"pre-condition,omitempty"`
+	Args              *map[string]any        `yaml:"args,omitempty" json:"args,omitempty"`
+	Code              *string                `yaml:"code,omitempty" json:"code,omitempty"`
+	StopAtFirstMatch  *bool                  `yaml:"stop-at-first-match,omitempty" json:"stop-at-first-match,omitempty"`
+	Attack            **string               `yaml:"attack,omitempty" json:"attack,omitempty"` // enum: batteringram, pitchfork, clusterbomb
+	Threads           *int                   `yaml:"threads,omitempty" json:"threads,omitempty"`
+	Payloads          *map[string]any        `yaml:"payloads,omitempty" json:"payloads,omitempty"`
 }
 
 type MatchersMatcher struct {
@@ -261,29 +261,29 @@ type ExtractorsExtractor struct {
 }
 
 type FuzzRule struct {
-	Type         *string        `yaml:"type,omitempty" json:"type,omitempty"`   // enum: replace, prefix, postfix, infix, replace-regex
-	Part         *string        `yaml:"part,omitempty" json:"part,omitempty"`   // enum: query, header, path, body, cookie, request
-	Parts        *[]string      `yaml:"parts,omitempty" json:"parts,omitempty"` // enum: query, header, path, body, cookie, request
-	Mode         *string        `yaml:"mode,omitempty" json:"mode,omitempty"`   // enum: single, multiple
-	Keys         *[]string      `yaml:"keys,omitempty" json:"keys,omitempty"`
-	KeysRegex    *[]string      `yaml:"keys-regex,omitempty" json:"keys-regex,omitempty"`
-	Values       *[]string      `yaml:"values,omitempty" json:"values,omitempty"`
-	Fuzz         *[]interface{} `yaml:"fuzz,omitempty" json:"fuzz,omitempty"` // string or object
-	ReplaceRegex *string        `yaml:"replace-regex,omitempty" json:"replace-regex,omitempty"`
+	Type         *string   `yaml:"type,omitempty" json:"type,omitempty"`   // enum: replace, prefix, postfix, infix, replace-regex
+	Part         *string   `yaml:"part,omitempty" json:"part,omitempty"`   // enum: query, header, path, body, cookie, request
+	Parts        *[]string `yaml:"parts,omitempty" json:"parts,omitempty"` // enum: query, header, path, body, cookie, request
+	Mode         *string   `yaml:"mode,omitempty" json:"mode,omitempty"`   // enum: single, multiple
+	Keys         *[]string `yaml:"keys,omitempty" json:"keys,omitempty"`
+	KeysRegex    *[]string `yaml:"keys-regex,omitempty" json:"keys-regex,omitempty"`
+	Values       *[]string `yaml:"values,omitempty" json:"values,omitempty"`
+	Fuzz         *[]any    `yaml:"fuzz,omitempty" json:"fuzz,omitempty"` // string or object
+	ReplaceRegex *string   `yaml:"replace-regex,omitempty" json:"replace-regex,omitempty"`
 }
 
 type EngineAction struct {
-	Args        *map[string]interface{} `yaml:"args,omitempty" json:"args,omitempty"`
-	Name        *string                 `yaml:"name,omitempty" json:"name,omitempty"`
-	Description *string                 `yaml:"description,omitempty" json:"description,omitempty"`
-	Action      string                  `yaml:"action" json:"action"` // enum: navigate, script, click, rightclick, text, screenshot, time, select, files, waitdom, waitfcp, waitfmp, waitidle, waitload, waitstable, getresource, extract, setmethod, addheader, setheader, deleteheader, setbody, waitevent, waitdialog, keyboard, debug, sleep, waitvisible
+	Args        *map[string]any `yaml:"args,omitempty" json:"args,omitempty"`
+	Name        *string         `yaml:"name,omitempty" json:"name,omitempty"`
+	Description *string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Action      string          `yaml:"action" json:"action"` // enum: navigate, script, click, rightclick, text, screenshot, time, select, files, waitdom, waitfcp, waitfmp, waitidle, waitload, waitstable, getresource, extract, setmethod, addheader, setheader, deleteheader, setbody, waitevent, waitdialog, keyboard, debug, sleep, waitvisible
 }
 
 type WorkflowTemplate struct {
-	Template *string      `yaml:"template,omitempty" json:"template,omitempty"`
-	Tags     *interface{} `yaml:"tags,omitempty" json:"tags,omitempty"` // string or slice
+	Template *string `yaml:"template,omitempty" json:"template,omitempty"`
+	Tags     *any    `yaml:"tags,omitempty" json:"tags,omitempty"` // string or slice
 	Matchers *[]struct {
-		Name         *interface{}        `yaml:"name,omitempty" json:"name,omitempty"`           // string or slice
+		Name         *any                `yaml:"name,omitempty" json:"name,omitempty"`           // string or slice
 		Condition    *string             `yaml:"condition,omitempty" json:"condition,omitempty"` // enum: and, or
 		SubTemplates *[]WorkflowTemplate `yaml:"subtemplates,omitempty" json:"subtemplates,omitempty"`
 	} `yaml:"matchers,omitempty" json:"matchers,omitempty"`

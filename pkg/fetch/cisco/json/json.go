@@ -146,7 +146,7 @@ func fetchAccessToken(client *utilhttp.Client, baseURL, clientID, clientSecret s
 	header := make(http.Header)
 	header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	req, err := utilhttp.NewRequest(http.MethodPost, baseURL, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody([]byte(fmt.Sprintf("client_id=%s&client_secret=%s&grant_type=client_credentials", clientID, clientSecret))))
+	req, err := utilhttp.NewRequest(http.MethodPost, baseURL, utilhttp.WithRequestHeader(header), utilhttp.WithRequestBody(fmt.Appendf(nil, "client_id=%s&client_secret=%s&grant_type=client_credentials", clientID, clientSecret)))
 	if err != nil {
 		return "", errors.Wrap(err, "new request")
 	}

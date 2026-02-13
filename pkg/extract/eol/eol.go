@@ -98,7 +98,7 @@ func Extract(opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.EOL,
-		Name: func() *string { t := "End Of Life"; return &t }(),
+		Name: new("End Of Life"),
 		Raw:  nil,
 		Extracted: func() *repositoryTypes.Repository {
 			if u, err := utilgit.GetOrigin(options.dir); err == nil {

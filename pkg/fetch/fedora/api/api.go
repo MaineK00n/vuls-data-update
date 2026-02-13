@@ -455,7 +455,7 @@ func (opts options) packages(client *utilhttp.Client, build Build) (map[string][
 		}
 
 		if buildinfo.Extra.TypeInfo.Module.IsZero() {
-			return nil, nil, errors.Errorf("buildinfo does not have module info. build_id: %q, nvr: %q", buildinfo.ID, build.NVR)
+			return nil, nil, errors.Errorf("buildinfo does not have module info. build_id: %q, nvr: %q", fmt.Sprintf("%d", buildinfo.ID), build.NVR)
 		}
 
 		as, err := listArchives(client, opts.dataURL.Package, buildinfo.ID)

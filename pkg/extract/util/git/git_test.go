@@ -109,10 +109,7 @@ func TestGetDataSourceRepository(t *testing.T) {
 			want: &repositoryTypes.Repository{
 				URL:    "https://github.com/MaineK00n/vuls-data-update-utilgit.git",
 				Commit: "7117b194f33f56922f428afe979a4e5bec1cace8",
-				Date: func() *time.Time {
-					t := time.Date(2024, time.July, 10, 23, 6, 5, 0, time.FixedZone("", 0))
-					return &t
-				}(),
+				Date:   new(time.Date(2024, time.July, 10, 23, 6, 5, 0, time.FixedZone("", 0))),
 			},
 		},
 	}

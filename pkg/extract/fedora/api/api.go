@@ -116,7 +116,7 @@ func Extract(args string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.FedoraAPI,
-		Name: func() *string { t := "Fedora Update System"; return &t }(),
+		Name: new("Fedora Update System"),
 		Raw: func() []repositoryTypes.Repository {
 			r, _ := utilgit.GetDataSourceRepository(args)
 			if r == nil {
@@ -294,7 +294,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 					Severity: []severityTypes.Severity{{
 						Type:   severityTypes.SeverityTypeVendor,
 						Source: "fedoraproject.org",
-						Vendor: func() *string { return &fetched.Severity }(),
+						Vendor: new(fetched.Severity),
 					}},
 					References: []referenceTypes.Reference{{
 						Source: "fedoraproject.org",
@@ -344,7 +344,7 @@ func extract(fetched api.Advisory, raws []string) (*dataTypes.Data, error) {
 									Severity: []severityTypes.Severity{{
 										Type:   severityTypes.SeverityTypeVendor,
 										Source: "fedoraproject.org",
-										Vendor: func() *string { return &b.BugSeverity }(),
+										Vendor: new(b.BugSeverity),
 									}},
 									References: []referenceTypes.Reference{{
 										Source: "fedoraproject.org",
