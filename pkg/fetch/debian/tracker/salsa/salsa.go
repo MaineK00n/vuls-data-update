@@ -65,10 +65,10 @@ var (
 		"undetermined",
 	}
 
-	releaseMain     = "http://deb.debian.org/debian"
+	releaseStable   = "http://deb.debian.org/debian"
 	releaseSecurity = "http://security.debian.org/debian-security"
 	releaseBackport = "http://deb.debian.org/debian"
-	archiveMain     = "http://archive.debian.org/debian"
+	archiveStable   = "http://archive.debian.org/debian"
 	archiveSecurity = "http://archive.debian.org/debian-security"
 	archiveBackport = "http://archive.debian.org/debian-backports"
 	codenames       = []string{"hamm", "slink", "potato", "woody", "sarge", "etch", "lenny", "squeeze", "wheezy", "jessie", "stretch", "buster", "bullseye", "bookworm", "trixie", "forky", "sid"}
@@ -116,10 +116,10 @@ func WithRetry(retry int) Option {
 }
 
 type Mirror struct {
-	ReleaseMain     string
+	ReleaseStable   string
 	ReleaseSecurity string
 	ReleaseBackport string
-	ArchiveMain     string
+	ArchiveStable   string
 	ArchiveSecurity string
 	ArchiveBackport string
 }
@@ -140,10 +140,10 @@ func Fetch(opts ...Option) error {
 		dir:     filepath.Join(util.CacheDir(), "fetch", "debian", "tracker", "salsa"),
 		retry:   3,
 		mirror: Mirror{
-			ReleaseMain:     releaseMain,
+			ReleaseStable:   releaseStable,
 			ReleaseSecurity: releaseSecurity,
 			ReleaseBackport: releaseBackport,
-			ArchiveMain:     archiveMain,
+			ArchiveStable:   archiveStable,
 			ArchiveSecurity: archiveSecurity,
 			ArchiveBackport: archiveBackport,
 		},
@@ -773,34 +773,34 @@ func parseConfig(r io.Reader) (archives []string, releases []string, err error) 
 
 func (opts *options) fetchSource(codename string, archived bool) (map[string]map[string]map[string]textproto.MIMEHeader, error) {
 	m := map[string]map[string]map[string]textproto.MIMEHeader{
-		"main":     make(map[string]map[string]textproto.MIMEHeader),
+		"stable":   make(map[string]map[string]textproto.MIMEHeader),
 		"security": make(map[string]map[string]textproto.MIMEHeader),
 		"backport": make(map[string]map[string]textproto.MIMEHeader),
 	}
 
-	mainURL := opts.mirror.ReleaseMain
+	stableURL := opts.mirror.ReleaseStable
 	securityURL := opts.mirror.ReleaseSecurity
 	backportURL := opts.mirror.ReleaseBackport
 	if archived {
-		mainURL = opts.mirror.ArchiveMain
+		stableURL = opts.mirror.ArchiveStable
 		securityURL = opts.mirror.ArchiveSecurity
 		backportURL = opts.mirror.ArchiveBackport
 	}
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
 
-	log.Printf("Fetch Debian %s main", codename)
-	sections, err := fetchRelease(client, fmt.Sprintf("%s/dists/%s/Release", mainURL, codename))
+	log.Printf("Fetch Debian %s stable", codename)
+	sections, err := fetchRelease(client, fmt.Sprintf("%s/dists/%s/Release", stableURL, codename))
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
 	}
 	for _, section := range sections {
-		sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s/%s/source/Sources", mainURL, codename, section))
+		sources, err := fetchSource(client, fmt.Sprintf("%s/dists/%s/%s/source/Sources", stableURL, codename, section))
 		if err != nil {
 			return nil, errors.Wrap(err, "fetch source")
 		}
 
-		m["main"][section] = sources
+		m["stable"][section] = sources
 	}
 
 	if codename == "sid" {
@@ -828,7 +828,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 
 	log.Printf("Fetch Debian %s backport", codename)
 	if slices.Index(codenames, codename) == -1 || slices.Index(codenames, codename) >= slices.Index(codenames, "wheezy") {
-		backportURL = mainURL
+		backportURL = stableURL
 	}
 
 	sections, err = fetchRelease(client, fmt.Sprintf("%s/dists/%s-backports/Release", backportURL, codename))

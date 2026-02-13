@@ -39,7 +39,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			var m salsa.Mirror
-			m.ReleaseMain, err = url.JoinPath(ts.URL, "testdata", "fixtures", "release", "debian")
+			m.ReleaseStable, err = url.JoinPath(ts.URL, "testdata", "fixtures", "release", "debian")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
@@ -51,7 +51,7 @@ func TestFetch(t *testing.T) {
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
-			m.ArchiveMain, err = url.JoinPath(ts.URL, "testdata", "fixtures", "archive", "debian")
+			m.ArchiveStable, err = url.JoinPath(ts.URL, "testdata", "fixtures", "archive", "debian")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
