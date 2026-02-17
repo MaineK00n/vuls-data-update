@@ -753,7 +753,7 @@ type product2 struct {
 
 type productsWithMaxPid struct {
 	maxPid vex.ProductID
-	p2s    []product2
+	p2s    map[string][]product2 // key: product2.cpe
 }
 
 func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[vex.ProductID][]product, assm map[vex.ProductID]ass) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
@@ -790,33 +790,32 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 			if !found {
 				pmax = productsWithMaxPid{
 					maxPid: pid,
-					p2s: []product2{{
-						name:            p.name,
-						version:         p.version,
-						modularitylabel: p.modularitylabel,
-						cpe:             p.cpe,
-						archs:           []string{p.arch},
-						repositories:    p.repositories,
-					}},
+					p2s: map[string][]product2{
+						p.cpe: {{
+							name:            p.name,
+							version:         p.version,
+							modularitylabel: p.modularitylabel,
+							cpe:             p.cpe,
+							archs:           []string{p.arch},
+							repositories:    p.repositories,
+						}},
+					},
 				}
 			} else {
-				added := false
 				pmax.maxPid = vex.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
-				for i, p2 := range pmax.p2s {
-					if p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel &&
-						p2.cpe == p.cpe {
-						// && slices.Compare(p2.repositories, p.repositories) == 0 {
-
+				added := false
+				for i, p2 := range pmax.p2s[p.cpe] {
+					if p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel {
 						added = true
 						if !slices.Contains(p2.archs, p.arch) {
 							p2.archs = append(p2.archs, p.arch)
 						}
-						pmax.p2s[i] = p2
+						pmax.p2s[p.cpe][i] = p2
 						break
 					}
 				}
 				if !added {
-					pmax.p2s = append(pmax.p2s, product2{
+					pmax.p2s[p.cpe] = append(pmax.p2s[p.cpe], product2{
 						name:            p.name,
 						version:         p.version,
 						modularitylabel: p.modularitylabel,
@@ -848,19 +847,31 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			}
 
-			for _, p2 := range pmax.p2s {
-				vcs, err := buildVersionCriterion(p2, ass)
-				if err != nil {
-					return nil, nil, nil, errors.Wrap(err, "build version criterion")
+			for _, cpe := range slices.Sorted(maps.Keys(pmax.p2s)) {
+				p2s := pmax.p2s[cpe]
+				subCa := criteriaTypes.Criteria{
+					Operator:     criteriaTypes.CriteriaOperatorTypeOR,
+					Repositories: p2s[0].repositories,
 				}
-				for _, vc := range vcs {
-					ca.Criterions = append(ca.Criterions, criterionTypes.Criterion{
-						Type:    criterionTypes.CriterionTypeVersion,
-						Version: &vc,
-					})
+
+				for _, p2 := range p2s {
+					vcs, err := buildVersionCriterion(p2, ass)
+					if err != nil {
+						return nil, nil, nil, errors.Wrap(err, "build version criterion")
+					}
+					for _, vc := range vcs {
+
+						subCa.Criterions = append(subCa.Criterions, criterionTypes.Criterion{
+							Type:    criterionTypes.CriterionTypeVersion,
+							Version: &vc,
+						})
+					}
+				}
+				if len(subCa.Criterions) > 0 {
+					ca.Criterias = append(ca.Criterias, subCa)
 				}
 			}
-			if len(ca.Criterions) > 0 {
+			if len(ca.Criterias) > 0 {
 				conds = append(conds, conditionTypes.Condition{
 					Criteria: ca,
 					Tag:      tag,
@@ -927,7 +938,6 @@ func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 							return p2.name
 						}(),
 						Architectures: as,
-						Repositories:  p2.repositories,
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -968,7 +978,6 @@ func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 							}
 							return as
 						}(),
-						Repositories: p2.repositories,
 					},
 				},
 			})
@@ -990,7 +999,6 @@ func buildVersionCriterion(p2 product2, ass ass) ([]vcTypes.Criterion, error) {
 							}
 							return p2.name
 						}(),
-						Repositories: p2.repositories,
 					},
 				},
 			})
