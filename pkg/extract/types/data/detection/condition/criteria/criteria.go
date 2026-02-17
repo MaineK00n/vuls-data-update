@@ -2,8 +2,8 @@ package criteria
 
 import (
 	"cmp"
-	"encoding/json/v2"
 	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"slices"
 
@@ -79,9 +79,10 @@ func (t *CriteriaOperatorType) UnmarshalJSON(data []byte) error {
 }
 
 type Criteria struct {
-	Operator   CriteriaOperatorType       `json:"operator,omitempty"`
-	Criterias  []Criteria                 `json:"criterias,omitempty"`
-	Criterions []criterionTypes.Criterion `json:"criterions,omitempty"`
+	Operator     CriteriaOperatorType       `json:"operator,omitempty"`
+	Criterias    []Criteria                 `json:"criterias,omitempty"`
+	Criterions   []criterionTypes.Criterion `json:"criterions,omitempty"`
+	Repositories []string                   `json:"repositories,omitempty"`
 }
 
 func (c *Criteria) Sort() {
@@ -94,6 +95,8 @@ func (c *Criteria) Sort() {
 		(&c.Criterias[i]).Sort()
 	}
 	slices.SortFunc(c.Criterias, Compare)
+
+	slices.Sort(c.Repositories)
 }
 
 func Compare(x, y Criteria) int {
@@ -101,6 +104,7 @@ func Compare(x, y Criteria) int {
 		cmp.Compare(x.Operator, y.Operator),
 		slices.CompareFunc(x.Criterions, y.Criterions, criterionTypes.Compare),
 		slices.CompareFunc(x.Criterias, y.Criterias, Compare),
+		slices.Compare(x.Repositories, y.Repositories),
 	)
 }
 
