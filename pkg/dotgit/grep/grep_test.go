@@ -12,7 +12,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
 
-func TestFind(t *testing.T) {
+func TestGrep(t *testing.T) {
 	type args struct {
 		repository string
 		patterns   []string

@@ -136,9 +136,9 @@ func Grep(repository string, patterns []string, opts ...Option) (string, error) 
 	var sb strings.Builder
 	for _, r := range rs {
 		if options.filesWithMatches {
-			sb.WriteString(fmt.Sprintf("%s:%s\n", r.TreeName, r.FileName))
+			fmt.Fprintf(&sb, "%s:%s\n", r.TreeName, r.FileName)
 		} else {
-			sb.WriteString(fmt.Sprintf("%s\n", r.String()))
+			fmt.Fprintf(&sb, "%s\n", r.String())
 		}
 	}
 	return sb.String(), nil
