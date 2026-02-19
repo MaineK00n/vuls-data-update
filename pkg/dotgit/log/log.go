@@ -130,7 +130,7 @@ func Log(repository string, opts ...Option) (iter.Seq2[string, error], error) {
 					}
 					sb.Reset()
 				}
-				sb.WriteString(fmt.Sprintf("%s\n", s))
+				fmt.Fprintf(&sb, "%s\n", s)
 			}
 			if sb.Len() > 0 {
 				if !yield(sb.String(), nil) {
