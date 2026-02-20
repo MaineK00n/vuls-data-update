@@ -130,9 +130,6 @@
 											"name": "vim-X11-debuginfo",
 											"architectures": [
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -162,9 +159,6 @@
 											"name": "vim-common-debuginfo",
 											"architectures": [
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -181,6 +175,9 @@
 									}
 								}
 							}
+						],
+						"repositories": [
+							"amazonlinux"
 						]
 					}
 				}

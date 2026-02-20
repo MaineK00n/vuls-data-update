@@ -92,9 +92,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -126,9 +123,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -160,9 +154,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -194,9 +185,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -228,9 +216,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -260,9 +245,6 @@
 											"name": "rsyslog-doc",
 											"architectures": [
 												"noarch"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -294,9 +276,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -328,9 +307,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -362,9 +338,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -396,9 +369,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -430,9 +400,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -464,9 +431,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -498,9 +462,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -532,9 +493,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -566,9 +524,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -600,9 +555,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -634,9 +586,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -668,9 +617,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -702,9 +648,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -736,9 +679,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -770,9 +710,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amazonlinux"
 											]
 										}
 									},
@@ -789,6 +726,9 @@
 									}
 								}
 							}
+						],
+						"repositories": [
+							"amazonlinux"
 						]
 					}
 				}

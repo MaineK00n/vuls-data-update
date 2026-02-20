@@ -311,9 +311,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -344,9 +341,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -377,9 +371,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -410,9 +401,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -442,9 +430,6 @@
 											"name": "kernel-debuginfo-common-aarch64",
 											"architectures": [
 												"aarch64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -474,9 +459,6 @@
 											"name": "kernel-debuginfo-common-x86_64",
 											"architectures": [
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -507,9 +489,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -541,9 +520,6 @@
 												"aarch64",
 												"i686",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -574,9 +550,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -607,9 +580,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -640,9 +610,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -673,9 +640,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -706,9 +670,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -739,9 +700,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -772,9 +730,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -805,9 +760,6 @@
 											"architectures": [
 												"aarch64",
 												"x86_64"
-											],
-											"repositories": [
-												"amzn2extra-kernel-5.15"
 											]
 										}
 									},
@@ -824,6 +776,9 @@
 									}
 								}
 							}
+						],
+						"repositories": [
+							"amzn2extra-kernel-5.15"
 						]
 					}
 				}

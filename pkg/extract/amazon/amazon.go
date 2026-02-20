@@ -132,7 +132,7 @@ func Extract(args string, opts ...Option) error {
 }
 
 func extract(fetched amazon.Update, raws []string) dataTypes.Data {
-	ds := detectionTypes.Detection{
+	d := detectionTypes.Detection{
 		Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAmazon, func() string {
 			switch {
 			case strings.HasPrefix(fetched.ID, "ALAS2023"):
@@ -165,24 +165,6 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 						return cap
 					}())
 
-					repos := func() []string {
-						switch {
-						case strings.HasPrefix(fetched.ID, "ALAS2023"):
-							if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
-								return []string{repo}
-							}
-							return []string{"amazonlinux"}
-						case strings.HasPrefix(fetched.ID, "ALAS2022"):
-							return []string{"amazonlinux"}
-						case strings.HasPrefix(fetched.ID, "ALAS2"):
-							if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
-								return []string{fmt.Sprintf("amzn2extra-%s", repo)}
-							}
-							return []string{"amzn2-core"}
-						default:
-							return []string{"amzn-main", "amzn-updates"}
-						}
-					}()
 					for n, evras := range pkgs {
 						for evr, as := range evras {
 							cs = append(cs, criterionTypes.Criterion{
@@ -194,7 +176,6 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 										Type: packageTypes.PackageTypeBinary,
 										Binary: &binaryPackageTypes.Package{
 											Name:          n,
-											Repositories:  repos,
 											Architectures: as,
 										},
 									},
@@ -209,6 +190,24 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 					}
 
 					return cs
+				}(),
+				Repositories: func() []string {
+					switch {
+					case strings.HasPrefix(fetched.ID, "ALAS2023"):
+						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2023---"); ok {
+							return []string{repo}
+						}
+						return []string{"amazonlinux"}
+					case strings.HasPrefix(fetched.ID, "ALAS2022"):
+						return []string{"amazonlinux"}
+					case strings.HasPrefix(fetched.ID, "ALAS2"):
+						if repo, ok := strings.CutPrefix(fetched.Pkglist.Collection.Short, "amazon-linux-2---"); ok {
+							return []string{fmt.Sprintf("amzn2extra-%s", repo)}
+						}
+						return []string{"amzn2-core"}
+					default:
+						return []string{"amzn-main", "amzn-updates"}
+					}
 				}(),
 			}},
 		},
@@ -253,7 +252,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 				Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
 				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
 			},
-			Segments: []segmentTypes.Segment{{Ecosystem: ds.Ecosystem}},
+			Segments: []segmentTypes.Segment{{Ecosystem: d.Ecosystem}},
 		}},
 		Vulnerabilities: func() []vulnerabilityTypes.Vulnerability {
 			var vs []vulnerabilityTypes.Vulnerability
@@ -267,13 +266,13 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 								URL:    r.Href,
 							}},
 						},
-						Segments: []segmentTypes.Segment{{Ecosystem: ds.Ecosystem}},
+						Segments: []segmentTypes.Segment{{Ecosystem: d.Ecosystem}},
 					})
 				}
 			}
 			return vs
 		}(),
-		Detections: []detectionTypes.Detection{ds},
+		Detections: []detectionTypes.Detection{d},
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.Amazon,
 			Raws: raws,
