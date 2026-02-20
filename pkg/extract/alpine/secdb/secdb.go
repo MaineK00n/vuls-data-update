@@ -151,8 +151,7 @@ func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 						Package: packageTypes.Package{
 							Type: packageTypes.PackageTypeSource,
 							Source: &sourcePackageTypes.Package{
-								Name:         pkg.Pkg.Name,
-								Repositories: []string{fetched.Reponame},
+								Name: pkg.Pkg.Name,
 							},
 						},
 						Affected: &affectedTypes.Affected{
@@ -186,8 +185,9 @@ func extract(fetched secdb.Advisory, raws []string) []dataTypes.Data {
 				Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeAlpine, strings.TrimPrefix(fetched.Distroversion, "v"))),
 				Conditions: []conditionTypes.Condition{{
 					Criteria: criteriaTypes.Criteria{
-						Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-						Criterions: cs,
+						Operator:     criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions:   cs,
+						Repositories: []string{fetched.Reponame},
 					},
 				}},
 			}},
