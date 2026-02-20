@@ -861,15 +861,15 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 					}
 				}
 
-				criterions, err := buildCriterions(pidsPerMajor, status, pm)
+				subCriterias, err := buildCriterias(pidsPerMajor, status, pm)
 				if err != nil {
 					return nil, nil, nil, errors.Wrap(err, "build criterions")
 				}
-				if len(criterions) > 0 {
+				if len(subCriterias) > 0 {
 					cm[major] = append(cm[major], conditionTypes.Condition{
 						Criteria: criteriaTypes.Criteria{
-							Operator:   criteriaTypes.CriteriaOperatorTypeOR,
-							Criterions: criterions,
+							Operator:  criteriaTypes.CriteriaOperatorTypeOR,
+							Criterias: subCriterias,
 						},
 						Tag: segment.Tag,
 					})
@@ -897,13 +897,14 @@ type productKey struct {
 }
 
 type productExtra struct {
+	cpe          string
 	arches       []string
 	repositories []string
 }
 
-func buildCriterions(pids []csaf.ProductID, status status, pm map[csaf.ProductID][]product) ([]criterionTypes.Criterion, error) {
-	// Aggregate architectures by {productKey, repositories} at first
-	pkm1 := make(map[productKey][]productExtra)
+func buildCriterias(pids []csaf.ProductID, status status, pm map[csaf.ProductID][]product) ([]criteriaTypes.Criteria, error) {
+	// Aggregate architectures by {productKey, cpe}
+	pkm := make(map[productKey][]productExtra)
 	for _, pid := range pids {
 		for _, p := range pm[pid] {
 			pk := productKey{
@@ -913,53 +914,45 @@ func buildCriterions(pids []csaf.ProductID, status status, pm map[csaf.ProductID
 				modularitylabel: p.modularitylabel,
 			}
 
-			slices.Sort(p.repositories)
-			index := slices.IndexFunc(pkm1[pk], func(e productExtra) bool {
-				return slices.Equal(p.repositories, e.repositories)
+			index := slices.IndexFunc(pkm[pk], func(e productExtra) bool {
+				return p.cpe == e.cpe
 			})
 
 			if index == -1 {
-				pkm1[pk] = append(pkm1[pk], productExtra{
+				pkm[pk] = append(pkm[pk], productExtra{
+					cpe:          p.cpe,
 					arches:       []string{p.arch},
 					repositories: p.repositories,
 				})
 			} else {
-				if !slices.Contains(pkm1[pk][index].arches, p.arch) {
-					pkm1[pk][index].arches = append(pkm1[pk][index].arches, p.arch)
+				if !slices.Contains(pkm[pk][index].arches, p.arch) {
+					pkm[pk][index].arches = append(pkm[pk][index].arches, p.arch)
 				}
 			}
 		}
 	}
 
-	// Then, aggregate repositories by {productKey, architectures}
-	pkm2 := make(map[productKey][]productExtra)
-	for pk, extras := range pkm1 {
+	// Group criterions by cpe (each cpe has a fixed set of repositories)
+	type cpeGroup struct {
+		repositories []string
+		criterions   []criterionTypes.Criterion
+	}
+	cpeGroups := make(map[string]*cpeGroup)
+	for pk, extras := range pkm {
 		for _, extra := range extras {
 			slices.Sort(extra.arches)
-			index := slices.IndexFunc(pkm2[pk], func(e productExtra) bool {
-				return slices.Equal(extra.arches, e.arches)
-			})
-			if index == -1 {
-				pkm2[pk] = append(pkm2[pk], extra)
-			} else {
-				for _, repository := range extra.repositories {
-					if !slices.Contains(pkm1[pk][index].repositories, repository) {
-						pkm2[pk][index].repositories = append(pkm2[pk][index].repositories, repository)
-					}
-				}
-			}
-		}
-	}
-
-	var cs []criterionTypes.Criterion
-	for pk, extras := range pkm2 {
-		for _, extra := range extras {
 			vcs, err := buildVersionCriterion(pk, extra, status)
 			if err != nil {
 				return nil, errors.Wrap(err, "build version criterion")
 			}
+
+			g, ok := cpeGroups[extra.cpe]
+			if !ok {
+				g = &cpeGroup{repositories: extra.repositories}
+				cpeGroups[extra.cpe] = g
+			}
 			for _, vc := range vcs {
-				cs = append(cs, criterionTypes.Criterion{
+				g.criterions = append(g.criterions, criterionTypes.Criterion{
 					Type:    criterionTypes.CriterionTypeVersion,
 					Version: &vc,
 				})
@@ -967,7 +960,19 @@ func buildCriterions(pids []csaf.ProductID, status status, pm map[csaf.ProductID
 		}
 	}
 
-	return cs, nil
+	var cas []criteriaTypes.Criteria
+	for _, g := range cpeGroups {
+		if len(g.criterions) == 0 {
+			continue
+		}
+		cas = append(cas, criteriaTypes.Criteria{
+			Operator:     criteriaTypes.CriteriaOperatorTypeOR,
+			Repositories: g.repositories,
+			Criterions:   g.criterions,
+		})
+	}
+
+	return cas, nil
 }
 
 func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]vcTypes.Criterion, error) {
@@ -993,7 +998,6 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 							return pk.name
 						}(),
 						Architectures: as,
-						Repositories:  extra.repositories,
 					},
 				},
 				Affected: &affectedTypes.Affected{
