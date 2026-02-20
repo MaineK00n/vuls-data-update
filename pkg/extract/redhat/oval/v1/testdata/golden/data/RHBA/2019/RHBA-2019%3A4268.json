@@ -175,26 +175,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -226,27 +206,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::custodia",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::custodia"
 												}
 											},
 											"affected": {
@@ -283,26 +243,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -334,27 +274,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::ipa-client-common",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::ipa-client-common"
 												}
 											},
 											"affected": {
@@ -391,26 +311,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -442,27 +342,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::ipa-common",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::ipa-common"
 												}
 											},
 											"affected": {
@@ -493,27 +373,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::ipa-healthcheck",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::ipa-healthcheck"
 												}
 											},
 											"affected": {
@@ -550,26 +410,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -601,27 +441,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::ipa-python-compat",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::ipa-python-compat"
 												}
 											},
 											"affected": {
@@ -658,26 +478,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -709,27 +509,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::ipa-server-common",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::ipa-server-common"
 												}
 											},
 											"affected": {
@@ -760,27 +540,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::ipa-server-dns",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::ipa-server-dns"
 												}
 											},
 											"affected": {
@@ -817,26 +577,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -874,26 +614,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -925,27 +645,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-custodia",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-custodia"
 												}
 											},
 											"affected": {
@@ -976,27 +676,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-ipaclient",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-ipaclient"
 												}
 											},
 											"affected": {
@@ -1027,27 +707,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-ipalib",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-ipalib"
 												}
 											},
 											"affected": {
@@ -1078,27 +738,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-ipaserver",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-ipaserver"
 												}
 											},
 											"affected": {
@@ -1129,27 +769,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-jwcrypto",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-jwcrypto"
 												}
 											},
 											"affected": {
@@ -1180,27 +800,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-kdcproxy",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-kdcproxy"
 												}
 											},
 											"affected": {
@@ -1231,27 +831,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-pyusb",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-pyusb"
 												}
 											},
 											"affected": {
@@ -1282,27 +862,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-qrcode",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-qrcode"
 												}
 											},
 											"affected": {
@@ -1333,27 +893,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-qrcode-core",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-qrcode-core"
 												}
 											},
 											"affected": {
@@ -1384,27 +924,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "idm:DL1::python3-yubico",
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
-													]
+													"name": "idm:DL1::python3-yubico"
 												}
 											},
 											"affected": {
@@ -1441,26 +961,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -1498,26 +998,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -1555,26 +1035,6 @@
 														"ppc64le",
 														"s390x",
 														"x86_64"
-													],
-													"repositories": [
-														"rhel-8-for-aarch64-appstream-debug-rpms",
-														"rhel-8-for-aarch64-appstream-rpms",
-														"rhel-8-for-aarch64-appstream-source-rpms",
-														"rhel-8-for-ppc64le-appstream-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-rpms",
-														"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
-														"rhel-8-for-ppc64le-appstream-rpms",
-														"rhel-8-for-ppc64le-appstream-source-rpms",
-														"rhel-8-for-s390x-appstream-debug-rpms",
-														"rhel-8-for-s390x-appstream-rpms",
-														"rhel-8-for-s390x-appstream-source-rpms",
-														"rhel-8-for-x86_64-appstream-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-rpms",
-														"rhel-8-for-x86_64-appstream-e4s-source-rpms",
-														"rhel-8-for-x86_64-appstream-rpms",
-														"rhel-8-for-x86_64-appstream-source-rpms"
 													]
 												}
 											},
@@ -1593,6 +1053,26 @@
 									}
 								]
 							}
+						],
+						"repositories": [
+							"rhel-8-for-aarch64-appstream-debug-rpms",
+							"rhel-8-for-aarch64-appstream-rpms",
+							"rhel-8-for-aarch64-appstream-source-rpms",
+							"rhel-8-for-ppc64le-appstream-debug-rpms",
+							"rhel-8-for-ppc64le-appstream-e4s-debug-rpms",
+							"rhel-8-for-ppc64le-appstream-e4s-rpms",
+							"rhel-8-for-ppc64le-appstream-e4s-source-rpms",
+							"rhel-8-for-ppc64le-appstream-rpms",
+							"rhel-8-for-ppc64le-appstream-source-rpms",
+							"rhel-8-for-s390x-appstream-debug-rpms",
+							"rhel-8-for-s390x-appstream-rpms",
+							"rhel-8-for-s390x-appstream-source-rpms",
+							"rhel-8-for-x86_64-appstream-debug-rpms",
+							"rhel-8-for-x86_64-appstream-e4s-debug-rpms",
+							"rhel-8-for-x86_64-appstream-e4s-rpms",
+							"rhel-8-for-x86_64-appstream-e4s-source-rpms",
+							"rhel-8-for-x86_64-appstream-rpms",
+							"rhel-8-for-x86_64-appstream-source-rpms"
 						]
 					},
 					"tag": "8"
