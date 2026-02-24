@@ -8,7 +8,6 @@ func TestPackage_Sort(t *testing.T) {
 	type fields struct {
 		Name          string
 		Architectures []string
-		Repositories  []string
 	}
 	tests := []struct {
 		name   string
@@ -21,7 +20,6 @@ func TestPackage_Sort(t *testing.T) {
 			p := &Package{
 				Name:          tt.fields.Name,
 				Architectures: tt.fields.Architectures,
-				Repositories:  tt.fields.Repositories,
 			}
 			p.Sort()
 		})

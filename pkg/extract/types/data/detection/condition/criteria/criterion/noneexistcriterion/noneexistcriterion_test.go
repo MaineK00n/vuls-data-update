@@ -60,7 +60,8 @@ func TestCriterion_Accept(t *testing.T) {
 		Source *sourceTypes.Package
 	}
 	type args struct {
-		query necTypes.Query
+		query        necTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -76,7 +77,6 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{
 					Name:          "kpatch-patch-3_10_0-1062_4_1",
 					Architectures: []string{"x86_64", "aarch64"},
-					Repositories:  []string{"repo1"},
 				},
 			},
 			args: args{
@@ -94,6 +94,7 @@ func TestCriterion_Accept(t *testing.T) {
 						},
 					},
 				},
+				repositories: []string{"repo1"},
 			},
 			want: false,
 		},
@@ -104,7 +105,6 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{
 					Name:          "kpatch-patch-3_10_0-1062_4_1",
 					Architectures: []string{"x86_64", "aarch64"},
-					Repositories:  []string{"repo1"},
 				},
 			},
 			args: args{
@@ -117,6 +117,7 @@ func TestCriterion_Accept(t *testing.T) {
 						},
 					},
 				},
+				repositories: []string{"repo1"},
 			},
 			want: true,
 		},
@@ -127,7 +128,6 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{
 					Name:          "kpatch-patch-3_10_0-1062_4_1",
 					Architectures: []string{"x86_64", "aarch64"},
-					Repositories:  []string{"repo1"},
 				},
 			},
 			args: args{
@@ -145,6 +145,7 @@ func TestCriterion_Accept(t *testing.T) {
 						},
 					},
 				},
+				repositories: []string{"repo1"},
 			},
 			want: true,
 		},
@@ -172,19 +173,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: tt.fields.Binary,
 				Source: tt.fields.Source,
 			}
-			got, err := c.Accept(tt.args.query, func() []string {
-				switch tt.fields.Type {
-				case necTypes.PackageTypeBinary:
-					if tt.fields.Binary != nil {
-						return tt.fields.Binary.Repositories
-					}
-				case necTypes.PackageTypeSource:
-					if tt.fields.Source != nil {
-						return tt.fields.Source.Repositories
-					}
-				}
-				return nil
-			}())
+			got, err := c.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -6,19 +6,14 @@ import (
 )
 
 type Package struct {
-	Name         string   `json:"name,omitempty"`
-	Repositories []string `json:"repositories,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 func (p *Package) Sort() {
-	slices.Sort(p.Repositories)
 }
 
 func Compare(x, y Package) int {
-	return cmp.Or(
-		cmp.Compare(x.Name, y.Name),
-		slices.Compare(x.Repositories, y.Repositories),
-	)
+	return cmp.Compare(x.Name, y.Name)
 }
 
 type Query struct {

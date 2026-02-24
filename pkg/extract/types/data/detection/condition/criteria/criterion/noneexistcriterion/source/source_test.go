@@ -6,8 +6,7 @@ import (
 
 func TestPackage_Sort(t *testing.T) {
 	type fields struct {
-		Name         string
-		Repositories []string
+		Name string
 	}
 	tests := []struct {
 		name   string
@@ -18,8 +17,7 @@ func TestPackage_Sort(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Package{
-				Name:         tt.fields.Name,
-				Repositories: tt.fields.Repositories,
+				Name: tt.fields.Name,
 			}
 			p.Sort()
 		})

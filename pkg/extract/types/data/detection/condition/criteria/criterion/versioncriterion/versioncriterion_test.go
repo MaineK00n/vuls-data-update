@@ -70,7 +70,8 @@ func TestCriterion_Accept(t *testing.T) {
 		Affected   *affectedTypes.Affected
 	}
 	type args struct {
-		query vcTypes.Query
+		query        vcTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -89,7 +90,6 @@ func TestCriterion_Accept(t *testing.T) {
 					Binary: &binaryTypes.Package{
 						Name:          "name",
 						Architectures: []string{"x86_64", "aarch64"},
-						Repositories:  []string{"repo1", "repo2"},
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -114,6 +114,7 @@ func TestCriterion_Accept(t *testing.T) {
 						Repository: "repo1",
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -127,7 +128,6 @@ func TestCriterion_Accept(t *testing.T) {
 					Binary: &binaryTypes.Package{
 						Name:          "name",
 						Architectures: []string{"x86_64", "aarch64"},
-						Repositories:  []string{"repo1", "repo2"},
 					},
 				},
 			},
@@ -147,6 +147,7 @@ func TestCriterion_Accept(t *testing.T) {
 						Repository: "repo1",
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -158,8 +159,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeSource,
 					Source: &sourceTypes.Package{
-						Name:         "name",
-						Repositories: []string{"repo1", "repo2"},
+						Name: "name",
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -184,6 +184,7 @@ func TestCriterion_Accept(t *testing.T) {
 						Repository: "repo1",
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -195,8 +196,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeSource,
 					Source: &sourceTypes.Package{
-						Name:         "name",
-						Repositories: []string{"repo1", "repo2"},
+						Name: "name",
 					},
 				},
 			},
@@ -216,6 +216,7 @@ func TestCriterion_Accept(t *testing.T) {
 						Repository: "repo1",
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -304,7 +305,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package:    tt.fields.Package,
 				Affected:   tt.fields.Affected,
 			}
-			got, err := c.Accept(tt.args.query, nil)
+			got, err := c.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

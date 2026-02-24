@@ -8,19 +8,16 @@ import (
 type Package struct {
 	Name          string   `json:"name,omitempty"`
 	Architectures []string `json:"architectures,omitempty"`
-	Repositories  []string `json:"repositories,omitempty"`
 }
 
 func (p *Package) Sort() {
 	slices.Sort(p.Architectures)
-	slices.Sort(p.Repositories)
 }
 
 func Compare(x, y Package) int {
 	return cmp.Or(
 		cmp.Compare(x.Name, y.Name),
 		slices.Compare(x.Architectures, y.Architectures),
-		slices.Compare(x.Repositories, y.Repositories),
 	)
 }
 
