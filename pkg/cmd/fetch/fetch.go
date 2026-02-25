@@ -124,6 +124,7 @@ import (
 	nvdFeedCVEv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/nvd/feed/cve/v2"
 	openeulerCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/csaf"
 	openeulerCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/cvrf"
+	openeulerOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/openeuler/osv"
 	oracleLinux "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/linux"
 	oracleOLAM "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/olam"
 	oracleOpenStack "github.com/MaineK00n/vuls-data-update/pkg/fetch/oracle/openstack"
@@ -255,7 +256,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdNucleiAPI(), newCmdNucleiRepository(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDAPICPEMatch(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
-		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(),
+		newCmdOpenEulerCVRF(), newCmdOpenEulerCSAF(), newCmdOpenEulerOSV(),
 		newCmdOracleLinux(), newCmdOracleOLAM(), newCmdOracleOpenStack(), newCmdOracleVM(),
 		newCmdOSSFuzzOSV(),
 		newCmdOXCSAF(),
@@ -3829,6 +3830,43 @@ func newCmdOpenEulerCSAF() *cobra.Command {
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := openeulerCSAF.Fetch(openeulerCSAF.WithDir(options.dir), openeulerCSAF.WithRetry(options.retry), openeulerCSAF.WithConcurrency(options.concurrency), openeulerCSAF.WithWait(options.wait)); err != nil {
 				return errors.Wrap(err, "failed to fetch openeuler csaf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdOpenEulerOSV() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "openeuler", "osv"),
+			retry: 5,
+		},
+		concurrency: 20,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "openeuler-osv",
+		Short: "Fetch openEuler OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch openeuler-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := openeulerOSV.Fetch(openeulerOSV.WithDir(options.dir), openeulerOSV.WithRetry(options.retry), openeulerOSV.WithConcurrency(options.concurrency), openeulerOSV.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch openeuler osv")
 			}
 			return nil
 		},
