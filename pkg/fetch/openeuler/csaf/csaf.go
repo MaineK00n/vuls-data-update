@@ -2,6 +2,7 @@ package csaf
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
@@ -132,6 +133,23 @@ func (o options) fetchCSAFIndex(client *utilhttp.Client, kind string) ([]string,
 
 	var ls []string
 	scanner := bufio.NewScanner(resp.Body)
+	if kind == "advisories" {
+		scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+			if atEOF && len(data) == 0 {
+				return 0, nil, nil
+			}
+
+			if i := bytes.Index(data, []byte(";\\n")); i >= 0 {
+				return i + len(";\\n"), data[:i], nil
+			}
+
+			if atEOF {
+				return len(data), bytes.TrimSuffix(data, []byte("\n")), nil
+			}
+
+			return 0, nil, nil
+		})
+	}
 	for scanner.Scan() {
 		ls = append(ls, scanner.Text())
 	}
