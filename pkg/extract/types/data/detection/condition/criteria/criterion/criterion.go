@@ -139,14 +139,14 @@ type Query struct {
 	NoneExist *necTypes.Query
 }
 
-func (c Criterion) Contains(query Query) (bool, error) {
+func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 	switch c.Type {
 	case CriterionTypeVersion:
 		if len(query.Version) == 0 {
 			return false, errors.New("query is not set for version criterion")
 		}
 		for _, q := range query.Version {
-			isAccepted, err := c.Version.Accept(q, nil)
+			isAccepted, err := c.Version.Accept(q, repositories)
 			if err != nil {
 				return false, errors.Wrap(err, "version criterion accept")
 			}
@@ -159,7 +159,7 @@ func (c Criterion) Contains(query Query) (bool, error) {
 		if query.NoneExist == nil {
 			return false, errors.New("query is not set for none exist criterion")
 		}
-		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, nil)
+		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "none exist criterion accept")
 		}

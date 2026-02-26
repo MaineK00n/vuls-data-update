@@ -803,18 +803,10 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 				}
 			} else {
 				pmax.maxPid = vex.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
-				added := false
-				for i, p2 := range pmax.p2s[p.cpe] {
-					if p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel {
-						added = true
-						if !slices.Contains(p2.archs, p.arch) {
-							p2.archs = append(p2.archs, p.arch)
-						}
-						pmax.p2s[p.cpe][i] = p2
-						break
-					}
-				}
-				if !added {
+				switch i := slices.IndexFunc(pmax.p2s[p.cpe], func(p2 product2) bool {
+					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
+				}); i {
+				case -1:
 					pmax.p2s[p.cpe] = append(pmax.p2s[p.cpe], product2{
 						name:            p.name,
 						version:         p.version,
@@ -823,6 +815,10 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 						archs:           []string{p.arch},
 						repositories:    p.repositories,
 					})
+				default:
+					if !slices.Contains(pmax.p2s[p.cpe][i].archs, p.arch) {
+						pmax.p2s[p.cpe][i].archs = append(pmax.p2s[p.cpe][i].archs, p.arch)
+					}
 				}
 			}
 			apm[ass] = pmax

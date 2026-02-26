@@ -69,7 +69,8 @@ func TestCriterion_Contains(t *testing.T) {
 		NoneExist *necTypes.Criterion
 	}
 	type args struct {
-		query criterionTypes.Query
+		query        criterionTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -208,7 +209,7 @@ func TestCriterion_Contains(t *testing.T) {
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
 			}
-			got, err := c.Contains(tt.args.query)
+			got, err := c.Contains(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Contains() error = %v, wantErr %v", err, tt.wantErr)
 				return

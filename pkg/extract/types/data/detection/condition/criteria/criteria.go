@@ -108,9 +108,14 @@ func Compare(x, y Criteria) int {
 	)
 }
 
-func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
+func (c Criteria) Contains(query criterionTypes.Query, parentRepositories []string) (bool, error) {
+	repositories := parentRepositories
+	if len(c.Repositories) > 0 {
+		repositories = c.Repositories
+	}
+
 	for _, ca := range c.Criterias {
-		isContained, err := ca.Contains(query)
+		isContained, err := ca.Contains(query, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "criteria contains")
 		}
@@ -120,7 +125,7 @@ func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 	}
 
 	for _, cn := range c.Criterions {
-		isContained, err := cn.Contains(query)
+		isContained, err := cn.Contains(query, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "criterion accept")
 		}

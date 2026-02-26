@@ -150,7 +150,8 @@ func TestCriteria_Contains(t *testing.T) {
 		Criterions []criterionTypes.Criterion
 	}
 	type args struct {
-		query criterionTypes.Query
+		query              criterionTypes.Query
+		parentRepositories []string
 	}
 	tests := []struct {
 		name    string
@@ -531,7 +532,7 @@ func TestCriteria_Contains(t *testing.T) {
 				Criterias:  tt.fields.Criterias,
 				Criterions: tt.fields.Criterions,
 			}
-			got, err := c.Contains(tt.args.query)
+			got, err := c.Contains(tt.args.query, tt.args.parentRepositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criteria.Contains() error = %v, wantErr %v", err, tt.wantErr)
 				return

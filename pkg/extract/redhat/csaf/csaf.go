@@ -861,15 +861,15 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 					}
 				}
 
-				subCriterias, err := buildCriterias(pidsPerMajor, status, pm)
+				criterias, err := buildCriterias(pidsPerMajor, status, pm)
 				if err != nil {
 					return nil, nil, nil, errors.Wrap(err, "build criterions")
 				}
-				if len(subCriterias) > 0 {
+				if len(criterias) > 0 {
 					cm[major] = append(cm[major], conditionTypes.Condition{
 						Criteria: criteriaTypes.Criteria{
 							Operator:  criteriaTypes.CriteriaOperatorTypeOR,
-							Criterias: subCriterias,
+							Criterias: criterias,
 						},
 						Tag: segment.Tag,
 					})
