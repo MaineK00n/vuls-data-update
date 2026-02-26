@@ -400,12 +400,12 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 							}
 						}
 					default:
-						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/", "pkg:github.com/"} {
+						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
 							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
 								return nil, nil
 							}
 						}
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/...", "pkg:github.com/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
