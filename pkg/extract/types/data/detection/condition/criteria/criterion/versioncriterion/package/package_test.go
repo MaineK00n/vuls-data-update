@@ -146,7 +146,7 @@ func TestPackage_Accept(t *testing.T) {
 				CPE:      tt.fields.CPE,
 				Language: tt.fields.Language,
 			}
-			got, err := p.Accept(tt.args.query)
+			got, err := p.Accept(tt.args.query, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

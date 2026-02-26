@@ -102,7 +102,7 @@ type QueryLanguage struct {
 	Functions []string
 }
 
-func (c Criterion) Accept(query Query) (bool, error) {
+func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 	switch c.Package.Type {
 	case packageTypes.PackageTypeBinary:
 		if query.Binary == nil {
@@ -114,7 +114,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 				Arch:       query.Binary.Arch,
 				Repository: query.Binary.Repository,
 			},
-		})
+		}, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}
@@ -139,7 +139,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 				Name:       query.Source.Name,
 				Repository: query.Source.Repository,
 			},
-		})
+		}, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}
@@ -160,8 +160,11 @@ func (c Criterion) Accept(query Query) (bool, error) {
 			return false, nil
 		}
 		isAccepted, err := c.Package.Accept(packageTypes.Query{
-			CPE: new(cpeTypes.Query(*query.CPE)),
-		})
+			CPE: func() *cpeTypes.Query {
+				q := cpeTypes.Query(*query.CPE)
+				return &q
+			}(),
+		}, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}
@@ -206,7 +209,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 				Arch:      query.Language.Arch,
 				Functions: query.Language.Functions,
 			},
-		})
+		}, nil)
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}

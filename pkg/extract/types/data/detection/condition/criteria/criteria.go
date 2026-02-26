@@ -132,14 +132,21 @@ func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 }
 
 type FilteredCriteria struct {
-	Operator   CriteriaOperatorType               `json:"operator,omitempty"`
-	Criterias  []FilteredCriteria                 `json:"criterias,omitempty"`
-	Criterions []criterionTypes.FilteredCriterion `json:"criterions,omitempty"`
+	Operator     CriteriaOperatorType               `json:"operator,omitempty"`
+	Criterias    []FilteredCriteria                 `json:"criterias,omitempty"`
+	Criterions   []criterionTypes.FilteredCriterion `json:"criterions,omitempty"`
+	Repositories []string                           `json:"repositories,omitempty"`
 }
 
-func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
+func (c Criteria) Accept(query criterionTypes.Query, parentRepositories []string) (FilteredCriteria, error) {
+	repositories := parentRepositories
+	if len(c.Repositories) > 0 {
+		repositories = c.Repositories
+	}
+
 	filtered := FilteredCriteria{
-		Operator: c.Operator,
+		Operator:     c.Operator,
+		Repositories: repositories,
 		Criterias: func() []FilteredCriteria {
 			if len(c.Criterias) > 0 {
 				return make([]FilteredCriteria, 0, len(c.Criterias))
@@ -155,7 +162,7 @@ func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
 	}
 
 	for _, ca := range c.Criterias {
-		fca, err := ca.Accept(query)
+		fca, err := ca.Accept(query, repositories)
 		if err != nil {
 			return FilteredCriteria{}, errors.Wrap(err, "criteria accept")
 		}
@@ -163,7 +170,7 @@ func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
 	}
 
 	for _, cn := range c.Criterions {
-		fcn, err := cn.Accept(query)
+		fcn, err := cn.Accept(query, repositories)
 		if err != nil {
 			return FilteredCriteria{}, errors.Wrap(err, "criterion accept")
 		}

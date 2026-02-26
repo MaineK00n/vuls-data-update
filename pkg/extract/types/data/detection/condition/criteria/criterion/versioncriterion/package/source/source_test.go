@@ -49,11 +49,11 @@ func TestCompare(t *testing.T) {
 
 func TestPackage_Accept(t *testing.T) {
 	type fields struct {
-		Name         string
-		Repositories []string
+		Name string
 	}
 	type args struct {
-		query Query
+		query        Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -89,41 +89,41 @@ func TestPackage_Accept(t *testing.T) {
 		{
 			name: "accept: name, repo",
 			fields: fields{
-				Name:         "name",
-				Repositories: []string{"repo"},
+				Name: "name",
 			},
 			args: args{
 				query: Query{
 					Name:       "name",
 					Repository: "repo",
 				},
+				repositories: []string{"repo"},
 			},
 			want: true,
 		},
 		{
 			name: "accept2: name, repo",
 			fields: fields{
-				Name:         "name",
-				Repositories: []string{"repo"},
+				Name: "name",
 			},
 			args: args{
 				query: Query{
 					Name: "name",
 				},
+				repositories: []string{"repo"},
 			},
 			want: true,
 		},
 		{
 			name: "not accept: name, repo",
 			fields: fields{
-				Name:         "name",
-				Repositories: []string{"repo"},
+				Name: "name",
 			},
 			args: args{
 				query: Query{
 					Name:       "name",
 					Repository: "repo2",
 				},
+				repositories: []string{"repo"},
 			},
 			want: false,
 		},
@@ -131,10 +131,9 @@ func TestPackage_Accept(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := Package{
-				Name:         tt.fields.Name,
-				Repositories: tt.fields.Repositories,
+				Name: tt.fields.Name,
 			}
-			got, err := p.Accept(tt.args.query)
+			got, err := p.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

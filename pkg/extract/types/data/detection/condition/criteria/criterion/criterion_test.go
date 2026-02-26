@@ -426,7 +426,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -184,13 +184,13 @@ type Query struct {
 	Language *languageTypes.Query
 }
 
-func (p Package) Accept(query Query) (bool, error) {
+func (p Package) Accept(query Query, repositories []string) (bool, error) {
 	switch p.Type {
 	case PackageTypeBinary:
 		if query.Binary == nil {
 			return false, errors.New("query is not set for Binary Package")
 		}
-		isAccepted, err := p.Binary.Accept(*query.Binary)
+		isAccepted, err := p.Binary.Accept(*query.Binary, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "binary package accept")
 		}
@@ -199,7 +199,7 @@ func (p Package) Accept(query Query) (bool, error) {
 		if query.Source == nil {
 			return false, errors.New("query is not set for Source Package")
 		}
-		isAccepted, err := p.Source.Accept(*query.Source)
+		isAccepted, err := p.Source.Accept(*query.Source, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "source package accept")
 		}

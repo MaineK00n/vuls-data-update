@@ -172,7 +172,19 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: tt.fields.Binary,
 				Source: tt.fields.Source,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, func() []string {
+				switch tt.fields.Type {
+				case necTypes.PackageTypeBinary:
+					if tt.fields.Binary != nil {
+						return tt.fields.Binary.Repositories
+					}
+				case necTypes.PackageTypeSource:
+					if tt.fields.Source != nil {
+						return tt.fields.Source.Repositories
+					}
+				}
+				return nil
+			}())
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

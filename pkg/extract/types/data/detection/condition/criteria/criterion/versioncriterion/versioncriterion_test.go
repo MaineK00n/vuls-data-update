@@ -304,7 +304,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package:    tt.fields.Package,
 				Affected:   tt.fields.Affected,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -139,14 +139,14 @@ type Query struct {
 	Sources  []sourceTypes.Query
 }
 
-func (c Criterion) Accept(query Query) (bool, error) {
+func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 	switch c.Type {
 	case PackageTypeBinary:
 		if len(query.Binaries) == 0 {
 			return false, errors.New("query is not set for Binary Package")
 		}
 		for _, q := range query.Binaries {
-			isAccepted, err := c.Binary.Accept(q)
+			isAccepted, err := c.Binary.Accept(q, repositories)
 			if err != nil {
 				return false, errors.Wrap(err, "binary package accept")
 			}
@@ -160,7 +160,7 @@ func (c Criterion) Accept(query Query) (bool, error) {
 			return false, errors.New("query is not set for Source Package")
 		}
 		for _, q := range query.Sources {
-			isAccepted, err := c.Source.Accept(q)
+			isAccepted, err := c.Source.Accept(q, repositories)
 			if err != nil {
 				return false, errors.Wrap(err, "source package accept")
 			}

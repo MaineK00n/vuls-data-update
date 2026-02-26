@@ -26,12 +26,12 @@ type Query struct {
 	Repository string
 }
 
-func (p Package) Accept(query Query) (bool, error) {
+func (p Package) Accept(query Query, repositories []string) (bool, error) {
 	if query.Name != p.Name {
 		return false, nil
 	}
 
-	if query.Repository != "" && len(p.Repositories) > 0 && !slices.Contains(p.Repositories, query.Repository) {
+	if query.Repository != "" && len(repositories) > 0 && !slices.Contains(repositories, query.Repository) {
 		return false, nil
 	}
 

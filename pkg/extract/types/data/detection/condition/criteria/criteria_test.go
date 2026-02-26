@@ -471,7 +471,8 @@ func TestCriteria_Accept(t *testing.T) {
 		Criterions []criterionTypes.Criterion
 	}
 	type args struct {
-		query criterionTypes.Query
+		query        criterionTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -1138,7 +1139,7 @@ func TestCriteria_Accept(t *testing.T) {
 				Criterias:  tt.fields.Criterias,
 				Criterions: tt.fields.Criterions,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criteria.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

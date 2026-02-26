@@ -35,7 +35,7 @@ func (c Condition) Contains(query criterionTypes.Query) (bool, error) {
 }
 
 func (c Condition) Accept(query criterionTypes.Query) (FilteredCondition, error) {
-	filtered, err := c.Criteria.Accept(query)
+	filtered, err := c.Criteria.Accept(query, nil)
 	if err != nil {
 		return FilteredCondition{}, errors.Wrap(err, "criteria accept")
 	}

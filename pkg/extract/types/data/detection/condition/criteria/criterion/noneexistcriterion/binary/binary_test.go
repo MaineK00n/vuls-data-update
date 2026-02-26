@@ -53,10 +53,10 @@ func TestPackage_Accept(t *testing.T) {
 	type fields struct {
 		Name          string
 		Architectures []string
-		Repositories  []string
 	}
 	type args struct {
-		query Query
+		query        Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -135,7 +135,6 @@ func TestPackage_Accept(t *testing.T) {
 			fields: fields{
 				Name:          "name",
 				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repo"},
 			},
 			args: args{
 				query: Query{
@@ -143,6 +142,7 @@ func TestPackage_Accept(t *testing.T) {
 					Arch:       "x86_64",
 					Repository: "repo",
 				},
+				repositories: []string{"repo"},
 			},
 			want: true,
 		},
@@ -151,12 +151,12 @@ func TestPackage_Accept(t *testing.T) {
 			fields: fields{
 				Name:          "name",
 				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repo"},
 			},
 			args: args{
 				query: Query{
 					Name: "name",
 				},
+				repositories: []string{"repo"},
 			},
 			want: true,
 		},
@@ -165,7 +165,6 @@ func TestPackage_Accept(t *testing.T) {
 			fields: fields{
 				Name:          "name",
 				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repo"},
 			},
 			args: args{
 				query: Query{
@@ -173,6 +172,7 @@ func TestPackage_Accept(t *testing.T) {
 					Arch:       "x86_64",
 					Repository: "repo2",
 				},
+				repositories: []string{"repo"},
 			},
 			want: false,
 		},
@@ -182,9 +182,8 @@ func TestPackage_Accept(t *testing.T) {
 			p := Package{
 				Name:          tt.fields.Name,
 				Architectures: tt.fields.Architectures,
-				Repositories:  tt.fields.Repositories,
 			}
-			got, err := p.Accept(tt.args.query)
+			got, err := p.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
