@@ -22,9 +22,9 @@ func Compare(x, y Package) int {
 }
 
 type Query struct {
-	Name       string
-	Arch       string
-	Repository string
+	Name         string
+	Arch         string
+	Repositories []string
 }
 
 func (p Package) Accept(query Query, repositories []string) (bool, error) {
@@ -36,7 +36,9 @@ func (p Package) Accept(query Query, repositories []string) (bool, error) {
 		return false, nil
 	}
 
-	if query.Repository != "" && len(repositories) > 0 && !slices.Contains(repositories, query.Repository) {
+	if len(query.Repositories) > 0 && len(repositories) > 0 && !slices.ContainsFunc(query.Repositories, func(r string) bool {
+		return slices.Contains(repositories, r)
+	}) {
 		return false, nil
 	}
 

@@ -1236,8 +1236,8 @@ func TestCriteria_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Name:       "package1",
-							Repository: "repo1",
+							Name:         "package1",
+							Repositories: []string{"repo1"},
 						},
 					}},
 				},
@@ -1292,8 +1292,8 @@ func TestCriteria_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Name:       "package1",
-							Repository: "repo1",
+							Name:         "package1",
+							Repositories: []string{"repo1"},
 						},
 					}},
 				},
@@ -1357,8 +1357,8 @@ func TestCriteria_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Name:       "package1",
-							Repository: "child-repo",
+							Name:         "package1",
+							Repositories: []string{"child-repo"},
 						},
 					}},
 				},
@@ -1415,8 +1415,8 @@ func TestCriteria_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Name:       "package1",
-							Repository: "other-repo",
+							Name:         "package1",
+							Repositories: []string{"other-repo"},
 						},
 					}},
 				},
@@ -1477,8 +1477,8 @@ func TestCriteria_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Name:       "package1",
-							Repository: "root-repo",
+							Name:         "package1",
+							Repositories: []string{"root-repo"},
 						},
 					}},
 				},
@@ -1546,8 +1546,8 @@ func TestCriteria_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Name:       "package1",
-							Repository: "other-repo",
+							Name:         "package1",
+							Repositories: []string{"other-repo"},
 						},
 					}},
 				},

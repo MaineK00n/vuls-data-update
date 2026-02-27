@@ -91,8 +91,8 @@ func TestPackage_Accept(t *testing.T) {
 			},
 			args: args{
 				query: Query{
-					Name:       "name",
-					Repository: "repo",
+					Name:         "name",
+					Repositories: []string{"repo"},
 				},
 				repositories: []string{"repo"},
 			},
@@ -118,12 +118,66 @@ func TestPackage_Accept(t *testing.T) {
 			},
 			args: args{
 				query: Query{
-					Name:       "name",
-					Repository: "repo2",
+					Name:         "name",
+					Repositories: []string{"repo2"},
 				},
 				repositories: []string{"repo"},
 			},
 			want: false,
+		},
+		{
+			name: "accept: intersection of multiple repos",
+			fields: fields{
+				Name: "name",
+			},
+			args: args{
+				query: Query{
+					Name:         "name",
+					Repositories: []string{"repo1", "repo2"},
+				},
+				repositories: []string{"repo2", "repo3"},
+			},
+			want: true,
+		},
+		{
+			name: "not accept: no intersection of multiple repos",
+			fields: fields{
+				Name: "name",
+			},
+			args: args{
+				query: Query{
+					Name:         "name",
+					Repositories: []string{"repo1", "repo2"},
+				},
+				repositories: []string{"repo3", "repo4"},
+			},
+			want: false,
+		},
+		{
+			name: "accept: query repos empty, condition repos set",
+			fields: fields{
+				Name: "name",
+			},
+			args: args{
+				query: Query{
+					Name: "name",
+				},
+				repositories: []string{"repo1"},
+			},
+			want: true,
+		},
+		{
+			name: "accept: query repos set, condition repos empty",
+			fields: fields{
+				Name: "name",
+			},
+			args: args{
+				query: Query{
+					Name:         "name",
+					Repositories: []string{"repo1"},
+				},
+			},
+			want: true,
 		},
 	}
 	for _, tt := range tests {

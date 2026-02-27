@@ -80,18 +80,18 @@ type Query struct {
 }
 
 type QueryBinary struct {
-	Family     ecosystemTypes.Ecosystem
-	Name       string
-	Version    string
-	Arch       string
-	Repository string
+	Family       ecosystemTypes.Ecosystem
+	Name         string
+	Version      string
+	Arch         string
+	Repositories []string
 }
 
 type QuerySource struct {
-	Family     ecosystemTypes.Ecosystem
-	Name       string
-	Version    string
-	Repository string
+	Family       ecosystemTypes.Ecosystem
+	Name         string
+	Version      string
+	Repositories []string
 }
 
 type QueryLanguage struct {
@@ -110,9 +110,9 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 		}
 		isAccepted, err := c.Package.Accept(packageTypes.Query{
 			Binary: &binaryTypes.Query{
-				Name:       query.Binary.Name,
-				Arch:       query.Binary.Arch,
-				Repository: query.Binary.Repository,
+				Name:         query.Binary.Name,
+				Arch:         query.Binary.Arch,
+				Repositories: query.Binary.Repositories,
 			},
 		}, repositories)
 		if err != nil {
@@ -136,8 +136,8 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 		}
 		isAccepted, err := c.Package.Accept(packageTypes.Query{
 			Source: &sourceTypes.Query{
-				Name:       query.Source.Name,
-				Repository: query.Source.Repository,
+				Name:         query.Source.Name,
+				Repositories: query.Source.Repositories,
 			},
 		}, repositories)
 		if err != nil {
