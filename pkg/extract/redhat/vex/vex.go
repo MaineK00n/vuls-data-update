@@ -753,7 +753,7 @@ type product2 struct {
 
 type productsWithMaxPid struct {
 	maxPid vex.ProductID
-	p2s    map[string][]product2 // key: product2.cpe
+	p2sm   map[string][]product2 // key: product2.cpe
 }
 
 func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[vex.ProductID][]product, assm map[vex.ProductID]ass) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
@@ -790,7 +790,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 			if !found {
 				pmax = productsWithMaxPid{
 					maxPid: pid,
-					p2s: map[string][]product2{
+					p2sm: map[string][]product2{
 						p.cpe: {{
 							name:            p.name,
 							version:         p.version,
@@ -803,11 +803,11 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 				}
 			} else {
 				pmax.maxPid = vex.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
-				switch i := slices.IndexFunc(pmax.p2s[p.cpe], func(p2 product2) bool {
+				switch i := slices.IndexFunc(pmax.p2sm[p.cpe], func(p2 product2) bool {
 					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
 				}); i {
 				case -1:
-					pmax.p2s[p.cpe] = append(pmax.p2s[p.cpe], product2{
+					pmax.p2sm[p.cpe] = append(pmax.p2sm[p.cpe], product2{
 						name:            p.name,
 						version:         p.version,
 						modularitylabel: p.modularitylabel,
@@ -816,8 +816,8 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 						repositories:    p.repositories,
 					})
 				default:
-					if !slices.Contains(pmax.p2s[p.cpe][i].archs, p.arch) {
-						pmax.p2s[p.cpe][i].archs = append(pmax.p2s[p.cpe][i].archs, p.arch)
+					if !slices.Contains(pmax.p2sm[p.cpe][i].archs, p.arch) {
+						pmax.p2sm[p.cpe][i].archs = append(pmax.p2sm[p.cpe][i].archs, p.arch)
 					}
 				}
 			}
@@ -843,8 +843,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 				Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			}
 
-			for _, cpe := range slices.Sorted(maps.Keys(pmax.p2s)) {
-				p2s := pmax.p2s[cpe]
+			for _, p2s := range pmax.p2sm {
 				subCa := criteriaTypes.Criteria{
 					Operator:     criteriaTypes.CriteriaOperatorTypeOR,
 					Repositories: p2s[0].repositories,
