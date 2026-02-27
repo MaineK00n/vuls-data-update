@@ -960,7 +960,7 @@ func buildCriterias(pids []csaf.ProductID, status status, pm map[csaf.ProductID]
 		}
 	}
 
-	var cas []criteriaTypes.Criteria
+	cas := make([]criteriaTypes.Criteria, 0, len(cpeGroups))
 	for _, g := range cpeGroups {
 		if len(g.criterions) == 0 {
 			continue
