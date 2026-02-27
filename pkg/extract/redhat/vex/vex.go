@@ -856,7 +856,6 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 						return nil, nil, nil, errors.Wrap(err, "build version criterion")
 					}
 					for _, vc := range vcs {
-
 						subCa.Criterions = append(subCa.Criterions, criterionTypes.Criterion{
 							Type:    criterionTypes.CriterionTypeVersion,
 							Version: &vc,
