@@ -164,7 +164,7 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 				q := cpeTypes.Query(*query.CPE)
 				return &q
 			}(),
-		}, repositories)
+		}, nil)
 		if err != nil {
 			return false, errors.Wrap(err, "package accept")
 		}
