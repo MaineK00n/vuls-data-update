@@ -1,1 +1,2 @@
-2025/csaf-openeuler-sa-2025-1070.json;\n2025/csaf-openeuler-sa-2025-1351.json
+2025/csaf-openeuler-sa-2025-1070.json
+2025/csaf-openeuler-sa-2025-1351.json
