@@ -151,7 +151,7 @@ func (c Criteria) Accept(query criterionTypes.Query, parentRepositories []string
 
 	filtered := FilteredCriteria{
 		Operator:     c.Operator,
-		Repositories: repositories,
+		Repositories: c.Repositories,
 		Criterias: func() []FilteredCriteria {
 			if len(c.Criterias) > 0 {
 				return make([]FilteredCriteria, 0, len(c.Criterias))

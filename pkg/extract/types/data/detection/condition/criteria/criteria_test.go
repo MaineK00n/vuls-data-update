@@ -1300,12 +1300,10 @@ func TestCriteria_Accept(t *testing.T) {
 				repositories: []string{"repo1", "repo2"},
 			},
 			want: criteriaTypes.FilteredCriteria{
-				Operator:     criteriaTypes.CriteriaOperatorTypeAND,
-				Repositories: []string{"repo1", "repo2"},
+				Operator: criteriaTypes.CriteriaOperatorTypeAND,
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
-						Operator:     criteriaTypes.CriteriaOperatorTypeOR,
-						Repositories: []string{"repo1", "repo2"},
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
@@ -1488,12 +1486,10 @@ func TestCriteria_Accept(t *testing.T) {
 				Repositories: []string{"root-repo"},
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
-						Operator:     criteriaTypes.CriteriaOperatorTypeOR,
-						Repositories: []string{"root-repo"},
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterias: []criteriaTypes.FilteredCriteria{
 							{
-								Operator:     criteriaTypes.CriteriaOperatorTypeOR,
-								Repositories: []string{"root-repo"},
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
 								Criterions: []criterionTypes.FilteredCriterion{
 									{
 										Criterion: criterionTypes.Criterion{
@@ -1557,8 +1553,7 @@ func TestCriteria_Accept(t *testing.T) {
 				Repositories: []string{"repo1"},
 				Criterias: []criteriaTypes.FilteredCriteria{
 					{
-						Operator:     criteriaTypes.CriteriaOperatorTypeOR,
-						Repositories: []string{"repo1"},
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
 						Criterions: []criterionTypes.FilteredCriterion{
 							{
 								Criterion: criterionTypes.Criterion{
@@ -1574,6 +1569,68 @@ func TestCriteria_Accept(t *testing.T) {
 									},
 								},
 								Accepts: criterionTypes.AcceptQueries{},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "child FilteredCriteria does not inherit parent Repositories",
+			fields: fields{
+				Operator:     criteriaTypes.CriteriaOperatorTypeAND,
+				Repositories: []string{"parent-repo"},
+				Criterias: []criteriaTypes.Criteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: []criterionTypes.Criterion{
+							{
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: true,
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
+											Name: "package1",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{{
+						Binary: &vcTypes.QueryBinary{
+							Name:         "package1",
+							Repositories: []string{"parent-repo"},
+						},
+					}},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator:     criteriaTypes.CriteriaOperatorTypeAND,
+				Repositories: []string{"parent-repo"},
+				Criterias: []criteriaTypes.FilteredCriteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
+						Criterions: []criterionTypes.FilteredCriterion{
+							{
+								Criterion: criterionTypes.Criterion{
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: true,
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
+												Name: "package1",
+											},
+										},
+									},
+								},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
 							},
 						},
 					},
