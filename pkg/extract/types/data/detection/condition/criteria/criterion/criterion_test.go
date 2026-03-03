@@ -69,7 +69,8 @@ func TestCriterion_Contains(t *testing.T) {
 		NoneExist *necTypes.Criterion
 	}
 	type args struct {
-		query criterionTypes.Query
+		query        criterionTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -100,17 +101,17 @@ func TestCriterion_Contains(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.0.el9",
-							Arch:       "x86_64",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.0.el9",
+							Arch:         "x86_64",
+							Repositories: []string{"repo"},
 						},
 						Source: &vcTypes.QuerySource{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.0.el9",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.0.el9",
+							Repositories: []string{"repo"},
 						},
 					}},
 				},
@@ -139,17 +140,17 @@ func TestCriterion_Contains(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.2.el9",
-							Arch:       "x86_64",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.2.el9",
+							Arch:         "x86_64",
+							Repositories: []string{"repo"},
 						},
 						Source: &vcTypes.QuerySource{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.2.el9",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.2.el9",
+							Repositories: []string{"repo"},
 						},
 					}},
 				},
@@ -208,7 +209,7 @@ func TestCriterion_Contains(t *testing.T) {
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
 			}
-			got, err := c.Contains(tt.args.query)
+			got, err := c.Contains(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Contains() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -258,17 +259,17 @@ func TestCriterion_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.0.el9",
-							Arch:       "x86_64",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.0.el9",
+							Arch:         "x86_64",
+							Repositories: []string{"repo"},
 						},
 						Source: &vcTypes.QuerySource{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.0.el9",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.0.el9",
+							Repositories: []string{"repo"},
 						},
 					}},
 				},
@@ -315,17 +316,17 @@ func TestCriterion_Accept(t *testing.T) {
 				query: criterionTypes.Query{
 					Version: []vcTypes.Query{{
 						Binary: &vcTypes.QueryBinary{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.2.el9",
-							Arch:       "x86_64",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.2.el9",
+							Arch:         "x86_64",
+							Repositories: []string{"repo"},
 						},
 						Source: &vcTypes.QuerySource{
-							Family:     ecosystemTypes.EcosystemTypeRedHat,
-							Name:       "name",
-							Version:    "0.0.1-0.0.2.el9",
-							Repository: "repo",
+							Family:       ecosystemTypes.EcosystemTypeRedHat,
+							Name:         "name",
+							Version:      "0.0.1-0.0.2.el9",
+							Repositories: []string{"repo"},
 						},
 					}},
 				},
@@ -426,7 +427,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

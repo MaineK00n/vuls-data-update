@@ -8,7 +8,6 @@ func TestPackage_Sort(t *testing.T) {
 	type fields struct {
 		Name          string
 		Architectures []string
-		Repositories  []string
 	}
 	tests := []struct {
 		name   string
@@ -21,7 +20,6 @@ func TestPackage_Sort(t *testing.T) {
 			p := &Package{
 				Name:          tt.fields.Name,
 				Architectures: tt.fields.Architectures,
-				Repositories:  tt.fields.Repositories,
 			}
 			p.Sort()
 		})
@@ -53,10 +51,10 @@ func TestPackage_Accept(t *testing.T) {
 	type fields struct {
 		Name          string
 		Architectures []string
-		Repositories  []string
 	}
 	type args struct {
-		query Query
+		query        Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -135,14 +133,14 @@ func TestPackage_Accept(t *testing.T) {
 			fields: fields{
 				Name:          "name",
 				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repo"},
 			},
 			args: args{
 				query: Query{
-					Name:       "name",
-					Arch:       "x86_64",
-					Repository: "repo",
+					Name:         "name",
+					Arch:         "x86_64",
+					Repositories: []string{"repo"},
 				},
+				repositories: []string{"repo"},
 			},
 			want: true,
 		},
@@ -151,12 +149,12 @@ func TestPackage_Accept(t *testing.T) {
 			fields: fields{
 				Name:          "name",
 				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repo"},
 			},
 			args: args{
 				query: Query{
 					Name: "name",
 				},
+				repositories: []string{"repo"},
 			},
 			want: true,
 		},
@@ -165,16 +163,78 @@ func TestPackage_Accept(t *testing.T) {
 			fields: fields{
 				Name:          "name",
 				Architectures: []string{"x86_64"},
-				Repositories:  []string{"repo"},
 			},
 			args: args{
 				query: Query{
-					Name:       "name",
-					Arch:       "x86_64",
-					Repository: "repo2",
+					Name:         "name",
+					Arch:         "x86_64",
+					Repositories: []string{"repo2"},
 				},
+				repositories: []string{"repo"},
 			},
 			want: false,
+		},
+		{
+			name: "accept: intersection of multiple repos",
+			fields: fields{
+				Name:          "name",
+				Architectures: []string{"x86_64"},
+			},
+			args: args{
+				query: Query{
+					Name:         "name",
+					Arch:         "x86_64",
+					Repositories: []string{"repo1", "repo2"},
+				},
+				repositories: []string{"repo2", "repo3"},
+			},
+			want: true,
+		},
+		{
+			name: "not accept: no intersection of multiple repos",
+			fields: fields{
+				Name:          "name",
+				Architectures: []string{"x86_64"},
+			},
+			args: args{
+				query: Query{
+					Name:         "name",
+					Arch:         "x86_64",
+					Repositories: []string{"repo1", "repo2"},
+				},
+				repositories: []string{"repo3", "repo4"},
+			},
+			want: false,
+		},
+		{
+			name: "accept: query repos empty, condition repos set",
+			fields: fields{
+				Name:          "name",
+				Architectures: []string{"x86_64"},
+			},
+			args: args{
+				query: Query{
+					Name: "name",
+					Arch: "x86_64",
+				},
+				repositories: []string{"repo1"},
+			},
+			want: true,
+		},
+		{
+			name: "accept: query repos set, condition repos empty",
+			fields: fields{
+				Name:          "name",
+				Architectures: []string{"x86_64"},
+			},
+			args: args{
+				query: Query{
+					Name:         "name",
+					Arch:         "x86_64",
+					Repositories: []string{"repo1"},
+				},
+			},
+			want: true,
 		},
 	}
 	for _, tt := range tests {
@@ -182,9 +242,8 @@ func TestPackage_Accept(t *testing.T) {
 			p := Package{
 				Name:          tt.fields.Name,
 				Architectures: tt.fields.Architectures,
-				Repositories:  tt.fields.Repositories,
 			}
-			got, err := p.Accept(tt.args.query)
+			got, err := p.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

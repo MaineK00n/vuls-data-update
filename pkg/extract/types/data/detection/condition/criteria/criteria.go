@@ -2,8 +2,8 @@ package criteria
 
 import (
 	"cmp"
-	"encoding/json/v2"
 	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"slices"
 
@@ -79,9 +79,10 @@ func (t *CriteriaOperatorType) UnmarshalJSON(data []byte) error {
 }
 
 type Criteria struct {
-	Operator   CriteriaOperatorType       `json:"operator,omitempty"`
-	Criterias  []Criteria                 `json:"criterias,omitempty"`
-	Criterions []criterionTypes.Criterion `json:"criterions,omitempty"`
+	Operator     CriteriaOperatorType       `json:"operator,omitempty"`
+	Criterias    []Criteria                 `json:"criterias,omitempty"`
+	Criterions   []criterionTypes.Criterion `json:"criterions,omitempty"`
+	Repositories []string                   `json:"repositories,omitempty"`
 }
 
 func (c *Criteria) Sort() {
@@ -94,6 +95,8 @@ func (c *Criteria) Sort() {
 		(&c.Criterias[i]).Sort()
 	}
 	slices.SortFunc(c.Criterias, Compare)
+
+	slices.Sort(c.Repositories)
 }
 
 func Compare(x, y Criteria) int {
@@ -101,12 +104,18 @@ func Compare(x, y Criteria) int {
 		cmp.Compare(x.Operator, y.Operator),
 		slices.CompareFunc(x.Criterions, y.Criterions, criterionTypes.Compare),
 		slices.CompareFunc(x.Criterias, y.Criterias, Compare),
+		slices.Compare(x.Repositories, y.Repositories),
 	)
 }
 
-func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
+func (c Criteria) Contains(query criterionTypes.Query, parentRepositories []string) (bool, error) {
+	repositories := parentRepositories
+	if len(c.Repositories) > 0 {
+		repositories = c.Repositories
+	}
+
 	for _, ca := range c.Criterias {
-		isContained, err := ca.Contains(query)
+		isContained, err := ca.Contains(query, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "criteria contains")
 		}
@@ -116,7 +125,7 @@ func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 	}
 
 	for _, cn := range c.Criterions {
-		isContained, err := cn.Contains(query)
+		isContained, err := cn.Contains(query, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "criterion accept")
 		}
@@ -128,14 +137,21 @@ func (c Criteria) Contains(query criterionTypes.Query) (bool, error) {
 }
 
 type FilteredCriteria struct {
-	Operator   CriteriaOperatorType               `json:"operator,omitempty"`
-	Criterias  []FilteredCriteria                 `json:"criterias,omitempty"`
-	Criterions []criterionTypes.FilteredCriterion `json:"criterions,omitempty"`
+	Operator     CriteriaOperatorType               `json:"operator,omitempty"`
+	Criterias    []FilteredCriteria                 `json:"criterias,omitempty"`
+	Criterions   []criterionTypes.FilteredCriterion `json:"criterions,omitempty"`
+	Repositories []string                           `json:"repositories,omitempty"`
 }
 
-func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
+func (c Criteria) Accept(query criterionTypes.Query, parentRepositories []string) (FilteredCriteria, error) {
+	repositories := parentRepositories
+	if len(c.Repositories) > 0 {
+		repositories = c.Repositories
+	}
+
 	filtered := FilteredCriteria{
-		Operator: c.Operator,
+		Operator:     c.Operator,
+		Repositories: c.Repositories,
 		Criterias: func() []FilteredCriteria {
 			if len(c.Criterias) > 0 {
 				return make([]FilteredCriteria, 0, len(c.Criterias))
@@ -151,7 +167,7 @@ func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
 	}
 
 	for _, ca := range c.Criterias {
-		fca, err := ca.Accept(query)
+		fca, err := ca.Accept(query, repositories)
 		if err != nil {
 			return FilteredCriteria{}, errors.Wrap(err, "criteria accept")
 		}
@@ -159,7 +175,7 @@ func (c Criteria) Accept(query criterionTypes.Query) (FilteredCriteria, error) {
 	}
 
 	for _, cn := range c.Criterions {
-		fcn, err := cn.Accept(query)
+		fcn, err := cn.Accept(query, repositories)
 		if err != nil {
 			return FilteredCriteria{}, errors.Wrap(err, "criterion accept")
 		}

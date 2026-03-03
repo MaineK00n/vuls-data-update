@@ -74,10 +74,6 @@
 											"name": "httpd-devel",
 											"architectures": [
 												"i686"
-											],
-											"repositories": [
-												"amzn-main",
-												"amzn-updates"
 											]
 										}
 									},
@@ -94,6 +90,10 @@
 									}
 								}
 							}
+						],
+						"repositories": [
+							"amzn-main",
+							"amzn-updates"
 						]
 					}
 				}

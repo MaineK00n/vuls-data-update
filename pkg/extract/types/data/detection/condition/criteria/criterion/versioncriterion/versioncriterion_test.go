@@ -70,7 +70,8 @@ func TestCriterion_Accept(t *testing.T) {
 		Affected   *affectedTypes.Affected
 	}
 	type args struct {
-		query vcTypes.Query
+		query        vcTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -89,7 +90,6 @@ func TestCriterion_Accept(t *testing.T) {
 					Binary: &binaryTypes.Package{
 						Name:          "name",
 						Architectures: []string{"x86_64", "aarch64"},
-						Repositories:  []string{"repo1", "repo2"},
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -101,19 +101,20 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{
 				query: vcTypes.Query{
 					Binary: &vcTypes.QueryBinary{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Arch:       "x86_64",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1"},
 					},
 					Source: &vcTypes.QuerySource{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1"},
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -127,26 +128,26 @@ func TestCriterion_Accept(t *testing.T) {
 					Binary: &binaryTypes.Package{
 						Name:          "name",
 						Architectures: []string{"x86_64", "aarch64"},
-						Repositories:  []string{"repo1", "repo2"},
 					},
 				},
 			},
 			args: args{
 				query: vcTypes.Query{
 					Binary: &vcTypes.QueryBinary{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Arch:       "x86_64",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1"},
 					},
 					Source: &vcTypes.QuerySource{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1"},
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -158,8 +159,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeSource,
 					Source: &sourceTypes.Package{
-						Name:         "name",
-						Repositories: []string{"repo1", "repo2"},
+						Name: "name",
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -171,19 +171,20 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{
 				query: vcTypes.Query{
 					Binary: &vcTypes.QueryBinary{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Arch:       "x86_64",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1"},
 					},
 					Source: &vcTypes.QuerySource{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1"},
 					},
 				},
+				repositories: []string{"repo1", "repo2"},
 			},
 			want: true,
 		},
@@ -195,25 +196,229 @@ func TestCriterion_Accept(t *testing.T) {
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeSource,
 					Source: &sourceTypes.Package{
-						Name:         "name",
-						Repositories: []string{"repo1", "repo2"},
+						Name: "name",
 					},
 				},
 			},
 			args: args{
 				query: vcTypes.Query{
 					Binary: &vcTypes.QueryBinary{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Arch:       "x86_64",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1"},
 					},
 					Source: &vcTypes.QuerySource{
-						Family:     ecosystemTypes.EcosystemTypeRedHat,
-						Name:       "name",
-						Version:    "0.0.1-0.0.0.el9",
-						Repository: "repo1",
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1"},
+					},
+				},
+				repositories: []string{"repo1", "repo2"},
+			},
+			want: true,
+		},
+		{
+			name: "binary: accept intersection of multiple repos",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Binary: &vcTypes.QueryBinary{
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1", "repo2"},
+					},
+				},
+				repositories: []string{"repo2", "repo3"},
+			},
+			want: true,
+		},
+		{
+			name: "binary: not accept no intersection of multiple repos",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Binary: &vcTypes.QueryBinary{
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1", "repo2"},
+					},
+				},
+				repositories: []string{"repo3", "repo4"},
+			},
+			want: false,
+		},
+		{
+			name: "binary: accept query repos empty, condition repos set",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Binary: &vcTypes.QueryBinary{
+						Family:  ecosystemTypes.EcosystemTypeRedHat,
+						Name:    "name",
+						Version: "0.0.1-0.0.0.el9",
+						Arch:    "x86_64",
+					},
+				},
+				repositories: []string{"repo1"},
+			},
+			want: true,
+		},
+		{
+			name: "binary: accept query repos set, condition repos empty",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Binary: &vcTypes.QueryBinary{
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Arch:         "x86_64",
+						Repositories: []string{"repo1"},
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "source: accept intersection of multiple repos",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeSource,
+					Source: &sourceTypes.Package{
+						Name: "name",
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Source: &vcTypes.QuerySource{
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1", "repo2"},
+					},
+				},
+				repositories: []string{"repo2", "repo3"},
+			},
+			want: true,
+		},
+		{
+			name: "source: not accept no intersection of multiple repos",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeSource,
+					Source: &sourceTypes.Package{
+						Name: "name",
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Source: &vcTypes.QuerySource{
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1", "repo2"},
+					},
+				},
+				repositories: []string{"repo3", "repo4"},
+			},
+			want: false,
+		},
+		{
+			name: "source: accept query repos empty, condition repos set",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeSource,
+					Source: &sourceTypes.Package{
+						Name: "name",
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Source: &vcTypes.QuerySource{
+						Family:  ecosystemTypes.EcosystemTypeRedHat,
+						Name:    "name",
+						Version: "0.0.1-0.0.0.el9",
+					},
+				},
+				repositories: []string{"repo1"},
+			},
+			want: true,
+		},
+		{
+			name: "source: accept query repos set, condition repos empty",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeSource,
+					Source: &sourceTypes.Package{
+						Name: "name",
+					},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					Source: &vcTypes.QuerySource{
+						Family:       ecosystemTypes.EcosystemTypeRedHat,
+						Name:         "name",
+						Version:      "0.0.1-0.0.0.el9",
+						Repositories: []string{"repo1"},
 					},
 				},
 			},
@@ -304,7 +509,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Package:    tt.fields.Package,
 				Affected:   tt.fields.Affected,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

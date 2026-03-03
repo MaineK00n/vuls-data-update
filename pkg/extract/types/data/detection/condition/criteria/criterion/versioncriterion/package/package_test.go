@@ -68,7 +68,8 @@ func TestPackage_Accept(t *testing.T) {
 		Language *languageTypes.Package
 	}
 	type args struct {
-		query packageTypes.Query
+		query        packageTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -146,7 +147,7 @@ func TestPackage_Accept(t *testing.T) {
 				CPE:      tt.fields.CPE,
 				Language: tt.fields.Language,
 			}
-			got, err := p.Accept(tt.args.query)
+			got, err := p.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Package.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

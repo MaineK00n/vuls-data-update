@@ -60,7 +60,8 @@ func TestCriterion_Accept(t *testing.T) {
 		Source *sourceTypes.Package
 	}
 	type args struct {
-		query necTypes.Query
+		query        necTypes.Query
+		repositories []string
 	}
 	tests := []struct {
 		name    string
@@ -76,24 +77,24 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{
 					Name:          "kpatch-patch-3_10_0-1062_4_1",
 					Architectures: []string{"x86_64", "aarch64"},
-					Repositories:  []string{"repo1"},
 				},
 			},
 			args: args{
 				query: necTypes.Query{
 					Binaries: []binaryTypes.Query{
 						{
-							Name:       "kernel",
-							Arch:       "x86_64",
-							Repository: "repo1",
+							Name:         "kernel",
+							Arch:         "x86_64",
+							Repositories: []string{"repo1"},
 						},
 						{
-							Name:       "kpatch-patch-3_10_0-1062_4_1",
-							Arch:       "x86_64",
-							Repository: "repo1",
+							Name:         "kpatch-patch-3_10_0-1062_4_1",
+							Arch:         "x86_64",
+							Repositories: []string{"repo1"},
 						},
 					},
 				},
+				repositories: []string{"repo1"},
 			},
 			want: false,
 		},
@@ -104,19 +105,19 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{
 					Name:          "kpatch-patch-3_10_0-1062_4_1",
 					Architectures: []string{"x86_64", "aarch64"},
-					Repositories:  []string{"repo1"},
 				},
 			},
 			args: args{
 				query: necTypes.Query{
 					Binaries: []binaryTypes.Query{
 						{
-							Name:       "kernel",
-							Arch:       "x86_64",
-							Repository: "repo1",
+							Name:         "kernel",
+							Arch:         "x86_64",
+							Repositories: []string{"repo1"},
 						},
 					},
 				},
+				repositories: []string{"repo1"},
 			},
 			want: true,
 		},
@@ -127,26 +128,198 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: &binaryTypes.Package{
 					Name:          "kpatch-patch-3_10_0-1062_4_1",
 					Architectures: []string{"x86_64", "aarch64"},
-					Repositories:  []string{"repo1"},
 				},
 			},
 			args: args{
 				query: necTypes.Query{
 					Binaries: []binaryTypes.Query{
 						{
-							Name:       "kernel",
-							Arch:       "x86_64",
-							Repository: "repo2",
+							Name:         "kernel",
+							Arch:         "x86_64",
+							Repositories: []string{"repo2"},
 						},
 						{
-							Name:       "kpatch-patch-3_10_0-1062_4_1",
-							Arch:       "x86_64",
-							Repository: "repo2",
+							Name:         "kpatch-patch-3_10_0-1062_4_1",
+							Arch:         "x86_64",
+							Repositories: []string{"repo2"},
+						},
+					},
+				},
+				repositories: []string{"repo1"},
+			},
+			want: true,
+		},
+		{
+			name: "installed: intersection of multiple repos",
+			fields: fields{
+				Type: necTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{
+					Name:          "kpatch-patch-3_10_0-1062_4_1",
+					Architectures: []string{"x86_64", "aarch64"},
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Binaries: []binaryTypes.Query{
+						{
+							Name:         "kpatch-patch-3_10_0-1062_4_1",
+							Arch:         "x86_64",
+							Repositories: []string{"repo1", "repo2"},
+						},
+					},
+				},
+				repositories: []string{"repo2", "repo3"},
+			},
+			want: false,
+		},
+		{
+			name: "not installed: no intersection of multiple repos",
+			fields: fields{
+				Type: necTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{
+					Name:          "kpatch-patch-3_10_0-1062_4_1",
+					Architectures: []string{"x86_64", "aarch64"},
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Binaries: []binaryTypes.Query{
+						{
+							Name:         "kpatch-patch-3_10_0-1062_4_1",
+							Arch:         "x86_64",
+							Repositories: []string{"repo1", "repo2"},
+						},
+					},
+				},
+				repositories: []string{"repo3", "repo4"},
+			},
+			want: true,
+		},
+		{
+			name: "installed source: intersection of multiple repos",
+			fields: fields{
+				Type: necTypes.PackageTypeSource,
+				Source: &sourceTypes.Package{
+					Name: "package",
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Sources: []sourceTypes.Query{
+						{
+							Name:         "package",
+							Repositories: []string{"repo1", "repo2"},
+						},
+					},
+				},
+				repositories: []string{"repo2", "repo3"},
+			},
+			want: false,
+		},
+		{
+			name: "not installed source: no intersection of multiple repos",
+			fields: fields{
+				Type: necTypes.PackageTypeSource,
+				Source: &sourceTypes.Package{
+					Name: "package",
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Sources: []sourceTypes.Query{
+						{
+							Name:         "package",
+							Repositories: []string{"repo1", "repo2"},
+						},
+					},
+				},
+				repositories: []string{"repo3", "repo4"},
+			},
+			want: true,
+		},
+		{
+			name: "installed binary: query repos empty, condition repos set",
+			fields: fields{
+				Type: necTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{
+					Name:          "kpatch-patch-3_10_0-1062_4_1",
+					Architectures: []string{"x86_64"},
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Binaries: []binaryTypes.Query{
+						{
+							Name: "kpatch-patch-3_10_0-1062_4_1",
+							Arch: "x86_64",
+						},
+					},
+				},
+				repositories: []string{"repo1"},
+			},
+			want: false,
+		},
+		{
+			name: "installed binary: query repos set, condition repos empty",
+			fields: fields{
+				Type: necTypes.PackageTypeBinary,
+				Binary: &binaryTypes.Package{
+					Name:          "kpatch-patch-3_10_0-1062_4_1",
+					Architectures: []string{"x86_64"},
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Binaries: []binaryTypes.Query{
+						{
+							Name:         "kpatch-patch-3_10_0-1062_4_1",
+							Arch:         "x86_64",
+							Repositories: []string{"repo1"},
 						},
 					},
 				},
 			},
-			want: true,
+			want: false,
+		},
+		{
+			name: "installed source: query repos empty, condition repos set",
+			fields: fields{
+				Type: necTypes.PackageTypeSource,
+				Source: &sourceTypes.Package{
+					Name: "package",
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Sources: []sourceTypes.Query{
+						{
+							Name: "package",
+						},
+					},
+				},
+				repositories: []string{"repo1"},
+			},
+			want: false,
+		},
+		{
+			name: "installed source: query repos set, condition repos empty",
+			fields: fields{
+				Type: necTypes.PackageTypeSource,
+				Source: &sourceTypes.Package{
+					Name: "package",
+				},
+			},
+			args: args{
+				query: necTypes.Query{
+					Sources: []sourceTypes.Query{
+						{
+							Name:         "package",
+							Repositories: []string{"repo1"},
+						},
+					},
+				},
+			},
+			want: false,
 		},
 		{
 			name: "not installed 3",
@@ -172,7 +345,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Binary: tt.fields.Binary,
 				Source: tt.fields.Source,
 			}
-			got, err := c.Accept(tt.args.query)
+			got, err := c.Accept(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Criterion.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return

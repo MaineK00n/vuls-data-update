@@ -8,29 +8,26 @@ import (
 type Package struct {
 	Name          string   `json:"name,omitempty"`
 	Architectures []string `json:"architectures,omitempty"`
-	Repositories  []string `json:"repositories,omitempty"`
 }
 
 func (p *Package) Sort() {
 	slices.Sort(p.Architectures)
-	slices.Sort(p.Repositories)
 }
 
 func Compare(x, y Package) int {
 	return cmp.Or(
 		cmp.Compare(x.Name, y.Name),
 		slices.Compare(x.Architectures, y.Architectures),
-		slices.Compare(x.Repositories, y.Repositories),
 	)
 }
 
 type Query struct {
-	Name       string
-	Arch       string
-	Repository string
+	Name         string
+	Arch         string
+	Repositories []string
 }
 
-func (p Package) Accept(query Query) (bool, error) {
+func (p Package) Accept(query Query, repositories []string) (bool, error) {
 	if query.Name != p.Name {
 		return false, nil
 	}
@@ -39,7 +36,9 @@ func (p Package) Accept(query Query) (bool, error) {
 		return false, nil
 	}
 
-	if query.Repository != "" && len(p.Repositories) > 0 && !slices.Contains(p.Repositories, query.Repository) {
+	if len(query.Repositories) > 0 && len(repositories) > 0 && !slices.ContainsFunc(query.Repositories, func(r string) bool {
+		return slices.Contains(repositories, r)
+	}) {
 		return false, nil
 	}
 

@@ -511,11 +511,12 @@ func (e extractor) collectPackages(majorDir, streamDir string, criteria v2.Crite
 
 	ds := make([]detectionTypes.Detection, 0, len(m))
 	for major, rootCa := range m {
-		ca, err := e.walkCriteria(majorDir, streamDir, rootCa, affectedRepositories)
+		ca, err := e.walkCriteria(majorDir, streamDir, rootCa)
 		if err != nil {
 			return nil, errors.Wrap(err, "walk criteria")
 		}
 		ca = e.postWalkCriteria(ca)
+		ca.Repositories = affectedRepositories
 
 		if err := f(ca, affectedResolutions); err != nil {
 			return nil, errors.Wrap(err, "add affected resolution")
@@ -796,7 +797,7 @@ func (e extractor) prewalkCriterion(name, stream string, ovalCns []v2.Criterion)
 	}
 }
 
-func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affectedRepositories []string) (criteriaTypes.Criteria, error) {
+func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria) (criteriaTypes.Criteria, error) {
 	var ca criteriaTypes.Criteria
 	switch criteria.Operator {
 	case "OR":
@@ -808,7 +809,7 @@ func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affec
 	}
 
 	for _, ovalCa := range criteria.Criterias {
-		cca, err := e.walkCriteria(name, stream, ovalCa, affectedRepositories)
+		cca, err := e.walkCriteria(name, stream, ovalCa)
 		if err != nil {
 			return criteriaTypes.Criteria{}, errors.Wrap(err, "walk criteria")
 		}
@@ -819,14 +820,14 @@ func (e extractor) walkCriteria(name, stream string, criteria v2.Criteria, affec
 		}
 	}
 
-	cca, err := e.walkCriterions(ca, name, stream, criteria.Criterions, affectedRepositories)
+	cca, err := e.walkCriterions(ca, name, stream, criteria.Criterions)
 	if err != nil {
 		return criteriaTypes.Criteria{}, errors.Wrap(err, "walk criterions")
 	}
 	return cca, nil
 }
 
-func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string, ovalCns []v2.Criterion, affectedRepositories []string) (criteriaTypes.Criteria, error) {
+func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string, ovalCns []v2.Criterion) (criteriaTypes.Criteria, error) {
 	var next []v2.Criterion
 
 	for _, ovalCn := range ovalCns {
@@ -868,7 +869,6 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 									}
 									return strings.Split(s.Arch.Text, "|")
 								}(),
-								Repositories: affectedRepositories,
 							},
 						},
 						Affected: &affectedTypes.Affected{
@@ -911,7 +911,6 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 									}
 									return strings.Split(s.Arch.Text, "|")
 								}(),
-								Repositories: affectedRepositories,
 							},
 						},
 						Affected: &affectedTypes.Affected{
@@ -937,8 +936,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 					Package: packageTypes.Package{
 						Type: packageTypes.PackageTypeBinary,
 						Binary: &vcBinaryPackageTypes.Package{
-							Name:         o.Name,
-							Repositories: affectedRepositories,
+							Name: o.Name,
 						},
 					},
 				},
@@ -955,8 +953,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 				NoneExist: &necTypes.Criterion{
 					Type: necTypes.PackageTypeBinary,
 					Binary: &necBinaryPackageTypes.Package{
-						Name:         o.Name,
-						Repositories: affectedRepositories,
+						Name: o.Name,
 					},
 				},
 			})
