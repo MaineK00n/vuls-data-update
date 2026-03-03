@@ -1,0 +1,82 @@
+{
+	"ID": "ALAS2023NVIDIA-2025-001",
+	"Author": "linux-security@amazon.com",
+	"From": "linux-security@amazon.com",
+	"Status": "final",
+	"Type": "security",
+	"Version": "1.4",
+	"Title": "Amazon Linux 2023 - Nvidia - ALAS2023NVIDIA-2025-001: important priority package update for libnvidia-container",
+	"Issued": {
+		"Date": "2025-02-14 23:13:00"
+	},
+	"Updated": {
+		"Date": "2025-03-05 16:39:00"
+	},
+	"Severity": "important",
+	"Description": "Package updates are available for Amazon Linux 2023 - Nvidia that fix the following vulnerabilities:\nCVE-2025-23359:\n\tNVIDIA Container Toolkit for Linux contains a Time-of-Check Time-of-Use (TOCTOU) vulnerability when used with default configuration, where a crafted container image could gain access to the host file system. A successful exploit of this vulnerability might lead to code execution, denial of service, escalation of privileges, information disclosure, and data tampering.\n",
+	"References": {
+		"Reference": [
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-23359",
+				"ID": "CVE-2025-23359",
+				"Type": "cve"
+			}
+		]
+	},
+	"Pkglist": {
+		"Collection": {
+			"Short": "amazon-linux-2023---nvidia",
+			"Name": "Amazon Linux 2023 - Nvidia",
+			"Package": [
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "libnvidia-container-devel",
+					"Release": "1",
+					"Version": "1.17.4",
+					"Filename": "Packages/libnvidia-container-devel-1.17.4-1.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "libnvidia-container-tools",
+					"Release": "1",
+					"Version": "1.17.4",
+					"Filename": "Packages/libnvidia-container-tools-1.17.4-1.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "libnvidia-container-static",
+					"Release": "1",
+					"Version": "1.17.4",
+					"Filename": "Packages/libnvidia-container-static-1.17.4-1.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "libnvidia-container1-debuginfo",
+					"Release": "1",
+					"Version": "1.17.4",
+					"Filename": "Packages/libnvidia-container1-debuginfo-1.17.4-1.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "libnvidia-container-libseccomp2",
+					"Release": "1",
+					"Version": "1.17.4",
+					"Filename": "Packages/libnvidia-container-libseccomp2-1.17.4-1.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "libnvidia-container1",
+					"Release": "1",
+					"Version": "1.17.4",
+					"Filename": "Packages/libnvidia-container1-1.17.4-1.x86_64.rpm"
+				}
+			]
+		}
+	}
+}

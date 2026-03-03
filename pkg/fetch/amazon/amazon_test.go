@@ -34,6 +34,7 @@ func TestFetch(t *testing.T) {
 				"2022":                  "testdata/fixtures/repomd_valid.xml",
 				"2023":                  "testdata/fixtures/repomd_valid.xml",
 				"2023-kernel-livepatch": "testdata/fixtures/repomd_valid.xml",
+				"2023-nvidia":           "testdata/fixtures/repomd_valid.xml",
 			},
 			updateinfos: map[string]string{
 				"1":                     "testdata/fixtures/updateinfo_1.xml.gz",
@@ -42,6 +43,7 @@ func TestFetch(t *testing.T) {
 				"2022":                  "testdata/fixtures/updateinfo_2022.xml.gz",
 				"2023":                  "testdata/fixtures/updateinfo_2023.xml.gz",
 				"2023-kernel-livepatch": "testdata/fixtures/updateinfo_2023_kernel-livepatch.xml.gz",
+				"2023-nvidia":           "testdata/fixtures/updateinfo_2023_nvidia.xml.gz",
 			},
 		},
 		{
@@ -123,6 +125,10 @@ func TestFetch(t *testing.T) {
 						if _, err := fmt.Fprintf(w, "http://%s/al2023/kernel-livepatch/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
 							t.Error("unexpected error:", err)
 						}
+					case strings.HasPrefix(r.URL.Path, "/al2023/nvidia"):
+						if _, err := fmt.Fprintf(w, "http://%s/al2023/nvidia/guids/b9dbfbda87c463b53ce6de759cc6cb527efa01fc5976bb654b201f294c2d099f/x86_64/", r.Host); err != nil {
+							t.Error("unexpected error:", err)
+						}
 					}
 
 				case strings.HasSuffix(r.URL.Path, "/repomd.xml"):
@@ -141,6 +147,8 @@ func TestFetch(t *testing.T) {
 						http.ServeFile(w, r, tt.repomd["2023"])
 					case strings.HasPrefix(r.URL.Path, "/al2023/kernel-livepatch"):
 						http.ServeFile(w, r, tt.repomd["2023-kernel-livepatch"])
+					case strings.HasPrefix(r.URL.Path, "/al2023/nvidia"):
+						http.ServeFile(w, r, tt.repomd["2023-nvidia"])
 					}
 				case strings.HasSuffix(r.URL.Path, "/updateinfo.xml.gz"):
 					switch {
@@ -156,6 +164,8 @@ func TestFetch(t *testing.T) {
 						http.ServeFile(w, r, tt.updateinfos["2023"])
 					case strings.HasPrefix(r.URL.Path, "/al2023/kernel-livepatch"):
 						http.ServeFile(w, r, tt.updateinfos["2023-kernel-livepatch"])
+					case strings.HasPrefix(r.URL.Path, "/al2023/nvidia"):
+						http.ServeFile(w, r, tt.updateinfos["2023-nvidia"])
 					}
 				}
 			}))
@@ -172,6 +182,7 @@ func TestFetch(t *testing.T) {
 					"2023": {
 						Core:            fmt.Sprintf("%s/al2023/core/mirrors/latest/x86_64/mirror.list", ts.URL),
 						KernelLivePatch: fmt.Sprintf("%s/al2023/kernel-livepatch/mirrors/latest/x86_64/mirror.list", ts.URL),
+						Nvidia:          fmt.Sprintf("%s/al2023/nvidia/mirrors/latest/x86_64/mirror.list", ts.URL),
 					},
 				}),
 				amazon.WithDir(dir), amazon.WithRetry(0))

@@ -32,6 +32,7 @@ type MirrorURL struct {
 	Extra           string
 	extra           []string
 	KernelLivePatch string
+	Nvidia          string
 }
 
 type Option interface {
@@ -82,6 +83,7 @@ func Fetch(opts ...Option) error {
 			"2023": {
 				Core:            "https://cdn.amazonlinux.com/al2023/core/mirrors/latest/x86_64/mirror.list",
 				KernelLivePatch: "https://cdn.amazonlinux.com/al2023/kernel-livepatch/mirrors/latest/x86_64/mirror.list",
+				Nvidia:          "https://cdn.amazonlinux.com/al2023/nvidia/mirrors/latest/x86_64/mirror.list",
 			},
 		},
 		dir:   filepath.Join(util.CacheDir(), "fetch", "amazon"),
@@ -156,6 +158,12 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].KernelLivePatch)
 			}
 			advs[getPackageRepository(options.mirrorURLs[v].KernelLivePatch)] = us
+
+			us, err = options.fetch(options.mirrorURLs[v].Nvidia)
+			if err != nil {
+				return errors.Wrapf(err, "fetch %s", options.mirrorURLs[v].Nvidia)
+			}
+			advs[getPackageRepository(options.mirrorURLs[v].Nvidia)] = us
 		default:
 			return errors.Errorf("unexpected version. accepts %q, received %q", []string{"1", "2", "2022", "2023"}, v)
 		}
@@ -329,6 +337,8 @@ func getPackageRepository(mirror string) string {
 		return filepath.Join("extras", lhs)
 	case strings.Contains(mirror, "/kernel-livepatch/"):
 		return "kernel-livepatch"
+	case strings.Contains(mirror, "/nvidia/"):
+		return "nvidia"
 	default:
 		log.Printf("WARN: failed to find repository. mirror: %s", mirror)
 		return "unknown"
