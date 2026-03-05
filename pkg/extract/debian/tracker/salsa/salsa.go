@@ -24,7 +24,7 @@ import (
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
 	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
 	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
-	criteriaTtypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	vcAffectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
@@ -231,12 +231,12 @@ func (o options) walkPackages(root string) (map[string]map[string]distribution, 
 
 	m := make(map[string]map[string]distribution)
 	for r := range resChan {
-		for pkg, versions := range r {
+		for pkg, codes := range r {
 			if _, ok := m[pkg]; !ok {
 				m[pkg] = make(map[string]distribution)
 			}
-			for version, path := range versions {
-				base := m[pkg][version]
+			for code, path := range codes {
+				base := m[pkg][code]
 				if path.Stable != "" {
 					base.Stable = path.Stable
 				}
@@ -247,7 +247,7 @@ func (o options) walkPackages(root string) (map[string]map[string]distribution, 
 				// if path.Backport != "" {
 				// 	base.Backport = path.Backport
 				// }
-				m[pkg][version] = base
+				m[pkg][code] = base
 			}
 		}
 	}
@@ -529,8 +529,8 @@ func (e extractor) collectAdvisoryAnnotations(vid string) (map[string]map[string
 
 func newCondition(pkg string, vc vcTypes.Criterion) *conditionTypes.Condition {
 	return &conditionTypes.Condition{
-		Criteria: criteriaTtypes.Criteria{
-			Operator: criteriaTtypes.CriteriaOperatorTypeOR,
+		Criteria: criteriaTypes.Criteria{
+			Operator: criteriaTypes.CriteriaOperatorTypeOR,
 			Criterions: []criterionTypes.Criterion{{
 				Type:    criterionTypes.CriterionTypeVersion,
 				Version: &vc,

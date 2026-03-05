@@ -818,7 +818,7 @@ func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := debianSecurityTrackerSalsa.Extract(args[0], debianSecurityTrackerSalsa.WithDir(options.dir), debianSecurityTrackerSalsa.WithConcurrency(options.concurrency)); err != nil {
-				return errors.Wrap(err, "failed to fetch debian security tracker salsa repository")
+				return errors.Wrap(err, "failed to extract debian security tracker salsa repository")
 			}
 			return nil
 		},
