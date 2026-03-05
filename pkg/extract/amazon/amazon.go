@@ -213,6 +213,26 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 		},
 	}
 
+	// These 9 AL2023 advisories (ALAS-935..1080) contain kernel6.12 packages
+	// alongside unsuffixed shared packages (bpftool, kernel-tools, etc.) that
+	// are also used by the kernel 6.1 branch. Starting from ALAS-1129, Amazon
+	// renamed 6.12-branch packages with a "6.12" suffix. For these 9 earlier
+	// advisories, wrap the shared packages in an AND criteria requiring
+	// kernel6.12 to be installed, preventing false positives for 6.1 users.
+	switch fetched.ID {
+	case "ALAS2023-2025-935",
+		"ALAS2023-2025-940",
+		"ALAS2023-2025-948",
+		"ALAS2023-2025-984",
+		"ALAS2023-2025-994",
+		"ALAS2023-2025-995",
+		"ALAS2023-2025-1052",
+		"ALAS2023-2025-1053",
+		"ALAS2023-2025-1080":
+		applyKernel612Guard(&d.Conditions[0].Criteria)
+	default:
+	}
+
 	return dataTypes.Data{
 		ID: dataTypes.RootID(fetched.ID),
 		Advisories: []advisoryTypes.Advisory{{
@@ -249,8 +269,8 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 					}
 					return rs
 				}(),
-				Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Issued.Date),
-				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.Updated.Date),
+				Published: utiltime.Parse([]string{"2006-01-02T15:04:05Z", "2006-01-02 15:04:05", "2006-01-02 15:04"}, fetched.Issued.Date),
+				Modified:  utiltime.Parse([]string{"2006-01-02T15:04:05Z", "2006-01-02 15:04:05", "2006-01-02 15:04"}, fetched.Updated.Date),
 			},
 			Segments: []segmentTypes.Segment{{Ecosystem: d.Ecosystem}},
 		}},
@@ -278,4 +298,59 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 			Raws: raws,
 		},
 	}
+}
+
+// applyKernel612Guard restructures criteria for the 9 AL2023 advisories
+// (ALAS-935..1080) that contain kernel6.12 alongside unsuffixed shared packages.
+// It moves shared packages (bpftool*, kernel-*) into a nested AND criteria
+// guarded by a kernel6.12 existence check (vulnerable:false, ge 0:0).
+func applyKernel612Guard(criteria *criteriaTypes.Criteria) {
+	var nonShared, shared []criterionTypes.Criterion
+	for _, c := range criteria.Criterions {
+		if c.Type == criterionTypes.CriterionTypeVersion &&
+			c.Version != nil &&
+			c.Version.Package.Binary != nil &&
+			isKernel612SharedPackage(c.Version.Package.Binary.Name) {
+			shared = append(shared, c)
+		} else {
+			nonShared = append(nonShared, c)
+		}
+	}
+	if len(shared) == 0 {
+		return
+	}
+
+	criteria.Criterions = nonShared
+	criteria.Criterias = append(criteria.Criterias, criteriaTypes.Criteria{
+		Operator: criteriaTypes.CriteriaOperatorTypeAND,
+		Criterions: []criterionTypes.Criterion{{
+			Type: criterionTypes.CriterionTypeVersion,
+			Version: &vcTypes.Criterion{
+				Vulnerable: false,
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeBinary,
+					Binary: &binaryPackageTypes.Package{
+						Name: "kernel6.12",
+					},
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  rangeTypes.RangeTypeRPM,
+					Range: []rangeTypes.Range{{GreaterEqual: "0"}},
+				},
+			},
+		}},
+		Criterias: []criteriaTypes.Criteria{{
+			Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+			Criterions: shared,
+		}},
+	})
+}
+
+// isKernel612SharedPackage reports whether the package name is a kernel-related
+// package shared between the kernel 6.1 and 6.12 branches in Amazon Linux 2023.
+// These are packages like bpftool, kernel-devel, kernel-tools whose names do not
+// distinguish which kernel branch they belong to.
+func isKernel612SharedPackage(name string) bool {
+	return (strings.HasPrefix(name, "kernel-") || strings.HasPrefix(name, "bpftool")) &&
+		!strings.Contains(name, "6.12")
 }

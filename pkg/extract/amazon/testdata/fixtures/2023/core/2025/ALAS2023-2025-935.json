@@ -1,0 +1,435 @@
+{
+	"ID": "ALAS2023-2025-935",
+	"Author": "linux-security@amazon.com",
+	"From": "linux-security@amazon.com",
+	"Status": "final",
+	"Type": "security",
+	"Version": "1.4",
+	"Title": "Amazon Linux 2023 - ALAS2023-2025-935: Important priority package update for kernel6.12",
+	"Issued": {
+		"Date": "2025-04-09 19:43:00"
+	},
+	"Updated": {
+		"Date": "2025-06-19 04:31:00"
+	},
+	"Severity": "Important",
+	"Description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\nCVE-2025-22023:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nusb: xhci: Don't skip on Stopped - Length Invalid\n\nCVE-2025-22022:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nusb: xhci: Apply the link chain quirk on NEC isoc endpoints\n\nCVE-2025-22021:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnetfilter: socket: Lookup orig tuple for IPv6 SNAT\n\nCVE-2025-22017:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\ndevlink: fix xa_alloc_cyclic() error handling\n\nCVE-2025-22015:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nmm/migrate: fix shmem xarray update during migration\n\nCVE-2025-22013:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nKVM: arm64: Unconditionally save+flush host FPSIMD/SVE/SME state\n\nCVE-2025-22005:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nipv6: Fix memleak of nhc_pcpu_rth_output in fib_check_nh_v6_gw().\n\nCVE-2025-22002:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnetfs: Call `invalidate_cache` only if implemented\n\nCVE-2025-22000:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nmm/huge_memory: drop beyond-EOF folios with the right number of refs\n\nCVE-2025-21999:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nproc: fix UAF in proc_get_inode()\n\nCVE-2025-21997:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nxsk: fix an integer overflow in xp_create_and_assign_umem()\n\nCVE-2025-21926:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnet: gso: fix ownership in __udp_gso_segment\n\nCVE-2025-21893:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nkeys: Fix UAF in key_put()\n\nCVE-2024-58092:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnfsd: fix legacy client tracking initialization\n",
+	"References": {
+		"Reference": [
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092",
+				"ID": "CVE-2024-58092",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893",
+				"ID": "CVE-2025-21893",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926",
+				"ID": "CVE-2025-21926",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997",
+				"ID": "CVE-2025-21997",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999",
+				"ID": "CVE-2025-21999",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000",
+				"ID": "CVE-2025-22000",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002",
+				"ID": "CVE-2025-22002",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005",
+				"ID": "CVE-2025-22005",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013",
+				"ID": "CVE-2025-22013",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015",
+				"ID": "CVE-2025-22015",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017",
+				"ID": "CVE-2025-22017",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021",
+				"ID": "CVE-2025-22021",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022",
+				"ID": "CVE-2025-22022",
+				"Type": "cve"
+			},
+			{
+				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023",
+				"ID": "CVE-2025-22023",
+				"Type": "cve"
+			}
+		]
+	},
+	"Pkglist": {
+		"Collection": {
+			"Short": "amazon-linux-2023",
+			"Name": "Amazon Linux 2023",
+			"Package": [
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "perf6.12-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/perf6.12-debuginfo-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "bpftool-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/bpftool-debuginfo-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf-devel",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-devel-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "python3-perf6.12",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/python3-perf6.12-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-debuginfo-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-tools-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-tools-debuginfo-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "bpftool",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/bpftool-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-tools",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-tools-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-tools-devel",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-tools-devel-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-modules-extra-common",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-modules-extra-common-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-livepatch-6.12.22-27.96",
+					"Release": "0.amzn2023",
+					"Version": "1.0",
+					"Filename": "Packages/kernel-livepatch-6.12.22-27.96-1.0-0.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "python3-perf6.12-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/python3-perf6.12-debuginfo-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-headers",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-headers-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel6.12-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-debuginfo-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf-static",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-static-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "perf6.12",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/perf6.12-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel6.12-modules-extra",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-modules-extra-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel6.12",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel6.12-debuginfo-common-x86_64",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-debuginfo-common-x86_64-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "x86_64",
+					"Epoch": "0",
+					"Name": "kernel-devel",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-devel-6.12.22-27.96.amzn2023.x86_64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "bpftool",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/bpftool-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-livepatch-6.12.22-27.96",
+					"Release": "0.amzn2023",
+					"Version": "1.0",
+					"Filename": "Packages/kernel-livepatch-6.12.22-27.96-1.0-0.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf-devel",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-devel-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "perf6.12-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/perf6.12-debuginfo-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf-static",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-static-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "perf6.12",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/perf6.12-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-tools",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-tools-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-tools-devel",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-tools-devel-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "bpftool-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/bpftool-debuginfo-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-headers",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-headers-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "python3-perf6.12",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/python3-perf6.12-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-libbpf-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-libbpf-debuginfo-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel6.12-modules-extra",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-modules-extra-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-tools-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-tools-debuginfo-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "python3-perf6.12-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/python3-perf6.12-debuginfo-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-modules-extra-common",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-modules-extra-common-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel6.12",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel6.12-debuginfo",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-debuginfo-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel6.12-debuginfo-common-aarch64",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel6.12-debuginfo-common-aarch64-6.12.22-27.96.amzn2023.aarch64.rpm"
+				},
+				{
+					"Arch": "aarch64",
+					"Epoch": "0",
+					"Name": "kernel-devel",
+					"Release": "27.96.amzn2023",
+					"Version": "6.12.22",
+					"Filename": "Packages/kernel-devel-6.12.22-27.96.amzn2023.aarch64.rpm"
+				}
+			]
+		}
+	}
+}

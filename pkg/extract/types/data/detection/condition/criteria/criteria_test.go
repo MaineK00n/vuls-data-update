@@ -1576,6 +1576,349 @@ func TestCriteria_Accept(t *testing.T) {
 			},
 		},
 		{
+			name: "amazon kernel6.12 AND guard: host without kernel6.12",
+			fields: fields{
+				// OR(
+				//   kernel6.12 (version criterion),
+				//   AND(
+				//     kernel6.12 >= 0:0 (vulnerable:false, guard),
+				//     OR(kernel-tools (version criterion))
+				//   )
+				// )
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{
+					{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
+									Name: "kernel6.12",
+								},
+							},
+							Affected: &affectedTypes.Affected{
+								Type:  affectedrangeTypes.RangeTypeRPM,
+								Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+								Fixed: []string{"0:6.12.6-1.amzn2023"},
+							},
+						},
+					},
+				},
+				Criterias: []criteriaTypes.Criteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+						Criterions: []criterionTypes.Criterion{
+							{
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: false,
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
+											Name: "kernel6.12",
+										},
+									},
+									Affected: &affectedTypes.Affected{
+										Type:  affectedrangeTypes.RangeTypeRPM,
+										Range: []affectedrangeTypes.Range{{GreaterEqual: "0"}},
+									},
+								},
+							},
+						},
+						Criterias: []criteriaTypes.Criteria{
+							{
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
+								Criterions: []criterionTypes.Criterion{
+									{
+										Type: criterionTypes.CriterionTypeVersion,
+										Version: &vcTypes.Criterion{
+											Vulnerable: true,
+											Package: vcPackageTypes.Package{
+												Type: vcPackageTypes.PackageTypeBinary,
+												Binary: &vcBinaryPackageTypes.Package{
+													Name: "kernel-tools",
+												},
+											},
+											Affected: &affectedTypes.Affected{
+												Type:  affectedrangeTypes.RangeTypeRPM,
+												Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+												Fixed: []string{"0:6.12.6-1.amzn2023"},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				// Host runs kernel 6.1 (has kernel + kernel-tools, but NOT kernel6.12)
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{
+						{
+							Binary: &vcTypes.QueryBinary{
+								Name:    "kernel",
+								Version: "0:6.1.100-1.amzn2023",
+							},
+						},
+						{
+							Binary: &vcTypes.QueryBinary{
+								Name:    "kernel-tools",
+								Version: "0:6.1.100-1.amzn2023",
+							},
+						},
+					},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
+										Name: "kernel6.12",
+									},
+								},
+								Affected: &affectedTypes.Affected{
+									Type:  affectedrangeTypes.RangeTypeRPM,
+									Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+									Fixed: []string{"0:6.12.6-1.amzn2023"},
+								},
+							},
+						},
+					},
+				},
+				Criterias: []criteriaTypes.FilteredCriteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+						Criterions: []criterionTypes.FilteredCriterion{
+							{
+								Criterion: criterionTypes.Criterion{
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: false,
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
+												Name: "kernel6.12",
+											},
+										},
+										Affected: &affectedTypes.Affected{
+											Type:  affectedrangeTypes.RangeTypeRPM,
+											Range: []affectedrangeTypes.Range{{GreaterEqual: "0"}},
+										},
+									},
+								},
+							},
+						},
+						Criterias: []criteriaTypes.FilteredCriteria{
+							{
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
+								Criterions: []criterionTypes.FilteredCriterion{
+									{
+										Criterion: criterionTypes.Criterion{
+											Type: criterionTypes.CriterionTypeVersion,
+											Version: &vcTypes.Criterion{
+												Vulnerable: true,
+												Package: vcPackageTypes.Package{
+													Type: vcPackageTypes.PackageTypeBinary,
+													Binary: &vcBinaryPackageTypes.Package{
+														Name: "kernel-tools",
+													},
+												},
+												Affected: &affectedTypes.Affected{
+													Type:  affectedrangeTypes.RangeTypeRPM,
+													Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+													Fixed: []string{"0:6.12.6-1.amzn2023"},
+												},
+											},
+										},
+										Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "amazon kernel6.12 AND guard: host with kernel6.12",
+			fields: fields{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.Criterion{
+					{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: true,
+							Package: vcPackageTypes.Package{
+								Type: vcPackageTypes.PackageTypeBinary,
+								Binary: &vcBinaryPackageTypes.Package{
+									Name: "kernel6.12",
+								},
+							},
+							Affected: &affectedTypes.Affected{
+								Type:  affectedrangeTypes.RangeTypeRPM,
+								Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+								Fixed: []string{"0:6.12.6-1.amzn2023"},
+							},
+						},
+					},
+				},
+				Criterias: []criteriaTypes.Criteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+						Criterions: []criterionTypes.Criterion{
+							{
+								Type: criterionTypes.CriterionTypeVersion,
+								Version: &vcTypes.Criterion{
+									Vulnerable: false,
+									Package: vcPackageTypes.Package{
+										Type: vcPackageTypes.PackageTypeBinary,
+										Binary: &vcBinaryPackageTypes.Package{
+											Name: "kernel6.12",
+										},
+									},
+									Affected: &affectedTypes.Affected{
+										Type:  affectedrangeTypes.RangeTypeRPM,
+										Range: []affectedrangeTypes.Range{{GreaterEqual: "0"}},
+									},
+								},
+							},
+						},
+						Criterias: []criteriaTypes.Criteria{
+							{
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
+								Criterions: []criterionTypes.Criterion{
+									{
+										Type: criterionTypes.CriterionTypeVersion,
+										Version: &vcTypes.Criterion{
+											Vulnerable: true,
+											Package: vcPackageTypes.Package{
+												Type: vcPackageTypes.PackageTypeBinary,
+												Binary: &vcBinaryPackageTypes.Package{
+													Name: "kernel-tools",
+												},
+											},
+											Affected: &affectedTypes.Affected{
+												Type:  affectedrangeTypes.RangeTypeRPM,
+												Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+												Fixed: []string{"0:6.12.6-1.amzn2023"},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			args: args{
+				// Host has both kernel6.12 and kernel-tools
+				query: criterionTypes.Query{
+					Version: []vcTypes.Query{
+						{
+							Binary: &vcTypes.QueryBinary{
+								Name:    "kernel6.12",
+								Version: "0:6.12.3-1.amzn2023",
+							},
+						},
+						{
+							Binary: &vcTypes.QueryBinary{
+								Name:    "kernel-tools",
+								Version: "0:6.12.3-1.amzn2023",
+							},
+						},
+					},
+				},
+			},
+			want: criteriaTypes.FilteredCriteria{
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
+										Name: "kernel6.12",
+									},
+								},
+								Affected: &affectedTypes.Affected{
+									Type:  affectedrangeTypes.RangeTypeRPM,
+									Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+									Fixed: []string{"0:6.12.6-1.amzn2023"},
+								},
+							},
+						},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+					},
+				},
+				Criterias: []criteriaTypes.FilteredCriteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+						Criterions: []criterionTypes.FilteredCriterion{
+							{
+								Criterion: criterionTypes.Criterion{
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: false,
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
+												Name: "kernel6.12",
+											},
+										},
+										Affected: &affectedTypes.Affected{
+											Type:  affectedrangeTypes.RangeTypeRPM,
+											Range: []affectedrangeTypes.Range{{GreaterEqual: "0"}},
+										},
+									},
+								},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+							},
+						},
+						Criterias: []criteriaTypes.FilteredCriteria{
+							{
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
+								Criterions: []criterionTypes.FilteredCriterion{
+									{
+										Criterion: criterionTypes.Criterion{
+											Type: criterionTypes.CriterionTypeVersion,
+											Version: &vcTypes.Criterion{
+												Vulnerable: true,
+												Package: vcPackageTypes.Package{
+													Type: vcPackageTypes.PackageTypeBinary,
+													Binary: &vcBinaryPackageTypes.Package{
+														Name: "kernel-tools",
+													},
+												},
+												Affected: &affectedTypes.Affected{
+													Type:  affectedrangeTypes.RangeTypeRPM,
+													Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+													Fixed: []string{"0:6.12.6-1.amzn2023"},
+												},
+											},
+										},
+										Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "child FilteredCriteria does not inherit parent Repositories",
 			fields: fields{
 				Operator:     criteriaTypes.CriteriaOperatorTypeAND,
@@ -2103,6 +2446,186 @@ func TestFilteredCriteria_Affected(t *testing.T) {
 									},
 								},
 								Accepts: criterionTypes.AcceptQueries{NoneExist: true},
+							},
+						},
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "amazon kernel6.12 AND guard: host without kernel6.12 - not affected",
+			fields: fields{
+				// OR(
+				//   kernel6.12 (no Accepts - not installed),
+				//   AND(
+				//     kernel6.12 guard (no Accepts - not installed),
+				//     OR(kernel-tools (Accepts - installed & vulnerable))
+				//   )
+				// )
+				// The AND branch fails because the guard criterion has no Accepts,
+				// so the overall OR tree is not affected.
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
+										Name: "kernel6.12",
+									},
+								},
+								Affected: &affectedTypes.Affected{
+									Type:  affectedrangeTypes.RangeTypeRPM,
+									Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+									Fixed: []string{"0:6.12.6-1.amzn2023"},
+								},
+							},
+						},
+					},
+				},
+				Criterias: []criteriaTypes.FilteredCriteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+						Criterions: []criterionTypes.FilteredCriterion{
+							{
+								Criterion: criterionTypes.Criterion{
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: false,
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
+												Name: "kernel6.12",
+											},
+										},
+										Affected: &affectedTypes.Affected{
+											Type:  affectedrangeTypes.RangeTypeRPM,
+											Range: []affectedrangeTypes.Range{{GreaterEqual: "0"}},
+										},
+									},
+								},
+								// No Accepts: kernel6.12 is not installed on this host
+							},
+						},
+						Criterias: []criteriaTypes.FilteredCriteria{
+							{
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
+								Criterions: []criterionTypes.FilteredCriterion{
+									{
+										Criterion: criterionTypes.Criterion{
+											Type: criterionTypes.CriterionTypeVersion,
+											Version: &vcTypes.Criterion{
+												Vulnerable: true,
+												Package: vcPackageTypes.Package{
+													Type: vcPackageTypes.PackageTypeBinary,
+													Binary: &vcBinaryPackageTypes.Package{
+														Name: "kernel-tools",
+													},
+												},
+												Affected: &affectedTypes.Affected{
+													Type:  affectedrangeTypes.RangeTypeRPM,
+													Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+													Fixed: []string{"0:6.12.6-1.amzn2023"},
+												},
+											},
+										},
+										Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "amazon kernel6.12 AND guard: host with kernel6.12 - affected",
+			fields: fields{
+				// OR(
+				//   kernel6.12 (Accepts - installed & vulnerable),
+				//   AND(
+				//     kernel6.12 guard (Accepts - installed),
+				//     OR(kernel-tools (Accepts - installed & vulnerable))
+				//   )
+				// )
+				// Both the top-level criterion and the AND branch are satisfied.
+				Operator: criteriaTypes.CriteriaOperatorTypeOR,
+				Criterions: []criterionTypes.FilteredCriterion{
+					{
+						Criterion: criterionTypes.Criterion{
+							Type: criterionTypes.CriterionTypeVersion,
+							Version: &vcTypes.Criterion{
+								Vulnerable: true,
+								Package: vcPackageTypes.Package{
+									Type: vcPackageTypes.PackageTypeBinary,
+									Binary: &vcBinaryPackageTypes.Package{
+										Name: "kernel6.12",
+									},
+								},
+								Affected: &affectedTypes.Affected{
+									Type:  affectedrangeTypes.RangeTypeRPM,
+									Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+									Fixed: []string{"0:6.12.6-1.amzn2023"},
+								},
+							},
+						},
+						Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+					},
+				},
+				Criterias: []criteriaTypes.FilteredCriteria{
+					{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+						Criterions: []criterionTypes.FilteredCriterion{
+							{
+								Criterion: criterionTypes.Criterion{
+									Type: criterionTypes.CriterionTypeVersion,
+									Version: &vcTypes.Criterion{
+										Vulnerable: false,
+										Package: vcPackageTypes.Package{
+											Type: vcPackageTypes.PackageTypeBinary,
+											Binary: &vcBinaryPackageTypes.Package{
+												Name: "kernel6.12",
+											},
+										},
+										Affected: &affectedTypes.Affected{
+											Type:  affectedrangeTypes.RangeTypeRPM,
+											Range: []affectedrangeTypes.Range{{GreaterEqual: "0"}},
+										},
+									},
+								},
+								Accepts: criterionTypes.AcceptQueries{Version: []int{0}},
+							},
+						},
+						Criterias: []criteriaTypes.FilteredCriteria{
+							{
+								Operator: criteriaTypes.CriteriaOperatorTypeOR,
+								Criterions: []criterionTypes.FilteredCriterion{
+									{
+										Criterion: criterionTypes.Criterion{
+											Type: criterionTypes.CriterionTypeVersion,
+											Version: &vcTypes.Criterion{
+												Vulnerable: true,
+												Package: vcPackageTypes.Package{
+													Type: vcPackageTypes.PackageTypeBinary,
+													Binary: &vcBinaryPackageTypes.Package{
+														Name: "kernel-tools",
+													},
+												},
+												Affected: &affectedTypes.Affected{
+													Type:  affectedrangeTypes.RangeTypeRPM,
+													Range: []affectedrangeTypes.Range{{LessThan: "0:6.12.6-1.amzn2023"}},
+													Fixed: []string{"0:6.12.6-1.amzn2023"},
+												},
+											},
+										},
+										Accepts: criterionTypes.AcceptQueries{Version: []int{1}},
+									},
+								},
 							},
 						},
 					},
