@@ -373,7 +373,23 @@ func needsKernel612Guard(id string) bool {
 // package shared between the kernel 6.1 and 6.12 branches in Amazon Linux 2023.
 // These are packages like bpftool, kernel-devel, kernel-tools whose names do not
 // distinguish which kernel branch they belong to.
+// The set is fixed and exhaustive for the 9 advisories listed in extract().
 func isKernel612SharedPackage(name string) bool {
-	return (strings.HasPrefix(name, "kernel-") || strings.HasPrefix(name, "bpftool")) &&
-		!strings.Contains(name, "6.12")
+	switch name {
+	case "bpftool",
+		"bpftool-debuginfo",
+		"kernel-devel",
+		"kernel-headers",
+		"kernel-libbpf",
+		"kernel-libbpf-debuginfo",
+		"kernel-libbpf-devel",
+		"kernel-libbpf-static",
+		"kernel-modules-extra-common",
+		"kernel-tools",
+		"kernel-tools-debuginfo",
+		"kernel-tools-devel":
+		return true
+	default:
+		return false
+	}
 }
