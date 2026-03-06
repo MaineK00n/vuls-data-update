@@ -1209,7 +1209,7 @@ func newCmdDebianOVAL() *cobra.Command {
 
 func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "api"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "tracker", "api"),
 		retry: 3,
 	}
 
@@ -1228,15 +1228,15 @@ func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "api"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
 
 func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "salsa"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "debian", "tracker", "salsa"),
 		retry: 3,
 	}
 
@@ -1255,8 +1255,8 @@ func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "fetch", "debian", "security-tracker", "salsa"), "output fetch results to specified directory")
-	cmd.Flags().IntVarP(&options.retry, "retry", "", 3, "number of retry http request")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

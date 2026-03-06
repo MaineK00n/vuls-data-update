@@ -1,0 +1,62 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-pip, python3-pip-whl"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), pybuild-plugin-pyproject, python3, python3-docutils <!nodoc>, python3-setuptools (>= 44.0.0)"
+	],
+	"Checksums-Sha256": [
+		"011993c19077b23c2b0f206ef053e6992522c1250864b67703445a440ed0ee85 1693 python-pip_23.0.1+dfsg-1.dsc 0720e60ea1ccf47d68c269742cd12a1d3bef4d30927cc2c02c2cf9e02deb7378 1261780 python-pip_23.0.1+dfsg.orig.tar.xz 2dbc2575c940c46d0d28cf42d9d015957aef835a5f6f49d9e4b5382dea3e996b 22160 python-pip_23.0.1+dfsg-1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/p/python-pip"
+	],
+	"Files": [
+		"7e2439bd21a3b3a2b8a49f632d8683cd 1693 python-pip_23.0.1+dfsg-1.dsc 4b9bdea8ab9de92bcf5b1bc38c665c1c 1261780 python-pip_23.0.1+dfsg.orig.tar.xz 1dcdaeaa63fa7ee16a078daf7e5cf2fb 22160 python-pip_23.0.1+dfsg-1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://pip.pypa.io/en/stable/"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"python-pip"
+	],
+	"Package-List": [
+		"python3-pip deb python optional arch=all python3-pip-whl deb python optional arch=all"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.6.2"
+	],
+	"Testsuite": [
+		"autopkgtest"
+	],
+	"Testsuite-Triggers": [
+		"python3-venv"
+	],
+	"Uploaders": [
+		"Carl Chenet <chaica@debian.org>, Scott Kitterman <scott@kitterman.com>, Stefano Rivera <stefanor@debian.org>"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/python-pip"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/python-pip.git"
+	],
+	"Version": [
+		"23.0.1+dfsg-1"
+	]
+}

@@ -1,0 +1,56 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"wordpress, wordpress-l10n, wordpress-theme-twentytwentythree, wordpress-theme-twentytwentyfour, wordpress-theme-twentytwentyfive"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-linktree"
+	],
+	"Build-Depends-Indep": [
+		"gettext, libjs-backbone, libjs-cropper, libjs-jquery (>= 1.11.3), libjs-jquery-form, libjs-jquery-ui, libjs-lodash, libjs-underscore, php-getid3 (>= 1.9.8-2), perl"
+	],
+	"Checksums-Sha256": [
+		"8567bfed5ad26fd4044c012b4637f000df5343d1981b40e941e35a0783e74cd1 2408 wordpress_6.9+dfsg1-1.dsc 1d00127aedba19fd8fdc22934858c1019c3507d8bffe741bd63366e47fefb3d6 22379284 wordpress_6.9+dfsg1.orig.tar.xz 2496f4f70540b15f6e8591f2e2ed0072b58f0386ab7f633cd7973316e6fcc487 6898824 wordpress_6.9+dfsg1-1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/w/wordpress"
+	],
+	"Files": [
+		"20f4cc2875f042b67a50b827f1e5c1d9 2408 wordpress_6.9+dfsg1-1.dsc 3c412033b1ce0d92c47c3c84bd14436f 22379284 wordpress_6.9+dfsg1.orig.tar.xz 07bf6120148784c80983b665bbfabef7 6898824 wordpress_6.9+dfsg1-1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://wordpress.org"
+	],
+	"Maintainer": [
+		"Craig Small <csmall@debian.org>"
+	],
+	"Package": [
+		"wordpress"
+	],
+	"Package-List": [
+		"wordpress deb web optional arch=all wordpress-l10n deb localization optional arch=all wordpress-theme-twentytwentyfive deb web optional arch=all wordpress-theme-twentytwentyfour deb web optional arch=all wordpress-theme-twentytwentythree deb web optional arch=all"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"web"
+	],
+	"Standards-Version": [
+		"4.6.2"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/debian/wordpress"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/debian/wordpress.git"
+	],
+	"Version": [
+		"6.9+dfsg1-1"
+	]
+}

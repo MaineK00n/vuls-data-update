@@ -775,7 +775,7 @@ func newCmdDebianOVAL() *cobra.Command {
 
 func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "debian", "security-tracker", "api"),
+		dir: filepath.Join(util.CacheDir(), "extract", "debian", "tracker", "api"),
 	}
 
 	cmd := &cobra.Command{
@@ -793,14 +793,20 @@ func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "debian", "security-tracker", "api"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 
 	return cmd
 }
 
 func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "debian", "security-tracker", "salsa"),
+	options := &struct {
+		base
+		concurrency int
+	}{
+		base: base{
+			dir: filepath.Join(util.CacheDir(), "extract", "debian", "tracker", "salsa"),
+		},
+		concurrency: runtime.NumCPU(),
 	}
 
 	cmd := &cobra.Command{
@@ -809,16 +815,17 @@ func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract debian-security-tracker-salsa vuls-data-raw-debian-security-tracker-salsa
 		`),
-		Args: cobra.NoArgs,
+		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := debianSecurityTrackerSalsa.Extract(args[0], debianSecurityTrackerSalsa.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to fetch debian security tracker salsa repository")
+			if err := debianSecurityTrackerSalsa.Extract(args[0], debianSecurityTrackerSalsa.WithDir(options.dir), debianSecurityTrackerSalsa.WithConcurrency(options.concurrency)); err != nil {
+				return errors.Wrap(err, "failed to extract debian security tracker salsa repository")
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "debian", "security-tracker", "salsa"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "c", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }

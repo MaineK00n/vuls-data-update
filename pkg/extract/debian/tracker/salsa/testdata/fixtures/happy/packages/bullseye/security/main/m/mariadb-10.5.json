@@ -1,0 +1,59 @@
+{
+	"Architecture": [
+		"any all"
+	],
+	"Binary": [
+		"libmariadb-dev, libmariadb-dev-compat, libmariadb3, libmariadbd19, libmariadbd-dev, mariadb-common, mariadb-client-core-10.5, mariadb-client-10.5, mariadb-server-core-10.5, mariadb-server-10.5, mariadb-server, mariadb-client, mariadb-backup, mariadb-plugin-connect, mariadb-plugin-s3, mariadb-plugin-rocksdb, mariadb-plugin-oqgraph, mariadb-plugin-mroonga, mariadb-plugin-spider, mariadb-plugin-gssapi-server, mariadb-plugin-gssapi-client, mariadb-plugin-cracklib-password-check, mariadb-test, mariadb-test-data"
+	],
+	"Build-Depends": [
+		"debhelper (>= 10), dh-exec, bison, cmake, cracklib-runtime <!nocheck>, gdb <!nocheck>, libaio-dev [linux-any], libboost-dev, libcrack2-dev (>= 2.9.0), libcurl4-openssl-dev | libcurl4-dev, libedit-dev, libedit-dev:native, libjemalloc-dev [linux-any], libjudy-dev, libkrb5-dev, liblz4-dev, libncurses5-dev (>= 5.0-6~), libncurses5-dev:native (>= 5.0-6~), libnuma-dev [linux-any], libpam0g-dev, libpcre2-dev, libsnappy-dev, libssl-dev, libssl-dev:native, libsystemd-dev [linux-any], libxml2-dev, libzstd-dev (>= 1.3.3), lsb-release, perl:any, po-debconf, psmisc, unixodbc-dev, uuid-dev, zlib1g-dev (>= 1:1.1.3-5~)"
+	],
+	"Checksums-Sha256": [
+		"349efbc8f4f60937ad128b57524517926e9b0e432bd43ecf2ef12cfa138da699 4814 mariadb-10.5_10.5.29-0+deb11u1.dsc de49ed417f6fa90e8fee72a41e526e0983dc47f388caff9e703803cec263b826 117805539 mariadb-10.5_10.5.29.orig.tar.gz af5b31b8617e51e8162b34e78167e7b8397355539fbeb48c15604aa20f041f85 833 mariadb-10.5_10.5.29.orig.tar.gz.asc 2b83df79cefb5f2d4723c3c2b18f5a620ea62759b503a815e519b89ebefc022a 222240 mariadb-10.5_10.5.29-0+deb11u1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/updates/main/m/mariadb-10.5"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://mariadb.org/"
+	],
+	"Maintainer": [
+		"Debian MySQL Maintainers <pkg-mysql-maint@lists.alioth.debian.org>"
+	],
+	"Package": [
+		"mariadb-10.5"
+	],
+	"Package-List": [
+		"libmariadb-dev deb libdevel optional arch=any libmariadb-dev-compat deb libdevel optional arch=any libmariadb3 deb libs optional arch=any libmariadbd-dev deb libdevel optional arch=any libmariadbd19 deb libs optional arch=any mariadb-backup deb database optional arch=any mariadb-client deb database optional arch=all mariadb-client-10.5 deb database optional arch=any mariadb-client-core-10.5 deb database optional arch=any mariadb-common deb database optional arch=all mariadb-plugin-connect deb database optional arch=any mariadb-plugin-cracklib-password-check deb database optional arch=any mariadb-plugin-gssapi-client deb database optional arch=any mariadb-plugin-gssapi-server deb database optional arch=any mariadb-plugin-mroonga deb database optional arch=any-alpha,any-amd64,any-arm,any-arm64,any-i386,any-ia64,any-mips64el,any-mips64r6el,any-mipsel,any-mipsr6el,any-nios2,any-powerpcel,any-ppc64el,any-sh3,any-sh4,any-tilegx mariadb-plugin-oqgraph deb database optional arch=any mariadb-plugin-rocksdb deb database optional arch=amd64,arm64,mips64el,ppc64el mariadb-plugin-s3 deb database optional arch=any mariadb-plugin-spider deb database optional arch=any mariadb-server deb database optional arch=all mariadb-server-10.5 deb database optional arch=any mariadb-server-core-10.5 deb database optional arch=any mariadb-test deb database optional arch=any mariadb-test-data deb database optional arch=all"
+	],
+	"Priority": [
+		"extra"
+	],
+	"Section": [
+		"misc"
+	],
+	"Standards-Version": [
+		"4.5.0"
+	],
+	"Testsuite": [
+		"autopkgtest"
+	],
+	"Testsuite-Triggers": [
+		"eatmydata"
+	],
+	"Uploaders": [
+		"Otto Kekäläinen <otto@debian.org>"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/mariadb-team/mariadb-10.5"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/mariadb-team/mariadb-10.5.git"
+	],
+	"Version": [
+		"1:10.5.29-0+deb11u1"
+	]
+}
