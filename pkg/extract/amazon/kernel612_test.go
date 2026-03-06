@@ -9,15 +9,10 @@ import (
 // TestIsKernel612SharedPackage tests isKernel612SharedPackage with every
 // package name that appears in the 9 kernel6.12 advisories (ALAS2023-2025-935,
 // -940, -948, -984, -994, -995, -1052, -1053, -1080). The package list is
-// identical across all 9 advisories.
-//
-// "Shared" means the package name is common to both the kernel 6.1 and
-// kernel 6.12 branches in AL2023. For example, kernel-tools and bpftool are
-// built from both branches but use the same unsuffixed name, whereas
-// kernel6.12, perf6.12, etc. are unique to the 6.12 branch. The AND guard
-// wraps these shared packages so that they match only when kernel6.12 is
-// actually installed on the host, preventing false positives on kernel 6.1
-// systems.
+// identical across all 9 advisories. Although this looks like an example-based
+// test, the cases below are exhaustive: they cover all package names from those
+// advisories.
+// See applyKernel612Guard for the definition of "shared" packages.
 func TestIsKernel612SharedPackage(t *testing.T) {
 	tests := []struct {
 		name string

@@ -101,31 +101,31 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", filepath.Base(dir), repo, y, fmt.Sprintf("%s.json", extracted.ID)))
 		}
 
-		if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-			ID:   sourceTypes.Amazon,
-			Name: new("Amazon Linux Security Center"),
-			Raw: func() []repositoryTypes.Repository {
-				r, _ := utilgit.GetDataSourceRepository(args)
-				if r == nil {
-					return nil
-				}
-				return []repositoryTypes.Repository{*r}
-			}(),
-			Extracted: func() *repositoryTypes.Repository {
-				if u, err := utilgit.GetOrigin(options.dir); err == nil {
-					return &repositoryTypes.Repository{
-						URL: u,
-					}
-				}
-				return nil
-			}(),
-		}, false); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
-		}
-
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
+	}
+
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.Amazon,
+		Name: new("Amazon Linux Security Center"),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{
+					URL: u,
+				}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
 	}
 
 	return nil
@@ -219,6 +219,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 	// renamed 6.12-branch packages with a "6.12" suffix. For these 9 earlier
 	// advisories, wrap the shared packages in an AND criteria requiring
 	// kernel6.12 to be installed, preventing false positives for 6.1 users.
+	// See applyKernel612Guard for the definition of "shared" packages.
 	switch fetched.ID {
 	case "ALAS2023-2025-935",
 		"ALAS2023-2025-940",
@@ -229,7 +230,7 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 		"ALAS2023-2025-1052",
 		"ALAS2023-2025-1053",
 		"ALAS2023-2025-1080":
-		applyKernel612Guard(&d.Conditions[0].Criteria)
+		d.Conditions[0].Criteria = applyKernel612Guard(d.Conditions[0].Criteria)
 	default:
 	}
 
@@ -302,9 +303,22 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 
 // applyKernel612Guard restructures criteria for the 9 AL2023 advisories
 // (ALAS-935..1080) that contain kernel6.12 alongside unsuffixed shared packages.
-// It moves shared packages (bpftool*, kernel-*) into a nested AND criteria
-// guarded by a kernel6.12 existence check (vulnerable:false, ge 0:0).
-func applyKernel612Guard(criteria *criteriaTypes.Criteria) {
+//
+// "Shared" means the package name is common to both the kernel 6.1 and
+// kernel 6.12 branches in AL2023. For example, kernel-tools and bpftool are
+// built from both branches but use the same unsuffixed name, whereas
+// kernel6.12, perf6.12, etc. are unique to the 6.12 branch. Reusing the same
+// name for both branches was arguably a poor packaging strategy; Amazon
+// recognised this and, starting from ALAS-1129, renamed the 6.12-branch
+// packages with an explicit "6.12" suffix. Because of this rename the set of
+// advisories that need this guard is fixed to the 9 listed above and will not
+// grow (at least not for this reason).
+//
+// This function moves shared packages (bpftool*, kernel-*) into a nested AND
+// criteria guarded by a kernel6.12 existence check (vulnerable:false, ge 0),
+// so that they match only when kernel6.12 is actually installed on the host,
+// preventing false positives on kernel 6.1 systems.
+func applyKernel612Guard(criteria criteriaTypes.Criteria) criteriaTypes.Criteria {
 	var nonShared, shared []criterionTypes.Criterion
 	for _, c := range criteria.Criterions {
 		if c.Type == criterionTypes.CriterionTypeVersion &&
@@ -317,7 +331,7 @@ func applyKernel612Guard(criteria *criteriaTypes.Criteria) {
 		}
 	}
 	if len(shared) == 0 {
-		return
+		return criteria
 	}
 
 	criteria.Criterions = nonShared
@@ -344,6 +358,7 @@ func applyKernel612Guard(criteria *criteriaTypes.Criteria) {
 			Criterions: shared,
 		}},
 	})
+	return criteria
 }
 
 // isKernel612SharedPackage reports whether the package name is a kernel-related

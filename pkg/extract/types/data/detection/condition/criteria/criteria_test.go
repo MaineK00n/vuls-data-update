@@ -1581,7 +1581,7 @@ func TestCriteria_Accept(t *testing.T) {
 				// OR(
 				//   kernel6.12 (version criterion),
 				//   AND(
-				//     kernel6.12 >= 0:0 (vulnerable:false, guard),
+				//     kernel6.12 >= 0 (vulnerable:false, guard),
 				//     OR(kernel-tools (version criterion))
 				//   )
 				// )
