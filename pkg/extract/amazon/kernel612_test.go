@@ -8,7 +8,14 @@ import (
 
 // TestNeedsKernel612Guard asserts that every advisory ID in the kernel6.12 guard
 // list returns true, and that unrelated IDs return false.
-// This prevents regressions where an ID is accidentally removed from the list.
+//
+// The list of 9 IDs is the specification: this test encodes it explicitly so
+// that any change requires an intentional, visible update here rather than a
+// silent inline edit.  In particular, when an LLM refactors a switch with many
+// nearly-identical cases it may "simplify" by collapsing ranges or dropping
+// what looks like a duplicate.  Because each ID is a named subtest, such a
+// regression surfaces immediately as a named test failure instead of a silent
+// behaviour change.
 func TestNeedsKernel612Guard(t *testing.T) {
 	guardedIDs := []string{
 		"ALAS2023-2025-935",
