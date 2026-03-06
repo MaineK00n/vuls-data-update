@@ -10,9 +10,10 @@ type FixStatus struct {
 type Class string
 
 const (
-	ClassUnfixed Class = "unfixed"
-	ClassFixed   Class = "fixed"
-	ClassUnknown Class = "unknown"
+	ClassUnfixed     Class = "unfixed"
+	ClassFixed       Class = "fixed"
+	ClassUnknown     Class = "unknown"
+	ClassNotAffected Class = "not-affected"
 )
 
 func Compare(x, y FixStatus) int {

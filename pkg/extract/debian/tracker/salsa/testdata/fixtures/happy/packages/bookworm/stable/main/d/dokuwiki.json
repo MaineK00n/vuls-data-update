@@ -1,0 +1,41 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"dokuwiki"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), po-debconf, slimit"
+	],
+	"Directory": [
+		"pool/main/d/dokuwiki"
+	],
+	"Files": [
+		"9476f18efdadb71b8f7d58bef5321ff2 1999 dokuwiki_0.0.20220731.a-2.dsc 4459ea99e3a4ce2b767482f505724dcc 3985949 dokuwiki_0.0.20220731.a.orig.tar.gz 33132f18424d3daad164a17c27d044e9 106296 dokuwiki_0.0.20220731.a-2.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://www.dokuwiki.org/"
+	],
+	"Maintainer": [
+		"Debian DokuWiki Team <team+dokuwiki@tracker.debian.org>"
+	],
+	"Package": [
+		"dokuwiki"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"web"
+	],
+	"Standards-Version": [
+		"4.6.1"
+	],
+	"Version": [
+		"0.0.20220731.a-2"
+	]
+}
