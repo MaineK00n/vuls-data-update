@@ -13,19 +13,17 @@
 		"Date": "2023-02-22 23:22:00"
 	},
 	"Severity": "Important",
-	"Description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\n\tCVE-2022-24903:\n\t\tA flaw was found in rsyslog's reception TCP modules. This flaw allows an attacker to craft a malicious message leading to a heap-based buffer overflow. This issue allows the attacker to corrupt or access data stored in memory, leading to a denial of service in the rsyslog or possible remote code execution.\n\t\n\tCVE-2014-3634:\n\t\tA flaw was found in the way rsyslog handled invalid log message priority values. In certain configurations, a local attacker, or a remote attacker able to connect to the rsyslog port, could use this flaw to crash the rsyslog daemon or, potentially in rsyslog 7.x, execute arbitrary code as the user running the rsyslog daemon.\n\t",
+	"Description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\nCVE-2022-24903:\n\tA flaw was found in rsyslog's reception TCP modules. This flaw allows an attacker to craft a malicious message leading to a heap-based buffer overflow. This issue allows the attacker to corrupt or access data stored in memory, leading to a denial of service in the rsyslog or possible remote code execution.\n\nCVE-2014-3634:\n\tA flaw was found in the way rsyslog handled invalid log message priority values. In certain configurations, a local attacker, or a remote attacker able to connect to the rsyslog port, could use this flaw to crash the rsyslog daemon or, potentially in rsyslog 7.x, execute arbitrary code as the user running the rsyslog daemon.\n",
 	"References": {
 		"Reference": [
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3634",
 				"ID": "CVE-2014-3634",
-				"Title": "",
 				"Type": "cve"
 			},
 			{
 				"Href": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24903",
 				"ID": "CVE-2022-24903",
-				"Title": "",
 				"Type": "cve"
 			}
 		]

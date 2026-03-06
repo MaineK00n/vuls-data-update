@@ -1,0 +1,1029 @@
+{
+	"id": "ALAS2023-2025-935",
+	"advisories": [
+		{
+			"content": {
+				"id": "ALAS2023-2025-935",
+				"title": "Amazon Linux 2023 - ALAS2023-2025-935: Important priority package update for kernel6.12",
+				"description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\nCVE-2025-22023:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nusb: xhci: Don't skip on Stopped - Length Invalid\n\nCVE-2025-22022:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nusb: xhci: Apply the link chain quirk on NEC isoc endpoints\n\nCVE-2025-22021:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnetfilter: socket: Lookup orig tuple for IPv6 SNAT\n\nCVE-2025-22017:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\ndevlink: fix xa_alloc_cyclic() error handling\n\nCVE-2025-22015:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nmm/migrate: fix shmem xarray update during migration\n\nCVE-2025-22013:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nKVM: arm64: Unconditionally save+flush host FPSIMD/SVE/SME state\n\nCVE-2025-22005:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nipv6: Fix memleak of nhc_pcpu_rth_output in fib_check_nh_v6_gw().\n\nCVE-2025-22002:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnetfs: Call `invalidate_cache` only if implemented\n\nCVE-2025-22000:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nmm/huge_memory: drop beyond-EOF folios with the right number of refs\n\nCVE-2025-21999:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nproc: fix UAF in proc_get_inode()\n\nCVE-2025-21997:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nxsk: fix an integer overflow in xp_create_and_assign_umem()\n\nCVE-2025-21926:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnet: gso: fix ownership in __udp_gso_segment\n\nCVE-2025-21893:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nkeys: Fix UAF in key_put()\n\nCVE-2024-58092:\n\tIn the Linux kernel, the following vulnerability has been resolved:\n\nnfsd: fix legacy client tracking initialization\n",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "linux-security@amazon.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://alas.aws.amazon.com/AL2023/ALAS-2025-935.html"
+					}
+				],
+				"published": "2025-04-09T19:43:00Z",
+				"modified": "2025-06-19T04:31:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2024-58092",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-21893",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-21926",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-21997",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-21999",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22000",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22002",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22005",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22013",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22015",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22017",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22021",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22022",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2025-22023",
+				"references": [
+					{
+						"source": "linux-security@amazon.com",
+						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "amazon:2023"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "amazon:2023",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterias": [
+									{
+										"operator": "OR",
+										"criterions": [
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "bpftool",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "bpftool-debuginfo",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-devel",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-headers",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-libbpf",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-libbpf-debuginfo",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-libbpf-devel",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-libbpf-static",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-modules-extra-common",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-tools",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-tools-debuginfo",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											},
+											{
+												"type": "version",
+												"version": {
+													"vulnerable": true,
+													"fix_status": {
+														"class": "fixed"
+													},
+													"package": {
+														"type": "binary",
+														"binary": {
+															"name": "kernel-tools-devel",
+															"architectures": [
+																"aarch64",
+																"x86_64"
+															]
+														}
+													},
+													"affected": {
+														"type": "rpm",
+														"range": [
+															{
+																"lt": "0:6.12.22-27.96.amzn2023"
+															}
+														],
+														"fixed": [
+															"0:6.12.22-27.96.amzn2023"
+														]
+													}
+												}
+											}
+										]
+									}
+								],
+								"criterions": [
+									{
+										"type": "version",
+										"version": {
+											"vulnerable": false,
+											"package": {
+												"type": "binary",
+												"binary": {
+													"name": "kernel6.12"
+												}
+											},
+											"affected": {
+												"type": "rpm",
+												"range": [
+													{
+														"ge": "0"
+													}
+												]
+											}
+										}
+									}
+								]
+							}
+						],
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel-livepatch-6.12.22-27.96",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:1.0-0.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:1.0-0.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel6.12",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel6.12-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel6.12-debuginfo-common-aarch64",
+											"architectures": [
+												"aarch64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel6.12-debuginfo-common-x86_64",
+											"architectures": [
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "kernel6.12-modules-extra",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "perf6.12",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "perf6.12-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3-perf6.12",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "python3-perf6.12-debuginfo",
+											"architectures": [
+												"aarch64",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "0:6.12.22-27.96.amzn2023"
+											}
+										],
+										"fixed": [
+											"0:6.12.22-27.96.amzn2023"
+										]
+									}
+								}
+							}
+						],
+						"repositories": [
+							"amazonlinux"
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "amazon",
+		"raws": [
+			"fixtures/2023/core/2025/ALAS2023-2025-935.json"
+		]
+	}
+}

@@ -22,7 +22,9 @@
 						"source": "linux-security@amazon.com",
 						"url": "https://alas.aws.amazon.com/AL2023/ALASLIVEPATCH-2023-001.html"
 					}
-				]
+				],
+				"published": "2023-04-13T17:56:00Z",
+				"modified": "2023-05-09T18:35:00Z"
 			},
 			"segments": [
 				{
