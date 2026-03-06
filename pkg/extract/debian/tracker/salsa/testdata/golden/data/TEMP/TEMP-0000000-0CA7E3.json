@@ -1,0 +1,166 @@
+{
+	"id": "TEMP-0000000-0CA7E3",
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "TEMP-0000000-0CA7E3",
+				"description": "[XSS in press-this of wordpress]\n\nNOTE:\nthis code was never present in a released wordpress version\nhttps://www.openwall.com/lists/oss-security/2008/07/15/5",
+				"references": [
+					{
+						"source": "security-tracker.debian.org",
+						"url": "https://security-tracker.debian.org/tracker/TEMP-0000000-0CA7E3"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "debian:11",
+					"tag": "wordpress"
+				},
+				{
+					"ecosystem": "debian:12",
+					"tag": "wordpress"
+				},
+				{
+					"ecosystem": "debian:13",
+					"tag": "wordpress"
+				},
+				{
+					"ecosystem": "debian:sid",
+					"tag": "wordpress"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "debian:11",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected",
+										"vendor": "not-affected: Vulnerable code not present"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "wordpress"
+										}
+									}
+								}
+							}
+						]
+					},
+					"tag": "wordpress"
+				}
+			]
+		},
+		{
+			"ecosystem": "debian:12",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected",
+										"vendor": "not-affected: Vulnerable code not present"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "wordpress"
+										}
+									}
+								}
+							}
+						]
+					},
+					"tag": "wordpress"
+				}
+			]
+		},
+		{
+			"ecosystem": "debian:13",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected",
+										"vendor": "not-affected: Vulnerable code not present"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "wordpress"
+										}
+									}
+								}
+							}
+						]
+					},
+					"tag": "wordpress"
+				}
+			]
+		},
+		{
+			"ecosystem": "debian:sid",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": false,
+									"fix_status": {
+										"class": "not-affected",
+										"vendor": "not-affected: Vulnerable code not present"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "wordpress"
+										}
+									}
+								}
+							}
+						]
+					},
+					"tag": "wordpress"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "debian-security-tracker-salsa",
+		"raws": [
+			"happy/CVE/TEMP/TEMP-0000000-0CA7E3.json",
+			"happy/packages/bookworm/security/main/w/wordpress.json",
+			"happy/packages/bookworm/stable/main/w/wordpress.json",
+			"happy/packages/bullseye/security/main/w/wordpress.json",
+			"happy/packages/bullseye/stable/main/w/wordpress.json",
+			"happy/packages/sid/stable/main/w/wordpress.json",
+			"happy/packages/trixie/security/main/w/wordpress.json",
+			"happy/packages/trixie/stable/main/w/wordpress.json"
+		]
+	}
+}
