@@ -220,18 +220,8 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 	// advisories, wrap the shared packages in an AND criteria requiring
 	// kernel6.12 to be installed, preventing false positives for 6.1 users.
 	// See applyKernel612Guard for the definition of "shared" packages.
-	switch fetched.ID {
-	case "ALAS2023-2025-935",
-		"ALAS2023-2025-940",
-		"ALAS2023-2025-948",
-		"ALAS2023-2025-984",
-		"ALAS2023-2025-994",
-		"ALAS2023-2025-995",
-		"ALAS2023-2025-1052",
-		"ALAS2023-2025-1053",
-		"ALAS2023-2025-1080":
+	if needsKernel612Guard(fetched.ID) {
 		d.Conditions[0].Criteria = applyKernel612Guard(d.Conditions[0].Criteria)
-	default:
 	}
 
 	return dataTypes.Data{
@@ -359,6 +349,24 @@ func applyKernel612Guard(criteria criteriaTypes.Criteria) criteriaTypes.Criteria
 		}},
 	})
 	return criteria
+}
+
+// needsKernel612Guard reports whether the advisory ID is one of the 9 AL2023
+// advisories (ALAS-935..1080) that require the kernel6.12 guard.
+func needsKernel612Guard(id string) bool {
+	switch id {
+	case "ALAS2023-2025-935",
+		"ALAS2023-2025-940",
+		"ALAS2023-2025-948",
+		"ALAS2023-2025-984",
+		"ALAS2023-2025-994",
+		"ALAS2023-2025-995",
+		"ALAS2023-2025-1052",
+		"ALAS2023-2025-1053",
+		"ALAS2023-2025-1080":
+		return true
+	}
+	return false
 }
 
 // isKernel612SharedPackage reports whether the package name is a kernel-related

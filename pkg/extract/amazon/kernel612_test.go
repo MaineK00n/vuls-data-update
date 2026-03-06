@@ -6,6 +6,44 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/amazon"
 )
 
+// TestNeedsKernel612Guard asserts that every advisory ID in the kernel6.12 guard
+// list returns true, and that unrelated IDs return false.
+// This prevents regressions where an ID is accidentally removed from the list.
+func TestNeedsKernel612Guard(t *testing.T) {
+	guardedIDs := []string{
+		"ALAS2023-2025-935",
+		"ALAS2023-2025-940",
+		"ALAS2023-2025-948",
+		"ALAS2023-2025-984",
+		"ALAS2023-2025-994",
+		"ALAS2023-2025-995",
+		"ALAS2023-2025-1052",
+		"ALAS2023-2025-1053",
+		"ALAS2023-2025-1080",
+	}
+	for _, id := range guardedIDs {
+		t.Run(id, func(t *testing.T) {
+			if !amazon.NeedsKernel612Guard(id) {
+				t.Errorf("NeedsKernel612Guard(%q) = false, want true", id)
+			}
+		})
+	}
+
+	notGuardedIDs := []string{
+		"ALAS2023-2025-934",
+		"ALAS2023-2025-1081",
+		"ALAS2023-2025-1129",
+		"ALAS2-2025-2738",
+	}
+	for _, id := range notGuardedIDs {
+		t.Run(id, func(t *testing.T) {
+			if amazon.NeedsKernel612Guard(id) {
+				t.Errorf("NeedsKernel612Guard(%q) = true, want false", id)
+			}
+		})
+	}
+}
+
 // TestIsKernel612SharedPackage tests isKernel612SharedPackage with every
 // package name that appears in the 9 kernel6.12 advisories (ALAS2023-2025-935,
 // -940, -948, -984, -994, -995, -1052, -1053, -1080). The package list is
