@@ -1,0 +1,41 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"dokuwiki, dokuwiki-farm"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), python3-docutils"
+	],
+	"Directory": [
+		"pool/main/d/dokuwiki"
+	],
+	"Files": [
+		"698db7e6cb5a2f439d696ccc9c010dbc 1386 dokuwiki_2025-05-14.b+dfsg-5.dsc bbc0d306d3fa240dd7f3bcba9c2148a6 1746556 dokuwiki_2025-05-14.b+dfsg.orig.tar.xz 00ecc8cbb9d4870169fa1ca150ed9a06 96856 dokuwiki_2025-05-14.b+dfsg-5.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://github.com/dokuwiki/dokuwiki"
+	],
+	"Maintainer": [
+		"Daniel Baumann <daniel@debian.org>"
+	],
+	"Package": [
+		"dokuwiki"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"web"
+	],
+	"Standards-Version": [
+		"4.7.3"
+	],
+	"Version": [
+		"2025-05-14.b+dfsg-5"
+	]
+}

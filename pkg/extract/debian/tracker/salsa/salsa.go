@@ -388,6 +388,9 @@ func (e extractor) extractCVE(path string, pkgs map[string]map[string]distributi
 	}
 
 	for _, vpkg := range vpkgs {
+		if vpkg.Kind == "itp" {
+			continue
+		}
 		switch vpkg.Release {
 		case "":
 			for code := range pkgs[vpkg.Package] {
@@ -454,10 +457,15 @@ func (e extractor) extractCVE(path string, pkgs map[string]map[string]distributi
 			if err != nil {
 				return dataTypes.Data{}, errors.Wrapf(err, "create condition for %q from annotation: %+v", pkg, ann)
 			}
-			if c == nil {
-				continue
+
+			var seg *segmentTypes.Segment
+			if c != nil {
+				d.Detections = appendDetection(d.Detections, eco, *c)
+				seg = &segmentTypes.Segment{
+					Ecosystem: eco,
+					Tag:       segmentTypes.DetectionTag(pkg),
+				}
 			}
-			d.Detections = appendDetection(d.Detections, eco, *c)
 
 			sev, bugRefs, err := collectSeverityAndBugRefs(ann.Vulnerability.Anns)
 			if err != nil {
@@ -471,7 +479,7 @@ func (e extractor) extractCVE(path string, pkgs map[string]map[string]distributi
 				}}
 			}
 			ann.Vulnerability.Content.References = append(ann.Vulnerability.Content.References, bugRefs...)
-			d.Vulnerabilities = appendOrMergeVulnerability(d.Vulnerabilities, ann.Vulnerability.Content, eco, pkg)
+			d.Vulnerabilities = appendOrMergeVulnerability(d.Vulnerabilities, ann.Vulnerability.Content, seg)
 
 			for aid, a := range ann.Advisories {
 				sev, bugRefs, err := collectSeverityAndBugRefs(a.Anns)
@@ -486,7 +494,7 @@ func (e extractor) extractCVE(path string, pkgs map[string]map[string]distributi
 					}}
 				}
 				a.Content.References = append(a.Content.References, bugRefs...)
-				d.Advisories = appendOrMergeAdvisory(d.Advisories, a.Content, eco, pkg)
+				d.Advisories = appendOrMergeAdvisory(d.Advisories, a.Content, seg)
 			}
 		}
 	}
@@ -570,6 +578,34 @@ func newUnfixedCondition(pkg, vendor string) *conditionTypes.Condition {
 	})
 }
 
+func newNotAffectedCondition(pkg, vendor string) *conditionTypes.Condition {
+	return newCondition(pkg, vcTypes.Criterion{
+		Vulnerable: false,
+		FixStatus: &vcFixStatusTypes.FixStatus{
+			Class:  vcFixStatusTypes.ClassNotAffected,
+			Vendor: vendor,
+		},
+		Package: vcPackageTypes.Package{
+			Type:   vcPackageTypes.PackageTypeSource,
+			Source: &vcSourcePackageTypes.Package{Name: pkg},
+		},
+	})
+}
+
+func newUnknownCondition(pkg, vendor string) *conditionTypes.Condition {
+	return newCondition(pkg, vcTypes.Criterion{
+		Vulnerable: false,
+		FixStatus: &vcFixStatusTypes.FixStatus{
+			Class:  vcFixStatusTypes.ClassUnknown,
+			Vendor: vendor,
+		},
+		Package: vcPackageTypes.Package{
+			Type:   vcPackageTypes.PackageTypeSource,
+			Source: &vcSourcePackageTypes.Package{Name: pkg},
+		},
+	})
+}
+
 func (e extractor) buildCondition(pkg, code string, ann cveAnnotation, pkgs map[string]map[string]distribution) (*conditionTypes.Condition, error) {
 	advs := make(map[string][]packageAnnotation)
 	for id, a := range ann.Advisories {
@@ -591,8 +627,20 @@ func (e extractor) buildCondition(pkg, code string, ann cveAnnotation, pkgs map[
 			vendor = fmt.Sprintf("%s: %s", max.Kind, max.Description)
 		}
 		return newUnfixedCondition(pkg, vendor), nil
-	case "itp", "not-affected", "undetermined":
+	case "not-affected":
+		vendor := max.Kind
+		if max.Description != "" {
+			vendor = fmt.Sprintf("%s: %s", max.Kind, max.Description)
+		}
+		return newNotAffectedCondition(pkg, vendor), nil
+	case "itp":
 		return nil, nil
+	case "undetermined":
+		vendor := max.Kind
+		if max.Description != "" {
+			vendor = fmt.Sprintf("%s: %s", max.Kind, max.Description)
+		}
+		return newUnknownCondition(pkg, vendor), nil
 	default:
 		return nil, errors.Errorf("unexpected package annotation kind. expected: %q, actual: %q", []string{"fixed", "postponed", "end-of-life", "removed", "ignored", "no-dsa", "unfixed", "itp", "not-affected", "undetermined"}, max.Kind)
 	}
@@ -679,40 +727,38 @@ func collectSeverityAndBugRefs(anns []packageAnnotation) (*string, []referenceTy
 	return sev, refs, nil
 }
 
-func appendOrMergeVulnerability(vulns []vulnerabilityTypes.Vulnerability, content vulnerabilityContentTypes.Content, eco ecosystemTypes.Ecosystem, pkg string) []vulnerabilityTypes.Vulnerability {
-	seg := segmentTypes.Segment{
-		Ecosystem: eco,
-		Tag:       segmentTypes.DetectionTag(pkg),
-	}
+func appendOrMergeVulnerability(vulns []vulnerabilityTypes.Vulnerability, content vulnerabilityContentTypes.Content, seg *segmentTypes.Segment) []vulnerabilityTypes.Vulnerability {
 	switch i := slices.IndexFunc(vulns, func(e vulnerabilityTypes.Vulnerability) bool {
 		return vulnerabilityContentTypes.Compare(e.Content, content) == 0
 	}); i {
 	case -1:
-		return append(vulns, vulnerabilityTypes.Vulnerability{
-			Content:  content,
-			Segments: []segmentTypes.Segment{seg},
-		})
+		v := vulnerabilityTypes.Vulnerability{Content: content}
+		if seg != nil {
+			v.Segments = []segmentTypes.Segment{*seg}
+		}
+		return append(vulns, v)
 	default:
-		vulns[i].Segments = append(vulns[i].Segments, seg)
+		if seg != nil {
+			vulns[i].Segments = append(vulns[i].Segments, *seg)
+		}
 		return vulns
 	}
 }
 
-func appendOrMergeAdvisory(advisories []advisoryTypes.Advisory, content advisoryContentTypes.Content, eco ecosystemTypes.Ecosystem, pkg string) []advisoryTypes.Advisory {
-	seg := segmentTypes.Segment{
-		Ecosystem: eco,
-		Tag:       segmentTypes.DetectionTag(pkg),
-	}
+func appendOrMergeAdvisory(advisories []advisoryTypes.Advisory, content advisoryContentTypes.Content, seg *segmentTypes.Segment) []advisoryTypes.Advisory {
 	switch i := slices.IndexFunc(advisories, func(e advisoryTypes.Advisory) bool {
 		return advisoryContentTypes.Compare(e.Content, content) == 0
 	}); i {
 	case -1:
-		return append(advisories, advisoryTypes.Advisory{
-			Content:  content,
-			Segments: []segmentTypes.Segment{seg},
-		})
+		a := advisoryTypes.Advisory{Content: content}
+		if seg != nil {
+			a.Segments = []segmentTypes.Segment{*seg}
+		}
+		return append(advisories, a)
 	default:
-		advisories[i].Segments = append(advisories[i].Segments, seg)
+		if seg != nil {
+			advisories[i].Segments = append(advisories[i].Segments, *seg)
+		}
 		return advisories
 	}
 }

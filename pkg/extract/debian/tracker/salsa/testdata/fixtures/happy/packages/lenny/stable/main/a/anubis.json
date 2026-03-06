@@ -1,0 +1,41 @@
+{
+	"Architecture": [
+		"any"
+	],
+	"Binary": [
+		"anubis"
+	],
+	"Build-Depends": [
+		"autotools-dev, debhelper (>= 5), dpatch, guile-1.8-dev | libguile-dev, libgnutls-dev, libgpgme11-dev, libgsasl7-dev, libpam0g-dev | libpam-dev, libpcre3-dev, libwrap0-dev, m4"
+	],
+	"Directory": [
+		"pool/main/a/anubis"
+	],
+	"Files": [
+		"e588283ce0ee643a59cbb378a88a0dbe 781 anubis_4.1+dfsg1-2.dsc a7126e0c85d55287d7b2a2aedec9648b 1117640 anubis_4.1+dfsg1.orig.tar.gz cc6c601e41a2b056ca3147a2514d2f24 8575 anubis_4.1+dfsg1-2.diff.gz"
+	],
+	"Format": [
+		"1.0"
+	],
+	"Homepage": [
+		"http://www.gnu.org/software/anubis/"
+	],
+	"Maintainer": [
+		"Krzysztof Burghardt <krzysztof@burghardt.pl>"
+	],
+	"Package": [
+		"anubis"
+	],
+	"Priority": [
+		"optional"
+	],
+	"Section": [
+		"net"
+	],
+	"Standards-Version": [
+		"3.7.3"
+	],
+	"Version": [
+		"4.1+dfsg1-2"
+	]
+}
