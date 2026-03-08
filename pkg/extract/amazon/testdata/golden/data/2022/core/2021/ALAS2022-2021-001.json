@@ -4,13 +4,13 @@
 		{
 			"content": {
 				"id": "ALAS2022-2021-001",
-				"title": "Amazon Linux 2022 - ALAS2022-2021-001: medium priority package update for vim",
+				"title": "Amazon Linux 2022 - ALAS2022-2021-001: Medium priority package update for vim",
 				"description": "Package updates are available for Amazon Linux 2022 that fix the following vulnerabilities:\nCVE-2021-3875:\n\tThere's an out-of-bounds read flaw in Vim's ex_docmd.c. An attacker who is capable of tricking a user into opening a specially crafted file could trigger an out-of-bounds read on a memmove operation, potentially causing an impact to application availability.\n2014661: CVE-2021-3875 vim: heap-based buffer overflow\n\nCVE-2021-3872:\n\tAn out-of-bounds write flaw was found in vim's drawscreen.c win_redr_status() function. This flaw allows an attacker to trick a user to open a crafted file with specific arguments in vim, triggering an out-of-bounds write. The highest threat from this vulnerability is to confidentiality, integrity, and system availability.\n2016056: CVE-2021-3872 vim: heap-based buffer overflow in win_redr_status() drawscreen.c\n\nCVE-2021-3796:\n\tA use-after-free vulnerability in vim could allow an attacker to input a specially crafted file leading to memory corruption and a potentially exploitable crash or code execution. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.\n2004728: CVE-2021-3796 vim: use-after-free in nv_replace() in normal.c\n\nCVE-2021-3778:\n\tA flaw was found in vim. A possible heap-based buffer overflow could allow an attacker to input a specially crafted file leading to a crash or code execution. The highest threat from this vulnerability is to data confidentiality and integrity as well as system availability.\n2004621: CVE-2021-3778 vim: heap-based buffer overflow in utf_ptr2char() in mbyte.c\n",
 				"severity": [
 					{
 						"type": "vendor",
 						"source": "linux-security@amazon.com",
-						"vendor": "medium"
+						"vendor": "Medium"
 					}
 				],
 				"references": [
@@ -34,7 +34,9 @@
 						"source": "linux-security@amazon.com",
 						"url": "https://alas.aws.amazon.com/AL2022/ALAS-2021-001.html"
 					}
-				]
+				],
+				"published": "2021-10-26T02:25:00Z",
+				"modified": "2021-10-27T00:24:00Z"
 			},
 			"segments": [
 				{
@@ -127,8 +129,72 @@
 									"package": {
 										"type": "binary",
 										"binary": {
+											"name": "vim-X11",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
 											"name": "vim-X11-debuginfo",
 											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-common",
+											"architectures": [
+												"aarch64",
+												"i686",
 												"x86_64"
 											]
 										}
@@ -158,6 +224,252 @@
 										"binary": {
 											"name": "vim-common-debuginfo",
 											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-debuginfo",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-debugsource",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-default-editor",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-enhanced",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-enhanced-debuginfo",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-filesystem",
+											"architectures": [
+												"noarch"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-minimal",
+											"architectures": [
+												"aarch64",
+												"i686",
+												"x86_64"
+											]
+										}
+									},
+									"affected": {
+										"type": "rpm",
+										"range": [
+											{
+												"lt": "2:8.2.3512-1.amzn2022"
+											}
+										],
+										"fixed": [
+											"2:8.2.3512-1.amzn2022"
+										]
+									}
+								}
+							},
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "binary",
+										"binary": {
+											"name": "vim-minimal-debuginfo",
+											"architectures": [
+												"aarch64",
+												"i686",
 												"x86_64"
 											]
 										}
