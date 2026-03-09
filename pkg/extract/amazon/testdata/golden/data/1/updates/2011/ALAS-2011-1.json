@@ -45,6 +45,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2011-3192.html"
 					}
 				]
 			},

@@ -53,6 +53,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3778"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2021-3778.html"
 					}
 				]
 			},
@@ -69,6 +73,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3796"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2021-3796.html"
 					}
 				]
 			},
@@ -85,6 +93,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3872"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2021-3872.html"
 					}
 				]
 			},
@@ -101,6 +113,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3875"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2021-3875.html"
 					}
 				]
 			},

@@ -272,10 +272,16 @@ func extract(fetched amazon.Update, raws []string) dataTypes.Data {
 					vs = append(vs, vulnerabilityTypes.Vulnerability{
 						Content: vulnerabilityContentTypes.Content{
 							ID: vulnerabilityContentTypes.VulnerabilityID(r.ID),
-							References: []referenceTypes.Reference{{
-								Source: fetched.Author,
-								URL:    r.Href,
-							}},
+							References: []referenceTypes.Reference{
+								{
+									Source: fetched.Author,
+									URL:    fmt.Sprintf("https://explore.alas.aws.amazon.com/%s.html", r.ID),
+								},
+								{
+									Source: fetched.Author,
+									URL:    r.Href,
+								},
+							},
 						},
 						Segments: []segmentTypes.Segment{{Ecosystem: d.Ecosystem}},
 					})

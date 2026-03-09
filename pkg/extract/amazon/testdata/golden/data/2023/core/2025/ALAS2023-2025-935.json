@@ -93,6 +93,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-58092"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2024-58092.html"
 					}
 				]
 			},
@@ -109,6 +113,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21893"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-21893.html"
 					}
 				]
 			},
@@ -125,6 +133,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21926"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-21926.html"
 					}
 				]
 			},
@@ -141,6 +153,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21997"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-21997.html"
 					}
 				]
 			},
@@ -157,6 +173,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-21999"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-21999.html"
 					}
 				]
 			},
@@ -173,6 +193,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22000"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22000.html"
 					}
 				]
 			},
@@ -189,6 +213,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22002"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22002.html"
 					}
 				]
 			},
@@ -205,6 +233,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22005"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22005.html"
 					}
 				]
 			},
@@ -221,6 +253,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22013"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22013.html"
 					}
 				]
 			},
@@ -237,6 +273,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22015"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22015.html"
 					}
 				]
 			},
@@ -253,6 +293,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22017"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22017.html"
 					}
 				]
 			},
@@ -269,6 +313,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22021"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22021.html"
 					}
 				]
 			},
@@ -285,6 +333,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22022"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22022.html"
 					}
 				]
 			},
@@ -301,6 +353,10 @@
 					{
 						"source": "linux-security@amazon.com",
 						"url": "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-22023"
+					},
+					{
+						"source": "linux-security@amazon.com",
+						"url": "https://explore.alas.aws.amazon.com/CVE-2025-22023.html"
 					}
 				]
 			},
