@@ -1,0 +1,26 @@
+{
+	"header": {
+		"line": "CVE-2008-XXXX [XSS in press-this of wordpress]",
+		"name": "TEMP-0000000-0CA7E3",
+		"description": "[XSS in press-this of wordpress]"
+	},
+	"annotations": [
+		{
+			"line": "\t- wordpress <not-affected> (Vulnerable code not present)",
+			"type": "package",
+			"package": "wordpress",
+			"kind": "not-affected",
+			"description": "Vulnerable code not present"
+		},
+		{
+			"line": "\tNOTE: this code was never present in a released wordpress version",
+			"type": "NOTE",
+			"description": "this code was never present in a released wordpress version"
+		},
+		{
+			"line": "\tNOTE: https://www.openwall.com/lists/oss-security/2008/07/15/5",
+			"type": "NOTE",
+			"description": "https://www.openwall.com/lists/oss-security/2008/07/15/5"
+		}
+	]
+}
