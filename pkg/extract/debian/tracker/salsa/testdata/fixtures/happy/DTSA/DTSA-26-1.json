@@ -1,0 +1,16 @@
+{
+	"header": {
+		"line": "[December 5th, 2005] DTSA-26-1 trackballs - symlink attack",
+		"name": "DTSA-26-1"
+	},
+	"annotations": [
+		{
+			"line": "\t[etch] - trackballs 1.1.1-0.0etch1",
+			"type": "package",
+			"release": "etch",
+			"package": "trackballs",
+			"kind": "fixed",
+			"version": "1.1.1-0.0etch1"
+		}
+	]
+}

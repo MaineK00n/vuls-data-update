@@ -1,0 +1,24 @@
+{
+	"header": {
+		"line": "[29 Aug 2025] DSA-5990-1 libxml2 - security update",
+		"name": "DSA-5990-1"
+	},
+	"annotations": [
+		{
+			"line": "\t[bookworm] - libxml2 2.9.14+dfsg-1.3~deb12u4",
+			"type": "package",
+			"release": "bookworm",
+			"package": "libxml2",
+			"kind": "fixed",
+			"version": "2.9.14+dfsg-1.3~deb12u4"
+		},
+		{
+			"line": "\t[trixie] - libxml2 2.12.7+dfsg+really2.9.14-2.1+deb13u1",
+			"type": "package",
+			"release": "trixie",
+			"package": "libxml2",
+			"kind": "fixed",
+			"version": "2.12.7+dfsg+really2.9.14-2.1+deb13u1"
+		}
+	]
+}

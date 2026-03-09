@@ -1,0 +1,114 @@
+{
+	"id": "DSA-5990-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "DSA-5990-1",
+				"description": "libxml2 - security update",
+				"references": [
+					{
+						"source": "security-tracker.debian.org",
+						"url": "https://security-tracker.debian.org/tracker/DSA-5990-1"
+					}
+				],
+				"published": "2025-08-29T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "debian:12",
+					"tag": "libxml2"
+				},
+				{
+					"ecosystem": "debian:13",
+					"tag": "libxml2"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "debian:12",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "libxml2"
+										}
+									},
+									"affected": {
+										"type": "dpkg",
+										"range": [
+											{
+												"lt": "2.9.14+dfsg-1.3~deb12u4"
+											}
+										],
+										"fixed": [
+											"2.9.14+dfsg-1.3~deb12u4"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "libxml2"
+				}
+			]
+		},
+		{
+			"ecosystem": "debian:13",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "libxml2"
+										}
+									},
+									"affected": {
+										"type": "dpkg",
+										"range": [
+											{
+												"lt": "2.12.7+dfsg+really2.9.14-2.1+deb13u1"
+											}
+										],
+										"fixed": [
+											"2.12.7+dfsg+really2.9.14-2.1+deb13u1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "libxml2"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "debian-security-tracker-salsa",
+		"raws": [
+			"happy/DSA/DSA-5990-1.json"
+		]
+	}
+}
