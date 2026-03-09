@@ -1,0 +1,56 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-flask, python-flask-doc"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-python (>= 2.20160609~), python3-all, python3-blinker, python3-click (>= 5.1), python3-itsdangerous (>= 0.24), python3-jinja2 (>= 2.10), python3-pallets-sphinx-themes, python3-pytest (>= 3), python3-setuptools, python3-sphinx, python3-sphinx-issues, python3-werkzeug (>= 0.15)"
+	],
+	"Checksums-Sha256": [
+		"63f54c0a59c6444f27cb69215256cd5e1696aad2213c29e1485ce307d19fea73 2296 flask_1.1.2-2+deb11u1.dsc 4efa1ae2d7c9865af48986de8aeb8504bf32c7f3d6fdc9353d34b21f4b127060 637516 flask_1.1.2.orig.tar.gz c171b52fb19eb00ea566b33954200c587edff620b838b1f7d5a4c59df17b25a0 7192 flask_1.1.2-2+deb11u1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/updates/main/f/flask"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://flask.pocoo.org/"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"flask"
+	],
+	"Package-List": [
+		"python-flask-doc deb doc optional arch=all python3-flask deb python optional arch=all"
+	],
+	"Priority": [
+		"extra"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.5.0"
+	],
+	"Testsuite": [
+		"autopkgtest-pkg-python"
+	],
+	"Uploaders": [
+		"Ondřej Nový <onovy@debian.org>,"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/flask"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/flask.git"
+	],
+	"Version": [
+		"1.1.2-2+deb11u1"
+	]
+}

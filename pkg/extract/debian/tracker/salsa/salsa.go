@@ -790,7 +790,18 @@ func (e extractor) buildCondition(pkg, code string, ann cveAnnotation, pkgs map[
 		default:
 			return newFixedCondition(pkg, max.Version), nil
 		}
-	case "postponed", "end-of-life", "removed", "ignored", "no-dsa", "unfixed":
+	case "postponed":
+		if i := slices.IndexFunc(ann.Vulnerability.Anns, func(a packageAnnotation) bool {
+			return a.Kind == "fixed" && a.Release == "" && a.Version != ""
+		}); i >= 0 {
+			return e.buildFixedConditionWithVersionCheck(pkg, code, ann.Vulnerability.Anns[i].Version, pkgs)
+		}
+		vendor := max.Kind
+		if max.Description != "" {
+			vendor = fmt.Sprintf("%s: %s", max.Kind, max.Description)
+		}
+		return newUnfixedCondition(pkg, vendor), nil
+	case "end-of-life", "removed", "ignored", "no-dsa", "unfixed":
 		vendor := max.Kind
 		if max.Description != "" {
 			vendor = fmt.Sprintf("%s: %s", max.Kind, max.Description)

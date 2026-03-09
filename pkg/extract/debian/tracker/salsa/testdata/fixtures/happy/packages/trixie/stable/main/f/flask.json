@@ -1,0 +1,62 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-flask, python-flask-doc"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-sequence-python3, dh-sequence-sphinxdoc, flit, pybuild-plugin-pyproject, python-blinker-doc <!nodoc>, python-click-doc <!nodoc>, python-itsdangerous-doc <!nodoc>, python-jinja2-doc <!nodoc>, python-sqlalchemy-doc <!nodoc>, python-werkzeug-doc <!nodoc>, python-wtforms-doc <!nodoc>, python3-all, python3-blinker (>= 1.9.0) <!nocheck !nodoc>, python3-click (>= 8.1.3) <!nocheck !nodoc>, python3-doc <!nodoc>, python3-itsdangerous (>= 2.2) <!nocheck !nodoc>, python3-jinja2 <!nocheck>, python3-pallets-sphinx-themes <!nodoc>, python3-pytest (>= 7.4) <!nocheck>, python3-sphinx <!nodoc>, python3-sphinx-issues <!nodoc>, python3-sphinx-tabs <!nodoc>, python3-werkzeug (>= 3.1.0) <!nocheck>"
+	],
+	"Checksums-Sha256": [
+		"e8b0b80a4aabe88a4351b85fbce47262fc6c1e6623be0398e9825892ab3a07b1 2775 flask_3.1.1-1.dsc d76ab2c6c09e228285ad6e8d356176b3c0f725fdbce4d01d29b65fdd7e803df2 761821 flask_3.1.1.orig.tar.gz 4541230b654ec4c5c732af8f34d29181715d4e62d35f8267889f34fc578fe8f5 9992 flask_3.1.1-1.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/f/flask"
+	],
+	"Files": [
+		"b4d80647857ad77afbfa6fd2cc875382 2775 flask_3.1.1-1.dsc 65febd8d317d22fa36c58514e2f3dd75 761821 flask_3.1.1.orig.tar.gz a9fb07fab39f2324e5f2c4d11be6bc7e 9992 flask_3.1.1-1.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"https://github.com/pallets/flask"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"flask"
+	],
+	"Package-List": [
+		"python-flask-doc deb doc optional arch=all python3-flask deb python optional arch=all"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.7.2"
+	],
+	"Testsuite": [
+		"autopkgtest, autopkgtest-pkg-python"
+	],
+	"Testsuite-Triggers": [
+		"python3-all, python3-pytest"
+	],
+	"Uploaders": [
+		"Thomas Goirand <zigo@debian.org>,"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/flask"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/flask.git"
+	],
+	"Version": [
+		"3.1.1-1"
+	]
+}
