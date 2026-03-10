@@ -1,0 +1,62 @@
+{
+	"Architecture": [
+		"all"
+	],
+	"Binary": [
+		"python3-flask, python-flask-doc"
+	],
+	"Build-Depends": [
+		"debhelper-compat (= 13), dh-python (>= 2.20160609~), python3-all, python3-asgiref, python3-blinker, python3-click (>= 8.0), python3-dotenv, python3-itsdangerous (>= 2.0), python3-jinja2 (>= 3.0), python3-pallets-sphinx-themes, python3-pytest (>= 3), python3-tomli, python3-setuptools, python3-sphinx, python3-sphinx-issues, python3-sphinx-tabs, python3-werkzeug (>= 2.2.2)"
+	],
+	"Checksums-Sha256": [
+		"c53168c98b85bd6b74b8ac6b810bad6bcdfc8be0ae8c6be98367a115ee7e9550 2497 flask_2.2.2-3.dsc 642c450d19c4ad482f96729bd2a8f6d32554aa1e231f4f6b4e7e5264b16cca2b 677389 flask_2.2.2.orig.tar.gz e20c2c4d90eb02780fa2712a4fd7b2c192bd856c403c8f104ebdffa5078bac21 8372 flask_2.2.2-3.debian.tar.xz"
+	],
+	"Directory": [
+		"pool/main/f/flask"
+	],
+	"Files": [
+		"17139565f967b5b6698e2304f9def61b 2497 flask_2.2.2-3.dsc c0d2276cb7d59a06d62c915da9c77ba6 677389 flask_2.2.2.orig.tar.gz 87128aed635fac063ace7b32cff22bb1 8372 flask_2.2.2-3.debian.tar.xz"
+	],
+	"Format": [
+		"3.0 (quilt)"
+	],
+	"Homepage": [
+		"http://flask.pocoo.org/"
+	],
+	"Maintainer": [
+		"Debian Python Team <team+python@tracker.debian.org>"
+	],
+	"Package": [
+		"flask"
+	],
+	"Package-List": [
+		"python-flask-doc deb doc optional arch=all python3-flask deb python optional arch=all"
+	],
+	"Priority": [
+		"source"
+	],
+	"Section": [
+		"python"
+	],
+	"Standards-Version": [
+		"4.6.1"
+	],
+	"Testsuite": [
+		"autopkgtest, autopkgtest-pkg-python"
+	],
+	"Testsuite-Triggers": [
+		"python3-all, python3-asgiref, python3-blinker, python3-dotenv, python3-pytest, python3-setuptools"
+	],
+	"Uploaders": [
+		"Thomas Goirand <zigo@debian.org>, Ondřej Nový <onovy@debian.org>,"
+	],
+	"Vcs-Browser": [
+		"https://salsa.debian.org/python-team/packages/flask"
+	],
+	"Vcs-Git": [
+		"https://salsa.debian.org/python-team/packages/flask.git"
+	],
+	"Version": [
+		"2.2.2-3"
+	]
+}
