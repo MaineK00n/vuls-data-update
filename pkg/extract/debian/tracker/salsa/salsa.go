@@ -101,6 +101,10 @@ func Extract(root string, opts ...Option) error {
 		return errors.Wrapf(err, "walk %s", root)
 	}
 
+	if err := options.walkAdvisory(root); err != nil {
+		return errors.Wrapf(err, "walk %s", root)
+	}
+
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.DebianSecurityTrackerSalsa,
 		Name: new("Debian Security Tracker Salsa"),
@@ -304,8 +308,8 @@ func (o options) walkCVE(root string, pkgs map[string]map[string]distribution) e
 
 				switch splitted[0] {
 				case "CVE":
-					if err := util.Write(filepath.Join(o.dir, "data", splitted[1], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
-						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, "data", splitted[1], fmt.Sprintf("%s.json", d.ID)))
+					if err := util.Write(filepath.Join(o.dir, "data", "CVE", splitted[1], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
+						return errors.Wrapf(err, "write %s", filepath.Join(o.dir, "data", "CVE", splitted[1], fmt.Sprintf("%s.json", d.ID)))
 					}
 				case "TEMP":
 					if err := util.Write(filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
@@ -324,6 +328,171 @@ func (o options) walkCVE(root string, pkgs map[string]map[string]distribution) e
 	}
 
 	return nil
+}
+
+func (o options) walkAdvisory(root string) error {
+	for _, dir := range []string{"DSA", "DLA", "DTSA"} {
+		reqChan := make(chan string)
+
+		eg, ctx := errgroup.WithContext(context.TODO())
+		eg.SetLimit(1 + o.concurrency)
+		eg.Go(func() error {
+			defer close(reqChan)
+
+			return filepath.WalkDir(filepath.Join(root, dir), func(path string, d fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+
+				if d.IsDir() || filepath.Ext(path) != ".json" {
+					return nil
+				}
+
+				select {
+				case reqChan <- path:
+				case <-ctx.Done():
+					return ctx.Err()
+				}
+
+				return nil
+			})
+		})
+
+		for i := 0; i < o.concurrency; i++ {
+			eg.Go(func() error {
+				for path := range reqChan {
+					d, skip, err := (extractor{
+						baseDir: root,
+						r:       utiljson.NewJSONReader(),
+					}).extractAdvisory(path)
+					if err != nil {
+						return errors.Wrapf(err, "extract %s", path)
+					}
+					if skip {
+						continue
+					}
+
+					splitted, err := util.Split(string(d.ID), "-")
+					if err != nil {
+						return errors.Errorf("unexpected advisory id format. expected: %q, actual: %q", []string{"DSA-\\d+(-\\d+)?", "DLA-\\d+-\\d+", "DTSA-\\d+-\\d+"}, d.ID)
+					}
+
+					switch splitted[0] {
+					case "DSA", "DLA", "DTSA":
+						if err := util.Write(filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)), d, true); err != nil {
+							return errors.Wrapf(err, "write %s", filepath.Join(o.dir, "data", splitted[0], fmt.Sprintf("%s.json", d.ID)))
+						}
+					default:
+						return errors.Errorf("unexpected advisory id format. expected: %q, actual: %q", []string{"DSA-\\d+(-\\d+)?", "DLA-\\d+-\\d+", "DTSA-\\d+-\\d+"}, d.ID)
+					}
+				}
+				return nil
+			})
+		}
+
+		if err := eg.Wait(); err != nil {
+			return errors.Wrapf(err, "wait for walk %s", dir)
+		}
+	}
+
+	return nil
+}
+
+func (e extractor) extractAdvisory(path string) (dataTypes.Data, bool, error) {
+	baseAC, xrefAnns, apkgs, err := e.readAdvisory(path)
+	if err != nil {
+		return dataTypes.Data{}, false, errors.Wrapf(err, "read %s", path)
+	}
+
+	for _, xref := range xrefAnns {
+		for _, bug := range xref.Bugs {
+			if strings.HasPrefix(bug, "CVE-") || strings.HasPrefix(bug, "TEMP-") {
+				return dataTypes.Data{}, true, nil
+			}
+		}
+	}
+
+	annsByRelease := make(map[string]map[string]cveAnnotation)
+	for _, apkg := range apkgs {
+		switch apkg.Release {
+		case "":
+			return dataTypes.Data{}, false, errors.Errorf("unexpected package annotation release. expected: %q, actual: %q", slices.Collect(maps.Keys(codenameToVersion)), apkg.Release)
+		default:
+			if annsByRelease[apkg.Release] == nil {
+				annsByRelease[apkg.Release] = make(map[string]cveAnnotation)
+			}
+			base := annsByRelease[apkg.Release][apkg.Package]
+			if base.Advisories == nil {
+				base.Advisories = make(map[string]contentAnnotation[advisoryContentTypes.Content])
+			}
+			adv := base.Advisories[string(baseAC.ID)]
+			adv.Content = baseAC
+			adv.Anns = append(adv.Anns, apkg)
+			base.Advisories[string(baseAC.ID)] = adv
+			annsByRelease[apkg.Release][apkg.Package] = base
+		}
+	}
+
+	if len(annsByRelease) == 0 {
+		return dataTypes.Data{
+			ID:         dataTypes.RootID(baseAC.ID),
+			Advisories: []advisoryTypes.Advisory{{Content: baseAC}},
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.DebianSecurityTrackerSalsa,
+				Raws: e.r.Paths(),
+			},
+		}, false, nil
+	}
+
+	d := dataTypes.Data{ID: dataTypes.RootID(baseAC.ID)}
+
+	for code, annotationsByPkg := range annsByRelease {
+		ver, ok := codenameToVersion[code]
+		if !ok {
+			return dataTypes.Data{}, false, errors.Errorf("unexpected release code name. expected: %q, actual: %q", slices.Collect(maps.Keys(codenameToVersion)), code)
+		}
+
+		for pkg, ann := range annotationsByPkg {
+			eco := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeDebian, ver))
+
+			c, err := e.buildCondition(pkg, code, ann, nil)
+			if err != nil {
+				return dataTypes.Data{}, false, errors.Wrapf(err, "create condition for %q from annotation: %+v", pkg, ann)
+			}
+
+			var seg *segmentTypes.Segment
+			if c != nil {
+				d.Detections = appendDetection(d.Detections, eco, *c)
+				seg = &segmentTypes.Segment{
+					Ecosystem: eco,
+					Tag:       segmentTypes.DetectionTag(pkg),
+				}
+			}
+
+			for aid, a := range ann.Advisories {
+				sev, bugRefs, err := collectSeverityAndBugRefs(a.Anns)
+				if err != nil {
+					return dataTypes.Data{}, false, errors.Wrapf(err, "collect severity and bug refs for advisory %q pkg %q", aid, pkg)
+				}
+				if sev != nil {
+					a.Content.Severity = []severityTypes.Severity{{
+						Type:   severityTypes.SeverityTypeVendor,
+						Source: "security-tracker.debian.org",
+						Vendor: sev,
+					}}
+				}
+				a.Content.References = append(a.Content.References, bugRefs...)
+				d.Advisories = appendOrMergeAdvisory(d.Advisories, a.Content, seg)
+			}
+		}
+	}
+
+	d.DataSource = sourceTypes.Source{
+		ID:   sourceTypes.DebianSecurityTrackerSalsa,
+		Raws: e.r.Paths(),
+	}
+
+	return d, false, nil
 }
 
 type distribution struct {

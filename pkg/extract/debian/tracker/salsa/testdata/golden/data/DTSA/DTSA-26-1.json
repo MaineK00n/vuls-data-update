@@ -1,0 +1,71 @@
+{
+	"id": "DTSA-26-1",
+	"advisories": [
+		{
+			"content": {
+				"id": "DTSA-26-1",
+				"description": "trackballs - symlink attack",
+				"references": [
+					{
+						"source": "security-tracker.debian.org",
+						"url": "https://security-tracker.debian.org/tracker/DTSA-26-1"
+					}
+				],
+				"published": "2005-12-05T00:00:00Z"
+			},
+			"segments": [
+				{
+					"ecosystem": "debian:4",
+					"tag": "trackballs"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "debian:4",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "fixed"
+									},
+									"package": {
+										"type": "source",
+										"source": {
+											"name": "trackballs"
+										}
+									},
+									"affected": {
+										"type": "dpkg",
+										"range": [
+											{
+												"lt": "1.1.1-0.0etch1"
+											}
+										],
+										"fixed": [
+											"1.1.1-0.0etch1"
+										]
+									}
+								}
+							}
+						]
+					},
+					"tag": "trackballs"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "debian-security-tracker-salsa",
+		"raws": [
+			"happy/DTSA/DTSA-26-1.json"
+		]
+	}
+}
