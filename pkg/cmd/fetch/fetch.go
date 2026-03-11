@@ -179,6 +179,7 @@ import (
 	ubuntuVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/ubuntu/vex"
 	variotExploits "github.com/MaineK00n/vuls-data-update/pkg/fetch/variot/exploits"
 	variotVulns "github.com/MaineK00n/vuls-data-update/pkg/fetch/variot/vulns"
+	vscodeOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vscode/osv"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/kev"
 	vulncheckNISTNVD "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd"
 	vulncheckNISTNVD2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/vulncheck/nist-nvd2"
@@ -278,6 +279,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuUSNDB(), newCmdUbuntuOSV(), newCmdUbuntuVEX(), newCmdUbuntuCVE(), newCmdUbuntuNotice(),
 		newCmdVARIoTExploits(), newCmdVARIoTVulns(),
+		newCmdVSCodeOSV(),
 		newCmdVulnCheckKEV(), newCmdVulnCheckNISTNVD(), newCmdVulnCheckNISTNVD2(),
 		newCmdWolfiSecDB(), newCmdWolfiOSV(),
 		newCmdWRLinux(),
@@ -5572,6 +5574,33 @@ func newCmdVARIoTVulns() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrency http request")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdVSCodeOSV() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "vscode", "osv"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "vscode-osv",
+		Short: "Fetch VSCode OSV data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch vscode-osv
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := vscodeOSV.Fetch(vscodeOSV.WithDir(options.dir), vscodeOSV.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch vscode osv")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }
