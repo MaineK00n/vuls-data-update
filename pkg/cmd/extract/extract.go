@@ -62,6 +62,10 @@ import (
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/ghsa"
 	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/glsa"
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/osv"
+	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
+	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
+	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
+	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	mitreCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/cvrf"
 	mitreV4 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v4"
 	mitreV5 "github.com/MaineK00n/vuls-data-update/pkg/extract/mitre/v5"
@@ -118,10 +122,6 @@ import (
 	ubuntuOVAL "github.com/MaineK00n/vuls-data-update/pkg/extract/ubuntu/oval"
 	ubuntuCVETracker "github.com/MaineK00n/vuls-data-update/pkg/extract/ubuntu/tracker"
 	vulncheckKEV "github.com/MaineK00n/vuls-data-update/pkg/extract/vulncheck/kev"
-	windowsBulletin "github.com/MaineK00n/vuls-data-update/pkg/extract/windows/bulletin"
-	windowsCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/windows/cvrf"
-	windowsMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/windows/msuc"
-	windowsWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/windows/wsusscn2"
 	wolfiOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/wolfi/osv"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
@@ -171,6 +171,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftWSUSSCN2(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -191,7 +192,6 @@ func NewCmdExtract() *cobra.Command {
 		newCmdSwiftGHSA(), newCmdSwiftOSV(),
 		newCmdUbuntuOVAL(), newCmdUbuntuCVETracker(), newCmdUbuntuOSV(),
 		newCmdVulnCheckKEV(),
-		newCmdWindowsBulletin(), newCmdWindowsCVRF(), newCmdWindowsMSUC(), newCmdWindowsWSUSSCN2(),
 		newCmdWolfiOSV(),
 	)
 
@@ -1551,6 +1551,106 @@ func newCmdMavenOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "maven", "osv"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftBulletin() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "bulletin"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-bulletin <Raw Microsoft Bulletin Repository PATH>",
+		Short: "Extract Microsoft Bulletin data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-bulletin vuls-data-raw-microsoft-bulletin
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftBulletin.Extract(args[0], microsoftBulletin.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft bulletin")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftCVRF() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "cvrf"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-cvrf <Raw Microsoft CVRF Repository PATH>",
+		Short: "Extract Microsoft CVRF data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-cvrf vuls-data-raw-microsoft-cvrf
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftCVRF.Extract(args[0], microsoftCVRF.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft cvrf")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftMSUC() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "msuc"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-msuc <Raw Microsoft MSUC Repository PATH>",
+		Short: "Extract Microsoft MSUC data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-msuc vuls-data-raw-microsoft-msuc
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftMSUC.Extract(args[0], microsoftMSUC.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft msuc")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdMicrosoftWSUSSCN2() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "wsusscn2"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-wsusscn2 <Raw Microsoft WSUSSCN2 Repository PATH>",
+		Short: "Extract Microsoft WSUSSCN2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract microsoft-wsusscn2 vuls-data-raw-microsoft-wsusscn2
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := microsoftWSUSSCN2.Extract(args[0], microsoftWSUSSCN2.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft wsusscn2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2965,106 +3065,6 @@ func newCmdVulnCheckKEV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "vulncheck", "kev"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdWindowsBulletin() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "windows", "bulletin"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-bulletin <Raw Windows Bulletin Repository PATH>",
-		Short: "Extract Windows Bulletin data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract windows-bulletin vuls-data-raw-windows-bulletin
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsBulletin.Extract(args[0], windowsBulletin.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract windows bulletin")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "windows", "bulletin"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdWindowsCVRF() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "windows", "cvrf"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-cvrf <Raw Windows CVRF Repository PATH>",
-		Short: "Extract Windows CVRF data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract windows-cvrf vuls-data-raw-windows-cvrf
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsCVRF.Extract(args[0], windowsCVRF.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract windows cvrf")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "windows", "cvrf"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdWindowsMSUC() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "windows", "msuc"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-msuc <Raw Windows MSUC Repository PATH>",
-		Short: "Extract Windows MSUC data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract windows-msuc vuls-data-raw-windows-msuc
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsMSUC.Extract(args[0], windowsMSUC.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract windows msuc")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "windows", "msuc"), "output extract results to specified directory")
-
-	return cmd
-}
-
-func newCmdWindowsWSUSSCN2() *cobra.Command {
-	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "windows", "wsusscn2"),
-	}
-
-	cmd := &cobra.Command{
-		Use:   "windows-wsusscn2 <Raw Windows WSUSSCN2 Repository PATH>",
-		Short: "Extract Windows WSUSSCN2 data source",
-		Example: heredoc.Doc(`
-			$ vuls-data-update extract windows-wsusscn2 vuls-data-raw-windows-wsusscn2
-		`),
-		Args: cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			if err := windowsWSUSSCN2.Extract(args[0], windowsWSUSSCN2.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract windows wsusscn2")
-			}
-			return nil
-		},
-	}
-
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "windows", "wsusscn2"), "output extract results to specified directory")
 
 	return cmd
 }

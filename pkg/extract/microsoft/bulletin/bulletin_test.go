@@ -1,11 +1,11 @@
-package msuc_test
+package bulletin_test
 
 import (
 	"path/filepath"
 	"testing"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/windows/msuc"
 )
 
 func TestExtract(t *testing.T) {
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := msuc.Extract(tt.args, msuc.WithDir(dir))
+			err := bulletin.Extract(tt.args, bulletin.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

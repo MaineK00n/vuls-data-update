@@ -120,7 +120,7 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 				}
 				diff = cmp.Diff(want, got)
 			case "windowskb":
-				var want, got windowskbTypes.WindowsKB
+				var want, got windowskbTypes.KB
 				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}

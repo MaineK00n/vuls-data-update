@@ -250,10 +250,6 @@ func parseView(rd io.Reader, updateID string) (*Update, error) {
 
 	u := Update{UpdateID: updateID}
 
-	if doc.Find("body").HasClass("mainBody thanks") {
-		return &u, nil
-	}
-
 	r := strings.NewReplacer(" ", "", "\n", "")
 	var found bool
 

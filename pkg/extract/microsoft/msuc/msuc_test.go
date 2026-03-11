@@ -1,11 +1,11 @@
-package cvrf_test
+package msuc_test
 
 import (
 	"path/filepath"
 	"testing"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/windows/cvrf"
 )
 
 func TestExtract(t *testing.T) {
@@ -16,29 +16,31 @@ func TestExtract(t *testing.T) {
 	}{
 		{
 			name: "happy",
-			args: "./testdata/fixtures",
+			args: "./testdata/fixtures/happy",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := cvrf.Extract(tt.args, cvrf.WithDir(dir))
+			err := msuc.Extract(tt.args, msuc.WithDir(dir), msuc.WithConcurrency(2))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				return
+			default:
+				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				gp, err := filepath.Abs(dir)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				utiltest.Diff(t, ep, gp)
 			}
-
-			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			gp, err := filepath.Abs(dir)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			utiltest.Diff(t, ep, gp)
 		})
 	}
 }

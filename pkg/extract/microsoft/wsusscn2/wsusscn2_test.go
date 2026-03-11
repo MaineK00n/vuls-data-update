@@ -1,11 +1,11 @@
-package bulletin_test
+package wsusscn2_test
 
 import (
 	"path/filepath"
 	"testing"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/windows/bulletin"
 )
 
 func TestExtract(t *testing.T) {
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := bulletin.Extract(tt.args, bulletin.WithDir(dir))
+			err := wsusscn2.Extract(tt.args, wsusscn2.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
