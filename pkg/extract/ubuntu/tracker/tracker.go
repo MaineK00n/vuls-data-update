@@ -208,7 +208,75 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 						return ""
 					}(),
 				}
-			case "not-affected", "needs-triage", "DNE":
+			case "needs-triage":
+				rpm[rn][pn] = rp{
+					criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: false,
+							FixStatus: &vcFixStatusTypes.FixStatus{
+								Class: vcFixStatusTypes.ClassUnknown,
+								Vendor: func() string {
+									if r.Note != "" {
+										return fmt.Sprintf("%s: %s", r.Status, r.Note)
+									}
+									return r.Status
+								}(),
+							},
+							Package: vcPackageTypes.Package{
+								Type:   vcPackageTypes.PackageTypeSource,
+								Source: &vcSourcePackageTypes.Package{Name: pn},
+							},
+						},
+					},
+					priority: func() string {
+						if r.Priority != nil {
+							return r.Priority.Priority
+						}
+						if p.Priority != nil {
+							return p.Priority.Priority
+						}
+						if fetched.Priority != nil {
+							return fetched.Priority.Priority
+						}
+						return ""
+					}(),
+				}
+			case "not-affected":
+				rpm[rn][pn] = rp{
+					criterion: criterionTypes.Criterion{
+						Type: criterionTypes.CriterionTypeVersion,
+						Version: &vcTypes.Criterion{
+							Vulnerable: false,
+							FixStatus: &vcFixStatusTypes.FixStatus{
+								Class: vcFixStatusTypes.ClassNotAffected,
+								Vendor: func() string {
+									if r.Note != "" {
+										return fmt.Sprintf("%s: %s", r.Status, r.Note)
+									}
+									return r.Status
+								}(),
+							},
+							Package: vcPackageTypes.Package{
+								Type:   vcPackageTypes.PackageTypeSource,
+								Source: &vcSourcePackageTypes.Package{Name: pn},
+							},
+						},
+					},
+					priority: func() string {
+						if r.Priority != nil {
+							return r.Priority.Priority
+						}
+						if p.Priority != nil {
+							return p.Priority.Priority
+						}
+						if fetched.Priority != nil {
+							return fetched.Priority.Priority
+						}
+						return ""
+					}(),
+				}
+			case "DNE":
 			default:
 				return dataTypes.Data{}, errors.Errorf("unexpected package status. expected: %q, actual: %q", []string{"released", "deferred", "pending", "ignored", "in-progress", "needed", "not-affected", "needs-triage", "DNE"}, r.Status)
 			}
