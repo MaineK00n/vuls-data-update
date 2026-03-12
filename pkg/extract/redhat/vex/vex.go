@@ -169,7 +169,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 }
 
 func (e extractor) extract(vuln vex.VEX, c2r map[string][]string) (dataTypes.Data, error) {
-	pm, err := walkProductTree(vuln.ProductTree, c2r)
+	pm, err := walkProductTree(vuln.Document.Tracking.ID, vuln.ProductTree, c2r)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
 	}
@@ -227,7 +227,7 @@ type status struct {
 	affected_status string
 }
 
-func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.ProductID][]product, error) {
+func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]string) (map[vex.ProductID][]product, error) {
 	var f func(m map[vex.ProductID]vex.FullProductName, branch vex.Branch) error
 	f = func(m map[vex.ProductID]vex.FullProductName, branch vex.Branch) error {
 		for _, b := range branch.Branches {
@@ -347,7 +347,15 @@ func walkProductTree(pt vex.ProductTree, c2r map[string][]string) (map[vex.Produ
 							case "":
 								ss := strings.Split(rpmmod, ":")
 								if len(ss) < 2 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+									// FIXME: Some vendor data has rpmmod with only module name (no stream). This should be an error, but until the vendor corrects the data, skip this product with a warning.
+									// https://issues.redhat.com/projects/SECDATA/issues/SECDATA-1206
+									switch trackingID {
+									case "CVE-2024-6923":
+										log.Printf("[WARN] %s: skip product with unexpected rpmmod format. expected: %q, actual: %q", trackingID, "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+										return nil, nil
+									default:
+										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+									}
 								}
 								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
 								p.name = instance.Name
