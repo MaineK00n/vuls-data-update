@@ -83,7 +83,7 @@ func Write(path string, content any, doSort bool) error {
 			(&v).Sort()
 		case attackTypes.Attack:
 			(&v).Sort()
-		case windowskbTypes.WindowsKB:
+		case windowskbTypes.KB:
 			(&v).Sort()
 		case eolTypes.EOL:
 			(&v).Sort()

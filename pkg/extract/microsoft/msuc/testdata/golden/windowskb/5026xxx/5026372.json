@@ -1,0 +1,39 @@
+{
+	"kb_id": "5026372",
+	"updates": [
+		{
+			"update_id": "0b97c243-5833-4bf3-bcf8-77063e53c42a",
+			"title": "2023-05 Cumulative Update for Windows 11 Version 22H2 for arm64-based Systems (KB5026372)",
+			"description": "Install this update to resolve issues in Windows. For a complete listing of the issues that are included in this update, see the associated Microsoft Knowledge Base article for more information. After you install this item, you may have to restart your computer.",
+			"msrc_severity": "Critical",
+			"classification": "SecurityUpdates",
+			"products": [
+				"Windows11"
+			],
+			"languages": [
+				"all"
+			],
+			"more_info_url": "https://support.microsoft.com/help/5026372",
+			"support_url": "https://support.microsoft.com/help/5026372",
+			"superseded_by": [
+				{
+					"kb_id": "5026446",
+					"update_id": "acbe4fd0-394e-40e8-a96b-c4facae62c8b"
+				}
+			],
+			"reboot_behavior": "Can request restart",
+			"user_input": "No",
+			"connectivity": "No",
+			"creation_date": "0001-01-01T00:00:00Z",
+			"last_modified": "2023-05-09T00:00:00Z",
+			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=0b97c243-5833-4bf3-bcf8-77063e53c42a"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-msuc",
+		"raws": [
+			"happy/0b97c243-5833-4bf3-bcf8-77063e53c42a.json",
+			"happy/acbe4fd0-394e-40e8-a96b-c4facae62c8b.json"
+		]
+	}
+}

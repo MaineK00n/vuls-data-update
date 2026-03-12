@@ -1,11 +1,11 @@
-package wsusscn2_test
+package cvrf_test
 
 import (
 	"path/filepath"
 	"testing"
 
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/windows/wsusscn2"
 )
 
 func TestExtract(t *testing.T) {
@@ -22,7 +22,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := wsusscn2.Extract(tt.args, wsusscn2.WithDir(dir))
+			err := cvrf.Extract(tt.args, cvrf.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
