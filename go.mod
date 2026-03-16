@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
-	github.com/PuerkitoBio/goquery v1.11.0
+	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/aquasecurity/go-gem-version v0.0.0-20201115065557-8eed6fe000ce
 	github.com/aquasecurity/go-npm-version v0.0.2
 	github.com/aquasecurity/go-pep440-version v0.0.1
