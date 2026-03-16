@@ -1,14 +1,20 @@
 package util_test
 
 import (
+	"encoding/json/v2"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/pkg/errors"
+
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
+	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
+	windowskbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/update"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
@@ -138,6 +144,91 @@ func TestSplit(t *testing.T) {
 			}
 			if diff := cmp.Diff(tt.want, got, cmpopts.SortSlices(func(i, j int) bool { return i < j })); diff != "" {
 				t.Errorf("Split(). (-expected +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestWrite(t *testing.T) {
+	tests := []struct {
+		name    string
+		content any
+		doSort  bool
+		want    any
+	}{
+		{
+			name: "windowskb.KB",
+			content: windowskbTypes.KB{
+				KBID: "5070881",
+				Updates: []windowskbUpdateTypes.Update{
+					{UpdateID: "bbb"},
+					{UpdateID: "aaa"},
+				},
+				DataSource: sourceTypes.Source{
+					ID:   "microsoft-wsusscn2",
+					Raws: []string{"c.json", "a.json", "b.json"},
+				},
+			},
+			doSort: true,
+			want: windowskbTypes.KB{
+				KBID: "5070881",
+				Updates: []windowskbUpdateTypes.Update{
+					{UpdateID: "aaa"},
+					{UpdateID: "bbb"},
+				},
+				DataSource: sourceTypes.Source{
+					ID:   "microsoft-wsusscn2",
+					Raws: []string{"a.json", "b.json", "c.json"},
+				},
+			},
+		},
+		{
+			name: "pointer type is not sorted",
+			content: &windowskbTypes.KB{
+				KBID: "5070881",
+				Updates: []windowskbUpdateTypes.Update{
+					{UpdateID: "bbb"},
+					{UpdateID: "aaa"},
+				},
+				DataSource: sourceTypes.Source{
+					ID:   "microsoft-wsusscn2",
+					Raws: []string{"c.json", "a.json", "b.json"},
+				},
+			},
+			doSort: true,
+			want: windowskbTypes.KB{
+				KBID: "5070881",
+				Updates: []windowskbUpdateTypes.Update{
+					{UpdateID: "bbb"},
+					{UpdateID: "aaa"},
+				},
+				DataSource: sourceTypes.Source{
+					ID:   "microsoft-wsusscn2",
+					Raws: []string{"c.json", "a.json", "b.json"},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "out.json")
+			if err := util.Write(path, tt.content, tt.doSort); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			f, err := os.Open(path)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			defer f.Close()
+
+			got := reflect.New(reflect.TypeOf(tt.want)).Interface()
+			if err := json.UnmarshalRead(f, got); err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			if diff := cmp.Diff(tt.want, reflect.ValueOf(got).Elem().Interface()); diff != "" {
+				t.Errorf("Write(). (-expected +got):\n%s", diff)
 			}
 		})
 	}

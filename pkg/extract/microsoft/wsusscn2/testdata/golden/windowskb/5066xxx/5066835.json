@@ -1,0 +1,27 @@
+{
+	"kb_id": "5066835",
+	"updates": [
+		{
+			"update_id": "17ff83de-4e31-4fa5-9741-bebce9d44c2c",
+			"title": "2025-11 Cumulative Update for Windows 11, version 25H2 for arm64-based Systems (KB5066835)",
+			"description": "Install this update to resolve issues in Windows.",
+			"msrc_severity": "Important",
+			"classification": "SecurityUpdates",
+			"product_family": "6964AAB4-C5B5-43BD-A17D-FFB4346A8E1D",
+			"products": [
+				"72E7624A-5B00-45D2-B92F-E561C0A6A160"
+			],
+			"support_url": "http://go.microsoft.com/fwlink/?LinkId=507418",
+			"creation_date": "2025-11-12T01:07:55Z",
+			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=17ff83de-4e31-4fa5-9741-bebce9d44c2c"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-wsusscn2",
+		"raws": [
+			"happy/l/2.json",
+			"happy/u/2.json",
+			"happy/x/2.json"
+		]
+	}
+}

@@ -24,7 +24,6 @@
 			"reboot_behavior": "Can request restart",
 			"user_input": "No",
 			"connectivity": "No",
-			"creation_date": "0001-01-01T00:00:00Z",
 			"last_modified": "2023-05-09T00:00:00Z",
 			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=0b97c243-5833-4bf3-bcf8-77063e53c42a"
 		}

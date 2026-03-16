@@ -17,7 +17,6 @@
 			"reboot_behavior": "Can request restart",
 			"user_input": "No",
 			"connectivity": "No",
-			"creation_date": "0001-01-01T00:00:00Z",
 			"last_modified": "2023-05-24T00:00:00Z",
 			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=acbe4fd0-394e-40e8-a96b-c4facae62c8b"
 		},
@@ -37,7 +36,6 @@
 			"reboot_behavior": "Can request restart",
 			"user_input": "No",
 			"connectivity": "No",
-			"creation_date": "0001-01-01T00:00:00Z",
 			"last_modified": "2023-05-24T00:00:00Z",
 			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=ec3769c8-2cd5-4e89-a0a3-6e7830c38f6f"
 		}
