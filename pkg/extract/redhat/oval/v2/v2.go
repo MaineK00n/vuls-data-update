@@ -959,6 +959,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 			})
 		case strings.HasSuffix(t1.Comment, " is signed with Red Hat redhatrelease key"),
 			strings.HasSuffix(t1.Comment, " is signed with Red Hat redhatrelease2 key"),
+			strings.HasSuffix(t1.Comment, " is signed with Red Hat release2,ima key"),
 			strings.HasSuffix(t1.Comment, " is signed with Red Hat release4,release2,ima key"):
 		default:
 			return criteriaTypes.Criteria{}, errors.Errorf("unexpected comment format. expected: %q, actual: %q", []string{
@@ -969,6 +970,7 @@ func (e extractor) walkCriterions(ca criteriaTypes.Criteria, name, stream string
 				"<package> not installed for <version>",
 				"<package> is signed with Red Hat redhatrelease key",
 				"<package> is signed with Red Hat redhatrelease2 key",
+				"<package> is signed with Red Hat release2,ima key",
 				"<package> is signed with Red Hat release4,release2,ima key",
 			}, t1.Comment)
 		}
