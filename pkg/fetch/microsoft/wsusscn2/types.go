@@ -31,10 +31,10 @@ type offlineSyncPackage struct {
 }
 
 type Update struct {
-	CreationDate    string `xml:"CreationDate,attr" json:"creationdate,omitempty"`
-	DefaultLanguage string `xml:"DefaultLanguage,attr" json:"defaultlanguage,omitempty"`
-	UpdateID        string `xml:"UpdateId,attr" json:"updateid,omitempty"`
-	// RevisionNumber   string `xml:"RevisionNumber,attr" json:"revisionnumber,omitempty"`
+	CreationDate     string `xml:"CreationDate,attr" json:"creationdate,omitempty"`
+	DefaultLanguage  string `xml:"DefaultLanguage,attr" json:"defaultlanguage,omitempty"`
+	UpdateID         string `xml:"UpdateId,attr" json:"updateid,omitempty"`
+	RevisionNumber   string `xml:"RevisionNumber,attr" json:"revisionnumber,omitempty"`
 	RevisionID       string `xml:"RevisionId,attr" json:"revisionid,omitempty"`
 	IsLeaf           string `xml:"IsLeaf,attr" json:"isleaf,omitempty"`
 	IsBundle         string `xml:"IsBundle,attr" json:"isbundle,omitempty"`
@@ -84,6 +84,44 @@ type Update struct {
 	// 		} `xml:"Language" json:"language,omitempty"`
 	// 	} `xml:"File" json:"file,omitempty"`
 	// } `xml:"EulaFiles" json:"eulafiles,omitempty"`
+}
+
+type C struct {
+	UpdateIdentity struct {
+		UpdateID       string `xml:"UpdateID,attr" json:"updateid,omitempty"`
+		RevisionNumber string `xml:"RevisionNumber,attr" json:"revisionnumber,omitempty"`
+	} `xml:"UpdateIdentity" json:"updateidentity,omitzero"`
+	Properties struct {
+		UpdateType           string `xml:"UpdateType,attr" json:"updatetype,omitempty"`
+		ExplicitlyDeployable string `xml:"ExplicitlyDeployable,attr" json:"explicitlydeployable,omitempty"`
+		AutoSelectOnWebSites string `xml:"AutoSelectOnWebSites,attr" json:"autoselectonwebsites,omitempty"`
+	} `xml:"Properties" json:"properties,omitzero"`
+	Relationships struct {
+		SupersededUpdates struct {
+			UpdateIdentity []struct {
+				UpdateID       string `xml:"UpdateID,attr" json:"updateid,omitempty"`
+				RevisionNumber string `xml:"RevisionNumber,attr" json:"revisionnumber,omitempty"`
+			} `xml:"UpdateIdentity" json:"updateidentity,omitempty"`
+		} `xml:"SupersededUpdates" json:"supersededupdates,omitzero"`
+		Prerequisites struct {
+			AtLeastOne []struct {
+				IsCategory     string `xml:"IsCategory,attr" json:"iscategory,omitempty"`
+				UpdateIdentity []struct {
+					UpdateID       string `xml:"UpdateID,attr" json:"updateid,omitempty"`
+					RevisionNumber string `xml:"RevisionNumber,attr" json:"revisionnumber,omitempty"`
+				} `xml:"UpdateIdentity" json:"updateidentity,omitempty"`
+			} `xml:"AtLeastOne" json:"atleastone,omitempty"`
+		} `xml:"Prerequisites" json:"prerequisites,omitzero"`
+		BundledUpdates struct {
+			AtLeastOne []struct {
+				IsCategory     string `xml:"IsCategory,attr" json:"iscategory,omitempty"`
+				UpdateIdentity []struct {
+					UpdateID       string `xml:"UpdateID,attr" json:"updateid,omitempty"`
+					RevisionNumber string `xml:"RevisionNumber,attr" json:"revisionnumber,omitempty"`
+				} `xml:"UpdateIdentity" json:"updateidentity,omitempty"`
+			} `xml:"AtLeastOne" json:"atleastone,omitempty"`
+		} `xml:"BundledUpdates" json:"bundledupdates,omitzero"`
+	} `xml:"Relationships" json:"relationships,omitzero"`
 }
 
 type X struct {

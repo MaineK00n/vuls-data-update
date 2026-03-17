@@ -1,0 +1,33 @@
+{
+	"updateidentity": {
+		"updateid": "1c560bb8-276c-41ca-b597-35ae23bf424c",
+		"revisionnumber": "203"
+	},
+	"properties": {
+		"updatetype": "Software",
+		"explicitlydeployable": "true",
+		"autoselectonwebsites": "true"
+	},
+	"relationships": {
+		"prerequisites": {
+			"atleastone": [
+				{
+					"iscategory": "true",
+					"updateidentity": [
+						{
+							"updateid": "0fa1201d-4330-4fa8-8ae9-b877473b6441"
+						}
+					]
+				},
+				{
+					"iscategory": "true",
+					"updateidentity": [
+						{
+							"updateid": "2ee2ad83-828c-4405-9479-544d767993fc"
+						}
+					]
+				}
+			]
+		}
+	}
+}
