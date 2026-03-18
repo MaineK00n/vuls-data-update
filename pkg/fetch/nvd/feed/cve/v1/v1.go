@@ -172,21 +172,21 @@ func (opts options) fetch(feedURL string) ([]CVEItem, error) {
 	return cves, nil
 }
 
-// isNewer reports whether the file at path already contains a CVE record
+// isNewer reports whether the file at filePath already contains a CVE record
 // whose lastModifiedDate timestamp is newer than incoming.
-func isNewer(path, incoming string) (bool, error) {
-	b, err := os.ReadFile(path)
+func isNewer(filePath, incoming string) (bool, error) {
+	b, err := os.ReadFile(filePath)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return false, nil
 		}
-		return false, errors.Wrapf(err, "read %s", path)
+		return false, errors.Wrapf(err, "read %s", filePath)
 	}
 	var existing struct {
 		LastModifiedDate string `json:"lastModifiedDate"`
 	}
 	if err := json.Unmarshal(b, &existing); err != nil {
-		return false, errors.Wrapf(err, "unmarshal %s", path)
+		return false, errors.Wrapf(err, "unmarshal %s", filePath)
 	}
 	existingTime, err := time.Parse("2006-01-02T15:04Z", existing.LastModifiedDate)
 	if err != nil {
