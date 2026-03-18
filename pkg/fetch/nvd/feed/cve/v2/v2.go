@@ -175,7 +175,7 @@ func isNewer(path, incoming string) bool {
 	if err := json.Unmarshal(b, &existing); err != nil {
 		return false
 	}
-	a, _ := time.Parse("2006-01-02T15:04:05.000", existing.LastModified)
-	new, _ := time.Parse("2006-01-02T15:04:05.000", incoming)
-	return a.After(new)
+	existingTime, _ := time.Parse("2006-01-02T15:04:05.000", existing.LastModified)
+	incomingTime, _ := time.Parse("2006-01-02T15:04:05.000", incoming)
+	return existingTime.After(incomingTime)
 }
