@@ -114,7 +114,11 @@ func Fetch(opts ...Option) error {
 			}
 
 			p := filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cve.ID))
-			if isNewer(p, cve.LastModified) {
+			newer, err := isNewer(p, cve.LastModified)
+			if err != nil {
+				return errors.Wrapf(err, "check lastModified %s", cve.ID)
+			}
+			if newer {
 				_ = bar.Add(1)
 				continue
 			}
@@ -164,18 +168,27 @@ func (opts options) fetch(feedURL string) ([]CVE, error) {
 
 // isNewer reports whether the file at path already contains a CVE record
 // whose lastModified timestamp is newer than incoming.
-func isNewer(path, incoming string) bool {
+func isNewer(path, incoming string) (bool, error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
-		return false
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
+		return false, errors.Wrapf(err, "read %s", path)
 	}
 	var existing struct {
 		LastModified string `json:"lastModified"`
 	}
 	if err := json.Unmarshal(b, &existing); err != nil {
-		return false
+		return false, errors.Wrapf(err, "unmarshal %s", path)
 	}
-	existingTime, _ := time.Parse("2006-01-02T15:04:05.000", existing.LastModified)
-	incomingTime, _ := time.Parse("2006-01-02T15:04:05.000", incoming)
-	return existingTime.After(incomingTime)
+	existingTime, err := time.Parse("2006-01-02T15:04:05.000", existing.LastModified)
+	if err != nil {
+		return false, errors.Wrapf(err, "parse existing lastModified %q", existing.LastModified)
+	}
+	incomingTime, err := time.Parse("2006-01-02T15:04:05.000", incoming)
+	if err != nil {
+		return false, errors.Wrapf(err, "parse incoming lastModified %q", incoming)
+	}
+	return existingTime.After(incomingTime), nil
 }
