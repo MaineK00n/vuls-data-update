@@ -22,8 +22,12 @@ func TestFetch(t *testing.T) {
 		hasError bool
 	}{
 		{
-			name:     "happy path",
-			testdata: []string{"testdata/fixtures/nvdcve-1.1-2021.json.gz", "testdata/fixtures/nvdcve-1.1-modified.json.gz"},
+			name: "happy path",
+			testdata: []string{
+				"testdata/fixtures/nvdcve-1.1-2002.json.gz",
+				"testdata/fixtures/nvdcve-1.1-2021.json.gz",
+				"testdata/fixtures/nvdcve-1.1-modified.json.gz",
+			},
 		},
 	}
 

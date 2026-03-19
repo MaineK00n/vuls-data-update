@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"cmp"
 	"compress/gzip"
 	"encoding/json/v2"
 	"fmt"
@@ -9,9 +8,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"path/filepath"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -73,7 +72,6 @@ func Fetch(opts ...Option) error {
 		fmt.Sprintf(baseURLFormat, "modified"),
 		fmt.Sprintf(baseURLFormat, "recent"),
 	}
-
 	for y := oldestYear; y <= time.Now().Year(); y++ {
 		us = append(us, fmt.Sprintf(baseURLFormat, strconv.Itoa(y)))
 	}
@@ -92,11 +90,6 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slices.SortFunc(options.baseURLs, func(a, b string) int {
-		return cmp.Compare(strings.TrimSuffix(strings.TrimPrefix(path.Base(b), "nvdcve-1.1-"), ".json.gz"), strings.TrimSuffix(strings.TrimPrefix(path.Base(a), "nvdcve-1.1-"), ".json.gz"))
-	})
-
-	cves := make(map[string]map[string]CVEItem)
 	for _, u := range options.baseURLs {
 		uu, err := url.Parse(u)
 		if err != nil {
@@ -105,16 +98,13 @@ func Fetch(opts ...Option) error {
 		feedname := strings.TrimSuffix(strings.TrimPrefix(path.Base(uu.Path), "nvdcve-1.1-"), ".json.gz")
 
 		log.Printf("[INFO] Fetch NVD CVE Feed 1.1 %s", feedname)
-		if err := options.fetch(u, cves); err != nil {
+		cves, err := options.fetch(u)
+		if err != nil {
 			return errors.Wrapf(err, "fetch nvd cve %s feed 1.1", feedname)
 		}
 
-		if feedname == "modified" || feedname == "recent" {
-			continue
-		}
-
-		bar := progressbar.Default(int64(len(cves[feedname])))
-		for _, cve := range cves[feedname] {
+		bar := progressbar.Default(int64(len(cves)))
+		for _, cve := range cves {
 			splitted, err := util.Split(cve.Cve.CVEDataMeta.ID, "-", "-")
 			if err != nil {
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", cve.Cve.CVEDataMeta.ID)
@@ -123,64 +113,90 @@ func Fetch(opts ...Option) error {
 				return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "CVE-yyyy-\\d{4,}", cve.Cve.CVEDataMeta.ID)
 			}
 
-			if err := util.Write(filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID)), cve); err != nil {
-				return errors.Wrapf(err, "write %s", filepath.Join(options.dir, splitted[1], cve.Cve.CVEDataMeta.ID))
+			p := filepath.Join(options.dir, splitted[1], fmt.Sprintf("%s.json", cve.Cve.CVEDataMeta.ID))
+			newer, err := isNewer(p, cve.LastModifiedDate)
+			if err != nil {
+				return errors.Wrapf(err, "check lastModifiedDate %s", cve.Cve.CVEDataMeta.ID)
+			}
+			if newer {
+				_ = bar.Add(1)
+				continue
+			}
+
+			if err := util.Write(p, cve); err != nil {
+				return errors.Wrapf(err, "write %s", p)
 			}
 
 			_ = bar.Add(1)
 		}
-		delete(cves, feedname)
 		_ = bar.Close()
 	}
 
 	return nil
 }
 
-func (opts options) fetch(feedURL string, cves map[string]map[string]CVEItem) error {
+func (opts options) fetch(feedURL string) ([]CVEItem, error) {
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry)).Get(feedURL)
 	if err != nil {
-		return errors.Wrap(err, "fetch nvd cve feed")
+		return nil, errors.Wrap(err, "fetch nvd cve feed")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error response with status code %d", resp.StatusCode)
+		return nil, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	r, err := gzip.NewReader(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "open cve as gzip")
+		return nil, errors.Wrap(err, "open cve as gzip")
 	}
 	defer r.Close()
 
 	var feed doc
 	if err := json.UnmarshalRead(r, &feed); err != nil {
-		return errors.Wrap(err, "decode json")
+		return nil, errors.Wrap(err, "decode json")
 	}
 
+	cves := make([]CVEItem, 0, len(feed.CVEItems))
 	for _, e := range feed.CVEItems {
-		item := CVEItem{
+		cves = append(cves, CVEItem{
 			Cve:              e.Cve,
 			Impact:           e.Impact,
 			Configurations:   e.Configurations,
 			LastModifiedDate: e.LastModifiedDate,
 			PublishedDate:    e.PublishedDate,
-		}
-
-		y := strings.Split(e.Cve.CVEDataMeta.ID, "-")[1]
-		if c, ok := cves[y][e.Cve.CVEDataMeta.ID]; ok {
-			a, _ := time.Parse("2006-01-02T15:04Z", c.LastModifiedDate)
-			b, _ := time.Parse("2006-01-02T15:04Z", item.LastModifiedDate)
-			if a.After(b) {
-				continue
-			}
-		}
-		if _, ok := cves[y]; !ok {
-			cves[y] = make(map[string]CVEItem)
-		}
-		cves[y][e.Cve.CVEDataMeta.ID] = item
+		})
 	}
 
-	return nil
+	return cves, nil
+}
+
+// isNewer reports whether the file at filePath already contains a CVE record
+// whose lastModifiedDate timestamp is newer than incoming.
+func isNewer(filePath, incoming string) (bool, error) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
+		return false, errors.Wrapf(err, "open %s", filePath)
+	}
+	defer f.Close()
+
+	var existing struct {
+		LastModifiedDate string `json:"lastModifiedDate"`
+	}
+	if err := json.UnmarshalRead(f, &existing); err != nil {
+		return false, errors.Wrapf(err, "unmarshal %s", filePath)
+	}
+	existingTime, err := time.Parse("2006-01-02T15:04Z", existing.LastModifiedDate)
+	if err != nil {
+		return false, errors.Wrapf(err, "parse existing lastModifiedDate %q", existing.LastModifiedDate)
+	}
+	incomingTime, err := time.Parse("2006-01-02T15:04Z", incoming)
+	if err != nil {
+		return false, errors.Wrapf(err, "parse incoming lastModifiedDate %q", incoming)
+	}
+	return existingTime.After(incomingTime), nil
 }
