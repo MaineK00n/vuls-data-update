@@ -2746,7 +2746,7 @@ func newCmdMicrosoftWSUSSCN2() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := microsoftWSUSSCN2.Fetch(microsoftWSUSSCN2.WithDir(options.dir), microsoftWSUSSCN2.WithRetry(options.retry)); err != nil {
+			if err := microsoftWSUSSCN2.Fetch(microsoftWSUSSCN2.WithDir(options.dir), microsoftWSUSSCN2.WithRetry(options.retry), microsoftWSUSSCN2.WithConcurrency(options.concurrency)); err != nil {
 				return errors.Wrap(err, "failed to fetch microsoft wsusscn2")
 			}
 			return nil

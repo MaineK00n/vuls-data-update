@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -13,12 +14,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
-	"github.com/schollz/progressbar/v3"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/util"
+	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
 const dataURL = "http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
@@ -97,133 +97,9 @@ func Fetch(opts ...Option) error {
 	}
 	defer os.RemoveAll(filepath.Dir(rootDir))
 
-	f, err := os.Open(filepath.Join(rootDir, "package", "package.xml"))
-	if err != nil {
-		return errors.Wrapf(err, "open %s", filepath.Join(rootDir, "package", "package.xml"))
+	if err := options.save(rootDir); err != nil {
+		return errors.Wrap(err, "save wsusscn2")
 	}
-	defer f.Close()
-
-	var pkg offlineSyncPackage
-	if err := xml.NewDecoder(f).Decode(&pkg); err != nil {
-		return errors.Wrap(err, "decode package.xml")
-	}
-
-	rIDtoUID := make(map[string]string)
-	for _, u := range pkg.Updates.Update {
-		if u.IsBundle != "true" || u.IsSoftware == "false" {
-			continue
-		}
-		rIDtoUID[u.RevisionID] = u.UpdateID
-	}
-
-	f, err = os.Open(filepath.Join(rootDir, "index.xml"))
-	if err != nil {
-		return errors.Wrap(err, "open wsusscn2/index.xml")
-	}
-	defer f.Close()
-
-	var cabIndex index
-	if err := xml.NewDecoder(f).Decode(&cabIndex); err != nil {
-		return errors.Wrap(err, "decode xml")
-	}
-
-	cabs := []cab{}
-	for _, c := range cabIndex.CABLIST.CAB {
-		if c.RANGESTART == "" {
-			continue
-		}
-		cabs = append(cabs, c)
-	}
-	slices.SortFunc(cabs, func(a, b cab) int {
-		ai, aerr := strconv.Atoi(a.RANGESTART)
-		bi, berr := strconv.Atoi(b.RANGESTART)
-		if aerr != nil && berr != nil {
-			return 0
-		}
-		if aerr != nil || ai > bi {
-			return -1
-		}
-		if berr != nil || ai < bi {
-			return +1
-		}
-		return 0
-	})
-
-	log.Printf("[INFO] Fetched %d Updates", len(rIDtoUID))
-	bar := progressbar.Default(int64(len(rIDtoUID)))
-	for _, u := range pkg.Updates.Update {
-		if u.IsBundle != "true" || u.IsSoftware == "false" {
-			continue
-		}
-
-		if err := util.Write(filepath.Join(options.dir, "u", fmt.Sprintf("%s.json", u.UpdateID)), u); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "u", fmt.Sprintf("%s.json", u.UpdateID)))
-		}
-
-		ridint, err := strconv.ParseUint(u.RevisionID, 10, 32)
-		if err != nil {
-			return errors.Wrap(err, "parse uint")
-		}
-
-		pname, err := func() (string, error) {
-			for _, c := range cabs {
-				cabint, err := strconv.ParseUint(c.RANGESTART, 10, 32)
-				if err != nil {
-					return "", errors.Wrap(err, "parse uint")
-				}
-
-				if ridint < cabint {
-					continue
-				}
-
-				return strings.TrimSuffix(c.NAME, ".cab"), nil
-			}
-			return "", errors.Errorf("not found cab directory for revision id %s", u.RevisionID)
-		}()
-		if err != nil {
-			return errors.WithStack(err)
-		}
-
-		x, l, err := func() (X, L, error) {
-			f, err := os.Open(filepath.Join(rootDir, pname, "x", u.RevisionID))
-			if err != nil {
-				return X{}, L{}, errors.Wrapf(err, "open wsusscn2/%s/x/%s", pname, u.RevisionID)
-			}
-			defer f.Close()
-
-			var x X
-			if err := xml.NewDecoder(f).Decode(&x); err != nil {
-				return X{}, L{}, errors.Wrap(err, "decode xml")
-			}
-
-			f, err = os.Open(filepath.Join(rootDir, pname, "l", u.DefaultLanguage, u.RevisionID))
-			if err != nil {
-				return X{}, L{}, errors.Wrapf(err, "open wsusscn2/%s/l/%s/%s", pname, u.DefaultLanguage, u.RevisionID)
-			}
-			defer f.Close()
-
-			var l L
-			if err := xml.NewDecoder(f).Decode(&l); err != nil {
-				return X{}, L{}, errors.Wrap(err, "decode xml")
-			}
-
-			return x, l, nil
-		}()
-		if err != nil {
-			return errors.WithStack(err)
-		}
-
-		if err := util.Write(filepath.Join(options.dir, "x", fmt.Sprintf("%s.json", u.RevisionID)), x); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "x", fmt.Sprintf("%s.json", u.RevisionID)))
-		}
-
-		if err := util.Write(filepath.Join(options.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)), l); err != nil {
-			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)))
-		}
-
-		_ = bar.Add(1)
-	}
-	_ = bar.Close()
 
 	return nil
 }
@@ -234,11 +110,8 @@ func (opts options) fetch() (string, error) {
 		return "", errors.Wrap(err, "make directory")
 	}
 
-	rc := retryablehttp.NewClient()
-	rc.RetryMax = opts.retry
-	rc.Logger = nil
-
-	resp, err := rc.Get(opts.dataURL)
+	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
+	resp, err := c.Get(opts.dataURL)
 	if err != nil {
 		return "", errors.Wrapf(err, "http get, url: %s", opts.dataURL)
 	}
@@ -295,15 +168,13 @@ func (opts options) extract(tmpDir string) error {
 	}
 
 	log.Printf("[INFO] extract %s - %s", filepath.Join(tmpDir, "wsusscn2", "package2.cab"), filepath.Join(tmpDir, "wsusscn2", fmt.Sprintf("package%d.cab", len(cabIndex.CABLIST.CAB))))
-	bar := progressbar.Default(int64(len(cabIndex.CABLIST.CAB) - 1))
-	eg, _ := errgroup.WithContext(context.Background())
+	eg, _ := errgroup.WithContext(context.TODO())
 	eg.SetLimit(opts.concurrency)
 	for _, c := range cabIndex.CABLIST.CAB {
 		eg.Go(func() error {
 			if c.NAME == "package.cab" {
 				return nil
 			}
-
 			if err := exec.Command(binPath, "-d", filepath.Join(tmpDir, "wsusscn2", strings.TrimSuffix(c.NAME, ".cab")), filepath.Join(tmpDir, "wsusscn2", c.NAME)).Run(); err != nil {
 				return errors.Wrapf(err, "cabextract wsusscn2/%s", c.NAME)
 			}
@@ -316,15 +187,14 @@ func (opts options) extract(tmpDir string) error {
 				return errors.Wrapf(err, "read wsusscn2/%s", strings.TrimSuffix(c.NAME, ".cab"))
 			}
 			for _, dir := range dirs {
-				if filepath.Base(dir.Name()) == "x" || filepath.Base(dir.Name()) == "l" {
-					continue
-				}
-				if err := os.RemoveAll(filepath.Join(tmpDir, "wsusscn2", strings.TrimSuffix(c.NAME, ".cab"), dir.Name())); err != nil {
-					return errors.Wrapf(err, "remove wsusscn2/%s/%s", strings.TrimSuffix(c.NAME, ".cab"), dir.Name())
+				switch filepath.Base(dir.Name()) {
+				case "c", "x", "l":
+				default:
+					if err := os.RemoveAll(filepath.Join(tmpDir, "wsusscn2", strings.TrimSuffix(c.NAME, ".cab"), dir.Name())); err != nil {
+						return errors.Wrapf(err, "remove wsusscn2/%s/%s", strings.TrimSuffix(c.NAME, ".cab"), dir.Name())
+					}
 				}
 			}
-
-			_ = bar.Add(1)
 
 			return nil
 		})
@@ -332,7 +202,172 @@ func (opts options) extract(tmpDir string) error {
 	if err := eg.Wait(); err != nil {
 		return errors.Wrapf(err, "extract %s", filepath.Join(tmpDir, "wsusscn2", "package\\d{1,2}.cab"))
 	}
-	_ = bar.Close()
+
+	return nil
+}
+
+func (opts options) save(root string) error {
+	log.Printf("[INFO] save wsusscn2 update, core, extended, localized data")
+
+	f, err := os.Open(filepath.Join(root, "package", "package.xml"))
+	if err != nil {
+		return errors.Wrapf(err, "open %s", filepath.Join(root, "package", "package.xml"))
+	}
+	defer f.Close()
+
+	var pkg offlineSyncPackage
+	if err := xml.NewDecoder(f).Decode(&pkg); err != nil {
+		return errors.Wrap(err, "decode package.xml")
+	}
+
+	f, err = os.Open(filepath.Join(root, "index.xml"))
+	if err != nil {
+		return errors.Wrap(err, "open wsusscn2/index.xml")
+	}
+	defer f.Close()
+
+	var cabIndex index
+	if err := xml.NewDecoder(f).Decode(&cabIndex); err != nil {
+		return errors.Wrap(err, "decode xml")
+	}
+
+	cabs := make([]cab, 0, len(cabIndex.CABLIST.CAB))
+	for _, c := range cabIndex.CABLIST.CAB {
+		if c.RANGESTART == "" {
+			continue
+		}
+		cabs = append(cabs, c)
+	}
+	slices.SortFunc(cabs, func(a, b cab) int {
+		ai, aerr := strconv.Atoi(a.RANGESTART)
+		bi, berr := strconv.Atoi(b.RANGESTART)
+		if aerr != nil && berr != nil {
+			return 0
+		}
+		if aerr != nil || ai > bi {
+			return -1
+		}
+		if berr != nil || ai < bi {
+			return +1
+		}
+		return 0
+	})
+
+	eg, _ := errgroup.WithContext(context.TODO())
+	eg.SetLimit(opts.concurrency)
+	for _, u := range pkg.Updates.Update {
+		eg.Go(func() error {
+			ridint, err := strconv.ParseUint(u.RevisionID, 10, 32)
+			if err != nil {
+				return errors.Wrap(err, "parse uint")
+			}
+
+			if err := util.Write(filepath.Join(opts.dir, "u", fmt.Sprintf("%s.json", u.RevisionID)), u); err != nil {
+				return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "u", fmt.Sprintf("%s.json", u.RevisionID)))
+			}
+
+			pname, err := func() (string, error) {
+				for _, c := range cabs {
+					cabint, err := strconv.ParseUint(c.RANGESTART, 10, 32)
+					if err != nil {
+						return "", errors.Wrap(err, "parse uint")
+					}
+
+					if ridint < cabint {
+						continue
+					}
+
+					return strings.TrimSuffix(c.NAME, ".cab"), nil
+				}
+				return "", errors.Errorf("not found cab directory for revision id %s", u.RevisionID)
+			}()
+			if err != nil {
+				return errors.WithStack(err)
+			}
+
+			c, err := func() (*C, error) {
+				bs, err := os.ReadFile(filepath.Join(root, pname, "c", u.RevisionID))
+				if err != nil {
+					if errors.Is(err, fs.ErrNotExist) {
+						return nil, nil
+					}
+					return nil, errors.Wrapf(err, "read %s", filepath.Join(root, pname, "c", u.RevisionID))
+				}
+
+				var c C
+				if err := xml.Unmarshal(fmt.Appendf(nil, "<CoreProperties>%s</CoreProperties>", string(bs)), &c); err != nil {
+					return nil, errors.Wrapf(err, "unmarshal %s", filepath.Join(root, pname, "c", u.RevisionID))
+				}
+
+				return &c, nil
+			}()
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			if c != nil {
+				if err := util.Write(filepath.Join(opts.dir, "c", fmt.Sprintf("%s.json", u.RevisionID)), *c); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "c", fmt.Sprintf("%s.json", u.RevisionID)))
+				}
+			}
+
+			x, err := func() (*X, error) {
+				f, err := os.Open(filepath.Join(root, pname, "x", u.RevisionID))
+				if err != nil {
+					if errors.Is(err, fs.ErrNotExist) {
+						return nil, nil
+					}
+					return nil, errors.Wrapf(err, "open %s", filepath.Join(root, pname, "x", u.RevisionID))
+				}
+				defer f.Close()
+
+				var x X
+				if err := xml.NewDecoder(f).Decode(&x); err != nil {
+					return nil, errors.Wrapf(err, "decode %s", filepath.Join(root, pname, "x", u.RevisionID))
+				}
+
+				return &x, nil
+			}()
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			if x != nil {
+				if err := util.Write(filepath.Join(opts.dir, "x", fmt.Sprintf("%s.json", u.RevisionID)), *x); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "x", fmt.Sprintf("%s.json", u.RevisionID)))
+				}
+			}
+
+			l, err := func() (*L, error) {
+				f, err := os.Open(filepath.Join(root, pname, "l", u.DefaultLanguage, u.RevisionID))
+				if err != nil {
+					if errors.Is(err, fs.ErrNotExist) {
+						return nil, nil
+					}
+					return nil, errors.Wrapf(err, "open %s", filepath.Join(root, pname, "l", u.DefaultLanguage, u.RevisionID))
+				}
+				defer f.Close()
+
+				var l L
+				if err := xml.NewDecoder(f).Decode(&l); err != nil {
+					return nil, errors.Wrapf(err, "decode %s", filepath.Join(root, pname, "l", u.DefaultLanguage, u.RevisionID))
+				}
+
+				return &l, nil
+			}()
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			if l != nil {
+				if err := util.Write(filepath.Join(opts.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)), *l); err != nil {
+					return errors.Wrapf(err, "write %s", filepath.Join(opts.dir, "l", fmt.Sprintf("%s.json", u.RevisionID)))
+				}
+			}
+
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return errors.Wrap(err, "save wsusscn2 update, core, extended, localized data")
+	}
 
 	return nil
 }

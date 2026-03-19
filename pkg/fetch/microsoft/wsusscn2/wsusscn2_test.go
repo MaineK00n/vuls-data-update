@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -18,22 +19,20 @@ import (
 func TestFetch(t *testing.T) {
 	tests := []struct {
 		name     string
-		cabPath  string
 		hasError bool
 	}{
 		{
-			name:    "happy path",
-			cabPath: "testdata/fixtures/wsusscn2.cab",
+			name: "happy",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
+				http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, path.Base(r.URL.Path)))
 			}))
 			defer ts.Close()
 
-			u, err := url.JoinPath(ts.URL, tt.cabPath)
+			u, err := url.JoinPath(ts.URL, "microsoftupdate/v6/wsusscan/wsusscn2.cab")
 			if err != nil {
 				t.Error("unexpected error:", err)
 			}
