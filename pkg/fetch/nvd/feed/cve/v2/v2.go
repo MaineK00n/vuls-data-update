@@ -68,13 +68,13 @@ func WithRetry(retry int) Option {
 }
 
 func Fetch(opts ...Option) error {
-	var us []string
+	us := []string{
+		fmt.Sprintf(baseURLFormat, "modified"),
+		fmt.Sprintf(baseURLFormat, "recent"),
+	}
 	for y := oldestYear; y <= time.Now().Year(); y++ {
 		us = append(us, fmt.Sprintf(baseURLFormat, strconv.Itoa(y)))
 	}
-	// Process recent and modified last so they overwrite year-feed data
-	// with the latest version.
-	us = append(us, fmt.Sprintf(baseURLFormat, "recent"), fmt.Sprintf(baseURLFormat, "modified"))
 
 	options := &options{
 		baseURLs: us,
