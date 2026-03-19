@@ -1,0 +1,5927 @@
+{
+	"id": "MS14-010",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS14-010",
+				"title": "Cumulative Security Update for Internet Explorer",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Moderate"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2014/ms14-010"
+					}
+				],
+				"published": "2014-02-11T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "MS14-010",
+				"title": "Cumulative Security Update for Internet Explorer",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2014/ms14-010"
+					}
+				],
+				"published": "2014-02-11T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "MS14-010",
+				"title": "Cumulative Security Update for Internet Explorer",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2014/ms14-010"
+					}
+				],
+				"published": "2014-02-11T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2014-0267",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0267"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0268",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0268"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0269",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0269"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0270",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0270"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0271",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0271"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0272",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0272"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0273",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0273"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0274",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0274"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0275",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0275"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0276",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0276"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0277",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0277"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0278",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0278"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0279",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0279"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0280",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0280"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0281",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0281"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0283",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0283"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0284",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0284"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0285",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0285"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0286",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0286"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0287",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0287"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0288",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0288"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0289",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0289"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0290",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0290"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2014-0293",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2014-0293"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows 8 for 32-bit Systems",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows 8 for x64-based Systems",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows 8 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows RT",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows RT"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 10 on Windows Server 2012",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 10 on Windows Server 2012"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows Vista Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Microsoft Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows RT 8.1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows RT 8.1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 11 on Windows Server 2012 R2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 11 on Windows Server 2012 R2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Windows Vista Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows Vista Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2",
+									"kb_id": "2909921"
+								}
+							}
+						]
+					},
+					"tag": "Windows Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/14/MS14-010.json"
+		]
+	}
+}

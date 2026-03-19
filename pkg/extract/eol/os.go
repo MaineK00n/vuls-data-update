@@ -667,6 +667,280 @@ var os = map[string]map[string]eolTypes.EOL{
 		"releng/14.1": {Ended: false},
 	},
 	ecosystemTypes.EcosystemTypeGentoo: {"gentoo": {Ended: false}},
+	ecosystemTypes.EcosystemTypeMicrosoft: {
+		"Windows XP": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":        time.Date(2005, 8, 30, 23, 59, 59, 0, time.UTC),
+				"Service Pack 1":  time.Date(2006, 10, 10, 23, 59, 59, 0, time.UTC),
+				"Service Pack 1a": time.Date(2006, 10, 10, 23, 59, 59, 0, time.UTC),
+				"Service Pack 2":  time.Date(2010, 7, 13, 23, 59, 59, 0, time.UTC),
+				"Service Pack 3":  time.Date(2014, 4, 8, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Vista": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":       time.Date(2010, 4, 13, 23, 59, 59, 0, time.UTC),
+				"Service Pack 1": time.Date(2011, 7, 12, 23, 59, 59, 0, time.UTC),
+				"Service Pack 2": time.Date(2017, 4, 11, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 7": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":                        time.Date(2013, 4, 9, 23, 59, 59, 0, time.UTC),
+				"Service Pack 1":                  time.Date(2020, 1, 14, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 1": time.Date(2021, 1, 12, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 2": time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 3": time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 8": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2016, 1, 12, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 8.1": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2018, 1, 9, 23, 59, 59, 0, time.UTC),
+				"ESU":      time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1507": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2017, 5, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1511": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2017, 10, 10, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1607": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2018, 4, 10, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2019, 4, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1703": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2018, 10, 9, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2019, 10, 8, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1709": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2019, 4, 9, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2020, 10, 13, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1803": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2019, 11, 12, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1809": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2020, 11, 10, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1903": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2020, 12, 8, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 1909": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2022, 5, 10, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 2004": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2021, 12, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 20H2": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2022, 5, 10, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2023, 5, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 21H1": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2022, 12, 13, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 21H2": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2023, 6, 13, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2024, 6, 11, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 10 Version 22H2": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 11 Version 21H2": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2023, 10, 10, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 11 Version 22H2": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows 11 Version 23H2": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard(Home and Pro)":             time.Date(2025, 11, 11, 23, 59, 59, 0, time.UTC),
+				"Standard(Enterprise and Education)": time.Date(2026, 11, 10, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2003": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":       time.Date(2007, 4, 10, 23, 59, 59, 0, time.UTC),
+				"Service Pack 1": time.Date(2009, 4, 14, 23, 59, 59, 0, time.UTC),
+				"Service Pack 2": time.Date(2015, 7, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2003 R2": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":       time.Date(2009, 4, 14, 23, 59, 59, 0, time.UTC),
+				"Service Pack 2": time.Date(2015, 7, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2008": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":                                     time.Date(2011, 7, 12, 23, 59, 59, 0, time.UTC),
+				"Service Pack 2":                               time.Date(2020, 1, 14, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 1":              time.Date(2021, 1, 12, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 2":              time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 3":              time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 4 (Azure only)": time.Date(2024, 1, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2008 R2": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard":                                     time.Date(2013, 4, 9, 23, 59, 59, 0, time.UTC),
+				"Service Pack 1":                               time.Date(2020, 1, 14, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 1":              time.Date(2021, 1, 12, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 2":              time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 3":              time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 4 (Azure only)": time.Date(2024, 1, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2012": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard":                        time.Date(2023, 10, 10, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 1": time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 2": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 3": time.Date(2026, 10, 13, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2012 R2": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard":                        time.Date(2023, 10, 10, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 1": time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 2": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
+				"Extended Security Update Year 3": time.Date(2026, 10, 13, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2016": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
+				"ESU":      time.Date(2027, 1, 12, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 1709": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2019, 4, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 1803": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2019, 11, 12, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 1809": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2020, 11, 10, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2019": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2024, 1, 9, 23, 59, 59, 0, time.UTC),
+				"ESU":      time.Date(2029, 1, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 1903": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2020, 12, 8, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 1909": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 2004": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2021, 12, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server, Version 20H2": {
+			Ended: true,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2022, 8, 9, 23, 59, 59, 0, time.UTC),
+			},
+		},
+		"Windows Server 2022": {
+			Ended: false,
+			Date: map[string]time.Time{
+				"Standard": time.Date(2026, 10, 13, 23, 59, 59, 0, time.UTC),
+				"ESU":      time.Date(2031, 10, 14, 23, 59, 59, 0, time.UTC),
+			},
+		},
+	},
 	ecosystemTypes.EcosystemTypeNetBSD: {
 		"1": {
 			Ended: true,
@@ -1528,280 +1802,6 @@ var os = map[string]map[string]eolTypes.EOL{
 			Ended: false,
 			Date: map[string]time.Time{
 				"Standard": time.Date(2029, 6, 30, 23, 59, 59, 0, time.UTC),
-			},
-		},
-	},
-	ecosystemTypes.EcosystemTypeWindows: {
-		"Windows XP": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":        time.Date(2005, 8, 30, 23, 59, 59, 0, time.UTC),
-				"Service Pack 1":  time.Date(2006, 10, 10, 23, 59, 59, 0, time.UTC),
-				"Service Pack 1a": time.Date(2006, 10, 10, 23, 59, 59, 0, time.UTC),
-				"Service Pack 2":  time.Date(2010, 7, 13, 23, 59, 59, 0, time.UTC),
-				"Service Pack 3":  time.Date(2014, 4, 8, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Vista": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":       time.Date(2010, 4, 13, 23, 59, 59, 0, time.UTC),
-				"Service Pack 1": time.Date(2011, 7, 12, 23, 59, 59, 0, time.UTC),
-				"Service Pack 2": time.Date(2017, 4, 11, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 7": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":                        time.Date(2013, 4, 9, 23, 59, 59, 0, time.UTC),
-				"Service Pack 1":                  time.Date(2020, 1, 14, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 1": time.Date(2021, 1, 12, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 2": time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 3": time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 8": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2016, 1, 12, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 8.1": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2018, 1, 9, 23, 59, 59, 0, time.UTC),
-				"ESU":      time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1507": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2017, 5, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1511": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2017, 10, 10, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1607": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2018, 4, 10, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2019, 4, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1703": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2018, 10, 9, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2019, 10, 8, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1709": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2019, 4, 9, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2020, 10, 13, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1803": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2019, 11, 12, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1809": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2020, 11, 10, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1903": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2020, 12, 8, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 1909": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2022, 5, 10, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 2004": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2021, 12, 14, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 20H2": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2022, 5, 10, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2023, 5, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 21H1": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2022, 12, 13, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 21H2": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2023, 6, 13, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2024, 6, 11, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 10 Version 22H2": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 11 Version 21H2": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2023, 10, 10, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 11 Version 22H2": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows 11 Version 23H2": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard(Home and Pro)":             time.Date(2025, 11, 11, 23, 59, 59, 0, time.UTC),
-				"Standard(Enterprise and Education)": time.Date(2026, 11, 10, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2003": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":       time.Date(2007, 4, 10, 23, 59, 59, 0, time.UTC),
-				"Service Pack 1": time.Date(2009, 4, 14, 23, 59, 59, 0, time.UTC),
-				"Service Pack 2": time.Date(2015, 7, 14, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2003 R2": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":       time.Date(2009, 4, 14, 23, 59, 59, 0, time.UTC),
-				"Service Pack 2": time.Date(2015, 7, 14, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2008": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":                                     time.Date(2011, 7, 12, 23, 59, 59, 0, time.UTC),
-				"Service Pack 2":                               time.Date(2020, 1, 14, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 1":              time.Date(2021, 1, 12, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 2":              time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 3":              time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 4 (Azure only)": time.Date(2024, 1, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2008 R2": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard":                                     time.Date(2013, 4, 9, 23, 59, 59, 0, time.UTC),
-				"Service Pack 1":                               time.Date(2020, 1, 14, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 1":              time.Date(2021, 1, 12, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 2":              time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 3":              time.Date(2023, 1, 10, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 4 (Azure only)": time.Date(2024, 1, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2012": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard":                        time.Date(2023, 10, 10, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 1": time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 2": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 3": time.Date(2026, 10, 13, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2012 R2": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard":                        time.Date(2023, 10, 10, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 1": time.Date(2024, 10, 8, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 2": time.Date(2025, 10, 14, 23, 59, 59, 0, time.UTC),
-				"Extended Security Update Year 3": time.Date(2026, 10, 13, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2016": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2022, 1, 11, 23, 59, 59, 0, time.UTC),
-				"ESU":      time.Date(2027, 1, 12, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 1709": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2019, 4, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 1803": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2019, 11, 12, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 1809": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2020, 11, 10, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2019": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2024, 1, 9, 23, 59, 59, 0, time.UTC),
-				"ESU":      time.Date(2029, 1, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 1903": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2020, 12, 8, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 1909": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2021, 5, 11, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 2004": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2021, 12, 14, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server, Version 20H2": {
-			Ended: true,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2022, 8, 9, 23, 59, 59, 0, time.UTC),
-			},
-		},
-		"Windows Server 2022": {
-			Ended: false,
-			Date: map[string]time.Time{
-				"Standard": time.Date(2026, 10, 13, 23, 59, 59, 0, time.UTC),
-				"ESU":      time.Date(2031, 10, 14, 23, 59, 59, 0, time.UTC),
 			},
 		},
 	},

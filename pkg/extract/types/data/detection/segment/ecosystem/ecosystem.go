@@ -21,6 +21,7 @@ const (
 	EcosystemTypeFedora              = "fedora"
 	EcosystemTypeFreeBSD             = "freebsd"
 	EcosystemTypeGentoo              = "gentoo"
+	EcosystemTypeMicrosoft           = "microsoft"
 	EcosystemTypeNetBSD              = "netbsd"
 	EcosystemTypeOracle              = "oracle"
 	EcosystemTypeRedHat              = "redhat"
@@ -32,7 +33,6 @@ const (
 	EcosystemTypeSUSELinuxEnterprise = "suse.linux.enterprise"
 	EcosystemTypeSUSELinuxMicro      = "suse.linux.micro"
 	EcosystemTypeUbuntu              = "ubuntu"
-	EcosystemTypeWindows             = "windows"
 
 	EcosystemTypeCPE = "cpe"
 
@@ -109,8 +109,8 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 			return "", errors.Errorf("unexpected release format. expected: %q, actual: %q", "<major>.<minor>(.<patch>)", release)
 		}
 		return Ecosystem(fmt.Sprintf("%s:%s.%s", family, ss[0], ss[1])), nil
-	case EcosystemTypeWindows:
-		return Ecosystem(fmt.Sprintf("%s:%s", family, release)), nil
+	case EcosystemTypeMicrosoft:
+		return Ecosystem(family), nil
 	case EcosystemTypeCPE:
 		return Ecosystem(family), nil
 	case EcosystemTypeFortinet:
@@ -146,6 +146,6 @@ func GetEcosystem(family, release string) (Ecosystem, error) {
 	case EcosystemTypeSwift:
 		return Ecosystem(family), nil
 	default:
-		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeCentOS, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeOpenSUSELeap, EcosystemTypeOpenSUSELeapMicro, EcosystemTypeOpenSUSETumbleweed, EcosystemTypeSUSELinuxMicro, EcosystemTypeUbuntu, EcosystemTypeWindows, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
+		return "", errors.Errorf("unexpected family. expected: %q, actual: %q", []Ecosystem{EcosystemTypeAlma, EcosystemTypeAlpine, EcosystemTypeAmazon, EcosystemTypeArch, EcosystemTypeCentOS, EcosystemTypeDebian, EcosystemTypeEPEL, EcosystemTypeFedora, EcosystemTypeFreeBSD, EcosystemTypeGentoo, EcosystemTypeMicrosoft, EcosystemTypeNetBSD, EcosystemTypeOracle, EcosystemTypeRedHat, EcosystemTypeRocky, EcosystemTypeOpenSUSE, EcosystemTypeOpenSUSELeap, EcosystemTypeOpenSUSELeapMicro, EcosystemTypeOpenSUSETumbleweed, EcosystemTypeSUSELinuxEnterprise, EcosystemTypeSUSELinuxMicro, EcosystemTypeUbuntu, EcosystemTypeCPE, EcosystemTypeFortinet, EcosystemTypeCargo, EcosystemTypeComposer, EcosystemTypeConan, EcosystemTypeErlang, EcosystemTypeGolang, EcosystemTypeHaskell, EcosystemTypeMaven, EcosystemTypeNpm, EcosystemTypeNuget, EcosystemTypePerl, EcosystemTypePip, EcosystemTypePub, EcosystemTypeR, EcosystemTypeRubygems, EcosystemTypeSwift}, family)
 	}
 }

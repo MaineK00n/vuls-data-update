@@ -1,0 +1,115 @@
+{
+	"id": "MS08-069",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS08-069",
+				"title": "Vulnerabilities in Microsoft XML Core Services Could Allow Remote Code Execution",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2008/ms08-069"
+					}
+				],
+				"published": "2008-11-11T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2007-0099",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2007-0099"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2008-4029",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2008-4029"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2008-4033",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2008-4033"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4",
+									"kb_id": "955069"
+								}
+							}
+						]
+					},
+					"tag": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/08/MS08-069.json"
+		]
+	}
+}

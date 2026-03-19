@@ -1,0 +1,12 @@
+{
+	"kb_id": "4014329",
+	"products": [
+		"Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/17/MS17-023.json"
+		]
+	}
+}

@@ -1,0 +1,100 @@
+[
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft Excel 2000 for Windows",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft Excel 2002 for Windows",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft Excel 98 for Macintosh",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft Excel 2001 for Macintosh",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft PowerPoint 2000 for Windows",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft PowerPoint 2002 for Windows",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft PowerPoint 98 for Macintosh",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  },
+  {
+    "date_posted": "10-04-01",
+    "bulletin_id": "MS01-050",
+    "bulletin_severity": "Critical",
+    "bulletin_impact": "Remote Code Execution",
+    "title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+    "affected_product": "Microsoft PowerPoint 2001 for Macintosh",
+    "impact": "Remote Code Execution",
+    "severity": "Critical",
+    "cves": "CAN-2001-0718"
+  }
+]

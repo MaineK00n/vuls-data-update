@@ -1,0 +1,115 @@
+{
+	"id": "MS01-050",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS01-050",
+				"title": "Malformed Excel or PowerPoint Document Can Bypass Macro Security",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2001/ms01-050"
+					}
+				],
+				"published": "2001-10-04T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 2000 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 2001 for Macintosh"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 2002 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 98 for Macintosh"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 2000 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 2001 for Macintosh"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 2002 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 98 for Macintosh"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CAN-2001-0718",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CAN-2001-0718"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 2000 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 2001 for Macintosh"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 2002 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Excel 98 for Macintosh"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 2000 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 2001 for Macintosh"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 2002 for Windows"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft PowerPoint 98 for Macintosh"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/01/MS01-050.json"
+		]
+	}
+}
