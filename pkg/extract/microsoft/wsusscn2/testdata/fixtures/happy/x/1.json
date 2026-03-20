@@ -1,0 +1,14 @@
+{
+	"defaultpropertieslanguage": "en",
+	"msrcseverity": "Critical",
+	"browseonly": "false",
+	"supporturl": {
+		"text": "http://go.microsoft.com/fwlink/?LinkId=507417"
+	},
+	"securitybulletinid": {
+		"text": "MS25-001"
+	},
+	"kbarticleid": {
+		"text": "5070881"
+	}
+}

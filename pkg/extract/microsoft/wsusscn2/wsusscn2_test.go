@@ -16,7 +16,7 @@ func TestExtract(t *testing.T) {
 	}{
 		{
 			name: "happy",
-			args: "./testdata/fixtures",
+			args: "./testdata/fixtures/happy",
 		},
 	}
 	for _, tt := range tests {
@@ -28,17 +28,19 @@ func TestExtract(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				return
+			default:
+				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				gp, err := filepath.Abs(dir)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				utiltest.Diff(t, ep, gp)
 			}
-
-			ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			gp, err := filepath.Abs(dir)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			utiltest.Diff(t, ep, gp)
 		})
 	}
 }

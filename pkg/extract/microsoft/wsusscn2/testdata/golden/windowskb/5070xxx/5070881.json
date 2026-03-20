@@ -1,0 +1,35 @@
+{
+	"kb_id": "5070881",
+	"updates": [
+		{
+			"update_id": "0f08c8e4-9998-4bf7-8f51-f3736282d656",
+			"title": "2025-10 Cumulative Update for Microsoft server operating system version 24H2 for x64-based Systems (KB5070881)",
+			"description": "Install this update to resolve issues in Microsoft server operating system.",
+			"security_bulletin": "MS25-001",
+			"msrc_severity": "Critical",
+			"classification": "SecurityUpdates",
+			"product_family": "6964AAB4-C5B5-43BD-A17D-FFB4346A8E1D",
+			"products": [
+				"B256987D-4693-4C87-955D-DBB9341205EB"
+			],
+			"support_url": "http://go.microsoft.com/fwlink/?LinkId=507417",
+			"superseded_by": [
+				{
+					"kb_id": "5066835",
+					"update_id": "17ff83de-4e31-4fa5-9741-bebce9d44c2c"
+				}
+			],
+			"creation_date": "2025-10-23T23:11:51Z",
+			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=0f08c8e4-9998-4bf7-8f51-f3736282d656"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-wsusscn2",
+		"raws": [
+			"happy/l/1.json",
+			"happy/u/1.json",
+			"happy/x/1.json",
+			"happy/x/2.json"
+		]
+	}
+}

@@ -30,8 +30,8 @@ type Update struct {
 	Connectivity       string                           `json:"connectivity,omitempty"`
 	UninstallNotes     string                           `json:"uninstall_notes,omitempty"`
 	UninstallSteps     string                           `json:"uninstall_steps,omitempty"`
-	CreationDate       time.Time                        `json:"creation_date"`
-	LastModified       time.Time                        `json:"last_modified"`
+	CreationDate       time.Time                        `json:"creation_date,omitzero"`
+	LastModified       time.Time                        `json:"last_modified,omitzero"`
 	CatalogURL         string                           `json:"catalog_url"`
 }
 
