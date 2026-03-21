@@ -5517,7 +5517,7 @@
 							{
 								"type": "kb",
 								"kb": {
-									"product": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit systems",
+									"product": "Windows Internet Explorer 11 on Windows 8.1 for 32-bit Systems",
 									"kb_id": "2909921"
 								}
 							}
@@ -5532,7 +5532,7 @@
 							{
 								"type": "kb",
 								"kb": {
-									"product": "Windows Internet Explorer 11 on Windows 8.1 for x64-based systems",
+									"product": "Windows Internet Explorer 11 on Windows 8.1 for x64-based Systems",
 									"kb_id": "2909921"
 								}
 							}
@@ -5682,7 +5682,7 @@
 							{
 								"type": "kb",
 								"kb": {
-									"product": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-Based Systems Service Pack 2",
+									"product": "Windows Internet Explorer 7 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
 									"kb_id": "2909921"
 								}
 							}
@@ -5832,7 +5832,7 @@
 							{
 								"type": "kb",
 								"kb": {
-									"product": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1",
+									"product": "Windows Internet Explorer 8 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
 									"kb_id": "2909921"
 								}
 							}

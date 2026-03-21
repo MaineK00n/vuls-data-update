@@ -14,6 +14,7 @@ import (
 // Per-update supersession is stored in each Update's SupersededBy.
 type KB struct {
 	KBID         string                                    `json:"kb_id"`
+	URL          string                                    `json:"url,omitempty"`
 	Products     []string                                  `json:"products,omitempty"`
 	SupersededBy []windowskbSupersededByTypes.SupersededBy `json:"superseded_by,omitempty"`
 	Updates      []windowskbUpdateTypes.Update             `json:"updates,omitempty"`
@@ -39,6 +40,7 @@ func (d *KB) Sort() {
 func Compare(x, y KB) int {
 	return cmp.Or(
 		cmp.Compare(x.KBID, y.KBID),
+		cmp.Compare(x.URL, y.URL),
 		slices.Compare(x.Products, y.Products),
 		slices.CompareFunc(x.SupersededBy, y.SupersededBy, windowskbSupersededByTypes.Compare),
 		slices.CompareFunc(x.Updates, y.Updates, windowskbUpdateTypes.Compare),

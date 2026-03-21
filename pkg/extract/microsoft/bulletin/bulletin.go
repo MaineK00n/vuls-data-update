@@ -15,6 +15,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
 	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
@@ -460,7 +461,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 		if row.ComponentKB != "" {
 			cn := criterionTypes.Criterion{
 				Type: criterionTypes.CriterionTypeKB,
-				KB:   &kbcTypes.Criterion{Product: pn, KBID: row.ComponentKB},
+				KB:   &kbcTypes.Criterion{Product: microsoftutil.NormalizeProductName(pn), KBID: row.ComponentKB},
 			}
 
 			switch idx := slices.IndexFunc(g.conditions, func(c conditionTypes.Condition) bool {
@@ -482,7 +483,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 			if _, ok := kbProducts[row.ComponentKB]; !ok {
 				kbProducts[row.ComponentKB] = make(map[string]struct{})
 			}
-			kbProducts[row.ComponentKB][pn] = struct{}{}
+			kbProducts[row.ComponentKB][microsoftutil.NormalizeProductName(pn)] = struct{}{}
 
 			for _, oldKBID := range parseSupersedes(row.Supersedes) {
 				if _, ok := kbSupersededBy[oldKBID]; !ok {
@@ -523,6 +524,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 	for kbID, products := range kbProducts {
 		kb := windowskbTypes.KB{
 			KBID:     kbID,
+			URL:      fmt.Sprintf("https://support.microsoft.com/help/%s", kbID),
 			Products: slices.Collect(maps.Keys(products)),
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.MicrosoftBulletin,

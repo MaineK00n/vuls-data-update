@@ -1,0 +1,22 @@
+{
+	"kb_id": "3087088",
+	"url": "https://support.microsoft.com/help/3087088",
+	"products": [
+		"Windows 8.1 for x64-based Systems",
+		"Windows Server 2012",
+		"Windows Server 2012 (Server Core installation)",
+		"Windows Server 2012 R2",
+		"Windows Server 2012 R2 (Server Core installation)"
+	],
+	"superseded_by": [
+		{
+			"kb_id": "3135456"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2016-Apr/2016/CVE-2016-0088.json"
+		]
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"kb_id": "3147461",
+	"url": "https://support.microsoft.com/help/3147461",
+	"products": [
+		"Windows 10 for x64-based Systems"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2016-Apr/2016/CVE-2016-0088.json"
+		]
+	}
+}
