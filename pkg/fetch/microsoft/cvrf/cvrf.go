@@ -170,7 +170,7 @@ func filterProductTree(ptree ProductTree, productIDs []string) ProductTree {
 	pt := ProductTree{Branch: filterBranch(ptree.Branch, productIDs)}
 	for _, p := range ptree.FullProductName {
 		if slices.Contains(productIDs, p.ProductID) {
-			ptree.FullProductName = append(ptree.FullProductName, p)
+			pt.FullProductName = append(pt.FullProductName, p)
 		}
 	}
 	return pt
@@ -187,7 +187,7 @@ func filterBranch(branch Branch, productIDs []string) Branch {
 		}
 	}
 	for _, b := range branch.Branch {
-		if filtered := filterBranch(b, productIDs); len(filtered.FullProductName) > 0 {
+		if filtered := filterBranch(b, productIDs); len(filtered.FullProductName) > 0 || len(filtered.Branch) > 0 {
 			root.Branch = append(root.Branch, filtered)
 		}
 	}
