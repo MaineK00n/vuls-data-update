@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	necBinaryPackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/binary"
 	necSourcePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion/source"
@@ -67,6 +68,7 @@ func TestCriterion_Contains(t *testing.T) {
 		Type      criterionTypes.CriterionType
 		Version   *vcTypes.Criterion
 		NoneExist *necTypes.Criterion
+		KB        *kbcTypes.Criterion
 	}
 	type args struct {
 		query        criterionTypes.Query
@@ -201,6 +203,42 @@ func TestCriterion_Contains(t *testing.T) {
 			},
 			want: false,
 		},
+		{
+			name: "contains kb",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10",
+					KBID:    "5025239",
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					KB: &kbcTypes.Query{
+						UnappliedKBs: []string{"5025239", "5025305"},
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "not contains kb",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10",
+					KBID:    "5025239",
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					KB: &kbcTypes.Query{
+						UnappliedKBs: []string{"5025305"},
+					},
+				},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -208,6 +246,7 @@ func TestCriterion_Contains(t *testing.T) {
 				Type:      tt.fields.Type,
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
+				KB:        tt.fields.KB,
 			}
 			got, err := c.Contains(tt.args.query, tt.args.repositories)
 			if (err != nil) != tt.wantErr {
@@ -226,6 +265,7 @@ func TestCriterion_Accept(t *testing.T) {
 		Type      criterionTypes.CriterionType
 		Version   *vcTypes.Criterion
 		NoneExist *necTypes.Criterion
+		KB        *kbcTypes.Criterion
 	}
 	type args struct {
 		query criterionTypes.Query
@@ -419,6 +459,60 @@ func TestCriterion_Accept(t *testing.T) {
 				Accepts: criterionTypes.AcceptQueries{NoneExist: false},
 			},
 		},
+		{
+			name: "accept kb",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10",
+					KBID:    "5025239",
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					KB: &kbcTypes.Query{
+						UnappliedKBs: []string{"5025239", "5025305"},
+					},
+				},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeKB,
+					KB: &kbcTypes.Criterion{
+						Product: "Windows 10",
+						KBID:    "5025239",
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{KB: true},
+			},
+		},
+		{
+			name: "not accept kb",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10",
+					KBID:    "5025239",
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{
+					KB: &kbcTypes.Query{
+						UnappliedKBs: []string{"5025305"},
+					},
+				},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeKB,
+					KB: &kbcTypes.Criterion{
+						Product: "Windows 10",
+						KBID:    "5025239",
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{KB: false},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -426,6 +520,7 @@ func TestCriterion_Accept(t *testing.T) {
 				Type:      tt.fields.Type,
 				Version:   tt.fields.Version,
 				NoneExist: tt.fields.NoneExist,
+				KB:        tt.fields.KB,
 			}
 			got, err := c.Accept(tt.args.query, nil)
 			if (err != nil) != tt.wantErr {
@@ -527,6 +622,34 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{NoneExist: false},
+			},
+			want: false,
+		},
+		{
+			name: "affected kb",
+			fields: fields{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeKB,
+					KB: &kbcTypes.Criterion{
+						Product: "Windows 10",
+						KBID:    "5025239",
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{KB: true},
+			},
+			want: true,
+		},
+		{
+			name: "not affected kb",
+			fields: fields{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeKB,
+					KB: &kbcTypes.Criterion{
+						Product: "Windows 10",
+						KBID:    "5025239",
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{KB: false},
 			},
 			want: false,
 		},

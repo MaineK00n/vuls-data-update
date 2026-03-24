@@ -1,0 +1,62 @@
+{
+	"id": "MS17-023",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS17-023",
+				"title": "Security Update for Adobe Flash Player",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-023"
+					}
+				],
+				"published": "2017-03-14T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "kb",
+								"kb": {
+									"product": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems",
+									"kb_id": "4014329"
+								}
+							}
+						]
+					},
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/17/MS17-023.json"
+		]
+	}
+}

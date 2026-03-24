@@ -8,6 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	necTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/noneexistcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 )
@@ -18,6 +19,7 @@ const (
 	_ CriterionType = iota
 	CriterionTypeVersion
 	CriterionTypeNoneExist
+	CriterionTypeKB
 
 	CriterionTypeUnknown
 )
@@ -28,6 +30,8 @@ func (t CriterionType) String() string {
 		return "version"
 	case CriterionTypeNoneExist:
 		return "none-exist"
+	case CriterionTypeKB:
+		return "kb"
 	default:
 		return "unknown"
 	}
@@ -51,6 +55,8 @@ func (t *CriterionType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = CriterionTypeVersion
 	case "none-exist":
 		*t = CriterionTypeNoneExist
+	case "kb":
+		*t = CriterionTypeKB
 	case "unknown":
 		*t = CriterionTypeUnknown
 	default:
@@ -75,6 +81,8 @@ func (t *CriterionType) UnmarshalJSON(data []byte) error {
 		ct = CriterionTypeVersion
 	case "none-exist":
 		ct = CriterionTypeNoneExist
+	case "kb":
+		ct = CriterionTypeKB
 	case "unknown":
 		ct = CriterionTypeUnknown
 	default:
@@ -88,14 +96,23 @@ type Criterion struct {
 	Type      CriterionType       `json:"type,omitempty"`
 	Version   *vcTypes.Criterion  `json:"version,omitempty"`
 	NoneExist *necTypes.Criterion `json:"none_exist,omitempty"`
+	KB        *kbcTypes.Criterion `json:"kb,omitempty"`
 }
 
 func (c *Criterion) Sort() {
 	switch c.Type {
 	case CriterionTypeVersion:
-		c.Version.Sort()
+		if c.Version != nil {
+			c.Version.Sort()
+		}
 	case CriterionTypeNoneExist:
-		c.NoneExist.Sort()
+		if c.NoneExist != nil {
+			c.NoneExist.Sort()
+		}
+	case CriterionTypeKB:
+		if c.KB != nil {
+			c.KB.Sort()
+		}
 	default:
 	}
 }
@@ -127,6 +144,17 @@ func Compare(x, y Criterion) int {
 				default:
 					return necTypes.Compare(*x.NoneExist, *y.NoneExist)
 				}
+			case CriterionTypeKB:
+				switch {
+				case x.KB == nil && y.KB == nil:
+					return 0
+				case x.KB == nil && y.KB != nil:
+					return -1
+				case x.KB != nil && y.KB == nil:
+					return +1
+				default:
+					return kbcTypes.Compare(*x.KB, *y.KB)
+				}
 			default:
 				return 0
 			}
@@ -137,14 +165,19 @@ func Compare(x, y Criterion) int {
 type Query struct {
 	Version   []vcTypes.Query
 	NoneExist *necTypes.Query
+	KB        *kbcTypes.Query
 }
 
 func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 	switch c.Type {
 	case CriterionTypeVersion:
+		if c.Version == nil {
+			return false, errors.New("criterion is not set for version criterion")
+		}
 		if len(query.Version) == 0 {
 			return false, errors.New("query is not set for version criterion")
 		}
+
 		for _, q := range query.Version {
 			isAccepted, err := c.Version.Accept(q, repositories)
 			if err != nil {
@@ -156,16 +189,33 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 		}
 		return false, nil
 	case CriterionTypeNoneExist:
+		if c.NoneExist == nil {
+			return false, errors.New("criterion is not set for none exist criterion")
+		}
 		if query.NoneExist == nil {
 			return false, errors.New("query is not set for none exist criterion")
 		}
+
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
 		if err != nil {
 			return false, errors.Wrap(err, "none exist criterion accept")
 		}
 		return isAccepted, nil
+	case CriterionTypeKB:
+		if c.KB == nil {
+			return false, errors.New("criterion is not set for kb criterion")
+		}
+		if query.KB == nil {
+			return false, errors.New("query is not set for kb criterion")
+		}
+
+		isAccepted, err := c.KB.Accept(*query.KB)
+		if err != nil {
+			return false, errors.Wrap(err, "kb criterion accept")
+		}
+		return isAccepted, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist}, c.Type)
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, c.Type)
 	}
 }
 
@@ -177,11 +227,15 @@ type FilteredCriterion struct {
 type AcceptQueries struct {
 	Version   []int `json:"version,omitempty"`
 	NoneExist bool  `json:"none_exist,omitempty"`
+	KB        bool  `json:"kb,omitempty"`
 }
 
 func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
 	switch c.Type {
 	case CriterionTypeVersion:
+		if c.Version == nil {
+			return FilteredCriterion{}, errors.New("criterion is not set for version criterion")
+		}
 		if len(query.Version) == 0 {
 			return FilteredCriterion{}, errors.New("query is not set for version criterion")
 		}
@@ -201,9 +255,13 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Accepts:   AcceptQueries{Version: is},
 		}, nil
 	case CriterionTypeNoneExist:
+		if c.NoneExist == nil {
+			return FilteredCriterion{}, errors.New("criterion is not set for none exist criterion")
+		}
 		if query.NoneExist == nil {
 			return FilteredCriterion{}, errors.New("query is not set for none exist criterion")
 		}
+
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
 		if err != nil {
 			return FilteredCriterion{}, errors.Wrap(err, "none exist criterion accept")
@@ -212,8 +270,24 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			Criterion: c,
 			Accepts:   AcceptQueries{NoneExist: isAccepted},
 		}, nil
+	case CriterionTypeKB:
+		if c.KB == nil {
+			return FilteredCriterion{}, errors.New("criterion is not set for kb criterion")
+		}
+		if query.KB == nil {
+			return FilteredCriterion{}, errors.New("query is not set for kb criterion")
+		}
+
+		isAccepted, err := c.KB.Accept(*query.KB)
+		if err != nil {
+			return FilteredCriterion{}, errors.Wrap(err, "kb criterion accept")
+		}
+		return FilteredCriterion{
+			Criterion: c,
+			Accepts:   AcceptQueries{KB: isAccepted},
+		}, nil
 	default:
-		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist}, c.Type)
+		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, c.Type)
 	}
 }
 
@@ -223,7 +297,9 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 		return len(fc.Accepts.Version) > 0, nil
 	case CriterionTypeNoneExist:
 		return fc.Accepts.NoneExist, nil
+	case CriterionTypeKB:
+		return fc.Accepts.KB, nil
 	default:
-		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist}, fc.Criterion.Type)
+		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, fc.Criterion.Type)
 	}
 }
