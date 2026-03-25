@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -103,7 +103,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch RedHat CSAF VEX")
+	slog.Info("Fetch RedHat CSAF VEX")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	at, err := options.fetchArchiveDate(client)
@@ -111,17 +111,17 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch archive date")
 	}
 
-	log.Printf("[INFO] Fetch RedHat CSAF VEX %s Archive", at.Format("2006-01-02"))
+	slog.Info("Fetch RedHat CSAF VEX Archive", slog.String("date", at.Format("2006-01-02")))
 	if err := options.fetchArchive(client, at); err != nil {
 		return errors.Wrap(err, "fetch archive")
 	}
 
-	log.Println("[INFO] Fetch RedHat CSAF VEX Changes")
+	slog.Info("Fetch RedHat CSAF VEX Changes")
 	if err := options.fetchChanges(client, at); err != nil {
 		return errors.Wrap(err, "fetch changes")
 	}
 
-	log.Println("[INFO] Fetch RedHat CSAF VEX Deletions")
+	slog.Info("Fetch RedHat CSAF VEX Deletions")
 	if err := options.fetchDeletions(client, at); err != nil {
 		return errors.Wrap(err, "fetch deletions")
 	}

@@ -3,7 +3,7 @@ package epss
 import (
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 	"strings"
 	"time"
@@ -55,7 +55,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Exploit Prediction Scoring System: EPSS")
+	slog.Info("Extract Exploit Prediction Scoring System: EPSS")
 
 	var latest time.Time
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {

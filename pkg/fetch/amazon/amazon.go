@@ -7,7 +7,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -99,7 +99,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	for v := range options.mirrorURLs {
-		log.Printf("[INFO] Fetch Amazon Linux %s", v)
+		slog.Info("Fetch Amazon Linux", slog.String("version", v))
 		advs := make(map[string][]Update)
 		switch v {
 		case "1", "2022":
@@ -169,7 +169,7 @@ func Fetch(opts ...Option) error {
 		}
 
 		for r, us := range advs {
-			log.Printf("[INFO] Fetched Amazon Linux %s %s", v, r)
+			slog.Info("Fetched Amazon Linux", slog.String("version", v), slog.String("release", r))
 			bar := progressbar.Default(int64(len(us)))
 			for _, u := range us {
 				y, err := func() (string, error) {
@@ -331,7 +331,7 @@ func getPackageRepository(mirror string) string {
 		_, rhs, _ := strings.Cut(mirror, "/extras/")
 		lhs, _, found := strings.Cut(rhs, "/")
 		if !found {
-			log.Printf("WARN: failed to find repository. mirror: %s", mirror)
+			slog.Warn("failed to find repository", slog.String("mirror", mirror))
 			return "unknown"
 		}
 		return filepath.Join("extras", lhs)
@@ -340,7 +340,7 @@ func getPackageRepository(mirror string) string {
 	case strings.Contains(mirror, "/nvidia/"):
 		return "nvidia"
 	default:
-		log.Printf("WARN: failed to find repository. mirror: %s", mirror)
+		slog.Warn("failed to find repository", slog.String("mirror", mirror))
 		return "unknown"
 	}
 }

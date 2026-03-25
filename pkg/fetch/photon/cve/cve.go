@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -73,7 +73,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Photon CVE")
+	slog.Info("Fetch Photon CVE")
 
 	versions, err := options.fetchVersions()
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -97,7 +97,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Siemens Security Advisories (CSAF)")
+	slog.Info("Fetch Siemens Security Advisories (CSAF)")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry))
 	us, err := options.fetchFeed(client)
 	if err != nil {

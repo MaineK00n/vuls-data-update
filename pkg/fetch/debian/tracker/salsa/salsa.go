@@ -11,7 +11,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"maps"
 	"net/http"
 	"net/textproto"
@@ -157,7 +157,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Debian Security Tracker Salsa repository")
+	slog.Info("Fetch Debian Security Tracker Salsa repository")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch salsa repository")
@@ -192,7 +192,7 @@ func Fetch(opts ...Option) error {
 		d, f := filepath.Split(hdr.Name)
 		switch f {
 		case "config.json":
-			log.Printf("[INFO] Fetch Package Source")
+			slog.Info("Fetch Package Source")
 			archives, releases, err := parseConfig(tr)
 			if err != nil {
 				return errors.Wrap(err, "parse config")
@@ -206,7 +206,7 @@ func Fetch(opts ...Option) error {
 
 				for repo, mm := range m {
 					for section, mmm := range mm {
-						log.Printf("[INFO] Fetched Debian %s %s %s", codename, repo, section)
+						slog.Info("Fetched Debian", slog.String("codename", codename), slog.String("repo", repo), slog.String("section", section))
 						bar := progressbar.Default(int64(len(mmm)))
 						for name, source := range mmm {
 							if err := util.Write(filepath.Join(options.dir, "packages", codename, repo, section, name[:1], fmt.Sprintf("%s.json", name)), source, util.WithAllowInvalidUTF8(true)); err != nil {
@@ -221,7 +221,7 @@ func Fetch(opts ...Option) error {
 		case "list":
 			switch filepath.Base(d) {
 			case "CPE":
-				log.Printf("[INFO] Read CPE/list")
+				slog.Info("Read CPE/list")
 				cpes, err := cpelist(tr)
 				if err != nil {
 					return errors.Wrap(err, "parse CPE/list")
@@ -236,7 +236,7 @@ func Fetch(opts ...Option) error {
 				}
 				_ = bar.Close()
 			case "CVE":
-				log.Printf("[INFO] Read CVE/list")
+				slog.Info("Read CVE/list")
 				bugs, err := cvelist(tr)
 				if err != nil {
 					return errors.Wrap(err, "parse CVE/list")
@@ -262,7 +262,7 @@ func Fetch(opts ...Option) error {
 				}
 				_ = bar.Close()
 			case "DLA":
-				log.Printf("[INFO] Read DLA/list")
+				slog.Info("Read DLA/list")
 				bugs, err := dlalist(tr)
 				if err != nil {
 					return errors.Wrap(err, "parse DLA/list")
@@ -277,7 +277,7 @@ func Fetch(opts ...Option) error {
 				}
 				_ = bar.Close()
 			case "DSA":
-				log.Printf("[INFO] Read DSA/list")
+				slog.Info("Read DSA/list")
 				bugs, err := dsalist(tr)
 				if err != nil {
 					return errors.Wrap(err, "parse DSA/list")
@@ -292,7 +292,7 @@ func Fetch(opts ...Option) error {
 				}
 				_ = bar.Close()
 			case "DTSA":
-				log.Printf("[INFO] Read DTSA/list")
+				slog.Info("Read DTSA/list")
 				bugs, err := dtsalist(tr)
 				if err != nil {
 					return errors.Wrap(err, "parse DTSA/list")
@@ -324,7 +324,7 @@ func cpelist(r io.Reader) ([]CPE, error) {
 		line := s.Text()
 		lhs, rhs, ok := strings.Cut(line, ";")
 		if !ok {
-			log.Printf("[WARN] unexpected format. expected: \"<Package>;<CPE>\", actual: %q", line)
+			slog.Warn("unexpected CPE format", slog.String("expected", "<Package>;<CPE>"), slog.String("actual", line))
 			continue
 		}
 		cpes = append(cpes, CPE{
@@ -351,10 +351,10 @@ func cvelist(r io.Reader) ([]Bug, error) {
 
 		if desc := match[reHeader.SubexpIndex("description")]; desc != "" {
 			if desc[:1] == "(" && desc[len(desc)-1:] != ")" {
-				log.Printf("[WARN] missing ')': %q", line)
+				slog.Warn("missing ')'", slog.String("line", line))
 			}
 			if desc[:1] == "[" && desc[len(desc)-1:] != "]" {
-				log.Printf("[WARN] missing ']': %q", line)
+				slog.Warn("missing ']'", slog.String("line", line))
 			}
 		}
 		return match
@@ -500,7 +500,7 @@ func dlalist(r io.Reader) ([]Bug, error) {
 func checkrelease(anns []any, kind string) {
 	for _, ann := range anns {
 		if a, ok := ann.(PackageAnnotation); ok && a.Type == "package" && a.Release == "" {
-			log.Printf("[WARN] release annotation required in %q file", kind)
+			slog.Warn("release annotation required", slog.String("kind", kind))
 		}
 	}
 }
@@ -523,7 +523,7 @@ func parselist(r io.Reader, parseheader func(line string) []string, finish func(
 		case line == "":
 		case line[0] == ' ' || line[0] == '\t':
 			if len(header) == 0 {
-				log.Printf("[WARN] header expected: %q", line)
+				slog.Warn("header expected", slog.String("line", line))
 				break
 			}
 
@@ -541,7 +541,7 @@ func parselist(r io.Reader, parseheader func(line string) []string, finish func(
 					if a.Type == "package" {
 						if _, ok := relpkg[a.Release]; ok {
 							if _, ok := relpkg[a.Release][a.Package]; ok {
-								log.Printf("[WARN] duplicate package annotation: %q", line)
+								slog.Warn("duplicate package annotation", slog.String("line", line))
 								ann = nil
 							}
 						}
@@ -563,10 +563,10 @@ func parselist(r io.Reader, parseheader func(line string) []string, finish func(
 		default:
 			if len(header) != 0 {
 				if keys := slices.Collect(maps.Keys(anns_types)); slices.Contains(keys, "NOT-FOR-US") && slices.Contains(keys, "package") {
-					log.Printf("[WARN] NOT-FOR-US conflicts with package annotations: %q", headerline)
+					slog.Warn("NOT-FOR-US conflicts with package annotations", slog.String("header", headerline))
 				}
 				if keys := slices.Collect(maps.Keys(anns_types)); slices.Contains(keys, "REJECTED") && slices.Contains(keys, "package") {
-					log.Printf("[WARN] REJECTED bug has package annotations: %q", headerline)
+					slog.Warn("REJECTED bug has package annotations", slog.String("header", headerline))
 				}
 				bugs = append(bugs, finish(header, headerline, anns))
 
@@ -578,7 +578,7 @@ func parselist(r io.Reader, parseheader func(line string) []string, finish func(
 
 			header = parseheader(line)
 			if len(header) == 0 {
-				log.Printf("[WARN] malformed header: %q", line)
+				slog.Warn("malformed header", slog.String("line", line))
 			}
 		}
 	}
@@ -635,7 +635,7 @@ func annotationdispatcher(line string) any {
 		case slices.Contains(pseudoStruct, kind):
 			flags := parseinner(inner)
 			if kind == "itp" && !slices.ContainsFunc(flags, func(i any) bool { _, ok := i.(PackageBugAnnotation); return ok }) {
-				log.Printf("[WARN] <itp> needs Debian bug reference: %q", line)
+				slog.Warn("<itp> needs Debian bug reference", slog.String("line", line))
 			}
 			return PackageAnnotation{
 				Line:        line,
@@ -648,7 +648,7 @@ func annotationdispatcher(line string) any {
 				Flags:       flags,
 			}
 		default:
-			log.Printf("[WARN] invalid pseudo-version(%q): %q", kind, line)
+			slog.Warn("invalid pseudo-version", slog.String("kind", kind), slog.String("line", line))
 			return nil
 		}
 	case xrefRegexp.MatchString(line):
@@ -660,7 +660,7 @@ func annotationdispatcher(line string) any {
 				Bugs: x,
 			}
 		}
-		log.Printf("[WARN] empty cross-reference: %q", line)
+		slog.Warn("empty cross-reference", slog.String("line", line))
 		return nil
 	case flagRegexp.MatchString(line):
 		groups := flagRegexp.FindStringSubmatch(line)
@@ -676,7 +676,7 @@ func annotationdispatcher(line string) any {
 			Description: groups[stringRegexp.SubexpIndex("description")],
 		}
 	default:
-		log.Printf("[WARN] invalid annotation: %q", line)
+		slog.Warn("invalid annotation", slog.String("line", line))
 		return nil
 	}
 }
@@ -697,7 +697,7 @@ func parseinner(inner string) []any {
 				a, ok := i.(PackageUrgencyAnnotation)
 				return ok && a.Severity == f
 			}) {
-				log.Printf("[WARN] duplicate urgency(%q): %q", f, inner)
+				slog.Warn("duplicate urgency", slog.String("field", f), slog.String("inner", inner))
 			} else {
 				flags = append(flags, PackageUrgencyAnnotation{Severity: f})
 			}
@@ -705,18 +705,18 @@ func parseinner(inner string) []any {
 			groups := pkgBugRegexp.FindStringSubmatch(innerann)
 			no, err := strconv.Atoi(groups[pkgBugRegexp.SubexpIndex("no")])
 			if err != nil {
-				log.Printf("[WARN] atoi err: %s", err)
+				slog.Warn("atoi err", slog.Any("err", err))
 			}
 			if slices.ContainsFunc(flags, func(i any) bool {
 				a, ok := i.(PackageBugAnnotation)
 				return ok && a.Bug == no
 			}) {
-				log.Printf("[WARN] duplicate bug number(%q): %q", fmt.Sprintf("%d", no), inner)
+				slog.Warn("duplicate bug number", slog.String("number", fmt.Sprintf("%d", no)), slog.String("inner", inner))
 			} else {
 				flags = append(flags, PackageBugAnnotation{Bug: no})
 			}
 		default:
-			log.Printf("[WARN] invalid inner annotation(%q): %q", innerann, inner)
+			slog.Warn("invalid inner annotation", slog.String("annotation", innerann), slog.String("inner", inner))
 		}
 	}
 
@@ -727,7 +727,7 @@ func parseinner(inner string) []any {
 		}
 	}
 	if len(urgencies) > 1 {
-		log.Printf("[WARN] multiple urgencies(%q): %q", strings.Join(urgencies, ", "), inner)
+		slog.Warn("multiple urgencies", slog.String("urgencies", strings.Join(urgencies, ", ")), slog.String("inner", inner))
 	}
 
 	return flags
@@ -789,7 +789,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
 
-	log.Printf("Fetch Debian %s stable", codename)
+	slog.Info("Fetch Debian stable", slog.String("codename", codename))
 	sections, err := fetchRelease(client, fmt.Sprintf("%s/dists/%s/Release", stableURL, codename))
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch release")
@@ -807,7 +807,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 		return m, nil
 	}
 
-	log.Printf("Fetch Debian %s security", codename)
+	slog.Info("Fetch Debian security", slog.String("codename", codename))
 	securityDistURL := fmt.Sprintf("%s/dists/%s/updates", securityURL, codename)
 	if slices.Index(codenames, codename) == -1 || slices.Index(codenames, codename) > slices.Index(codenames, "buster") {
 		securityDistURL = fmt.Sprintf("%s/dists/%s-security", securityURL, codename)
@@ -826,7 +826,7 @@ func (opts *options) fetchSource(codename string, archived bool) (map[string]map
 		m["security"][filepath.Base(section)] = sources
 	}
 
-	log.Printf("Fetch Debian %s backport", codename)
+	slog.Info("Fetch Debian backport", slog.String("codename", codename))
 	if slices.Index(codenames, codename) == -1 || slices.Index(codenames, codename) >= slices.Index(codenames, "wheezy") {
 		backportURL = stableURL
 	}
@@ -855,7 +855,7 @@ func fetchRelease(c *utilhttp.Client, releaseURL string) ([]string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("[WARN] fetch %s error: %s", releaseURL, errors.Errorf("error response with status code %d", resp.StatusCode))
+		slog.Warn("fetch error", slog.String("url", releaseURL), slog.Any("err", errors.Errorf("error response with status code %d", resp.StatusCode)))
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil, nil
 	}
@@ -958,7 +958,7 @@ func parseSource(r io.Reader) (map[string]textproto.MIMEHeader, error) {
 
 		name := header.Get("Package")
 		if name == "" {
-			log.Printf("[WARN] Package header not found")
+			slog.Warn("Package header not found")
 			continue
 		}
 		m[name] = header

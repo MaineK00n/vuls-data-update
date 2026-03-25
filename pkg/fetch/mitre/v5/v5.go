@@ -6,7 +6,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch MITRE CVE V5 List")
+	slog.Info("Fetch MITRE CVE V5 List")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch mitre data")

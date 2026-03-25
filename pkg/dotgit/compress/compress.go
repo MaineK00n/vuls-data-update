@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -61,7 +61,7 @@ func Compress(src, dst string, opts ...Option) error {
 		opt.apply(options)
 	}
 
-	log.Printf("[INFO] Compress %s dotgit to %s", src, dst)
+	slog.Info("Compress dotgit", slog.String("src", src), slog.String("dst", dst))
 
 	if err := options.compress(src, dst); err != nil {
 		if err2 := os.Remove(dst); err2 != nil {

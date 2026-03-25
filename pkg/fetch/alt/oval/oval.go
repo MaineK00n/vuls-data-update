@@ -7,7 +7,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -76,14 +76,14 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch ALT Linux OVAL")
+	slog.Info("Fetch ALT Linux OVAL")
 	bs, err := options.fetchBranches()
 	if err != nil {
 		return errors.Wrap(err, "fetch branches")
 	}
 
 	for _, b := range bs {
-		log.Printf("[INFO] Fetch ALT Linux %s OVAL", b)
+		slog.Info("Fetch ALT Linux OVAL", slog.String("branch", b))
 		if err := options.fetch(b); err != nil {
 			return errors.Wrapf(err, "fetch alt linux %s oval", b)
 		}

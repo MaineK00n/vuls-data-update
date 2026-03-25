@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -109,7 +109,7 @@ func Fetch(args []string, opts ...Option) error {
 }
 
 func (opts options) fetch(ids []string) error {
-	log.Printf("[INFO] Fetch Fortinet CSAF")
+	slog.Info("Fetch Fortinet CSAF")
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(opts.retry))
 

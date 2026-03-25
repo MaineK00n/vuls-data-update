@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json/v2"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -82,7 +82,7 @@ func Pull(repository string, opts ...Option) error {
 		opt.apply(options)
 	}
 
-	log.Printf("[INFO] Pull dotgit from %s", repository)
+	slog.Info("Pull dotgit", slog.String("repository", repository))
 
 	ctx := context.TODO()
 

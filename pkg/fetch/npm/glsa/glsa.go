@@ -5,7 +5,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch NPM GLSA")
+	slog.Info("Fetch NPM GLSA")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repoURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch repository")

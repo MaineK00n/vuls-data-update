@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Windows CVRF")
+	slog.Info("Fetch Windows CVRF")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch updates")
@@ -95,7 +95,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	for _, u := range us.Value {
-		log.Printf("[INFO] Fetch Windows CVRF %s", path.Base(u.CvrfURL))
+		slog.Info("Fetch Windows CVRF", slog.String("file", path.Base(u.CvrfURL)))
 		c, err := func() (*CVRF, error) {
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u.CvrfURL)
 			if err != nil {

@@ -7,7 +7,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -76,7 +76,7 @@ func Fetch(apiToken string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch VulnCheck KEV")
+	slog.Info("Fetch VulnCheck KEV")
 
 	if err := os.MkdirAll(options.dir, 0755); err != nil {
 		return errors.Wrapf(err, "mkdir %s", options.dir)

@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -96,7 +96,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch endoflife.date API")
+	slog.Info("Fetch endoflife.date API")
 	header := make(http.Header)
 	header.Set("Accept", "application/json")
 

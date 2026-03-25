@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -96,7 +96,7 @@ func Fetch(ids []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Palo Alto Networks Security Advisories (JSON)")
+	slog.Info("Fetch Palo Alto Networks Security Advisories (JSON)")
 
 	us := make([]string, 0, len(ids))
 	for _, id := range ids {

@@ -5,7 +5,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -75,7 +75,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch endoflife.date products")
+	slog.Info("Fetch endoflife.date products")
 
 	re, err := regexp.Compile(`(?s)^---\n(.*?)\n---`)
 	if err != nil {

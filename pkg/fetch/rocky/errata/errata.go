@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -86,7 +86,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Rocky Linux Errata")
+	slog.Info("Fetch Rocky Linux Errata")
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	bar := progressbar.Default(-1, "Paging Rocky Linux Errata")

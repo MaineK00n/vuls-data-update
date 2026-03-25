@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json/v2"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"slices"
 	"strings"
@@ -59,7 +59,7 @@ func Untag(imageRef, token string, opts ...Option) error {
 		o.apply(options)
 	}
 
-	log.Printf("[INFO] Untag dotgit %s", imageRef)
+	slog.Info("Untag dotgit", slog.String("image", imageRef))
 
 	ctx := context.TODO()
 
@@ -138,8 +138,8 @@ func (o options) moveTagToDummy(ctx context.Context, owner, pack, tag, token str
 		return ocispec.Descriptor{}, errors.Wrapf(err, "fetch original manifest. tag: %s", tag)
 	}
 	defer r.Close()
-	log.Printf("[INFO] Original digest: %s", original.Digest.String())
-	log.Printf("[INFO] If you made a mistake, run the following command: vuls-data-update dotgit remote tag ghcr.io/%s/%s@%s %s --token $(gh auth token)", owner, pack, original.Digest.String(), tag)
+	slog.Info("Original digest", slog.String("digest", original.Digest.String()))
+	slog.Info("If you made a mistake, run the following command", slog.String("cmd", fmt.Sprintf("vuls-data-update dotgit remote tag ghcr.io/%s/%s@%s %s --token $(gh auth token)", owner, pack, original.Digest.String(), tag)))
 
 	dummyDesc, err := oras.PackManifest(ctx, dst, oras.PackManifestVersion1_1, "application/vnd.vulsio.vuls-data-db.dotgit.dummy.artifact.v1", oras.PackManifestOptions{})
 	if err != nil {

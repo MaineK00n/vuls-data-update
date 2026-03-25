@@ -3,7 +3,7 @@ package packagemanifest
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -96,7 +96,7 @@ Red Hat, as the licensor of this document, waives the right to enforce, and agre
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	for _, major := range majors {
-		log.Printf("[INFO] Fetch RHEL %s Package Manifest", major)
+		slog.Info("Fetch RHEL Package Manifest", slog.String("version", major))
 		u := fmt.Sprintf(options.baseURL, major)
 
 		resp, err := c.Get(u)

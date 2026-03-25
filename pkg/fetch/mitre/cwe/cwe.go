@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch MITRE Common Weakness Enumeration: CWE")
+	slog.Info("Fetch MITRE Common Weakness Enumeration: CWE")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch cwe data")
@@ -116,7 +116,7 @@ func Fetch(opts ...Option) error {
 		exRefs[ref.ReferenceID] = ref
 	}
 
-	log.Printf(`[INFO] Weakness`)
+	slog.Info("Fetch CWE Weakness")
 	weaknesses := convertWeaknesses(catalog.Weaknesses, exRefs)
 
 	bar := progressbar.Default(int64(len(weaknesses)))
@@ -129,7 +129,7 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	log.Printf(`[INFO] Category`)
+	slog.Info("Fetch CWE Category")
 	categories := convertCategories(catalog.Categories, exRefs)
 
 	bar = progressbar.Default(int64(len(categories)))
@@ -142,7 +142,7 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	log.Printf(`[INFO] View`)
+	slog.Info("Fetch CWE View")
 	views := convertViews(catalog.Views, exRefs)
 
 	bar = progressbar.Default(int64(len(views)))
@@ -196,7 +196,7 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 		for _, ref := range w.References {
 			exRef, ok := exRefs[ref.ExternalReferenceID]
 			if !ok {
-				log.Printf(`[WARN] External_Reference not found. External_Reference_ID: %s`, ref.ExternalReferenceID)
+				slog.Warn("External_Reference not found", slog.String("external_reference_id", ref.ExternalReferenceID))
 				continue
 			}
 			references = append(references, Reference{
@@ -334,7 +334,7 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 		for _, ref := range c.References {
 			exRef, ok := exRefs[ref.ExternalReferenceID]
 			if !ok {
-				log.Printf(`[WARN] External_Reference not found. External_Reference_ID: %s`, ref.ExternalReferenceID)
+				slog.Warn("External_Reference not found", slog.String("external_reference_id", ref.ExternalReferenceID))
 				continue
 			}
 			references = append(references, Reference{
@@ -398,7 +398,7 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 		for _, ref := range v.References {
 			exRef, ok := exRefs[ref.ExternalReferenceID]
 			if !ok {
-				log.Printf(`[WARN] External_Reference not found. External_Reference_ID: %s`, ref.ExternalReferenceID)
+				slog.Warn("External_Reference not found", slog.String("external_reference_id", ref.ExternalReferenceID))
 				continue
 			}
 			references = append(references, Reference{

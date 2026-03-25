@@ -7,7 +7,7 @@ import (
 	stderrors "errors"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -101,7 +101,7 @@ func Fetch(opts ...Option) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	for _, kind := range []string{"cve", "advisories"} {
-		log.Printf("[INFO] Fetch openEuler %s Security Advisories (CSAF)", kind)
+		slog.Info("Fetch openEuler Security Advisories (CSAF)", slog.String("kind", kind))
 		is, err := options.fetchCSAFIndex(client, kind)
 		if err != nil {
 			return errors.Wrapf(err, "fetch %s index", kind)

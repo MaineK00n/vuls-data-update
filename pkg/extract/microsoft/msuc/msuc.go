@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -67,7 +67,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Microsoft MSUC")
+	slog.Info("Extract Microsoft MSUC")
 
 	uidm, err := buildUpdateIDMap(args)
 	if err != nil {

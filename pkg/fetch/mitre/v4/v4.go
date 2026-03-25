@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -75,7 +75,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch MITRE CVE V4 List")
+	slog.Info("Fetch MITRE CVE V4 List")
 	h := make(http.Header)
 	h.Set("Accept-Encoding", "gzip")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL, utilhttp.WithRequestHeader(h))

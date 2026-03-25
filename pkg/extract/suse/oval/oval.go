@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"maps"
 	"os"
 	"path/filepath"
@@ -102,7 +102,7 @@ func Extract(inputDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract SUSE OVAL")
+	slog.Info("Extract SUSE OVAL")
 
 	type osver struct {
 		osname  string
@@ -151,7 +151,7 @@ func Extract(inputDir string, opts ...Option) error {
 
 	for _, ov := range ovs {
 		baseDir := filepath.Join(inputDir, ov.osname, ov.version, "vulnerability")
-		log.Printf("[INFO] extract OVAL files. dir: %s", baseDir)
+		slog.Info("extract OVAL files", slog.String("dir", baseDir))
 
 		g, ctx := errgroup.WithContext(context.Background())
 		g.SetLimit(options.concurrency)

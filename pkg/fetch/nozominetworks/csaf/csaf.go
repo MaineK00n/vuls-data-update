@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -98,7 +98,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Nozomi Networks CSAF")
+	slog.Info("Fetch Nozomi Networks CSAF")
 	if err := options.fetch(); err != nil {
 		return errors.Wrap(err, "fetch")
 	}

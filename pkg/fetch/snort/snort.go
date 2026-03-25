@@ -6,7 +6,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Snort Rules")
+	slog.Info("Fetch Snort Rules")
 	rules, err := options.fetch()
 	if err != nil {
 		return errors.Wrap(err, "fetch snort rules")

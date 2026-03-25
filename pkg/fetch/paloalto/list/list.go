@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Palo Alto Networks Security Advisories (list)")
+	slog.Info("Fetch Palo Alto Networks Security Advisories (list)")
 
 	var advs []Advisory
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))

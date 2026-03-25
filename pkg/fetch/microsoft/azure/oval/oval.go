@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -75,7 +75,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Azure Linux OVAL")
+	slog.Info("Fetch Azure Linux OVAL")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch")
@@ -124,9 +124,9 @@ func Fetch(opts ...Option) error {
 			return errors.Errorf("unexpected oval file name. expected: %q, actual: %q", []string{"azurelinux-<version>-oval.xml", "cbl-mariner-<version>-oval.xml"}, filepath.Base(hdr.Name))
 		}
 
-		log.Printf("[INFO] Fetch %s %s OVAL", t, v)
+		slog.Info("Fetch OVAL", slog.String("type", t), slog.String("version", v))
 
-		log.Printf("[INFO] Fetch %s %s Definitions", t, v)
+		slog.Info("Fetch Definitions", slog.String("type", t), slog.String("version", v))
 		bar := progressbar.Default(int64(len(root.Definitions.Definition)))
 		for _, def := range root.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, t, v, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
@@ -136,7 +136,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch %s %s Tests", t, v)
+		slog.Info("Fetch Tests", slog.String("type", t), slog.String("version", v))
 		bar = progressbar.Default(int64(len(root.Tests.RpminfoTest)))
 		for _, test := range root.Tests.RpminfoTest {
 			if err := util.Write(filepath.Join(options.dir, t, v, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
@@ -146,7 +146,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch %s %s Objects", t, v)
+		slog.Info("Fetch Objects", slog.String("type", t), slog.String("version", v))
 		bar = progressbar.Default(int64(len(root.Objects.RpminfoObject)))
 		for _, object := range root.Objects.RpminfoObject {
 			if err := util.Write(filepath.Join(options.dir, t, v, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
@@ -156,7 +156,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch %s %s States", t, v)
+		slog.Info("Fetch States", slog.String("type", t), slog.String("version", v))
 		bar = progressbar.Default(int64(len(root.States.RpminfoState)))
 		for _, state := range root.States.RpminfoState {
 			if err := util.Write(filepath.Join(options.dir, t, v, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {

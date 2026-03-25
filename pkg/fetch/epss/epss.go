@@ -5,7 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -101,7 +101,7 @@ func Fetch(args []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Exploit Prediction Scoring System: EPSS")
+	slog.Info("Fetch Exploit Prediction Scoring System: EPSS")
 
 	urls := make([]string, 0, len(args))
 	for _, arg := range args {
@@ -121,7 +121,7 @@ func Fetch(args []string, opts ...Option) error {
 		if resp.StatusCode != http.StatusOK {
 			_, _ = io.Copy(io.Discard, resp.Body)
 			if resp.StatusCode == http.StatusNotFound && slices.Contains([]string{"2021-04-22", "2021-04-23", "2021-04-24", "2021-04-25", "2021-04-26", "2021-06-07", "2021-06-18", "2022-07-14", time.Now().UTC().Format("2006-01-02")}, strings.TrimSuffix(strings.TrimPrefix(path.Base(resp.Request.URL.Path), "epss_scores-"), ".csv.gz")) {
-				log.Printf("[WARN] %s is not found", resp.Request.URL)
+				slog.Warn("not found", slog.String("url", resp.Request.URL.String()))
 				return nil
 			}
 			return errors.Errorf("error response with status code %d", resp.StatusCode)
@@ -162,7 +162,7 @@ func Fetch(args []string, opts ...Option) error {
 				}
 				epss, err := strconv.ParseFloat(r[1], 64)
 				if err != nil {
-					log.Printf(`[WARN] error parse EPSS Score. strconv.ParseFloat(%s, 64)`, r[1])
+					slog.Warn("error parse EPSS Score", slog.String("value", r[1]))
 					break
 				}
 
@@ -178,12 +178,12 @@ func Fetch(args []string, opts ...Option) error {
 				}
 				epss, err := strconv.ParseFloat(r[1], 64)
 				if err != nil {
-					log.Printf(`[WARN] error parse EPSS Score. strconv.ParseFloat(%s, 64)`, r[1])
+					slog.Warn("error parse EPSS Score", slog.String("value", r[1]))
 					break
 				}
 				percentile, err := strconv.ParseFloat(r[2], 64)
 				if err != nil {
-					log.Printf(`[WARN] error parse EPSS Percentile. strconv.ParseFloat(%s, 64)`, r[2])
+					slog.Warn("error parse EPSS Percentile", slog.String("value", r[2]))
 					break
 				}
 				root.Data = append(root.Data, CVE{
@@ -195,13 +195,13 @@ func Fetch(args []string, opts ...Option) error {
 				switch len(r) {
 				case 2:
 					if !strings.HasPrefix(r[0], "#model_version:") {
-						log.Printf(`[WARN] unexpected model version. expected: "#model_version:<version>", actual: "%s"`, r[0])
+						slog.Warn("unexpected model version", slog.String("expected", "#model_version:<version>"), slog.String("actual", r[0]))
 						break
 					}
 					root.Model = strings.TrimPrefix(r[0], "#model_version:")
 
 					if !strings.HasPrefix(r[1], "score_date:") {
-						log.Printf(`[WARN] unexpected score date. expected: "#score_date:<2006-01-02T15:04:05-0700>", actual: "%s"`, r[1])
+						slog.Warn("unexpected score date", slog.String("expected", "score_date:<2006-01-02T15:04:05-0700>"), slog.String("actual", r[1]))
 						break
 					}
 					root.ScoreDate = strings.TrimPrefix(r[1], "score_date:")
@@ -211,12 +211,12 @@ func Fetch(args []string, opts ...Option) error {
 					}
 					epss, err := strconv.ParseFloat(r[1], 64)
 					if err != nil {
-						log.Printf(`[WARN] error parse EPSS Score. strconv.ParseFloat(%s, 64)`, r[1])
+						slog.Warn("error parse EPSS Score", slog.String("value", r[1]))
 						break
 					}
 					percentile, err := strconv.ParseFloat(r[2], 64)
 					if err != nil {
-						log.Printf(`[WARN] error parse EPSS Percentile. strconv.ParseFloat(%s, 64)`, r[2])
+						slog.Warn("error parse EPSS Percentile", slog.String("value", r[2]))
 						break
 					}
 					root.Data = append(root.Data, CVE{
@@ -225,19 +225,19 @@ func Fetch(args []string, opts ...Option) error {
 						Percentile: &percentile,
 					})
 				default:
-					log.Printf(`[WARN] unexpected epss line. expected: ["#model_version:<version>", "#score_date:<2006-01-02T15:04:05-0700>"] or ["<CVE ID>", "<EPSS Score>", "<EPSS Percentile>"], actual: %q`, r)
+					slog.Warn("unexpected epss line", slog.String("expected", `"#model_version:<version>", "score_date:<2006-01-02T15:04:05-0700>", "<CVE ID>", "<EPSS Score>", "<EPSS Percentile>"`), slog.Any("actual", r))
 				}
 			default:
 				switch len(r) {
 				case 2:
 					if !strings.HasPrefix(r[0], "#model_version:") {
-						log.Printf(`[WARN] unexpected model version. expected: "#model_version:<version>", actual: "%s"`, r[0])
+						slog.Warn("unexpected model version", slog.String("expected", "#model_version:<version>"), slog.String("actual", r[0]))
 						break
 					}
 					root.Model = strings.TrimPrefix(r[0], "#model_version:")
 
 					if !strings.HasPrefix(r[1], "score_date:") {
-						log.Printf(`[WARN] unexpected score date. expected: "#score_date:<2006-01-02T15:04:05-0700>", actual: "%s"`, r[1])
+						slog.Warn("unexpected score date", slog.String("expected", "score_date:<2006-01-02T15:04:05-0700>"), slog.String("actual", r[1]))
 						break
 					}
 					root.ScoreDate = strings.TrimPrefix(r[1], "score_date:")
@@ -247,12 +247,12 @@ func Fetch(args []string, opts ...Option) error {
 					}
 					epss, err := strconv.ParseFloat(r[1], 64)
 					if err != nil {
-						log.Printf(`[WARN] error parse EPSS Score. strconv.ParseFloat(%s, 64)`, r[1])
+						slog.Warn("error parse EPSS Score", slog.String("value", r[1]))
 						break
 					}
 					percentile, err := strconv.ParseFloat(r[2], 64)
 					if err != nil {
-						log.Printf(`[WARN] error parse EPSS Percentile. strconv.ParseFloat(%s, 64)`, r[2])
+						slog.Warn("error parse EPSS Percentile", slog.String("value", r[2]))
 						break
 					}
 					root.Data = append(root.Data, CVE{
@@ -261,7 +261,7 @@ func Fetch(args []string, opts ...Option) error {
 						Percentile: &percentile,
 					})
 				default:
-					log.Printf(`[WARN] unexpected epss line. expected: ["#model_version:<version>", "#score_date:<2006-01-02T15:04:05-0700>"] or ["<CVE ID>", "<EPSS Score>", "<EPSS Percentile>"], actual: %q`, r)
+					slog.Warn("unexpected epss line", slog.String("expected", `"#model_version:<version>", "score_date:<2006-01-02T15:04:05-0700>", "<CVE ID>", "<EPSS Score>", "<EPSS Percentile>"`), slog.Any("actual", r))
 				}
 			}
 

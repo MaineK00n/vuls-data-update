@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -99,16 +99,16 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch RedHat CVE API")
+	slog.Info("Fetch RedHat CVE API")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
-	log.Printf("[INFO] Fetch RedHat 1996...%d CVEs", time.Now().Year())
+	slog.Info("Fetch RedHat CVEs", slog.Int("from", 1996), slog.Int("to", time.Now().Year()))
 	urls, err := options.list(client)
 	if err != nil {
 		return errors.Wrap(err, "list cve url")
 	}
 
-	log.Println("[INFO] Fetch RedHat CVEs")
+	slog.Info("Fetch RedHat CVEs")
 	if err := client.PipelineGet(urls, options.concurrency, options.wait, false, func(resp *http.Response) error {
 		defer resp.Body.Close()
 

@@ -3,7 +3,7 @@ package errata
 import (
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -75,7 +75,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Rocky Linux Errata")
+	slog.Info("Extract Rocky Linux Errata")
 
 	entries, err := os.ReadDir(args)
 	if err != nil {
@@ -191,7 +191,7 @@ func extract(fetched errata.Advisory, raws []string) (dataTypes.Data, error) {
 			// This should be an error, but until it is corrected, it will be processed in the log and no criterion will be generated for that package.
 			// https://github.com/resf/distro-tools/issues/72
 			if strings.Contains(evr, ".module+el") && (p.ModuleName == nil || p.ModuleStream == nil) {
-				log.Printf("[WARN] skip generating criterion for %q in %q: module package must have module info. module_name: %v, module_stream: %v", p.NEVRA, fetched.Name, p.ModuleName, p.ModuleStream)
+				slog.Warn("skip generating criterion: module package must have module info", slog.String("name", fetched.Name), slog.String("nevra", p.NEVRA), slog.Any("module_name", p.ModuleName), slog.Any("module_stream", p.ModuleStream))
 				continue
 			}
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -73,7 +73,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Wind River Linux CVE Tracker")
+	slog.Info("Fetch Wind River Linux CVE Tracker")
 	cloneDir, err := os.MkdirTemp("", "vuls-data-update")
 	if err != nil {
 		return errors.Wrapf(err, "mkdir %s", cloneDir)

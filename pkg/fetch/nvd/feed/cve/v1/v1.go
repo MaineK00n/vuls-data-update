@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -97,7 +97,7 @@ func Fetch(opts ...Option) error {
 		}
 		feedname := strings.TrimSuffix(strings.TrimPrefix(path.Base(uu.Path), "nvdcve-1.1-"), ".json.gz")
 
-		log.Printf("[INFO] Fetch NVD CVE Feed 1.1 %s", feedname)
+		slog.Info("Fetch NVD CVE Feed 1.1", slog.String("feed", feedname))
 		cves, err := options.fetch(u)
 		if err != nil {
 			return errors.Wrapf(err, "fetch nvd cve %s feed 1.1", feedname)

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io/fs"
-	"log"
+	"log/slog"
 	"maps"
 	"path/filepath"
 	"slices"
@@ -86,7 +86,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract RedHat VEX")
+	slog.Info("Extract RedHat VEX")
 
 	br := utiljson.NewJSONReader()
 	var r2c repository2cpe.RepositoryToCPE
@@ -351,7 +351,7 @@ func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]str
 									// https://issues.redhat.com/projects/SECDATA/issues/SECDATA-1206
 									switch trackingID {
 									case "CVE-2024-6923":
-										log.Printf("[WARN] %s: skip product with unexpected rpmmod format. expected: %q, actual: %q", trackingID, "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
+										slog.Warn("skip product with unexpected rpmmod format", slog.String("tracking_id", trackingID), slog.String("expected", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>"), slog.String("purl", fpn.ProductIdentificationHelper.PURL))
 										return nil, nil
 									default:
 										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
@@ -779,7 +779,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 	for pid, ps := range pm {
 		for _, p := range ps {
 			if p.name == "" {
-				log.Printf("[WARN] package name of %q in %q cannot be found", pid, string(baseVulnerability.ID))
+				slog.Warn("package name cannot be found", slog.String("product_id", string(pid)), slog.String("vulnerability_id", string(baseVulnerability.ID)))
 				continue
 			}
 
@@ -790,7 +790,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 			ass, found := assm[pid]
 			if !found {
 				// FIXME: what to do?
-				log.Printf("[WARN] advisory/severity/status not found for pid: %s", pid)
+				slog.Warn("advisory/severity/status not found for pid", slog.String("product_id", string(pid)))
 				continue
 			}
 

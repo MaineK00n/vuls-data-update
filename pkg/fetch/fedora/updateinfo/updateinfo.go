@@ -9,7 +9,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path"
@@ -110,7 +110,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Fedora Updateinfo")
+	slog.Info("Fetch Fedora Updateinfo")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	us, err := options.fetchFullFileTimeList(client)
@@ -126,7 +126,7 @@ func Fetch(opts ...Option) error {
 }
 
 func (o options) fetchFullFileTimeList(client *utilhttp.Client) ([]string, error) {
-	log.Printf("[INFO] Fetch Fedora fullfiletimelist")
+	slog.Info("Fetch Fedora fullfiletimelist")
 
 	var us []string
 

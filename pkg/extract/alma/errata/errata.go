@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"maps"
 	"os"
 	"path/filepath"
@@ -73,7 +73,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract AlmaLinux Errata")
+	slog.Info("Extract AlmaLinux Errata")
 	ventries, err := os.ReadDir(args)
 	if err != nil {
 		return errors.Wrapf(err, "read dir %s", args)

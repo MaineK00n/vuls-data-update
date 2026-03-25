@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Debian OVAL")
+	slog.Info("Fetch Debian OVAL")
 	ovals, err := options.walkIndexOf()
 	if err != nil {
 		return errors.Wrap(err, "walk index of")
@@ -86,13 +86,13 @@ func Fetch(opts ...Option) error {
 	for _, ovalname := range ovals {
 		code := strings.TrimPrefix(strings.TrimSuffix(ovalname, ".xml.bz2"), "oval-definitions-")
 
-		log.Printf("[INFO] Fetch Debian %s OVAL", code)
+		slog.Info("Fetch Debian OVAL", slog.String("codename", code))
 		root, err := options.fetch(ovalname)
 		if err != nil {
 			return errors.Wrapf(err, "fetch debian %s oval", code)
 		}
 
-		log.Printf("[INFO] Fetch Debian %s Definitions", code)
+		slog.Info("Fetch Debian Definitions", slog.String("codename", code))
 		bar := progressbar.Default(int64(len(root.Definitions.Definition)))
 		for _, def := range root.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, code, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
@@ -102,7 +102,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch Debian %s Tests", code)
+		slog.Info("Fetch Debian Tests", slog.String("codename", code))
 		bar = progressbar.Default(2 + int64(len(root.Tests.DpkginfoTest)))
 		if err := util.Write(filepath.Join(options.dir, code, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", root.Tests.Textfilecontent54Test.ID)), root.Tests.Textfilecontent54Test); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "tests", "textfilecontent54_test", fmt.Sprintf("%s.json", root.Tests.Textfilecontent54Test.ID)))
@@ -120,7 +120,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch Debian %s Objects", code)
+		slog.Info("Fetch Debian Objects", slog.String("codename", code))
 		bar = progressbar.Default(2 + int64(len(root.Objects.DpkginfoObject)))
 		if err := util.Write(filepath.Join(options.dir, code, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", root.Objects.Textfilecontent54Object.ID)), root.Objects.Textfilecontent54Object); err != nil {
 			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, code, "objects", "textfilecontent54_object", fmt.Sprintf("%s.json", root.Objects.Textfilecontent54Object.ID)))
@@ -138,7 +138,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch Debian %s States", code)
+		slog.Info("Fetch Debian States", slog.String("codename", code))
 		bar = progressbar.Default(1 + int64(len(root.States.DpkginfoState)))
 		if root.States.Textfilecontent54State.ID != "" {
 			if err := util.Write(filepath.Join(options.dir, code, "states", "textfilecontent54_state", fmt.Sprintf("%s.json", root.States.Textfilecontent54State.ID)), root.States.Textfilecontent54State); err != nil {

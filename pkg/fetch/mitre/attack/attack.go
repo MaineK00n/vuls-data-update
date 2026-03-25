@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -73,7 +73,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch MITRE ATT&CK Enterprise")
+	slog.Info("Fetch MITRE ATT&CK Enterprise")
 	if err := func() error {
 		u, err := url.JoinPath(options.baseURL, "enterprise-attack/enterprise-attack.json")
 		if err != nil {
@@ -110,7 +110,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch enterprise")
 	}
 
-	log.Printf("[INFO] Fetch MITRE ATT&CK ICS")
+	slog.Info("Fetch MITRE ATT&CK ICS")
 	if err := func() error {
 		u, err := url.JoinPath(options.baseURL, "ics-attack/ics-attack.json")
 		if err != nil {
@@ -147,7 +147,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch ics")
 	}
 
-	log.Printf("[INFO] Fetch MITRE ATT&CK Mobile")
+	slog.Info("Fetch MITRE ATT&CK Mobile")
 	if err := func() error {
 		u, err := url.JoinPath(options.baseURL, "mobile-attack/mobile-attack.json")
 		if err != nil {

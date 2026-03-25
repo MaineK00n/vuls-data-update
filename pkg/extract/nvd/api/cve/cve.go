@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -98,7 +98,7 @@ func Extract(cveDir, cpematchDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract NVD API CVE")
+	slog.Info("Extract NVD API CVE")
 
 	g, ctx := errgroup.WithContext(context.Background())
 	g.SetLimit(options.concurrency)

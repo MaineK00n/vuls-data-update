@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf(`[INFO] Fetch NVD CPE Dictionary`)
+	slog.Info("Fetch NVD CPE Dictionary")
 	cpeDict, err := options.fetch()
 	if err != nil {
 		return errors.Wrap(err, "fetch cpe dictionary")
@@ -157,7 +157,7 @@ func (opts options) fetch() ([]CPEDictItem, error) {
 			if item.Deprecated != "" {
 				b, err := strconv.ParseBool(item.Deprecated)
 				if err != nil {
-					log.Printf(`[WARN] unexpected Deprecated Value in %s. accepts: ["true", "false"], received: "%s"`, item.Cpe23Item.Name, item.Deprecated)
+					slog.Warn("unexpected Deprecated Value", slog.String("name", item.Cpe23Item.Name), slog.String("expected", "true, false"), slog.String("actual", item.Deprecated))
 				} else {
 					c.Deprecated = b
 				}

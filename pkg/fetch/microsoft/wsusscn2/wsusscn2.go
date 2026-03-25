@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -90,7 +90,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Windows WSUSSCN2")
+	slog.Info("Fetch Windows WSUSSCN2")
 	rootDir, err := options.fetch()
 	if err != nil {
 		return errors.Wrap(err, "fetch wsusscn2.cab")
@@ -140,7 +140,7 @@ func (opts options) extract(tmpDir string) error {
 		return errors.Wrap(err, "look cabextract path")
 	}
 
-	log.Printf("[INFO] extract %s", filepath.Join(tmpDir, "wsusscn2.cab"))
+	slog.Info("extract", slog.String("path", filepath.Join(tmpDir, "wsusscn2.cab")))
 	if err := exec.Command(binPath, "-d", filepath.Join(tmpDir, "wsusscn2"), filepath.Join(tmpDir, "wsusscn2.cab")).Run(); err != nil {
 		return errors.Wrap(err, "run cabextract wsusscn2.cab")
 	}
@@ -159,7 +159,7 @@ func (opts options) extract(tmpDir string) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
-	log.Printf("[INFO] extract %s", filepath.Join(tmpDir, "wsusscn2", "package.cab"))
+	slog.Info("extract", slog.String("path", filepath.Join(tmpDir, "wsusscn2", "package.cab")))
 	if err := exec.Command(binPath, "-d", filepath.Join(tmpDir, "wsusscn2", "package"), filepath.Join(tmpDir, "wsusscn2", "package.cab")).Run(); err != nil {
 		return errors.Wrap(err, "run cabextract wsusscn2/package.cab")
 	}
@@ -167,7 +167,7 @@ func (opts options) extract(tmpDir string) error {
 		return errors.Wrap(err, "remove wsusscn2/package.cab")
 	}
 
-	log.Printf("[INFO] extract %s - %s", filepath.Join(tmpDir, "wsusscn2", "package2.cab"), filepath.Join(tmpDir, "wsusscn2", fmt.Sprintf("package%d.cab", len(cabIndex.CABLIST.CAB))))
+	slog.Info("extract", slog.String("from", filepath.Join(tmpDir, "wsusscn2", "package2.cab")), slog.String("to", filepath.Join(tmpDir, "wsusscn2", fmt.Sprintf("package%d.cab", len(cabIndex.CABLIST.CAB)))))
 	eg, _ := errgroup.WithContext(context.TODO())
 	eg.SetLimit(opts.concurrency)
 	for _, c := range cabIndex.CABLIST.CAB {
@@ -207,7 +207,7 @@ func (opts options) extract(tmpDir string) error {
 }
 
 func (opts options) save(root string) error {
-	log.Printf("[INFO] save wsusscn2 update, core, extended, localized data")
+	slog.Info("save wsusscn2 update, core, extended, localized data")
 
 	f, err := os.Open(filepath.Join(root, "package", "package.xml"))
 	if err != nil {

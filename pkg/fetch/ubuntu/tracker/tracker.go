@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Ubuntu CVE Tracker")
+	slog.Info("Fetch Ubuntu CVE Tracker")
 	cloneDir, err := os.MkdirTemp("", "vuls-data-update")
 	if err != nil {
 		return errors.Wrapf(err, "mkdir %s", cloneDir)
@@ -258,7 +258,7 @@ func parse(r io.Reader) (Advisory, error) {
 		default:
 			lhs, rhs, ok := strings.Cut(line, "_")
 			if !ok {
-				log.Printf("[WARN] unexpected line format in %s. expected: %q, actual: %q", a.Candidate, "<prefix>_<package>: <text>", line)
+				slog.Warn("unexpected line format", slog.String("candidate", a.Candidate), slog.String("expected", "<prefix>_<package>: <text>"), slog.String("actual", line))
 				break
 			}
 
@@ -387,7 +387,7 @@ func parse(r io.Reader) (Advisory, error) {
 
 				status, note, _ := strings.Cut(strings.TrimSpace(rhs), " ")
 				if !slices.Contains([]string{"DNE", "needs-triage", "not-affected", "needed", "in-progress", "ignored", "pending", "deferred", "released"}, status) {
-					log.Printf("[WARN] unexpected package status in %s. expected: %q, actual: %q", a.Candidate, []string{"DNE", "needs-triage", "not-affected", "needed", "in-progress", "ignored", "pending", "deferred", "released"}, status)
+					slog.Warn("unexpected package status", slog.String("candidate", a.Candidate), slog.String("expected", "DNE, needs-triage, not-affected, needed, in-progress, ignored, pending, deferred, released"), slog.String("actual", status))
 					break
 				}
 

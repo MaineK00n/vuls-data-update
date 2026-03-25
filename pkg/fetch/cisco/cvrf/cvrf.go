@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -98,7 +98,7 @@ func Fetch(ids []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Cisco Security Advisories (CVRF). dir: %s", options.dir)
+	slog.Info("Fetch Cisco Security Advisories (CVRF)", slog.String("dir", options.dir))
 
 	us := make([]string, 0, len(ids))
 	for _, id := range ids {

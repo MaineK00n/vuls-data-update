@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -73,7 +73,7 @@ func Fetch(apikey string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Nuclei Public & Early Templates from API")
+	slog.Info("Fetch Nuclei Public & Early Templates from API")
 	if err := options.fetch(apikey); err != nil {
 		return errors.Wrap(err, "fetch")
 	}

@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"mime"
 	"net/http"
 	"path/filepath"
@@ -99,7 +99,7 @@ func Fetch(args []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Fortinet CVRF")
+	slog.Info("Fetch Fortinet CVRF")
 
 	urls := make([]string, 0, len(args))
 	for _, arg := range args {

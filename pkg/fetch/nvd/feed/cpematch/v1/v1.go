@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 
@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf(`[INFO] Fetch NVD CPE Match Feed 1.0`)
+	slog.Info("Fetch NVD CPE Match Feed 1.0")
 	cpeMatch, err := options.fetch()
 	if err != nil {
 		return errors.Wrap(err, "fetch cpe match feed 1.0")

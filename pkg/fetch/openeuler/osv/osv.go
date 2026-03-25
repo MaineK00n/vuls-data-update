@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -96,7 +96,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch openEuler Security Advisories (OSV)")
+	slog.Info("Fetch openEuler Security Advisories (OSV)")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	ids, err := options.fetchList(client)
 	if err != nil {

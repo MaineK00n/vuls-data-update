@@ -3,7 +3,7 @@ package msuc
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path"
@@ -100,7 +100,7 @@ func Fetch(queries []string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Windows Microsoft Software Update Catalog")
+	slog.Info("Fetch Windows Microsoft Software Update Catalog")
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	uids, err := options.search(client, util.Unique(queries))
@@ -110,7 +110,7 @@ func Fetch(queries []string, opts ...Option) error {
 
 	uidmap := make(map[string]struct{})
 	for len(uids) > 0 {
-		log.Printf("[INFO] Search %d Update IDs", len(uids))
+		slog.Info("Search Update IDs", slog.Int("count", len(uids)))
 
 		var us []string
 		for _, uid := range uids {
@@ -176,7 +176,7 @@ func Fetch(queries []string, opts ...Option) error {
 }
 
 func (opts options) search(client *utilhttp.Client, queries []string) ([]string, error) {
-	log.Printf("[INFO] Search %d queries", len(queries))
+	slog.Info("Search queries", slog.Int("count", len(queries)))
 
 	header := make(http.Header)
 	header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -216,7 +216,7 @@ func (opts options) search(client *utilhttp.Client, queries []string) ([]string,
 			}
 			id, _, ok := strings.Cut(val, "_")
 			if !ok {
-				log.Printf(`[WARN] unexpected id. id="%s"`, val)
+				slog.Warn("unexpected id", slog.String("id", val))
 				return
 			}
 			us = append(us, id)
@@ -258,36 +258,36 @@ func parseView(rd io.Reader, updateID string) (*Update, error) {
 	u.Description = doc.Find("span#ScopedViewHandler_desc").Text()
 	_, u.Architecture, found = strings.Cut(r.Replace(doc.Find("div#archDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#archDiv format. expected: "...:<arch>", actual: "%s"`, r.Replace(doc.Find("div#archDiv").Text()))
+		slog.Warn("unexpected div#archDiv format", slog.String("expected", "...:<arch>"), slog.String("actual", r.Replace(doc.Find("div#archDiv").Text())))
 	}
 	_, u.Classification, found = strings.Cut(r.Replace(doc.Find("div#classificationDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#classificationDiv format. expected: "...:<classification>", actual: "%s"`, r.Replace(doc.Find("div#classificationDiv").Text()))
+		slog.Warn("unexpected div#classificationDiv format", slog.String("expected", "...:<classification>"), slog.String("actual", r.Replace(doc.Find("div#classificationDiv").Text())))
 	}
 	_, u.SupportedProducts, found = strings.Cut(r.Replace(doc.Find("div#productsDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#productsDiv format. expected: "...:<products>", actual: "%s"`, r.Replace(doc.Find("div#products").Text()))
+		slog.Warn("unexpected div#productsDiv format", slog.String("expected", "...:<products>"), slog.String("actual", r.Replace(doc.Find("div#productsDiv").Text())))
 	}
 	_, u.SupportedLanguages, found = strings.Cut(r.Replace(doc.Find("div#languagesDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#languagesDiv format. expected: "...:<languages>", actual: "%s"`, r.Replace(doc.Find("div#languagesDiv").Text()))
+		slog.Warn("unexpected div#languagesDiv format", slog.String("expected", "...:<languages>"), slog.String("actual", r.Replace(doc.Find("div#languagesDiv").Text())))
 	}
 	_, u.SecurityBulliten, found = strings.Cut(r.Replace(doc.Find("div#securityBullitenDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#securityBullitenDiv format. expected: "...:<securityBulliten>", actual: "%s"`, r.Replace(doc.Find("div#securityBullitenDiv").Text()))
+		slog.Warn("unexpected div#securityBullitenDiv format", slog.String("expected", "...:<securityBulliten>"), slog.String("actual", r.Replace(doc.Find("div#securityBullitenDiv").Text())))
 	}
 	u.MSRCSeverity = doc.Find("span#ScopedViewHandler_msrcSeverity").Text()
 	_, u.KBArticle, found = strings.Cut(r.Replace(doc.Find("div#kbDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#kbDiv format. expected: "...:<kb>", actual: "%s"`, r.Replace(doc.Find("div#kbDiv").Text()))
+		slog.Warn("unexpected div#kbDiv format", slog.String("expected", "...:<kb>"), slog.String("actual", r.Replace(doc.Find("div#kbDiv").Text())))
 	}
 	_, u.MoreInfo, found = strings.Cut(r.Replace(doc.Find("div#moreInfoDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#moreInfoDiv format. expected: "...:<moreInfo>", actual: "%s"`, r.Replace(doc.Find("div#moreInfoDiv").Text()))
+		slog.Warn("unexpected div#moreInfoDiv format", slog.String("expected", "...:<moreInfo>"), slog.String("actual", r.Replace(doc.Find("div#moreInfoDiv").Text())))
 	}
 	_, u.SupportURL, found = strings.Cut(r.Replace(doc.Find("div#suportUrlDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#suportUrlDiv format. expected: "...:<suportUrl>", actual: "%s"`, r.Replace(doc.Find("div#suportUrlDiv").Text()))
+		slog.Warn("unexpected div#suportUrlDiv format", slog.String("expected", "...:<supportURL>"), slog.String("actual", r.Replace(doc.Find("div#suportUrlDiv").Text())))
 	}
 
 	doc.Find("div#supersededbyInfo > div > a").Each(func(_ int, s *goquery.Selection) {
@@ -296,7 +296,7 @@ func parseView(rd io.Reader, updateID string) (*Update, error) {
 			return
 		}
 		if !strings.HasPrefix(val, "ScopedViewInline.aspx?updateid=") {
-			log.Printf(`[WARN] unexpected href. href="%s"`, val)
+			slog.Warn("unexpected href", slog.String("href", val))
 			return
 		}
 		u.Supersededby = append(u.Supersededby, Supersededby{
@@ -314,11 +314,11 @@ func parseView(rd io.Reader, updateID string) (*Update, error) {
 	u.Connectivity = doc.Find("span#ScopedViewHandler_connectivity").Text()
 	_, u.UninstallNotes, found = strings.Cut(r.Replace(doc.Find("div#uninstallNotesDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#uninstallNotesDiv format. expected: "...:<uninstallNotes>", actual: "%s"`, r.Replace(doc.Find("div#uninstallNotesDiv").Text()))
+		slog.Warn("unexpected div#uninstallNotesDiv format", slog.String("expected", "...:<uninstallNotes>"), slog.String("actual", r.Replace(doc.Find("div#uninstallNotesDiv").Text())))
 	}
 	_, u.UninstallSteps, found = strings.Cut(r.Replace(doc.Find("div#uninstallStepsDiv").Text()), ":")
 	if !found {
-		log.Printf(`[WARN] unexpected div#uninstallStepsDiv format. expected: "...:<uninstallSteps>", actual: "%s"`, r.Replace(doc.Find("div#uninstallStepsDiv").Text()))
+		slog.Warn("unexpected div#uninstallStepsDiv format", slog.String("expected", "...:<uninstallSteps>"), slog.String("actual", r.Replace(doc.Find("div#uninstallStepsDiv").Text())))
 	}
 
 	return &u, nil

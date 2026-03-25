@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -80,7 +80,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	for _, r := range releases {
-		log.Printf("[INFO] Fetch Alpine Linux %s", r)
+		slog.Info("Fetch Alpine Linux", slog.String("release", r))
 		files, err := options.walkDistroVersion(r)
 		if err != nil {
 			return errors.Wrapf(err, "walk alpine linux %s", r)

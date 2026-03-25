@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -73,7 +73,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Metasploit Framework")
+	slog.Info("Fetch Metasploit Framework")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch msf data")
@@ -124,18 +124,18 @@ func Fetch(opts ...Option) error {
 			s := fmt.Sprintf("%.0f", v)
 			i, err := strconv.Atoi(s)
 			if err != nil {
-				log.Printf(`[WARN] failed to convert rport in %s. strconv.Atoi(%s) = %s`, m.Name, s, err)
+				slog.Warn("failed to convert rport", slog.String("name", m.Name), slog.String("value", s), slog.Any("err", err))
 			}
 			module.Rport = &i
 		case string:
 			i, err := strconv.Atoi(v)
 			if err != nil {
-				log.Printf(`[WARN] failed to convert rport in %s. strconv.Atoi(%s) = %s`, m.Name, v, err)
+				slog.Warn("failed to convert rport", slog.String("name", m.Name), slog.String("value", v), slog.Any("err", err))
 			}
 			module.Rport = &i
 		case nil:
 		default:
-			log.Printf(`[WARN] unexpected rport type in %s. accepts: ["int", "float64", "string", "nil"], received: "%T"`, m.Name, v)
+			slog.Warn("unexpected rport type", slog.String("name", m.Name), slog.String("expected", "int, float64, string, nil"), slog.String("actual", fmt.Sprintf("%T", v)))
 		}
 
 		for k, note := range m.Notes {
@@ -148,13 +148,13 @@ func Fetch(opts ...Option) error {
 				for _, e := range v {
 					s, ok := e.(string)
 					if !ok {
-						log.Printf(`[WARN] unexpected notes element type in %s. accepts: ["string"], received: "%T"`, m.Name, e)
+						slog.Warn("unexpected notes element type", slog.String("name", m.Name), slog.String("expected", "string"), slog.String("actual", fmt.Sprintf("%T", e)))
 						continue
 					}
 					module.Notes[k] = append(module.Notes[k], s)
 				}
 			default:
-				log.Printf(`[WARN] unexpected notes type in %s. accepts: ["string", "[]string", "[]interface{}"], received: "%T"`, m.Name, v)
+				slog.Warn("unexpected notes type", slog.String("name", m.Name), slog.String("expected", "string, []string, []any"), slog.String("actual", fmt.Sprintf("%T", v)))
 			}
 		}
 
@@ -165,17 +165,17 @@ func Fetch(opts ...Option) error {
 			for _, e := range v {
 				s, ok := e.(string)
 				if !ok {
-					log.Printf(`[WARN] unexpected session_types element type in %s. accepts: ["string"], received: "%T"`, m.Name, e)
+					slog.Warn("unexpected session_types element type", slog.String("name", m.Name), slog.String("expected", "string"), slog.String("actual", fmt.Sprintf("%T", e)))
 					continue
 				}
 				module.SessionTypes = append(module.SessionTypes, s)
 			}
 		case bool:
 			if v {
-				log.Printf(`[WARN] unexpected session_types value in %s. accepts: ["[]string", "[]interface{}", "bool(false)"], received: "true"`, m.Name)
+				slog.Warn("unexpected session_types value", slog.String("name", m.Name))
 			}
 		default:
-			log.Printf(`[WARN] unexpected session_types type in %s. accepts: ["[]string", "[]interface{}", "bool"], received: "%T"`, m.Name, v)
+			slog.Warn("unexpected session_types type", slog.String("name", m.Name), slog.String("expected", "[]string, []any, bool"), slog.String("actual", fmt.Sprintf("%T", v)))
 		}
 
 		switch v := m.NeedsCleanup.(type) {
@@ -183,7 +183,7 @@ func Fetch(opts ...Option) error {
 			module.NeedsCleanup = &v
 		case nil:
 		default:
-			log.Printf(`[WARN] unexpected needs_cleanup type in %s. accepts: ["bool", "nil"], received: "%T"`, m.Name, v)
+			slog.Warn("unexpected needs_cleanup type", slog.String("name", m.Name), slog.String("expected", "bool, nil"), slog.String("actual", fmt.Sprintf("%T", v)))
 		}
 
 		modules = append(modules, module)

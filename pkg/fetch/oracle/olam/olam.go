@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 
@@ -73,7 +73,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Oracle Linux Automation Manager")
+	slog.Info("Fetch Oracle Linux Automation Manager")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
@@ -90,7 +90,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "decode xml")
 	}
 
-	log.Printf("[INFO] Fetch Oracle Linux Automation Manager Definitions")
+	slog.Info("Fetch Oracle Linux Automation Manager Definitions")
 	bar := progressbar.Default(int64(len(root.Definitions.Definition)))
 	for _, def := range root.Definitions.Definition {
 		if err := util.Write(filepath.Join(options.dir, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
@@ -100,7 +100,7 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	log.Printf("[INFO] Fetch Oracle Linux Automation Manager Tests")
+	slog.Info("Fetch Oracle Linux Automation Manager Tests")
 	bar = progressbar.Default(int64(len(root.Tests.RpminfoTest) + len(root.Tests.Textfilecontent54Test)))
 	for _, test := range root.Tests.RpminfoTest {
 		if err := util.Write(filepath.Join(options.dir, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
@@ -116,7 +116,7 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	log.Printf("[INFO] Fetch Oracle Linux Automation Manager Objects")
+	slog.Info("Fetch Oracle Linux Automation Manager Objects")
 	bar = progressbar.Default(int64(len(root.Objects.RpminfoObject) + len(root.Objects.Textfilecontent54Object)))
 	for _, object := range root.Objects.RpminfoObject {
 		if err := util.Write(filepath.Join(options.dir, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
@@ -132,7 +132,7 @@ func Fetch(opts ...Option) error {
 	}
 	_ = bar.Close()
 
-	log.Printf("[INFO] Fetch Oracle Linux Automation Manager States")
+	slog.Info("Fetch Oracle Linux Automation Manager States")
 	bar = progressbar.Default(int64(len(root.States.RpminfoState) + len(root.States.Textfilecontent54State)))
 	for _, state := range root.States.RpminfoState {
 		if err := util.Write(filepath.Join(options.dir, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
