@@ -3,7 +3,7 @@ package tracker
 import (
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"maps"
 	"path/filepath"
 	"slices"
@@ -69,7 +69,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Ubuntu CVE Tracker")
+	slog.Info("Extract Ubuntu CVE Tracker")
 	for _, target := range []string{"active", "retired"} {
 		if err := filepath.WalkDir(filepath.Join(args, target), func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
@@ -375,7 +375,7 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 			return "", errors.Errorf("unexpected release name. expected: %q, actual: %q", slices.Collect(maps.Keys(rtov)), release)
 		}(rn)
 		if err != nil {
-			log.Printf("[WARN] failed to find version from release. err: %s", err)
+			slog.Warn("failed to find version from release", slog.Any("err", err))
 			continue
 		}
 		if v == "" {

@@ -3,7 +3,7 @@ package appstreamlifecycle
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Print("[INFO] Fetch RHEL Application Streams Life Cycle")
+	slog.Info("Fetch RHEL Application Streams Life Cycle")
 
 	c := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	if err := options.extractAppStream(c); err != nil {

@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -101,7 +101,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch European Union Vulnerability Database(EUVD) List")
+	slog.Info("Fetch European Union Vulnerability Database(EUVD) List")
 	if err := options.fetch(); err != nil {
 		return errors.Wrap(err, "fetch")
 	}

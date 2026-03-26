@@ -5,7 +5,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -100,7 +100,7 @@ func Fetch(opts ...Option) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	for _, d := range []string{"appsuite", "dovecot"} {
-		log.Printf("[INFO] Fetch Open-Xchange(OX) %s CSAF", d)
+		slog.Info("Fetch Open-Xchange(OX) CSAF", slog.String("dir", d))
 		if err := options.fetch(client, d); err != nil {
 			return errors.Wrapf(err, "fetch %s", d)
 		}

@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -52,7 +52,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Microsoft WSUSSCN2")
+	slog.Info("Extract Microsoft WSUSSCN2")
 	if err := options.extract(args); err != nil {
 		return errors.Wrapf(err, "extract")
 	}

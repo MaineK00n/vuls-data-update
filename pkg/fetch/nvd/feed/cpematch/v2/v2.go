@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 
@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf(`[INFO] Fetch NVD CPE Match Feed 2.0`)
+	slog.Info("Fetch NVD CPE Match Feed 2.0")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch cpe match feed 2.0")

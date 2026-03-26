@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Debian Security Tracker API")
+	slog.Info("Fetch Debian Security Tracker API")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.advisoryURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch advisory")
@@ -130,7 +130,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	for code, advs := range m {
-		log.Printf("[INFO] Fetched Debian %s Advisory", code)
+		slog.Info("Fetched Debian Advisory", slog.String("codename", code))
 
 		bar := progressbar.Default(int64(len(advs)))
 		for _, a := range advs {

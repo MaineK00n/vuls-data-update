@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -74,7 +74,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch Gentoo Linux")
+	slog.Info("Fetch Gentoo Linux")
 
 	cloneDir, err := os.MkdirTemp("", "vuls-data-update")
 	if err != nil {

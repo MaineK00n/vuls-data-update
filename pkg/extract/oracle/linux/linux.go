@@ -3,7 +3,7 @@ package linux
 import (
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,7 +82,7 @@ func Extract(inputDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Oracle Linux")
+	slog.Info("Extract Oracle Linux")
 
 	if err := filepath.WalkDir(filepath.Join(inputDir, "definitions"), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -182,7 +182,7 @@ func (e extractor) extract(def linux.Definition) (dataTypes.Data, error) {
 				_, rhs, _ := strings.Cut(cve.CVSS2, "/")
 				v2, err := cvssV2Types.Parse(strings.TrimPrefix(rhs, "CVSS:2/")) // e.g. AV:L/AC:L/Au:N/C:C/I:C/A:C ; oval:com.oracle.elsa-201729301 CVE-2017-1000111, CVSS:2/AV:N/AC:M/Au:N/C:N/I:N/A:C ; oval:com.oracle.elsa-20184110 CVE-2018-1093
 				if err != nil {
-					log.Printf("[WARN] failed to parse CVSSv2. cve: %s, error: %s", cve.Text, err)
+					slog.Warn("failed to parse CVSSv2", slog.String("cve", cve.Text), slog.Any("err", err))
 					if !errors.Is(err, gocvss20.ErrTooShortVector) && !errors.Is(err, gocvss20.ErrInvalidMetricOrder) && !errors.Is(err, gocvss20.ErrInvalidMetricValue) { // e.g. AV:N/AC:N/Au:N/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20100046 CVE-2009-2910
 						return nil, errors.Wrap(err, "parse cvss2")
 					}
@@ -200,7 +200,7 @@ func (e extractor) extract(def linux.Definition) (dataTypes.Data, error) {
 				case strings.HasPrefix(rhs, "CVSS:3.0"):
 					v30, err := cvssV30Types.Parse(rhs)
 					if err != nil {
-						log.Printf("[WARN] failed to parse CVSSv3.0. cve: %s, error: %s", cve.Text, err)
+						slog.Warn("failed to parse CVSSv3.0", slog.String("cve", cve.Text), slog.Any("err", err))
 						if !errors.Is(err, gocvss30.ErrTooShortVector) && !errors.Is(err, gocvss30.ErrInvalidMetricValue) { // e.g. CVSS:3.0/AV:N/AC:N/PR:N/UI:N/S:U/C:N/I:N/A:N ; oval:com.oracle.elsa:def:20130727 CVE-2013-1798
 							return nil, errors.Wrap(err, "parse cvss3")
 						}
@@ -214,7 +214,7 @@ func (e extractor) extract(def linux.Definition) (dataTypes.Data, error) {
 				case strings.HasPrefix(rhs, "CVSS:3.1"):
 					v31, err := cvssV31Types.Parse(rhs)
 					if err != nil {
-						log.Printf("[WARN] failed to parse CVSSv3.1. cve: %s, error: %s", cve.Text, err)
+						slog.Warn("failed to parse CVSSv3.1", slog.String("cve", cve.Text), slog.Any("err", err))
 						if !errors.Is(err, gocvss31.ErrTooShortVector) && !errors.Is(err, gocvss31.ErrInvalidMetricValue) {
 							return nil, errors.Wrap(err, "parse cvss3")
 						}

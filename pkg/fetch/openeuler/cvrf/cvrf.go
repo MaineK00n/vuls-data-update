@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -99,7 +99,7 @@ func Fetch(opts ...Option) error {
 
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 	for _, kind := range []string{"cvrf", "hotpatch_cvrf"} {
-		log.Printf("[INFO] Fetch openEuler %s Security Advisories (CVRF)", kind)
+		slog.Info("Fetch openEuler Security Advisories (CVRF)", slog.String("kind", kind))
 		is, err := options.fetchCVRFIndex(client, kind)
 		if err != nil {
 			return errors.Wrapf(err, "fetch %s index", kind)

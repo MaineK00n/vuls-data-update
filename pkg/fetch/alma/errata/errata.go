@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -81,7 +81,7 @@ func Fetch(opts ...Option) error {
 	}
 
 	for v, url := range options.urls {
-		log.Printf("[INFO] Fetch AlmaLinux %s", v)
+		slog.Info("Fetch AlmaLinux", slog.String("version", v))
 		advs, err := func() ([]Erratum, error) {
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(url)
 			if err != nil {

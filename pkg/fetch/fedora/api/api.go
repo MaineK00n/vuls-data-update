@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"slices"
@@ -140,14 +140,14 @@ func Fetch(releases []string, opts ...Option) error {
 	}
 
 	for _, release := range extracted {
-		log.Printf("[INFO] Fetch Fedora %s", release)
-		log.Printf("[INFO] Fetch Fedora %s Advisory List", release)
+		slog.Info("Fetch Fedora", slog.String("release", release))
+		slog.Info("Fetch Fedora Advisory List", slog.String("release", release))
 		advs, err := options.advisories(client, release)
 		if err != nil {
 			return errors.Wrapf(err, "fetch %s security advisories", release)
 		}
 
-		log.Printf("[INFO] Finish Fedora %s Advisory", release)
+		slog.Info("Finish Fedora Advisory", slog.String("release", release))
 		advChan := make(chan Advisory, len(advs))
 		go func() {
 			defer close(advChan)

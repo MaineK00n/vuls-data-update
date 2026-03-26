@@ -6,7 +6,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"maps"
 	"os"
 	"path/filepath"
@@ -90,7 +90,7 @@ func Extract(root string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Debian Security Tracker Salsa repository")
+	slog.Info("Extract Debian Security Tracker Salsa")
 
 	pkgs, err := options.walkPackages(root)
 	if err != nil {

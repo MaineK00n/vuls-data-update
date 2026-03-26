@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -84,7 +84,7 @@ func Extract(ovalDir, repository2cpeDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract RedHat OVAL v1")
+	slog.Info("Extract RedHat OVAL v1")
 
 	br := utiljson.NewJSONReader()
 	var r2c repository2cpe.RepositoryToCPE

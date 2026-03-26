@@ -2,7 +2,7 @@ package tag
 
 import (
 	"context"
-	"log"
+	"log/slog"
 
 	"github.com/pkg/errors"
 	"oras.land/oras-go/v2"
@@ -12,7 +12,7 @@ import (
 )
 
 func Tag(imageRef, newTag, token string) error {
-	log.Printf("[INFO] Tag dotgit %s as %s", imageRef, newTag)
+	slog.Info("Tag dotgit", slog.String("image", imageRef), slog.String("tag", newTag))
 
 	repo, err := remote.NewRepository(imageRef)
 	if err != nil {

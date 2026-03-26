@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -72,7 +72,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch MITRE EMB3D")
+	slog.Info("Fetch MITRE EMB3D")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	if err := options.fetchThreats(client); err != nil {

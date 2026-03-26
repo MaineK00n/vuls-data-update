@@ -3,7 +3,7 @@ package delete
 import (
 	"encoding/json/v2"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
@@ -144,7 +144,7 @@ func Delete(image, token string, opts ...Option) error {
 				if err := utilGitHub.Do(http.MethodDelete, uu.String(), token, func(resp *http.Response) error {
 					switch resp.StatusCode {
 					case http.StatusNoContent:
-						log.Printf("[INFO] Deleted: %s@%s (ID: %d)\n", repo.Reference.Repository, repo.Reference.Reference, id)
+						slog.Info("Deleted", slog.String("repository", repo.Reference.Repository), slog.String("reference", repo.Reference.Reference), slog.Int("id", id))
 						return nil
 					default:
 						return errors.Errorf("unexpected response status. expected: %d, actual: %d", []int{http.StatusNoContent}, resp.StatusCode)

@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"slices"
@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch JVNDB Product")
+	slog.Info("Fetch JVNDB Product")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(jvnutil.CheckRetry)).Get(options.dataURL)
 	if err != nil {
 		return errors.Wrap(err, "get checksum")
@@ -116,7 +116,7 @@ func Fetch(opts ...Option) error {
 		return 0
 	})
 
-	log.Printf("[INFO] Fetch JVNDB Product Feed %s", filtered[len(filtered)-1].Filename)
+	slog.Info("Fetch JVNDB Product Feed", slog.String("feed", filtered[len(filtered)-1].Filename))
 	resp, err = utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(filtered[len(filtered)-1].URL)
 	if err != nil {
 		return errors.Wrap(err, "fetch jvndb product")

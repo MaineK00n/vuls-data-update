@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -75,7 +75,7 @@ func Extract(inputDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract Rocky Linux OSV")
+	slog.Info("Extract Rocky Linux OSV")
 	entries, err := os.ReadDir(inputDir)
 	if err != nil {
 		return errors.Wrapf(err, "read dir %s", inputDir)

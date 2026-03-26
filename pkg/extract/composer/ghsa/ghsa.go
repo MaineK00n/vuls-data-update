@@ -2,7 +2,7 @@ package ghsa
 
 import (
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -41,7 +41,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract ")
+	slog.Info("Extract Composer GHSA")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err

@@ -2,7 +2,7 @@ package eol
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"maps"
 	"path/filepath"
 	"slices"
@@ -63,7 +63,7 @@ func Extract(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract End of Life")
+	slog.Info("Extract End of Life")
 	now := time.Now().UTC()
 	for c, eols := range options.eols {
 		for e, m := range eols {

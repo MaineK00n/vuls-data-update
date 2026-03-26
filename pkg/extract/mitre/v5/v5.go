@@ -3,7 +3,7 @@ package v5
 import (
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 	"time"
 
@@ -60,7 +60,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract MITRE v5")
+	slog.Info("Extract MITRE CVE v5")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -150,7 +150,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 								if metric.CVSSv2 != nil {
 									v2, err := v2Types.Parse(metric.CVSSv2.VectorString)
 									if err != nil {
-										log.Printf("[WARN] unexpected CVSS v2 vector: %s", metric.CVSSv2.VectorString)
+										slog.Warn("unexpected CVSS v2 vector", slog.String("vector", metric.CVSSv2.VectorString))
 										continue
 									}
 									ss = append(ss, severityTypes.Severity{
@@ -162,7 +162,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 								if metric.CVSSv30 != nil {
 									v30, err := v30Types.Parse(metric.CVSSv30.VectorString)
 									if err != nil {
-										log.Printf("[WARN] unexpected CVSS v3.0 vector: %s", metric.CVSSv30.VectorString)
+										slog.Warn("unexpected CVSS v3.0 vector", slog.String("vector", metric.CVSSv30.VectorString))
 										continue
 									}
 									ss = append(ss, severityTypes.Severity{
@@ -174,7 +174,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 								if metric.CVSSv31 != nil {
 									v31, err := v31Types.Parse(metric.CVSSv31.VectorString)
 									if err != nil {
-										log.Printf("[WARN] unexpected CVSS v3.1 vector: %s", metric.CVSSv31.VectorString)
+										slog.Warn("unexpected CVSS v3.1 vector", slog.String("vector", metric.CVSSv31.VectorString))
 										continue
 									}
 									ss = append(ss, severityTypes.Severity{
@@ -186,7 +186,7 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 								if metric.CVSSv40 != nil {
 									v40, err := v40Types.Parse(metric.CVSSv40.VectorString)
 									if err != nil {
-										log.Printf("[WARN] unexpected CVSS v4.0 vector: %s", metric.CVSSv40.VectorString)
+										slog.Warn("unexpected CVSS v4.0 vector", slog.String("vector", metric.CVSSv40.VectorString))
 										continue
 									}
 									ss = append(ss, severityTypes.Severity{

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io/fs"
-	"log"
+	"log/slog"
 	"maps"
 	"path/filepath"
 	"slices"
@@ -86,7 +86,7 @@ func Extract(csafDir, repository2cpeDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract RedHat CSAF")
+	slog.Info("Extract RedHat CSAF")
 
 	br := utiljson.NewJSONReader()
 	var r2c repository2cpe.RepositoryToCPE

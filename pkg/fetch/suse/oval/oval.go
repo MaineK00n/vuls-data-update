@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"maps"
 	"net/http"
 	"net/url"
@@ -102,7 +102,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch SUSE OVAL")
+	slog.Info("Fetch SUSE OVAL")
 	ovals, err := options.walkIndexOf()
 	if err != nil {
 		return errors.Wrap(err, "walk index of")

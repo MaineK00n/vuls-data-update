@@ -2,7 +2,7 @@ package handmade
 
 import (
 	"io/fs"
-	"log"
+	"log/slog"
 	"path/filepath"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
@@ -40,7 +40,7 @@ func Extract(args string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Extract ")
+	slog.Info("Extract Fortinet Handmade")
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err

@@ -2,7 +2,7 @@ package db
 
 import (
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 
@@ -69,7 +69,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Rubygems DB")
+	slog.Info("Fetch Rubygems DB")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.repoURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch repository")

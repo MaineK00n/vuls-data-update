@@ -4,7 +4,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -97,7 +97,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Ubuntu CVEs")
+	slog.Info("Fetch Ubuntu CVEs")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	header := make(http.Header)

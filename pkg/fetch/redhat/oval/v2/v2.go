@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -76,7 +76,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch RedHat OVAL")
+	slog.Info("Fetch RedHat OVAL")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(options.feedURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch feed")
@@ -103,7 +103,7 @@ func Fetch(opts ...Option) error {
 		name := strings.TrimSuffix(file, ".oval.xml.bz2")
 		v := strings.TrimPrefix(path.Base(path.Clean(d)), "RHEL")
 
-		log.Printf("[INFO] Fetch RedHat %s %s OVAL", v, name)
+		slog.Info("Fetch RedHat OVAL", slog.String("version", v), slog.String("name", name))
 		r, err := func() (*root, error) {
 			resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry)).Get(u)
 			if err != nil {
@@ -127,7 +127,7 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "fetch")
 		}
 
-		log.Printf("[INFO] Fetch RedHat %s %s Definitions", v, name)
+		slog.Info("Fetch RedHat Definitions", slog.String("version", v), slog.String("name", name))
 		bar := progressbar.Default(int64(len(r.Definitions.Definition)))
 		for _, def := range r.Definitions.Definition {
 			if err := util.Write(filepath.Join(options.dir, v, name, "definitions", fmt.Sprintf("%s.json", def.ID)), def); err != nil {
@@ -137,7 +137,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch RedHat %s %s Tests", v, name)
+		slog.Info("Fetch RedHat Tests", slog.String("version", v), slog.String("name", name))
 		bar = progressbar.Default(int64(len(r.Tests.RpminfoTest) + len(r.Tests.RpmverifyfileTest) + len(r.Tests.Textfilecontent54Test) + len(r.Tests.UnameTest)))
 		for _, test := range r.Tests.RpminfoTest {
 			if err := util.Write(filepath.Join(options.dir, v, name, "tests", "rpminfo_test", fmt.Sprintf("%s.json", test.ID)), test); err != nil {
@@ -165,7 +165,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch RedHat %s %s Objects", v, name)
+		slog.Info("Fetch RedHat Objects", slog.String("version", v), slog.String("name", name))
 		bar = progressbar.Default(int64(len(r.Objects.RpminfoObject) + 1 + len(r.Objects.Textfilecontent54Object) + 1))
 		for _, object := range r.Objects.RpminfoObject {
 			if err := util.Write(filepath.Join(options.dir, v, name, "objects", "rpminfo_object", fmt.Sprintf("%s.json", object.ID)), object); err != nil {
@@ -193,7 +193,7 @@ func Fetch(opts ...Option) error {
 		_ = bar.Add(1)
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch RedHat %s %s States", v, name)
+		slog.Info("Fetch RedHat States", slog.String("version", v), slog.String("name", name))
 		bar = progressbar.Default(int64(len(r.States.RpminfoState) + len(r.States.RpmverifyfileState) + len(r.States.Textfilecontent54State) + len(r.States.UnameState)))
 		for _, state := range r.States.RpminfoState {
 			if err := util.Write(filepath.Join(options.dir, v, name, "states", "rpminfo_state", fmt.Sprintf("%s.json", state.ID)), state); err != nil {
@@ -221,7 +221,7 @@ func Fetch(opts ...Option) error {
 		}
 		_ = bar.Close()
 
-		log.Printf("[INFO] Fetch RedHat %s %s Variables", v, name)
+		slog.Info("Fetch RedHat Variables", slog.String("version", v), slog.String("name", name))
 		bar = progressbar.Default(1)
 		if r.Variables.LocalVariable.ID != "" {
 			if err := util.Write(filepath.Join(options.dir, v, name, "variables", "local_variable", fmt.Sprintf("%s.json", r.Variables.LocalVariable.ID)), r.Variables.LocalVariable); err != nil {

@@ -6,7 +6,7 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -100,7 +100,7 @@ func Fetch(r io.Reader, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Printf("[INFO] Fetch European Union Vulnerability Database(EUVD) Detail")
+	slog.Info("Fetch European Union Vulnerability Database(EUVD) Detail")
 	if err := options.fetch(r); err != nil {
 		return errors.Wrap(err, "fetch")
 	}
@@ -150,7 +150,7 @@ func (opts options) fetch(r io.Reader) error {
 
 			return nil
 		case http.StatusNoContent:
-			log.Printf("[WARN] %s may have been deleted", resp.Request.URL.Query().Get("id"))
+			slog.Warn("may have been deleted", slog.String("id", resp.Request.URL.Query().Get("id")))
 			return nil
 		default:
 			_, _ = io.Copy(io.Discard, resp.Body)

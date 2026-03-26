@@ -9,7 +9,7 @@ import (
 	stderrors "errors"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -78,7 +78,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch SUSE CVRF CVE")
+	slog.Info("Fetch SUSE CVRF CVE")
 	resp, err := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry), utilhttp.WithClientCheckRetry(checkRetry)).Get(options.baseURL)
 	if err != nil {
 		return errors.Wrap(err, "fetch suse cvrf cve")

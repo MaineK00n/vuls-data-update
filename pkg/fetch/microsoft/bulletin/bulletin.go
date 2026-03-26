@@ -3,7 +3,7 @@ package bulletin
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -77,7 +77,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	log.Println("[INFO] Fetch Windows Bulletin")
+	slog.Info("Fetch Windows Bulletin")
 
 	bulletins := make(map[string][]Bulletin)
 	for _, u := range options.dataURLs {
