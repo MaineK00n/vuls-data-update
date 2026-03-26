@@ -6,6 +6,7 @@ import (
 	"compress/bzip2"
 	"context"
 	"encoding/xml"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"log"
@@ -159,8 +160,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 		var adv CVRF
 		if err := xml.Unmarshal(bs, &adv); err != nil {
-			var syntaxErr *xml.SyntaxError
-			if errors.As(err, &syntaxErr) {
+			if syntaxErr, ok := stderrors.AsType[*xml.SyntaxError](err); ok {
 				return true, errors.Wrapf(syntaxErr, "decode xml. file: %q, body: %q", hdr.Name, string(bs))
 			}
 			return false, errors.Wrap(err, "decode xml")

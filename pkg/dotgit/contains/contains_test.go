@@ -6,8 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pkg/errors"
-
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/contains"
 	"github.com/MaineK00n/vuls-data-update/pkg/dotgit/util"
 )
@@ -21,7 +19,7 @@ func TestContains(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantErr any
+		wantErr bool
 	}{
 		{
 			name: "contains full commit hash, native git",
@@ -48,15 +46,22 @@ func TestContains(t *testing.T) {
 			},
 		},
 		{
-			name: "not contains commit hash",
+			name: "not contains commit hash, native git",
 			args: args{
 				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
 				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
+				opts:       []contains.Option{contains.WithUseNativeGit(true)},
 			},
-			wantErr: func() any {
-				var err *contains.CommitNotFoundError
-				return err
+			wantErr: true,
+		},
+		{
+			name: "not contains commit hash, go-git",
+			args: args{
+				repository: "testdata/fixtures/vuls-data-raw-test.tar.zst",
+				commit:     "9d3d5d486d4c9414321a2df56f2e007c4c2c8fac",
+				opts:       []contains.Option{contains.WithUseNativeGit(false)},
 			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -72,18 +77,12 @@ func TestContains(t *testing.T) {
 				t.Errorf("extract %s. err: %v", tt.args.repository, err)
 			}
 
-			err = contains.Contains(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst")), tt.args.commit)
+			err = contains.Contains(filepath.Join(dir, strings.TrimSuffix(filepath.Base(tt.args.repository), ".tar.zst")), tt.args.commit, tt.args.opts...)
 			switch {
-			case err != nil && tt.wantErr == nil:
+			case err != nil && !tt.wantErr:
 				t.Errorf("unexpected err: %v", err)
-			case err == nil && tt.wantErr != nil:
+			case err == nil && tt.wantErr:
 				t.Error("expected error has not occurred")
-			default:
-				if err != nil {
-					if !errors.As(err, &tt.wantErr) {
-						t.Errorf("expected error %T, but got %T", tt.wantErr, err)
-					}
-				}
 			}
 		})
 	}

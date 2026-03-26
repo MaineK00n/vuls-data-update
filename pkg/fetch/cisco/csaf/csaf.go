@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json/jsontext"
 	"encoding/json/v2"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"log"
@@ -149,8 +150,7 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 
 	var csaf CSAF
 	if err := json.Unmarshal(body, &csaf); err != nil {
-		var syntaxErr *jsontext.SyntacticError
-		if errors.As(err, &syntaxErr) {
+		if syntaxErr, ok := stderrors.AsType[*jsontext.SyntacticError](err); ok {
 			return true, errors.Wrap(syntaxErr, "unmarshal json")
 		}
 		return false, errors.Wrap(err, "unmarshal json")
