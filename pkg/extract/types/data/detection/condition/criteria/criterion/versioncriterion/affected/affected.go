@@ -2,6 +2,7 @@ package affected
 
 import (
 	"cmp"
+	stderrors "errors"
 	"slices"
 
 	"github.com/pkg/errors"
@@ -34,8 +35,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.Equal != "" {
 			n, err := a.Type.Compare(family, r.Equal, v)
 			if err != nil {
-				var compareErr *rangeTypes.CompareError
-				if errors.As(err, &compareErr) {
+				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.Equal, v)
@@ -47,8 +47,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.GreaterEqual != "" {
 			n, err := a.Type.Compare(family, r.GreaterEqual, v)
 			if err != nil {
-				var compareErr *rangeTypes.CompareError
-				if errors.As(err, &compareErr) {
+				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterEqual, v)
@@ -60,8 +59,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.GreaterThan != "" {
 			n, err := a.Type.Compare(family, r.GreaterThan, v)
 			if err != nil {
-				var compareErr *rangeTypes.CompareError
-				if errors.As(err, &compareErr) {
+				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.GreaterThan, v)
@@ -73,8 +71,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.LessEqual != "" {
 			n, err := a.Type.Compare(family, r.LessEqual, v)
 			if err != nil {
-				var compareErr *rangeTypes.CompareError
-				if errors.As(err, &compareErr) {
+				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessEqual, v)
@@ -86,8 +83,7 @@ func (a Affected) Accept(family ecosystemTypes.Ecosystem, v string) (bool, error
 		if r.LessThan != "" {
 			n, err := a.Type.Compare(family, r.LessThan, v)
 			if err != nil {
-				var compareErr *rangeTypes.CompareError
-				if errors.As(err, &compareErr) {
+				if _, ok := stderrors.AsType[*rangeTypes.CompareError](err); ok {
 					continue
 				}
 				return false, errors.Wrapf(err, "compare (type: %s, v1: %s, v2: %s)", a.Type, r.LessThan, v)
