@@ -1,0 +1,17 @@
+name: Log Push to Main
+run-name: "#${{ github.run_number }} | ${{ github.sha }} | forced:${{ github.event.forced }} | @${{ github.actor }}"
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  log:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+    steps:
+      - name: Log push event
+        run: echo "Push detected."
