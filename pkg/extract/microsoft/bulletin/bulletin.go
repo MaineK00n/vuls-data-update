@@ -33,6 +33,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
+	windowskbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
@@ -257,6 +258,40 @@ func parseCVEs(raw string) ([]string, error) {
 	return cves, nil
 }
 
+// parseSupersedes extracts superseded KB IDs from the Supersedes field.
+// Known formats in the historical data:
+//   - Single entry:             "MS17-005[4010250]"          → ["4010250"]
+//   - Comma-separated entries:  "MS03-026[823980],MS03-039[824146]" → ["823980", "824146"]
+//   - Semicolon-separated KBs:  "MS03-013[881493;811493]"    → ["881493", "811493"]
+//   - No brackets (ID only):    "MS00-006"                   → [] (skipped)
+func parseSupersedes(raw string) []string {
+	if raw == "" {
+		return nil
+	}
+
+	var kbIDs []string
+	// Split by "," to handle comma-separated entries (e.g. "MS03-026[823980],MS03-039[824146]")
+	for entry := range strings.SplitSeq(raw, ",") {
+		// Extract content inside brackets (e.g. "MS17-005[4010250]" → "4010250")
+		open := strings.Index(entry, "[")
+		close := strings.Index(entry, "]")
+		if open < 0 || close <= open+1 {
+			// No brackets or empty brackets (e.g. "MS00-006") → skip
+			continue
+		}
+		inner := entry[open+1 : close]
+
+		// Split by ";" to handle multiple KBs inside one bracket (e.g. "881493;811493")
+		for kbID := range strings.SplitSeq(inner, ";") {
+			kbID = strings.TrimSpace(kbID)
+			if kbID != "" {
+				kbIDs = append(kbIDs, kbID)
+			}
+		}
+	}
+	return kbIDs
+}
+
 // productName builds a product name from the affected product and component fields.
 // The format aligns with microsoft-cvrf's fullproductname convention:
 //   - If one side is a Windows OS or SharePoint Server platform, the name is "<app> on <platform>"
@@ -310,6 +345,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 
 	groups := make(map[dataTypes.RootID]dataGroup)
 	kbProducts := make(map[string]map[string]struct{})
+	kbSupersededBy := make(map[string]map[string]struct{}) // old KBID → set of new KBIDs
 
 	for _, row := range rows {
 		if row.AffectedProduct == "" {
@@ -447,6 +483,13 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 				kbProducts[row.ComponentKB] = make(map[string]struct{})
 			}
 			kbProducts[row.ComponentKB][pn] = struct{}{}
+
+			for _, oldKBID := range parseSupersedes(row.Supersedes) {
+				if _, ok := kbSupersededBy[oldKBID]; !ok {
+					kbSupersededBy[oldKBID] = make(map[string]struct{})
+				}
+				kbSupersededBy[oldKBID][row.ComponentKB] = struct{}{}
+			}
 		}
 
 		groups[rootID] = g
@@ -476,11 +519,32 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 	}
 
 	// WindowsKB entries
-	kbs := make([]windowskbTypes.KB, 0, len(kbProducts))
+	kbs := make([]windowskbTypes.KB, 0, len(kbProducts)+len(kbSupersededBy))
 	for kbID, products := range kbProducts {
-		kbs = append(kbs, windowskbTypes.KB{
+		kb := windowskbTypes.KB{
 			KBID:     kbID,
 			Products: slices.Collect(maps.Keys(products)),
+			DataSource: sourceTypes.Source{
+				ID:   sourceTypes.MicrosoftBulletin,
+				Raws: e.r.Paths(),
+			},
+		}
+		if newKBIDs, ok := kbSupersededBy[kbID]; ok {
+			for newKBID := range newKBIDs {
+				kb.SupersededBy = append(kb.SupersededBy, windowskbSupersededByTypes.SupersededBy{KBID: newKBID})
+			}
+			delete(kbSupersededBy, kbID)
+		}
+		kbs = append(kbs, kb)
+	}
+	for oldKBID, newKBIDs := range kbSupersededBy {
+		ss := make([]windowskbSupersededByTypes.SupersededBy, 0, len(newKBIDs))
+		for newKBID := range newKBIDs {
+			ss = append(ss, windowskbSupersededByTypes.SupersededBy{KBID: newKBID})
+		}
+		kbs = append(kbs, windowskbTypes.KB{
+			KBID:         oldKBID,
+			SupersededBy: ss,
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.MicrosoftBulletin,
 				Raws: e.r.Paths(),

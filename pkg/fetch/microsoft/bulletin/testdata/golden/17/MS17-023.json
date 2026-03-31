@@ -11,6 +11,7 @@
 		"affected_component": "Adobe Flash Player",
 		"impact": "Remote Code Execution",
 		"severity": "Critical",
+		"supersedes": "MS17-005[4010250]",
 		"reboot": "Yes"
 	}
 ]
