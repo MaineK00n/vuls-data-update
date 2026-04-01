@@ -1,0 +1,14 @@
+{
+	"kb_id": "4010250",
+	"superseded_by": [
+		{
+			"kb_id": "4014329"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/17/MS17-023.json"
+		]
+	}
+}

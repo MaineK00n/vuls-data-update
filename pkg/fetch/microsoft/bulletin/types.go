@@ -12,6 +12,7 @@ type Bulletin struct {
 	AffectedComponent string `xlsx:"8" json:"affected_component,omitempty"`
 	Impact            string `xlsx:"9" json:"impact,omitempty"`
 	Severity          string `xlsx:"10" json:"severity,omitempty"`
+	Supersedes        string `xlsx:"11" json:"supersedes,omitempty"`
 	Reboot            string `xlsx:"12" json:"reboot,omitempty"`
 	CVEs              string `xlsx:"13" json:"cves,omitempty"`
 }
