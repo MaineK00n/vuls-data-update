@@ -5,13 +5,12 @@ on:
   push:
     branches: [main]
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   log:
     runs-on: ubuntu-slim
-    permissions:
-      contents: read
     steps:
       - name: Log push event
         run: echo "Push detected."
