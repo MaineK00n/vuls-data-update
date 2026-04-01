@@ -239,6 +239,60 @@ func TestCriterion_Contains(t *testing.T) {
 			},
 			want: false,
 		},
+		{
+			name: "version criterion with query not set",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeType.RangeTypeRPM,
+						Range: []affectedrangeType.Range{{LessThan: "0.0.1-0.0.1.el9"}},
+						Fixed: []string{"0.0.1-0.0.1.el9"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{},
+			},
+			want: false,
+		},
+		{
+			name: "none exist criterion with query not set",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeNoneExist,
+				NoneExist: &necTypes.Criterion{
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{},
+			},
+			want: false,
+		},
+		{
+			name: "kb criterion with query not set",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10",
+					KBID:    "5025239",
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -511,6 +565,99 @@ func TestCriterion_Accept(t *testing.T) {
 					},
 				},
 				Accepts: criterionTypes.AcceptQueries{KB: false},
+			},
+		},
+		{
+			name: "version criterion with query not set",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+					Package: vcPackageTypes.Package{
+						Type:   vcPackageTypes.PackageTypeBinary,
+						Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeType.RangeTypeRPM,
+						Range: []affectedrangeType.Range{{LessThan: "0.0.1-0.0.1.el9"}},
+						Fixed: []string{"0.0.1-0.0.1.el9"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeVersion,
+					Version: &vcTypes.Criterion{
+						Vulnerable: true,
+						FixStatus:  &fixstatusType.FixStatus{Class: fixstatusType.ClassFixed},
+						Package: vcPackageTypes.Package{
+							Type:   vcPackageTypes.PackageTypeBinary,
+							Binary: &vcBinaryPackageTypes.Package{Name: "name"},
+						},
+						Affected: &affectedTypes.Affected{
+							Type:  affectedrangeType.RangeTypeRPM,
+							Range: []affectedrangeType.Range{{LessThan: "0.0.1-0.0.1.el9"}},
+							Fixed: []string{"0.0.1-0.0.1.el9"},
+						},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{},
+			},
+		},
+		{
+			name: "none exist criterion with query not set",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeNoneExist,
+				NoneExist: &necTypes.Criterion{
+					Type: necTypes.PackageTypeBinary,
+					Binary: &necBinaryPackageTypes.Package{
+						Name:          "name",
+						Architectures: []string{"x86_64"},
+					},
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeNoneExist,
+					NoneExist: &necTypes.Criterion{
+						Type: necTypes.PackageTypeBinary,
+						Binary: &necBinaryPackageTypes.Package{
+							Name:          "name",
+							Architectures: []string{"x86_64"},
+						},
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{},
+			},
+		},
+		{
+			name: "kb criterion with query not set",
+			fields: fields{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10",
+					KBID:    "5025239",
+				},
+			},
+			args: args{
+				query: criterionTypes.Query{},
+			},
+			want: criterionTypes.FilteredCriterion{
+				Criterion: criterionTypes.Criterion{
+					Type: criterionTypes.CriterionTypeKB,
+					KB: &kbcTypes.Criterion{
+						Product: "Windows 10",
+						KBID:    "5025239",
+					},
+				},
+				Accepts: criterionTypes.AcceptQueries{},
 			},
 		},
 	}
