@@ -18,7 +18,7 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 )
 
 func CacheDir() string {
@@ -83,7 +83,7 @@ func Write(path string, content any, doSort bool) error {
 			(&v).Sort()
 		case attackTypes.Attack:
 			(&v).Sort()
-		case windowskbTypes.KB:
+		case microsoftkbTypes.KB:
 			(&v).Sort()
 		case eolTypes.EOL:
 			(&v).Sort()

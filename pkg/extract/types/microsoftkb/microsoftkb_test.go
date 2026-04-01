@@ -1,21 +1,21 @@
-package windowskb_test
+package microsoftkb_test
 
 import (
 	"testing"
 
-	windowsKBTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
+	microsoftKBTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 )
 
-func TestWindowsKB_Sort(t *testing.T) {
+func TestMicrosoftKB_Sort(t *testing.T) {
 	tests := []struct {
 		name string
-		d    *windowsKBTypes.KB
+		d    *microsoftKBTypes.KB
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := &windowsKBTypes.KB{}
+			d := &microsoftKBTypes.KB{}
 			d.Sort()
 		})
 	}
@@ -23,8 +23,8 @@ func TestWindowsKB_Sort(t *testing.T) {
 
 func TestCompare(t *testing.T) {
 	type args struct {
-		x windowsKBTypes.KB
-		y windowsKBTypes.KB
+		x microsoftKBTypes.KB
+		y microsoftKBTypes.KB
 	}
 	tests := []struct {
 		name string
@@ -35,7 +35,7 @@ func TestCompare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := windowsKBTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
+			if got := microsoftKBTypes.Compare(tt.args.x, tt.args.y); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
 		})

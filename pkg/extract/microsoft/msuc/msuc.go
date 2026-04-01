@@ -16,9 +16,9 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
-	windowskbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
-	windowskbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/update"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/msuc"
@@ -160,7 +160,7 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 		})
 	})
 
-	resChan := make(chan windowskbTypes.KB)
+	resChan := make(chan microsoftkbTypes.KB)
 	for i := 0; i < o.concurrency; i++ {
 		eg.Go(func() error {
 			for path := range reqChan {
@@ -192,7 +192,7 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 			if len(kb.KBID) <= 3 {
 				return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q", kb.KBID)
 			}
-			filename := filepath.Join(o.dir, "windowskb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			filename := filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
 			if _, err := os.Stat(filename); err == nil {
 				f, err := os.Open(filename)
 				if err != nil {
@@ -200,7 +200,7 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 				}
 				defer f.Close()
 
-				var base windowskbTypes.KB
+				var base microsoftkbTypes.KB
 				if err := json.UnmarshalRead(f, &base); err != nil {
 					return errors.Wrapf(err, "decode %s", filename)
 				}
@@ -225,33 +225,33 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 	return nil
 }
 
-func (e extractor) extract(path string, updateIDMap map[string]string) (windowskbTypes.KB, error) {
+func (e extractor) extract(path string, updateIDMap map[string]string) (microsoftkbTypes.KB, error) {
 	var u msuc.Update
 	if err := e.r.Read(path, e.baseDir, &u); err != nil {
-		return windowskbTypes.KB{}, errors.Wrapf(err, "read %s", path)
+		return microsoftkbTypes.KB{}, errors.Wrapf(err, "read %s", path)
 	}
 
 	if u.KBArticle == "" {
-		return windowskbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", u.UpdateID)
+		return microsoftkbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", u.UpdateID)
 	}
 
-	ss := make([]windowskbSupersededByTypes.SupersededBy, 0, len(u.Supersededby))
+	ss := make([]microsoftkbSupersededByTypes.SupersededBy, 0, len(u.Supersededby))
 	for _, s := range u.Supersededby {
 		path, ok := updateIDMap[s.UpdateID]
 		if !ok {
-			return windowskbTypes.KB{}, errors.Errorf("path not found for update ID: %s", s.UpdateID)
+			return microsoftkbTypes.KB{}, errors.Errorf("path not found for update ID: %s", s.UpdateID)
 		}
 
 		var su msuc.Update
 		if err := e.r.Read(path, e.baseDir, &su); err != nil {
-			return windowskbTypes.KB{}, errors.Wrapf(err, "read %s", path)
+			return microsoftkbTypes.KB{}, errors.Wrapf(err, "read %s", path)
 		}
 
 		if su.KBArticle == "" {
-			return windowskbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", su.UpdateID)
+			return microsoftkbTypes.KB{}, errors.Errorf("KB article not found for update ID: %s", su.UpdateID)
 		}
 
-		ss = append(ss, windowskbSupersededByTypes.SupersededBy{
+		ss = append(ss, microsoftkbSupersededByTypes.SupersededBy{
 			UpdateID: su.UpdateID,
 			KBID:     su.KBArticle,
 		})
@@ -259,13 +259,13 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (windowsk
 
 	t, err := time.Parse("1/2/2006", u.LastModified)
 	if err != nil {
-		return windowskbTypes.KB{}, errors.Wrapf(err, "parse last modified %s", u.LastModified)
+		return microsoftkbTypes.KB{}, errors.Wrapf(err, "parse last modified %s", u.LastModified)
 	}
 
-	return windowskbTypes.KB{
+	return microsoftkbTypes.KB{
 		KBID: u.KBArticle,
 		URL:  fmt.Sprintf("https://support.microsoft.com/help/%s", u.KBArticle),
-		Updates: []windowskbUpdateTypes.Update{{
+		Updates: []microsoftkbUpdateTypes.Update{{
 			UpdateID:         u.UpdateID,
 			Title:            u.Title,
 			Description:      u.Description,

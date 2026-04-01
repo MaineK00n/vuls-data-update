@@ -13,9 +13,9 @@ import (
 	"github.com/pkg/errors"
 
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
-	windowskbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
-	windowskbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/update"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/wsusscn2"
@@ -98,7 +98,7 @@ func (o options) extract(root string) error {
 		if len(kb.KBID) <= 3 {
 			return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q", kb.KBID)
 		}
-		filename := filepath.Join(o.dir, "windowskb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+		filename := filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
 		if _, err := os.Stat(filename); err == nil {
 			f, err := os.Open(filename)
 			if err != nil {
@@ -106,7 +106,7 @@ func (o options) extract(root string) error {
 			}
 			defer f.Close()
 
-			var base windowskbTypes.KB
+			var base microsoftkbTypes.KB
 			if err := json.UnmarshalRead(f, &base); err != nil {
 				return errors.Wrapf(err, "decode %s", filename)
 			}
@@ -170,7 +170,7 @@ func buildRevIDtoUpdateID(root string) (map[string]string, error) {
 	return m, nil
 }
 
-func (e extractor) extract(path string, revIDToUpdateID map[string]string) (*windowskbTypes.KB, error) {
+func (e extractor) extract(path string, revIDToUpdateID map[string]string) (*microsoftkbTypes.KB, error) {
 	var rawU wsusscn2.Update
 	if err := e.r.Read(path, e.baseDir, &rawU); err != nil {
 		return nil, errors.Wrapf(err, "read %s", path)
@@ -193,7 +193,7 @@ func (e extractor) extract(path string, revIDToUpdateID map[string]string) (*win
 		return nil, errors.Wrapf(err, "parse creation date %s", rawU.CreationDate)
 	}
 
-	u := windowskbUpdateTypes.Update{
+	u := microsoftkbUpdateTypes.Update{
 		UpdateID:     rawU.UpdateID,
 		CreationDate: creationDate,
 		CatalogURL:   fmt.Sprintf("https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=%s", rawU.UpdateID),
@@ -227,7 +227,7 @@ func (e extractor) extract(path string, revIDToUpdateID map[string]string) (*win
 			continue
 		}
 
-		su := windowskbSupersededByTypes.SupersededBy{UpdateID: updateID}
+		su := microsoftkbSupersededByTypes.SupersededBy{UpdateID: updateID}
 
 		var rawSX wsusscn2.X
 		if err := e.r.Read(filepath.Join(e.baseDir, "x", fmt.Sprintf("%s.json", rev.ID)), e.baseDir, &rawSX); err != nil {
@@ -283,10 +283,10 @@ func (e extractor) extract(path string, revIDToUpdateID map[string]string) (*win
 		u.Languages = append(u.Languages, l.Name)
 	}
 
-	return &windowskbTypes.KB{
+	return &microsoftkbTypes.KB{
 		KBID:    kbid,
 		URL:     fmt.Sprintf("https://support.microsoft.com/help/%s", kbid),
-		Updates: []windowskbUpdateTypes.Update{u},
+		Updates: []microsoftkbUpdateTypes.Update{u},
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.MicrosoftWSUSSCN2,
 			Raws: e.r.Paths(),

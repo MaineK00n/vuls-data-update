@@ -19,11 +19,11 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	eolTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/eol"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 )
 
 func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
-	for _, name := range []string{"datasource.json", "data", "cpe", "cwe", "capec", "attack", "windowskb", "eol"} {
+	for _, name := range []string{"datasource.json", "data", "cpe", "cwe", "capec", "attack", "microsoftkb", "eol"} {
 		if _, err := os.Stat(filepath.Join(gotAbsPath, name)); err != nil {
 			continue
 		}
@@ -119,8 +119,8 @@ func Diff(t *testing.T, expectedAbsPath, gotAbsPath string) {
 					return err
 				}
 				diff = cmp.Diff(want, got)
-			case "windowskb":
-				var want, got windowskbTypes.KB
+			case "microsoftkb":
+				var want, got microsoftkbTypes.KB
 				if err := json.UnmarshalRead(ef, &want); err != nil {
 					return err
 				}
