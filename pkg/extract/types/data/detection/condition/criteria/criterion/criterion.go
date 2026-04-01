@@ -175,7 +175,7 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			return false, errors.New("criterion is not set for version criterion")
 		}
 		if len(query.Version) == 0 {
-			return false, errors.New("query is not set for version criterion")
+			return false, nil
 		}
 
 		for _, q := range query.Version {
@@ -193,7 +193,7 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			return false, errors.New("criterion is not set for none exist criterion")
 		}
 		if query.NoneExist == nil {
-			return false, errors.New("query is not set for none exist criterion")
+			return false, nil
 		}
 
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
@@ -206,7 +206,7 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			return false, errors.New("criterion is not set for kb criterion")
 		}
 		if query.KB == nil {
-			return false, errors.New("query is not set for kb criterion")
+			return false, nil
 		}
 
 		isAccepted, err := c.KB.Accept(*query.KB)
@@ -237,7 +237,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			return FilteredCriterion{}, errors.New("criterion is not set for version criterion")
 		}
 		if len(query.Version) == 0 {
-			return FilteredCriterion{}, errors.New("query is not set for version criterion")
+			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
 		var is []int
@@ -259,7 +259,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			return FilteredCriterion{}, errors.New("criterion is not set for none exist criterion")
 		}
 		if query.NoneExist == nil {
-			return FilteredCriterion{}, errors.New("query is not set for none exist criterion")
+			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
 		isAccepted, err := c.NoneExist.Accept(*query.NoneExist, repositories)
@@ -275,7 +275,7 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			return FilteredCriterion{}, errors.New("criterion is not set for kb criterion")
 		}
 		if query.KB == nil {
-			return FilteredCriterion{}, errors.New("query is not set for kb criterion")
+			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
 		isAccepted, err := c.KB.Accept(*query.KB)
