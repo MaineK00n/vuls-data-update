@@ -264,6 +264,7 @@ func (e extractor) extract(path string, updateIDMap map[string]string) (windowsk
 
 	return windowskbTypes.KB{
 		KBID: u.KBArticle,
+		URL:  fmt.Sprintf("https://support.microsoft.com/help/%s", u.KBArticle),
 		Updates: []windowskbUpdateTypes.Update{{
 			UpdateID:         u.UpdateID,
 			Title:            u.Title,

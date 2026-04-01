@@ -7,6 +7,30 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pkg/errors"
+
+	microsoftdefenderandroid "github.com/MaineK00n/go-microsoft-version/defender/android"
+	microsoftdefenderios "github.com/MaineK00n/go-microsoft-version/defender/ios"
+	microsoftdefenderiot "github.com/MaineK00n/go-microsoft-version/defender/iot"
+	microsoftdefenderlinux "github.com/MaineK00n/go-microsoft-version/defender/linux"
+	microsoftdefendermac "github.com/MaineK00n/go-microsoft-version/defender/mac"
+	microsoftdefendersi "github.com/MaineK00n/go-microsoft-version/defender/securityintelligence"
+	microsoftdefenderwindows "github.com/MaineK00n/go-microsoft-version/defender/windows"
+	microsoftdotnetcore "github.com/MaineK00n/go-microsoft-version/dotnet/core"
+	microsoftedge "github.com/MaineK00n/go-microsoft-version/edge"
+	microsoftexchange "github.com/MaineK00n/go-microsoft-version/exchange"
+	microsoftofficemac "github.com/MaineK00n/go-microsoft-version/office/mac"
+	microsoftofficewindows "github.com/MaineK00n/go-microsoft-version/office/windows"
+	microsoftsharepoint "github.com/MaineK00n/go-microsoft-version/sharepoint"
+	microsoftsqlserver "github.com/MaineK00n/go-microsoft-version/sqlserver"
+	microsoftteamsandroid "github.com/MaineK00n/go-microsoft-version/teams/android"
+	microsoftteamsclient "github.com/MaineK00n/go-microsoft-version/teams/client"
+	microsoftteamsdesktop "github.com/MaineK00n/go-microsoft-version/teams/desktop"
+	microsoftteamsios "github.com/MaineK00n/go-microsoft-version/teams/ios"
+	microsoftteamsmac "github.com/MaineK00n/go-microsoft-version/teams/mac"
+	microsoftvisualstudio "github.com/MaineK00n/go-microsoft-version/visualstudio"
+	microsoftvscode "github.com/MaineK00n/go-microsoft-version/vscode"
+	microsoftwindows "github.com/MaineK00n/go-microsoft-version/windows"
 	gem "github.com/aquasecurity/go-gem-version"
 	npm "github.com/aquasecurity/go-npm-version/pkg"
 	pep440 "github.com/aquasecurity/go-pep440-version"
@@ -15,7 +39,6 @@ import (
 	deb "github.com/knqyf263/go-deb-version"
 	rpm "github.com/knqyf263/go-rpm-version"
 	mvn "github.com/masahiro331/go-mvn-version"
-	"github.com/pkg/errors"
 
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 )
@@ -36,6 +59,28 @@ const (
 	RangeTypeRubyGems
 	RangeTypePyPI
 	RangeTypeMaven
+	RangeTypeMicrosoftDefenderAndroid
+	RangeTypeMicrosoftDefenderIOS
+	RangeTypeMicrosoftDefenderIoT
+	RangeTypeMicrosoftDefenderLinux
+	RangeTypeMicrosoftDefenderMac
+	RangeTypeMicrosoftDefenderSecurityIntelligence
+	RangeTypeMicrosoftDefenderWindows
+	RangeTypeMicrosoftDotNetCore
+	RangeTypeMicrosoftEdge
+	RangeTypeMicrosoftExchange
+	RangeTypeMicrosoftOfficeMac
+	RangeTypeMicrosoftOfficeWindows
+	RangeTypeMicrosoftSharePoint
+	RangeTypeMicrosoftSQLServer
+	RangeTypeMicrosoftTeamsAndroid
+	RangeTypeMicrosoftTeamsClient
+	RangeTypeMicrosoftTeamsDesktop
+	RangeTypeMicrosoftTeamsIOS
+	RangeTypeMicrosoftTeamsMac
+	RangeTypeMicrosoftVisualStudio
+	RangeTypeMicrosoftVSCode
+	RangeTypeMicrosoftWindows
 
 	RangeTypeUnknown
 )
@@ -66,6 +111,50 @@ func (t RangeType) String() string {
 		return "pypi"
 	case RangeTypeMaven:
 		return "maven"
+	case RangeTypeMicrosoftDefenderAndroid:
+		return "microsoft-defender-android"
+	case RangeTypeMicrosoftDefenderIOS:
+		return "microsoft-defender-ios"
+	case RangeTypeMicrosoftDefenderIoT:
+		return "microsoft-defender-iot"
+	case RangeTypeMicrosoftDefenderLinux:
+		return "microsoft-defender-linux"
+	case RangeTypeMicrosoftDefenderMac:
+		return "microsoft-defender-mac"
+	case RangeTypeMicrosoftDefenderSecurityIntelligence:
+		return "microsoft-defender-security-intelligence"
+	case RangeTypeMicrosoftDefenderWindows:
+		return "microsoft-defender-windows"
+	case RangeTypeMicrosoftDotNetCore:
+		return "microsoft-dotnet-core"
+	case RangeTypeMicrosoftEdge:
+		return "microsoft-edge"
+	case RangeTypeMicrosoftExchange:
+		return "microsoft-exchange"
+	case RangeTypeMicrosoftOfficeMac:
+		return "microsoft-office-mac"
+	case RangeTypeMicrosoftOfficeWindows:
+		return "microsoft-office-windows"
+	case RangeTypeMicrosoftSharePoint:
+		return "microsoft-sharepoint"
+	case RangeTypeMicrosoftSQLServer:
+		return "microsoft-sqlserver"
+	case RangeTypeMicrosoftTeamsAndroid:
+		return "microsoft-teams-android"
+	case RangeTypeMicrosoftTeamsClient:
+		return "microsoft-teams-client"
+	case RangeTypeMicrosoftTeamsDesktop:
+		return "microsoft-teams-desktop"
+	case RangeTypeMicrosoftTeamsIOS:
+		return "microsoft-teams-ios"
+	case RangeTypeMicrosoftTeamsMac:
+		return "microsoft-teams-mac"
+	case RangeTypeMicrosoftVisualStudio:
+		return "microsoft-visualstudio"
+	case RangeTypeMicrosoftVSCode:
+		return "microsoft-vscode"
+	case RangeTypeMicrosoftWindows:
+		return "microsoft-windows"
 	case RangeTypeUnknown:
 		return "unknown"
 	default:
@@ -111,6 +200,50 @@ func (t *RangeType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 		*t = RangeTypePyPI
 	case "maven":
 		*t = RangeTypeMaven
+	case "microsoft-defender-android":
+		*t = RangeTypeMicrosoftDefenderAndroid
+	case "microsoft-defender-ios":
+		*t = RangeTypeMicrosoftDefenderIOS
+	case "microsoft-defender-iot":
+		*t = RangeTypeMicrosoftDefenderIoT
+	case "microsoft-defender-linux":
+		*t = RangeTypeMicrosoftDefenderLinux
+	case "microsoft-defender-mac":
+		*t = RangeTypeMicrosoftDefenderMac
+	case "microsoft-defender-security-intelligence":
+		*t = RangeTypeMicrosoftDefenderSecurityIntelligence
+	case "microsoft-defender-windows":
+		*t = RangeTypeMicrosoftDefenderWindows
+	case "microsoft-dotnet-core":
+		*t = RangeTypeMicrosoftDotNetCore
+	case "microsoft-edge":
+		*t = RangeTypeMicrosoftEdge
+	case "microsoft-exchange":
+		*t = RangeTypeMicrosoftExchange
+	case "microsoft-office-mac":
+		*t = RangeTypeMicrosoftOfficeMac
+	case "microsoft-office-windows":
+		*t = RangeTypeMicrosoftOfficeWindows
+	case "microsoft-sharepoint":
+		*t = RangeTypeMicrosoftSharePoint
+	case "microsoft-sqlserver":
+		*t = RangeTypeMicrosoftSQLServer
+	case "microsoft-teams-android":
+		*t = RangeTypeMicrosoftTeamsAndroid
+	case "microsoft-teams-client":
+		*t = RangeTypeMicrosoftTeamsClient
+	case "microsoft-teams-desktop":
+		*t = RangeTypeMicrosoftTeamsDesktop
+	case "microsoft-teams-ios":
+		*t = RangeTypeMicrosoftTeamsIOS
+	case "microsoft-teams-mac":
+		*t = RangeTypeMicrosoftTeamsMac
+	case "microsoft-visualstudio":
+		*t = RangeTypeMicrosoftVisualStudio
+	case "microsoft-vscode":
+		*t = RangeTypeMicrosoftVSCode
+	case "microsoft-windows":
+		*t = RangeTypeMicrosoftWindows
 	case "unknown":
 		*t = RangeTypeUnknown
 	default:
@@ -155,6 +288,50 @@ func (t *RangeType) UnmarshalJSON(data []byte) error {
 		rt = RangeTypePyPI
 	case "maven":
 		rt = RangeTypeMaven
+	case "microsoft-defender-android":
+		rt = RangeTypeMicrosoftDefenderAndroid
+	case "microsoft-defender-ios":
+		rt = RangeTypeMicrosoftDefenderIOS
+	case "microsoft-defender-iot":
+		rt = RangeTypeMicrosoftDefenderIoT
+	case "microsoft-defender-linux":
+		rt = RangeTypeMicrosoftDefenderLinux
+	case "microsoft-defender-mac":
+		rt = RangeTypeMicrosoftDefenderMac
+	case "microsoft-defender-security-intelligence":
+		rt = RangeTypeMicrosoftDefenderSecurityIntelligence
+	case "microsoft-defender-windows":
+		rt = RangeTypeMicrosoftDefenderWindows
+	case "microsoft-dotnet-core":
+		rt = RangeTypeMicrosoftDotNetCore
+	case "microsoft-edge":
+		rt = RangeTypeMicrosoftEdge
+	case "microsoft-exchange":
+		rt = RangeTypeMicrosoftExchange
+	case "microsoft-office-mac":
+		rt = RangeTypeMicrosoftOfficeMac
+	case "microsoft-office-windows":
+		rt = RangeTypeMicrosoftOfficeWindows
+	case "microsoft-sharepoint":
+		rt = RangeTypeMicrosoftSharePoint
+	case "microsoft-sqlserver":
+		rt = RangeTypeMicrosoftSQLServer
+	case "microsoft-teams-android":
+		rt = RangeTypeMicrosoftTeamsAndroid
+	case "microsoft-teams-client":
+		rt = RangeTypeMicrosoftTeamsClient
+	case "microsoft-teams-desktop":
+		rt = RangeTypeMicrosoftTeamsDesktop
+	case "microsoft-teams-ios":
+		rt = RangeTypeMicrosoftTeamsIOS
+	case "microsoft-teams-mac":
+		rt = RangeTypeMicrosoftTeamsMac
+	case "microsoft-visualstudio":
+		rt = RangeTypeMicrosoftVisualStudio
+	case "microsoft-vscode":
+		rt = RangeTypeMicrosoftVSCode
+	case "microsoft-windows":
+		rt = RangeTypeMicrosoftWindows
 	case "unknown":
 		rt = RangeTypeUnknown
 	default:
@@ -347,6 +524,226 @@ func (t RangeType) Compare(family ecosystemTypes.Ecosystem, v1, v2 string) (int,
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
 		}
 		vb, err := mvn.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderAndroid:
+		va, err := microsoftdefenderandroid.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefenderandroid.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderIOS:
+		va, err := microsoftdefenderios.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefenderios.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderIoT:
+		va, err := microsoftdefenderiot.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefenderiot.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderLinux:
+		va, err := microsoftdefenderlinux.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefenderlinux.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderMac:
+		va, err := microsoftdefendermac.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefendermac.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderSecurityIntelligence:
+		va, err := microsoftdefendersi.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefendersi.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDefenderWindows:
+		va, err := microsoftdefenderwindows.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdefenderwindows.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftDotNetCore:
+		va, err := microsoftdotnetcore.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftdotnetcore.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftEdge:
+		va, err := microsoftedge.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftedge.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftExchange:
+		va, err := microsoftexchange.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftexchange.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftOfficeMac:
+		va, err := microsoftofficemac.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftofficemac.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftOfficeWindows:
+		va, err := microsoftofficewindows.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftofficewindows.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftSharePoint:
+		va, err := microsoftsharepoint.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftsharepoint.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftSQLServer:
+		va, err := microsoftsqlserver.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftsqlserver.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftTeamsAndroid:
+		va, err := microsoftteamsandroid.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftteamsandroid.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftTeamsClient:
+		va, err := microsoftteamsclient.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftteamsclient.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftTeamsDesktop:
+		va, err := microsoftteamsdesktop.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftteamsdesktop.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftTeamsIOS:
+		va, err := microsoftteamsios.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftteamsios.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftTeamsMac:
+		va, err := microsoftteamsmac.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftteamsmac.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftVisualStudio:
+		va, err := microsoftvisualstudio.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftvisualstudio.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftVSCode:
+		va, err := microsoftvscode.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftvscode.NewVersion(v2)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
+		}
+		return va.Compare(vb), nil
+	case RangeTypeMicrosoftWindows:
+		va, err := microsoftwindows.NewVersion(v1)
+		if err != nil {
+			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v1, Err: err}}
+		}
+		vb, err := microsoftwindows.NewVersion(v2)
 		if err != nil {
 			return 0, &CompareError{Err: &NewVersionError{RangeType: t, Version: v2, Err: err}}
 		}
