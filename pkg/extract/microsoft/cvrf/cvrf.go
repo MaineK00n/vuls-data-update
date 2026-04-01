@@ -65,8 +65,8 @@ import (
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
-	windowskbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
@@ -179,7 +179,7 @@ func Extract(args string, opts ...Option) error {
 				return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q", kb.KBID)
 			}
 
-			filename := filepath.Join(options.dir, "windowskb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			filename := filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
 			if _, err := os.Stat(filename); err == nil {
 				if err := func() error {
 					f, err := os.Open(filename)
@@ -188,7 +188,7 @@ func Extract(args string, opts ...Option) error {
 					}
 					defer f.Close()
 
-					var base windowskbTypes.KB
+					var base microsoftkbTypes.KB
 					if err := json.UnmarshalRead(f, &base); err != nil {
 						return errors.Wrapf(err, "unmarshal %s", filename)
 					}
@@ -236,11 +236,11 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []windowskbTypes.KB, error) {
+func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
 	products := collectProducts(c.ProductTree)
 
 	var datas []dataTypes.Data
-	kbm := make(map[string]windowskbTypes.KB)
+	kbm := make(map[string]microsoftkbTypes.KB)
 
 	for _, v := range c.Vulnerability {
 		var description string
@@ -1898,7 +1898,7 @@ func buildKBCriterion(product, kbID string) *criterionTypes.Criterion {
 // appendOrMergeSegment adds seg to an existing item whose content matches (determined by compare returning 0),
 // or appends newItem if no match is found.
 
-func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, kbm map[string]windowskbTypes.KB) error {
+func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, kbm map[string]microsoftkbTypes.KB) error {
 	for _, r := range v.Remediations.Remediation {
 		if r.Type != "Vendor Fix" {
 			continue
@@ -1943,10 +1943,10 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 						Raws: e.r.Paths(),
 					}
 				}
-				if !slices.ContainsFunc(skb.SupersededBy, func(s windowskbSupersededByTypes.SupersededBy) bool {
+				if !slices.ContainsFunc(skb.SupersededBy, func(s microsoftkbSupersededByTypes.SupersededBy) bool {
 					return s.KBID == kbID
 				}) {
-					skb.SupersededBy = append(skb.SupersededBy, windowskbSupersededByTypes.SupersededBy{KBID: kbID})
+					skb.SupersededBy = append(skb.SupersededBy, microsoftkbSupersededByTypes.SupersededBy{KBID: kbID})
 				}
 				if !slices.Contains(skb.Products, criterionProductName) {
 					skb.Products = append(skb.Products, criterionProductName)

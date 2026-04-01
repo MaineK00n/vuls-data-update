@@ -13,8 +13,8 @@ import (
 	"github.com/pkg/errors"
 
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
-	windowskbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/update"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 )
@@ -157,10 +157,10 @@ func TestWrite(t *testing.T) {
 		want    any
 	}{
 		{
-			name: "windowskb.KB",
-			content: windowskbTypes.KB{
+			name: "microsoftkb.KB",
+			content: microsoftkbTypes.KB{
 				KBID: "5070881",
-				Updates: []windowskbUpdateTypes.Update{
+				Updates: []microsoftkbUpdateTypes.Update{
 					{UpdateID: "bbb"},
 					{UpdateID: "aaa"},
 				},
@@ -170,9 +170,9 @@ func TestWrite(t *testing.T) {
 				},
 			},
 			doSort: true,
-			want: windowskbTypes.KB{
+			want: microsoftkbTypes.KB{
 				KBID: "5070881",
-				Updates: []windowskbUpdateTypes.Update{
+				Updates: []microsoftkbUpdateTypes.Update{
 					{UpdateID: "aaa"},
 					{UpdateID: "bbb"},
 				},
@@ -184,9 +184,9 @@ func TestWrite(t *testing.T) {
 		},
 		{
 			name: "pointer type is not sorted",
-			content: &windowskbTypes.KB{
+			content: &microsoftkbTypes.KB{
 				KBID: "5070881",
-				Updates: []windowskbUpdateTypes.Update{
+				Updates: []microsoftkbUpdateTypes.Update{
 					{UpdateID: "bbb"},
 					{UpdateID: "aaa"},
 				},
@@ -196,9 +196,9 @@ func TestWrite(t *testing.T) {
 				},
 			},
 			doSort: true,
-			want: windowskbTypes.KB{
+			want: microsoftkbTypes.KB{
 				KBID: "5070881",
-				Updates: []windowskbUpdateTypes.Update{
+				Updates: []microsoftkbUpdateTypes.Update{
 					{UpdateID: "bbb"},
 					{UpdateID: "aaa"},
 				},

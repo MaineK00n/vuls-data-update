@@ -5,7 +5,7 @@ import (
 	"slices"
 	"time"
 
-	supersededbyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
+	supersededbyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
 )
 
 // Update represents a specific update instance identified by Update ID (UUID).

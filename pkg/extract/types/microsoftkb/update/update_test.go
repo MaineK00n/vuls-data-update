@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
+	supersededbyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
 )
 
 func TestUpdate_Sort(t *testing.T) {
@@ -21,7 +21,7 @@ func TestUpdate_Sort(t *testing.T) {
 		Languages          []string
 		MoreInfoURL        string
 		SupportURL         string
-		SupersededBy       []supersededby.SupersededBy
+		SupersededBy       []supersededbyTypes.SupersededBy
 		RebootBehavior     string
 		UserInput          string
 		InstallationImpact string

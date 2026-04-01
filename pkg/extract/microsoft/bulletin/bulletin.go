@@ -33,8 +33,8 @@ import (
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
-	windowskbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb"
-	windowskbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/windowskb/supersededby"
+	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
+	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
@@ -130,7 +130,7 @@ func Extract(args string, opts ...Option) error {
 				return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q, path: %q", kb.KBID, path)
 			}
 
-			filename := filepath.Join(options.dir, "windowskb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
+			filename := filepath.Join(options.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
 			if _, err := os.Stat(filename); err == nil {
 				if err := func() error {
 					f, err := os.Open(filename)
@@ -139,7 +139,7 @@ func Extract(args string, opts ...Option) error {
 					}
 					defer f.Close()
 
-					var base windowskbTypes.KB
+					var base microsoftkbTypes.KB
 					if err := json.UnmarshalRead(f, &base); err != nil {
 						return errors.Wrapf(err, "unmarshal %s", filename)
 					}
@@ -337,7 +337,7 @@ func isOSPlatform(s string) bool {
 	}
 }
 
-func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []windowskbTypes.KB, error) {
+func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
 	type dataGroup struct {
 		advisories []advisoryTypes.Advisory
 		vulns      []vulnerabilityTypes.Vulnerability
@@ -519,10 +519,10 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 		})
 	}
 
-	// WindowsKB entries
-	kbs := make([]windowskbTypes.KB, 0, len(kbProducts)+len(kbSupersededBy))
+	// MicrosoftKB entries
+	kbs := make([]microsoftkbTypes.KB, 0, len(kbProducts)+len(kbSupersededBy))
 	for kbID, products := range kbProducts {
-		kb := windowskbTypes.KB{
+		kb := microsoftkbTypes.KB{
 			KBID:     kbID,
 			URL:      fmt.Sprintf("https://support.microsoft.com/help/%s", kbID),
 			Products: slices.Collect(maps.Keys(products)),
@@ -533,18 +533,18 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []window
 		}
 		if newKBIDs, ok := kbSupersededBy[kbID]; ok {
 			for newKBID := range newKBIDs {
-				kb.SupersededBy = append(kb.SupersededBy, windowskbSupersededByTypes.SupersededBy{KBID: newKBID})
+				kb.SupersededBy = append(kb.SupersededBy, microsoftkbSupersededByTypes.SupersededBy{KBID: newKBID})
 			}
 			delete(kbSupersededBy, kbID)
 		}
 		kbs = append(kbs, kb)
 	}
 	for oldKBID, newKBIDs := range kbSupersededBy {
-		ss := make([]windowskbSupersededByTypes.SupersededBy, 0, len(newKBIDs))
+		ss := make([]microsoftkbSupersededByTypes.SupersededBy, 0, len(newKBIDs))
 		for newKBID := range newKBIDs {
-			ss = append(ss, windowskbSupersededByTypes.SupersededBy{KBID: newKBID})
+			ss = append(ss, microsoftkbSupersededByTypes.SupersededBy{KBID: newKBID})
 		}
-		kbs = append(kbs, windowskbTypes.KB{
+		kbs = append(kbs, microsoftkbTypes.KB{
 			KBID:         oldKBID,
 			SupersededBy: ss,
 			DataSource: sourceTypes.Source{
