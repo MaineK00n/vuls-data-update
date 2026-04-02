@@ -590,6 +590,9 @@ func appendOrMergeSegment[T any](
 func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, error) {
 	conditionsByEcosystem := make(map[ecosystemTypes.Ecosystem][]conditionTypes.Condition)
 
+	// Track which product IDs are covered by Vendor Fix remediations.
+	coveredProductIDs := make(map[string]struct{})
+
 	for _, r := range v.Remediations.Remediation {
 		switch r.Type {
 		case "Vendor Fix":
@@ -602,6 +605,13 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				if isCBLMarinerOrAzureLinux(productName) {
 					continue
 				}
+
+				// Mark the product as covered so that the ProductStatuses fallback
+				// does not incorrectly register it as unfixed. This must happen
+				// before the nil check below because some Vendor Fix entries
+				// (e.g. "Click to Run") carry neither a KB ID nor a FixedBuild,
+				// yet the product IS fixed via an auto-update channel.
+				coveredProductIDs[pid] = struct{}{}
 
 				tag := segmentTypes.DetectionTag(productName)
 				criterionProductName := microsoftutil.NormalizeProductName(productName)
@@ -624,25 +634,7 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 					cns = append(cns, *fixedBuildCriterion)
 				}
 
-				conditions := conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft]
-				for _, cn := range cns {
-					switch idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
-						return c.Tag == tag
-					}); idx {
-					case -1:
-						conditions = append(conditions, conditionTypes.Condition{
-							Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR, Criterions: []criterionTypes.Criterion{cn}},
-							Tag:      tag,
-						})
-					default:
-						if !slices.ContainsFunc(conditions[idx].Criteria.Criterions, func(e criterionTypes.Criterion) bool {
-							return criterionTypes.Compare(e, cn) == 0
-						}) {
-							conditions[idx].Criteria.Criterions = append(conditions[idx].Criteria.Criterions, cn)
-						}
-					}
-				}
-				conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
+				appendConditions(conditionsByEcosystem, tag, cns)
 			}
 		case "Release Notes", "Known Issue", "Mitigation", "Workaround":
 		default:
@@ -650,7 +642,72 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 		}
 	}
 
+	// For products listed in ProductStatuses but not covered by any Vendor Fix
+	// remediation, use fixedBuildOverrides if available (e.g. Edge), otherwise
+	// register as unfixed.
+	for _, pid := range v.ProductStatuses.Status.ProductID {
+		if _, ok := coveredProductIDs[pid]; ok {
+			continue
+		}
+
+		productName, ok := products[pid]
+		if !ok {
+			return nil, errors.Errorf("product ID %q not found in product tree for %s", pid, v.CVE)
+		}
+
+		if isCBLMarinerOrAzureLinux(productName) {
+			continue
+		}
+
+		tag := segmentTypes.DetectionTag(productName)
+		criterionProductName := microsoftutil.NormalizeProductName(productName)
+
+		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, "")
+		if err != nil {
+			return nil, errors.Wrap(err, "build fixed build criterion")
+		}
+
+		if fixedBuildCriterion != nil {
+			appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
+			continue
+		}
+
+		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{{
+			Type: criterionTypes.CriterionTypeVersion,
+			Version: &vcTypes.Criterion{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnfixed},
+				Package: criterionpackageTypes.Package{
+					Type:   criterionpackageTypes.PackageTypeBinary,
+					Binary: &binaryTypes.Package{Name: criterionProductName},
+				},
+			},
+		}})
+	}
+
 	return conditionsByEcosystem, nil
+}
+
+func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, cns []criterionTypes.Criterion) {
+	conditions := conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft]
+	for _, cn := range cns {
+		switch idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
+			return c.Tag == tag
+		}); idx {
+		case -1:
+			conditions = append(conditions, conditionTypes.Condition{
+				Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR, Criterions: []criterionTypes.Criterion{cn}},
+				Tag:      tag,
+			})
+		default:
+			if !slices.ContainsFunc(conditions[idx].Criteria.Criterions, func(e criterionTypes.Criterion) bool {
+				return criterionTypes.Compare(e, cn) == 0
+			}) {
+				conditions[idx].Criteria.Criterions = append(conditions[idx].Criteria.Criterions, cn)
+			}
+		}
+	}
+	conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
 }
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {
 	// Generic cleanup
