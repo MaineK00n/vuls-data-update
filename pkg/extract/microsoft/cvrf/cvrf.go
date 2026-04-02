@@ -1277,6 +1277,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			Affected: &affectedTypes.Affected{
 				Type:  rt,
 				Range: []rangeTypes.Range{{LessThan: fixedBuild}},
+				Fixed: []string{fixedBuild},
 			},
 		},
 	}, nil
