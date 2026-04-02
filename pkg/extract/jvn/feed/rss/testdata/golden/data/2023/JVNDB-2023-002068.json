@@ -56,22 +56,6 @@
 	"vulnerabilities": [
 		{
 			"content": {
-				"id": "CVE-2022-25026 & CVE-2022-25027: Vulnerabilities in Rocket TRUfusion Enterprise",
-				"references": [
-					{
-						"source": "jvndb.jvn.jp",
-						"url": "https://labs.nettitude.com/blog/cve-2022-25026-cve-2022-25027-vulnerabilities-in-rocket-trufusion-enterprise/"
-					}
-				]
-			},
-			"segments": [
-				{
-					"ecosystem": "cpe"
-				}
-			]
-		},
-		{
-			"content": {
 				"id": "CVE-2022-25027",
 				"references": [
 					{

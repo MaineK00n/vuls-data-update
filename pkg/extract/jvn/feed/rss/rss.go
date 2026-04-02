@@ -251,24 +251,26 @@ func extract(fetched fetchTypes.Item, raws []string) (dataTypes.Data, error) {
 	// Build vulnerabilities from CVE references (merge references for same CVE ID)
 	vulnMap := make(map[string]vulnerabilityTypes.Vulnerability)
 	for _, ref := range fetched.References {
-		if !strings.HasPrefix(ref.ID, "CVE-") {
-			continue
-		}
-		if _, ok := vulnMap[ref.ID]; !ok {
-			vulnMap[ref.ID] = vulnerabilityTypes.Vulnerability{
-				Content: vulnerabilityContentTypes.Content{
-					ID: vulnerabilityContentTypes.VulnerabilityID(ref.ID),
-				},
-				Segments: segments,
+		switch ref.Source {
+		case "CVE", "NVD":
+			if _, ok := vulnMap[ref.ID]; !ok {
+				vulnMap[ref.ID] = vulnerabilityTypes.Vulnerability{
+					Content: vulnerabilityContentTypes.Content{
+						ID: vulnerabilityContentTypes.VulnerabilityID(ref.ID),
+					},
+					Segments: segments,
+				}
 			}
-		}
-		if ref.Text != "" {
-			v := vulnMap[ref.ID]
-			v.Content.References = append(v.Content.References, referenceTypes.Reference{
-				Source: "jvndb.jvn.jp",
-				URL:    ref.Text,
-			})
-			vulnMap[ref.ID] = v
+			if ref.Text != "" {
+				v := vulnMap[ref.ID]
+				v.Content.References = append(v.Content.References, referenceTypes.Reference{
+					Source: "jvndb.jvn.jp",
+					URL:    ref.Text,
+				})
+				vulnMap[ref.ID] = v
+			}
+		default:
+			continue
 		}
 	}
 
