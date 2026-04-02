@@ -1,0 +1,116 @@
+{
+	"id": "JVNDB-2022-017704",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2022-017704",
+				"title": "Linux の Linux Kernel における NULL ポインタデリファレンスに関する脆弱性",
+				"description": "Linux の Linux Kernel には、NULL ポインタデリファレンスに関する脆弱性が存在します。 ",
+				"severity": [
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+							"base_score": 5.5,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.5,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.5,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-476"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://cdn.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.16.3"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://github.com/torvalds/linux/commit/3ba880a12df5aa4488c18281701b5b1bc3d4531a"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23001"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23001"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.kernel.org"
+					}
+				],
+				"published": "2023-10-16T17:17:41+09:00",
+				"modified": "2023-10-16T17:17:41+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2023-23001",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2023-23001"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2023-23001"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"package": {
+										"type": "cpe",
+										"cpe": "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail",
+		"raws": [
+			"fixtures/2022/JVNDB-2022-017704.json"
+		]
+	}
+}
