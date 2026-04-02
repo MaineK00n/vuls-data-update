@@ -1,0 +1,162 @@
+{
+	"id": "JVNDB-2022-000002",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2022-000002",
+				"title": "WordPress 用プラグイン Quiz And Survey Master における複数の脆弱性",
+				"description": "ExpressTech が提供する WordPress 用プラグイン Quiz And Survey Master には、次の複数の脆弱性が存在します。 ・クロスサイトリクエストフォージェリ (CWE-352) - CVE-2022-0180 ・反射型クロスサイトスクリプティング (CWE-79) - CVE-2022-0181 ・格納型クロスサイトスクリプティング (CWE-79) - CVE-2022-0182  CVE-2022-0180、CVE-2022-0181 これらの脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。 報告者: 末吉 大輝 氏  CVE-2022-0182 この脆弱性情報は、情報セキュリティ早期警戒パートナーシップに基づき下記の方が IPA に報告し、JPCERT/CC が開発者との調整を行いました。 報告者: 三井物産セキュアディレクション株式会社 荒牧　努 氏",
+				"severity": [
+					{
+						"type": "cvss_v2",
+						"source": "jvndb.jvn.jp",
+						"cvss_v2": {
+							"vector": "AV:N/AC:L/Au:S/C:N/I:P/A:N",
+							"base_score": 4,
+							"nvd_base_severity": "MEDIUM",
+							"temporal_score": 4,
+							"nvd_temporal_severity": "MEDIUM",
+							"environmental_score": 4,
+							"nvd_environmental_severity": "MEDIUM"
+						}
+					},
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
+							"base_score": 5.4,
+							"base_severity": "MEDIUM",
+							"temporal_score": 5.4,
+							"temporal_severity": "MEDIUM",
+							"environmental_score": 5.4,
+							"environmental_severity": "MEDIUM"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-352",
+							"CWE-79"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://ja.wordpress.org/plugins/quiz-master-next/"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://jvn.jp/jp/JVN72788165/index.html"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://quizandsurveymaster.com/"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0180"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0181"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0182"
+					}
+				],
+				"published": "2022-01-12T12:08:20+09:00",
+				"modified": "2022-01-12T12:08:20+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-0180",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0180"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-0181",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0181"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2022-0182",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-0182"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"package": {
+										"type": "cpe",
+										"cpe": "cpe:2.3:a:expresstech:quiz_and_survey_master:*:*:*:*:*:*:*:*"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail",
+		"raws": [
+			"fixtures/2022/JVNDB-2022-000002.json"
+		]
+	}
+}

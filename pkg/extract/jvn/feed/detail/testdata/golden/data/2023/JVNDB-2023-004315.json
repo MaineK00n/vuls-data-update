@@ -1,0 +1,120 @@
+{
+	"id": "JVNDB-2023-004315",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2023-004315",
+				"title": "oclc の oaicat における SQL インジェクションの脆弱性",
+				"description": "oclc の oaicat には、SQL インジェクションの脆弱性が存在します。",
+				"severity": [
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9.8,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9.8,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-89"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://code.google.com/archive/p/oaicat/issues/7"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://github.com/OCLC-Research/oaicat/commit/6cc65501869fa663bcd24a70b63f41f5cfe6b3e1"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2013-10019"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://oaicat.googlecode.com/files/oaicat-1.5.62.tar.gz"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://vuldb.com/?id.221489"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2013-10019"
+					}
+				],
+				"published": "2023-10-27T17:01:51+09:00",
+				"modified": "2023-10-27T17:01:51+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2013-10019",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2013-10019"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2013-10019"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"package": {
+										"type": "cpe",
+										"cpe": "cpe:2.3:a:oclc:oaicat:*:*:*:*:*:*:*:*"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-detail",
+		"raws": [
+			"fixtures/2023/JVNDB-2023-004315.json"
+		]
+	}
+}

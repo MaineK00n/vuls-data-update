@@ -1,13 +1,46 @@
 package detail
 
 import (
+	"fmt"
 	"io/fs"
 	"log/slog"
+	"maps"
 	"path/filepath"
+	"slices"
+	"strings"
+	"time"
 
+	"github.com/knqyf263/go-cpe/naming"
 	"github.com/pkg/errors"
 
+	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
+	advisoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory"
+	advisoryContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/advisory/content"
+	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
+	detectionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection"
+	conditionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition"
+	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
+	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
+	cpePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
+	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
+	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
+	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
+	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
+	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
+	v31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
+	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
+	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
+	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
+	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
+	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
+	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
+	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
+	fetchTypes "github.com/MaineK00n/vuls-data-update/pkg/fetch/jvn/feed/detail"
 )
 
 type options struct {
@@ -30,7 +63,7 @@ func WithDir(dir string) Option {
 
 func Extract(args string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "", ""),
+		dir: filepath.Join(util.CacheDir(), "extract", "jvn", "feed", "detail"),
 	}
 
 	for _, o := range opts {
@@ -55,10 +88,207 @@ func Extract(args string, opts ...Option) error {
 			return nil
 		}
 
+		r := utiljson.NewJSONReader()
+		var fetched fetchTypes.Vulinfo
+		if err := r.Read(path, args, &fetched); err != nil {
+			return errors.Wrapf(err, "read json %s", path)
+		}
+
+		data, err := extract(fetched, r.Paths())
+		if err != nil {
+			return errors.Wrapf(err, "extract %s", path)
+		}
+
+		splitted, err := util.Split(string(data.ID), "-", "-")
+		if err != nil {
+			return errors.Wrapf(err, "unexpected ID format. expected: %q, actual: %q", "JVNDB-yyyy-\\d{6}", data.ID)
+		}
+
+		if err := util.Write(filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)), data, true); err != nil {
+			return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "data", splitted[1], fmt.Sprintf("%s.json", data.ID)))
+		}
+
 		return nil
 	}); err != nil {
 		return errors.Wrapf(err, "walk %s", args)
 	}
 
+	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
+		ID:   sourceTypes.JVNFeedDetail,
+		Name: new("Japan Vulnerability Notes: JVN Feed Detail"),
+		Raw: func() []repositoryTypes.Repository {
+			r, _ := utilgit.GetDataSourceRepository(args)
+			if r == nil {
+				return nil
+			}
+			return []repositoryTypes.Repository{*r}
+		}(),
+		Extracted: func() *repositoryTypes.Repository {
+			if u, err := utilgit.GetOrigin(options.dir); err == nil {
+				return &repositoryTypes.Repository{URL: u}
+			}
+			return nil
+		}(),
+	}, false); err != nil {
+		return errors.Wrapf(err, "write %s", filepath.Join(options.dir, "datasource.json"))
+	}
+
 	return nil
+}
+
+func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) {
+	// Build CVSS severity
+	var ss []severityTypes.Severity
+	for _, cvss := range fetched.VulinfoData.Impact.Cvss {
+		if cvss.Vector == "" {
+			continue
+		}
+		switch cvss.Version {
+		case "2.0":
+			v2, err := v2Types.Parse(cvss.Vector)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "parse cvss v2 %q", cvss.Vector)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:   severityTypes.SeverityTypeCVSSv2,
+				Source: "jvndb.jvn.jp",
+				CVSSv2: v2,
+			})
+		case "3.0":
+			v30, err := v30Types.Parse(cvss.Vector)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "parse cvss v3.0 %q", cvss.Vector)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv30,
+				Source:  "jvndb.jvn.jp",
+				CVSSv30: v30,
+			})
+		case "3.1":
+			v31, err := v31Types.Parse(cvss.Vector)
+			if err != nil {
+				return dataTypes.Data{}, errors.Wrapf(err, "parse cvss v3.1 %q", cvss.Vector)
+			}
+			ss = append(ss, severityTypes.Severity{
+				Type:    severityTypes.SeverityTypeCVSSv31,
+				Source:  "jvndb.jvn.jp",
+				CVSSv31: v31,
+			})
+		default:
+			return dataTypes.Data{}, errors.Errorf("unknown CVSS version %q, vector %q", cvss.Version, cvss.Vector)
+		}
+	}
+
+	// Build CWE from related items
+	var cweIDs []string
+	for _, item := range fetched.VulinfoData.Related.RelatedItem {
+		if item.Type == "cwe" && strings.HasPrefix(item.VulinfoID, "CWE-") {
+			cweIDs = append(cweIDs, item.VulinfoID)
+		}
+	}
+	var cwes []cweTypes.CWE
+	if len(cweIDs) > 0 {
+		cwes = []cweTypes.CWE{{
+			Source: "jvndb.jvn.jp",
+			CWE:    cweIDs,
+		}}
+	}
+
+	// Build references from related items (exclude CWE entries)
+	var refs []referenceTypes.Reference
+	for _, item := range fetched.VulinfoData.Related.RelatedItem {
+		if item.Type == "cwe" || item.URL == "" {
+			continue
+		}
+		refs = append(refs, referenceTypes.Reference{
+			Source: "jvndb.jvn.jp",
+			URL:    item.URL,
+		})
+	}
+
+	// Build CPE-based detections (convert CPE 2.2 URI to CPE 2.3 FS format)
+	var criterions []criterionTypes.Criterion
+	for _, item := range fetched.VulinfoData.Affected.AffectedItem {
+		if item.Cpe == nil || item.Cpe.Text == "" {
+			continue
+		}
+		wfn, err := naming.UnbindURI(item.Cpe.Text)
+		if err != nil {
+			return dataTypes.Data{}, errors.Wrapf(err, "parse CPE URI %q", item.Cpe.Text)
+		}
+		criterions = append(criterions, criterionTypes.Criterion{
+			Type: criterionTypes.CriterionTypeVersion,
+			Version: &vcTypes.Criterion{
+				Vulnerable: true,
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpePackageTypes.CPE(naming.BindToFS(wfn))),
+				},
+			},
+		})
+	}
+
+	var segments []segmentTypes.Segment
+	var detections []detectionTypes.Detection
+	if len(criterions) > 0 {
+		segments = []segmentTypes.Segment{{
+			Ecosystem: ecosystemTypes.EcosystemTypeCPE,
+		}}
+		detections = []detectionTypes.Detection{{
+			Ecosystem: ecosystemTypes.EcosystemTypeCPE,
+			Conditions: []conditionTypes.Condition{{
+				Criteria: criteriaTypes.Criteria{
+					Operator:   criteriaTypes.CriteriaOperatorTypeOR,
+					Criterions: criterions,
+				},
+			}},
+		}}
+	}
+
+	// Build vulnerabilities from CVE references (merge references for same CVE ID)
+	vulnMap := make(map[string]vulnerabilityTypes.Vulnerability)
+	for _, item := range fetched.VulinfoData.Related.RelatedItem {
+		if !strings.HasPrefix(item.VulinfoID, "CVE-") {
+			continue
+		}
+		if _, ok := vulnMap[item.VulinfoID]; !ok {
+			vulnMap[item.VulinfoID] = vulnerabilityTypes.Vulnerability{
+				Content: vulnerabilityContentTypes.Content{
+					ID: vulnerabilityContentTypes.VulnerabilityID(item.VulinfoID),
+				},
+				Segments: segments,
+			}
+		}
+		if item.URL != "" {
+			v := vulnMap[item.VulinfoID]
+			v.Content.References = append(v.Content.References, referenceTypes.Reference{
+				Source: "jvndb.jvn.jp",
+				URL:    item.URL,
+			})
+			vulnMap[item.VulinfoID] = v
+		}
+	}
+
+	return dataTypes.Data{
+		ID: dataTypes.RootID(fetched.VulinfoID),
+		Advisories: []advisoryTypes.Advisory{{
+			Content: advisoryContentTypes.Content{
+				ID:          advisoryContentTypes.AdvisoryID(fetched.VulinfoID),
+				Title:       fetched.VulinfoData.Title,
+				Description: fetched.VulinfoData.VulinfoDescription.Overview,
+				Severity:    ss,
+				CWE:         cwes,
+				References:  refs,
+				Published:   utiltime.Parse([]string{time.RFC3339}, fetched.VulinfoData.DateFirstPublished),
+				Modified:    utiltime.Parse([]string{time.RFC3339}, fetched.VulinfoData.DateLastUpdated),
+			},
+			Segments: segments,
+		}},
+		Vulnerabilities: slices.Collect(maps.Values(vulnMap)),
+		Detections:      detections,
+		DataSource: sourceTypes.Source{
+			ID:   sourceTypes.JVNFeedDetail,
+			Raws: raws,
+		},
+	}, nil
 }
