@@ -141,6 +141,9 @@
 								"type": "version",
 								"version": {
 									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
 									"package": {
 										"type": "cpe",
 										"cpe": "cpe:2.3:a:expresstech:quiz_and_survey_master:*:*:*:*:*:*:*:*"
