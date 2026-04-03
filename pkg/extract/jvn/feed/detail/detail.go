@@ -22,6 +22,7 @@ import (
 	criteriaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
+	fixstatusTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/fixstatus"
 	packageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package"
 	cpePackageTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/package/cpe"
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
@@ -91,7 +92,7 @@ func Extract(args string, opts ...Option) error {
 		r := utiljson.NewJSONReader()
 		var fetched fetchTypes.Vulinfo
 		if err := r.Read(path, args, &fetched); err != nil {
-			return errors.Wrapf(err, "read json %s", path)
+			return errors.Wrapf(err, "read %s", path)
 		}
 
 		data, err := extract(fetched, r.Paths())
@@ -214,12 +215,14 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 		}
 		wfn, err := naming.UnbindURI(item.Cpe.Text)
 		if err != nil {
-			return dataTypes.Data{}, errors.Wrapf(err, "parse CPE URI %q", item.Cpe.Text)
+			slog.Warn("skip invalid CPE URI", slog.String("cpe", item.Cpe.Text), slog.Any("err", err))
+			continue
 		}
 		criterions = append(criterions, criterionTypes.Criterion{
 			Type: criterionTypes.CriterionTypeVersion,
 			Version: &vcTypes.Criterion{
 				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeCPE,
 					CPE:  new(cpePackageTypes.CPE(naming.BindToFS(wfn))),
@@ -248,24 +251,29 @@ func extract(fetched fetchTypes.Vulinfo, raws []string) (dataTypes.Data, error) 
 	// Build vulnerabilities from CVE references (merge references for same CVE ID)
 	vulnMap := make(map[string]vulnerabilityTypes.Vulnerability)
 	for _, item := range fetched.VulinfoData.Related.RelatedItem {
-		if !strings.HasPrefix(item.VulinfoID, "CVE-") {
-			continue
-		}
-		if _, ok := vulnMap[item.VulinfoID]; !ok {
-			vulnMap[item.VulinfoID] = vulnerabilityTypes.Vulnerability{
-				Content: vulnerabilityContentTypes.Content{
-					ID: vulnerabilityContentTypes.VulnerabilityID(item.VulinfoID),
-				},
-				Segments: segments,
+		switch item.Type {
+		case "advisory":
+			switch item.Name {
+			case "Common Vulnerabilities and Exposures (CVE)", "National Vulnerability Database (NVD)":
+				if _, ok := vulnMap[item.VulinfoID]; !ok {
+					vulnMap[item.VulinfoID] = vulnerabilityTypes.Vulnerability{
+						Content: vulnerabilityContentTypes.Content{
+							ID: vulnerabilityContentTypes.VulnerabilityID(item.VulinfoID),
+						},
+						Segments: segments,
+					}
+				}
+				if item.URL != "" {
+					v := vulnMap[item.VulinfoID]
+					v.Content.References = append(v.Content.References, referenceTypes.Reference{
+						Source: "jvndb.jvn.jp",
+						URL:    item.URL,
+					})
+					vulnMap[item.VulinfoID] = v
+				}
+			default:
 			}
-		}
-		if item.URL != "" {
-			v := vulnMap[item.VulinfoID]
-			v.Content.References = append(v.Content.References, referenceTypes.Reference{
-				Source: "jvndb.jvn.jp",
-				URL:    item.URL,
-			})
-			vulnMap[item.VulinfoID] = v
+		default:
 		}
 	}
 
