@@ -1,0 +1,111 @@
+{
+	"id": "JVNDB-2023-002068",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2023-002068",
+				"title": "Rocket TRUfusion Portal におけるパスワード管理機能に関する脆弱性",
+				"description": "Rocket TRUfusion Portal には、パスワード管理機能に関する脆弱性が存在します。\r\n\r\n",
+				"severity": [
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+							"base_score": 7.5,
+							"base_severity": "HIGH",
+							"temporal_score": 7.5,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.5,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-640"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://labs.nettitude.com/blog/cve-2022-25026-cve-2022-25027-vulnerabilities-in-rocket-trufusion-enterprise/"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25027"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25027"
+					}
+				],
+				"published": "2023-06-08T16:22:00+09:00",
+				"modified": "2023-06-08T16:22:00+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-25027",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-25027"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-25027"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"package": {
+										"type": "cpe",
+										"cpe": "cpe:2.3:a:rocketsoftware:trufusion_enterprise:*:*:*:*:*:*:*:*"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss",
+		"raws": [
+			"fixtures/2023/JVNDB-2023-002068.json"
+		]
+	}
+}

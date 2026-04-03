@@ -1,0 +1,124 @@
+{
+	"id": "JVNDB-2021-018345",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2021-018345",
+				"title": "Android における脆弱性",
+				"description": "Android には、不特定の脆弱性が存在します。\r\n\r\n",
+				"severity": [
+					{
+						"type": "cvss_v2",
+						"source": "jvndb.jvn.jp",
+						"cvss_v2": {
+							"vector": "AV:L/AC:L/Au:N/C:P/I:P/A:P",
+							"base_score": 4.6,
+							"nvd_base_severity": "MEDIUM",
+							"temporal_score": 4.6,
+							"nvd_temporal_severity": "MEDIUM",
+							"environmental_score": 4.6,
+							"nvd_environmental_severity": "MEDIUM"
+						}
+					},
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 7.8,
+							"base_severity": "HIGH",
+							"temporal_score": 7.8,
+							"temporal_severity": "HIGH",
+							"environmental_score": 7.8,
+							"environmental_severity": "HIGH"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-noinfo"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22292"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://security.samsungmobile.com/securityUpdate.smsb?year=2022&month=2"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-22292"
+					}
+				],
+				"published": "2023-06-01T11:12:00+09:00",
+				"modified": "2023-06-01T11:12:00+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-22292",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22292"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-22292"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"package": {
+										"type": "cpe",
+										"cpe": "cpe:2.3:o:google:android:*:*:*:*:*:*:*:*"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss",
+		"raws": [
+			"fixtures/2021/JVNDB-2021-018345.json"
+		]
+	}
+}

@@ -1,0 +1,107 @@
+{
+	"id": "JVNDB-2022-020469",
+	"advisories": [
+		{
+			"content": {
+				"id": "JVNDB-2022-020469",
+				"title": "アップルの macOS における脆弱性",
+				"description": "アップルの macOS には、不特定の脆弱性が存在します。\r\n",
+				"severity": [
+					{
+						"type": "cvss_v30",
+						"source": "jvndb.jvn.jp",
+						"cvss_v30": {
+							"vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+							"base_score": 9.8,
+							"base_severity": "CRITICAL",
+							"temporal_score": 9.8,
+							"temporal_severity": "CRITICAL",
+							"environmental_score": 9.8,
+							"environmental_severity": "CRITICAL"
+						}
+					}
+				],
+				"cwe": [
+					{
+						"source": "jvndb.jvn.jp",
+						"cwe": [
+							"CWE-noinfo"
+						]
+					}
+				],
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-46723"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46723"
+					}
+				],
+				"published": "2023-11-02T11:30:00+09:00",
+				"modified": "2023-11-02T11:30:00+09:00"
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2022-46723",
+				"references": [
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://nvd.nist.gov/vuln/detail/CVE-2022-46723"
+					},
+					{
+						"source": "jvndb.jvn.jp",
+						"url": "https://www.cve.org/CVERecord?id=CVE-2022-46723"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "cpe"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "cpe",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterions": [
+							{
+								"type": "version",
+								"version": {
+									"vulnerable": true,
+									"fix_status": {
+										"class": "unknown"
+									},
+									"package": {
+										"type": "cpe",
+										"cpe": "cpe:2.3:o:apple:macos:*:*:*:*:*:*:*:*"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "jvn-feed-rss",
+		"raws": [
+			"fixtures/2022/JVNDB-2022-020469.json"
+		]
+	}
+}
