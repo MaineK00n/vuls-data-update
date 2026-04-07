@@ -734,7 +734,9 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 	//    package names (e.g. "regex-1.8.4", "h2-0.3.26"), KB references (e.g. "KB5032921")
 	//  - Placeholder versions containing "x" (e.g. "15.0.5415.xxxxxx", "5.64.x")
 	//  - Values without dots that are not parseable version numbers (e.g. "25060212643")
-	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") {
+	//  - Semicolon-separated compound versions (e.g. "3.0.6920.8954; 2.0.50727.8970")
+	//    used by .NET Framework products bundling multiple framework versions
+	if fixedBuild[0] < '0' || fixedBuild[0] > '9' || strings.Contains(fixedBuild, "x") || !strings.Contains(fixedBuild, ".") || strings.Contains(fixedBuild, ";") {
 		return nil, nil
 	}
 
@@ -1991,11 +1993,26 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 			}
 			kbm[kbID] = kb
 
-			if isAllDigits(r.Supercedence) {
-				skb := kbm[r.Supercedence]
+			// Supercedence may list multiple KBs separated by commas or semicolons.
+			// Comma-separated (e.g. "5017500, 5018858, 5018545") is common for .NET Framework products.
+			// Semicolon-separated (e.g. "3181707; 3203838") appears in older (2016-2017) data.
+			// Mixed formats (e.g. "MS16-016, 3124280; MS16-097, 3178034") also exist;
+			// non-digit tokens (bulletin IDs) are filtered out by the isAllDigits check below.
+			var supKBIDs []string
+			for _, semiPart := range strings.Split(r.Supercedence, ";") {
+				for _, commaPart := range strings.Split(semiPart, ",") {
+					supKBIDs = append(supKBIDs, strings.TrimSpace(commaPart))
+				}
+			}
+			for _, supKBID := range supKBIDs {
+				if !isAllDigits(supKBID) {
+					continue
+				}
+
+				skb := kbm[supKBID]
 				if skb.KBID == "" {
-					skb.KBID = r.Supercedence
-					skb.URL = fmt.Sprintf("https://support.microsoft.com/help/%s", r.Supercedence)
+					skb.KBID = supKBID
+					skb.URL = fmt.Sprintf("https://support.microsoft.com/help/%s", supKBID)
 					skb.DataSource = sourceTypes.Source{
 						ID:   sourceTypes.MicrosoftCVRF,
 						Raws: e.r.Paths(),
@@ -2009,7 +2026,7 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 				if !slices.Contains(skb.Products, criterionProductName) {
 					skb.Products = append(skb.Products, criterionProductName)
 				}
-				kbm[r.Supercedence] = skb
+				kbm[supKBID] = skb
 			}
 		}
 	}

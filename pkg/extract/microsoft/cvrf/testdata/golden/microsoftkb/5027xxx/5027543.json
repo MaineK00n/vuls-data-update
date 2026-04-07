@@ -1,0 +1,16 @@
+{
+	"kb_id": "5027543",
+	"url": "https://support.microsoft.com/help/5027543",
+	"products": [
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2023-Jun/2023/CVE-2023-29326.json"
+		]
+	}
+}
