@@ -17,9 +17,25 @@ var canonicalProductNames = map[string]string{
 	"Microsoft Teams for Mac, Classic Edition":                                                     "Microsoft Teams for Mac",
 	"Microsoft Teams for Mac, New Edition":                                                         "Microsoft Teams for Mac",
 	"Azure File Sync v18":                                                                          "Azure File Sync v18.0",
+
+	// Bulletin→CVRF product name unification (legacy products with "Microsoft " prefix)
+	"Microsoft Azure Kubernetes Service":                          "Azure Kubernetes Service",
+	"Microsoft Azure Functions":                                   "Azure Functions",
+	"Microsoft Windows 2000 Advanced Server":                      "Windows 2000 Advanced Server",
+	"Microsoft Windows NT 4.0 Server":                             "Windows NT 4.0 Server",
+	"Microsoft Windows 2000 Datacenter Server":                    "Windows 2000 Datacenter Server",
+	"Microsoft Windows 2000 Server":                               "Windows 2000 Server",
+	"Microsoft SQL Server 2000 Service Pack 4":                    "SQL Server 2000 Service Pack 4",
+	"Microsoft SQL Server 2000 Reporting Services Service Pack 2": "SQL Server 2000 Reporting Services Service Pack 2",
 }
 
 var productNameReplacer = strings.NewReplacer(
+	"Windows Internet Explorer", "Internet Explorer",
+	"Microsoft Internet Explorer", "Internet Explorer",
+	"Microsoft Office Online Server", "Office Online Server",
+	"Microsoft Internet Information Services", "Internet Information Services",
+	"Microsoft Windows Messenger", "Windows Messenger",
+	"Microsoft Windows Media Player", "Windows Media Player",
 	" systems", " Systems",
 	"(Server Core Installation)", "(Server Core installation)",
 	"(server core installation)", "(Server Core installation)",

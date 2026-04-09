@@ -953,7 +953,6 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Office LTSC 2021 for 64-bit editions",
 			"Microsoft Office LTSC 2024 for 32-bit editions",
 			"Microsoft Office LTSC 2024 for 64-bit editions",
-			"Microsoft Office Online Server",
 			"Microsoft Office Web Apps Server 2013 Service Pack 1",
 			"Microsoft Outlook 2013 (32-bit editions)",
 			"Microsoft Outlook 2013 (64-bit editions)",
@@ -1578,7 +1577,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-38660", "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", "5381.1000"}:  "15.0.5381.1000",
 	{"CVE-2021-38655", "Microsoft Excel 2016 (32-bit edition)", "5215.1000"}:                  "16.0.5215.1000",
 	{"CVE-2021-38655", "Microsoft Excel 2016 (64-bit edition)", "5215.1000"}:                  "16.0.5215.1000",
-	{"CVE-2021-38655", "Microsoft Office Online Server", "10378.20000"}:                       "16.0.10378.20000",
+	{"CVE-2021-38655", "Office Online Server", "10378.20000"}:                       "16.0.10378.20000",
 	{"CVE-2021-38655", "Microsoft Office Web Apps Server 2013 Service Pack 1", "5381.1000"}:   "15.0.5381.1000",
 	// 2021-Jul (Office 2019 for Mac, FixedBuild "16.51.210711.01" has extra dot in build segment, should be "16.51.21071101")
 	{"CVE-2021-34501", "Microsoft Office 2019 for Mac", "16.51.210711.01"}: "16.51.21071101",
