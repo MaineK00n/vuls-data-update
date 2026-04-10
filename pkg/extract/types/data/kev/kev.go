@@ -3,6 +3,8 @@ package kev
 import (
 	"cmp"
 	"time"
+
+	vulncheckTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/vulncheck"
 )
 
 type KEV struct {
@@ -13,6 +15,14 @@ type KEV struct {
 	Notes                      string    `json:"notes,omitempty"`
 	DateAdded                  time.Time `json:"dateAdded,omitzero"`
 	DueDate                    time.Time `json:"dueDate,omitzero"`
+
+	VulnCheck *vulncheckTypes.VulnCheck `json:"vulncheck,omitempty"`
+}
+
+func (k *KEV) Sort() {
+	if k.VulnCheck != nil {
+		k.VulnCheck.Sort()
+	}
 }
 
 func Compare(x, y KEV) int {
@@ -24,5 +34,17 @@ func Compare(x, y KEV) int {
 		cmp.Compare(x.Notes, y.Notes),
 		x.DateAdded.Compare(y.DateAdded),
 		x.DueDate.Compare(y.DueDate),
+		func() int {
+			switch {
+			case x.VulnCheck == nil && y.VulnCheck == nil:
+				return 0
+			case x.VulnCheck == nil && y.VulnCheck != nil:
+				return -1
+			case x.VulnCheck != nil && y.VulnCheck == nil:
+				return +1
+			default:
+				return vulncheckTypes.Compare(*x.VulnCheck, *y.VulnCheck)
+			}
+		}(),
 	)
 }
