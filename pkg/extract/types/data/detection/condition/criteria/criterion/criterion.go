@@ -209,11 +209,11 @@ func (c Criterion) Contains(query Query, repositories []string) (bool, error) {
 			return false, nil
 		}
 
-		isAccepted, err := c.KB.Accept(*query.KB)
+		byCovered, byUnapplied, err := c.KB.Accept(*query.KB)
 		if err != nil {
 			return false, errors.Wrap(err, "kb criterion accept")
 		}
-		return isAccepted, nil
+		return byCovered || byUnapplied, nil
 	default:
 		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, c.Type)
 	}
@@ -224,10 +224,19 @@ type FilteredCriterion struct {
 	Accepts   AcceptQueries `json:"accepts,omitzero"`
 }
 
+// KB records which evaluation path accepted the KB criterion (i.e., detected
+// the vulnerability). Covered=true means the KB was accepted via covered-based
+// evaluation (the KB was NOT in the covered set, so it is vulnerable).
+// Unapplied=true means the KB was accepted via unapplied-based evaluation.
+type KB struct {
+	Covered   bool `json:"covered,omitempty"`
+	Unapplied bool `json:"unapplied,omitempty"`
+}
+
 type AcceptQueries struct {
 	Version   []int `json:"version,omitempty"`
 	NoneExist bool  `json:"none_exist,omitempty"`
-	KB        bool  `json:"kb,omitempty"`
+	KB        KB    `json:"kb,omitzero"`
 }
 
 func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion, error) {
@@ -278,13 +287,13 @@ func (c Criterion) Accept(query Query, repositories []string) (FilteredCriterion
 			return FilteredCriterion{Criterion: c, Accepts: AcceptQueries{}}, nil
 		}
 
-		isAccepted, err := c.KB.Accept(*query.KB)
+		byCovered, byUnapplied, err := c.KB.Accept(*query.KB)
 		if err != nil {
 			return FilteredCriterion{}, errors.Wrap(err, "kb criterion accept")
 		}
 		return FilteredCriterion{
 			Criterion: c,
-			Accepts:   AcceptQueries{KB: isAccepted},
+			Accepts:   AcceptQueries{KB: KB{Covered: byCovered, Unapplied: byUnapplied}},
 		}, nil
 	default:
 		return FilteredCriterion{}, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, c.Type)
@@ -298,7 +307,7 @@ func (fc FilteredCriterion) Affected() (bool, error) {
 	case CriterionTypeNoneExist:
 		return fc.Accepts.NoneExist, nil
 	case CriterionTypeKB:
-		return fc.Accepts.KB, nil
+		return fc.Accepts.KB.Covered || fc.Accepts.KB.Unapplied, nil
 	default:
 		return false, errors.Errorf("unexpected criterion type. expected: %q, actual: %q", []CriterionType{CriterionTypeVersion, CriterionTypeNoneExist, CriterionTypeKB}, fc.Criterion.Type)
 	}

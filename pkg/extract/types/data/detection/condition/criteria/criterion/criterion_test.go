@@ -215,7 +215,8 @@ func TestCriterion_Contains(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					KB: &kbcTypes.Query{
-						UnappliedKBs: []string{"5025239", "5025305"},
+						AcceptProducts: []string{"Windows 10"},
+						UnappliedKBs:   []string{"5025239", "5025305"},
 					},
 				},
 			},
@@ -233,7 +234,8 @@ func TestCriterion_Contains(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					KB: &kbcTypes.Query{
-						UnappliedKBs: []string{"5025305"},
+						AcceptProducts: []string{"Windows 10"},
+						UnappliedKBs:   []string{"5025305"},
 					},
 				},
 			},
@@ -525,7 +527,8 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					KB: &kbcTypes.Query{
-						UnappliedKBs: []string{"5025239", "5025305"},
+						AcceptProducts: []string{"Windows 10"},
+						UnappliedKBs:   []string{"5025239", "5025305"},
 					},
 				},
 			},
@@ -537,7 +540,7 @@ func TestCriterion_Accept(t *testing.T) {
 						KBID:    "5025239",
 					},
 				},
-				Accepts: criterionTypes.AcceptQueries{KB: true},
+				Accepts: criterionTypes.AcceptQueries{KB: criterionTypes.KB{Unapplied: true}},
 			},
 		},
 		{
@@ -552,7 +555,8 @@ func TestCriterion_Accept(t *testing.T) {
 			args: args{
 				query: criterionTypes.Query{
 					KB: &kbcTypes.Query{
-						UnappliedKBs: []string{"5025305"},
+						AcceptProducts: []string{"Windows 10"},
+						UnappliedKBs:   []string{"5025305"},
 					},
 				},
 			},
@@ -564,7 +568,7 @@ func TestCriterion_Accept(t *testing.T) {
 						KBID:    "5025239",
 					},
 				},
-				Accepts: criterionTypes.AcceptQueries{KB: false},
+				Accepts: criterionTypes.AcceptQueries{KB: criterionTypes.KB{}},
 			},
 		},
 		{
@@ -782,7 +786,7 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 						KBID:    "5025239",
 					},
 				},
-				Accepts: criterionTypes.AcceptQueries{KB: true},
+				Accepts: criterionTypes.AcceptQueries{KB: criterionTypes.KB{Unapplied: true}},
 			},
 			want: true,
 		},
@@ -796,7 +800,7 @@ func TestFilteredCriterion_Affected(t *testing.T) {
 						KBID:    "5025239",
 					},
 				},
-				Accepts: criterionTypes.AcceptQueries{KB: false},
+				Accepts: criterionTypes.AcceptQueries{KB: criterionTypes.KB{}},
 			},
 			want: false,
 		},

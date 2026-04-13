@@ -5198,13 +5198,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5213,13 +5218,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5228,13 +5238,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows 8 for 32-bit Systems",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows 8 for 32-bit Systems",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5243,13 +5258,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows 8 for x64-based Systems",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows 8 for x64-based Systems",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5258,13 +5278,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows RT",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows RT",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5273,13 +5298,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5288,13 +5318,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 10 on Windows Server 2012",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 10 on Windows Server 2012",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5303,13 +5338,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5318,13 +5358,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5333,13 +5378,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5348,13 +5398,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5363,13 +5418,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5378,13 +5438,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows Vista Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows Vista Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5393,13 +5458,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5408,13 +5478,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 6.0 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5423,13 +5498,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 6.0 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5438,13 +5518,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 6.0 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5453,13 +5538,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 6.0 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5468,13 +5558,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 6.0 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5483,13 +5578,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5498,13 +5598,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5513,13 +5618,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows 8.1 for 32-bit Systems",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows 8.1 for 32-bit Systems",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5528,13 +5638,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows 8.1 for x64-based Systems",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows 8.1 for x64-based Systems",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5543,13 +5658,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows RT 8.1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows RT 8.1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5558,13 +5678,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5573,13 +5698,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 11 on Windows Server 2012 R2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 11 on Windows Server 2012 R2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5588,13 +5718,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5603,13 +5738,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5618,13 +5758,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5633,13 +5778,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5648,13 +5798,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Microsoft Windows XP Service Pack 3",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5663,13 +5818,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5678,13 +5838,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5693,13 +5858,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5708,13 +5878,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Windows Vista Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Windows Vista Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5723,13 +5898,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 7 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5738,13 +5918,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5753,13 +5938,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5768,13 +5958,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5783,13 +5978,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Microsoft Windows XP Service Pack 3",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5798,13 +5998,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5813,13 +6018,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5828,13 +6038,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5843,13 +6058,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5858,13 +6078,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5873,13 +6098,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5888,13 +6118,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows Vista Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows Vista Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -5903,13 +6138,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2",
-									"kb_id": "2909921"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Internet Explorer 8 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2909921"
+										}
+									}
+								]
 							}
 						]
 					},

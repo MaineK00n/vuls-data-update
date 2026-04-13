@@ -690,16 +690,36 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]conditionTypes.Condition, tag segmentTypes.DetectionTag, cns []criterionTypes.Criterion) {
 	conditions := conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft]
+
+	idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
+		return c.Tag == tag
+	})
+	if idx == -1 {
+		conditions = append(conditions, conditionTypes.Condition{
+			Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR},
+			Tag:      tag,
+		})
+		idx = len(conditions) - 1
+	}
+
 	for _, cn := range cns {
-		switch idx := slices.IndexFunc(conditions, func(c conditionTypes.Condition) bool {
-			return c.Tag == tag
-		}); idx {
-		case -1:
-			conditions = append(conditions, conditionTypes.Condition{
-				Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR, Criterions: []criterionTypes.Criterion{cn}},
-				Tag:      tag,
-			})
+		switch cn.Type {
+		case criterionTypes.CriterionTypeKB:
+			// KB criterions go under a nested AND sub-criteria so that
+			// dual-track KBs (Monthly Rollup + Security Only) require ALL
+			// to be unapplied before reporting a vulnerability.
+			if len(conditions[idx].Criteria.Criterias) == 0 {
+				conditions[idx].Criteria.Criterias = []criteriaTypes.Criteria{{
+					Operator: criteriaTypes.CriteriaOperatorTypeAND,
+				}}
+			}
+			if !slices.ContainsFunc(conditions[idx].Criteria.Criterias[0].Criterions, func(e criterionTypes.Criterion) bool {
+				return criterionTypes.Compare(e, cn) == 0
+			}) {
+				conditions[idx].Criteria.Criterias[0].Criterions = append(conditions[idx].Criteria.Criterias[0].Criterions, cn)
+			}
 		default:
+			// Version criterions go directly under the top-level OR.
 			if !slices.ContainsFunc(conditions[idx].Criteria.Criterions, func(e criterionTypes.Criterion) bool {
 				return criterionTypes.Compare(e, cn) == 0
 			}) {
@@ -707,6 +727,7 @@ func appendConditions(conditionsByEcosystem map[ecosystemTypes.Ecosystem][]condi
 			}
 		}
 	}
+
 	conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft] = conditions
 }
 func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criterionTypes.Criterion, error) {

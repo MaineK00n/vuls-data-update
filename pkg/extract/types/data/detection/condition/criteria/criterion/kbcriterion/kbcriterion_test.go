@@ -100,11 +100,12 @@ func TestCompare(t *testing.T) {
 
 func TestCriterion_Accept(t *testing.T) {
 	tests := []struct {
-		name      string
-		criterion kbcriterionTypes.Criterion
-		query     kbcriterionTypes.Query
-		want      bool
-		wantErr   bool
+		name          string
+		criterion     kbcriterionTypes.Criterion
+		query         kbcriterionTypes.Query
+		wantCovered   bool
+		wantUnapplied bool
+		wantErr       bool
 	}{
 		{
 			name: "kbid in unapplied list",
@@ -113,9 +114,10 @@ func TestCriterion_Accept(t *testing.T) {
 				KBID:    "5025239",
 			},
 			query: kbcriterionTypes.Query{
-				UnappliedKBs: []string{"5025239", "5025305"},
+				AcceptProducts: []string{"Windows 10"},
+				UnappliedKBs:   []string{"5025239", "5025305"},
 			},
-			want: true,
+			wantUnapplied: true,
 		},
 		{
 			name: "kbid not in unapplied list",
@@ -124,9 +126,9 @@ func TestCriterion_Accept(t *testing.T) {
 				KBID:    "5025239",
 			},
 			query: kbcriterionTypes.Query{
-				UnappliedKBs: []string{"5025305", "5025306"},
+				AcceptProducts: []string{"Windows 10"},
+				UnappliedKBs:   []string{"5025305", "5025306"},
 			},
-			want: false,
 		},
 		{
 			name: "empty unapplied list",
@@ -135,9 +137,9 @@ func TestCriterion_Accept(t *testing.T) {
 				KBID:    "5025239",
 			},
 			query: kbcriterionTypes.Query{
-				UnappliedKBs: []string{},
+				AcceptProducts: []string{"Windows 10"},
+				UnappliedKBs:   []string{},
 			},
-			want: false,
 		},
 		{
 			name: "nil unapplied list",
@@ -145,19 +147,91 @@ func TestCriterion_Accept(t *testing.T) {
 				Product: "Windows 10",
 				KBID:    "5025239",
 			},
-			query: kbcriterionTypes.Query{},
-			want:  false,
+			query: kbcriterionTypes.Query{
+				AcceptProducts: []string{"Windows 10"},
+			},
+		},
+		{
+			name: "product not in AcceptProducts is rejected",
+			criterion: kbcriterionTypes.Criterion{
+				Product: "Windows Server 2012 R2",
+				KBID:    "5025239",
+			},
+			query: kbcriterionTypes.Query{
+				AcceptProducts: []string{"Windows 10"},
+				UnappliedKBs:   []string{"5025239"},
+			},
+		},
+		{
+			name: "empty AcceptProducts returns error",
+			criterion: kbcriterionTypes.Criterion{
+				Product: "Windows 10",
+				KBID:    "5025239",
+			},
+			query: kbcriterionTypes.Query{
+				UnappliedKBs: []string{"5025239"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "covered-based: KB not in covered list is vulnerable",
+			criterion: kbcriterionTypes.Criterion{
+				Product: "Windows 10",
+				KBID:    "5025239",
+			},
+			query: kbcriterionTypes.Query{
+				AcceptProducts: []string{"Windows 10"},
+				CoveredKBs:     []string{"5025305"},
+			},
+			wantCovered: true,
+		},
+		{
+			name: "covered-based: KB in covered list is not vulnerable",
+			criterion: kbcriterionTypes.Criterion{
+				Product: "Windows 10",
+				KBID:    "5025239",
+			},
+			query: kbcriterionTypes.Query{
+				AcceptProducts: []string{"Windows 10"},
+				CoveredKBs:     []string{"5025239", "5025305"},
+			},
+		},
+		{
+			name: "covered-based: undiscovered KB treated as not covered",
+			criterion: kbcriterionTypes.Criterion{
+				Product: "Windows 10",
+				KBID:    "9999999",
+			},
+			query: kbcriterionTypes.Query{
+				AcceptProducts: []string{"Windows 10"},
+				CoveredKBs:     []string{"5025239"},
+			},
+			wantCovered: true,
+		},
+		{
+			name: "covered-based: product filter still applies",
+			criterion: kbcriterionTypes.Criterion{
+				Product: "Windows Server 2012 R2",
+				KBID:    "5025239",
+			},
+			query: kbcriterionTypes.Query{
+				AcceptProducts: []string{"Windows 10"},
+				CoveredKBs:     []string{"5025305"},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.criterion.Accept(tt.query)
+			gotCovered, gotUnapplied, err := tt.criterion.Accept(tt.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("Accept() = %v, want %v", got, tt.want)
+			if gotCovered != tt.wantCovered {
+				t.Errorf("Accept() byCovered = %v, want %v", gotCovered, tt.wantCovered)
+			}
+			if gotUnapplied != tt.wantUnapplied {
+				t.Errorf("Accept() byUnapplied = %v, want %v", gotUnapplied, tt.wantUnapplied)
 			}
 		})
 	}
