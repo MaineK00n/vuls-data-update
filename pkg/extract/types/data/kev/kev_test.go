@@ -5,6 +5,7 @@ import (
 	"time"
 
 	kevTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev"
+	enisaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/enisa"
 	vulncheckTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/vulncheck"
 	reportedExploitationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/vulncheck/reportedexploitation"
 	xdbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/vulncheck/xdb"
@@ -144,6 +145,42 @@ func TestCompare(t *testing.T) {
 				},
 			},
 			want: +1,
+		},
+		{
+			name: "x has ENISA, y does not",
+			args: args{
+				x: kevTypes.KEV{
+					ENISA: &enisaTypes.ENISA{
+						OriginSource: "cnw",
+					},
+				},
+				y: kevTypes.KEV{},
+			},
+			want: +1,
+		},
+		{
+			name: "neither has ENISA",
+			args: args{
+				x: kevTypes.KEV{VendorProject: "Ivanti"},
+				y: kevTypes.KEV{VendorProject: "Ivanti"},
+			},
+			want: 0,
+		},
+		{
+			name: "both have ENISA, x:date_reported < y:date_reported",
+			args: args{
+				x: kevTypes.KEV{
+					ENISA: &enisaTypes.ENISA{
+						DateReported: time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC),
+					},
+				},
+				y: kevTypes.KEV{
+					ENISA: &enisaTypes.ENISA{
+						DateReported: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: -1,
 		},
 	}
 	for _, tt := range tests {
