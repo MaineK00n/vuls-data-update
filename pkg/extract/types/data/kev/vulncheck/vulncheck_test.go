@@ -108,7 +108,7 @@ func TestCompare(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "x has reportedExploitation, y does not",
+			name: "x has reported_exploitation, y does not",
 			args: args{
 				x: vulncheckTypes.VulnCheck{
 					ReportedExploitation: []reportedExploitationTypes.ReportedExploitation{

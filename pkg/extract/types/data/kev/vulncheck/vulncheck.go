@@ -10,7 +10,7 @@ import (
 
 type VulnCheck struct {
 	XDB                  []xdbTypes.XDB                                  `json:"xdb,omitempty"`
-	ReportedExploitation []reportedExploitationTypes.ReportedExploitation `json:"reportedExploitation,omitempty"`
+	ReportedExploitation []reportedExploitationTypes.ReportedExploitation `json:"reported_exploitation,omitempty"`
 }
 
 func (v *VulnCheck) Sort() {

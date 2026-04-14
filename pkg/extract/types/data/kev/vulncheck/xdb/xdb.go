@@ -6,11 +6,11 @@ import (
 )
 
 type XDB struct {
-	XDBID       string    `json:"xdbId,omitempty"`
-	XDBURL      string    `json:"xdbUrl,omitempty"`
-	DateAdded   time.Time `json:"dateAdded,omitzero"`
-	ExploitType string    `json:"exploitType,omitempty"`
-	CloneSSHURL string    `json:"cloneSSHUrl,omitempty"`
+	XDBID       string    `json:"xdb_id,omitempty"`
+	XDBURL      string    `json:"xdb_url,omitempty"`
+	DateAdded   time.Time `json:"date_added,omitzero"`
+	ExploitType string    `json:"exploit_type,omitempty"`
+	CloneSSHURL string    `json:"clone_ssh_url,omitempty"`
 }
 
 func Compare(x, y XDB) int {

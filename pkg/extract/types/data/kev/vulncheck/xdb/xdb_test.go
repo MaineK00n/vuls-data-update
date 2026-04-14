@@ -38,7 +38,7 @@ func TestCompare(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "x:xdbId < y:xdbId",
+			name: "x:xdb_id < y:xdb_id",
 			args: args{
 				x: xdbTypes.XDB{XDBID: "aaa"},
 				y: xdbTypes.XDB{XDBID: "bbb"},
@@ -46,7 +46,7 @@ func TestCompare(t *testing.T) {
 			want: -1,
 		},
 		{
-			name: "x:dateAdded > y:dateAdded",
+			name: "x:date_added > y:date_added",
 			args: args{
 				x: xdbTypes.XDB{
 					XDBID:     "abc",

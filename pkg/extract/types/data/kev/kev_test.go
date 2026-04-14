@@ -88,7 +88,7 @@ func TestCompare(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "x:vendorProject < y:vendorProject",
+			name: "x:vendor_project < y:vendor_project",
 			args: args{
 				x: kevTypes.KEV{VendorProject: "Apple"},
 				y: kevTypes.KEV{VendorProject: "Microsoft"},
@@ -104,7 +104,7 @@ func TestCompare(t *testing.T) {
 			want: +1,
 		},
 		{
-			name: "x:dateAdded < y:dateAdded",
+			name: "x:date_added < y:date_added",
 			args: args{
 				x: kevTypes.KEV{
 					VendorProject: "Microsoft",

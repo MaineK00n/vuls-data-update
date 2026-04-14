@@ -8,13 +8,13 @@ import (
 )
 
 type KEV struct {
-	VendorProject              string    `json:"vendorProject,omitempty"`
+	VendorProject              string    `json:"vendor_project,omitempty"`
 	Product                    string    `json:"product,omitempty"`
-	RequiredAction             string    `json:"requiredAction,omitempty"`
-	KnownRansomwareCampaignUse string    `json:"knownRansomwareCampaignUse,omitempty"`
+	RequiredAction             string    `json:"required_action,omitempty"`
+	KnownRansomwareCampaignUse string    `json:"known_ransomware_campaign_use,omitempty"`
 	Notes                      string    `json:"notes,omitempty"`
-	DateAdded                  time.Time `json:"dateAdded,omitzero"`
-	DueDate                    time.Time `json:"dueDate,omitzero"`
+	DateAdded                  time.Time `json:"date_added,omitzero"`
+	DueDate                    time.Time `json:"due_date,omitzero"`
 
 	VulnCheck *vulncheckTypes.VulnCheck `json:"vulncheck,omitempty"`
 }
