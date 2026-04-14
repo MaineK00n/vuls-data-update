@@ -1,0 +1,61 @@
+{
+	"vendorProject": "wificam",
+	"product": "wireless_ip_camera_\\(p2p\\)_firmware",
+	"shortDescription": "On Wireless IP Camera (P2P) WIFICAM devices, access to .ini files (containing credentials) is not correctly checked. An attacker can bypass authentication by providing an empty loginuse parameter and an empty loginpas parameter in the URI.",
+	"vulnerabilityName": "wificam wireless_ip_camera_\\(p2p\\)_firmware Insufficiently Protected Credentials",
+	"required_action": "Apply remediations or mitigations per vendor instructions or discontinue use of the product if remediation or mitigations are unavailable.",
+	"knownRansomwareCampaignUse": "Unknown",
+	"cve": [
+		"CVE-2017-8225"
+	],
+	"vulncheck_xdb": [
+		{
+			"xdb_id": "1989ffaa4d96",
+			"xdb_url": "https://vulncheck.com/xdb/1989ffaa4d96",
+			"date_added": "2016-03-30T11:43:12Z",
+			"exploit_type": "initial-access",
+			"clone_ssh_url": "git@github.com:threat9/routersploit.git"
+		},
+		{
+			"xdb_id": "8dc58884078e",
+			"xdb_url": "https://vulncheck.com/xdb/8dc58884078e",
+			"date_added": "2021-10-30T02:28:27Z",
+			"exploit_type": "infoleak",
+			"clone_ssh_url": "git@github.com:kienquoc102/CVE-2017-8225.git"
+		},
+		{
+			"xdb_id": "024735e8bde7",
+			"xdb_url": "https://vulncheck.com/xdb/024735e8bde7",
+			"date_added": "2023-09-08T21:47:18Z",
+			"exploit_type": "infoleak",
+			"clone_ssh_url": "git@github.com:K3ysTr0K3R/CVE-2017-8225-EXPLOIT.git"
+		}
+	],
+	"vulncheck_reported_exploitation": [
+		{
+			"url": "https://research.checkpoint.com/2017/new-iot-botnet-storm-coming/",
+			"date_added": "2017-10-19T00:00:00Z"
+		},
+		{
+			"url": "https://www.radware.com/blog/security/iot_reaper-botnet/",
+			"date_added": "2017-10-25T00:00:00Z"
+		},
+		{
+			"url": "https://blog.netlab.360.com/ddos-botnet-moobot-en/",
+			"date_added": "2020-07-09T00:00:00Z"
+		},
+		{
+			"url": "https://www.researchgate.net/publication/348602660_An_analysis_of_the_use_of_CVEs_by_IoT_malware",
+			"date_added": "2020-12-01T00:00:00Z"
+		},
+		{
+			"url": "https://api.vulncheck.com/v3/index/sans-dshield?cve=CVE-2017-8225",
+			"date_added": "2021-09-02T00:00:00Z"
+		},
+		{
+			"url": "https://info.greynoise.io/hubfs/resources/GreyNoise-How-Resurgent-Vulnerabilities-Jeopardize-Organizational-Security-Report.pdf",
+			"date_added": "2025-04-23T00:00:00Z"
+		}
+	],
+	"date_added": "2017-10-19T00:00:00Z"
+}
