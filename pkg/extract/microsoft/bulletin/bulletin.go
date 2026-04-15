@@ -469,14 +469,25 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 			}); idx {
 			case -1:
 				g.conditions = append(g.conditions, conditionTypes.Condition{
-					Criteria: criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR, Criterions: []criterionTypes.Criterion{cn}},
-					Tag:      segmentTypes.DetectionTag(pn),
+					Criteria: criteriaTypes.Criteria{
+						Operator: criteriaTypes.CriteriaOperatorTypeOR,
+						Criterias: []criteriaTypes.Criteria{{
+							Operator:   criteriaTypes.CriteriaOperatorTypeAND,
+							Criterions: []criterionTypes.Criterion{cn},
+						}},
+					},
+					Tag: segmentTypes.DetectionTag(pn),
 				})
 			default:
-				if !slices.ContainsFunc(g.conditions[idx].Criteria.Criterions, func(e criterionTypes.Criterion) bool {
+				if len(g.conditions[idx].Criteria.Criterias) == 0 {
+					g.conditions[idx].Criteria.Criterias = []criteriaTypes.Criteria{{
+						Operator: criteriaTypes.CriteriaOperatorTypeAND,
+					}}
+				}
+				if !slices.ContainsFunc(g.conditions[idx].Criteria.Criterias[0].Criterions, func(e criterionTypes.Criterion) bool {
 					return e.KB != nil && e.KB.KBID == row.ComponentKB
 				}) {
-					g.conditions[idx].Criteria.Criterions = append(g.conditions[idx].Criteria.Criterions, cn)
+					g.conditions[idx].Criteria.Criterias[0].Criterions = append(g.conditions[idx].Criteria.Criterias[0].Criterions, cn)
 				}
 			}
 

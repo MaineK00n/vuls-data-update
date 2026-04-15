@@ -38,13 +38,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems",
-									"kb_id": "4014329"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems",
+											"kb_id": "4014329"
+										}
+									}
+								]
 							}
 						]
 					},

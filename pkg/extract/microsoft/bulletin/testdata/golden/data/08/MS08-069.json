@@ -91,13 +91,18 @@
 				{
 					"criteria": {
 						"operator": "OR",
-						"criterions": [
+						"criterias": [
 							{
-								"type": "kb",
-								"kb": {
-									"product": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4",
-									"kb_id": "955069"
-								}
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4",
+											"kb_id": "955069"
+										}
+									}
+								]
 							}
 						]
 					},
