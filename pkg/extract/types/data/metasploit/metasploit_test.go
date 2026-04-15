@@ -1,43 +1,58 @@
 package metasploit_test
 
 import (
+	"reflect"
 	"testing"
-	"time"
 
 	metasploitTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/metasploit"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 )
 
 func TestMetasploit_Sort(t *testing.T) {
-	type fields struct {
-		Type        string
-		Name        string
-		FullName    string
-		Description string
-		Rank        int
-		Published   *time.Time
-		Modified    *time.Time
-		References  []referenceTypes.Reference
-	}
 	tests := []struct {
-		name   string
-		fields fields
+		name  string
+		input metasploitTypes.Metasploit
+		want  metasploitTypes.Metasploit
 	}{
-		// TODO: Add test cases.
+		{
+			name: "sorts all slice fields",
+			input: metasploitTypes.Metasploit{
+				Type:     "exploit",
+				Name:     "SMB DOUBLEPULSAR Remote Code Execution",
+				FullName: "exploit/windows/smb/smb_doublepulsar_rce",
+				Aliases:  []string{"exploit/windows/smb/doublepulsar_rce", "exploit/windows/smb/alias_a"},
+				Author:   []string{"zerosum0x0", "Luke Jennings", "Shadow Brokers"},
+				Targets:  []string{"Windows x64 (Native Payload)", "Windows x64", "Windows x86"},
+				References: []referenceTypes.Reference{
+					{Source: "rapid7/metasploit", URL: "https://zerosum0x0.blogspot.com"},
+					{Source: "rapid7/metasploit", URL: "https://www.cve.org/CVERecord?id=CVE-2017-0143"},
+				},
+			},
+			want: metasploitTypes.Metasploit{
+				Type:     "exploit",
+				Name:     "SMB DOUBLEPULSAR Remote Code Execution",
+				FullName: "exploit/windows/smb/smb_doublepulsar_rce",
+				Aliases:  []string{"exploit/windows/smb/alias_a", "exploit/windows/smb/doublepulsar_rce"},
+				Author:   []string{"Luke Jennings", "Shadow Brokers", "zerosum0x0"},
+				Targets:  []string{"Windows x64", "Windows x64 (Native Payload)", "Windows x86"},
+				References: []referenceTypes.Reference{
+					{Source: "rapid7/metasploit", URL: "https://www.cve.org/CVERecord?id=CVE-2017-0143"},
+					{Source: "rapid7/metasploit", URL: "https://zerosum0x0.blogspot.com"},
+				},
+			},
+		},
+		{
+			name:  "empty slices",
+			input: metasploitTypes.Metasploit{Type: "auxiliary"},
+			want:  metasploitTypes.Metasploit{Type: "auxiliary"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &metasploitTypes.Metasploit{
-				Type:        tt.fields.Type,
-				Name:        tt.fields.Name,
-				FullName:    tt.fields.FullName,
-				Description: tt.fields.Description,
-				Rank:        tt.fields.Rank,
-				Published:   tt.fields.Published,
-				Modified:    tt.fields.Modified,
-				References:  tt.fields.References,
+			tt.input.Sort()
+			if !reflect.DeepEqual(tt.input, tt.want) {
+				t.Errorf("Sort() result mismatch:\n got  %+v\n want %+v", tt.input, tt.want)
 			}
-			m.Sort()
 		})
 	}
 }
