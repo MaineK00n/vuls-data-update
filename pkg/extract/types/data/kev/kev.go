@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"time"
 
+	enisaTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/enisa"
 	vulncheckTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev/vulncheck"
 )
 
@@ -17,6 +18,7 @@ type KEV struct {
 	DueDate                    time.Time `json:"due_date,omitzero"`
 
 	VulnCheck *vulncheckTypes.VulnCheck `json:"vulncheck,omitempty"`
+	ENISA     *enisaTypes.ENISA         `json:"enisa,omitempty"`
 }
 
 func (k *KEV) Sort() {
@@ -44,6 +46,18 @@ func Compare(x, y KEV) int {
 				return +1
 			default:
 				return vulncheckTypes.Compare(*x.VulnCheck, *y.VulnCheck)
+			}
+		}(),
+		func() int {
+			switch {
+			case x.ENISA == nil && y.ENISA == nil:
+				return 0
+			case x.ENISA == nil && y.ENISA != nil:
+				return -1
+			case x.ENISA != nil && y.ENISA == nil:
+				return +1
+			default:
+				return enisaTypes.Compare(*x.ENISA, *y.ENISA)
 			}
 		}(),
 	)
