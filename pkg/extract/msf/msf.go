@@ -235,15 +235,93 @@ func classifyReferences(refs []string) ([]string, []referenceTypes.Reference, er
 				Source: "rapid7/metasploit",
 				URL:    fmt.Sprintf("https://wpscan.com/vulnerability/%s", strings.TrimPrefix(ref, "WPVDB-")),
 			})
-		default:
-			u, err := url.Parse(ref)
-			if err != nil || u.Scheme == "" || u.Host == "" {
-				return nil, nil, errors.Errorf("unknown reference format: %s", ref)
-			}
+		case strings.HasPrefix(ref, "OSVDB-"):
 			references = append(references, referenceTypes.Reference{
 				Source: "rapid7/metasploit",
-				URL:    ref,
+				URL:    fmt.Sprintf("https://vulners.com/osvdb/%s", ref),
 			})
+		case strings.HasPrefix(ref, "CWE-"):
+			references = append(references, referenceTypes.Reference{
+				Source: "rapid7/metasploit",
+				URL:    fmt.Sprintf("https://cwe.mitre.org/data/definitions/%s.html", strings.TrimPrefix(ref, "CWE-")),
+			})
+		case strings.HasPrefix(ref, "GHSA-"):
+			references = append(references, referenceTypes.Reference{
+				Source: "rapid7/metasploit",
+				URL:    fmt.Sprintf("https://github.com/advisories/%s", ref),
+			})
+		case strings.HasPrefix(ref, "ATT&CK-"):
+
+			switch id := strings.TrimPrefix(ref, "ATT&CK-"); {
+			case strings.HasPrefix(id, "TA"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/tactics/%s", id),
+				})
+			case strings.HasPrefix(id, "T"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/techniques/%s", strings.ReplaceAll(id, ".", "/")),
+				})
+			case strings.HasPrefix(id, "S"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/software/%s", id),
+				})
+			case strings.HasPrefix(id, "G"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/groups/%s", id),
+				})
+			case strings.HasPrefix(id, "C"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/campaigns/%s", id),
+				})
+			case strings.HasPrefix(id, "M"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/mitigations/%s", id),
+				})
+			case strings.HasPrefix(id, "DS"):
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://attack.mitre.org/datasources/%s", id),
+				})
+			default:
+				return nil, nil, errors.Errorf("unknown ATT&CK reference format. expected: %q, actual: %q", []string{"ATT&CK-TA*", "ATT&CK-T*", "ATT&CK-S*", "ATT&CK-G*", "ATT&CK-C*", "ATT&CK-M*", "ATT&CK-DS*"}, ref)
+			}
+		case strings.HasPrefix(ref, "US-CERT-VU-"):
+			references = append(references, referenceTypes.Reference{
+				Source: "rapid7/metasploit",
+				URL:    fmt.Sprintf("https://www.kb.cert.org/vuls/id/%s", strings.TrimPrefix(ref, "US-CERT-VU-")),
+			})
+		case strings.HasPrefix(ref, "VTS-"):
+			switch ref {
+			case "VTS-17-006":
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    fmt.Sprintf("https://www.veritas.com/content/support/en_US/security/%s", strings.ReplaceAll(ref, "-", "")),
+				})
+			default:
+				return nil, nil, errors.Errorf("unknown VTS reference format: %s", ref)
+			}
+		default:
+			switch ref {
+			case "AKA-SMBLoris",
+				"LOGO-https://proxylogon.com/images/logo.jpg",
+				"SOUNDTRACK-https://www.youtube.com/watch?v=dDnhthI27Fg",
+				"OVE-OVE-20160712-0036", "OVE-20160904-0002":
+			default:
+				u, err := url.Parse(ref)
+				if err != nil || u.Scheme == "" || u.Host == "" {
+					return nil, nil, errors.Errorf("unknown reference format: %s", ref)
+				}
+				references = append(references, referenceTypes.Reference{
+					Source: "rapid7/metasploit",
+					URL:    ref,
+				})
+			}
 		}
 	}
 	return cveIDs, references, nil
