@@ -11,6 +11,7 @@ var canonicalProductNames = map[string]string{
 	"Dynamics 365 Business Central 2019 Spring Update": "Dynamics 365 Business Central Spring 2019 Update",
 	"Windows 11 for x64-based Systems":                 "Windows 11 Version 21H2 for x64-based Systems",
 	"Windows 11 for ARM64-based Systems":               "Windows 11 Version 21H2 for ARM64-based Systems",
+	"Windows 11 Version 25H2 for ARM Systems":          "Windows 11 Version 25H2 for ARM64-based Systems",
 	"Microsoft Defender for Endpoint for Windows on Windows Server 2022 Datacenter: Azure Edition": "Microsoft Defender for Endpoint for Windows on Windows Server 2022",
 	"System Center Operations Manager (SCOM) 2019":                                                 "System Center Operations Manager 2019",
 	"System Center Operations Manager (SCOM) 2022":                                                 "System Center Operations Manager 2022",

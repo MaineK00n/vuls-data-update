@@ -182,6 +182,11 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Microsoft Teams for Mac",
 		},
 		{
+			name: "Windows 11 Version 25H2 for ARM systems typo canonicalized",
+			args: args{s: "Windows 11 Version 25H2 for ARM systems"},
+			want: "Windows 11 Version 25H2 for ARM64-based Systems",
+		},
+		{
 			name: "Azure File Sync v18 canonicalized",
 			args: args{s: "Azure File Sync v18"},
 			want: "Azure File Sync v18.0",
