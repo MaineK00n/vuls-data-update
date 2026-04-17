@@ -64,9 +64,9 @@ import (
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
-	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
@@ -805,8 +805,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			}
 			return rangeTypes.RangeTypeMicrosoftDefenderSecurityIntelligence, nil
 
-		// Windows Defender Antimalware Platform
-		case "Windows Defender Antimalware Platform":
+		// Microsoft Defender Antimalware Platform
+		case "Microsoft Defender Antimalware Platform":
 			if _, err := defenderwindowsversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "defenderwindowsversion.NewVersion")
 			}
@@ -1050,10 +1050,12 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 21)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 22)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 23)",
+			"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 5)",
 			"Microsoft SQL Server 2022 for x64-based Systems (CU 8)",
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU2)",
+			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
 			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 			"SQL Server 2019 for Linux Containers",
 			"SQL Server Integration Services for Visual Studio 2019",
@@ -1598,7 +1600,7 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2021-38660", "Microsoft Excel 2013 Service Pack 1 (64-bit editions)", "5381.1000"}:  "15.0.5381.1000",
 	{"CVE-2021-38655", "Microsoft Excel 2016 (32-bit edition)", "5215.1000"}:                  "16.0.5215.1000",
 	{"CVE-2021-38655", "Microsoft Excel 2016 (64-bit edition)", "5215.1000"}:                  "16.0.5215.1000",
-	{"CVE-2021-38655", "Office Online Server", "10378.20000"}:                       "16.0.10378.20000",
+	{"CVE-2021-38655", "Office Online Server", "10378.20000"}:                                 "16.0.10378.20000",
 	{"CVE-2021-38655", "Microsoft Office Web Apps Server 2013 Service Pack 1", "5381.1000"}:   "15.0.5381.1000",
 	// 2021-Jul (Office 2019 for Mac, FixedBuild "16.51.210711.01" has extra dot in build segment, should be "16.51.21071101")
 	{"CVE-2021-34501", "Microsoft Office 2019 for Mac", "16.51.210711.01"}: "16.51.21071101",
@@ -1738,6 +1740,9 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-23674", "Windows Server 2012 (Server Core installation)", "1.000"}:    "",
 	{"CVE-2026-23674", "Windows Server 2012 R2", "1.000"}:                            "",
 	{"CVE-2026-23674", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
+	// 2026-Apr (IE Cumulative, FixedBuild "1.000" is a revision number, not a Windows OS build)
+	{"CVE-2026-32077", "Windows Server 2012 R2", "1.000"}:                            "",
+	{"CVE-2026-32077", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
 	// 2021-Oct (IE Cumulative, FixedBuild "1.001" is a revision number, not a Windows OS build)
 	{"CVE-2021-41342", "Windows 7 for 32-bit Systems Service Pack 1", "1.001"}:                 "",
 	{"CVE-2021-41342", "Windows 7 for x64-based Systems Service Pack 1", "1.001"}:              "",
