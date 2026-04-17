@@ -1,4 +1,6 @@
 package cvrf
 
-var BuildFixedBuildCriterion = buildFixedBuildCriterion
-var FixedBuildOverrides = fixedBuildOverrides
+var (
+	BuildFixedBuildCriterion = buildFixedBuildCriterion
+	FixedBuildOverrides      = fixedBuildOverrides
+)
