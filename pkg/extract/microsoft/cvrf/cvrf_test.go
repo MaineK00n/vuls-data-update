@@ -17,25 +17,6 @@ import (
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
-func fixedVersionCriterion(productName, fixedBuild string, rangeType affectedrangeTypes.RangeType) *criterionTypes.Criterion {
-	return &criterionTypes.Criterion{
-		Type: criterionTypes.CriterionTypeVersion,
-		Version: &vcTypes.Criterion{
-			Vulnerable: true,
-			FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
-			Package: packageTypes.Package{
-				Type:   packageTypes.PackageTypeBinary,
-				Binary: &binaryTypes.Package{Name: productName},
-			},
-			Affected: &affectedTypes.Affected{
-				Type:  rangeType,
-				Range: []affectedrangeTypes.Range{{LessThan: fixedBuild}},
-				Fixed: []string{fixedBuild},
-			},
-		},
-	}
-}
-
 func TestBuildFixedBuildCriterion(t *testing.T) {
 	type args struct {
 		cveID         string
@@ -55,11 +36,22 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 				productName:   "Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
 				rawFixedBuild: "16.0.4250.1",
 			},
-			want: fixedVersionCriterion(
-				"Microsoft SQL Server 2022 for x64-based Systems (CU 24)",
-				"16.0.4250.1",
-				affectedrangeTypes.RangeTypeMicrosoftSQLServer,
-			),
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2022 for x64-based Systems (CU 24)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "16.0.4250.1"}},
+						Fixed: []string{"16.0.4250.1"},
+					},
+				},
+			},
 		},
 		{
 			name: "SQL Server 2025 CU3",
@@ -68,11 +60,22 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 				productName:   "Microsoft SQL Server 2025 for x64-based Systems (CU3)",
 				rawFixedBuild: "17.0.4030.1",
 			},
-			want: fixedVersionCriterion(
-				"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
-				"17.0.4030.1",
-				affectedrangeTypes.RangeTypeMicrosoftSQLServer,
-			),
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft SQL Server 2025 for x64-based Systems (CU3)"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftSQLServer,
+						Range: []affectedrangeTypes.Range{{LessThan: "17.0.4030.1"}},
+						Fixed: []string{"17.0.4030.1"},
+					},
+				},
+			},
 		},
 		{
 			name: "Microsoft Defender Antimalware Platform",
@@ -81,11 +84,22 @@ func TestBuildFixedBuildCriterion(t *testing.T) {
 				productName:   "Microsoft Defender Antimalware Platform",
 				rawFixedBuild: "4.18.26030.3011",
 			},
-			want: fixedVersionCriterion(
-				"Microsoft Defender Antimalware Platform",
-				"4.18.26030.3011",
-				affectedrangeTypes.RangeTypeMicrosoftDefenderWindows,
-			),
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeVersion,
+				Version: &vcTypes.Criterion{
+					Vulnerable: true,
+					FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
+					Package: packageTypes.Package{
+						Type:   packageTypes.PackageTypeBinary,
+						Binary: &binaryTypes.Package{Name: "Microsoft Defender Antimalware Platform"},
+					},
+					Affected: &affectedTypes.Affected{
+						Type:  affectedrangeTypes.RangeTypeMicrosoftDefenderWindows,
+						Range: []affectedrangeTypes.Range{{LessThan: "4.18.26030.3011"}},
+						Fixed: []string{"4.18.26030.3011"},
+					},
+				},
+			},
 		},
 		{
 			name: "CVE-2026-32077 Windows Server 2012 R2 IE Cumulative 1.000 skipped",
