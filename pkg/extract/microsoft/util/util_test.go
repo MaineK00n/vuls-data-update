@@ -187,6 +187,11 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "Windows 11 Version 25H2 for ARM64-based Systems",
 		},
 		{
+			name: "Windows Defender Antimalware Platform canonicalized to Microsoft branding",
+			args: args{s: "Windows Defender Antimalware Platform"},
+			want: "Microsoft Defender Antimalware Platform",
+		},
+		{
 			name: "Azure File Sync v18 canonicalized",
 			args: args{s: "Azure File Sync v18"},
 			want: "Azure File Sync v18.0",
