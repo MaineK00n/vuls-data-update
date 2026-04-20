@@ -18,6 +18,7 @@ var canonicalProductNames = map[string]string{
 	"Microsoft Teams for Mac, Classic Edition":                                                     "Microsoft Teams for Mac",
 	"Microsoft Teams for Mac, New Edition":                                                         "Microsoft Teams for Mac",
 	"Azure File Sync v18":                                                                          "Azure File Sync v18.0",
+	"Windows Defender Antimalware Platform":                                                        "Microsoft Defender Antimalware Platform",
 
 	// Bulletin→CVRF product name unification (legacy products with "Microsoft " prefix)
 	"Microsoft Azure Kubernetes Service":                          "Azure Kubernetes Service",
