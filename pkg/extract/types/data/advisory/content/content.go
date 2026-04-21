@@ -6,6 +6,7 @@ import (
 	"time"
 
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
+	exploitTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/exploit"
 	kevTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
@@ -17,6 +18,7 @@ type Content struct {
 	Description string                     `json:"description,omitempty"`
 	Severity    []severityTypes.Severity   `json:"severity,omitempty"`
 	CWE         []cweTypes.CWE             `json:"cwe,omitempty"`
+	Exploit     []exploitTypes.Exploit     `json:"exploit,omitempty"`
 	KEV         *kevTypes.KEV              `json:"kev,omitempty"`
 	References  []referenceTypes.Reference `json:"references,omitempty"`
 	Published   *time.Time                 `json:"published,omitempty"`
@@ -34,6 +36,11 @@ func (c *Content) Sort() {
 	}
 	slices.SortFunc(c.CWE, cweTypes.Compare)
 
+	for i := range c.Exploit {
+		(&c.Exploit[i]).Sort()
+	}
+	slices.SortFunc(c.Exploit, exploitTypes.Compare)
+
 	if c.KEV != nil {
 		c.KEV.Sort()
 	}
@@ -48,6 +55,7 @@ func Compare(x, y Content) int {
 		cmp.Compare(x.Description, y.Description),
 		slices.CompareFunc(x.Severity, y.Severity, severityTypes.Compare),
 		slices.CompareFunc(x.CWE, y.CWE, cweTypes.Compare),
+		slices.CompareFunc(x.Exploit, y.Exploit, exploitTypes.Compare),
 		func() int {
 			switch {
 			case x.KEV == nil && y.KEV == nil:
