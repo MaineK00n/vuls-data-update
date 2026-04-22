@@ -76,6 +76,7 @@ import (
 	npmGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/ghsa"
 	npmGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/glsa"
 	npmOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/npm/osv"
+	nucleiRepository "github.com/MaineK00n/vuls-data-update/pkg/extract/nuclei/repository"
 	nugetGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/nuget/ghsa"
 	nugetGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/nuget/glsa"
 	nugetOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/nuget/osv"
@@ -179,6 +180,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdNetBSD(),
 		newCmdNpmGHSA(), newCmdNpmGLSA(), newCmdNpmOSV(), newCmdNpmDB(),
 		newCmdNugetGHSA(), newCmdNugetGLSA(), newCmdNugetOSV(),
+		newCmdNucleiRepository(),
 		newCmdNVDAPICVE(), newCmdNVDAPICPE(), newCmdNVDFeedCVEv1(), newCmdNVDFeedCPEv1(), newCmdNVDFeedCPEMATCHv1(), newCmdNVDFeedCVEv2(), newCmdNVDFeedCPEv2(), newCmdNVDFeedCPEMATCHv2(),
 		newCmdOracleLinux(),
 		newCmdOSSFuzzOSV(),
@@ -1978,6 +1980,31 @@ func newCmdNugetOSV() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nuget", "osv"), "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdNucleiRepository() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "nuclei", "repository"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "nuclei-repository <Raw Nuclei Templates Repository PATH>",
+		Short: "Extract Nuclei Templates Repository data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract nuclei-repository vuls-data-raw-nuclei-repository
+		`),
+		Args: cobra.ExactArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := nucleiRepository.Extract(args[0], nucleiRepository.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract nuclei repository")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
