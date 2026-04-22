@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 
+	microsoftutil "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/util"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
@@ -217,6 +218,7 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 			if len(kb.KBID) <= 3 {
 				return errors.Errorf("unexpected KBID format. expected: len > 3, actual: %q", kb.KBID)
 			}
+
 			filename := filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID))
 			if _, err := os.Stat(filename); err == nil {
 				f, err := os.Open(filename)
@@ -245,6 +247,49 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 
 	if err := eg.Wait(); err != nil {
 		return errors.Wrap(err, "wait for walk")
+	}
+
+	// Phase 2: read all written KB files, derive Supersedes, write all KB files back.
+	kbDir := filepath.Join(o.dir, "microsoftkb")
+	if _, err := os.Stat(kbDir); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return errors.Wrapf(err, "stat %s", kbDir)
+		}
+		return nil
+	}
+	var kbs []microsoftkbTypes.KB
+	if err := filepath.WalkDir(kbDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() || filepath.Ext(path) != ".json" {
+			return nil
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return errors.Wrapf(err, "open %s", path)
+		}
+		defer f.Close()
+
+		var kb microsoftkbTypes.KB
+		if err := json.UnmarshalRead(f, &kb); err != nil {
+			return errors.Wrapf(err, "decode %s", path)
+		}
+
+		kbs = append(kbs, kb)
+		return nil
+	}); err != nil {
+		return errors.Wrapf(err, "walk %s", kbDir)
+	}
+
+	microsoftutil.DeriveSupersedes(kbs)
+
+	for _, kb := range kbs {
+		if err := util.Write(filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)), kb, true); err != nil {
+			return errors.Wrapf(err, "write %s", kb.KBID)
+		}
 	}
 
 	return nil

@@ -13,6 +13,12 @@
 				"72E7624A-5B00-45D2-B92F-E561C0A6A160"
 			],
 			"support_url": "http://go.microsoft.com/fwlink/?LinkId=507418",
+			"supersedes": [
+				{
+					"kb_id": "5070881",
+					"update_id": "0f08c8e4-9998-4bf7-8f51-f3736282d656"
+				}
+			],
 			"creation_date": "2025-11-12T01:07:55Z",
 			"catalog_url": "https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=17ff83de-4e31-4fa5-9741-bebce9d44c2c"
 		}

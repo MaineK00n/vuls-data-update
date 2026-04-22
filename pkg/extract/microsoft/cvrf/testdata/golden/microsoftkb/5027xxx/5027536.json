@@ -8,6 +8,11 @@
 		"Microsoft .NET Framework 3.5 AND 4.8 on Windows Server 2019",
 		"Microsoft .NET Framework 3.5 AND 4.8 on Windows Server 2019 (Server Core installation)"
 	],
+	"supersedes": [
+		{
+			"kb_id": "5022782"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [

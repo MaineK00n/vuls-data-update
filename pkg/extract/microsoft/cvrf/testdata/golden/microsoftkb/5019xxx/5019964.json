@@ -7,6 +7,11 @@
 		"Microsoft .NET Framework 3.5 AND 4.6.2/4.7/4.7.1/4.7.2 on Windows Server 2016",
 		"Microsoft .NET Framework 3.5 AND 4.6.2/4.7/4.7.1/4.7.2 on Windows Server 2016 (Server Core installation)"
 	],
+	"supersedes": [
+		{
+			"kb_id": "5018411"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [

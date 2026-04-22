@@ -32,9 +32,9 @@ import (
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
-	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
@@ -564,6 +564,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 			},
 		})
 	}
+	microsoftutil.DeriveSupersedes(kbs)
 
 	return datas, kbs, nil
 }
