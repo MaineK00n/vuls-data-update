@@ -35,6 +35,9 @@ func TestExtract(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
 			default:
 				ep, err := filepath.Abs(filepath.Join("testdata", "golden"))
 				if err != nil {

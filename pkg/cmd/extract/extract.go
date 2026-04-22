@@ -222,7 +222,7 @@ func newCmdAlmaErrata() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "alma", "errata"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -247,7 +247,7 @@ func newCmdAlmaOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "alma", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -272,7 +272,7 @@ func newCmdAlmaOVAL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "alma", "oval"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -297,7 +297,7 @@ func newCmdAlpineSecDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "alpine", "secdb"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -322,7 +322,7 @@ func newCmdAlpineOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "alpine", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -347,7 +347,7 @@ func newCmdAmazon() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "amazon"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -372,7 +372,7 @@ func newCmdAndroidOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "android", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -397,7 +397,7 @@ func newCmdArch() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "arch"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -422,7 +422,7 @@ func newCmdAttack() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "attack"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -447,7 +447,7 @@ func newCmdBitnamiOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "bitnami", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -472,7 +472,7 @@ func newCmdCapec() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "capec"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -497,7 +497,7 @@ func newCmdCargoGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cargo", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -522,7 +522,7 @@ func newCmdCargoOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cargo", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -547,7 +547,7 @@ func newCmdCargoDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cargo", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -572,7 +572,7 @@ func newCmdChainguardOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "chainguard", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -622,7 +622,7 @@ func newCmdComposerGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "composer", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -647,7 +647,7 @@ func newCmdComposerGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "composer", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -672,7 +672,7 @@ func newCmdComposerOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "composer", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -697,7 +697,7 @@ func newCmdComposerDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "composer", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -722,7 +722,7 @@ func newCmdConanGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "conan", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -747,7 +747,7 @@ func newCmdCWE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "cwe"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -772,7 +772,7 @@ func newCmdDebianOVAL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "debian", "oval"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -797,7 +797,7 @@ func newCmdDebianSecurityTrackerAPI() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -828,7 +828,7 @@ func newCmdDebianSecurityTrackerSalsa() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "c", options.concurrency, "number of concurrent workers")
 
 	return cmd
@@ -854,7 +854,7 @@ func newCmdDebianOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "debian", "osv"), "output fetch results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -879,7 +879,7 @@ func newCmdEOL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "eol"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -929,7 +929,7 @@ func newCmdEPSS() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "epss"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -954,7 +954,7 @@ func newCmdErlangGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "erlang", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -979,7 +979,7 @@ func newCmdErlangOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "erlang", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1004,7 +1004,7 @@ func newCmdExploitExploitDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "exploit", "exploitdb"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1029,7 +1029,7 @@ func newCmdExploitGitHub() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "exploit", "github"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1054,7 +1054,7 @@ func newCmdExploitInTheWild() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "exploit", "inthewild"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1079,7 +1079,7 @@ func newCmdExploitTrickest() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "exploit", "trickest"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1129,7 +1129,7 @@ func newCmdFortinetHandmade() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "fortinet", "handmade"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1154,7 +1154,7 @@ func newCmdFortinetCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "fortinet", "cvrf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1179,7 +1179,7 @@ func newCmdFreeBSD() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "freebsd"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1204,7 +1204,7 @@ func newCmdGentoo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "gentoo"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1229,7 +1229,7 @@ func newCmdGHActionsOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "ghactions", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1254,7 +1254,7 @@ func newCmdGitOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "git", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1279,7 +1279,7 @@ func newCmdGolangGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "golang", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1304,7 +1304,7 @@ func newCmdGolangGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "golang", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1329,7 +1329,7 @@ func newCmdGolangOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "golang", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1354,7 +1354,7 @@ func newCmdGolangDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "golang", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1379,7 +1379,7 @@ func newCmdGolangVulnDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "golang", "vulndb"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1404,7 +1404,7 @@ func newCmdHaskellOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "haskell", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1429,7 +1429,7 @@ func newCmdJVNFeedDetail() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "jvn", "feed", "detail"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1454,7 +1454,7 @@ func newCmdJVNFeedProduct() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "jvn", "feed", "product"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1479,7 +1479,7 @@ func newCmdJVNFeedRSS() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "jvn", "feed", "rss"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1504,7 +1504,7 @@ func newCmdLinuxOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "linux", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1529,7 +1529,7 @@ func newCmdMavenGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "maven", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1554,7 +1554,7 @@ func newCmdMavenGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "maven", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1579,7 +1579,7 @@ func newCmdMavenOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "maven", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1704,7 +1704,7 @@ func newCmdMitreCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "mitre", "cvrf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1729,7 +1729,7 @@ func newCmdMitreV4() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "mitre", "v4"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1754,7 +1754,7 @@ func newCmdMitreV5() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "mitre", "v5"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1779,7 +1779,7 @@ func newCmdMSF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "msf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1804,7 +1804,7 @@ func newCmdNetBSD() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "netbsd"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1829,7 +1829,7 @@ func newCmdNpmGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "npm", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1854,7 +1854,7 @@ func newCmdNpmGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "npm", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1879,7 +1879,7 @@ func newCmdNpmOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "npm", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1904,7 +1904,7 @@ func newCmdNpmDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "npm", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1929,7 +1929,7 @@ func newCmdNugetGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nuget", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1954,7 +1954,7 @@ func newCmdNugetGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nuget", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -1979,7 +1979,7 @@ func newCmdNugetOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nuget", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2035,8 +2035,8 @@ func newCmdNVDAPICVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cve"), "output extract results to specified directory")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }
@@ -2061,7 +2061,7 @@ func newCmdNVDAPICPE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "nvd", "api", "cpe"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2261,7 +2261,7 @@ func newCmdOSSFuzzOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "oss-fuzz", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2286,7 +2286,7 @@ func newCmdPerlDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "perl", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2311,7 +2311,7 @@ func newCmdPipGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "pip", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2336,7 +2336,7 @@ func newCmdPipGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "pip", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2361,7 +2361,7 @@ func newCmdPipOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "pip", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2386,7 +2386,7 @@ func newCmdPipDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "pip", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2411,7 +2411,7 @@ func newCmdPubGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "pub", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2436,7 +2436,7 @@ func newCmdPubOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "pub", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2461,7 +2461,7 @@ func newCmdROSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "r", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2486,7 +2486,7 @@ func newCmdRedHatOVALv1() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "oval", "v1"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2511,7 +2511,7 @@ func newCmdRedHatOVALv2() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "oval", "v2"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2536,7 +2536,7 @@ func newCmdRedHatCVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "cve"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2561,7 +2561,7 @@ func newCmdRedHatCVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "cvrf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2586,7 +2586,7 @@ func newCmdRedHatCSAF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "csaf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2611,7 +2611,7 @@ func newCmdRedHatVEX() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "vex"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2636,7 +2636,7 @@ func newCmdRedHatOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "redhat", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2661,7 +2661,7 @@ func newCmdRockyErrata() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "rocky", "errata"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2686,7 +2686,7 @@ func newCmdRockyOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "rocky", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2711,7 +2711,7 @@ func newCmdRubygemsGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "rubygems", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2736,7 +2736,7 @@ func newCmdRubygemsGLSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "rubygems", "glsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2761,7 +2761,7 @@ func newCmdRubygemsOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "rubygems", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2786,7 +2786,7 @@ func newCmdRubygemsDB() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "rubygems", "db"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2811,7 +2811,7 @@ func newCmdSnort() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "snort"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2842,8 +2842,8 @@ func newCmdSUSEOVAL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "suse", "oval"), "output extract results to specified directory")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", runtime.NumCPU(), "number of concurrency process")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent workers")
 
 	return cmd
 }
@@ -2868,7 +2868,7 @@ func newCmdSUSECVRF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "suse", "cvrf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2893,7 +2893,7 @@ func newCmdSUSECVRFCVE() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "suse", "cvrf-cve"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2918,7 +2918,7 @@ func newCmdSUSECSAF() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "suse", "csaf"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2943,7 +2943,7 @@ func newCmdSUSECSAFVEX() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "suse", "csaf-vex"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2968,7 +2968,7 @@ func newCmdSUSEOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "suse", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -2993,7 +2993,7 @@ func newCmdSwiftGHSA() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "swift", "ghsa"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -3018,7 +3018,7 @@ func newCmdSwiftOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "swift", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -3043,7 +3043,7 @@ func newCmdUbuntuOVAL() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "ubuntu", "oval"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -3093,7 +3093,7 @@ func newCmdUbuntuOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "ubuntu", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -3118,7 +3118,7 @@ func newCmdVulnCheckKEV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "vulncheck", "kev"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
@@ -3143,7 +3143,7 @@ func newCmdWolfiOSV() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.dir, "dir", "d", filepath.Join(util.CacheDir(), "extract", "wolfi", "osv"), "output extract results to specified directory")
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
 
 	return cmd
 }
