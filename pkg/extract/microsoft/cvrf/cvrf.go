@@ -1126,7 +1126,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2022 Version 17.7",
 			"Microsoft Visual Studio 2022 Version 17.8",
 			"Microsoft Visual Studio 2022 Version 17.9",
-			"Microsoft Visual Studio 2026 Version 18.3":
+			"Microsoft Visual Studio 2026 Version 18.3",
+			"Microsoft Visual Studio 2026 Version 18.4":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
@@ -1961,6 +1962,11 @@ var fixedBuildOverrides = map[[3]string]string{
 	// 2023-Aug (IE Cumulative, FixedBuild "10.0.0.0" is a revision number, not a Windows OS build)
 	{"CVE-2023-35384", "Windows Server 2012 R2", "10.0.0.0"}:                            "",
 	{"CVE-2023-35384", "Windows Server 2012 R2 (Server Core installation)", "10.0.0.0"}: "",
+	// 2026-Apr (IE Cumulative, FixedBuild "1.000" is a placeholder, not a Windows OS build)
+	{"CVE-2026-32077", "Windows Server 2012", "1.000"}:                            "",
+	{"CVE-2026-32077", "Windows Server 2012 (Server Core installation)", "1.000"}: "",
+	{"CVE-2026-32077", "Windows Server 2012 R2", "1.000"}:                            "",
+	{"CVE-2026-32077", "Windows Server 2012 R2 (Server Core installation)", "1.000"}: "",
 	// 2021-May (IE Cumulative, FixedBuild "6.0"/"6.1"/"6.2" matches OS major.minor but is a truncated IE revision)
 	{"CVE-2021-26419", "Internet Explorer 9 on Windows Server 2008 for 32-bit Systems Service Pack 2", "6.0"}:        "",
 	{"CVE-2021-26419", "Internet Explorer 9 on Windows Server 2008 for x64-based Systems Service Pack 2", "6.0"}:     "",
