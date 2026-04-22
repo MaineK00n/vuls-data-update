@@ -1,0 +1,93 @@
+{
+	"id": "gcloud-lb-backend-unsecured",
+	"info": {
+		"name": "Unsecured Backend Services in Google Cloud Load Balancers",
+		"author": "princechaddha",
+		"tags": "cloud,devops,gcp,gcloud,google-cloud-load-balancer,gcp-cloud-config",
+		"description": "Ensure that the backend services associated with your Google Cloud load balancers are protected with edge security policies provided by the Cloud Armor service in order to shield your backend services from a range of potential attacks. Edge security policies let you control access to your cloud resources at the Google Cloud Platform (GCP) network edge.\n",
+		"impact": "Without edge security policies, backend services are vulnerable to a variety of network-based attacks, which can compromise data integrity and availability.\n",
+		"reference": [
+			"https://cloud.google.com/armor/docs/security-policy-overview"
+		],
+		"severity": "medium",
+		"remediation": "Attach an edge security policy to your backend services via the Google Cloud Console or using the Cloud Armor APIs to enhance security at your network's edge.\n"
+	},
+	"flow": "code(1)\nfor(let projectId of iterate(template.projectIds)){\n  set(\"projectId\", projectId)\n  code(2)\n  for(let urlMapName of iterate(template.urlMaps)){\n    set(\"urlMapName\", urlMapName)\n    code(3)\n    for(let backendService of iterate(template.backendServices)){\n      set(\"backendService\", backendService)\n      code(4)\n    }\n  }\n}\n",
+	"code": [
+		{
+			"extractors": [
+				{
+					"name": "projectIds",
+					"type": "json",
+					"json": [
+						".[].projectId"
+					],
+					"internal": true
+				}
+			],
+			"engine": [
+				"sh",
+				"bash"
+			],
+			"source": "gcloud projects list --format=\"json(projectId)\"\n"
+		},
+		{
+			"extractors": [
+				{
+					"name": "urlMaps",
+					"type": "json",
+					"json": [
+						".[].name"
+					],
+					"internal": true
+				}
+			],
+			"engine": [
+				"sh",
+				"bash"
+			],
+			"source": "gcloud compute url-maps list --project $projectId --format=\"json(name)\"\n"
+		},
+		{
+			"extractors": [
+				{
+					"name": "backendServices",
+					"type": "json",
+					"json": [
+						".defaultService"
+					],
+					"internal": true
+				}
+			],
+			"engine": [
+				"sh",
+				"bash"
+			],
+			"source": "gcloud compute url-maps describe $urlMapName --format=\"json(defaultService)\"\n"
+		},
+		{
+			"matchers": [
+				{
+					"type": "word",
+					"words": [
+						"null"
+					]
+				}
+			],
+			"extractors": [
+				{
+					"type": "dsl",
+					"dsl": [
+						"\"Unsecured Backend Service \" + backendService + \" for URL Map \" + urlMapName + \" in Project \" + projectId"
+					]
+				}
+			],
+			"engine": [
+				"sh",
+				"bash"
+			],
+			"source": "gcloud compute backend-services describe $backendService --format=\"json(securityPolicy)\"\n"
+		}
+	],
+	"self-contained": true
+}
