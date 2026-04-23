@@ -45,3 +45,28 @@ func TestExtract(t *testing.T) {
 		})
 	}
 }
+
+func TestNormalizeCVEID(t *testing.T) {
+	tests := []struct {
+		name string
+		args string
+		want string
+	}{
+		// valid
+		{name: "valid CVE ID", args: "CVE-2024-8852", want: "CVE-2024-8852"},
+		// lowercase normalization
+		{name: "lowercase cve", args: "cve-2024-8852", want: "CVE-2024-8852"},
+		// surrounding whitespace
+		{name: "trailing space", args: "CVE-2024-8852 ", want: "CVE-2024-8852"},
+		// non-CVE (skip)
+		{name: "CWE prefix", args: "CWE-200", want: ""},
+		{name: "empty", args: "", want: ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := repository.NormalizeCVEID(tt.args); got != tt.want {
+				t.Errorf("NormalizeCVEID(%q) = %q, want %q", tt.args, got, tt.want)
+			}
+		})
+	}
+}
