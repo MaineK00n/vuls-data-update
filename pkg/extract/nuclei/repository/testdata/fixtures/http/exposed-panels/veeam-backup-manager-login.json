@@ -1,0 +1,61 @@
+{
+	"id": "veeam-backup-manager-login",
+	"info": {
+		"name": "Veeam Backup Enterprise Manager Login - Detect",
+		"author": "Charles D",
+		"tags": "veeam,panel,enterprise-manager,login,detect,discovery",
+		"description": "Veeam Backup Enterprise Manager Login\n",
+		"severity": "info",
+		"metadata": {
+			"fofa-query": [
+				"title=\"veeam backup enterprise manager\"",
+				"icon_hash=\"169658321\""
+			],
+			"max-request": 1,
+			"shodan-query": [
+				"title:\"veeam backup enterprise manager\"",
+				"http.favicon.hash:169658321",
+				"\"Set-Cookie: .ASPXANONYMOUS\" http.html:\"Veeam\""
+			],
+			"verified": true
+		},
+		"classification": {
+			"cve-id": "CWE-200",
+			"cvss-metrics": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N"
+		}
+	},
+	"http": [
+		{
+			"matchers": [
+				{
+					"type": "word",
+					"part": "body",
+					"words": [
+						"Veeam Backup Enterprise Manager : Login"
+					]
+				},
+				{
+					"type": "status",
+					"status": [
+						200
+					]
+				}
+			],
+			"extractors": [
+				{
+					"name": "version",
+					"type": "regex",
+					"regex": [
+						"login.bundle.js\\?v=([\\d\\.]+)"
+					],
+					"group": 1
+				}
+			],
+			"matchers-condition": "and",
+			"path": [
+				"{{BaseURL}}/login.aspx"
+			],
+			"method": "GET"
+		}
+	]
+}

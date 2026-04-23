@@ -101,6 +101,14 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
+func normalizeCVEID(s string) string {
+	upper := strings.ToUpper(strings.TrimSpace(s))
+	if !strings.HasPrefix(upper, "CVE-") {
+		return ""
+	}
+	return upper
+}
+
 func extract(args string) (map[string]dataTypes.Data, error) {
 	cveExploits := make(map[string]dataTypes.Data)
 
@@ -123,7 +131,10 @@ func extract(args string) (map[string]dataTypes.Data, error) {
 			return nil
 		}
 
-		cveID := *f.Info.Classification.CVEID
+		cveID := normalizeCVEID(*f.Info.Classification.CVEID)
+		if cveID == "" {
+			return nil
+		}
 
 		rel, err := filepath.Rel(args, path)
 		if err != nil {
