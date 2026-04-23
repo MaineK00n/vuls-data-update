@@ -4,6 +4,11 @@
 	"products": [
 		"Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
 	],
+	"supersedes": [
+		{
+			"kb_id": "4010250"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-bulletin",
 		"raws": [

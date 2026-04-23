@@ -307,7 +307,9 @@ func (e extractor) extract(c cvrf.CVRF) ([]dataTypes.Data, []microsoftkbTypes.KB
 		})
 	}
 
-	return datas, slices.Collect(maps.Values(kbm)), nil
+	kbs := slices.Collect(maps.Values(kbm))
+	microsoftutil.DeriveSupersedes(kbs)
+	return datas, kbs, nil
 }
 func collectProducts(pt cvrf.ProductTree) map[string]string {
 	m := make(map[string]string)
@@ -2033,8 +2035,8 @@ func (e extractor) collectKBs(v cvrf.Vulnerability, products map[string]string, 
 			// Mixed formats (e.g. "MS16-016, 3124280; MS16-097, 3178034") also exist;
 			// non-digit tokens (bulletin IDs) are filtered out by the isAllDigits check below.
 			var supKBIDs []string
-			for _, semiPart := range strings.Split(r.Supercedence, ";") {
-				for _, commaPart := range strings.Split(semiPart, ",") {
+			for semiPart := range strings.SplitSeq(r.Supercedence, ";") {
+				for commaPart := range strings.SplitSeq(semiPart, ",") {
 					supKBIDs = append(supKBIDs, strings.TrimSpace(commaPart))
 				}
 			}
