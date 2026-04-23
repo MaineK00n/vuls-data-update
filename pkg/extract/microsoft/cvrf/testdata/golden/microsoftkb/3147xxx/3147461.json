@@ -4,6 +4,11 @@
 	"products": [
 		"Windows 10 for x64-based Systems"
 	],
+	"supersedes": [
+		{
+			"kb_id": "3140745"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [

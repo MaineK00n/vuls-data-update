@@ -6,6 +6,17 @@
 		"Microsoft .NET Framework 4.8 on Windows 10 Version 21H2 for ARM64-based Systems",
 		"Microsoft .NET Framework 4.8 on Windows 10 Version 21H2 for x64-based Systems"
 	],
+	"supersedes": [
+		{
+			"kb_id": "5017500"
+		},
+		{
+			"kb_id": "5018545"
+		},
+		{
+			"kb_id": "5018858"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [

@@ -8,6 +8,11 @@
 		"Windows Server 2012 R2",
 		"Windows Server 2012 R2 (Server Core installation)"
 	],
+	"supersedes": [
+		{
+			"kb_id": "3087088"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [
