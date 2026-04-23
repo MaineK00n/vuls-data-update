@@ -4,6 +4,11 @@
 	"products": [
 		"Microsoft XML Core Services 3.0 on Microsoft Windows 2000 Service Pack 4"
 	],
+	"supersedes": [
+		{
+			"kb_id": "936021"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-bulletin",
 		"raws": [

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	supersededbyTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	supersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 )
 
 // Update represents a specific update instance identified by Update ID (UUID).
@@ -24,6 +25,7 @@ type Update struct {
 	MoreInfoURL        string                           `json:"more_info_url,omitempty"`
 	SupportURL         string                           `json:"support_url,omitempty"`
 	SupersededBy       []supersededbyTypes.SupersededBy `json:"superseded_by,omitempty"`
+	Supersedes         []supersedesTypes.Supersedes     `json:"supersedes,omitempty"`
 	RebootBehavior     string                           `json:"reboot_behavior,omitempty"`
 	UserInput          string                           `json:"user_input,omitempty"`
 	InstallationImpact string                           `json:"installation_impact,omitempty"`
@@ -39,10 +41,9 @@ func (d *Update) Sort() {
 	slices.Sort(d.Products)
 	slices.Sort(d.Languages)
 
-	for i := range d.SupersededBy {
-		d.SupersededBy[i].Sort()
-	}
 	slices.SortFunc(d.SupersededBy, supersededbyTypes.Compare)
+
+	slices.SortFunc(d.Supersedes, supersedesTypes.Compare)
 }
 
 func Compare(x, y Update) int {
@@ -60,6 +61,7 @@ func Compare(x, y Update) int {
 		cmp.Compare(x.MoreInfoURL, y.MoreInfoURL),
 		cmp.Compare(x.SupportURL, y.SupportURL),
 		slices.CompareFunc(x.SupersededBy, y.SupersededBy, supersededbyTypes.Compare),
+		slices.CompareFunc(x.Supersedes, y.Supersedes, supersedesTypes.Compare),
 		cmp.Compare(x.RebootBehavior, y.RebootBehavior),
 		cmp.Compare(x.UserInput, y.UserInput),
 		cmp.Compare(x.InstallationImpact, y.InstallationImpact),

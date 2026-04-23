@@ -4,30 +4,32 @@ import (
 	"cmp"
 	"slices"
 
-	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
+	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 )
 
 // KB represents a Microsoft Knowledge Base article as a grouping key.
 // SupersededBy at this level holds KB-level supersession info (e.g. from CVRF).
+// Supersedes is the reverse: KBs that this KB replaces, derived from SupersededBy.
 // Per-update supersession is stored in each Update's SupersededBy.
 type KB struct {
-	KBID         string                                    `json:"kb_id"`
-	URL          string                                    `json:"url,omitempty"`
-	Products     []string                                  `json:"products,omitempty"`
+	KBID         string                                      `json:"kb_id"`
+	URL          string                                      `json:"url,omitempty"`
+	Products     []string                                    `json:"products,omitempty"`
 	SupersededBy []microsoftkbSupersededByTypes.SupersededBy `json:"superseded_by,omitempty"`
+	Supersedes   []microsoftkbSupersedesTypes.Supersedes     `json:"supersedes,omitempty"`
 	Updates      []microsoftkbUpdateTypes.Update             `json:"updates,omitempty"`
-	DataSource   sourceTypes.Source                        `json:"data_source,omitzero"`
+	DataSource   sourceTypes.Source                          `json:"data_source,omitzero"`
 }
 
 func (d *KB) Sort() {
 	slices.Sort(d.Products)
 
-	for i := range d.SupersededBy {
-		d.SupersededBy[i].Sort()
-	}
 	slices.SortFunc(d.SupersededBy, microsoftkbSupersededByTypes.Compare)
+
+	slices.SortFunc(d.Supersedes, microsoftkbSupersedesTypes.Compare)
 
 	for i := range d.Updates {
 		d.Updates[i].Sort()
@@ -43,6 +45,7 @@ func Compare(x, y KB) int {
 		cmp.Compare(x.URL, y.URL),
 		slices.Compare(x.Products, y.Products),
 		slices.CompareFunc(x.SupersededBy, y.SupersededBy, microsoftkbSupersededByTypes.Compare),
+		slices.CompareFunc(x.Supersedes, y.Supersedes, microsoftkbSupersedesTypes.Compare),
 		slices.CompareFunc(x.Updates, y.Updates, microsoftkbUpdateTypes.Compare),
 		sourceTypes.Compare(x.DataSource, y.DataSource),
 	)
@@ -71,6 +74,16 @@ func (d *KB) Merge(kbs ...KB) {
 			}
 		}
 		d.SupersededBy = ss
+
+		sups := d.Supersedes
+		for _, esup := range e.Supersedes {
+			if !slices.ContainsFunc(sups, func(s microsoftkbSupersedesTypes.Supersedes) bool {
+				return microsoftkbSupersedesTypes.Compare(s, esup) == 0
+			}) {
+				sups = append(sups, esup)
+			}
+		}
+		d.Supersedes = sups
 
 		us := d.Updates
 		for _, eu := range e.Updates {

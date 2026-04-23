@@ -25,6 +25,12 @@
 					"update_id": "acbe4fd0-394e-40e8-a96b-c4facae62c8b"
 				}
 			],
+			"supersedes": [
+				{
+					"kb_id": "5025239",
+					"update_id": "f39d68ab-1519-4df8-85c1-d985be7f49c3"
+				}
+			],
 			"reboot_behavior": "Can request restart",
 			"user_input": "No",
 			"connectivity": "No",

@@ -7,6 +7,11 @@
 		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
 		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
 	],
+	"supersedes": [
+		{
+			"kb_id": "5022734"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-cvrf",
 		"raws": [
