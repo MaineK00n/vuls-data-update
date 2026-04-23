@@ -44,17 +44,20 @@ func TestExtract(t *testing.T) {
 				t.Error("unexpected error:", err)
 			case err == nil && tt.hasError:
 				t.Error("expected error has not occurred")
+			case err != nil && tt.hasError:
+				// error was expected and occurred, test passed
+				return
+			default:
+				ep, err := filepath.Abs(tt.golden)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				gp, err := filepath.Abs(dir)
+				if err != nil {
+					t.Error("unexpected error:", err)
+				}
+				utiltest.Diff(t, ep, gp)
 			}
-
-			ep, err := filepath.Abs(tt.golden)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			gp, err := filepath.Abs(dir)
-			if err != nil {
-				t.Error("unexpected error:", err)
-			}
-			utiltest.Diff(t, ep, gp)
 		})
 	}
 }
