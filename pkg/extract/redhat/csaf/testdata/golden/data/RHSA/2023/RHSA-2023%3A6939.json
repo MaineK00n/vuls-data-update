@@ -632,6 +632,12 @@
 						]
 					}
 				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Mitigation for this issue is either not available or the currently available options don't meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base or stability."
+					}
+				],
 				"references": [
 					{
 						"source": "secalert@redhat.com",
@@ -768,6 +774,12 @@
 						]
 					}
 				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base or stability."
+					}
+				],
 				"references": [
 					{
 						"source": "secalert@redhat.com",
@@ -836,6 +848,12 @@
 						]
 					}
 				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base, or stability."
+					}
+				],
 				"references": [
 					{
 						"source": "secalert@redhat.com",
@@ -902,6 +920,12 @@
 						"cwe": [
 							"CWE-176"
 						]
+					}
+				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base, or stability."
 					}
 				],
 				"references": [
@@ -1052,6 +1076,12 @@
 						]
 					}
 				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Condition 1: Unshare the cgroup namespace ((docker|podman|nerdctl) run --cgroupns=private). This is the default behavior of Docker/Podman/nerdctl on cgroup v2 hosts.\nCondition 2 (very rare): add /sys/fs/cgroup to maskedPaths"
+					}
+				],
 				"references": [
 					{
 						"source": "secalert@redhat.com",
@@ -1192,6 +1222,12 @@
 						]
 					}
 				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Avoid using an untrusted container image."
+					}
+				],
 				"references": [
 					{
 						"source": "secalert@redhat.com",
@@ -1254,6 +1290,12 @@
 						"cwe": [
 							"CWE-176"
 						]
+					}
+				],
+				"workarounds": [
+					{
+						"source": "secalert@redhat.com",
+						"description": "Mitigation for this issue is either not available or the currently available options do not meet the Red Hat Product Security criteria comprising ease of use and deployment, applicability to widespread installation base, or stability."
 					}
 				],
 				"references": [

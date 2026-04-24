@@ -33,6 +33,7 @@ import (
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	cvssV2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
 	cvssV30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
@@ -245,10 +246,12 @@ type product struct {
 	repositories    []string
 }
 
-type ass struct {
-	Advisory string
-	Severity severity
-	Status   status
+type assessment struct {
+	Advisory   string
+	Severity   severity
+	Status     status
+	Mitigation string
+	Workaround string
 }
 type severity struct {
 	Cvss2  string
@@ -582,11 +585,11 @@ func walkProductTree(pt csaf.ProductTree, c2r map[string][]string) (map[csaf.Pro
 	return pm, nil
 }
 
-func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map[string]map[csaf.ProductID]ass, map[string]vulnerabilityContentTypes.Content, error) {
-	vassm := make(map[string]map[csaf.ProductID]ass)
+func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map[string]map[csaf.ProductID]assessment, map[string]vulnerabilityContentTypes.Content, error) {
+	vassm := make(map[string]map[csaf.ProductID]assessment)
 	vm := make(map[string]vulnerabilityContentTypes.Content)
 	for _, v := range vulns {
-		vassm[v.CVE] = make(map[csaf.ProductID]ass)
+		vassm[v.CVE] = make(map[csaf.ProductID]assessment)
 
 		if err := func() error {
 			if len(v.ProductStatus.FirstAffected) > 0 || len(v.ProductStatus.FirstFixed) > 0 || len(v.ProductStatus.LastAffected) > 0 || len(v.ProductStatus.Recommended) > 0 {
@@ -633,7 +636,7 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 					switch base := vassm[v.CVE][p]; base.Status.ProductStatus {
 					case "unaffected":
 						if base.Status.AffectedStatus != "" {
-							return errors.New("already set affected_status")
+							return errors.Errorf("already set affected_status. cve: %s, product_id: %s", v.CVE, p)
 						}
 						base.Status.AffectedStatus = f.Label
 						vassm[v.CVE][p] = base
@@ -656,19 +659,31 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 					return pids
 				}() {
 					switch r.Category {
-					case "mitigation", "workaround":
-						// TODO:
+					case "mitigation":
+						base := vassm[v.CVE][p]
+						if base.Mitigation != "" {
+							return errors.Errorf("already set mitigation. cve: %s, product_id: %s", v.CVE, p)
+						}
+						base.Mitigation = r.Details
+						vassm[v.CVE][p] = base
+					case "workaround":
+						base := vassm[v.CVE][p]
+						if base.Workaround != "" {
+							return errors.Errorf("already set workaround. cve: %s, product_id: %s", v.CVE, p)
+						}
+						base.Workaround = r.Details
+						vassm[v.CVE][p] = base
 					case "no_fix_planned", "none_available":
 						base := vassm[v.CVE][p]
 						if base.Status.AffectedStatus != "" {
-							return errors.New("already set affected_status")
+							return errors.Errorf("already set affected_status. cve: %s, product_id: %s", v.CVE, p)
 						}
 						base.Status.AffectedStatus = r.Details
 						vassm[v.CVE][p] = base
 					case "vendor_fix":
 						base := vassm[v.CVE][p]
 						if base.Advisory != "" {
-							return errors.New("already set advisory id")
+							return errors.Errorf("already set advisory id. cve: %s, product_id: %s", v.CVE, p)
 						}
 						base.Advisory = strings.TrimPrefix(r.URL, "https://access.redhat.com/errata/")
 						vassm[v.CVE][p] = base
@@ -759,19 +774,19 @@ func walkVulnerabilities(vulns []csaf.Vulnerability, pids []csaf.ProductID) (map
 	return vassm, vm, nil
 }
 
-func invertVassGroup(vassm map[string]map[csaf.ProductID]ass, pm map[csaf.ProductID][]product) (map[string][]csaf.ProductID, error) {
-	pidToVassGroup := make(map[csaf.ProductID]map[string]ass)
+func invertVassGroup(vassm map[string]map[csaf.ProductID]assessment, pm map[csaf.ProductID][]product) (map[string][]csaf.ProductID, error) {
+	pidToVassGroup := make(map[csaf.ProductID]map[string]assessment)
 
 	for cveID, assm := range vassm {
 		for pid, a := range assm {
 			if !slices.ContainsFunc(pm[pid], func(p product) bool { return len(p.arch) > 0 }) {
-				// Ignore ass with no arches because it does not included in detections.
+				// Ignore assessment with no arches because it is not included in detections.
 				continue
 			}
 
 			vassGroup, found := pidToVassGroup[pid]
 			if !found {
-				vassGroup = make(map[string]ass)
+				vassGroup = make(map[string]assessment)
 			}
 			vassGroup[cveID] = a
 			pidToVassGroup[pid] = vassGroup
@@ -799,7 +814,7 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 	cm := make(map[string][]conditionTypes.Condition)
 
 	for vassGroupString, pids := range vassGroupToPids {
-		var vassGroup map[string]ass
+		var vassGroup map[string]assessment
 		if err := json.Unmarshal([]byte(vassGroupString), &vassGroup); err != nil {
 			return nil, nil, nil, errors.Wrap(err, "json unmarshal")
 		}
@@ -846,6 +861,18 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 						return nil, nil, nil, errors.Wrap(err, "build severities")
 					}
 					base.Severity = sevs
+					if a.Mitigation != "" {
+						base.Mitigations = []remediationTypes.Remediation{{
+							Source:      "secalert@redhat.com",
+							Description: a.Mitigation,
+						}}
+					}
+					if a.Workaround != "" {
+						base.Workarounds = []remediationTypes.Remediation{{
+							Source:      "secalert@redhat.com",
+							Description: a.Workaround,
+						}}
+					}
 					base.Sort()
 
 					index := slices.IndexFunc(vs, func(v vulnerabilityTypes.Vulnerability) bool {
