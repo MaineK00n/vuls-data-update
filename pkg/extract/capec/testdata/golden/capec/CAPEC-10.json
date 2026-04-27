@@ -1,0 +1,74 @@
+{
+	"id": "CAPEC-10",
+	"name": "Buffer Overflow via Environment Variables",
+	"description": "This attack pattern involves causing a buffer overflow through manipulation of environment variables. Once the adversary finds that they can modify an environment variable, they may try to overflow associated buffers. This attack leverages implicit trust often placed in environment variables.",
+	"extended_description": "Although the focus of this attack is putting excessive content into an environment variable that is loaded into a buffer, environment variables can be used to assist a classic buffer overflow attack as well. In the case where the buffer used in a traditional buffer overflow attack is not large enough to store the adversary's shell code, they will store the shell code in an environment variable and attempt to return to its address, rather than back into the data they wrote to the buffer.",
+	"abstraction": "Detailed",
+	"status": "Draft",
+	"likelihood_of_attack": "High",
+	"typical_severity": "High",
+	"domains": [
+		"Software"
+	],
+	"prerequisites": [
+		"An environment variable exposed to the user is vulnerable to a buffer overflow.",
+		"Tainted data used in the environment variables is not properly validated. For instance boundary checking is not done before copying the input data to a buffer.",
+		"The application uses environment variables.",
+		"The vulnerable environment variable uses untrusted data."
+	],
+	"skills_required": {
+		"High": "Exploiting a buffer overflow to inject malicious code into the stack of a software system or even the heap can require a higher skill level.",
+		"Low": "An attacker can simply overflow a buffer by inserting a long string into an attacker-modifiable injection vector. The result can be a DoS."
+	},
+	"consequences": {
+		"Access_Control": [
+			"Gain Privileges"
+		],
+		"Authorization": [
+			"Gain Privileges"
+		],
+		"Availability": [
+			"Execute Unauthorized Commands (Run Arbitrary Code)",
+			"Unreliable Execution"
+		],
+		"Confidentiality": [
+			"Execute Unauthorized Commands (Run Arbitrary Code)",
+			"Gain Privileges",
+			"Read Data"
+		],
+		"Integrity": [
+			"Execute Unauthorized Commands (Run Arbitrary Code)",
+			"Modify Data"
+		]
+	},
+	"related_cwes": [
+		"CWE-118",
+		"CWE-119",
+		"CWE-120",
+		"CWE-20",
+		"CWE-302",
+		"CWE-680",
+		"CWE-697",
+		"CWE-733",
+		"CWE-74",
+		"CWE-99"
+	],
+	"version": "3.9",
+	"modified": "2022-09-29T00:00:00Z",
+	"references": [
+		{
+			"source": "OWASP Attacks",
+			"url": "https://owasp.org/www-community/attacks/Buffer_Overflow_via_Environment_Variables"
+		},
+		{
+			"source": "reference_from_CAPEC",
+			"url": "http://sharefuzz.sourceforge.net"
+		}
+	],
+	"data_source": {
+		"id": "capec",
+		"raws": [
+			"fixtures/attack-pattern/attack-pattern--4a29d66d-8617-4382-b456-578ecdb1609e.json"
+		]
+	}
+}

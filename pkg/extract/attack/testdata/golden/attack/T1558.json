@@ -1,0 +1,209 @@
+{
+	"id": "T1558",
+	"kind": "technique",
+	"name": "Steal or Forge Kerberos Tickets",
+	"description": "Adversaries may attempt to subvert Kerberos authentication by stealing or forging Kerberos tickets to enable [Pass the Ticket](https://attack.mitre.org/techniques/T1550/003). Kerberos is an authentication protocol widely used in modern Windows domain environments. In Kerberos environments, referred to as “realms”, there are three basic participants: client, service, and Key Distribution Center (KDC).(Citation: ADSecurity Kerberos Ring Decoder) Clients request access to a service and through the exchange of Kerberos tickets, originating from KDC, they are granted access after having successfully authenticated. The KDC is responsible for both authentication and ticket granting.  Adversaries may attempt to abuse Kerberos by stealing tickets or forging tickets to enable unauthorized access.\n\nOn Windows, the built-in <code>klist</code> utility can be used to list and analyze cached Kerberos tickets.(Citation: Microsoft Klist)\n\nLinux systems on Active Directory domains store Kerberos credentials locally in the credential cache file referred to as the \"ccache\". The credentials are stored in the ccache file while they remain valid and generally while a user's session lasts.(Citation: MIT ccache) On modern Redhat Enterprise Linux systems, and derivative distributions, the System Security Services Daemon (SSSD) handles Kerberos tickets. By default SSSD maintains a copy of the ticket database that can be found in <code>/var/lib/sss/secrets/secrets.ldb</code> as well as the corresponding key located in <code>/var/lib/sss/secrets/.secrets.mkey</code>. Both files require root access to read. If an adversary is able to access the database and key, the credential cache Kerberos blob can be extracted and converted into a usable Kerberos ccache file that adversaries may use for [Pass the Ticket](https://attack.mitre.org/techniques/T1550/003). The ccache file may also be converted into a Windows format using tools such as Kekeo.(Citation: Linux Kerberos Tickets)(Citation: Brining MimiKatz to Unix)(Citation: Kekeo)\n\n\nKerberos tickets on macOS are stored in a standard ccache format, similar to Linux. By default, access to these ccache entries is federated through the KCM daemon process via the Mach RPC protocol, which uses the caller's environment to determine access. The storage location for these ccache entries is influenced by the <code>/etc/krb5.conf</code> configuration file and the <code>KRB5CCNAME</code> environment variable which can specify to save them to disk or keep them protected via the KCM daemon. Users can interact with ticket storage using <code>kinit</code>, <code>klist</code>, <code>ktutil</code>, and <code>kcc</code> built-in binaries or via Apple's native Kerberos framework. Adversaries can use open source tools to interact with the ccache files directly or to use the Kerberos framework to call lower-level APIs for extracting the user's TGT or Service Tickets.(Citation: SpectorOps Bifrost Kerberos macOS 2019)(Citation: macOS kerberos framework MIT)\n",
+	"domains": [
+		"enterprise-attack"
+	],
+	"platforms": [
+		"Linux",
+		"Windows",
+		"macOS"
+	],
+	"tactics": [
+		"credential-access"
+	],
+	"is_subtechnique": false,
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.4",
+	"modified": "2023-05-09T14:00:00.188Z",
+	"references": [
+		{
+			"source": "ADSecurity Detecting Forged Tickets",
+			"url": "https://adsecurity.org/?p=1515"
+		},
+		{
+			"source": "ADSecurity Kerberos Ring Decoder",
+			"url": "https://adsecurity.org/?p=227"
+		},
+		{
+			"source": "AdSecurity Cracking Kerberos Dec 2015",
+			"url": "https://adsecurity.org/?p=2293"
+		},
+		{
+			"source": "Brining MimiKatz to Unix",
+			"url": "https://labs.portcullis.co.uk/download/eu-18-Wadhwa-Brown-Where-2-worlds-collide-Bringing-Mimikatz-et-al-to-UNIX.pdf"
+		},
+		{
+			"source": "CERT-EU Golden Ticket Protection",
+			"url": "https://cert.europa.eu/static/WhitePapers/UPDATED%20-%20CERT-EU_Security_Whitepaper_2014-007_Kerberos_Golden_Ticket_Protection_v1_4.pdf"
+		},
+		{
+			"source": "Kekeo",
+			"url": "https://github.com/gentilkiwi/kekeo"
+		},
+		{
+			"source": "Linux Kerberos Tickets",
+			"url": "https://www.fireeye.com/blog/threat-research/2020/04/kerberos-tickets-on-linux-red-teams.html"
+		},
+		{
+			"source": "MIT ccache",
+			"url": "https://web.mit.edu/kerberos/krb5-1.12/doc/basic/ccache_def.html"
+		},
+		{
+			"source": "Medium Detecting Attempts to Steal Passwords from Memory",
+			"url": "https://medium.com/threatpunter/detecting-attempts-to-steal-passwords-from-memory-558f16dce4ea"
+		},
+		{
+			"source": "Microsoft Detecting Kerberoasting Feb 2018",
+			"url": "https://blogs.technet.microsoft.com/motiba/2018/02/23/detecting-kerberoasting-activity-using-azure-security-center/"
+		},
+		{
+			"source": "Microsoft Kerberos Golden Ticket",
+			"url": "https://gallery.technet.microsoft.com/scriptcenter/Kerberos-Golden-Ticket-b4814285"
+		},
+		{
+			"source": "Microsoft Klist",
+			"url": "https://docs.microsoft.com/windows-server/administration/windows-commands/klist"
+		},
+		{
+			"source": "SpectorOps Bifrost Kerberos macOS 2019",
+			"url": "https://posts.specterops.io/when-kirbi-walks-the-bifrost-4c727807744f"
+		},
+		{
+			"source": "Stealthbits Detect PtT 2019",
+			"url": "https://blog.stealthbits.com/detect-pass-the-ticket-attacks"
+		},
+		{
+			"source": "macOS kerberos framework MIT",
+			"url": "http://web.mit.edu/macdev/KfM/Common/Documentation/preferences.html"
+		}
+	],
+	"data_source": {
+		"id": "attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3dc8c101-d4db-4f4d-8150-1b5a76ca5f1b.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3ee16395-03f0-4690-a32e-69ce9ada0f9e.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3fc01293-ef5e-41c6-86ce-61f10706b64a.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3fc9b85a-2862-4363-a64d-d692e3ffbee0.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/enterprise/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
+			"fixtures/enterprise/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
+			"fixtures/enterprise/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
+			"fixtures/enterprise/relationship/relationship--9ed1ec04-312c-4053-bf2e-f48d3744702a.json",
+			"fixtures/enterprise/relationship/relationship--9f852541-3fc7-4036-9268-7bc6bfe94900.json",
+			"fixtures/enterprise/relationship/relationship--9f89d00f-fc0f-4dbb-9b54-3553821bf7ef.json",
+			"fixtures/enterprise/relationship/relationship--9ffb8d9a-6aee-4bb5-9f1a-0e9c1f643350.json",
+			"fixtures/enterprise/relationship/relationship--a0a54af7-b2b2-4914-a987-b8646f94db58.json",
+			"fixtures/enterprise/relationship/relationship--a1505946-76d9-4acb-8b1a-02c926915702.json",
+			"fixtures/enterprise/relationship/relationship--a23ab6bc-e5cc-46a9-b77f-747ae6fc6a9b.json",
+			"fixtures/enterprise/relationship/relationship--a24e618b-6624-4bca-9bef-c5f4ca6cab53.json",
+			"fixtures/enterprise/relationship/relationship--a34d1e30-dcf5-4743-93e5-e4834e980f0f.json",
+			"fixtures/enterprise/relationship/relationship--a354a81a-0277-45f2-913b-528558e6fd60.json",
+			"fixtures/enterprise/relationship/relationship--a498d3ae-f944-4ad0-af8e-f92a78f04feb.json",
+			"fixtures/enterprise/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
+			"fixtures/enterprise/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
+			"fixtures/enterprise/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/enterprise/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json",
+			"fixtures/ics/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/ics/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/ics/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/ics/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/ics/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/ics/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3dc8c101-d4db-4f4d-8150-1b5a76ca5f1b.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3ee16395-03f0-4690-a32e-69ce9ada0f9e.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3fc01293-ef5e-41c6-86ce-61f10706b64a.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3fc9b85a-2862-4363-a64d-d692e3ffbee0.json",
+			"fixtures/ics/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/ics/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/ics/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/ics/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
+			"fixtures/ics/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
+			"fixtures/ics/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
+			"fixtures/ics/relationship/relationship--9ed1ec04-312c-4053-bf2e-f48d3744702a.json",
+			"fixtures/ics/relationship/relationship--9f852541-3fc7-4036-9268-7bc6bfe94900.json",
+			"fixtures/ics/relationship/relationship--9f89d00f-fc0f-4dbb-9b54-3553821bf7ef.json",
+			"fixtures/ics/relationship/relationship--9ffb8d9a-6aee-4bb5-9f1a-0e9c1f643350.json",
+			"fixtures/ics/relationship/relationship--a0a54af7-b2b2-4914-a987-b8646f94db58.json",
+			"fixtures/ics/relationship/relationship--a1505946-76d9-4acb-8b1a-02c926915702.json",
+			"fixtures/ics/relationship/relationship--a23ab6bc-e5cc-46a9-b77f-747ae6fc6a9b.json",
+			"fixtures/ics/relationship/relationship--a24e618b-6624-4bca-9bef-c5f4ca6cab53.json",
+			"fixtures/ics/relationship/relationship--a34d1e30-dcf5-4743-93e5-e4834e980f0f.json",
+			"fixtures/ics/relationship/relationship--a354a81a-0277-45f2-913b-528558e6fd60.json",
+			"fixtures/ics/relationship/relationship--a498d3ae-f944-4ad0-af8e-f92a78f04feb.json",
+			"fixtures/ics/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
+			"fixtures/ics/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
+			"fixtures/ics/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/ics/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3dc8c101-d4db-4f4d-8150-1b5a76ca5f1b.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3ee16395-03f0-4690-a32e-69ce9ada0f9e.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3fc01293-ef5e-41c6-86ce-61f10706b64a.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3fc9b85a-2862-4363-a64d-d692e3ffbee0.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/mobile/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
+			"fixtures/mobile/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
+			"fixtures/mobile/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
+			"fixtures/mobile/relationship/relationship--9ed1ec04-312c-4053-bf2e-f48d3744702a.json",
+			"fixtures/mobile/relationship/relationship--9f852541-3fc7-4036-9268-7bc6bfe94900.json",
+			"fixtures/mobile/relationship/relationship--9f89d00f-fc0f-4dbb-9b54-3553821bf7ef.json",
+			"fixtures/mobile/relationship/relationship--9ffb8d9a-6aee-4bb5-9f1a-0e9c1f643350.json",
+			"fixtures/mobile/relationship/relationship--a0a54af7-b2b2-4914-a987-b8646f94db58.json",
+			"fixtures/mobile/relationship/relationship--a1505946-76d9-4acb-8b1a-02c926915702.json",
+			"fixtures/mobile/relationship/relationship--a23ab6bc-e5cc-46a9-b77f-747ae6fc6a9b.json",
+			"fixtures/mobile/relationship/relationship--a24e618b-6624-4bca-9bef-c5f4ca6cab53.json",
+			"fixtures/mobile/relationship/relationship--a34d1e30-dcf5-4743-93e5-e4834e980f0f.json",
+			"fixtures/mobile/relationship/relationship--a354a81a-0277-45f2-913b-528558e6fd60.json",
+			"fixtures/mobile/relationship/relationship--a498d3ae-f944-4ad0-af8e-f92a78f04feb.json",
+			"fixtures/mobile/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
+			"fixtures/mobile/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
+			"fixtures/mobile/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/mobile/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json"
+		]
+	}
+}

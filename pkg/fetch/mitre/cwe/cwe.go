@@ -268,6 +268,7 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			Abstraction:           w.Abstraction,
 			Structure:             w.Structure,
 			Status:                w.Status,
+			Diagram:               w.Diagram,
 			Description:           w.Description,
 			ExtendedDescription:   w.ExtendedDescription.Text,
 			RelatedWeaknesses:     w.RelatedWeaknesses,
@@ -289,6 +290,7 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			Notes:                 w.Notes,
 			AffectedResources:     w.AffectedResources,
 			FunctionalAreas:       w.FunctionalAreas,
+			MappingNotes:          convertMappingNotes(w.MappingNotes),
 		})
 	}
 	return converted
@@ -353,6 +355,7 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 			References:       references,
 			Notes:            c.Notes,
 			TaxonomyMappings: c.TaxonomyMappings,
+			MappingNotes:     convertMappingNotes(c.MappingNotes),
 		})
 	}
 	return converted
@@ -419,7 +422,29 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 			ContentHistory: contentHistory,
 			References:     references,
 			Filter:         v.Filter,
+			MappingNotes:   convertMappingNotes(v.MappingNotes),
 		})
 	}
 	return converted
+}
+
+func convertMappingNotes(mn mappingNotes) MappingNotes {
+	if mn.Usage == "" && mn.Rationale == "" && mn.Comments == "" && len(mn.Reasons) == 0 && len(mn.Suggestions) == 0 {
+		return MappingNotes{}
+	}
+	var reasons []Reason
+	for _, r := range mn.Reasons {
+		reasons = append(reasons, Reason{Type: r.Type})
+	}
+	var suggestions []Suggestion
+	for _, s := range mn.Suggestions {
+		suggestions = append(suggestions, Suggestion{CWEID: s.CWEID, Comment: s.Comment})
+	}
+	return MappingNotes{
+		Usage:       mn.Usage,
+		Rationale:   mn.Rationale,
+		Comments:    mn.Comments,
+		Reasons:     reasons,
+		Suggestions: suggestions,
+	}
 }
