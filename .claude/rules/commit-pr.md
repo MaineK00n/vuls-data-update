@@ -24,7 +24,7 @@ refactor(extract/types): unify advisory sort
 chore!(extract/types): rename Segment to Repository
 build(deps): bump github.com/go-git/go-git/v5 from 5.17.0 to 5.17.1
 test(extract/ubuntu): add golden tests for USN fixtures
-docs: update README with new data source list
+docs(readme): update README with new data source list
 ```
 
 ## Pull Requests
