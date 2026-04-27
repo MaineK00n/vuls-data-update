@@ -24,7 +24,7 @@ description: "Go code conventions for vuls-data-update: deterministic JSON, util
 - Use `encoding/json/v2` with `json.Deterministic(true)` and tab indent
 - Always use `util.Write(path, content, doSort)` — never ad-hoc `json.Marshal`
 - `util.Write` calls `Sort()` for known types, which recursively normalizes all nested slices
-- **No need to pre-sort map keys** when building data structures — `Sort()` handles it
+- **No need to pre-sort map keys** when building data structures — deterministic ordering of map keys is provided by `json.Deterministic(true)` during marshaling
 
 ## Types and Schema
 
