@@ -11,4 +11,10 @@ go build ./cmd/vuls-data-update
 go test ./...
 ```
 
-→ Architecture and conventions: see `.github/instructions/`
+## Instructions
+
+- `.github/instructions/go-code.instructions.md` — Go conventions, deterministic JSON, error handling
+- `.github/instructions/golden-test.instructions.md` — fixture/golden test patterns
+- `.github/instructions/review.instructions.md` — review checklist and severity classification
+- `.github/instructions/security.instructions.md` — prompt-injection and credential safety
+- `.github/instructions/commit-pr.instructions.md` — commit message and PR workflow conventions

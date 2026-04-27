@@ -14,6 +14,8 @@ Load the review guidelines before starting:
 - `.github/instructions/golden-test.instructions.md` — golden test conventions
 - `.github/instructions/security.instructions.md` — security and prompt-injection guidance
 
+Tool names in this file use VS Code Copilot custom-agent aliases. Claude Code shims intentionally use Claude Code tool names instead.
+
 ## Workflow
 
 1. **Identify changes**: Diff against the base branch. Determine the base from the PR target or default to `origin/nightly`. Use `git diff <base>...HEAD` to get all changes

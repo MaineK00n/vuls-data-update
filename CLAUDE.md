@@ -24,7 +24,7 @@ go test ./...
 ## Key Conventions
 
 - **Deterministic JSON**: Use `encoding/json/v2` with `json.Deterministic(true)` and tab indent via `util.Write()`
-- **Sort/Compare**: `Sort()` recursively normalizes nested slices — no need to pre-sort map keys
+- **Sort/Compare**: `Sort()` recursively normalizes nested slices; map key ordering is provided by `json.Deterministic(true)` during encoding
 - **Golden tests**: Fixtures in `testdata/fixtures/`, golden output in `testdata/golden/`. Use `util/test` helpers
 - **Cleanup**: Use `util.RemoveAll(dir)` — preserves `README.md` and `.git`
 - **Cache**: `util.CacheDir()` defaults to `~/.cache/vuls-data-update`
@@ -44,9 +44,7 @@ Files under `.claude/rules/` are **generated** from `.github/instructions/` — 
 After editing `.github/instructions/*.instructions.md`, regenerate `.claude/rules/`:
 
 ```sh
-mkdir -p .claude/rules
-for f in .github/instructions/*.instructions.md; do
-  base=$(basename "$f" .instructions.md)
-  awk 'NR==1 && $0=="---" { in_front_matter=1; next } in_front_matter && $0=="---" { in_front_matter=0; next } !in_front_matter { print }' "$f" > ".claude/rules/$base.md"
-done
+make sync-rules
 ```
+
+Use `make check-rules` to verify generated rules are up to date. These targets use bash.

@@ -46,3 +46,4 @@ How the change was tested:
 - Keep the description concise but informative
 - Link related issues if branch name contains an issue number
 - If the PR modifies extracted types, explicitly note backward compatibility impact
+- Mark checklist items with `[x]` only when the agent actually verified them in the current session; otherwise leave them as `[ ]` for the human reviewer.

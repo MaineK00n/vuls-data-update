@@ -26,7 +26,7 @@ Golden filenames may be URL-escaped (e.g., `%2F` for `/`). This is intentional f
 If a change causes widespread golden diffs:
 1. **Check determinism**: Verify `util.Write` and `types/*/Sort` are correct
 2. **Check sorting**: Ensure `Sort()`/`Compare()` are updated for any new or modified types
-3. **Update golden files**: If the diff is intentional, update golden files with `go test -update` or by running the extractor and copying output
+3. **Update golden files**: If the diff is intentional, run the relevant extractor and copy the output into `testdata/golden/`. This repo does not provide a generic test flag for updating golden files.
 
 ### Writing New Golden Tests
 

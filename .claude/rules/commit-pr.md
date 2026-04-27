@@ -12,7 +12,7 @@
   - Breaking changes: append `!` → `feat!(extract/types): rename Advisory field`
   - Dependency bumps: `build(deps): bump golang.org/x/net to v0.25.0`
 - **scope**: package path relative to repo root (e.g., `extract/alma`, `fetch/nvd`, `types/data`)
-- **subject**: imperative mood, lowercase, no period at end
+- **subject**: imperative mood, lowercase, no period at end. Keep it on one line; ~72 chars is a readability target, but longer subjects are acceptable when needed to preserve meaning.
 - **body**: usually omitted; only add when the *why* isn't obvious from the subject
 
 ### Examples (from actual repo history)
@@ -47,5 +47,5 @@ Open as **draft** by default. Mark ready-for-review only after CI passes.
 ### Review Workflow
 1. Open PR as **draft** against `nightly`
 2. Ensure CI passes
-3. Address review feedback — post `fixed: <commit-url>` when addressing specific comments
+3. Address review feedback and resolve the conversation after pushing the fix
 4. Update PR description if scope changes during review
