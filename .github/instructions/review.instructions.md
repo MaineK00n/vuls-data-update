@@ -33,7 +33,7 @@ description: "Code review guidelines: checklist, severity classification, review
 - Avoid `*[]T` (pointer to slice) — pass by value and return
 - Use `strings.Contains` over regex for simple checks
 - Use `switch` over `if-else` chains for type dispatching
-- Fill default directory in options: `dir: filepath.Join(util.CacheDir(), "extract", "<name>")`
+- Fill default directory in options: `dir: filepath.Join(util.CacheDir(), "extract", "<domain>", "<name>")`
 - Add `omitempty` on optional string/slice/map/pointer fields; use `omitzero` on struct and `time.Time` fields
 - Sort `maps.Keys()` / `slices.Collect()` results when output is logged, cached, or compared
 - Flag **unnecessary sorts**: sorting is justified only when downstream logic requires order or the data is emitted to humans/goldens. Sorting right before feeding into `util.Write` (which calls `Sort()`) or before a single unordered loop is waste.
