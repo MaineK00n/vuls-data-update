@@ -1,5 +1,5 @@
 ---
-description: "Code review guidelines: checklist, severity classification, review focus areas
+description: "Code review guidelines: checklist, severity classification, review focus areas"
 ---
 # Review Guidelines
 

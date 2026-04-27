@@ -8,7 +8,7 @@ description: "Commit message format and PR workflow conventions — enriched fro
 ### Format
 
 ```
-<type>(<scope>): <subject> (#PR_NUMBER)
+<type>(<scope>): <subject>
 ```
 
 - **type**: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `ci`
@@ -21,13 +21,13 @@ description: "Commit message format and PR workflow conventions — enriched fro
 ### Examples (from actual repo history)
 
 ```
-feat(extract/alma): add errata extraction (#174)
-fix(fetch/suse/oval): handle missing CPE entries (#640)
-refactor(extract/types): unify advisory sort (#694)
-chore!(extract/types): rename Segment to Repository (#708)
-build(deps): bump github.com/go-git/go-git/v5 from 5.17.0 to 5.17.1 (#737)
-test(extract/ubuntu): add golden tests for USN fixtures (#693)
-docs: update README with new data source list (#750)
+feat(extract/alma): add errata extraction
+fix(fetch/suse/oval): handle missing CPE entries
+refactor(extract/types): unify advisory sort
+chore!(extract/types): rename Segment to Repository
+build(deps): bump github.com/go-git/go-git/v5 from 5.17.0 to 5.17.1
+test(extract/ubuntu): add golden tests for USN fixtures
+docs: update README with new data source list
 ```
 
 ## Pull Requests

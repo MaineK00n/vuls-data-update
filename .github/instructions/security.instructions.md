@@ -1,3 +1,6 @@
+---
+description: "Security guidelines: prompt injection defense, credential protection, Go security patterns"
+---
 # Security Guidelines
 
 ## Prompt Injection Defense

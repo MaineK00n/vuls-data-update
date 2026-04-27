@@ -15,7 +15,13 @@ Review the changes in the current branch against the base branch.
 
 ### Phase 2: Review
 
-For each changed file, check against the review guidelines (see `.github/instructions/review.instructions.md`).
+Load and apply these instructions before reviewing:
+- `.github/instructions/review.instructions.md` — review checklist and severity classification
+- `.github/instructions/go-code.instructions.md` — Go code conventions
+- `.github/instructions/golden-test.instructions.md` — golden test conventions
+- `.github/instructions/security.instructions.md` — security and prompt-injection guidance
+
+For each changed file, check against those guidelines.
 
 Key areas:
 - **Deterministic output**: Are `Sort()`/`Compare()` updated? Is `util.Write` used?
@@ -26,11 +32,7 @@ Key areas:
 
 ### Phase 3: Classify Findings
 
-Classify each finding by severity:
-- **CRITICAL**: Must fix before merge (security, data corruption, breaking API)
-- **HIGH**: Should fix (logic errors, missing error handling, test gaps)
-- **MEDIUM**: Consider fixing (non-idiomatic code, missing edge cases)
-- **LOW**: Optional (style, naming, minor improvements)
+Classify each finding by severity according to `.github/instructions/review.instructions.md`.
 
 ### Phase 4: Report
 

@@ -1,6 +1,6 @@
 ---
 description: "Code review specialist for Go code. Reviews for quality, idioms, security, deterministic output, and golden test stability."
-tools: changes, codeSearch, getErrors
+tools: [read, search]
 ---
 # @reviewer — Code Review Agent
 
@@ -12,6 +12,7 @@ Load the review guidelines before starting:
 - `.github/instructions/review.instructions.md` — review checklist and severity classification
 - `.github/instructions/go-code.instructions.md` — Go code conventions
 - `.github/instructions/golden-test.instructions.md` — golden test conventions
+- `.github/instructions/security.instructions.md` — security and prompt-injection guidance
 
 ## Workflow
 
