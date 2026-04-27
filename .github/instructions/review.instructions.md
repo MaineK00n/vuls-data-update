@@ -23,7 +23,7 @@ description: "Code review guidelines: checklist, severity classification, review
 ### Error Handling
 - **Errors must not be swallowed.** Flag any `_ = f()` on a fallible call, or dropped errors with no logging/justification.
 - **Errors should be wrapped, not returned bare**, unless the caller already has full context. Look for `return err` that loses the current function's context.
-- Use `github.com/pkg/errors` consistently (not `fmt.Errorf %w`)
+- Use `github.com/pkg/errors` consistently (not `fmt.Errorf("...: %w", err)`)
 - Error messages: lowercase verb phrase in library code, `"failed to ..."` in `pkg/cmd/`
 - Validation errors: use `"unexpected X. expected: %q, actual: %q"` pattern
 - Non-fatal errors: `slog.Warn(...)` + skip, don't silently ignore
