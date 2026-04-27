@@ -1,0 +1,13 @@
+{
+	"id": "CWE-355",
+	"kind": "category",
+	"name": "User Interface Security Issues",
+	"status": "Draft",
+	"description": "Weaknesses in this category are related to or introduced in the User Interface (UI).",
+	"data_source": {
+		"id": "cwe",
+		"raws": [
+			"fixtures/category/355.json"
+		]
+	}
+}
