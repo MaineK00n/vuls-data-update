@@ -31,32 +31,10 @@ GOEXPERIMENT=jsonv2 go test ./...
 
 ## Rules & Docs
 
-Files under `.claude/rules/` are **generated** from `.github/instructions/` — do not edit them directly.
+`.claude/rules/` and `.github/instructions/` mirror each other for different agent ecosystems (Claude Code / Copilot). When editing one side, try to keep the other roughly in sync — exact parity is a best-effort goal, since the two ecosystems differ in minor format details.
 
 - Coding: `.claude/rules/go-code.md`
 - Golden tests: `.claude/rules/golden-test.md`
 - Review: `.claude/rules/review.md`
 - Git workflow: `.claude/rules/commit-pr.md`
 - Security: `.claude/rules/security.md`
-
-## Sync & Validation
-
-After editing `.github/instructions/*.instructions.md`, regenerate `.claude/rules/`:
-
-```sh
-make sync-rules
-```
-
-Validate the harness as a whole with:
-
-```sh
-make check-harness
-```
-
-`check-harness` aggregates:
-
-- `check-rules` — `.claude/rules/` matches `.github/instructions/`
-- `check-shims` — every `.github/prompts/<name>.prompt.md` has a `.claude/skills/<name>/SKILL.md`; every `.github/agents/<name>.agent.md` has a `.claude/agents/<name>.md`
-- `check-docs` — `CLAUDE.md` and `AGENTS.md` share an identical "What This Repo Does" + "Build & Test" intro (the first two `##` sections)
-
-These targets use bash.

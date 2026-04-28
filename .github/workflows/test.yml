@@ -22,9 +22,6 @@ jobs:
         with:
           go-version-file: "go.mod"
 
-      - name: check Claude harness (rules, shims, docs)
-        run: make check-harness
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
