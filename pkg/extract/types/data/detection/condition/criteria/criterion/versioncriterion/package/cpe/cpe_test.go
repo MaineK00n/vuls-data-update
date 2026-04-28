@@ -22,10 +22,90 @@ func TestCPE_Accept(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "not accept",
+			name: "query version wildcard against specific version",
 			p:    CPE("cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			},
+			want: true,
+		},
+		{
+			name: "different vendor",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:other:product:0.0.1:*:*:*:*:*:*:*"),
+			},
+			want: false,
+		},
+		{
+			name: "different product",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:other:0.0.1:*:*:*:*:*:*:*"),
+			},
+			want: false,
+		},
+		{
+			name: "pattern has target_sw, query has wildcard",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			},
+			want: true,
+		},
+		{
+			name: "pattern has target_sw, query has same target_sw",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:wordpress:*:*"),
+			},
+			want: true,
+		},
+		{
+			name: "pattern has target_sw, query has different target_sw",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:node.js:*:*"),
+			},
+			want: false,
+		},
+		{
+			name: "pattern has sw_edition, query has wildcard",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:enterprise:*:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			},
+			want: true,
+		},
+		{
+			name: "both wildcard versions",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			},
+			want: true,
+		},
+		{
+			name: "both specific same version",
+			p:    CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			},
+			want: true,
+		},
+		{
+			name: "both specific different version",
+			p:    CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			args: args{
+				query: Query("cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*"),
+			},
+			want: false,
+		},
+		{
+			name: "different part",
+			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			args: args{
+				query: Query("cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"),
 			},
 			want: false,
 		},

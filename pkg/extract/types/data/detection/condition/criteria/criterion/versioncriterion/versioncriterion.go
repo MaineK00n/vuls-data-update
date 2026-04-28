@@ -172,31 +172,53 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			return false, nil
 		}
 
-		wfn1, err := naming.UnbindFS(string(*c.Package.CPE))
+		patternWFN, err := naming.UnbindFS(string(*c.Package.CPE))
 		if err != nil {
 			return false, errors.Wrapf(err, "unbind %q to WFN", string(*c.Package.CPE))
 		}
 
-		switch wfn1.GetString(common.AttributeVersion) {
+		switch patternWFN.GetString(common.AttributeVersion) {
 		case "ANY":
 			if c.Affected == nil {
 				return true, nil
 			}
 
-			wfn2, err := naming.UnbindFS(*query.CPE)
+			queryWFN, err := naming.UnbindFS(*query.CPE)
 			if err != nil {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
+			queryVersion := queryWFN.GetString(common.AttributeVersion)
+			if queryVersion == "ANY" || queryVersion == "NA" {
+				return true, nil
+			}
+
+			isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
 			if err != nil {
-				return false, errors.Wrap(err, "affected accpet")
+				return false, errors.Wrap(err, "affected accept")
 			}
 
 			return isAccepted, nil
 		case "NA":
 			return true, nil
 		default:
+			if c.Affected != nil {
+				queryWFN, err := naming.UnbindFS(*query.CPE)
+				if err != nil {
+					return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
+				}
+
+				queryVersion := queryWFN.GetString(common.AttributeVersion)
+				// NOTE: queryVersion == "NA" is unreachable here because IsDisjoint(specific, NA) is true,
+				// so Package.Accept already returned false above. The guard is kept defensively.
+				if queryVersion != "ANY" && queryVersion != "NA" {
+					isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
+					if err != nil {
+						return false, errors.Wrap(err, "affected accept")
+					}
+					return isAccepted, nil
+				}
+			}
 			return true, nil
 		}
 	case packageTypes.PackageTypeLanguage:
