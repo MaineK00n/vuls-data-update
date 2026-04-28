@@ -1,6 +1,6 @@
 ---
 description: "Code review specialist for Go code. Reviews for quality, idioms, security, deterministic output, and golden test stability."
-tools: [read, search]
+tools: [read, search, runCommands]
 ---
 # @reviewer — Code Review Agent
 
