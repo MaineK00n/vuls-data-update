@@ -83,7 +83,7 @@ description: "Go code conventions for vuls-data-update: deterministic JSON, util
 ## Cleanup Helpers
 
 - Use `util.RemoveAll(dir)` when cleaning output trees — it preserves `README.md` and `.git` directories
-- `util.CacheDir()` defaults to `~/.cache/vuls-data-update` (or temp dir fallback)
+- `util.CacheDir()` defaults to `<os.UserCacheDir()>/vuls-data-update` (with a temp-dir fallback if the user cache directory is unavailable)
 
 ## Consistency With Surrounding Code
 
