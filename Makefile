@@ -4,6 +4,7 @@ SHELL := /bin/bash
 
 sync-rules:
 	@mkdir -p .claude/rules
+	@rm -f .claude/rules/*.md
 	@for f in .github/instructions/*.instructions.md; do \
 		base=$$(basename "$$f" .instructions.md); \
 		awk 'NR==1 && $$0=="---" { in_front_matter=1; next } in_front_matter && $$0=="---" { in_front_matter=0; next } !in_front_matter { print }' "$$f" > ".claude/rules/$$base.md"; \
