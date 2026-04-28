@@ -1,0 +1,73 @@
+{
+	"id": "CAPEC-70",
+	"name": "Try Common or Default Usernames and Passwords",
+	"description": "An adversary may try certain common or default usernames and passwords to gain access into the system and perform unauthorized actions. An adversary may try an intelligent brute force using empty passwords, known vendor default credentials, as well as a dictionary of common usernames and passwords. Many vendor products come preconfigured with default (and thus well-known) usernames and passwords that should be deleted prior to usage in a production environment. It is a common mistake to forget to remove these default login credentials. Another problem is that users would pick very simple (common) passwords (e.g. \"secret\" or \"password\") that make it easier for the attacker to gain access to the system compared to using a brute force attack or even a dictionary attack using a full dictionary.",
+	"abstraction": "Detailed",
+	"status": "Draft",
+	"likelihood_of_attack": "Medium",
+	"typical_severity": "High",
+	"domains": [
+		"Software"
+	],
+	"prerequisites": [
+		"The system uses one factor password based authentication.The adversary has the means to interact with the system."
+	],
+	"skills_required": {
+		"Low": "An adversary just needs to gain access to common default usernames/passwords specific to the technologies used by the system. Additionally, a brute force attack leveraging common passwords can be easily realized if the user name is known."
+	},
+	"resources_required": [
+		"Technology or vendor specific list of default usernames and passwords."
+	],
+	"consequences": {
+		"Access_Control": [
+			"Gain Privileges"
+		],
+		"Authorization": [
+			"Gain Privileges"
+		],
+		"Confidentiality": [
+			"Gain Privileges"
+		]
+	},
+	"related_cwes": [
+		"CWE-262",
+		"CWE-263",
+		"CWE-308",
+		"CWE-309",
+		"CWE-521",
+		"CWE-654",
+		"CWE-798"
+	],
+	"related_attacks": [
+		"T1078.001"
+	],
+	"can_precede": [
+		"CAPEC-653"
+	],
+	"version": "3.9",
+	"modified": "2021-06-24T00:00:00Z",
+	"references": [
+		{
+			"source": "reference_from_CAPEC",
+			"url": "https://msrc-blog.microsoft.com/2019/08/05/corporate-iot-a-path-to-intrusion"
+		},
+		{
+			"source": "reference_from_CAPEC",
+			"url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.html"
+		},
+		{
+			"source": "reference_from_CAPEC",
+			"url": "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/02-Testing_for_Default_Credentials.html"
+		},
+		{
+			"source": "reference_from_CAPEC",
+			"url": "https://www.us-cert.gov/ncas/alerts/TA13-175A"
+		}
+	],
+	"data_source": {
+		"id": "capec",
+		"raws": [
+			"fixtures/attack-pattern/attack-pattern--8c7bab16-5ecd-4778-9b04-c185bceed170.json"
+		]
+	}
+}

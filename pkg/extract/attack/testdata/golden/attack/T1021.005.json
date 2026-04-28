@@ -1,0 +1,197 @@
+{
+	"id": "T1021.005",
+	"kind": "technique",
+	"name": "VNC",
+	"description": "Adversaries may use [Valid Accounts](https://attack.mitre.org/techniques/T1078) to remotely control machines using Virtual Network Computing (VNC).  VNC is a platform-independent desktop sharing system that uses the RFB (“remote framebuffer”) protocol to enable users to remotely control another computer’s display by relaying the screen, mouse, and keyboard inputs over the network.(Citation: The Remote Framebuffer Protocol)\n\nVNC differs from [Remote Desktop Protocol](https://attack.mitre.org/techniques/T1021/001) as VNC is screen-sharing software rather than resource-sharing software. By default, VNC uses the system's authentication, but it can be configured to use credentials specific to VNC.(Citation: MacOS VNC software for Remote Desktop)(Citation: VNC Authentication)\n\nAdversaries may abuse VNC to perform malicious actions as the logged-on user such as opening documents, downloading files, and running arbitrary commands. An adversary could use VNC to remotely control and monitor a system to collect data and information to pivot to other systems within the network. Specific VNC libraries/implementations have also been susceptible to brute force attacks and memory usage exploitation.(Citation: Hijacking VNC)(Citation: macOS root VNC login without authentication)(Citation: VNC Vulnerabilities)(Citation: Offensive Security VNC Authentication Check)(Citation: Attacking VNC Servers PentestLab)(Citation: Havana authentication bug)",
+	"domains": [
+		"enterprise-attack"
+	],
+	"platforms": [
+		"Linux",
+		"Windows",
+		"macOS"
+	],
+	"tactics": [
+		"lateral-movement"
+	],
+	"is_subtechnique": true,
+	"deprecated": false,
+	"revoked": false,
+	"version": "1.1",
+	"modified": "2023-05-09T14:00:00.188Z",
+	"references": [
+		{
+			"source": "Apple Unified Log Analysis Remote Login and Screen Sharing",
+			"url": "https://sarah-edwards-xzkc.squarespace.com/blog/2020/4/30/analysis-of-apple-unified-logs-quarantine-edition-entry-6-working-from-home-remote-logins"
+		},
+		{
+			"source": "Attacking VNC Servers PentestLab",
+			"url": "https://pentestlab.blog/2012/10/30/attacking-vnc-servers/"
+		},
+		{
+			"source": "Gnome Remote Desktop grd-settings",
+			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/grd-settings.c#L207"
+		},
+		{
+			"source": "Gnome Remote Desktop gschema",
+			"url": "https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/blob/9aa9181e/src/org.gnome.desktop.remote-desktop.gschema.xml.in"
+		},
+		{
+			"source": "Havana authentication bug",
+			"url": "http://lists.openstack.org/pipermail/openstack/2013-December/004138.html"
+		},
+		{
+			"source": "Hijacking VNC",
+			"url": "https://int0x33.medium.com/day-70-hijacking-vnc-enum-brute-access-and-crack-d3d18a4601cc"
+		},
+		{
+			"source": "MacOS VNC software for Remote Desktop",
+			"url": "https://support.apple.com/guide/remote-desktop/set-up-a-computer-running-vnc-software-apdbed09830/mac"
+		},
+		{
+			"source": "Offensive Security VNC Authentication Check",
+			"url": "https://www.offensive-security.com/metasploit-unleashed/vnc-authentication/"
+		},
+		{
+			"source": "The Remote Framebuffer Protocol",
+			"url": "https://datatracker.ietf.org/doc/html/rfc6143#section-7.2.2"
+		},
+		{
+			"source": "VNC Authentication",
+			"url": "https://help.realvnc.com/hc/en-us/articles/360002250097-Setting-up-System-Authentication"
+		},
+		{
+			"source": "VNC Vulnerabilities",
+			"url": "https://www.bleepingcomputer.com/news/security/dozens-of-vnc-vulnerabilities-found-in-linux-windows-solutions/"
+		},
+		{
+			"source": "macOS root VNC login without authentication",
+			"url": "https://www.tenable.com/blog/detecting-macos-high-sierra-root-account-without-authentication"
+		}
+	],
+	"data_source": {
+		"id": "attack",
+		"raws": [
+			"fixtures/enterprise/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3dc8c101-d4db-4f4d-8150-1b5a76ca5f1b.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3ee16395-03f0-4690-a32e-69ce9ada0f9e.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3fc01293-ef5e-41c6-86ce-61f10706b64a.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--3fc9b85a-2862-4363-a64d-d692e3ffbee0.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/enterprise/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/enterprise/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
+			"fixtures/enterprise/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
+			"fixtures/enterprise/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
+			"fixtures/enterprise/relationship/relationship--9ed1ec04-312c-4053-bf2e-f48d3744702a.json",
+			"fixtures/enterprise/relationship/relationship--9f852541-3fc7-4036-9268-7bc6bfe94900.json",
+			"fixtures/enterprise/relationship/relationship--9f89d00f-fc0f-4dbb-9b54-3553821bf7ef.json",
+			"fixtures/enterprise/relationship/relationship--9ffb8d9a-6aee-4bb5-9f1a-0e9c1f643350.json",
+			"fixtures/enterprise/relationship/relationship--a0a54af7-b2b2-4914-a987-b8646f94db58.json",
+			"fixtures/enterprise/relationship/relationship--a1505946-76d9-4acb-8b1a-02c926915702.json",
+			"fixtures/enterprise/relationship/relationship--a23ab6bc-e5cc-46a9-b77f-747ae6fc6a9b.json",
+			"fixtures/enterprise/relationship/relationship--a24e618b-6624-4bca-9bef-c5f4ca6cab53.json",
+			"fixtures/enterprise/relationship/relationship--a34d1e30-dcf5-4743-93e5-e4834e980f0f.json",
+			"fixtures/enterprise/relationship/relationship--a354a81a-0277-45f2-913b-528558e6fd60.json",
+			"fixtures/enterprise/relationship/relationship--a498d3ae-f944-4ad0-af8e-f92a78f04feb.json",
+			"fixtures/enterprise/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
+			"fixtures/enterprise/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
+			"fixtures/enterprise/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/enterprise/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json",
+			"fixtures/ics/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/ics/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/ics/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/ics/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/ics/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/ics/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/ics/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3dc8c101-d4db-4f4d-8150-1b5a76ca5f1b.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3ee16395-03f0-4690-a32e-69ce9ada0f9e.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3fc01293-ef5e-41c6-86ce-61f10706b64a.json",
+			"fixtures/ics/attack-pattern/attack-pattern--3fc9b85a-2862-4363-a64d-d692e3ffbee0.json",
+			"fixtures/ics/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/ics/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/ics/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/ics/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
+			"fixtures/ics/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
+			"fixtures/ics/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
+			"fixtures/ics/relationship/relationship--9ed1ec04-312c-4053-bf2e-f48d3744702a.json",
+			"fixtures/ics/relationship/relationship--9f852541-3fc7-4036-9268-7bc6bfe94900.json",
+			"fixtures/ics/relationship/relationship--9f89d00f-fc0f-4dbb-9b54-3553821bf7ef.json",
+			"fixtures/ics/relationship/relationship--9ffb8d9a-6aee-4bb5-9f1a-0e9c1f643350.json",
+			"fixtures/ics/relationship/relationship--a0a54af7-b2b2-4914-a987-b8646f94db58.json",
+			"fixtures/ics/relationship/relationship--a1505946-76d9-4acb-8b1a-02c926915702.json",
+			"fixtures/ics/relationship/relationship--a23ab6bc-e5cc-46a9-b77f-747ae6fc6a9b.json",
+			"fixtures/ics/relationship/relationship--a24e618b-6624-4bca-9bef-c5f4ca6cab53.json",
+			"fixtures/ics/relationship/relationship--a34d1e30-dcf5-4743-93e5-e4834e980f0f.json",
+			"fixtures/ics/relationship/relationship--a354a81a-0277-45f2-913b-528558e6fd60.json",
+			"fixtures/ics/relationship/relationship--a498d3ae-f944-4ad0-af8e-f92a78f04feb.json",
+			"fixtures/ics/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
+			"fixtures/ics/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
+			"fixtures/ics/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/ics/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--0042a9f5-f053-4769-b3ef-9ad018dfa298.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--005a06c6-14bf-4118-afa0-ebcd8aebb0c9.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--005cc321-08ce-4d17-b1ea-cb5275926520.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--00d0b012-8a03-410e-95de-5826bf542de6.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--00f90846-cbd1-4fc5-9233-df5c2bf2a662.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01327cde-66c4-4123-bf34-5f258d59457b.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01a5a209-b94c-450b-b7f9-946497d91055.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--01df3350-ce05-4bdf-bdf8-0a919a66d4a8.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--0259baeb-9f63-4c69-bf10-eb038c390688.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3ccef7ae-cb5e-48f6-8302-897105fbf55c.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3d1b9d7e-3921-4d25-845a-7d9f15c0da44.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3d333250-30e4-4a82-9edc-756c68afc529.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3d52e51e-f6db-4719-813c-48002a99f43a.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3dc8c101-d4db-4f4d-8150-1b5a76ca5f1b.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3ee16395-03f0-4690-a32e-69ce9ada0f9e.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3f18edba-28f4-4bb9-82c3-8aa60dcac5f7.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3f886f2a-874f-4333-b794-aa6075009b1c.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3fc01293-ef5e-41c6-86ce-61f10706b64a.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--3fc9b85a-2862-4363-a64d-d692e3ffbee0.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--40597f16-0963-4249-bf4c-ac93b7fb9807.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--4061e78c-1284-44b4-9116-73e4ac3912f7.json",
+			"fixtures/mobile/attack-pattern/attack-pattern--8cdeb020-e31e-4f88-a582-f53dcfbda819.json",
+			"fixtures/mobile/relationship/relationship--9b30cb8a-fc4b-44c1-ad5e-b71e430e1a8c.json",
+			"fixtures/mobile/relationship/relationship--9c354df4-9cbf-4de9-bbed-4d59ca7d4d24.json",
+			"fixtures/mobile/relationship/relationship--9da92f82-172d-4375-9bcd-f148bfe13418.json",
+			"fixtures/mobile/relationship/relationship--9ed1ec04-312c-4053-bf2e-f48d3744702a.json",
+			"fixtures/mobile/relationship/relationship--9f852541-3fc7-4036-9268-7bc6bfe94900.json",
+			"fixtures/mobile/relationship/relationship--9f89d00f-fc0f-4dbb-9b54-3553821bf7ef.json",
+			"fixtures/mobile/relationship/relationship--9ffb8d9a-6aee-4bb5-9f1a-0e9c1f643350.json",
+			"fixtures/mobile/relationship/relationship--a0a54af7-b2b2-4914-a987-b8646f94db58.json",
+			"fixtures/mobile/relationship/relationship--a1505946-76d9-4acb-8b1a-02c926915702.json",
+			"fixtures/mobile/relationship/relationship--a23ab6bc-e5cc-46a9-b77f-747ae6fc6a9b.json",
+			"fixtures/mobile/relationship/relationship--a24e618b-6624-4bca-9bef-c5f4ca6cab53.json",
+			"fixtures/mobile/relationship/relationship--a34d1e30-dcf5-4743-93e5-e4834e980f0f.json",
+			"fixtures/mobile/relationship/relationship--a354a81a-0277-45f2-913b-528558e6fd60.json",
+			"fixtures/mobile/relationship/relationship--a498d3ae-f944-4ad0-af8e-f92a78f04feb.json",
+			"fixtures/mobile/relationship/relationship--ded85906-e996-45cd-ae64-82adc22397e3.json",
+			"fixtures/mobile/relationship/relationship--f93060a3-7c58-444f-a45e-1386c289cee6.json",
+			"fixtures/mobile/relationship/relationship--f946b4f9-a18e-4a1e-856c-2c215f78f8be.json",
+			"fixtures/mobile/x-mitre-collection/x-mitre-collection--1f5f1533-f617-4ca8-9ab4-6a02367fa019.json"
+		]
+	}
+}

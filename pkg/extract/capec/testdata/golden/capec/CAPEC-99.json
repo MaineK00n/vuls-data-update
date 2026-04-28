@@ -1,0 +1,15 @@
+{
+	"id": "CAPEC-99",
+	"name": "DEPRECATED: XML Parser Attack",
+	"description": "This attack pattern has been deprecated as it a generalization of CAPEC-230: XML Nested Payloads and CAPEC-231: XML Oversized Payloads. Please refer to these CAPECs going forward.",
+	"abstraction": "Standard",
+	"status": "Deprecated",
+	"version": "3.9",
+	"modified": "2019-09-30T00:00:00Z",
+	"data_source": {
+		"id": "capec",
+		"raws": [
+			"fixtures/attack-pattern/attack-pattern--28be41f9-7246-4484-869d-f0e2e82690ee.json"
+		]
+	}
+}
