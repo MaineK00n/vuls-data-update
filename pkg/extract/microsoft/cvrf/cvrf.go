@@ -57,6 +57,7 @@ import (
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	cvssv30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
 	cvssv31Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v31"
@@ -335,6 +336,8 @@ type productInfo struct {
 	impact        string
 	exploitStatus string
 	cvss          *severityTypes.Severity
+	mitigations   []remediationTypes.Remediation
+	workarounds   []remediationTypes.Remediation
 }
 
 func buildProductInfoMap(v cvrf.Vulnerability) (map[string]productInfo, error) {
@@ -392,6 +395,35 @@ func buildProductInfoMap(v cvrf.Vulnerability) (map[string]productInfo, error) {
 		}
 		productInfoMap[s.ProductID] = pi
 	}
+	for _, r := range v.Remediations.Remediation {
+		if r.Description == "" {
+			continue
+		}
+		productIDs := r.ProductID
+		if len(productIDs) == 0 {
+			// An empty ProductID means the remediation applies to all products in the advisory.
+			productIDs = v.ProductStatuses.Status.ProductID
+		}
+		rem := remediationTypes.Remediation{
+			Source:      "secure@microsoft.com",
+			Description: r.Description,
+		}
+		switch r.Type {
+		case "Mitigation":
+			for _, pid := range productIDs {
+				pi := productInfoMap[pid]
+				pi.mitigations = append(pi.mitigations, rem)
+				productInfoMap[pid] = pi
+			}
+		case "Workaround":
+			for _, pid := range productIDs {
+				pi := productInfoMap[pid]
+				pi.workarounds = append(pi.workarounds, rem)
+				productInfoMap[pid] = pi
+			}
+		default:
+		}
+	}
 	return productInfoMap, nil
 }
 
@@ -423,6 +455,8 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 			Description: description,
 			Severity:    buildSeverities(pi),
 			CWE:         cwes,
+			Mitigations: pi.mitigations,
+			Workarounds: pi.workarounds,
 			References:  refs,
 			Published:   published,
 			Modified:    modified,
@@ -486,6 +520,8 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 			Description: description,
 			Severity:    buildSeverities(pi),
 			CWE:         cwes,
+			Mitigations: pi.mitigations,
+			Workarounds: pi.workarounds,
 			References:  refs,
 			Published:   published,
 			Modified:    modified,

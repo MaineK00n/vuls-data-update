@@ -12,6 +12,7 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	v2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
 	v30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
@@ -139,9 +140,9 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 					}(),
 					Severity: func() []severityTypes.Severity {
 						m := make(map[string][]v5.Metric)
-						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = fetched.Containers.CNA.Metrics
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Metrics...)
 						for _, c := range fetched.Containers.ADP {
-							m[getSource(c.ProviderMetadata)] = c.Metrics
+							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Metrics...)
 						}
 
 						var ss []severityTypes.Severity
@@ -201,9 +202,9 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 					}(),
 					CWE: func() []cweTypes.CWE {
 						m := make(map[string][]v5.ProblemType)
-						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = fetched.Containers.CNA.ProblemTypes
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.ProblemTypes...)
 						for _, c := range fetched.Containers.ADP {
-							m[getSource(c.ProviderMetadata)] = c.ProblemTypes
+							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.ProblemTypes...)
 						}
 
 						mm := make(map[string][]string)
@@ -226,11 +227,32 @@ func extract(fetched v5.CVE, raws []string) (dataTypes.Data, error) {
 						}
 						return cwes
 					}(),
+					Workarounds: func() []remediationTypes.Remediation {
+						m := make(map[string][]v5.Description)
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.Workarounds...)
+						for _, c := range fetched.Containers.ADP {
+							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.Workarounds...)
+						}
+
+						var rs []remediationTypes.Remediation
+						for source, ws := range m {
+							for _, w := range ws {
+								if (w.Lang != "" && w.Lang != "en") || w.Value == "" {
+									continue
+								}
+								rs = append(rs, remediationTypes.Remediation{
+									Source:      source,
+									Description: w.Value,
+								})
+							}
+						}
+						return rs
+					}(),
 					References: func() []referenceTypes.Reference {
 						m := make(map[string][]v5.Reference)
-						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = fetched.Containers.CNA.References
+						m[getSource(fetched.Containers.CNA.ProviderMetadata)] = append(m[getSource(fetched.Containers.CNA.ProviderMetadata)], fetched.Containers.CNA.References...)
 						for _, c := range fetched.Containers.ADP {
-							m[getSource(c.ProviderMetadata)] = c.References
+							m[getSource(c.ProviderMetadata)] = append(m[getSource(c.ProviderMetadata)], c.References...)
 						}
 
 						var refs []referenceTypes.Reference

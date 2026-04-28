@@ -12,6 +12,7 @@ import (
 	dataTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data"
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/cwe"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	cvssV2Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v2"
 	cvssV30Types "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity/cvss/v30"
@@ -158,6 +159,7 @@ func extract(fetched cve.CVE, raws []string) (dataTypes.Data, error) {
 				Description: strings.Join(fetched.Details, "\n"),
 				Severity:    ss,
 				CWE:         buildCWE(fetched),
+				Mitigations: buildMitigations(fetched),
 				References:  buildReferences(fetched),
 				Published:   utiltime.Parse([]string{"2006-01-02T15:04:05Z"}, fetched.PublicDate),
 			},
@@ -229,6 +231,16 @@ func buildCWE(fetched cve.CVE) []cweTypes.CWE {
 	return []cweTypes.CWE{{
 		Source: "secalert@redhat.com",
 		CWE:    []string{*fetched.Cwe},
+	}}
+}
+
+func buildMitigations(fetched cve.CVE) []remediationTypes.Remediation {
+	if fetched.Mitigation == nil || fetched.Mitigation.Value == "" {
+		return nil
+	}
+	return []remediationTypes.Remediation{{
+		Source:      "secalert@redhat.com",
+		Description: fetched.Mitigation.Value,
 	}}
 }
 

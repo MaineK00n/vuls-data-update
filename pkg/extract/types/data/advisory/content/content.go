@@ -9,21 +9,24 @@ import (
 	exploitTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/exploit"
 	kevTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/kev"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 )
 
 type Content struct {
-	ID          AdvisoryID                 `json:"id,omitempty"`
-	Title       string                     `json:"title,omitempty"`
-	Description string                     `json:"description,omitempty"`
-	Severity    []severityTypes.Severity   `json:"severity,omitempty"`
-	CWE         []cweTypes.CWE             `json:"cwe,omitempty"`
-	Exploit     []exploitTypes.Exploit     `json:"exploit,omitempty"`
-	KEV         *kevTypes.KEV              `json:"kev,omitempty"`
-	References  []referenceTypes.Reference `json:"references,omitempty"`
-	Published   *time.Time                 `json:"published,omitempty"`
-	Modified    *time.Time                 `json:"modified,omitempty"`
-	Optional    map[string]any             `json:"optional,omitempty"`
+	ID          AdvisoryID                     `json:"id,omitempty"`
+	Title       string                         `json:"title,omitempty"`
+	Description string                         `json:"description,omitempty"`
+	Severity    []severityTypes.Severity       `json:"severity,omitempty"`
+	CWE         []cweTypes.CWE                 `json:"cwe,omitempty"`
+	Mitigations []remediationTypes.Remediation `json:"mitigations,omitempty"`
+	Workarounds []remediationTypes.Remediation `json:"workarounds,omitempty"`
+	Exploit     []exploitTypes.Exploit         `json:"exploit,omitempty"`
+	KEV         *kevTypes.KEV                  `json:"kev,omitempty"`
+	References  []referenceTypes.Reference     `json:"references,omitempty"`
+	Published   *time.Time                     `json:"published,omitempty"`
+	Modified    *time.Time                     `json:"modified,omitempty"`
+	Optional    map[string]any                 `json:"optional,omitempty"`
 }
 
 type AdvisoryID string
@@ -35,6 +38,9 @@ func (c *Content) Sort() {
 		(&c.CWE[i]).Sort()
 	}
 	slices.SortFunc(c.CWE, cweTypes.Compare)
+
+	slices.SortFunc(c.Mitigations, remediationTypes.Compare)
+	slices.SortFunc(c.Workarounds, remediationTypes.Compare)
 
 	for i := range c.Exploit {
 		(&c.Exploit[i]).Sort()
@@ -55,6 +61,8 @@ func Compare(x, y Content) int {
 		cmp.Compare(x.Description, y.Description),
 		slices.CompareFunc(x.Severity, y.Severity, severityTypes.Compare),
 		slices.CompareFunc(x.CWE, y.CWE, cweTypes.Compare),
+		slices.CompareFunc(x.Mitigations, y.Mitigations, remediationTypes.Compare),
+		slices.CompareFunc(x.Workarounds, y.Workarounds, remediationTypes.Compare),
 		slices.CompareFunc(x.Exploit, y.Exploit, exploitTypes.Compare),
 		func() int {
 			switch {

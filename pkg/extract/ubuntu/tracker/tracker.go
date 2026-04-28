@@ -25,6 +25,7 @@ import (
 	segmentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment"
 	ecosystemTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/segment/ecosystem"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
+	remediationTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/remediation"
 	severityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/severity"
 	vulnerabilityTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability"
 	vulnerabilityContentTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/vulnerability/content"
@@ -294,6 +295,22 @@ func extract(fetched tracker.Advisory, paths []string) (dataTypes.Data, error) {
 	baseVC := vulnerabilityContentTypes.Content{
 		ID:          vulnerabilityContentTypes.VulnerabilityID(fetched.Candidate),
 		Description: fetched.Description,
+		Mitigations: func() []remediationTypes.Remediation {
+			if len(fetched.Mitigation) == 0 {
+				return nil
+			}
+			rs := make([]remediationTypes.Remediation, 0, len(fetched.Mitigation))
+			for _, m := range fetched.Mitigation {
+				if m == "" {
+					continue
+				}
+				rs = append(rs, remediationTypes.Remediation{
+					Source:      "launchpad.net/ubuntu-cve-tracker",
+					Description: m,
+				})
+			}
+			return rs
+		}(),
 		References: func() []referenceTypes.Reference {
 			rs := make([]referenceTypes.Reference, 0, len(fetched.References))
 			for _, r := range fetched.References {
