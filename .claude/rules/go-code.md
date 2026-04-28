@@ -64,7 +64,7 @@
 ## Options Pattern
 
 - New data sources use functional options: `WithDir(dir string) Option`
-- Always fill the default directory in the options struct: `dir: filepath.Join(util.CacheDir(), "extract", "<domain>/<name>")`
+- Always fill the default directory in the options struct: `dir: filepath.Join(util.CacheDir(), "extract", "<domain>", "<name>")`
 - Don't leave default paths empty
 
 ## JSON Field Tags
