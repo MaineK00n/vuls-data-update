@@ -8,6 +8,7 @@ import (
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	criterionTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion"
+	kbcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/kbcriterion"
 	vcTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion"
 	affectedTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected"
 	affectedrangeTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/detection/condition/criteria/criterion/versioncriterion/affected/range"
@@ -227,6 +228,134 @@ func TestFixedBuildOverrides(t *testing.T) {
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
 				t.Errorf("fixedBuildOverrides[%v] mismatch (-want +got):\n%s", tt.key, diff)
+			}
+		})
+	}
+}
+
+func TestBuildKBCriterion(t *testing.T) {
+	type args struct {
+		product string
+		kbID    string
+	}
+	tests := []struct {
+		name string
+		args args
+		want *criterionTypes.Criterion
+	}{
+		{
+			name: "numeric KB ID returns criterion",
+			args: args{
+				product: "Windows 10 Version 1709 for x64-based Systems",
+				kbID:    "4284819",
+			},
+			want: &criterionTypes.Criterion{
+				Type: criterionTypes.CriterionTypeKB,
+				KB: &kbcTypes.Criterion{
+					Product: "Windows 10 Version 1709 for x64-based Systems",
+					KBID:    "4284819",
+				},
+			},
+		},
+		{
+			name: "empty KB ID returns nil",
+			args: args{
+				product: "Windows 10 Version 1709 for x64-based Systems",
+				kbID:    "",
+			},
+			want: nil,
+		},
+		{
+			name: "non-numeric KB ID (advisory) returns nil",
+			args: args{
+				product: "Windows 10 Version 1709 for x64-based Systems",
+				kbID:    "ADV200002",
+			},
+			want: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := cvrf.BuildKBCriterion(tt.args.product, tt.args.kbID)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("BuildKBCriterion() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestKBCumulativeTwins(t *testing.T) {
+	type args struct {
+		product string
+		kbID    string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "Win10 1709 x64 Delta KB4284819 → Cumulative KB4284822 (CVE-2018-8234)",
+			args: args{
+				product: "Windows 10 Version 1709 for x64-based Systems",
+				kbID:    "4284819",
+			},
+			want: "4284822",
+		},
+		{
+			name: "Win10 1709 32-bit Delta KB4284819 → Cumulative KB4284822",
+			args: args{
+				product: "Windows 10 Version 1709 for 32-bit Systems",
+				kbID:    "4284819",
+			},
+			want: "4284822",
+		},
+		{
+			name: "Win7 x64 SP1 SecurityOnly KB4022722 → MonthlyRollup KB4022719",
+			args: args{
+				product: "Windows 7 for x64-based Systems Service Pack 1",
+				kbID:    "4022722",
+			},
+			want: "4022719",
+		},
+		{
+			name: "Server 2012 R2 SecurityOnly KB4019213 → MonthlyRollup KB4019215",
+			args: args{
+				product: "Windows Server 2012 R2",
+				kbID:    "4019213",
+			},
+			want: "4019215",
+		},
+		{
+			name: "Cumulative KB without twin (no entry) misses",
+			args: args{
+				product: "Windows 10 Version 1709 for x64-based Systems",
+				kbID:    "4284822",
+			},
+			want: "",
+		},
+		{
+			name: "Unrelated KB misses",
+			args: args{
+				product: "Microsoft SQL Server 2022 for x64-based Systems",
+				kbID:    "9999999",
+			},
+			want: "",
+		},
+		{
+			name: "Known KB but mismatched product (Win10 1607 entry queried with Win10 1709 product) misses",
+			args: args{
+				product: "Windows 10 Version 1709 for x64-based Systems",
+				kbID:    "4019472",
+			},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := cvrf.KBCumulativeTwins[[2]string{tt.args.product, tt.args.kbID}]
+			if got != tt.want {
+				t.Errorf("kbCumulativeTwins[{%q, %q}] = %q, want %q", tt.args.product, tt.args.kbID, got, tt.want)
 			}
 		})
 	}
