@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: "Code review specialist. Reviews Go code for quality, idioms, security, and deterministic output."
-tools: Read, Grep, Glob
+tools: [Read, Grep, Glob]
 ---
 # Code Reviewer
 
