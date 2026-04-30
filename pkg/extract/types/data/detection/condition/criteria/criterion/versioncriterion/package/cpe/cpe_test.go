@@ -8,14 +8,14 @@ func TestCPE_Accept(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		p       CPE
+		c       CPE
 		args    args
 		want    bool
 		wantErr bool
 	}{
 		{
 			name: "accept",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"),
 			},
@@ -23,7 +23,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "query version wildcard against specific version",
-			p:    CPE("cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:0.0.1:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
 			},
@@ -31,7 +31,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "different vendor",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:other:product:0.0.1:*:*:*:*:*:*:*"),
 			},
@@ -39,7 +39,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "different product",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:other:0.0.1:*:*:*:*:*:*:*"),
 			},
@@ -47,7 +47,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "pattern has target_sw, query has wildcard",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
 			},
@@ -55,7 +55,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "pattern has target_sw, query has same target_sw",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:wordpress:*:*"),
 			},
@@ -63,7 +63,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "pattern has target_sw, query has different target_sw",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:node.js:*:*"),
 			},
@@ -71,7 +71,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "pattern has sw_edition, query has wildcard",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:enterprise:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:enterprise:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
 			},
@@ -79,7 +79,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "both wildcard versions",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
 			},
@@ -87,7 +87,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "both specific same version",
-			p:    CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
 			},
@@ -95,7 +95,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "both specific different version",
-			p:    CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:a:vendor:product:2.0:*:*:*:*:*:*:*"),
 			},
@@ -103,7 +103,7 @@ func TestCPE_Accept(t *testing.T) {
 		},
 		{
 			name: "different part",
-			p:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+			c:    CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
 			args: args{
 				query: Query("cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"),
 			},
@@ -112,7 +112,7 @@ func TestCPE_Accept(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.p.Accept(tt.args.query)
+			got, err := tt.c.Accept(tt.args.query)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CPE.Accept() error = %v, wantErr %v", err, tt.wantErr)
 				return
