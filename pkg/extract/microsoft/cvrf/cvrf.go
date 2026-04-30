@@ -1168,7 +1168,8 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft Visual Studio 2022 Version 17.8",
 			"Microsoft Visual Studio 2022 Version 17.9",
 			"Microsoft Visual Studio 2026 Version 18.3",
-			"Microsoft Visual Studio 2026 Version 18.4":
+			"Microsoft Visual Studio 2026 Version 18.4",
+			"Microsoft Visual Studio 2026 Version 18.5":
 			if _, err := visualstudioversion.NewVersion(fixedBuild); err != nil {
 				return rangeTypes.RangeTypeUnknown, errors.Wrap(err, "visualstudioversion.NewVersion")
 			}
