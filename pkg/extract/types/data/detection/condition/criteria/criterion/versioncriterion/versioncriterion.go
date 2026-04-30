@@ -178,48 +178,14 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 		}
 
 		switch patternWFN.GetString(common.AttributeVersion) {
-		case "ANY":
-			if c.Affected == nil {
-				return true, nil
-			}
-
-			queryWFN, err := naming.UnbindFS(*query.CPE)
-			if err != nil {
-				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
-			}
-
-			queryVersion := queryWFN.GetString(common.AttributeVersion)
-			if queryVersion == "ANY" || queryVersion == "NA" {
-				return true, nil
-			}
-
-			isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
-			if err != nil {
-				return false, errors.Wrap(err, "affected accept")
-			}
-
-			return isAccepted, nil
 		case "NA":
 			return true, nil
 		default:
-			if c.Affected != nil {
-				queryWFN, err := naming.UnbindFS(*query.CPE)
-				if err != nil {
-					return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
-				}
-
-				queryVersion := queryWFN.GetString(common.AttributeVersion)
-				// NOTE: queryVersion == "NA" is unreachable here because IsDisjoint(specific, NA) is true,
-				// so Package.Accept already returned false above. The guard is kept defensively.
-				if queryVersion != "ANY" && queryVersion != "NA" {
-					isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
-					if err != nil {
-						return false, errors.Wrap(err, "affected accept")
-					}
-					return isAccepted, nil
-				}
-			}
-			return true, nil
+			// Covers both pattern version "ANY" and any specific
+			// version: evaluate c.Affected against the query version
+			// (ANY/NA queries short-circuit to true since there is no
+			// concrete version to compare).
+			return acceptCPEAffected(c.Affected, *query.CPE)
 		}
 	case packageTypes.PackageTypeLanguage:
 		if query.Language == nil {
@@ -250,4 +216,30 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 	default:
 		return false, errors.Errorf("unexpected version criterion package type. expected: %q, actual: %q", []packageTypes.PackageType{packageTypes.PackageTypeBinary, packageTypes.PackageTypeSource, packageTypes.PackageTypeCPE, packageTypes.PackageTypeLanguage}, c.Package.Type)
 	}
+}
+
+// acceptCPEAffected evaluates affected against the version of queryCPE.
+// It returns true when affected is nil, or when the query version is
+// ANY/NA (no concrete version is available to evaluate against the
+// affected range, so the criterion is conservatively accepted).
+func acceptCPEAffected(affected *affectedTypes.Affected, queryCPE string) (bool, error) {
+	if affected == nil {
+		return true, nil
+	}
+
+	queryWFN, err := naming.UnbindFS(queryCPE)
+	if err != nil {
+		return false, errors.Wrapf(err, "unbind %q to WFN", queryCPE)
+	}
+
+	queryVersion := queryWFN.GetString(common.AttributeVersion)
+	if queryVersion == "ANY" || queryVersion == "NA" {
+		return true, nil
+	}
+
+	isAccepted, err := affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
+	if err != nil {
+		return false, errors.Wrap(err, "affected accept")
+	}
+	return isAccepted, nil
 }
