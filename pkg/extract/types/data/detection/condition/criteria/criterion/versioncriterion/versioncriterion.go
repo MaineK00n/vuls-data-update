@@ -2,7 +2,6 @@ package versioncriterion
 
 import (
 	"cmp"
-	"log/slog"
 	"strings"
 
 	"github.com/knqyf263/go-cpe/common"
@@ -185,9 +184,6 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			// upstream by Package.Accept. c.Affected is intentionally
 			// ignored here because c.version="NA" makes the version
 			// range semantically meaningless.
-			if c.Affected != nil {
-				slog.Warn("criterion CPE has version NA but criterion has Affected; ignoring Affected", "cpe", string(*c.Package.CPE), "query", *query.CPE)
-			}
 			return true, nil
 		default:
 			// Covers both c.version="ANY" and any specific version:
