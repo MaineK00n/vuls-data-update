@@ -194,16 +194,16 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			queryVersion := queryWFN.GetString(common.AttributeVersion)
-			if queryVersion == "ANY" || queryVersion == "NA" {
+			switch queryVersion := queryWFN.GetString(common.AttributeVersion); queryVersion {
+			case "ANY", "NA":
 				return true, nil
+			default:
+				isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
+				if err != nil {
+					return false, errors.Wrap(err, "affected accept")
+				}
+				return isAccepted, nil
 			}
-
-			isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
-			if err != nil {
-				return false, errors.Wrap(err, "affected accept")
-			}
-			return isAccepted, nil
 		}
 	case packageTypes.PackageTypeLanguage:
 		if query.Language == nil {
