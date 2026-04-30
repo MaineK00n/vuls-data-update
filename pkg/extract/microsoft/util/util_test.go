@@ -1,10 +1,10 @@
 package util
 
 import (
-	"slices"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
@@ -217,17 +217,20 @@ func TestNormalizeProductName(t *testing.T) {
 }
 
 func TestDeriveSupersedes(t *testing.T) {
+	type args struct {
+		kbs []microsoftkbTypes.KB
+	}
 	tests := []struct {
 		name string
-		kbs  []microsoftkbTypes.KB
+		args args
 		want []microsoftkbTypes.KB
 	}{
 		{
 			name: "basic KB-level: B superseded by A → A supersedes B",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
 				{KBID: "1"},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "1", Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "2"}}},
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
@@ -235,11 +238,11 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "chain: C→B→A → B.Supersedes=[C], A.Supersedes=[B]",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "3", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "2"}}},
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
 				{KBID: "1"},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "1", Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "2"}}},
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}, Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "3"}}},
@@ -248,11 +251,11 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "fan-in: B→A and C→A → A.Supersedes=[B,C]",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
 				{KBID: "3", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
 				{KBID: "1"},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "1", Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "2"}, {KBID: "3"}}},
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
@@ -261,37 +264,37 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "superseding KB absent: no Supersedes added, no panic",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "99"}}},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "99"}}},
 			},
 		},
 		{
 			name: "self-supersession ignored",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "1", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "1", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}}},
 			},
 		},
 		{
 			name: "empty SupersededBy KBID ignored",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "1", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: ""}}},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "1", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: ""}}},
 			},
 		},
 		{
 			name: "KB-level deduplication: duplicate SupersededBy entry adds Supersedes only once",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}, {KBID: "1"}}},
 				{KBID: "1"},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{KBID: "1", Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "2"}}},
 				{KBID: "2", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1"}, {KBID: "1"}}},
@@ -299,7 +302,7 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "basic update-level: KB2/U2 superseded by KB1/U1 → KB1/U1.Supersedes=[KB2/U2]",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{
 					KBID: "2",
 					Updates: []microsoftkbUpdateTypes.Update{
@@ -310,7 +313,7 @@ func TestDeriveSupersedes(t *testing.T) {
 					KBID:    "1",
 					Updates: []microsoftkbUpdateTypes.Update{{UpdateID: "U1"}},
 				},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{
 					KBID: "1",
@@ -328,14 +331,14 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "update self-supersession ignored",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{
 					KBID: "1",
 					Updates: []microsoftkbUpdateTypes.Update{
 						{UpdateID: "U1", SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "1", UpdateID: "U2"}}},
 					},
 				},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{
 					KBID: "1",
@@ -347,7 +350,7 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "empty UpdateID in SupersededBy skips update-level",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{
 					KBID: "2",
 					Updates: []microsoftkbUpdateTypes.Update{
@@ -358,7 +361,7 @@ func TestDeriveSupersedes(t *testing.T) {
 					KBID:    "1",
 					Updates: []microsoftkbUpdateTypes.Update{{UpdateID: "U1"}},
 				},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{
 					KBID:    "1",
@@ -374,7 +377,7 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "update-level deduplication: duplicate SupersededBy entry adds Supersedes only once",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{
 					KBID: "2",
 					Updates: []microsoftkbUpdateTypes.Update{
@@ -388,7 +391,7 @@ func TestDeriveSupersedes(t *testing.T) {
 					KBID:    "1",
 					Updates: []microsoftkbUpdateTypes.Update{{UpdateID: "U1"}},
 				},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{
 					KBID: "1",
@@ -409,7 +412,7 @@ func TestDeriveSupersedes(t *testing.T) {
 		},
 		{
 			name: "update-level cross-KB: same UpdateID in two KBs only the matching KBID gets Supersedes",
-			kbs: []microsoftkbTypes.KB{
+			args: args{kbs: []microsoftkbTypes.KB{
 				{
 					KBID: "2",
 					Updates: []microsoftkbUpdateTypes.Update{
@@ -426,7 +429,7 @@ func TestDeriveSupersedes(t *testing.T) {
 					KBID:    "3",
 					Updates: []microsoftkbUpdateTypes.Update{{UpdateID: "U1"}},
 				},
-			},
+			}},
 			want: []microsoftkbTypes.KB{
 				{
 					KBID: "1",
@@ -450,16 +453,17 @@ func TestDeriveSupersedes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			DeriveSupersedes(tt.kbs)
-			for i := range tt.kbs {
-				tt.kbs[i].Sort()
-			}
-			slices.SortFunc(tt.kbs, microsoftkbTypes.Compare)
-			for i := range tt.want {
-				tt.want[i].Sort()
-			}
-			slices.SortFunc(tt.want, microsoftkbTypes.Compare)
-			if diff := cmp.Diff(tt.want, tt.kbs); diff != "" {
+			DeriveSupersedes(tt.args.kbs)
+			if diff := cmp.Diff(tt.want, tt.args.kbs,
+				cmpopts.SortSlices(func(x, y microsoftkbTypes.KB) bool { return microsoftkbTypes.Compare(x, y) < 0 }),
+				cmpopts.SortSlices(func(x, y microsoftkbUpdateTypes.Update) bool { return microsoftkbUpdateTypes.Compare(x, y) < 0 }),
+				cmpopts.SortSlices(func(x, y microsoftkbSupersededByTypes.SupersededBy) bool {
+					return microsoftkbSupersededByTypes.Compare(x, y) < 0
+				}),
+				cmpopts.SortSlices(func(x, y microsoftkbSupersedesTypes.Supersedes) bool {
+					return microsoftkbSupersedesTypes.Compare(x, y) < 0
+				}),
+			); diff != "" {
 				t.Errorf("DeriveSupersedes() mismatch (-want +got):\n%s", diff)
 			}
 		})
