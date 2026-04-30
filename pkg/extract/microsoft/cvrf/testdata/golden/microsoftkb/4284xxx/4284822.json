@@ -1,0 +1,13 @@
+{
+	"kb_id": "4284822",
+	"url": "https://support.microsoft.com/help/4284822",
+	"products": [
+		"Windows 10 Version 1709 for x64-based Systems"
+	],
+	"data_source": {
+		"id": "microsoft-cvrf",
+		"raws": [
+			"fixtures/2018-Jun/2018/CVE-2018-8234.json"
+		]
+	}
+}
