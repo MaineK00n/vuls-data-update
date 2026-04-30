@@ -10,16 +10,16 @@ type CPE string
 
 type Query string
 
-func (p CPE) Accept(query Query) (bool, error) {
-	wfn1, err := naming.UnbindFS(string(query))
+func (c CPE) Accept(query Query) (bool, error) {
+	qWFN, err := naming.UnbindFS(string(query))
 	if err != nil {
 		return false, errors.Wrapf(err, "unbind %q to WFN", string(query))
 	}
 
-	wfn2, err := naming.UnbindFS(string(p))
+	cWFN, err := naming.UnbindFS(string(c))
 	if err != nil {
-		return false, errors.Wrapf(err, "unbind %q to WFN", string(p))
+		return false, errors.Wrapf(err, "unbind %q to WFN", string(c))
 	}
 
-	return matching.IsSubset(wfn1, wfn2), nil
+	return !matching.IsDisjoint(qWFN, cWFN), nil
 }

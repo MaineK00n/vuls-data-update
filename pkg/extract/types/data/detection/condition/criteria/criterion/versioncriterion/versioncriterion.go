@@ -172,32 +172,47 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			return false, nil
 		}
 
-		wfn1, err := naming.UnbindFS(string(*c.Package.CPE))
+		cWFN, err := naming.UnbindFS(string(*c.Package.CPE))
 		if err != nil {
 			return false, errors.Wrapf(err, "unbind %q to WFN", string(*c.Package.CPE))
 		}
 
-		switch wfn1.GetString(common.AttributeVersion) {
-		case "ANY":
+		switch cWFN.GetString(common.AttributeVersion) {
+		case "NA":
+			// Reachable only when query.version is ANY or NA: a specific
+			// query against c.version="NA" is DISJOINT and filtered out
+			// upstream by Package.Accept. c.Affected is intentionally
+			// ignored here because c.version="NA" makes the version
+			// range semantically meaningless.
+			return true, nil
+		default:
+			// Covers both c.version="ANY" and any specific version:
+			// evaluate c.Affected against the query version (ANY/NA
+			// queries short-circuit to true since there is no concrete
+			// version to compare).
 			if c.Affected == nil {
 				return true, nil
 			}
 
-			wfn2, err := naming.UnbindFS(*query.CPE)
+			qWFN, err := naming.UnbindFS(*query.CPE)
 			if err != nil {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(wfn2.GetString(common.AttributeVersion), "\\.", "."))
-			if err != nil {
-				return false, errors.Wrap(err, "affected accpet")
+			switch qVersion := qWFN.GetString(common.AttributeVersion); qVersion {
+			case "ANY", "NA":
+				// "ANY" is reachable for any c.version; "NA" is only
+				// reachable when c.version="ANY" — for a specific
+				// c.version, query.version="NA" is DISJOINT and
+				// filtered upstream.
+				return true, nil
+			default:
+				isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(qVersion, "\\.", "."))
+				if err != nil {
+					return false, errors.Wrap(err, "affected accept")
+				}
+				return isAccepted, nil
 			}
-
-			return isAccepted, nil
-		case "NA":
-			return true, nil
-		default:
-			return true, nil
 		}
 	case packageTypes.PackageTypeLanguage:
 		if query.Language == nil {

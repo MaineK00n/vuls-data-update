@@ -446,6 +446,280 @@ func TestCriterion_Accept(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "cpe: accept with target_sw in pattern, wildcard in query",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "2.0.8"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:1.5:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: not accept with different target_sw",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:wordpress:*:*")),
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:1.5:*:*:*:*:node.js:*:*"),
+				},
+			},
+			want: false,
+		},
+		{
+			name: "cpe: not accept with different part",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:o:vendor:product:1.0:*:*:*:*:*:*:*"),
+				},
+			},
+			want: false,
+		},
+		{
+			name: "cpe: query version wildcard with affected range",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.2"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: query version wildcard without affected",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: query version wildcard against specific pattern version",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*")),
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern version ANY, query version NA",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "1.0.0"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern version ANY, query version not in affected range",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.2"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"),
+				},
+			},
+			want: false,
+		},
+		{
+			name: "cpe: pattern version NA",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*")),
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern version NA with affected, affected is ignored",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.2"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern specific version with affected, query same version in range",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "2.0.0"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:1.0.0:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern specific version with affected, query same version out of range",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "2.0.0"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*"),
+				},
+			},
+			want: false,
+		},
+		{
+			name: "cpe: pattern specific version with affected, query version ANY",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "2.0.0"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern specific version outside affected, query version ANY short-circuits",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "2.0.0"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
 			name: "language fixed",
 			fields: fields{
 				Vulnerable: true,
