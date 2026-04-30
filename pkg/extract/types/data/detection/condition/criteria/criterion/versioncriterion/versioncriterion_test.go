@@ -615,6 +615,27 @@ func TestCriterion_Accept(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "cpe: pattern version NA with affected, affected is ignored",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:-:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "0.0.2"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
 			name: "cpe: pattern specific version with affected, query same version in range",
 			fields: fields{
 				Vulnerable: true,
@@ -664,6 +685,27 @@ func TestCriterion_Accept(t *testing.T) {
 				Package: packageTypes.Package{
 					Type: packageTypes.PackageTypeCPE,
 					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:1.0:*:*:*:*:*:*:*")),
+				},
+				Affected: &affectedTypes.Affected{
+					Type:  affectedrangeTypes.RangeTypeSEMVER,
+					Range: []affectedrangeTypes.Range{{LessThan: "2.0.0"}},
+				},
+			},
+			args: args{
+				query: vcTypes.Query{
+					CPE: new("cpe:2.3:a:vendor:product:*:*:*:*:*:*:*:*"),
+				},
+			},
+			want: true,
+		},
+		{
+			name: "cpe: pattern specific version outside affected, query version ANY short-circuits",
+			fields: fields{
+				Vulnerable: true,
+				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassUnknown},
+				Package: packageTypes.Package{
+					Type: packageTypes.PackageTypeCPE,
+					CPE:  new(cpeTypes.CPE("cpe:2.3:a:vendor:product:3.0.0:*:*:*:*:*:*:*")),
 				},
 				Affected: &affectedTypes.Affected{
 					Type:  affectedrangeTypes.RangeTypeSEMVER,

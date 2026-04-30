@@ -2,6 +2,7 @@ package versioncriterion
 
 import (
 	"cmp"
+	"log/slog"
 	"strings"
 
 	"github.com/knqyf263/go-cpe/common"
@@ -172,33 +173,45 @@ func (c Criterion) Accept(query Query, repositories []string) (bool, error) {
 			return false, nil
 		}
 
-		patternWFN, err := naming.UnbindFS(string(*c.Package.CPE))
+		cWFN, err := naming.UnbindFS(string(*c.Package.CPE))
 		if err != nil {
 			return false, errors.Wrapf(err, "unbind %q to WFN", string(*c.Package.CPE))
 		}
 
-		switch patternWFN.GetString(common.AttributeVersion) {
+		switch cWFN.GetString(common.AttributeVersion) {
 		case "NA":
+			// Reachable only when query.version is ANY or NA: a specific
+			// query against c.version="NA" is DISJOINT and filtered out
+			// upstream by Package.Accept. c.Affected is intentionally
+			// ignored here because c.version="NA" makes the version
+			// range semantically meaningless.
+			if c.Affected != nil {
+				slog.Warn("criterion CPE has version NA but criterion has Affected; ignoring Affected", "cpe", string(*c.Package.CPE), "query", *query.CPE)
+			}
 			return true, nil
 		default:
-			// Covers both pattern version "ANY" and any specific
-			// version: evaluate c.Affected against the query version
-			// (ANY/NA queries short-circuit to true since there is no
-			// concrete version to compare).
+			// Covers both c.version="ANY" and any specific version:
+			// evaluate c.Affected against the query version (ANY/NA
+			// queries short-circuit to true since there is no concrete
+			// version to compare).
 			if c.Affected == nil {
 				return true, nil
 			}
 
-			queryWFN, err := naming.UnbindFS(*query.CPE)
+			qWFN, err := naming.UnbindFS(*query.CPE)
 			if err != nil {
 				return false, errors.Wrapf(err, "unbind %q to WFN", *query.CPE)
 			}
 
-			switch queryVersion := queryWFN.GetString(common.AttributeVersion); queryVersion {
+			switch qVersion := qWFN.GetString(common.AttributeVersion); qVersion {
 			case "ANY", "NA":
+				// "ANY" is reachable for any c.version; "NA" is only
+				// reachable when c.version="ANY" — for a specific
+				// c.version, query.version="NA" is DISJOINT and
+				// filtered upstream.
 				return true, nil
 			default:
-				isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(queryVersion, "\\.", "."))
+				isAccepted, err := c.Affected.Accept(ecosystemTypes.EcosystemTypeCPE, strings.ReplaceAll(qVersion, "\\.", "."))
 				if err != nil {
 					return false, errors.Wrap(err, "affected accept")
 				}
