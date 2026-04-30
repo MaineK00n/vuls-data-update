@@ -1,6 +1,6 @@
 package repository
 
-// https://github.com/projectdiscovery/nuclei/blob/24311cc28e5cc7bbc7a75aaa4220324b25a31db6/nuclei-jsonschema.json
+// https://github.com/projectdiscovery/nuclei/blob/a3c07e3ef91fd8128f92fbff7b35c9249a378f60/nuclei-jsonschema.json
 type Template struct {
 	ID   string `yaml:"id" json:"id"`
 	Info struct {
@@ -13,8 +13,8 @@ type Template struct {
 		Severity       *string         `yaml:"severity,omitempty" json:"severity,omitempty"`   // enum: info, low, medium, high, critical, unknown
 		Metadata       *map[string]any `yaml:"metadata,omitempty" json:"metadata,omitempty"`
 		Classification *struct {
-			CVEID          *string  `yaml:"cve-id,omitempty" json:"cve-id,omitempty"`
-			CWEID          *string  `yaml:"cwe-id,omitempty" json:"cwe-id,omitempty"`
+			CVEID          *any     `yaml:"cve-id,omitempty" json:"cve-id,omitempty"` // string or slice
+			CWEID          *any     `yaml:"cwe-id,omitempty" json:"cwe-id,omitempty"` // string or slice
 			CVSSMetrics    *string  `yaml:"cvss-metrics,omitempty" json:"cvss-metrics,omitempty"`
 			CVSSScore      *float64 `yaml:"cvss-score,omitempty" json:"cvss-score,omitempty"`
 			EPSSScore      *float64 `yaml:"epss-score,omitempty" json:"epss-score,omitempty"`
