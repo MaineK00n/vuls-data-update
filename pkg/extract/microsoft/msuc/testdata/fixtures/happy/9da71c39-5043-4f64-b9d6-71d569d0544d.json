@@ -1,0 +1,22 @@
+{
+	"update_id": "9da71c39-5043-4f64-b9d6-71d569d0544d",
+	"title": "2018-02 Preview of Monthly Quality Rollup for Windows 7 for x86-based Systems (KB4075211)",
+	"description": "Install this update to resolve issues in Windows. For a complete listing of the issues that are included in this update, see the associated Microsoft Knowledge Base article for more information. After you install this item, you may have to restart your computer.",
+	"architecture": "X86",
+	"classification": "Updates",
+	"supported_products": "Windows7",
+	"supported_languages": "all",
+	"security_bulliten": "n/a",
+	"msrc_severity": "n/a",
+	"kb_article": "4075211",
+	"more_info": "https://support.microsoft.com/help/4075211",
+	"support_url": "https://support.microsoft.com/help/4075211",
+	"supersededby": [],
+	"supersedes": [],
+	"reboot_behavior": "Can request restart",
+	"user_input": "No",
+	"connectivity": "No",
+	"uninstall_notes": "ThissoftwareupdatecanberemovedbyselectingViewinstalledupdatesintheProgramsandFeaturesControlPanel.",
+	"uninstall_steps": "n/a",
+	"last_modified": "2/22/2018"
+}

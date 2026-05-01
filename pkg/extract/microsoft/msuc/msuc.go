@@ -8,7 +8,9 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -20,6 +22,7 @@ import (
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
 	microsoftkbTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb"
 	microsoftkbSupersededByTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersededby"
+	microsoftkbSupersedesTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/supersedes"
 	microsoftkbUpdateTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/microsoftkb/update"
 	sourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/source"
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
@@ -285,6 +288,7 @@ func (o options) extract(root string, updateIDMap map[string]string) error {
 	}
 
 	microsoftutil.DeriveSupersedes(kbs)
+	deriveCrossTrackSupersedes(kbs)
 
 	for _, kb := range kbs {
 		if err := util.Write(filepath.Join(o.dir, "microsoftkb", fmt.Sprintf("%sxxx", kb.KBID[:len(kb.KBID)-3]), fmt.Sprintf("%s.json", kb.KBID)), kb, true); err != nil {
@@ -383,4 +387,165 @@ func normalizeNA(s string) string {
 		return ""
 	}
 	return s
+}
+
+// monthlyTrackTitleRE matches the title of a monthly Quality Update / Rollup,
+// capturing year, month, track, and product name.
+//
+// Microsoft releases parallel-track updates per product per month:
+//   - "Security Only Quality Update"        (narrowest)
+//   - "Security Monthly Quality Rollup"     (includes Security Only + non-security fixes)
+//   - "Preview of Monthly Quality Rollup"   (includes Security Monthly + next-month previews)
+//   - "Cumulative Update"                   (Win10/11/Server 2016+)
+//   - "Cumulative Update Preview"           (Win10/11/Server 2016+ preview track)
+var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
+
+// deriveCrossTrackSupersedes augments Update-level Supersedes / SupersededBy
+// with cross-track equivalence for monthly Quality Rollups within the same
+// product+year+month.
+//
+// Microsoft does NOT consistently record cross-track supersession in MSUC's
+// per-Update SupersededBy graph: across the production raw corpus the SO/SM,
+// SO/PV and SM/PV pairings are 0% covered while CU/CP is ~92% covered.
+// However the broader-track update is functionally a superset of the narrower
+// one, so for detection-time coverage we add synthetic edges (both
+// Supersedes on the broader-track Update and the reverse SupersededBy on the
+// narrower-track Update):
+//
+// Preview            ⊇ SecurityMonthly ⊇ SecurityOnly
+// CumulativePreview  ⊇ Cumulative
+//
+// kbs is modified in place. Only Update-level edges are added: KB-level
+// supersession is left to native KB-level signals (CVRF, Bulletin) so that
+// cross-arch / partial supersession is not lossy-aggregated to KB level.
+// Detection still discovers cross-track equivalence via the Update-level
+// edges. Architecture pairing across tracks is 1:1 within a group because
+// monthlyTrackTitleRE captures the architecture suffix (e.g. "for x64-based
+// Systems") as part of the product key, so each (year, month,
+// product+architecture, track) tuple has at most one Update.
+//
+// This is MSUC-specific: other Microsoft data sources either lack per-Update
+// titles (CVRF, Bulletin) or do not expose modern monthly-track titles in the
+// `YYYY-MM ...` form expected by monthlyTrackTitleRE (WSUSSCN2 uses the older
+// "Month, YYYY" format for the relevant EOL products and omits Cumulative
+// Update Preview entries entirely).
+func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
+	type track int
+	const (
+		trackUnknown track = iota
+		trackSecurityOnly
+		trackSecurityMonthly
+		trackPreview
+		trackCumulative
+		trackCumulativePreview
+	)
+
+	classify := func(s string) track {
+		switch s {
+		case "Security Only Quality Update":
+			return trackSecurityOnly
+		case "Security Monthly Quality Rollup":
+			return trackSecurityMonthly
+		case "Preview of Monthly Quality Rollup":
+			return trackPreview
+		case "Cumulative Update":
+			return trackCumulative
+		case "Cumulative Update Preview":
+			return trackCumulativePreview
+		default:
+			return trackUnknown
+		}
+	}
+
+	type member struct{ kbID, updateID string }
+	type group struct{ year, month, product string }
+	grouped := make(map[group]map[track][]member)
+
+	for _, kb := range kbs {
+		for _, u := range kb.Updates {
+			m := monthlyTrackTitleRE.FindStringSubmatch(u.Title)
+			if m == nil {
+				continue
+			}
+			tr := classify(m[3])
+			if tr == trackUnknown {
+				continue
+			}
+			g := group{year: m[1], month: m[2], product: microsoftutil.NormalizeProductName(m[4])}
+			if grouped[g] == nil {
+				grouped[g] = make(map[track][]member)
+			}
+			grouped[g][tr] = append(grouped[g][tr], member{kbID: kb.KBID, updateID: u.UpdateID})
+		}
+	}
+
+	kbIdx := make(map[string]*microsoftkbTypes.KB, len(kbs))
+	for i := range kbs {
+		kbIdx[kbs[i].KBID] = &kbs[i]
+	}
+	updateIdx := func(kbID, updateID string) *microsoftkbUpdateTypes.Update {
+		kb, ok := kbIdx[kbID]
+		if !ok {
+			return nil
+		}
+		if i := slices.IndexFunc(kb.Updates, func(u microsoftkbUpdateTypes.Update) bool {
+			return u.UpdateID == updateID
+		}); i >= 0 {
+			return &kb.Updates[i]
+		}
+		return nil
+	}
+
+	addEdge := func(super, sub member) {
+		if super.kbID == "" || sub.kbID == "" || super.kbID == sub.kbID {
+			return
+		}
+		// Mirror DeriveSupersedes's Update-level guard: synthesize an edge
+		// only when both endpoints have an UpdateID. updateIdx requires a
+		// non-empty UpdateID to match deterministically.
+		if super.updateID == "" || sub.updateID == "" {
+			return
+		}
+
+		// Update-level edges only. Architecture pairing across tracks is 1:1
+		// within the same (year, month, product+architecture) group because
+		// the product capture in monthlyTrackTitleRE includes the architecture
+		// suffix (e.g. "for x64-based Systems").
+		if superU := updateIdx(super.kbID, super.updateID); superU != nil {
+			if !slices.ContainsFunc(superU.Supersedes, func(s microsoftkbSupersedesTypes.Supersedes) bool {
+				return s.KBID == sub.kbID && s.UpdateID == sub.updateID
+			}) {
+				superU.Supersedes = append(superU.Supersedes, microsoftkbSupersedesTypes.Supersedes{KBID: sub.kbID, UpdateID: sub.updateID})
+			}
+		}
+		if subU := updateIdx(sub.kbID, sub.updateID); subU != nil {
+			if !slices.ContainsFunc(subU.SupersededBy, func(s microsoftkbSupersededByTypes.SupersededBy) bool {
+				return s.KBID == super.kbID && s.UpdateID == super.updateID
+			}) {
+				subU.SupersededBy = append(subU.SupersededBy, microsoftkbSupersededByTypes.SupersededBy{KBID: super.kbID, UpdateID: super.updateID})
+			}
+		}
+	}
+
+	addBetween := func(supers, subs []member) {
+		for _, sup := range supers {
+			for _, sub := range subs {
+				addEdge(sup, sub)
+			}
+		}
+	}
+
+	inclusions := []struct{ super, sub track }{
+		// Preview ⊇ SecurityMonthly ⊇ SecurityOnly.
+		{trackPreview, trackSecurityMonthly},
+		{trackPreview, trackSecurityOnly},
+		{trackSecurityMonthly, trackSecurityOnly},
+		// CumulativePreview ⊇ Cumulative.
+		{trackCumulativePreview, trackCumulative},
+	}
+	for _, byTrack := range grouped {
+		for _, inc := range inclusions {
+			addBetween(byTrack[inc.super], byTrack[inc.sub])
+		}
+	}
 }
