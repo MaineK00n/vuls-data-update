@@ -115,6 +115,8 @@ func collectCVEIDs(v *any) ([]string, error) {
 	}
 	var out []string
 	switch val := (*v).(type) {
+	case nil:
+		return nil, nil
 	case string:
 		if id := normalizeCVEID(val); id != "" {
 			out = append(out, id)
