@@ -109,6 +109,32 @@ func normalizeCVEID(s string) string {
 	return upper
 }
 
+func collectCVEIDs(v *any) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var out []string
+	switch val := (*v).(type) {
+	case string:
+		if id := normalizeCVEID(val); id != "" {
+			out = append(out, id)
+		}
+	case []any:
+		for _, item := range val {
+			s, ok := item.(string)
+			if !ok {
+				return nil, errors.Errorf("unexpected cve-id element type. expected: %q, actual: %T", "string", item)
+			}
+			if id := normalizeCVEID(s); id != "" {
+				out = append(out, id)
+			}
+		}
+	default:
+		return nil, errors.Errorf("unexpected cve-id type. expected: %q, actual: %T", []string{"string", "[]any"}, *v)
+	}
+	return out, nil
+}
+
 func extract(args string) (map[string]dataTypes.Data, error) {
 	cveExploits := make(map[string]dataTypes.Data)
 
@@ -127,12 +153,15 @@ func extract(args string) (map[string]dataTypes.Data, error) {
 			return errors.Wrapf(err, "read %s", path)
 		}
 
-		if f.Info.Classification == nil || f.Info.Classification.CVEID == nil {
+		if f.Info.Classification == nil {
 			return nil
 		}
 
-		cveID := normalizeCVEID(*f.Info.Classification.CVEID)
-		if cveID == "" {
+		cveIDs, err := collectCVEIDs(f.Info.Classification.CVEID)
+		if err != nil {
+			return errors.Wrapf(err, "collect cve-id from %s", path)
+		}
+		if len(cveIDs) == 0 {
 			return nil
 		}
 
@@ -169,23 +198,25 @@ func extract(args string) (map[string]dataTypes.Data, error) {
 			},
 		}
 
-		base, ok := cveExploits[cveID]
-		if !ok {
-			base = dataTypes.Data{
-				ID: dataTypes.RootID(cveID),
-				Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
-					Content: vulnerabilityContentTypes.Content{
-						ID: vulnerabilityContentTypes.VulnerabilityID(cveID),
+		for _, cveID := range cveIDs {
+			base, ok := cveExploits[cveID]
+			if !ok {
+				base = dataTypes.Data{
+					ID: dataTypes.RootID(cveID),
+					Vulnerabilities: []vulnerabilityTypes.Vulnerability{{
+						Content: vulnerabilityContentTypes.Content{
+							ID: vulnerabilityContentTypes.VulnerabilityID(cveID),
+						},
+					}},
+					DataSource: sourceTypes.Source{
+						ID: sourceTypes.NucleiRepository,
 					},
-				}},
-				DataSource: sourceTypes.Source{
-					ID: sourceTypes.NucleiRepository,
-				},
+				}
 			}
+			base.Vulnerabilities[0].Content.Exploit = append(base.Vulnerabilities[0].Content.Exploit, exploit)
+			base.DataSource.Raws = append(base.DataSource.Raws, r.Paths()...)
+			cveExploits[cveID] = base
 		}
-		base.Vulnerabilities[0].Content.Exploit = append(base.Vulnerabilities[0].Content.Exploit, exploit)
-		base.DataSource.Raws = append(base.DataSource.Raws, r.Paths()...)
-		cveExploits[cveID] = base
 
 		return nil
 	}); err != nil {
