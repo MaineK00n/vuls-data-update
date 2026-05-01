@@ -1,0 +1,13 @@
+{
+	"id": "CWE-699",
+	"kind": "view",
+	"name": "Software Development",
+	"status": "Draft",
+	"description": "This view organizes weaknesses around concepts that are frequently used or encountered in software development. This includes all aspects of the software development lifecycle including both architecture and implementation. Accordingly, this view can align closely with the perspectives of architects, developers, educators, and assessment vendors. It provides a variety of categories that are intended to simplify navigation, browsing, and mapping.",
+	"data_source": {
+		"id": "cwe",
+		"raws": [
+			"fixtures/view/699.json"
+		]
+	}
+}

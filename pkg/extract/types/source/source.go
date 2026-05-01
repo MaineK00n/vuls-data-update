@@ -26,7 +26,7 @@ const (
 	Attack                     SourceID = "attack"
 	AzureOVAL                  SourceID = "azure-oval"
 	BitnamiOSV                 SourceID = "bitnami-osv"
-	Capec                      SourceID = "capec"
+	CAPEC                      SourceID = "capec"
 	CargoDB                    SourceID = "cargo-db"
 	CargoGHSA                  SourceID = "cargo-ghsa"
 	CargoOSV                   SourceID = "cargo-osv"
