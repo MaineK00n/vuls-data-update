@@ -152,7 +152,8 @@ import (
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	redhatPackageManifest "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/package-manifest"
 	redhatRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
-	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
+	redhatVEXbeta "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/beta"
+	redhatVEXv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v1"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/rootio"
@@ -269,7 +270,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatAppstreamLifecycle(), newCmdRedHatPackageManifest(),
+		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEXV1(), newCmdRedHatVEXBeta(), newCmdRedHatOSV(), newCmdRedHatAppstreamLifecycle(), newCmdRedHatPackageManifest(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
@@ -4656,14 +4657,14 @@ func newCmdRedHatOVALV2() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedHatVEX() *cobra.Command {
+func newCmdRedHatVEXV1() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
 		wait        time.Duration
 	}{
 		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v1"),
 			retry: 3,
 		},
 		concurrency: 10,
@@ -4671,15 +4672,52 @@ func newCmdRedHatVEX() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-vex",
-		Short: "Fetch RedHat Enterprise Linux CSAF VEX data source",
+		Use:   "redhat-vexv1",
+		Short: "Fetch RedHat Enterprise Linux CSAF VEX v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-vex
+			$ vuls-data-update fetch redhat-vexv1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatVEX.Fetch(redhatVEX.WithDir(options.dir), redhatVEX.WithRetry(options.retry), redhatVEX.WithConcurrency(options.concurrency), redhatVEX.WithWait(options.wait)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat vex")
+			if err := redhatVEXv1.Fetch(redhatVEXv1.WithDir(options.dir), redhatVEXv1.WithRetry(options.retry), redhatVEXv1.WithConcurrency(options.concurrency), redhatVEXv1.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat vexv1")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdRedHatVEXBeta() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "beta"),
+			retry: 3,
+		},
+		concurrency: 10,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-vexbeta",
+		Short: "Fetch RedHat Enterprise Linux CSAF VEX Beta data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-vexbeta
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatVEXbeta.Fetch(redhatVEXbeta.WithDir(options.dir), redhatVEXbeta.WithRetry(options.retry), redhatVEXbeta.WithConcurrency(options.concurrency), redhatVEXbeta.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat vexbeta")
 			}
 			return nil
 		},
