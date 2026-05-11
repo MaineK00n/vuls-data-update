@@ -1,4 +1,4 @@
-package beta
+package v2
 
 import (
 	"encoding/hex"
@@ -48,7 +48,7 @@ import (
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/beta"
+	v2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v2"
 )
 
 type options struct {
@@ -76,7 +76,7 @@ type extractor struct {
 
 func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex", "beta"),
+		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex", "v2"),
 	}
 
 	for _, o := range opts {
@@ -115,7 +115,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 			r:      br.Copy(),
 		}
 
-		var vuln beta.VEX
+		var vuln v2.VEX
 		if err := e.r.Read(path, e.vexDir, &vuln); err != nil {
 			return errors.Wrapf(err, "read %s", path)
 		}
@@ -169,7 +169,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 	return nil
 }
 
-func (e extractor) extract(vuln beta.VEX, c2r map[string][]string) (dataTypes.Data, error) {
+func (e extractor) extract(vuln v2.VEX, c2r map[string][]string) (dataTypes.Data, error) {
 	pm, err := walkProductTree(vuln.Document.Tracking.ID, vuln.ProductTree, c2r)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
@@ -230,9 +230,9 @@ type status struct {
 	affected_status string
 }
 
-func walkProductTree(trackingID string, pt beta.ProductTree, c2r map[string][]string) (map[beta.ProductID][]product, error) {
-	var f func(m map[beta.ProductID]beta.FullProductName, branch beta.Branch) error
-	f = func(m map[beta.ProductID]beta.FullProductName, branch beta.Branch) error {
+func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]string) (map[v2.ProductID][]product, error) {
+	var f func(m map[v2.ProductID]v2.FullProductName, branch v2.Branch) error
+	f = func(m map[v2.ProductID]v2.FullProductName, branch v2.Branch) error {
 		for _, b := range branch.Branches {
 			if err := f(m, b); err != nil {
 				return errors.Wrap(err, "walk product_tree")
@@ -252,34 +252,34 @@ func walkProductTree(trackingID string, pt beta.ProductTree, c2r map[string][]st
 		}
 	}
 
-	fpnm := make(map[beta.ProductID]beta.FullProductName)
+	fpnm := make(map[v2.ProductID]v2.FullProductName)
 	for _, b := range pt.Branches {
 		if err := f(fpnm, b); err != nil {
 			return nil, errors.Wrap(err, "walk product_tree")
 		}
 	}
 
-	rm := make(map[beta.ProductID][]beta.ProductID)
+	rm := make(map[v2.ProductID][]v2.ProductID)
 	for _, r := range pt.Relationships {
 		rm[r.FullProductName.ProductID] = append(rm[r.FullProductName.ProductID], r.ProductReference, r.RelatesToProductReference)
 	}
 
-	var f2 func(tree map[beta.ProductID][]beta.ProductID, node beta.ProductID) []beta.ProductID
-	f2 = func(tree map[beta.ProductID][]beta.ProductID, node beta.ProductID) []beta.ProductID {
+	var f2 func(tree map[v2.ProductID][]v2.ProductID, node v2.ProductID) []v2.ProductID
+	f2 = func(tree map[v2.ProductID][]v2.ProductID, node v2.ProductID) []v2.ProductID {
 		if _, ok := tree[node]; !ok {
-			return []beta.ProductID{node}
+			return []v2.ProductID{node}
 		}
 
-		var leaves []beta.ProductID
+		var leaves []v2.ProductID
 		for _, n := range tree[node] {
 			leaves = append(leaves, f2(tree, n)...)
 		}
 		return leaves
 	}
 
-	pm := make(map[beta.ProductID][]product)
-	for root := range func() map[beta.ProductID]struct{} {
-		rs := make(map[beta.ProductID]struct{}, len(rm))
+	pm := make(map[v2.ProductID][]product)
+	for root := range func() map[v2.ProductID]struct{} {
+		rs := make(map[v2.ProductID]struct{}, len(rm))
 		for id := range rm {
 			rs[id] = struct{}{}
 		}
@@ -573,12 +573,12 @@ func walkProductTree(trackingID string, pt beta.ProductTree, c2r map[string][]st
 	return pm, nil
 }
 
-func walkVulnerabilities(vulns []beta.Vulnerability, pids []beta.ProductID) (map[beta.ProductID]assessment, vulnerabilityContentTypes.Content, error) {
+func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.ProductID]assessment, vulnerabilityContentTypes.Content, error) {
 	if len(vulns) != 1 {
 		return nil, vulnerabilityContentTypes.Content{}, errors.Errorf("unexpected vulnerabilities length. expected: %d, actual: %d", 1, len(vulns))
 	}
 
-	assm := make(map[beta.ProductID]assessment)
+	assm := make(map[v2.ProductID]assessment)
 
 	if err := func() error {
 		if len(vulns[0].ProductStatus.FirstAffected) > 0 || len(vulns[0].ProductStatus.FirstFixed) > 0 || len(vulns[0].ProductStatus.LastAffected) > 0 || len(vulns[0].ProductStatus.Recommended) > 0 {
@@ -616,7 +616,7 @@ func walkVulnerabilities(vulns []beta.Vulnerability, pids []beta.ProductID) (map
 
 	if err := func() error {
 		for _, f := range vulns[0].Flags {
-			for _, p := range func() []beta.ProductID {
+			for _, p := range func() []v2.ProductID {
 				if len(f.ProductIDs) > 0 {
 					return f.ProductIDs
 				}
@@ -642,7 +642,7 @@ func walkVulnerabilities(vulns []beta.Vulnerability, pids []beta.ProductID) (map
 
 	if err := func() error {
 		for _, r := range vulns[0].Remediations {
-			for _, p := range func() []beta.ProductID {
+			for _, p := range func() []v2.ProductID {
 				if len(r.ProductIDs) > 0 {
 					return r.ProductIDs
 				}
@@ -708,7 +708,7 @@ func walkVulnerabilities(vulns []beta.Vulnerability, pids []beta.ProductID) (map
 
 	if err := func() error {
 		for _, t := range vulns[0].Threats {
-			for _, p := range func() []beta.ProductID {
+			for _, p := range func() []v2.ProductID {
 				if len(t.ProductIDs) > 0 {
 					return t.ProductIDs
 				}
@@ -735,7 +735,7 @@ func walkVulnerabilities(vulns []beta.Vulnerability, pids []beta.ProductID) (map
 		ID:    vulnerabilityContentTypes.VulnerabilityID(vulns[0].CVE),
 		Title: vulns[0].Title,
 		Description: func() string {
-			if i := slices.IndexFunc(vulns[0].Notes, func(e beta.Note) bool {
+			if i := slices.IndexFunc(vulns[0].Notes, func(e v2.Note) bool {
 				return e.Category == "description"
 			}); i >= 0 {
 				return vulns[0].Notes[i].Text
@@ -775,11 +775,11 @@ type product2 struct {
 }
 
 type productsWithMaxPid struct {
-	maxPid beta.ProductID
+	maxPid v2.ProductID
 	p2sm   map[string][]product2 // key: product2.cpe
 }
 
-func buildDataComponents(doc beta.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[beta.ProductID][]product, assm map[beta.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
+func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[v2.ProductID][]product, assm map[v2.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
 	baseVulnerability.Published = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.InitialReleaseDate)
 	baseVulnerability.Modified = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.CurrentReleaseDate)
 	for pid, assessment := range assm {
@@ -825,7 +825,7 @@ func buildDataComponents(doc beta.Document, baseVulnerability vulnerabilityConte
 					},
 				}
 			} else {
-				pmax.maxPid = beta.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
+				pmax.maxPid = v2.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
 				switch i := slices.IndexFunc(pmax.p2sm[p.cpe], func(p2 product2) bool {
 					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
 				}); i {

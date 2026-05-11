@@ -1,4 +1,4 @@
-package beta
+package v2
 
 import (
 	"archive/tar"
@@ -92,7 +92,7 @@ func WithWait(wait time.Duration) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "beta"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v2"),
 		retry:       3,
 		concurrency: 10,
 		wait:        1 * time.Second,

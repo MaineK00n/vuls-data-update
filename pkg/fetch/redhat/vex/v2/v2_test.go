@@ -1,4 +1,4 @@
-package beta_test
+package v2_test
 
 import (
 	"io/fs"
@@ -13,7 +13,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/beta"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v2"
 )
 
 func TestFetch(t *testing.T) {
@@ -47,7 +47,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = beta.Fetch(beta.WithBaseURL(u), beta.WithDir(dir), beta.WithRetry(0), beta.WithConcurrency(1), beta.WithWait(0))
+			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0), v2.WithConcurrency(1), v2.WithWait(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
