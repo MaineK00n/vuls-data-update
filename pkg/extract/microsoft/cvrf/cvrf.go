@@ -2248,11 +2248,11 @@ type missingProductOverride struct {
 // FixedBuild value is wrong/empty, prefer fixedBuildOverrides above.
 var missingProductOverrides = map[string][]missingProductOverride{
 	// CVE-2023-21796 — Microsoft Edge (Chromium-based) Elevation of Privilege Vulnerability
-	// CVRF only lists "Microsoft Edge (Chromium-based) Extended Stable" (PID 12142)
-	// and the Vendor Fix Remediation has no ProductID, so neither the Stable
-	// channel nor any FixedBuild is registered. The same fix is shipped in the
-	// Stable channel: Microsoft Edge Stable Release Notes (Jan 12, 2023) credit
-	// CVE-2023-21796 to 109.0.1518.49.
+	// CVRF lists only "Microsoft Edge (Chromium-based) Extended Stable" (PID 12142,
+	// fixed at 108.0.1462.83); the Stable channel is absent from ProductTree /
+	// ProductStatuses / Remediations entirely, even though the same fix ships in
+	// the Stable channel per Microsoft Edge Stable Release Notes (Jan 12, 2023),
+	// which credit CVE-2023-21796 to 109.0.1518.49.
 	// https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security
 	"CVE-2023-21796": {
 		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "109.0.1518.49"},
