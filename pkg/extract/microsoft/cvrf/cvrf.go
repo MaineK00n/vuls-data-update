@@ -475,25 +475,36 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 	}
 
 	// Apply missing-product overrides: products Microsoft omitted from CVRF
-	// but documented elsewhere as affected. Reuse the content of an existing
-	// vuln (same CVE metadata) so segments accumulate on a single record.
-	if len(vulns) > 0 {
-		for _, mp := range missingProductOverrides[v.CVE] {
-			if isCBLMarinerOrAzureLinux(mp.Product) {
-				continue
-			}
-			vc := vulns[0].Content
-			vulns = appendOrMergeSegment(vulns,
-				vulnerabilityTypes.Vulnerability{
-					Content:  vc,
-					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(mp.Product)}},
-				},
-				func(item vulnerabilityTypes.Vulnerability) int {
-					return vulnerabilityContentTypes.Compare(item.Content, vc)
-				},
-				func(item *vulnerabilityTypes.Vulnerability) *[]segmentTypes.Segment { return &item.Segments },
-			)
+	// but documented elsewhere as affected. Build Content from CVE-level data
+	// only — per-product fields (severity, impact, mitigations, workarounds)
+	// are unknown for the missing product since Microsoft did not publish them.
+	// appendOrMergeSegment handles both cases:
+	//   - same Content as an existing vuln → merges segment into that record
+	//   - different Content (existing vulns carry per-product severity), or
+	//     len(vulns) == 0 → appends a fresh vuln entry
+	for _, mp := range missingProductOverrides[v.CVE] {
+		if isCBLMarinerOrAzureLinux(mp.Product) {
+			continue
 		}
+		vc := vulnerabilityContentTypes.Content{
+			ID:          vulnerabilityContentTypes.VulnerabilityID(v.CVE),
+			Title:       v.Title,
+			Description: description,
+			CWE:         cwes,
+			References:  refs,
+			Published:   published,
+			Modified:    modified,
+		}
+		vulns = appendOrMergeSegment(vulns,
+			vulnerabilityTypes.Vulnerability{
+				Content:  vc,
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(mp.Product)}},
+			},
+			func(item vulnerabilityTypes.Vulnerability) int {
+				return vulnerabilityContentTypes.Compare(item.Content, vc)
+			},
+			func(item *vulnerabilityTypes.Vulnerability) *[]segmentTypes.Segment { return &item.Segments },
+		)
 	}
 
 	// If all products were CBL-Mariner/Azure Linux, emit product-independent metadata.
@@ -562,25 +573,32 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 	}
 
 	// Apply missing-product overrides: products Microsoft omitted from CVRF
-	// but documented elsewhere as affected. Reuse the content of an existing
-	// advisory (same CVE metadata) so segments accumulate on a single record.
-	if len(advisories) > 0 {
-		for _, mp := range missingProductOverrides[v.CVE] {
-			if isCBLMarinerOrAzureLinux(mp.Product) {
-				continue
-			}
-			ac := advisories[0].Content
-			advisories = appendOrMergeSegment(advisories,
-				advisoryTypes.Advisory{
-					Content:  ac,
-					Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(mp.Product)}},
-				},
-				func(item advisoryTypes.Advisory) int {
-					return advisoryContentTypes.Compare(item.Content, ac)
-				},
-				func(item *advisoryTypes.Advisory) *[]segmentTypes.Segment { return &item.Segments },
-			)
+	// but documented elsewhere as affected. Build Content from CVE-level data
+	// only — per-product fields (severity, impact, mitigations, workarounds)
+	// are unknown for the missing product since Microsoft did not publish them.
+	for _, mp := range missingProductOverrides[v.CVE] {
+		if isCBLMarinerOrAzureLinux(mp.Product) {
+			continue
 		}
+		ac := advisoryContentTypes.Content{
+			ID:          advisoryContentTypes.AdvisoryID(v.CVE),
+			Title:       v.Title,
+			Description: description,
+			CWE:         cwes,
+			References:  refs,
+			Published:   published,
+			Modified:    modified,
+		}
+		advisories = appendOrMergeSegment(advisories,
+			advisoryTypes.Advisory{
+				Content:  ac,
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(mp.Product)}},
+			},
+			func(item advisoryTypes.Advisory) int {
+				return advisoryContentTypes.Compare(item.Content, ac)
+			},
+			func(item *advisoryTypes.Advisory) *[]segmentTypes.Segment { return &item.Segments },
+		)
 	}
 
 	// If all products were CBL-Mariner/Azure Linux, emit product-independent metadata.
