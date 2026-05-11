@@ -383,14 +383,13 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 							}
 						}
 					default:
-						// Skip every non-RPM PURL type we have explicitly
-						// considered. A brand-new type errors out so a human
+						// Skip every non-RPM PURL type observed in the legacy
+						// vex feed. A brand-new type errors out so a human
 						// decides whether the new artifact class should be
-						// processed or just added to this skip list (i.e.
-						// forces a deliberate review, not silent data loss).
+						// processed or just added to this skip list — silent
+						// data loss is worse than a loud failure.
 						for _, s := range []string{
-							"pkg:cargo/", "pkg:gem/", "pkg:generic/", "pkg:golang/",
-							"pkg:koji/", "pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
+							"pkg:generic/", "pkg:maven/", "pkg:npm/", "pkg:oci/",
 						} {
 							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
 								return nil, nil

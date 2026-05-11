@@ -385,14 +385,13 @@ func parseRPMPurl(s string) (*struct {
 	name, version, arch, modularitylabel string
 }, error) {
 	if !strings.HasPrefix(s, "pkg:rpm/") {
-		// Skip every non-RPM PURL type we have explicitly considered. A
-		// brand-new type intentionally errors out so that a human decides
-		// whether the new artifact class should be processed or just added
-		// to this skip list (i.e. forces a deliberate review, not silent
-		// data loss).
+		// Skip every non-RPM PURL type observed in the VEX-GA feed. A
+		// brand-new type errors out so a human decides whether the new
+		// artifact class should be processed or just added to this skip
+		// list — silent data loss is worse than a loud failure.
 		for _, prefix := range []string{
 			"pkg:cargo/", "pkg:gem/", "pkg:generic/", "pkg:golang/",
-			"pkg:koji/", "pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
+			"pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
 		} {
 			if strings.HasPrefix(s, prefix) {
 				return nil, nil
