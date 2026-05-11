@@ -402,8 +402,13 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 
 // monthlyTrackTitleOldRE matches the older title format used by 2016 - mid 2017
 // monthly updates ("Month, YYYY ...") for Win7 / Server 2008 R2 / Server 2012 /
-// Server 2012 R2 / Win 8.1 era KBs. Same capture groups as monthlyTrackTitleRE
-// but month is given as a name and appears after the year.
+// Server 2012 R2 / Win 8.1 era KBs. The month appears as an English name
+// BEFORE the year (e.g. "April, 2017 ..."), so the capture order differs from
+// monthlyTrackTitleRE:
+//   m[1] = month name (e.g. "April")     -- vs. m[1] = year ("2017") in modern
+//   m[2] = year       (e.g. "2017")      -- vs. m[2] = month ("04") in modern
+//   m[3] = track                         -- same as modern
+//   m[4] = product                       -- same as modern
 var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|May|June|July|August|September|October|November|December), (\d{4}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
 
 // monthlyTrackTitleParsers lists the title formats recognised by
