@@ -229,16 +229,22 @@ type status struct {
 	affected_status string
 }
 
-// walkProductTree exploits the VEX-GA flat product tree:
+// walkProductTree converts a CSAF VEX product_tree into a map of product_id ->
+// product, ready for buildDataComponents to consume.
+//
+// The walker recurses through the branch tree as the CSAF spec requires (branches
+// can in principle nest to any depth). For VEX-GA the tree is in practice flat
 //
 //	vendor
 //	 ├── product_name      (CPE, e.g. cpe:/a:redhat:enterprise_linux:9::appstream)
-//	 ├── product_name      ...
 //	 ├── product_version   (PURL, e.g. pkg:rpm/redhat/foo@1.2-3.el9?epoch=0)
 //	 └── ...
 //	relationships: default_component_of joins product_name (env) and product_version (pkg)
 //
-// Reference: https://redhatproductsecurity.github.io/security-data-guidelines/vex-ga-details/
+// but intermediate vendor / product_family / architecture nodes are treated as
+// transparent containers so the walker stays spec-conformant if Red Hat reintroduces
+// grouping later. See
+// https://redhatproductsecurity.github.io/security-data-guidelines/vex-ga-details/
 func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]string) (map[v2.ProductID][]product, error) {
 	type nameInfo struct {
 		cpe   string
@@ -254,45 +260,54 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 	names := make(map[v2.ProductID]nameInfo)
 	versions := make(map[v2.ProductID]versionInfo)
 
-	for _, root := range pt.Branches {
-		if root.Category != "vendor" {
-			continue
+	var walk func(branch v2.Branch) error
+	walk = func(branch v2.Branch) error {
+		switch branch.Category {
+		case "vendor", "product_family", "architecture":
+			// transparent container; nothing to collect here
+		case "product_name", "product_version":
+			if branch.Product == nil {
+				return errors.Errorf("branch product is nil. tracking_id: %q, category: %q", trackingID, branch.Category)
+			}
+			pih := branch.Product.ProductIdentificationHelper
+			if pih != nil {
+				if pih.Hashes != nil || pih.ModuleNumbers != nil || pih.SBOMURLs != nil || pih.SerialNumbers != nil || pih.SKUs != nil || pih.XGenericURIs != nil {
+					return errors.Errorf("unexpected product identification helper method. tracking_id: %q, product_id: %q", trackingID, branch.Product.ProductID)
+				}
+				switch branch.Category {
+				case "product_name":
+					if pih.CPE != "" {
+						names[branch.Product.ProductID] = nameInfo{
+							cpe:   pih.CPE,
+							major: majorFromCPE(pih.CPE),
+						}
+					}
+				case "product_version":
+					if pih.PURL != "" {
+						v, err := parseRPMPurl(pih.PURL, trackingID)
+						if err != nil {
+							return errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, branch.Product.ProductID)
+						}
+						if v != nil {
+							versions[branch.Product.ProductID] = *v
+						}
+					}
+				}
+			}
+		default:
+			return errors.Errorf("unexpected branch category. tracking_id: %q, expected: %q, actual: %q", trackingID, []string{"vendor", "product_family", "architecture", "product_name", "product_version"}, branch.Category)
 		}
-		for _, b := range root.Branches {
-			if b.Product == nil {
-				return nil, errors.Errorf("branch product is nil. tracking_id: %q", trackingID)
+		for _, child := range branch.Branches {
+			if err := walk(child); err != nil {
+				return err
 			}
-			pih := b.Product.ProductIdentificationHelper
-			if pih == nil {
-				continue
-			}
-			if pih.Hashes != nil || pih.ModuleNumbers != nil || pih.SBOMURLs != nil || pih.SerialNumbers != nil || pih.SKUs != nil || pih.XGenericURIs != nil {
-				return nil, errors.Errorf("unexpected product identification helper method. tracking_id: %q, product_id: %q", trackingID, b.Product.ProductID)
-			}
-			switch b.Category {
-			case "product_name":
-				if pih.CPE == "" {
-					continue
-				}
-				names[b.Product.ProductID] = nameInfo{
-					cpe:   pih.CPE,
-					major: majorFromCPE(pih.CPE),
-				}
-			case "product_version":
-				if pih.PURL == "" {
-					continue
-				}
-				v, err := parseRPMPurl(pih.PURL, trackingID)
-				if err != nil {
-					return nil, errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, b.Product.ProductID)
-				}
-				if v == nil {
-					continue
-				}
-				versions[b.Product.ProductID] = *v
-			default:
-				return nil, errors.Errorf("unexpected branch category. tracking_id: %q, expected: %q, actual: %q", trackingID, []string{"product_name", "product_version"}, b.Category)
-			}
+		}
+		return nil
+	}
+
+	for _, root := range pt.Branches {
+		if err := walk(root); err != nil {
+			return nil, errors.Wrap(err, "walk product_tree")
 		}
 	}
 
