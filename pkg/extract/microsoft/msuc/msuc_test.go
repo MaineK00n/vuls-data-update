@@ -419,6 +419,37 @@ func TestDeriveCrossTrackSupersedes(t *testing.T) {
 			},
 		},
 		{
+			name: "invalid month digits (e.g. \"2025-13\"): skipped, no cross-track edges added",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "A",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-A", Title: "2025-13 Security Only Quality Update for Windows Server 2008 R2 for x64-based Systems (KB1001)"},
+					},
+				},
+				{
+					KBID: "B",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-B", Title: "2025-13 Security Monthly Quality Rollup for Windows Server 2008 R2 for x64-based Systems (KB1002)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "A",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-A", Title: "2025-13 Security Only Quality Update for Windows Server 2008 R2 for x64-based Systems (KB1001)"},
+					},
+				},
+				{
+					KBID: "B",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-B", Title: "2025-13 Security Monthly Quality Rollup for Windows Server 2008 R2 for x64-based Systems (KB1002)"},
+					},
+				},
+			},
+		},
+		{
 			name: "old and modern titles share (year, month, product) group across formats",
 			args: args{kbs: []microsoftkbTypes.KB{
 				{

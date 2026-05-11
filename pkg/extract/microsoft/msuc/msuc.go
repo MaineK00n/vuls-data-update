@@ -406,13 +406,54 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 // but month is given as a name and appears after the year.
 var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|May|June|July|August|September|October|November|December), (\d{4}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
 
-// oldMonthNumbers maps month names used by monthlyTrackTitleOldRE to the
-// two-digit numeric form used by monthlyTrackTitleRE so both regex variants
-// produce comparable (year, month) group keys.
-var oldMonthNumbers = map[string]string{
-	"January": "01", "February": "02", "March": "03", "April": "04",
-	"May": "05", "June": "06", "July": "07", "August": "08",
-	"September": "09", "October": "10", "November": "11", "December": "12",
+// monthlyTrackTitleParsers lists the title formats recognised by
+// parseMonthlyTrackTitle, tried in order. layout is passed to time.Parse
+// together with the date substring built by extract; this is the single
+// source of truth for normalising both "YYYY-MM" and "Month, YYYY" date
+// shapes to the same (year, month) tuple. Adding a new title format only
+// needs a new entry here.
+var monthlyTrackTitleParsers = []struct {
+	re      *regexp.Regexp
+	layout  string
+	extract func(m []string) (dateStr, trackStr, product string)
+}{
+	{
+		re:     monthlyTrackTitleRE,
+		layout: "2006-01",
+		extract: func(m []string) (string, string, string) {
+			return fmt.Sprintf("%s-%s", m[1], m[2]), m[3], m[4]
+		},
+	},
+	{
+		re:     monthlyTrackTitleOldRE,
+		layout: "January, 2006",
+		extract: func(m []string) (string, string, string) {
+			return fmt.Sprintf("%s, %s", m[1], m[2]), m[3], m[4]
+		},
+	},
+}
+
+// parseMonthlyTrackTitle parses an MSUC Update title into its (year, month,
+// track, product) tuple. year/month are normalised through time.Parse, so
+// the older "Month, YYYY" format produces the same group key as the modern
+// "YYYY-MM" format. ok is false when the title matches no known format, or
+// when the date fails time.Parse validation (e.g. malformed month "13" in
+// the modern format).
+func parseMonthlyTrackTitle(title string) (year, month, trackStr, product string, ok bool) {
+	for _, p := range monthlyTrackTitleParsers {
+		m := p.re.FindStringSubmatch(title)
+		if m == nil {
+			continue
+		}
+		dateStr, trackStr, product := p.extract(m)
+		t, err := time.Parse(p.layout, dateStr)
+		if err != nil {
+			slog.Warn("skip MSUC title with invalid year/month", "title", title, "err", err)
+			return "", "", "", "", false
+		}
+		return fmt.Sprintf("%04d", t.Year()), fmt.Sprintf("%02d", int(t.Month())), trackStr, product, true
+	}
+	return "", "", "", "", false
 }
 
 // deriveCrossTrackSupersedes augments Update-level Supersedes / SupersededBy
@@ -479,12 +520,8 @@ func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
 
 	for _, kb := range kbs {
 		for _, u := range kb.Updates {
-			var year, month, trackStr, product string
-			if m := monthlyTrackTitleRE.FindStringSubmatch(u.Title); m != nil {
-				year, month, trackStr, product = m[1], m[2], m[3], m[4]
-			} else if m := monthlyTrackTitleOldRE.FindStringSubmatch(u.Title); m != nil {
-				year, month, trackStr, product = m[2], oldMonthNumbers[m[1]], m[3], m[4]
-			} else {
+			year, month, trackStr, product, ok := parseMonthlyTrackTitle(u.Title)
+			if !ok {
 				continue
 			}
 			tr := classify(trackStr)
