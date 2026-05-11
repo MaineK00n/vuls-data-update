@@ -362,6 +362,101 @@ func TestDeriveCrossTrackSupersedes(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "old Month, YYYY title: Preview ⊇ SecurityMonthly ⊇ SecurityOnly (Win 7 April 2017)",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-So", Title: "April, 2017 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)"},
+					},
+				},
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "April, 2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)"},
+					},
+				},
+				{
+					KBID: "4015552",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Pv", Title: "April, 2017 Preview of Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015552)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-So",
+							Title:        "April, 2017 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "4015549", UpdateID: "U-Sm"}, {KBID: "4015552", UpdateID: "U-Pv"}},
+						},
+					},
+				},
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-Sm",
+							Title:        "April, 2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "4015552", UpdateID: "U-Pv"}},
+							Supersedes:   []microsoftkbSupersedesTypes.Supersedes{{KBID: "4015546", UpdateID: "U-So"}},
+						},
+					},
+				},
+				{
+					KBID: "4015552",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:   "U-Pv",
+							Title:      "April, 2017 Preview of Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015552)",
+							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "4015549", UpdateID: "U-Sm"}, {KBID: "4015546", UpdateID: "U-So"}},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "old and modern titles share (year, month, product) group across formats",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-So", Title: "April, 2017 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)"},
+					},
+				},
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "2017-04 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-So",
+							Title:        "April, 2017 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "4015549", UpdateID: "U-Sm"}},
+						},
+					},
+				},
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:   "U-Sm",
+							Title:      "2017-04 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)",
+							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "4015546", UpdateID: "U-So"}},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

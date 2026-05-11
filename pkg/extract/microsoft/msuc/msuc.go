@@ -389,8 +389,8 @@ func normalizeNA(s string) string {
 	return s
 }
 
-// monthlyTrackTitleRE matches the title of a monthly Quality Update / Rollup,
-// capturing year, month, track, and product name.
+// monthlyTrackTitleRE matches the modern title of a monthly Quality Update /
+// Rollup ("YYYY-MM ..."), capturing year, month, track, and product name.
 //
 // Microsoft releases parallel-track updates per product per month:
 //   - "Security Only Quality Update"        (narrowest)
@@ -399,6 +399,21 @@ func normalizeNA(s string) string {
 //   - "Cumulative Update"                   (Win10/11/Server 2016+)
 //   - "Cumulative Update Preview"           (Win10/11/Server 2016+ preview track)
 var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
+
+// monthlyTrackTitleOldRE matches the older title format used by 2016 - mid 2017
+// monthly updates ("Month, YYYY ...") for Win7 / Server 2008 R2 / Server 2012 /
+// Server 2012 R2 / Win 8.1 era KBs. Same capture groups as monthlyTrackTitleRE
+// but month is given as a name and appears after the year.
+var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|May|June|July|August|September|October|November|December), (\d{4}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
+
+// oldMonthNumbers maps month names used by monthlyTrackTitleOldRE to the
+// two-digit numeric form used by monthlyTrackTitleRE so both regex variants
+// produce comparable (year, month) group keys.
+var oldMonthNumbers = map[string]string{
+	"January": "01", "February": "02", "March": "03", "April": "04",
+	"May": "05", "June": "06", "July": "07", "August": "08",
+	"September": "09", "October": "10", "November": "11", "December": "12",
+}
 
 // deriveCrossTrackSupersedes augments Update-level Supersedes / SupersededBy
 // with cross-track equivalence for monthly Quality Rollups within the same
@@ -425,10 +440,11 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 // product+architecture, track) tuple has at most one Update.
 //
 // This is MSUC-specific: other Microsoft data sources either lack per-Update
-// titles (CVRF, Bulletin) or do not expose modern monthly-track titles in the
-// `YYYY-MM ...` form expected by monthlyTrackTitleRE (WSUSSCN2 uses the older
-// "Month, YYYY" format for the relevant EOL products and omits Cumulative
-// Update Preview entries entirely).
+// titles (CVRF, Bulletin) or only expose titles via fields the MSUC-flavoured
+// regexes here are not tuned for. Two title formats are recognised here:
+//   - modern "YYYY-MM ..." via monthlyTrackTitleRE
+//   - older "Month, YYYY ..." via monthlyTrackTitleOldRE (2016 - mid 2017
+//     Win7 / Server 2008 R2 / Server 2012 / Server 2012 R2 / Win 8.1)
 func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
 	type track int
 	const (
@@ -463,15 +479,19 @@ func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
 
 	for _, kb := range kbs {
 		for _, u := range kb.Updates {
-			m := monthlyTrackTitleRE.FindStringSubmatch(u.Title)
-			if m == nil {
+			var year, month, trackStr, product string
+			if m := monthlyTrackTitleRE.FindStringSubmatch(u.Title); m != nil {
+				year, month, trackStr, product = m[1], m[2], m[3], m[4]
+			} else if m := monthlyTrackTitleOldRE.FindStringSubmatch(u.Title); m != nil {
+				year, month, trackStr, product = m[2], oldMonthNumbers[m[1]], m[3], m[4]
+			} else {
 				continue
 			}
-			tr := classify(m[3])
+			tr := classify(trackStr)
 			if tr == trackUnknown {
 				continue
 			}
-			g := group{year: m[1], month: m[2], product: microsoftutil.NormalizeProductName(m[4])}
+			g := group{year: year, month: month, product: microsoftutil.NormalizeProductName(product)}
 			if grouped[g] == nil {
 				grouped[g] = make(map[track][]member)
 			}
