@@ -474,6 +474,47 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 		)
 	}
 
+	// Apply missing-product overrides: products Microsoft omitted from CVRF
+	// but documented elsewhere as affected. Build Content from CVE-level data
+	// only — per-product fields (severity, impact, mitigations, workarounds)
+	// are unknown for the missing product since Microsoft did not publish them.
+	// Skip when an existing vuln already carries a segment for the same tag —
+	// that means CVRF now lists the product (e.g. after re-publication) and we
+	// must defer to its data to avoid emitting a duplicate vuln entry.
+	// appendOrMergeSegment otherwise:
+	//   - merges into an existing vuln with matching Content (rare), or
+	//   - appends a fresh vuln entry — including the len(vulns) == 0 case.
+	for _, mp := range missingProductOverrides[v.CVE] {
+		if isCBLMarinerOrAzureLinux(mp.Product) {
+			continue
+		}
+		tag := segmentTypes.DetectionTag(mp.Product)
+		if slices.ContainsFunc(vulns, func(it vulnerabilityTypes.Vulnerability) bool {
+			return slices.ContainsFunc(it.Segments, func(s segmentTypes.Segment) bool { return s.Tag == tag })
+		}) {
+			continue
+		}
+		vc := vulnerabilityContentTypes.Content{
+			ID:          vulnerabilityContentTypes.VulnerabilityID(v.CVE),
+			Title:       v.Title,
+			Description: description,
+			CWE:         cwes,
+			References:  refs,
+			Published:   published,
+			Modified:    modified,
+		}
+		vulns = appendOrMergeSegment(vulns,
+			vulnerabilityTypes.Vulnerability{
+				Content:  vc,
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: tag}},
+			},
+			func(item vulnerabilityTypes.Vulnerability) int {
+				return vulnerabilityContentTypes.Compare(item.Content, vc)
+			},
+			func(item *vulnerabilityTypes.Vulnerability) *[]segmentTypes.Segment { return &item.Segments },
+		)
+	}
+
 	// If all products were CBL-Mariner/Azure Linux, emit product-independent metadata.
 	if len(vulns) == 0 {
 		vulns = append(vulns, vulnerabilityTypes.Vulnerability{
@@ -531,6 +572,43 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 			advisoryTypes.Advisory{
 				Content:  ac,
 				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(productName)}},
+			},
+			func(item advisoryTypes.Advisory) int {
+				return advisoryContentTypes.Compare(item.Content, ac)
+			},
+			func(item *advisoryTypes.Advisory) *[]segmentTypes.Segment { return &item.Segments },
+		)
+	}
+
+	// Apply missing-product overrides: products Microsoft omitted from CVRF
+	// but documented elsewhere as affected. Build Content from CVE-level data
+	// only — per-product fields (severity, impact, mitigations, workarounds)
+	// are unknown for the missing product since Microsoft did not publish them.
+	// Skip when an existing advisory already carries a segment for the same
+	// tag — CVRF now lists the product and we defer to its data.
+	for _, mp := range missingProductOverrides[v.CVE] {
+		if isCBLMarinerOrAzureLinux(mp.Product) {
+			continue
+		}
+		tag := segmentTypes.DetectionTag(mp.Product)
+		if slices.ContainsFunc(advisories, func(it advisoryTypes.Advisory) bool {
+			return slices.ContainsFunc(it.Segments, func(s segmentTypes.Segment) bool { return s.Tag == tag })
+		}) {
+			continue
+		}
+		ac := advisoryContentTypes.Content{
+			ID:          advisoryContentTypes.AdvisoryID(v.CVE),
+			Title:       v.Title,
+			Description: description,
+			CWE:         cwes,
+			References:  refs,
+			Published:   published,
+			Modified:    modified,
+		}
+		advisories = appendOrMergeSegment(advisories,
+			advisoryTypes.Advisory{
+				Content:  ac,
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: tag}},
 			},
 			func(item advisoryTypes.Advisory) int {
 				return advisoryContentTypes.Compare(item.Content, ac)
@@ -724,6 +802,29 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 				},
 			},
 		}})
+	}
+
+	// Apply missing-product overrides: products Microsoft omitted from CVRF
+	// for this advisory but documented elsewhere as affected. Synthesise a
+	// FixedBuild criterion so detection still fires. Skip when an existing
+	// condition already targets the same tag — that means CVRF now lists the
+	// product (e.g. after re-publication) and we must defer to its data to
+	// avoid emitting a stale FixedBuild side-by-side with the canonical one.
+	for _, mp := range missingProductOverrides[v.CVE] {
+		tag := segmentTypes.DetectionTag(mp.Product)
+		if slices.ContainsFunc(conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft],
+			func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
+			continue
+		}
+		criterionProductName := microsoftutil.NormalizeProductName(mp.Product)
+		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, mp.FixedBuild)
+		if err != nil {
+			return nil, errors.Wrapf(err, "build fixed build criterion for missing product %q", mp.Product)
+		}
+		if fixedBuildCriterion == nil {
+			continue
+		}
+		appendConditions(conditionsByEcosystem, tag, []criterionTypes.Criterion{*fixedBuildCriterion})
 	}
 
 	return conditionsByEcosystem, nil
@@ -2145,6 +2246,38 @@ var fixedBuildOverrides = map[[3]string]string{
 	{"CVE-2026-25172", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
 	{"CVE-2026-25173", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
 	{"CVE-2026-26111", "Windows 11 Version 25H2 for ARM64-based Systems", "10.0.26100.7982"}: "10.0.26200.7982",
+}
+
+// missingProductOverride describes a product that Microsoft omitted from a
+// CVRF advisory's ProductTree / ProductStatuses / Remediations, but which is
+// documented elsewhere (e.g. Microsoft Edge Release Notes) to be affected and
+// fixed in the given build. The override synthesises a FixedBuild criterion
+// for the missing product so that detection still fires.
+type missingProductOverride struct {
+	Product    string
+	FixedBuild string
+}
+
+// missingProductOverrides maps a CVE ID to a list of products Microsoft failed
+// to list in CVRF for that advisory. Each entry produces a synthesised
+// FixedBuild criterion as if the product had been listed under ProductStatuses
+// with the given fixed version.
+//
+// Use this mechanism only when the affected product is documented elsewhere
+// (e.g. Edge Release Notes) but is omitted from CVRF's ProductTree /
+// ProductStatuses / Remediations entirely. When the product IS listed but the
+// FixedBuild value is wrong/empty, prefer fixedBuildOverrides above.
+var missingProductOverrides = map[string][]missingProductOverride{
+	// CVE-2023-21796 — Microsoft Edge (Chromium-based) Elevation of Privilege Vulnerability
+	// CVRF lists only "Microsoft Edge (Chromium-based) Extended Stable" (PID 12142,
+	// fixed at 108.0.1462.83); the Stable channel is absent from ProductTree /
+	// ProductStatuses / Remediations entirely, even though the same fix ships in
+	// the Stable channel per Microsoft Edge Stable Release Notes (Jan 12, 2023),
+	// which credit CVE-2023-21796 to 109.0.1518.49.
+	// https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security
+	"CVE-2023-21796": {
+		{Product: "Microsoft Edge (Chromium-based)", FixedBuild: "109.0.1518.49"},
+	},
 }
 
 func buildKBCriterion(product, kbID string) *criterionTypes.Criterion {
