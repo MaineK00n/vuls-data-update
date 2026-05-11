@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"cmp"
 	"encoding/hex"
 	"fmt"
 	"hash/fnv"
@@ -207,7 +208,13 @@ type product struct {
 }
 
 type assessment struct {
-	advisory   advisory
+	// advisories holds every vendor_fix erratum reported for this product.
+	// VEX-GA can reference the same fixed pid from multiple RHSAs (e.g. a
+	// re-issued advisory or sibling errata for variant streams) — see
+	// CVE-2007-6015 / CVE-2023-48022 for examples.
+	// Kept sorted-and-deduplicated so two assessments that differ only in
+	// insertion order produce the same key.
+	advisories []advisory
 	severity   severity
 	status     status
 	mitigation string
@@ -217,6 +224,36 @@ type assessment struct {
 type advisory struct {
 	id   string
 	date string
+}
+
+// assessmentKey is the comparable summary of an assessment, suitable for use
+// as a map key. Only the advisories slice needs encoding; every other field
+// is already a comparable value type.
+type assessmentKey struct {
+	advisoriesKey string
+	severity      severity
+	status        status
+	mitigation    string
+	workaround    string
+}
+
+func (a assessment) key() assessmentKey {
+	var sb strings.Builder
+	for i, x := range a.advisories {
+		if i > 0 {
+			sb.WriteByte('\x01')
+		}
+		sb.WriteString(x.id)
+		sb.WriteByte('\x00')
+		sb.WriteString(x.date)
+	}
+	return assessmentKey{
+		advisoriesKey: sb.String(),
+		severity:      a.severity,
+		status:        a.status,
+		mitigation:    a.mitigation,
+		workaround:    a.workaround,
+	}
 }
 
 type severity struct {
@@ -540,14 +577,17 @@ func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.
 					assm[p] = base
 				case "vendor_fix":
 					base := assm[p]
-					if base.advisory.id != "" {
-						return errors.Errorf("already set advisory id. cve: %s, product_id: %s", vulns[0].CVE, p)
-					}
-					base.advisory = advisory{
+					ad := advisory{
 						id:   strings.TrimPrefix(r.URL, "https://access.redhat.com/errata/"),
 						date: r.Date,
 					}
-					assm[p] = base
+					// Skip exact duplicates; otherwise insert in sorted order
+					// (by id, then date) so the assessment key is stable
+					// regardless of remediation declaration order.
+					if i, ok := slices.BinarySearchFunc(base.advisories, ad, compareAdvisory); !ok {
+						base.advisories = slices.Insert(base.advisories, i, ad)
+						assm[p] = base
+					}
 				default:
 					return errors.Errorf("unexpected remediation category. expected: %q, actual: %q", []string{"mitigation", "no_fix_planned", "none_available", "vendor_fix", "workaround"}, r.Category)
 				}
@@ -644,7 +684,18 @@ type product2 struct {
 
 type productsWithMaxPid struct {
 	maxPid v2.ProductID
-	p2sm   map[string][]product2 // key: product2.cpe
+	// assessment retained so emission can recover the full assessment
+	// (including the advisories slice that the assessmentKey collapses
+	// into an opaque string).
+	assessment assessment
+	p2sm       map[string][]product2 // key: product2.cpe
+}
+
+func compareAdvisory(a, b advisory) int {
+	if c := cmp.Compare(a.id, b.id); c != 0 {
+		return c
+	}
+	return cmp.Compare(a.date, b.date)
 }
 
 func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[v2.ProductID][]product, assm map[v2.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
@@ -657,8 +708,8 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 		}
 	}
 
-	// major -> assessment -> productWithMaxPid
-	apmm := make(map[string]map[assessment]productsWithMaxPid)
+	// major -> assessmentKey -> productsWithMaxPid (full assessment carried inside).
+	apmm := make(map[string]map[assessmentKey]productsWithMaxPid)
 	for pid, ps := range pm {
 		for _, p := range ps {
 			if p.name == "" {
@@ -667,17 +718,19 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 
 			apm, found := apmm[p.major]
 			if !found {
-				apm = map[assessment]productsWithMaxPid{}
+				apm = map[assessmentKey]productsWithMaxPid{}
 			}
 			assessment, found := assm[pid]
 			if !found {
 				return nil, nil, nil, errors.Errorf("no product_status entry for pid that appears in product_tree. cve: %s, product_id: %s", baseVulnerability.ID, pid)
 			}
 
-			pmax, found := apm[assessment]
+			key := assessment.key()
+			pmax, found := apm[key]
 			if !found {
 				pmax = productsWithMaxPid{
-					maxPid: pid,
+					maxPid:     pid,
+					assessment: assessment,
 					p2sm: map[string][]product2{
 						p.cpe: {{
 							name:            p.name,
@@ -709,7 +762,7 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 					}
 				}
 			}
-			apm[assessment] = pmax
+			apm[key] = pmax
 			apmm[p.major] = apm
 		}
 	}
@@ -721,7 +774,8 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 	for major, apm := range apmm {
 		var conds []conditionTypes.Condition
 		es := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major))
-		for assessment, pmax := range apm {
+		for _, pmax := range apm {
+			assessment := pmax.assessment
 			tag := calculateTag(pmax)
 			ss := []segmentTypes.Segment{{
 				Ecosystem: es,
@@ -769,13 +823,11 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 				Segments: ss,
 			})
 
-			a, err := buildAdvisory(assessment)
-			if err != nil {
-				return nil, nil, nil, errors.Wrap(err, "build advisory")
-			}
-			if a != nil {
+			// One Advisory entry per RHSA; same segments shared across them
+			// because they all attest to the same (env, pkg) fix combination.
+			for _, content := range buildAdvisories(assessment) {
 				as = append(as, advisoryTypes.Advisory{
-					Content: *a,
+					Content: content,
 					Segments: []segmentTypes.Segment{{
 						Ecosystem: es,
 						Tag:       tag,
@@ -969,19 +1021,19 @@ func buildVulnerability(baseVulnerability vulnerabilityContentTypes.Content, ass
 	return baseVulnerability, nil
 }
 
-func buildAdvisory(assessment assessment) (*advisoryContentTypes.Content, error) {
-	if assessment.advisory.id == "" {
-		return nil, nil
+func buildAdvisories(assessment assessment) []advisoryContentTypes.Content {
+	out := make([]advisoryContentTypes.Content, 0, len(assessment.advisories))
+	for _, ad := range assessment.advisories {
+		out = append(out, advisoryContentTypes.Content{
+			ID: advisoryContentTypes.AdvisoryID(ad.id),
+			References: []referenceTypes.Reference{{
+				Source: "secalert@redhat.com",
+				URL:    fmt.Sprintf("https://access.redhat.com/errata/%s", ad.id),
+			}},
+			Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, ad.date),
+		})
 	}
-	a := advisoryContentTypes.Content{
-		ID: advisoryContentTypes.AdvisoryID(assessment.advisory.id),
-		References: []referenceTypes.Reference{{
-			Source: "secalert@redhat.com",
-			URL:    fmt.Sprintf("https://access.redhat.com/errata/%s", assessment.advisory.id),
-		}},
-		Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, assessment.advisory.date),
-	}
-	return &a, nil
+	return out
 }
 
 func calculateTag(pmax productsWithMaxPid) segmentTypes.DetectionTag {
