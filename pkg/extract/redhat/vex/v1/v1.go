@@ -796,9 +796,7 @@ func buildDataComponents(doc v1.Document, baseVulnerability vulnerabilityContent
 			}
 			assessment, found := assm[pid]
 			if !found {
-				// FIXME: what to do?
-				slog.Warn("advisory/severity/status not found for pid", slog.String("product_id", string(pid)))
-				continue
+				return nil, nil, nil, errors.Errorf("no product_status entry for pid that appears in product_tree. cve: %s, product_id: %s", baseVulnerability.ID, pid)
 			}
 
 			pmax, found := apm[assessment]
