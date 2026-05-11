@@ -383,12 +383,20 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 							}
 						}
 					default:
-						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
+						// Skip every non-RPM PURL type we have explicitly
+						// considered. A brand-new type errors out so a human
+						// decides whether the new artifact class should be
+						// processed or just added to this skip list (i.e.
+						// forces a deliberate review, not silent data loss).
+						for _, s := range []string{
+							"pkg:cargo/", "pkg:gem/", "pkg:generic/", "pkg:golang/",
+							"pkg:koji/", "pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
+						} {
 							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
 								return nil, nil
 							}
 						}
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl prefix: %q", fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
