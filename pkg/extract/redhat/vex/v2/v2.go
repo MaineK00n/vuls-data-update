@@ -284,7 +284,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 					}
 				case "product_version":
 					if pih.PURL != "" {
-						v, err := parseRPMPurl(pih.PURL, trackingID)
+						v, err := parseRPMPurl(pih.PURL)
 						if err != nil {
 							return errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, branch.Product.ProductID)
 						}
@@ -344,7 +344,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 // Binary RPMs omit the arch qualifier entirely (only sources carry arch=src).
 // Returns (nil, nil) for non-RPM PURLs (oci, maven, generic, koji, npm) which
 // the VEX feed exposes but the RPM-based extractor does not handle.
-func parseRPMPurl(s, trackingID string) (*struct {
+func parseRPMPurl(s string) (*struct {
 	name, version, arch, modularitylabel string
 }, error) {
 	if !strings.HasPrefix(s, "pkg:rpm/") {
@@ -374,12 +374,6 @@ func parseRPMPurl(s, trackingID string) (*struct {
 	if rpmmod := quals["rpmmod"]; rpmmod != "" {
 		parts := strings.Split(rpmmod, ":")
 		if len(parts) < 2 {
-			// FIXME: vendor occasionally emits rpmmod without a stream component.
-			// https://issues.redhat.com/projects/SECDATA/issues/SECDATA-1206
-			if trackingID == "CVE-2024-6923" {
-				slog.Warn("skip product with malformed rpmmod", slog.String("tracking_id", trackingID), slog.String("purl", s))
-				return nil, nil
-			}
 			return nil, errors.Errorf("unexpected rpmmod format. expected: %q, actual: %q", "<module>:<stream>[:<version>:<context>]", rpmmod)
 		}
 		out.modularitylabel = fmt.Sprintf("%s:%s", parts[0], parts[1])
