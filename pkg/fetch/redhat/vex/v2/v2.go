@@ -106,26 +106,26 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX-Beta")
+	slog.Info("Fetch RedHat CSAF VEX v2")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	if err := options.checkArchiveLatest(client); err != nil {
 		return errors.Wrap(err, "check archive latest")
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX-Beta Archive")
+	slog.Info("Fetch RedHat CSAF VEX v2 Archive")
 	at, err := options.fetchArchive(client)
 	if err != nil {
 		return errors.Wrap(err, "fetch archive")
 	}
-	slog.Info("Fetched RedHat CSAF VEX-Beta Archive", slog.String("modified", at.Format(time.RFC3339)))
+	slog.Info("Fetched RedHat CSAF VEX v2 Archive", slog.String("modified", at.Format(time.RFC3339)))
 
-	slog.Info("Fetch RedHat CSAF VEX-Beta Changes")
+	slog.Info("Fetch RedHat CSAF VEX v2 Changes")
 	if err := options.fetchChanges(client, at); err != nil {
 		return errors.Wrap(err, "fetch changes")
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX-Beta Deletions")
+	slog.Info("Fetch RedHat CSAF VEX v2 Deletions")
 	if err := options.fetchDeletions(client, at); err != nil {
 		return errors.Wrap(err, "fetch deletions")
 	}
