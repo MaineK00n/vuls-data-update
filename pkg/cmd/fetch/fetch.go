@@ -4610,15 +4610,15 @@ func newCmdRedHatOVALV1() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv1",
-		Short: "Fetch RedHat Enterprise Linux OVALv1 data source",
+		Use:   "redhat-oval-v1",
+		Short: "Fetch RedHat Enterprise Linux OVAL v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-ovalv1
+			$ vuls-data-update fetch redhat-oval-v1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := redhatOVALv1.Fetch(redhatOVALv1.WithDir(options.dir), redhatOVALv1.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat ovalv1")
+				return errors.Wrap(err, "failed to fetch redhat oval v1")
 			}
 			return nil
 		},
@@ -4637,15 +4637,15 @@ func newCmdRedHatOVALV2() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv2",
-		Short: "Fetch RedHat Enterprise Linux OVALv2 data source",
+		Use:   "redhat-oval-v2",
+		Short: "Fetch RedHat Enterprise Linux OVAL v2 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-ovalv2
+			$ vuls-data-update fetch redhat-oval-v2
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := redhatOVALv2.Fetch(redhatOVALv2.WithDir(options.dir), redhatOVALv2.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat ovalv2")
+				return errors.Wrap(err, "failed to fetch redhat oval v2")
 			}
 			return nil
 		},
