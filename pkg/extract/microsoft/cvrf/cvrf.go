@@ -478,12 +478,20 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 	// but documented elsewhere as affected. Build Content from CVE-level data
 	// only — per-product fields (severity, impact, mitigations, workarounds)
 	// are unknown for the missing product since Microsoft did not publish them.
-	// appendOrMergeSegment handles both cases:
-	//   - same Content as an existing vuln → merges segment into that record
-	//   - different Content (existing vulns carry per-product severity), or
-	//     len(vulns) == 0 → appends a fresh vuln entry
+	// Skip when an existing vuln already carries a segment for the same tag —
+	// that means CVRF now lists the product (e.g. after re-publication) and we
+	// must defer to its data to avoid emitting a duplicate vuln entry.
+	// appendOrMergeSegment otherwise:
+	//   - merges into an existing vuln with matching Content (rare), or
+	//   - appends a fresh vuln entry — including the len(vulns) == 0 case.
 	for _, mp := range missingProductOverrides[v.CVE] {
 		if isCBLMarinerOrAzureLinux(mp.Product) {
+			continue
+		}
+		tag := segmentTypes.DetectionTag(mp.Product)
+		if slices.ContainsFunc(vulns, func(it vulnerabilityTypes.Vulnerability) bool {
+			return slices.ContainsFunc(it.Segments, func(s segmentTypes.Segment) bool { return s.Tag == tag })
+		}) {
 			continue
 		}
 		vc := vulnerabilityContentTypes.Content{
@@ -498,7 +506,7 @@ func buildVulnerabilities(v cvrf.Vulnerability, c cvrf.CVRF, products map[string
 		vulns = appendOrMergeSegment(vulns,
 			vulnerabilityTypes.Vulnerability{
 				Content:  vc,
-				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(mp.Product)}},
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: tag}},
 			},
 			func(item vulnerabilityTypes.Vulnerability) int {
 				return vulnerabilityContentTypes.Compare(item.Content, vc)
@@ -576,8 +584,16 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 	// but documented elsewhere as affected. Build Content from CVE-level data
 	// only — per-product fields (severity, impact, mitigations, workarounds)
 	// are unknown for the missing product since Microsoft did not publish them.
+	// Skip when an existing advisory already carries a segment for the same
+	// tag — CVRF now lists the product and we defer to its data.
 	for _, mp := range missingProductOverrides[v.CVE] {
 		if isCBLMarinerOrAzureLinux(mp.Product) {
+			continue
+		}
+		tag := segmentTypes.DetectionTag(mp.Product)
+		if slices.ContainsFunc(advisories, func(it advisoryTypes.Advisory) bool {
+			return slices.ContainsFunc(it.Segments, func(s segmentTypes.Segment) bool { return s.Tag == tag })
+		}) {
 			continue
 		}
 		ac := advisoryContentTypes.Content{
@@ -592,7 +608,7 @@ func buildAdvisories(v cvrf.Vulnerability, c cvrf.CVRF, products map[string]stri
 		advisories = appendOrMergeSegment(advisories,
 			advisoryTypes.Advisory{
 				Content:  ac,
-				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: segmentTypes.DetectionTag(mp.Product)}},
+				Segments: []segmentTypes.Segment{{Ecosystem: ecosystemTypes.EcosystemTypeMicrosoft, Tag: tag}},
 			},
 			func(item advisoryTypes.Advisory) int {
 				return advisoryContentTypes.Compare(item.Content, ac)
@@ -790,11 +806,16 @@ func buildDetections(v cvrf.Vulnerability, products map[string]string) (map[ecos
 
 	// Apply missing-product overrides: products Microsoft omitted from CVRF
 	// for this advisory but documented elsewhere as affected. Synthesise a
-	// FixedBuild criterion so detection still fires. appendConditions
-	// deduplicates against equal criterions, so this is idempotent if
-	// Microsoft later re-publishes the CVRF with the product included.
+	// FixedBuild criterion so detection still fires. Skip when an existing
+	// condition already targets the same tag — that means CVRF now lists the
+	// product (e.g. after re-publication) and we must defer to its data to
+	// avoid emitting a stale FixedBuild side-by-side with the canonical one.
 	for _, mp := range missingProductOverrides[v.CVE] {
 		tag := segmentTypes.DetectionTag(mp.Product)
+		if slices.ContainsFunc(conditionsByEcosystem[ecosystemTypes.EcosystemTypeMicrosoft],
+			func(c conditionTypes.Condition) bool { return c.Tag == tag }) {
+			continue
+		}
 		criterionProductName := microsoftutil.NormalizeProductName(mp.Product)
 		fixedBuildCriterion, err := buildFixedBuildCriterion(v.CVE, criterionProductName, mp.FixedBuild)
 		if err != nil {
