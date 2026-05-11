@@ -450,6 +450,37 @@ func TestDeriveCrossTrackSupersedes(t *testing.T) {
 			},
 		},
 		{
+			name: "old Month, YYYY with non-standard whitespace: skipped, no cross-track edges (regex is strict by design — see msuc.go)",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-So", Title: "April,  2017 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)"},
+					},
+				},
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "April,   2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-So", Title: "April,  2017 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)"},
+					},
+				},
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "April,   2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)"},
+					},
+				},
+			},
+		},
+		{
 			name: "old and modern titles share (year, month, product) group across formats",
 			args: args{kbs: []microsoftkbTypes.KB{
 				{
