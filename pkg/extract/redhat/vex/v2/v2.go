@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
-	"unicode"
 
 	"github.com/package-url/packageurl-go"
 	"github.com/pkg/errors"
@@ -230,347 +229,207 @@ type status struct {
 	affected_status string
 }
 
+// walkProductTree exploits the VEX-GA flat product tree:
+//
+//	vendor
+//	 ├── product_name      (CPE, e.g. cpe:/a:redhat:enterprise_linux:9::appstream)
+//	 ├── product_name      ...
+//	 ├── product_version   (PURL, e.g. pkg:rpm/redhat/foo@1.2-3.el9?epoch=0)
+//	 └── ...
+//	relationships: default_component_of joins product_name (env) and product_version (pkg)
+//
+// Reference: https://redhatproductsecurity.github.io/security-data-guidelines/vex-ga-details/
 func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]string) (map[v2.ProductID][]product, error) {
-	var f func(m map[v2.ProductID]v2.FullProductName, branch v2.Branch) error
-	f = func(m map[v2.ProductID]v2.FullProductName, branch v2.Branch) error {
-		for _, b := range branch.Branches {
-			if err := f(m, b); err != nil {
-				return errors.Wrap(err, "walk product_tree")
+	type nameInfo struct {
+		cpe   string
+		major string
+	}
+	type versionInfo struct {
+		name            string
+		version         string
+		arch            string
+		modularitylabel string
+	}
+
+	names := make(map[v2.ProductID]nameInfo)
+	versions := make(map[v2.ProductID]versionInfo)
+
+	for _, root := range pt.Branches {
+		if root.Category != "vendor" {
+			continue
+		}
+		for _, b := range root.Branches {
+			if b.Product == nil {
+				return nil, errors.Errorf("branch product is nil. tracking_id: %q", trackingID)
+			}
+			pih := b.Product.ProductIdentificationHelper
+			if pih == nil {
+				continue
+			}
+			if pih.Hashes != nil || pih.ModuleNumbers != nil || pih.SBOMURLs != nil || pih.SerialNumbers != nil || pih.SKUs != nil || pih.XGenericURIs != nil {
+				return nil, errors.Errorf("unexpected product identification helper method. tracking_id: %q, product_id: %q", trackingID, b.Product.ProductID)
+			}
+			switch b.Category {
+			case "product_name":
+				if pih.CPE == "" {
+					continue
+				}
+				names[b.Product.ProductID] = nameInfo{
+					cpe:   pih.CPE,
+					major: majorFromCPE(pih.CPE),
+				}
+			case "product_version":
+				if pih.PURL == "" {
+					continue
+				}
+				v, err := parseRPMPurl(pih.PURL, trackingID)
+				if err != nil {
+					return nil, errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, b.Product.ProductID)
+				}
+				if v == nil {
+					continue
+				}
+				versions[b.Product.ProductID] = *v
+			default:
+				return nil, errors.Errorf("unexpected branch category. tracking_id: %q, expected: %q, actual: %q", trackingID, []string{"product_name", "product_version"}, b.Category)
 			}
 		}
-		switch branch.Category {
-		case "vendor", "product_family", "architecture":
-			return nil
-		case "product_name", "product_version":
-			if branch.Product == nil {
-				return errors.New("branch product is nil")
-			}
-			m[branch.Product.ProductID] = *branch.Product
-			return nil
-		default:
-			return errors.Errorf("unexpected branch category. expected: %q, actual: %q", []string{"vendor", "product_family", "product_name", "product_version", "architecture"}, branch.Category)
-		}
-	}
-
-	fpnm := make(map[v2.ProductID]v2.FullProductName)
-	for _, b := range pt.Branches {
-		if err := f(fpnm, b); err != nil {
-			return nil, errors.Wrap(err, "walk product_tree")
-		}
-	}
-
-	rm := make(map[v2.ProductID][]v2.ProductID)
-	for _, r := range pt.Relationships {
-		rm[r.FullProductName.ProductID] = append(rm[r.FullProductName.ProductID], r.ProductReference, r.RelatesToProductReference)
-	}
-
-	var f2 func(tree map[v2.ProductID][]v2.ProductID, node v2.ProductID) []v2.ProductID
-	f2 = func(tree map[v2.ProductID][]v2.ProductID, node v2.ProductID) []v2.ProductID {
-		if _, ok := tree[node]; !ok {
-			return []v2.ProductID{node}
-		}
-
-		var leaves []v2.ProductID
-		for _, n := range tree[node] {
-			leaves = append(leaves, f2(tree, n)...)
-		}
-		return leaves
 	}
 
 	pm := make(map[v2.ProductID][]product)
-	for root := range func() map[v2.ProductID]struct{} {
-		rs := make(map[v2.ProductID]struct{}, len(rm))
-		for id := range rm {
-			rs[id] = struct{}{}
+	for _, rel := range pt.Relationships {
+		if rel.Category != "default_component_of" {
+			return nil, errors.Errorf("unexpected relationship category. tracking_id: %q, expected: %q, actual: %q", trackingID, "default_component_of", rel.Category)
 		}
-		for _, r := range pt.Relationships {
-			delete(rs, r.RelatesToProductReference)
-		}
-		return rs
-	}() {
-		p, err := func() (*product, error) {
-			var p product
-			for _, id := range f2(rm, root) {
-				fpn, ok := fpnm[id]
-				if !ok {
-					return nil, errors.Errorf("%q makes up %q cannot be found within branches", id, root)
-				}
-
-				if fpn.ProductIdentificationHelper == nil {
-					continue
-				}
-
-				if fpn.ProductIdentificationHelper.Hashes != nil || fpn.ProductIdentificationHelper.ModuleNumbers != nil || fpn.ProductIdentificationHelper.SBOMURLs != nil || fpn.ProductIdentificationHelper.SerialNumbers != nil || fpn.ProductIdentificationHelper.SKUs != nil || fpn.ProductIdentificationHelper.XGenericURIs != nil {
-					return nil, errors.New("unexpected product identification helper method")
-				}
-
-				if fpn.ProductIdentificationHelper.CPE != "" {
-					p.cpe = fpn.ProductIdentificationHelper.CPE
-					p.repositories = c2r[fpn.ProductIdentificationHelper.CPE]
-				}
-
-				if fpn.ProductIdentificationHelper.PURL != "" {
-					switch {
-					case strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, "pkg:rpm/"):
-						instance, err := packageurl.FromString(fpn.ProductIdentificationHelper.PURL)
-						if err != nil {
-							return nil, errors.Wrapf(err, "parse %q", fpn.ProductIdentificationHelper.PURL)
-						}
-						m := instance.Qualifiers.Map()
-
-						switch rpmmod := m["rpmmod"]; rpmmod {
-						case "":
-							switch instance.Version {
-							case "":
-								p.name = instance.Name
-
-								// source rpm: 'arch=src'
-								// binary rpm: ''
-								p.arch = m["arch"]
-							default:
-								p.name = instance.Name
-								p.version = func() string {
-									if n, ok := m["epoch"]; ok {
-										return fmt.Sprintf("%s:%s", n, instance.Version)
-									}
-									return fmt.Sprintf("0:%s", instance.Version)
-								}()
-
-								// source rpm: 'arch=src'
-								// binary rpm: 'arch=<arch>'
-								switch m["arch"] {
-								case "":
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)", fpn.ProductIdentificationHelper.PURL)
-								default:
-									p.arch = m["arch"]
-								}
-							}
-						default:
-							switch instance.Version {
-							case "":
-								ss := strings.Split(rpmmod, ":")
-								if len(ss) < 2 {
-									// FIXME: Some vendor data has rpmmod with only module name (no stream). This should be an error, but until the vendor corrects the data, skip this product with a warning.
-									// https://issues.redhat.com/projects/SECDATA/issues/SECDATA-1206
-									switch trackingID {
-									case "CVE-2024-6923":
-										slog.Warn("skip product with unexpected rpmmod format", slog.String("tracking_id", trackingID), slog.String("expected", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>"), slog.String("purl", fpn.ProductIdentificationHelper.PURL))
-										return nil, nil
-									default:
-										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
-									}
-								}
-								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
-								p.name = instance.Name
-
-								// source rpm: 'arch=src'
-								// binary rpm: ''
-								p.arch = m["arch"]
-							default:
-								ss := strings.Split(rpmmod, ":")
-								if len(ss) < 4 {
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
-								}
-								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
-								p.name = instance.Name
-								p.version = func() string {
-									if n, ok := m["epoch"]; ok {
-										return fmt.Sprintf("%s:%s", n, instance.Version)
-									}
-									return fmt.Sprintf("0:%s", instance.Version)
-								}()
-
-								// source rpm: 'arch=src'
-								// binary rpm: 'arch=<arch>'
-								switch m["arch"] {
-								case "":
-									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>@<version>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>:<version>:<context>(:<arch>)>", fpn.ProductIdentificationHelper.PURL)
-								default:
-									p.arch = m["arch"]
-								}
-							}
-						}
-					default:
-						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
-							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
-								return nil, nil
-							}
-						}
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
-					}
-				}
-			}
-			return &p, nil
-		}()
-		if err != nil {
-			return nil, errors.Wrapf(err, "combine %q", root)
-		}
-		if p == nil {
-			pm[root] = nil
+		ni, ok := names[rel.RelatesToProductReference]
+		if !ok || ni.major == "" {
 			continue
 		}
-
-		majors, err := func() ([]string, error) {
-			var vs []string
-			for _, r := range p.repositories {
-				switch {
-				case strings.Contains(r, "rhel-4-"):
-					if !slices.Contains(vs, "4") {
-						vs = append(vs, "4")
-					}
-				case strings.Contains(r, "rhel-5-"),
-					strings.Contains(r, "rhel-server-5-"):
-					if !slices.Contains(vs, "5") {
-						vs = append(vs, "5")
-					}
-				case strings.Contains(r, "rhel-6-"),
-					strings.Contains(r, "rhel-server-6-"),
-					strings.Contains(r, "rhel-hpc-node-6-"),
-					strings.Contains(r, "rhel-server-ost-6-"),
-					strings.Contains(r, "rhel-server-dts2-6-"), strings.Contains(r, "rhel-workstation-dts2-6-"),
-					strings.Contains(r, "rhel-server-ose-infra-6-"), strings.Contains(r, "rhel-server-ose-jbosseap-6-"), strings.Contains(r, "rhel-server-ose-node-6-"), strings.Contains(r, "rhel-server-ose-rhc-6-"),
-					strings.Contains(r, "rhel-server-ose-1.2-infra-6-"), strings.Contains(r, "rhel-server-ose-1.2-jbosseap-6-"), strings.Contains(r, "rhel-server-ose-1.2-node-6-"), strings.Contains(r, "rhel-server-ose-1.2-rhc-6-"),
-					strings.Contains(r, "rhel-server-rhscl-6-"), strings.Contains(r, "rhel-workstation-rhscl-6-"),
-					strings.Contains(r, "rhel-x86_64-6-"):
-					if !slices.Contains(vs, "6") {
-						vs = append(vs, "6")
-					}
-				case strings.Contains(r, "rhel-7-"),
-					strings.Contains(r, "rhel-x86_64-server-7-"),
-					strings.Contains(r, "rhel-server-rhscl-7-"), strings.Contains(r, "rhel-workstation-rhscl-7-"):
-					if !slices.Contains(vs, "7") {
-						vs = append(vs, "7")
-					}
-				case strings.Contains(r, "rhel-8-"):
-					if !slices.Contains(vs, "8") {
-						vs = append(vs, "8")
-					}
-				case strings.Contains(r, "rhel-9-"):
-					if !slices.Contains(vs, "9") {
-						vs = append(vs, "9")
-					}
-				case strings.Contains(r, "rhel-10-"):
-					if !slices.Contains(vs, "10") {
-						vs = append(vs, "10")
-					}
-				default:
-				}
-			}
-
-			switch len(vs) {
-			case 0:
-				switch {
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:2.1"):
-					return []string{"2.1"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:3"),
-					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_els:3"),
-					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_extras:3"),
-					strings.HasSuffix(p.cpe, "::el3"):
-					return []string{"3"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:4"),
-					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_extras:4"),
-					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_extras_sap:4"),
-					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_cluster:4"),
-					strings.HasSuffix(p.cpe, ":el4"), strings.HasSuffix(p.cpe, "::el4"):
-					return []string{"4"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:5"),
-					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_eus:5"),
-					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_mission_critical:5"),
-					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_cluster_storage:5"),
-					strings.HasSuffix(p.cpe, "::el5"):
-					return []string{"5"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:6"),
-					strings.HasPrefix(p.cpe, "cpe:/o:redhat:rhel_eus:6"),
-					strings.HasSuffix(p.cpe, "::el6"):
-					return []string{"6"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:7"),
-					strings.HasPrefix(p.cpe, "cpe:/a:redhat:rhel_atomic:7"),
-					strings.HasSuffix(p.cpe, "::el7"):
-					return []string{"7"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:8"),
-					strings.HasSuffix(p.cpe, "::el8"):
-					return []string{"8"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:9"),
-					strings.HasSuffix(p.cpe, "::el9"):
-					return []string{"9"}, nil
-				case strings.HasPrefix(p.cpe, "cpe:/o:redhat:enterprise_linux:10"),
-					strings.HasSuffix(p.cpe, "::el10"):
-					return []string{"10"}, nil
-				default:
-					switch {
-					case strings.HasPrefix(string(root), "3AS-"), strings.HasPrefix(string(root), "3ES-"), strings.HasPrefix(string(root), "3WS-"):
-						return []string{"3"}, nil
-					case strings.HasPrefix(string(root), "4AS-"), strings.HasPrefix(string(root), "4ES-"), strings.HasPrefix(string(root), "4WS-"):
-						return []string{"4"}, nil
-					case strings.HasPrefix(string(root), "5Server-"):
-						return []string{"5"}, nil
-					default:
-						if p.version != "" {
-							if p.modularitylabel != "" {
-								if _, rhs, ok := strings.Cut(p.version, ".module+el"); ok {
-									var sb strings.Builder
-									for _, r := range rhs {
-										if !unicode.IsDigit(r) {
-											break
-										}
-										if _, err := sb.WriteRune(r); err != nil {
-											return nil, errors.Wrapf(err, "write rune %q", r)
-										}
-									}
-									if sb.Len() < 1 {
-										return nil, errors.Errorf("unexpected version format. expected: %q, actual: %q", ".*\\.module+el<major>.*", p.version)
-									}
-									return []string{sb.String()}, nil
-								}
-							} else {
-								if _, rhs, ok := strings.Cut(p.version, ".el"); ok {
-									var sb strings.Builder
-									for _, r := range rhs {
-										if !unicode.IsDigit(r) {
-											break
-										}
-										if _, err := sb.WriteRune(r); err != nil {
-											return nil, errors.Wrapf(err, "write rune %q", r)
-										}
-									}
-									if sb.Len() < 1 {
-										return nil, errors.Errorf("unexpected version format. expected: %q, actual: %q", ".*\\.el<major>.*", p.version)
-									}
-									return []string{sb.String()}, nil
-								}
-								if _, rhs, ok := strings.Cut(p.version, ".RHEL"); ok {
-									var sb strings.Builder
-									for _, r := range rhs {
-										if !unicode.IsDigit(r) {
-											break
-										}
-										if _, err := sb.WriteRune(r); err != nil {
-											return nil, errors.Wrapf(err, "write rune %q", r)
-										}
-									}
-									if sb.Len() < 1 {
-										return nil, errors.Errorf("unexpected version format. expected: %q, actual: %q", ".*\\.RHEL<major>.*", p.version)
-									}
-									return []string{sb.String()}, nil
-								}
-							}
-						}
-						return []string{}, nil
-					}
-				}
-			default:
-				return vs, nil
-			}
-		}()
-		if err != nil {
-			return nil, errors.Wrapf(err, "%q detect major versions", root)
+		vi, ok := versions[rel.ProductReference]
+		if !ok {
+			continue
 		}
-		for _, v := range majors {
-			p.major = v
-			pm[root] = append(pm[root], *p)
-		}
+		pm[rel.FullProductName.ProductID] = append(pm[rel.FullProductName.ProductID], product{
+			major:           ni.major,
+			name:            vi.name,
+			version:         vi.version,
+			arch:            vi.arch,
+			modularitylabel: vi.modularitylabel,
+			cpe:             ni.cpe,
+			repositories:    c2r[ni.cpe],
+		})
 	}
 	return pm, nil
+}
+
+// parseRPMPurl decodes a Red Hat RPM PURL. The VEX-GA canonical form is
+//
+//	pkg:rpm/redhat/<name>[@<version>]?[arch=src&][epoch=<n>][&rpmmod=<module>:<stream>[:<version>:<context>]]
+//
+// Binary RPMs omit the arch qualifier entirely (only sources carry arch=src).
+// Returns (nil, nil) for non-RPM PURLs (oci, maven, generic, koji, npm) which
+// the VEX feed exposes but the RPM-based extractor does not handle.
+func parseRPMPurl(s, trackingID string) (*struct {
+	name, version, arch, modularitylabel string
+}, error) {
+	if !strings.HasPrefix(s, "pkg:rpm/") {
+		for _, prefix := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
+			if strings.HasPrefix(s, prefix) {
+				return nil, nil
+			}
+		}
+		return nil, errors.Errorf("unexpected purl prefix: %q", s)
+	}
+	instance, err := packageurl.FromString(s)
+	if err != nil {
+		return nil, errors.Wrapf(err, "parse %q", s)
+	}
+	quals := instance.Qualifiers.Map()
+	out := &struct{ name, version, arch, modularitylabel string }{
+		name: instance.Name,
+		arch: quals["arch"],
+	}
+	if instance.Version != "" {
+		epoch, ok := quals["epoch"]
+		if !ok {
+			epoch = "0"
+		}
+		out.version = fmt.Sprintf("%s:%s", epoch, instance.Version)
+	}
+	if rpmmod := quals["rpmmod"]; rpmmod != "" {
+		parts := strings.Split(rpmmod, ":")
+		if len(parts) < 2 {
+			// FIXME: vendor occasionally emits rpmmod without a stream component.
+			// https://issues.redhat.com/projects/SECDATA/issues/SECDATA-1206
+			if trackingID == "CVE-2024-6923" {
+				slog.Warn("skip product with malformed rpmmod", slog.String("tracking_id", trackingID), slog.String("purl", s))
+				return nil, nil
+			}
+			return nil, errors.Errorf("unexpected rpmmod format. expected: %q, actual: %q", "<module>:<stream>[:<version>:<context>]", rpmmod)
+		}
+		out.modularitylabel = fmt.Sprintf("%s:%s", parts[0], parts[1])
+	}
+	return out, nil
+}
+
+// majorFromCPE returns the RHEL major version implied by a VEX-GA CPE, or "" when
+// the CPE is not RHEL-related. The channel suffix `::el<N>` takes priority over the
+// product version (so e.g. cpe:/a:redhat:rhel_dotnet:6.0::el7 → "7", not "6").
+func majorFromCPE(cpe string) string {
+	for _, n := range []string{"10", "9", "8", "7", "6", "5", "4", "3"} {
+		if strings.HasSuffix(cpe, "::el"+n) {
+			return n
+		}
+	}
+	const op, ap = "cpe:/o:redhat:", "cpe:/a:redhat:"
+	var rest string
+	switch {
+	case strings.HasPrefix(cpe, op):
+		rest = cpe[len(op):]
+	case strings.HasPrefix(cpe, ap):
+		rest = cpe[len(ap):]
+	default:
+		return ""
+	}
+	product, version, ok := strings.Cut(rest, ":")
+	if !ok || !isRHELProduct(product) {
+		return ""
+	}
+	if idx := strings.Index(version, "::"); idx >= 0 {
+		version = version[:idx]
+	}
+	if version == "" {
+		return ""
+	}
+	// RHEL 2.1 is the only release with a non-integer major version.
+	if product == "enterprise_linux" && strings.HasPrefix(version, "2.1") {
+		return "2.1"
+	}
+	major, _, _ := strings.Cut(version, ".")
+	for _, r := range major {
+		if r < '0' || r > '9' {
+			return ""
+		}
+	}
+	if major == "" {
+		return ""
+	}
+	return major
+}
+
+func isRHELProduct(p string) bool {
+	switch p {
+	case "enterprise_linux", "enterprise_linux_eus",
+		"rhel_eus", "rhel_aus", "rhel_els", "rhel_e4s", "rhel_tus",
+		"rhel_extras", "rhel_extras_oracle_java", "rhel_extras_sap", "rhel_extras_rt", "rhel_extras_sap_hana",
+		"rhel_software_collections",
+		"rhel_atomic",
+		"rhel_dotnet", "rhel_dotnet_eus",
+		"rhel_cluster", "rhel_cluster_storage",
+		"rhel_mission_critical":
+		return true
+	}
+	return false
 }
 
 func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.ProductID]assessment, vulnerabilityContentTypes.Content, error) {
@@ -941,7 +800,13 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		if as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }); len(as) > 0 {
+		// VEX-GA binary RPM PURLs do not carry an arch qualifier, so archs
+		// may contain "". Treat that as "applies to all archs" (nil).
+		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
+			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
+			if len(as) == 0 {
+				as = nil
+			}
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
