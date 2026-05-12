@@ -140,7 +140,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-		ID:   sourceTypes.RedHatVEX,
+		ID:   sourceTypes.RedHatVEXv1,
 		Name: new("RedHat Enterprise Linux CSAF VEX"),
 		Raw: func() []repositoryTypes.Repository {
 			var rs []repositoryTypes.Repository
@@ -191,7 +191,7 @@ func (e extractor) extract(vuln v1.VEX, c2r map[string][]string) (dataTypes.Data
 		Vulnerabilities: vs,
 		Detections:      ds,
 		DataSource: sourceTypes.Source{
-			ID:   sourceTypes.RedHatVEX,
+			ID:   sourceTypes.RedHatVEXv1,
 			Raws: e.r.Paths(),
 		},
 	}, nil
