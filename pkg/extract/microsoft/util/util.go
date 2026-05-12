@@ -35,6 +35,13 @@ var canonicalProductNames = map[string]string{
 	"Microsoft Windows 2000 Server":                               "Windows 2000 Server",
 	"Microsoft SQL Server 2000 Service Pack 4":                    "SQL Server 2000 Service Pack 4",
 	"Microsoft SQL Server 2000 Reporting Services Service Pack 2": "SQL Server 2000 Reporting Services Service Pack 2",
+
+	// MSUC title product name variants. Microsoft used "<OS> x64 Edition" for
+	// the Preview Rollup track in a small number of legacy months (Oct 2016,
+	// Mar 2017, Apr 2017) but "<OS> for x64-based Systems" elsewhere; this
+	// alias lets deriveCrossTrackSupersedes pair PV ↔ SO/SM updates that
+	// would otherwise land in separate (year, month, product) groups.
+	"Windows Server 2008 R2 x64 Edition": "Windows Server 2008 R2 for x64-based Systems",
 }
 
 var productNameReplacer = strings.NewReplacer(
