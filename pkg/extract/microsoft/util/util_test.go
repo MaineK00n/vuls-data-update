@@ -147,6 +147,11 @@ func TestNormalizeProductName(t *testing.T) {
 			want: "SQL Server 2000 Reporting Services Service Pack 2",
 		},
 		{
+			name: "MSUC: Windows Server 2008 R2 x64 Edition canonicalized",
+			args: args{s: "Windows Server 2008 R2 x64 Edition"},
+			want: "Windows Server 2008 R2 for x64-based Systems",
+		},
+		{
 			name: "Outlook for iOS canonicalized",
 			args: args{s: "Outlook for iOS"},
 			want: "Microsoft Outlook for iOS",
