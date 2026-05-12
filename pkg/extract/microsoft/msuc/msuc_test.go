@@ -1,6 +1,7 @@
 package msuc_test
 
 import (
+	"log/slog"
 	"path/filepath"
 	"testing"
 
@@ -53,6 +54,15 @@ func TestExtract(t *testing.T) {
 }
 
 func TestDeriveCrossTrackSupersedes(t *testing.T) {
+	// Silence parseMonthlyTrackTitle's slog.Warn during the "invalid month
+	// digits" negative case. The warning is intentional at runtime (so an
+	// operator notices if Microsoft ever publishes a malformed title), but
+	// the test only asserts on edge synthesis behaviour, so the log line
+	// is pure noise here.
+	prev := slog.Default()
+	slog.SetDefault(slog.New(slog.DiscardHandler))
+	t.Cleanup(func() { slog.SetDefault(prev) })
+
 	type args struct {
 		kbs []microsoftkbTypes.KB
 	}

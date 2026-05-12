@@ -412,7 +412,7 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 //
 // Whitespace is intentionally strict (a single ASCII space at every
 // boundary). In a snapshot of the production raw MSUC corpus taken
-// 2026-05 (282 old-format titles), every title used exactly one space
+// 2026-05 (150 old-format titles), every title used exactly one space
 // at each separator, with zero observed variants (no double-space /
 // no missing space / no tab). A title that ever fails this strict
 // shape will be silently skipped by parseMonthlyTrackTitle and
