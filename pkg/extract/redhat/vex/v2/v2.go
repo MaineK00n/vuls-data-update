@@ -379,8 +379,10 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 //	pkg:rpm/redhat/<name>[@<version>]?[arch=src&][epoch=<n>][&rpmmod=<module>:<stream>[:<version>:<context>]]
 //
 // Binary RPMs omit the arch qualifier entirely (only sources carry arch=src).
-// Returns (nil, nil) for non-RPM PURLs (oci, maven, generic, koji, npm) which
-// the VEX feed exposes but the RPM-based extractor does not handle.
+// Returns (nil, nil) for the non-RPM PURL types observed in the VEX-GA feed
+// (cargo, gem, generic, golang, maven, npm, oci, pypi) which the RPM-based
+// extractor does not handle. Any other prefix is an error so a new artifact
+// class triggers a deliberate decision instead of silent data loss.
 func parseRPMPurl(s string) (*struct {
 	name, version, arch, modularitylabel string
 }, error) {

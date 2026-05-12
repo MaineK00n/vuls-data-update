@@ -138,8 +138,12 @@ const (
 	RedHatOSV                  SourceID = "redhat-osv"
 	RedHatOVALv1               SourceID = "redhat-ovalv1"
 	RedHatOVALv2               SourceID = "redhat-ovalv2"
-	RedHatVEXv1                SourceID = "redhat-vex"
-	RedHatVEXv2                SourceID = "redhat-vex-v2"
+	// RedHatVEXv1's string value is intentionally the legacy "redhat-vex"
+	// (not "redhat-vex-v1") so previously-built databases keyed on this
+	// ID remain consistent with v1 output going forward; the Go name
+	// pairs with RedHatVEXv2 for clarity.
+	RedHatVEXv1 SourceID = "redhat-vex"
+	RedHatVEXv2 SourceID = "redhat-vex-v2"
 	RockyErrata                SourceID = "rocky-errata"
 	RockyOSV                   SourceID = "rocky-osv"
 	RubygemsDB                 SourceID = "rubygems-db"
