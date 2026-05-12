@@ -411,11 +411,12 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 //   m[4] = product                       -- same as modern
 //
 // Whitespace is intentionally strict (a single ASCII space at every
-// boundary). All 282 old-format titles in the production raw MSUC corpus
-// use exactly one space at each separator, with zero observed variants
-// (no double-space / no missing space / no tab). A title that ever fails
-// this strict shape will be silently skipped by parseMonthlyTrackTitle
-// and surface as a visible drop in synthesised cross-track edges, at
+// boundary). In a snapshot of the production raw MSUC corpus taken
+// 2026-05 (282 old-format titles), every title used exactly one space
+// at each separator, with zero observed variants (no double-space /
+// no missing space / no tab). A title that ever fails this strict
+// shape will be silently skipped by parseMonthlyTrackTitle and
+// surface as a visible drop in synthesised cross-track edges, at
 // which point the regex can be loosened with empirical justification.
 var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|May|June|July|August|September|October|November|December), (\d{4}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
 
