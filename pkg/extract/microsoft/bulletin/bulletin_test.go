@@ -199,3 +199,52 @@ func TestIECumChainEdges(t *testing.T) {
 		})
 	}
 }
+
+// TestBulletinArchiveSupersedes verifies known edges in the static
+// bulletinArchiveSupersedes map. The map captures supersedes that the frozen
+// BulletinSearch.xlsx omits but the Microsoft Learn bulletin archive records,
+// so any regression in its structure should fail this test.
+func TestBulletinArchiveSupersedes(t *testing.T) {
+	tests := []struct {
+		name    string
+		oldKBID string
+		newKBID string
+	}{
+		{
+			name:    "MS13-054 Lync 2010 Attendee user install: 2827751 → 2843162 (Excel attributed Lync admin KB instead)",
+			oldKBID: "2827751",
+			newKBID: "2843162",
+		},
+		{
+			name:    "MS13-054 Lync 2010 Attendee admin install: 2827752 → 2843163",
+			oldKBID: "2827752",
+			newKBID: "2843163",
+		},
+		{
+			name:    "MS14-029 IE Win Server: 2936068 → 2953522 (Excel missed)",
+			oldKBID: "2936068",
+			newKBID: "2953522",
+		},
+		{
+			name:    "MS14-035 IE Cum May → Jun via 2957689 → 2962872 (chain continuation Excel split)",
+			oldKBID: "2957689",
+			newKBID: "2962872",
+		},
+		{
+			name:    "MS17-006 IE 11 Win 7 SP1: 3197655 → 3203621 (cross-month Excel gap)",
+			oldKBID: "3197655",
+			newKBID: "3203621",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			news, ok := bulletin.BulletinArchiveSupersedes[tt.oldKBID]
+			if !ok {
+				t.Fatalf("bulletinArchiveSupersedes has no entry for KB%s", tt.oldKBID)
+			}
+			if !slices.Contains(news, tt.newKBID) {
+				t.Errorf("bulletinArchiveSupersedes[%q] = %v, want to contain %q", tt.oldKBID, news, tt.newKBID)
+			}
+		})
+	}
+}
