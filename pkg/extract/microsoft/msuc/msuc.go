@@ -389,8 +389,8 @@ func normalizeNA(s string) string {
 	return s
 }
 
-// monthlyTrackTitleRE matches the title of a monthly Quality Update / Rollup,
-// capturing year, month, track, and product name.
+// monthlyTrackTitleRE matches the modern title of a monthly Quality Update /
+// Rollup ("YYYY-MM ..."), capturing year, month, track, and product name.
 //
 // Microsoft releases parallel-track updates per product per month:
 //   - "Security Only Quality Update"        (narrowest)
@@ -399,6 +399,76 @@ func normalizeNA(s string) string {
 //   - "Cumulative Update"                   (Win10/11/Server 2016+)
 //   - "Cumulative Update Preview"           (Win10/11/Server 2016+ preview track)
 var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
+
+// monthlyTrackTitleOldRE matches the older title format used by 2016 - mid 2017
+// monthly updates ("Month, YYYY ...") for Win7 / Server 2008 R2 / Server 2012 /
+// Server 2012 R2 / Win 8.1 era KBs. The month appears as an English name
+// BEFORE the year (e.g. "April, 2017 ..."), so the capture order differs from
+// monthlyTrackTitleRE:
+//   m[1] = month name (e.g. "April")     -- vs. m[1] = year ("2017") in modern
+//   m[2] = year       (e.g. "2017")      -- vs. m[2] = month ("04") in modern
+//   m[3] = track                         -- same as modern
+//   m[4] = product                       -- same as modern
+//
+// Whitespace is intentionally strict (a single ASCII space at every
+// boundary). In a snapshot of the production raw MSUC corpus taken
+// 2026-05 (150 old-format titles), every title used exactly one space
+// at each separator, with zero observed variants (no double-space /
+// no missing space / no tab). A title that ever fails this strict
+// shape will be silently skipped by parseMonthlyTrackTitle and
+// surface as a visible drop in synthesised cross-track edges, at
+// which point the regex can be loosened with empirical justification.
+var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|May|June|July|August|September|October|November|December), (\d{4}) (Security Only Quality Update|Security Monthly Quality Rollup|Preview of Monthly Quality Rollup|Cumulative Update Preview|Cumulative Update) for (.+?) \(KB\d+\)$`)
+
+// monthlyTrackTitleParsers lists the title formats recognised by
+// parseMonthlyTrackTitle, tried in order. layout is passed to time.Parse
+// together with the date substring built by extract; this is the single
+// source of truth for normalising both "YYYY-MM" and "Month, YYYY" date
+// shapes to the same (year, month) tuple. Adding a new title format only
+// needs a new entry here.
+var monthlyTrackTitleParsers = []struct {
+	re      *regexp.Regexp
+	layout  string
+	extract func(m []string) (dateStr, trackStr, product string)
+}{
+	{
+		re:     monthlyTrackTitleRE,
+		layout: "2006-01",
+		extract: func(m []string) (string, string, string) {
+			return fmt.Sprintf("%s-%s", m[1], m[2]), m[3], m[4]
+		},
+	},
+	{
+		re:     monthlyTrackTitleOldRE,
+		layout: "January, 2006",
+		extract: func(m []string) (string, string, string) {
+			return fmt.Sprintf("%s, %s", m[1], m[2]), m[3], m[4]
+		},
+	},
+}
+
+// parseMonthlyTrackTitle parses an MSUC Update title into its (year, month,
+// track, product) tuple. year/month are normalised through time.Parse, so
+// the older "Month, YYYY" format produces the same group key as the modern
+// "YYYY-MM" format. ok is false when the title matches no known format, or
+// when the date fails time.Parse validation (e.g. malformed month "13" in
+// the modern format).
+func parseMonthlyTrackTitle(title string) (year, month, trackStr, product string, ok bool) {
+	for _, p := range monthlyTrackTitleParsers {
+		m := p.re.FindStringSubmatch(title)
+		if m == nil {
+			continue
+		}
+		dateStr, track, prod := p.extract(m)
+		t, err := time.Parse(p.layout, dateStr)
+		if err != nil {
+			slog.Warn("skip MSUC title with invalid year/month", "title", title, "err", err)
+			return "", "", "", "", false
+		}
+		return fmt.Sprintf("%04d", t.Year()), fmt.Sprintf("%02d", int(t.Month())), track, prod, true
+	}
+	return "", "", "", "", false
+}
 
 // deriveCrossTrackSupersedes augments Update-level Supersedes / SupersededBy
 // with cross-track equivalence for monthly Quality Rollups within the same
@@ -425,10 +495,11 @@ var monthlyTrackTitleRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (Security Only Qu
 // product+architecture, track) tuple has at most one Update.
 //
 // This is MSUC-specific: other Microsoft data sources either lack per-Update
-// titles (CVRF, Bulletin) or do not expose modern monthly-track titles in the
-// `YYYY-MM ...` form expected by monthlyTrackTitleRE (WSUSSCN2 uses the older
-// "Month, YYYY" format for the relevant EOL products and omits Cumulative
-// Update Preview entries entirely).
+// titles (CVRF, Bulletin) or only expose titles via fields the MSUC-flavoured
+// regexes here are not tuned for. Two title formats are recognised here:
+//   - modern "YYYY-MM ..." via monthlyTrackTitleRE
+//   - older "Month, YYYY ..." via monthlyTrackTitleOldRE (2016 - mid 2017
+//     Win7 / Server 2008 R2 / Server 2012 / Server 2012 R2 / Win 8.1)
 func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
 	type track int
 	const (
@@ -463,15 +534,15 @@ func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
 
 	for _, kb := range kbs {
 		for _, u := range kb.Updates {
-			m := monthlyTrackTitleRE.FindStringSubmatch(u.Title)
-			if m == nil {
+			year, month, trackStr, product, ok := parseMonthlyTrackTitle(u.Title)
+			if !ok {
 				continue
 			}
-			tr := classify(m[3])
+			tr := classify(trackStr)
 			if tr == trackUnknown {
 				continue
 			}
-			g := group{year: m[1], month: m[2], product: microsoftutil.NormalizeProductName(m[4])}
+			g := group{year: year, month: month, product: microsoftutil.NormalizeProductName(product)}
 			if grouped[g] == nil {
 				grouped[g] = make(map[track][]member)
 			}
