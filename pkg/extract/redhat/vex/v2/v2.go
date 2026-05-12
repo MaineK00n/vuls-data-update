@@ -404,6 +404,18 @@ func parseRPMPurl(s string) (*struct {
 		return nil, errors.Wrapf(err, "parse %q", s)
 	}
 	quals := instance.Qualifiers.Map()
+	// repository_id (src RPMs only, info also reachable via CPE→repository2cpe)
+	// and distro (observed only on non-RHEL "Hummingbird" products that are
+	// filtered out downstream) are intentionally parsed-but-ignored. A
+	// brand-new key errors out so a human decides whether the new metadata
+	// should be processed — silent data loss is worse than a loud failure.
+	for k := range quals {
+		switch k {
+		case "arch", "epoch", "rpmmod", "repository_id", "distro":
+		default:
+			return nil, errors.Errorf("unexpected purl qualifier %q in %q", k, s)
+		}
+	}
 	out := &struct{ name, version, arch, modularitylabel string }{
 		name: instance.Name,
 		arch: quals["arch"],

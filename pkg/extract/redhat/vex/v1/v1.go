@@ -317,6 +317,19 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 							return nil, errors.Wrapf(err, "parse %q", fpn.ProductIdentificationHelper.PURL)
 						}
 						m := instance.Qualifiers.Map()
+						// repository_id (src RPMs, info already reachable via
+						// CPE→repository2cpe) and distro (only on non-RHEL
+						// "Hummingbird" products filtered out downstream) are
+						// intentionally parsed-but-ignored. A brand-new key
+						// errors out so a human decides whether the new
+						// metadata should be processed.
+						for k := range m {
+							switch k {
+							case "arch", "epoch", "rpmmod", "repository_id", "distro":
+							default:
+								return nil, errors.Errorf("unexpected purl qualifier %q in %q", k, fpn.ProductIdentificationHelper.PURL)
+							}
+						}
 
 						switch rpmmod := m["rpmmod"]; rpmmod {
 						case "":
