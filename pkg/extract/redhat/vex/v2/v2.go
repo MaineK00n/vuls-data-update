@@ -688,7 +688,6 @@ func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.
 			}
 			return rs
 		}(),
-		Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, vulns[0].ReleaseDate),
 	}, nil
 }
 
