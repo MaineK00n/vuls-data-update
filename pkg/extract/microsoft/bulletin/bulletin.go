@@ -61,8 +61,9 @@ func WithDir(dir string) Option {
 }
 
 type extractor struct {
-	inputDir string
-	r        *utiljson.JSONReader
+	inputDir   string
+	r          *utiljson.JSONReader
+	chainEdges map[string]map[string]struct{}
 }
 
 func Extract(args string, opts ...Option) error {
@@ -80,6 +81,11 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract Microsoft Bulletin")
 
+	chainEdges, err := collectIECumChainEdges(args)
+	if err != nil {
+		return errors.Wrapf(err, "collect IE Cumulative chain edges")
+	}
+
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -90,8 +96,9 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		e := extractor{
-			inputDir: args,
-			r:        utiljson.NewJSONReader(),
+			inputDir:   args,
+			r:          utiljson.NewJSONReader(),
+			chainEdges: chainEdges,
 		}
 
 		var rows []bulletin.Bulletin
@@ -507,6 +514,25 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		groups[rootID] = g
 	}
 
+	// A1: merge IE Cumulative in-track chain edges for KBs this file emits.
+	// Microsoft frequently stops publishing month-to-month supersedes for IE 10/11
+	// KBs starting Nov 2016 (MS16-142), leaving the chain incomplete. The global
+	// pass in collectIECumChainEdges fills those gaps so that vuls2's classifyKBs
+	// can walk back through the IE Cum history when an applied MR includes those
+	// updates.
+	for oldKBID := range kbProducts {
+		newKBIDs, ok := e.chainEdges[oldKBID]
+		if !ok {
+			continue
+		}
+		if _, exists := kbSupersededBy[oldKBID]; !exists {
+			kbSupersededBy[oldKBID] = make(map[string]struct{})
+		}
+		for newKBID := range newKBIDs {
+			kbSupersededBy[oldKBID][newKBID] = struct{}{}
+		}
+	}
+
 	// Build result
 	datas := make([]dataTypes.Data, 0, len(groups))
 	for rootID, g := range groups {
@@ -567,4 +593,108 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	microsoftutil.DeriveSupersedes(kbs)
 
 	return datas, kbs, nil
+}
+
+// ieCumTitleRE matches bulletin titles for cumulative Internet Explorer security updates.
+// Both naming variants are cumulative in semantics — each release fully includes prior
+// fixes for the same (product, component) — so they are eligible for in-track chaining.
+var ieCumTitleRE = regexp.MustCompile(`^(?i)(cumulative\s+)?security\s+update\s+for\s+internet\s+explorer$`)
+
+// collectIECumChainEdges scans bulletin JSON files under rootDir and returns
+// synthesized SupersededBy edges that link consecutive IE Cumulative KBs for the
+// same (product, component) group, sorted by date_posted. Microsoft frequently
+// stops publishing the explicit month-to-month edge starting with MS16-142 (Nov
+// 2016), leaving in-track chains incomplete for IE 10/11. This function fills
+// those gaps. Edges already published in the raw data are emitted by the main
+// extract path and merged downstream, so duplicates here are harmless.
+//
+// Returns: edges[oldKBID][newKBID] = struct{}{}.
+func collectIECumChainEdges(rootDir string) (map[string]map[string]struct{}, error) {
+	type entry struct {
+		kbID     string
+		date     time.Time
+		groupKey string
+	}
+	var entries []entry
+
+	if err := filepath.WalkDir(rootDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || filepath.Ext(path) != ".json" {
+			return nil
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			return errors.Wrapf(err, "open %s", path)
+		}
+		defer f.Close()
+
+		var rows []bulletin.Bulletin
+		if err := json.UnmarshalRead(f, &rows); err != nil {
+			return errors.Wrapf(err, "unmarshal %s", path)
+		}
+		for _, row := range rows {
+			if !ieCumTitleRE.MatchString(strings.TrimSpace(row.Title)) {
+				continue
+			}
+			ckb := strings.TrimSpace(row.ComponentKB)
+			if ckb == "" {
+				continue
+			}
+			dt := utiltime.Parse(
+				[]string{"1/2/2006", "01/02/2006", "01-02-06", "2006-01-02"},
+				dateLocalePrefix.ReplaceAllString(row.DatePosted, ""),
+			)
+			if dt == nil || dt.IsZero() {
+				continue
+			}
+			pn := microsoftutil.NormalizeProductName(productName(row.AffectedProduct, row.AffectedComponent))
+			entries = append(entries, entry{
+				kbID:     ckb,
+				date:     *dt,
+				groupKey: pn + "\x00" + row.AffectedComponent,
+			})
+		}
+		return nil
+	}); err != nil {
+		return nil, errors.Wrapf(err, "walk %s", rootDir)
+	}
+
+	groups := make(map[string][]entry)
+	for _, e := range entries {
+		groups[e.groupKey] = append(groups[e.groupKey], e)
+	}
+
+	edges := make(map[string]map[string]struct{})
+	for _, g := range groups {
+		slices.SortFunc(g, func(a, b entry) int {
+			if c := a.date.Compare(b.date); c != 0 {
+				return c
+			}
+			return strings.Compare(a.kbID, b.kbID)
+		})
+		// Same KBID may appear across multiple bulletin rows within a group; keep
+		// the earliest occurrence and dedupe so the chain reflects calendar order.
+		seen := make(map[string]struct{}, len(g))
+		ordered := make([]entry, 0, len(g))
+		for _, e := range g {
+			if _, ok := seen[e.kbID]; ok {
+				continue
+			}
+			seen[e.kbID] = struct{}{}
+			ordered = append(ordered, e)
+		}
+		for i := 1; i < len(ordered); i++ {
+			oldKBID, newKBID := ordered[i-1].kbID, ordered[i].kbID
+			if oldKBID == newKBID {
+				continue
+			}
+			if edges[oldKBID] == nil {
+				edges[oldKBID] = make(map[string]struct{})
+			}
+			edges[oldKBID][newKBID] = struct{}{}
+		}
+	}
+	return edges, nil
 }
