@@ -428,13 +428,14 @@ var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|
 // occasionally omitted on out-of-band releases.
 var ieCumTitleModernRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (?:Cumulative )?Security Update for Internet Explorer \d+(?: Service Pack \d+)? for (.+?) \(KB\d+\)$`)
 
-// ieCumTitleOldRE matches the older MSUC title format used during the Bulletin
-// era through 2018-08 ("(Cumulative )?Security Update for Internet Explorer N
-// for <OS-arch> (KBxxxxx)"). No date is embedded in the title, so the calendar
-// month is taken from the ieCumOldReleaseMonth static map below, keyed by the
-// KBID captured by the second group. Capturing KBID this way avoids depending
-// on u.LastModified (which is the catalog page's "Last Updated" field — not
-// a release timestamp).
+// ieCumTitleOldRE matches the older MSUC title format used during the
+// Bulletin era and the post-Bulletin transition (2003-11 through 2018-08):
+// "(Cumulative )?Security Update for Internet Explorer N for <OS-arch>
+// (KBxxxxx)". No date is embedded in the title, so the calendar month is
+// taken from the ieCumOldReleaseMonth static map below, keyed by the KBID
+// captured by the second group. Capturing KBID this way avoids depending on
+// u.LastModified (which is the catalog page's "Last Updated" field — not a
+// release timestamp).
 var ieCumTitleOldRE = regexp.MustCompile(`^(?:Cumulative )?Security Update for Internet Explorer \d+(?: Service Pack \d+)? for (.+?) \(KB(\d+)\)$`)
 
 // ieCumOldReleaseMonth maps an IE cumulative KB ID to the calendar month
@@ -766,7 +767,7 @@ func parseMSUCUpdateGroup(u microsoftkbUpdateTypes.Update) (year, month, trackSt
 //   - IE cumulative "YYYY-MM (Cumulative )?Security Update for Internet
 //     Explorer N for <OS-arch> (KB...)" via ieCumTitleModernRE
 //   - IE cumulative "(Cumulative )?Security Update for Internet Explorer N for
-//     <OS-arch> (KB...)" via ieCumTitleOldRE (date from u.LastModified)
+//     <OS-arch> (KB...)" via ieCumTitleOldRE (date from ieCumOldReleaseMonth)
 func deriveCrossTrackSupersedes(kbs []microsoftkbTypes.KB) {
 	type track int
 	const (
