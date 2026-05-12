@@ -61,9 +61,8 @@ func WithDir(dir string) Option {
 }
 
 type extractor struct {
-	inputDir   string
-	r          *utiljson.JSONReader
-	chainEdges map[string]map[string]struct{}
+	inputDir string
+	r        *utiljson.JSONReader
 }
 
 func Extract(args string, opts ...Option) error {
@@ -81,11 +80,6 @@ func Extract(args string, opts ...Option) error {
 
 	slog.Info("Extract Microsoft Bulletin")
 
-	chainEdges, err := collectIECumChainEdges(args)
-	if err != nil {
-		return errors.Wrapf(err, "collect IE Cumulative chain edges")
-	}
-
 	if err := filepath.WalkDir(args, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -96,9 +90,8 @@ func Extract(args string, opts ...Option) error {
 		}
 
 		e := extractor{
-			inputDir:   args,
-			r:          utiljson.NewJSONReader(),
-			chainEdges: chainEdges,
+			inputDir: args,
+			r:        utiljson.NewJSONReader(),
 		}
 
 		var rows []bulletin.Bulletin
@@ -516,19 +509,18 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 
 	// A1: merge IE Cumulative in-track chain edges for KBs this file emits.
 	// Microsoft frequently stops publishing month-to-month supersedes for IE 10/11
-	// KBs starting Nov 2016 (MS16-142), leaving the chain incomplete. The global
-	// pass in collectIECumChainEdges fills those gaps so that vuls2's classifyKBs
-	// can walk back through the IE Cum history when an applied MR includes those
-	// updates.
+	// KBs starting Nov 2016 (MS16-142), leaving the chain incomplete. The Bulletin
+	// source is frozen (retired April 2017), so ieCumChainEdges is a static
+	// snapshot of the chain — see its doc comment for provenance.
 	for oldKBID := range kbProducts {
-		newKBIDs, ok := e.chainEdges[oldKBID]
+		newKBIDs, ok := ieCumChainEdges[oldKBID]
 		if !ok {
 			continue
 		}
 		if _, exists := kbSupersededBy[oldKBID]; !exists {
 			kbSupersededBy[oldKBID] = make(map[string]struct{})
 		}
-		for newKBID := range newKBIDs {
+		for _, newKBID := range newKBIDs {
 			kbSupersededBy[oldKBID][newKBID] = struct{}{}
 		}
 	}
@@ -595,106 +587,162 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	return datas, kbs, nil
 }
 
-// ieCumTitleRE matches bulletin titles for cumulative Internet Explorer security updates.
-// Both naming variants are cumulative in semantics — each release fully includes prior
-// fixes for the same (product, component) — so they are eligible for in-track chaining.
-var ieCumTitleRE = regexp.MustCompile(`^(?i)(cumulative\s+)?security\s+update\s+for\s+internet\s+explorer$`)
-
-// collectIECumChainEdges scans bulletin JSON files under rootDir and returns
-// synthesized SupersededBy edges that link consecutive IE Cumulative KBs for the
-// same (product, component) group, sorted by date_posted. Microsoft frequently
-// stops publishing the explicit month-to-month edge starting with MS16-142 (Nov
-// 2016), leaving in-track chains incomplete for IE 10/11. This function fills
-// those gaps. Edges already published in the raw data are emitted by the main
-// extract path and merged downstream, so duplicates here are harmless.
+// ieCumChainEdges synthesizes month-to-month SupersededBy edges between
+// Internet Explorer Cumulative bulletins for the same (product, component)
+// group. Microsoft frequently stops publishing the explicit month-to-month
+// edge starting with MS16-142 (Nov 2016) for IE 10/11, leaving in-track
+// chains incomplete.
 //
-// Returns: edges[oldKBID][newKBID] = struct{}{}.
-func collectIECumChainEdges(rootDir string) (map[string]map[string]struct{}, error) {
-	type entry struct {
-		kbID     string
-		date     time.Time
-		groupKey string
-	}
-	var entries []entry
-
-	if err := filepath.WalkDir(rootDir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() || filepath.Ext(path) != ".json" {
-			return nil
-		}
-		f, err := os.Open(path)
-		if err != nil {
-			return errors.Wrapf(err, "open %s", path)
-		}
-		defer f.Close()
-
-		var rows []bulletin.Bulletin
-		if err := json.UnmarshalRead(f, &rows); err != nil {
-			return errors.Wrapf(err, "unmarshal %s", path)
-		}
-		for _, row := range rows {
-			if !ieCumTitleRE.MatchString(strings.TrimSpace(row.Title)) {
-				continue
-			}
-			ckb := strings.TrimSpace(row.ComponentKB)
-			if ckb == "" {
-				continue
-			}
-			dt := utiltime.Parse(
-				[]string{"1/2/2006", "01/02/2006", "01-02-06", "2006-01-02"},
-				dateLocalePrefix.ReplaceAllString(row.DatePosted, ""),
-			)
-			if dt == nil || dt.IsZero() {
-				continue
-			}
-			pn := microsoftutil.NormalizeProductName(productName(row.AffectedProduct, row.AffectedComponent))
-			entries = append(entries, entry{
-				kbID:     ckb,
-				date:     *dt,
-				groupKey: pn + "\x00" + row.AffectedComponent,
-			})
-		}
-		return nil
-	}); err != nil {
-		return nil, errors.Wrapf(err, "walk %s", rootDir)
-	}
-
-	groups := make(map[string][]entry)
-	for _, e := range entries {
-		groups[e.groupKey] = append(groups[e.groupKey], e)
-	}
-
-	edges := make(map[string]map[string]struct{})
-	for _, g := range groups {
-		slices.SortFunc(g, func(a, b entry) int {
-			if c := a.date.Compare(b.date); c != 0 {
-				return c
-			}
-			return strings.Compare(a.kbID, b.kbID)
-		})
-		// Same KBID may appear across multiple bulletin rows within a group; keep
-		// the earliest occurrence and dedupe so the chain reflects calendar order.
-		seen := make(map[string]struct{}, len(g))
-		ordered := make([]entry, 0, len(g))
-		for _, e := range g {
-			if _, ok := seen[e.kbID]; ok {
-				continue
-			}
-			seen[e.kbID] = struct{}{}
-			ordered = append(ordered, e)
-		}
-		for i := 1; i < len(ordered); i++ {
-			oldKBID, newKBID := ordered[i-1].kbID, ordered[i].kbID
-			if oldKBID == newKBID {
-				continue
-			}
-			if edges[oldKBID] == nil {
-				edges[oldKBID] = make(map[string]struct{})
-			}
-			edges[oldKBID][newKBID] = struct{}{}
-		}
-	}
-	return edges, nil
+// The Bulletin source is frozen (retired April 2017), so this map is a static
+// exhaustive snapshot. It was generated by scanning bulletin rows whose title
+// matches `(?i)^(cumulative\s+)?security\s+update\s+for\s+internet\s+explorer$`,
+// grouping by (NormalizeProductName(productName(affected_product, affected_component)),
+// affected_component), sorting each group by date_posted, and emitting
+// consecutive-month (oldKBID → newKBID) edges. Edges already published in the
+// raw data are merged downstream, so overlaps here are harmless.
+var ieCumChainEdges = map[string][]string{
+	"832894":  {"867801"},
+	"834707":  {"889293", "890923"},
+	"867801":  {"834707", "890923", "896727"},
+	"883939":  {"896727", "931768", "944533"},
+	"889293":  {"883939", "890923"},
+	"890923":  {"883939", "896727", "944533"},
+	"896688":  {"905915"},
+	"896727":  {"896688"},
+	"905915":  {"910620", "912812"},
+	"910620":  {"912812"},
+	"912812":  {"916281"},
+	"916281":  {"918899"},
+	"918899":  {"922760"},
+	"922760":  {"928090"},
+	"928090":  {"931768"},
+	"931768":  {"933566"},
+	"933566":  {"937143"},
+	"937143":  {"939653"},
+	"939653":  {"942615"},
+	"942615":  {"944533", "947864"},
+	"944533":  {"947864"},
+	"947864":  {"950759"},
+	"950759":  {"953838"},
+	"953838":  {"956390"},
+	"956390":  {"958215"},
+	"958215":  {"960714"},
+	"960714":  {"963027"},
+	"963027":  {"969897"},
+	"969897":  {"972260"},
+	"972260":  {"974455"},
+	"974455":  {"976325"},
+	"976325":  {"978207"},
+	"978207":  {"980182"},
+	"980182":  {"982381"},
+	"982381":  {"2183461"},
+	"2183461": {"2360131"},
+	"2360131": {"2416400"},
+	"2416400": {"2482017"},
+	"2482017": {"2497640"},
+	"2497640": {"2530548"},
+	"2530548": {"2559049"},
+	"2559049": {"2586448"},
+	"2586448": {"2618444"},
+	"2618444": {"2647516"},
+	"2647516": {"2675157"},
+	"2675157": {"2699988"},
+	"2699988": {"2719177", "2722913"},
+	"2719177": {"2722913"},
+	"2722913": {"2744842"},
+	"2744842": {"2761451", "2761465"},
+	"2761451": {"2761465"},
+	"2761465": {"2792100", "2799329"},
+	"2792100": {"2809289"},
+	"2799329": {"2792100"},
+	"2809289": {"2817183"},
+	"2817183": {"2829530"},
+	"2829530": {"2838727", "2847204"},
+	"2838727": {"2846071"},
+	"2846071": {"2862772"},
+	"2847204": {"2838727"},
+	"2862772": {"2870699"},
+	"2870699": {"2879017"},
+	"2879017": {"2888505"},
+	"2884101": {"2888505"},
+	"2888505": {"2898785"},
+	"2898785": {"2909921"},
+	"2909921": {"2925418"},
+	"2925418": {"2936068", "2964358"},
+	"2936068": {"2964358"},
+	"2953522": {"2957689", "2961851"},
+	"2956058": {"2956073"},
+	"2956097": {"2956098"},
+	"2957689": {"2962872", "2963950"},
+	"2961851": {"2957689"},
+	"2962872": {"2963952", "2976627"},
+	"2963950": {"2962872"},
+	"2963952": {"2976627"},
+	"2964358": {"2953522", "2964444"},
+	"2964444": {"2953522"},
+	"2976627": {"2977629", "2987107"},
+	"2977629": {"2987107"},
+	"2987107": {"3003057"},
+	"3003057": {"3008923"},
+	"3008923": {"3021952"},
+	"3021952": {"3032359", "3034196"},
+	"3032359": {"3038314"},
+	"3034196": {"3032359"},
+	"3038314": {"3049563"},
+	"3049563": {"3058515"},
+	"3058515": {"3065822"},
+	"3065822": {"3078071"},
+	"3078071": {"3087985"},
+	"3081444": {"3097617"},
+	"3087038": {"3093983"},
+	"3087985": {"3087038"},
+	"3093983": {"3100773"},
+	"3097617": {"3105213"},
+	"3100773": {"3104002"},
+	"3104002": {"3124275"},
+	"3105211": {"3116900"},
+	"3105213": {"3116869"},
+	"3116869": {"3124266"},
+	"3116900": {"3124263"},
+	"3124263": {"3135173"},
+	"3124266": {"3135174"},
+	"3124275": {"3134814"},
+	"3134814": {"3139929"},
+	"3135173": {"3140768"},
+	"3135174": {"3140745"},
+	"3139929": {"3148198"},
+	"3140745": {"3147461"},
+	"3140768": {"3147458"},
+	"3147458": {"3156421"},
+	"3147461": {"3156387"},
+	"3148198": {"3154070"},
+	"3154070": {"3160005"},
+	"3156387": {"3163017"},
+	"3156421": {"3163018"},
+	"3160005": {"3170106"},
+	"3163912": {"3176492"},
+	"3170106": {"3175443", "3191492", "3192391", "3192393", "3205400"},
+	"3172985": {"3176493"},
+	"3175443": {"3185319"},
+	"3176492": {"3185611"},
+	"3176493": {"3185614"},
+	"3176495": {"3189866"},
+	"3185319": {"3185331", "3192391", "3192392", "3197655", "3197867", "3197876"},
+	"3185331": {"3197874"},
+	"3185611": {"3192440"},
+	"3185614": {"3192441"},
+	"3189866": {"3194798"},
+	"3191492": {"3203621"},
+	"3192391": {"3197867", "3205394"},
+	"3192392": {"3197873"},
+	"3192393": {"3205408"},
+	"3192440": {"3198585"},
+	"3192441": {"3198586"},
+	"3194798": {"3200970"},
+	"3197867": {"3205394"},
+	"3197873": {"3205400"},
+	"3197874": {"3205401"},
+	"3198585": {"3205383"},
+	"3198586": {"3205386"},
+	"3200970": {"3206632"},
 }

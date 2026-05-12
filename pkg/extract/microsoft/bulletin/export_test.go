@@ -1,6 +1,6 @@
 package bulletin
 
 var (
-	ProductName              = productName
-	CollectIECumChainEdges   = collectIECumChainEdges
+	ProductName       = productName
+	IECumChainEdges   = ieCumChainEdges
 )
