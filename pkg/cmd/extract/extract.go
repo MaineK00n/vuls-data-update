@@ -2473,7 +2473,7 @@ func newCmdRedHatOVALv1() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-oval-v1 <Raw RedHat OVAL v1 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-oval-v1 <Raw RedHat OVAL v1 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
 		Short: "Extract RedHat OVAL v1 data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract redhat-oval-v1 vuls-data-raw-redhat-oval-v1 vuls-data-raw-redhat-repository-to-cpe
@@ -2498,7 +2498,7 @@ func newCmdRedHatOVALv2() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-oval-v2 <Raw RedHat OVAL v2 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-oval-v2 <Raw RedHat OVAL v2 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
 		Short: "Extract RedHat OVAL v2 data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract redhat-oval-v2 vuls-data-raw-redhat-oval-v2 vuls-data-raw-redhat-repository-to-cpe
@@ -2573,7 +2573,7 @@ func newCmdRedHatCSAF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-csaf <Raw RedHat CSAF Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-csaf <Raw RedHat CSAF Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
 		Short: "Extract RedHat CSAF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract redhat-csaf vuls-data-raw-redhat-csaf vuls-data-raw-redhat-repository-to-cpe
@@ -2598,7 +2598,7 @@ func newCmdRedHatVEXv1() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-vex-v1 <Raw RedHat VEX v1 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-vex-v1 <Raw RedHat VEX v1 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
 		Short: "Extract RedHat VEX v1 data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract redhat-vex-v1 vuls-data-raw-redhat-vex-v1 vuls-data-raw-redhat-repository-to-cpe
@@ -2623,7 +2623,7 @@ func newCmdRedHatVEXv2() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-vex-v2 <Raw RedHat VEX v2 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-vex-v2 <Raw RedHat VEX v2 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
 		Short: "Extract RedHat VEX v2 data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract redhat-vex-v2 vuls-data-raw-redhat-vex-v2 vuls-data-raw-redhat-repository-to-cpe
