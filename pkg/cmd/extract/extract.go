@@ -63,7 +63,7 @@ import (
 	mavenGHSA "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/ghsa"
 	mavenGLSA "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/glsa"
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/maven/osv"
-	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
+	microsoftBulletinExcel "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin/excel"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/cvrf"
 	microsoftMSUC "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/msuc"
 	microsoftWSUSSCN2 "github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/wsusscn2"
@@ -174,7 +174,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdJVNFeedDetail(), newCmdJVNFeedProduct(), newCmdJVNFeedRSS(),
 		newCmdLinuxOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftWSUSSCN2(),
+		newCmdMicrosoftBulletinExcel(), newCmdMicrosoftCVRF(), newCmdMicrosoftMSUC(), newCmdMicrosoftWSUSSCN2(),
 		newCmdMitreCVRF(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
 		newCmdNetBSD(),
@@ -1584,21 +1584,21 @@ func newCmdMavenOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdMicrosoftBulletin() *cobra.Command {
+func newCmdMicrosoftBulletinExcel() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "bulletin"),
+		dir: filepath.Join(util.CacheDir(), "extract", "microsoft", "bulletin", "excel"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "microsoft-bulletin <Raw Microsoft Bulletin Repository PATH>",
-		Short: "Extract Microsoft Bulletin data source",
+		Use:   "microsoft-bulletin-excel <Raw Microsoft Bulletin Excel Repository PATH>",
+		Short: "Extract Microsoft Bulletin Excel (BulletinSearch.xlsx) data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract microsoft-bulletin vuls-data-raw-microsoft-bulletin
+			$ vuls-data-update extract microsoft-bulletin-excel vuls-data-raw-microsoft-bulletin-excel
 		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := microsoftBulletin.Extract(args[0], microsoftBulletin.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract microsoft bulletin")
+			if err := microsoftBulletinExcel.Extract(args[0], microsoftBulletinExcel.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract microsoft bulletin excel")
 			}
 			return nil
 		},

@@ -1,4 +1,4 @@
-package bulletin
+package excel
 
 type Bulletin struct {
 	DatePosted        string `xlsx:"0" json:"date_posted,omitempty"`

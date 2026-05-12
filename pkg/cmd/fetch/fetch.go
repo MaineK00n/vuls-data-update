@@ -83,8 +83,8 @@ import (
 	mavenOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/maven/osv"
 	microsoftAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/advisory"
 	microsoftAzureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/azure/oval"
-	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
 	microsoftBulletinArchive "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin/archive"
+	microsoftBulletinExcel "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin/excel"
 	microsoftCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/csaf"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
@@ -248,7 +248,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftBulletinArchive(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletinExcel(), newCmdMicrosoftBulletinArchive(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2454,22 +2454,22 @@ func newCmdMavenOSV() *cobra.Command {
 	return cmd
 }
 
-func newCmdMicrosoftBulletin() *cobra.Command {
+func newCmdMicrosoftBulletinExcel() *cobra.Command {
 	options := &base{
-		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletin"),
+		dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletin", "excel"),
 		retry: 3,
 	}
 
 	cmd := &cobra.Command{
-		Use:   "microsoft-bulletin",
-		Short: "Fetch Microsoft Bulletin data source",
+		Use:   "microsoft-bulletin-excel",
+		Short: "Fetch Microsoft Bulletin Excel (BulletinSearch.xlsx) data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch microsoft-bulletin
+			$ vuls-data-update fetch microsoft-bulletin-excel
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := microsoftBulletin.Fetch(microsoftBulletin.WithDir(options.dir), microsoftBulletin.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch microsoft bulletin")
+			if err := microsoftBulletinExcel.Fetch(microsoftBulletinExcel.WithDir(options.dir), microsoftBulletinExcel.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft bulletin excel")
 			}
 			return nil
 		},

@@ -1,11 +1,11 @@
-package bulletin_test
+package excel_test
 
 import (
 	"path/filepath"
 	"slices"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin/excel"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -23,7 +23,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := bulletin.Extract(tt.args, bulletin.WithDir(dir))
+			err := excel.Extract(tt.args, excel.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
@@ -144,7 +144,7 @@ func Test_productName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := bulletin.ProductName(tt.args.product, tt.args.component); got != tt.want {
+			if got := excel.ProductName(tt.args.product, tt.args.component); got != tt.want {
 				t.Errorf("productName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -189,7 +189,7 @@ func TestIECumChainEdges(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			news, ok := bulletin.IECumChainEdges[tt.oldKBID]
+			news, ok := excel.IECumChainEdges[tt.oldKBID]
 			if !ok {
 				t.Fatalf("ieCumChainEdges has no entry for KB%s", tt.oldKBID)
 			}

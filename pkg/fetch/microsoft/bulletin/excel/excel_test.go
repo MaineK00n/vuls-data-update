@@ -1,4 +1,4 @@
-package bulletin_test
+package excel_test
 
 import (
 	"io/fs"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
+	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin/excel"
 )
 
 func TestFetch(t *testing.T) {
@@ -44,7 +44,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err := bulletin.Fetch(bulletin.WithDataURLs(urls), bulletin.WithDir(dir), bulletin.WithRetry(0))
+			err := excel.Fetch(excel.WithDataURLs(urls), excel.WithDir(dir), excel.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

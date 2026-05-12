@@ -1,4 +1,4 @@
-package bulletin
+package excel
 
 import (
 	"encoding/json/v2"
@@ -39,7 +39,7 @@ import (
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
+	fetchexcel "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin/excel"
 )
 
 type options struct {
@@ -94,7 +94,7 @@ func Extract(args string, opts ...Option) error {
 			r:        utiljson.NewJSONReader(),
 		}
 
-		var rows []bulletin.Bulletin
+		var rows []fetchexcel.Bulletin
 		if err := e.r.Read(path, e.inputDir, &rows); err != nil {
 			return errors.Wrapf(err, "read json %s", path)
 		}
@@ -337,7 +337,7 @@ func isOSPlatform(s string) bool {
 	}
 }
 
-func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
+func (e extractor) extract(rows []fetchexcel.Bulletin) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
 	type dataGroup struct {
 		advisories []advisoryTypes.Advisory
 		vulns      []vulnerabilityTypes.Vulnerability

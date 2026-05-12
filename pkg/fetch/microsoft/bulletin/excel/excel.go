@@ -1,4 +1,4 @@
-package bulletin
+package excel
 
 import (
 	"fmt"
