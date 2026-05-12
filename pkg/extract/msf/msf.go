@@ -77,7 +77,16 @@ func Extract(args string, opts ...Option) error {
 			return errors.Wrapf(err, "read %s", path)
 		}
 
-		cveIDs, refs, err := classifyReferences(fetched.References)
+		rs := fetched.References
+		if fetched.IsInstallPath && strings.HasPrefix(fetched.Path, "/modules/") {
+			u, err := url.JoinPath("https://github.com/rapid7/metasploit-framework/blob/master", fetched.Path)
+			if err != nil {
+				return errors.Wrapf(err, "join module url for %s", path)
+			}
+			rs = append(rs, fmt.Sprintf("URL-%s", u))
+		}
+
+		cveIDs, refs, err := classifyReferences(rs)
 		if err != nil {
 			return errors.Wrapf(err, "classify references for %s", path)
 		}
