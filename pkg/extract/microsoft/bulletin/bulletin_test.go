@@ -2,6 +2,7 @@ package bulletin_test
 
 import (
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
@@ -145,6 +146,55 @@ func Test_productName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := bulletin.ProductName(tt.args.product, tt.args.component); got != tt.want {
 				t.Errorf("productName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+// TestIECumChainEdges verifies known edges in the static ieCumChainEdges map.
+// The map is exhaustively generated from the frozen Bulletin corpus, so any
+// regression in its structure (e.g., missing edges across the Nov 2016 MS16-142
+// gap that A1 was specifically designed to bridge) should fail this test.
+func TestIECumChainEdges(t *testing.T) {
+	tests := []struct {
+		name    string
+		oldKBID string
+		newKBID string
+	}{
+		{
+			name:    "MS16-118 IE 11 Win 8.1 → MS16-142 (Microsoft did not publish this edge)",
+			oldKBID: "3192392",
+			newKBID: "3197873",
+		},
+		{
+			name:    "MS16-118 IE 11 Win 7 → MS16-142 (Microsoft did not publish this edge)",
+			oldKBID: "3192391",
+			newKBID: "3197867",
+		},
+		{
+			name:    "KB2957689 (IE 11 Cum May 2014, blocks 120 CVEs) → KB2962872",
+			oldKBID: "2957689",
+			newKBID: "2962872",
+		},
+		{
+			name:    "MS16-142 IE 11 Win 7 → MS16-144 (no Microsoft edge)",
+			oldKBID: "3197867",
+			newKBID: "3205394",
+		},
+		{
+			name:    "MS16-142 IE 11 Win 8.1 → MS16-144 (no Microsoft edge)",
+			oldKBID: "3197873",
+			newKBID: "3205400",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			news, ok := bulletin.IECumChainEdges[tt.oldKBID]
+			if !ok {
+				t.Fatalf("ieCumChainEdges has no entry for KB%s", tt.oldKBID)
+			}
+			if !slices.Contains(news, tt.newKBID) {
+				t.Errorf("ieCumChainEdges[%q] = %v, want to contain %q", tt.oldKBID, news, tt.newKBID)
 			}
 		})
 	}

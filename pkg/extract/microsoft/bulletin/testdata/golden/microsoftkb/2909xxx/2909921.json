@@ -51,6 +51,11 @@
 		"Internet Explorer 9 on Windows Vista Service Pack 2",
 		"Internet Explorer 9 on Windows Vista x64 Edition Service Pack 2"
 	],
+	"superseded_by": [
+		{
+			"kb_id": "2925418"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-bulletin",
 		"raws": [
