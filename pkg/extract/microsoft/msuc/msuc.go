@@ -459,13 +459,13 @@ func parseMonthlyTrackTitle(title string) (year, month, trackStr, product string
 		if m == nil {
 			continue
 		}
-		dateStr, trackStr, product := p.extract(m)
+		dateStr, track, prod := p.extract(m)
 		t, err := time.Parse(p.layout, dateStr)
 		if err != nil {
 			slog.Warn("skip MSUC title with invalid year/month", "title", title, "err", err)
 			return "", "", "", "", false
 		}
-		return fmt.Sprintf("%04d", t.Year()), fmt.Sprintf("%02d", int(t.Month())), trackStr, product, true
+		return fmt.Sprintf("%04d", t.Year()), fmt.Sprintf("%02d", int(t.Month())), track, prod, true
 	}
 	return "", "", "", "", false
 }
