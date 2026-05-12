@@ -84,6 +84,7 @@ import (
 	microsoftAdvisory "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/advisory"
 	microsoftAzureOVAL "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/azure/oval"
 	microsoftBulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
+	microsoftBulletinArchive "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin/archive"
 	microsoftCSAF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/csaf"
 	microsoftCVRF "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/cvrf"
 	microsoftDeployment "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/deployment"
@@ -247,7 +248,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdLinuxOSV(),
 		newCmdMageiaOSV(),
 		newCmdMavenGHSA(), newCmdMavenGLSA(), newCmdMavenOSV(),
-		newCmdMicrosoftBulletin(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
+		newCmdMicrosoftBulletin(), newCmdMicrosoftBulletinArchive(), newCmdMicrosoftCVRF(), newCmdMicrosoftCSAF(), newCmdMicrosoftMSUC(), newCmdMicrosoftAdvisory(), newCmdMicrosoftVulnerability(), newCmdMicrosoftProduct(), newCmdMicrosoftDeployment(), newCmdMicrosoftVEX(), newCmdMicrosoftWSUSSCN2(), newCmdMicrosoftAzureOVAL(),
 		newCmdMinimOSOSV(), newCmdMinimOSSecDB(),
 		newCmdMitreATTACK(), newCmdMitreCAPEC(), newCmdMitreCVRF(), newCmdMitreCWE(), newCmdMitreEMB3D(), newCmdMitreV4(), newCmdMitreV5(),
 		newCmdMSF(),
@@ -2476,6 +2477,43 @@ func newCmdMicrosoftBulletin() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+
+	return cmd
+}
+
+func newCmdMicrosoftBulletinArchive() *cobra.Command {
+	options := &struct {
+		base
+		concurrency int
+		wait        time.Duration
+	}{
+		base: base{
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletinarchive"),
+			retry: 3,
+		},
+		concurrency: 5,
+		wait:        1 * time.Second,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "microsoft-bulletin-archive",
+		Short: "Fetch Microsoft Bulletin archive markdown from Microsoft Learn",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch microsoft-bulletin-archive
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := microsoftBulletinArchive.Fetch(microsoftBulletinArchive.WithDir(options.dir), microsoftBulletinArchive.WithRetry(options.retry), microsoftBulletinArchive.WithConcurrency(options.concurrency), microsoftBulletinArchive.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch microsoft bulletin archive")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
+	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
+	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

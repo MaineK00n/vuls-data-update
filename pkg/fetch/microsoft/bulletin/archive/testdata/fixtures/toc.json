@@ -1,0 +1,30 @@
+{
+  "items": [
+    {
+      "href": "./",
+      "toc_title": "Security Updates",
+      "children": [
+        {
+          "href": "securitybulletins/securitybulletins",
+          "toc_title": "Security Bulletins",
+          "children": [
+            {
+              "href": "securitybulletins/2017/securitybulletins2017",
+              "toc_title": "2017",
+              "children": [
+                {"href": "securitybulletins/2017/ms17-006", "toc_title": "MS17-006"}
+              ]
+            },
+            {
+              "href": "securitybulletins/2016/securitybulletins2016",
+              "toc_title": "2016",
+              "children": [
+                {"href": "securitybulletins/2016/ms16-001", "toc_title": "MS16-001"}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
