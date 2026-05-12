@@ -543,6 +543,27 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		}
 	}
 
+	// Drop supersedes edges that BulletinSearch.xlsx attributes to the wrong
+	// component_kb (typically Excel cites the supersedes of a sibling component
+	// release in the same bulletin). See bulletinArchiveSupersedesOverride for
+	// provenance.
+	for newKBID := range kbProducts {
+		oldKBIDs, ok := bulletinArchiveSupersedesOverride[newKBID]
+		if !ok {
+			continue
+		}
+		for _, oldKBID := range oldKBIDs {
+			news, ok := kbSupersededBy[oldKBID]
+			if !ok {
+				continue
+			}
+			delete(news, newKBID)
+			if len(news) == 0 {
+				delete(kbSupersededBy, oldKBID)
+			}
+		}
+	}
+
 	// Build result
 	datas := make([]dataTypes.Data, 0, len(groups))
 	for rootID, g := range groups {
@@ -921,4 +942,95 @@ var bulletinArchiveSupersedes = map[string][]string{
 	"3197655": {"3203621"},                       // MS16-144: IE 9 Cumulative (Vista SP2)
 	"3197877": {"3205409"},                       // MS16-144: IE 10 Monthly Rollup (Server 2012) — archive-only
 	"3204808": {"3216775"},                       // MS17-004: LSASS DoS (Server 2008 SP2)
+}
+
+// bulletinArchiveSupersedesOverride drops supersedes edges that
+// BulletinSearch.xlsx attributes to the wrong component_kb. Keys are component
+// KBIDs (the newer KB) emitted by this extractor; values are the old KBIDs
+// that Excel claims the new KB supersedes, but that the corresponding
+// Bulletin archive page on Microsoft Learn lists as superseded by a different
+// component in the same bulletin (Excel mis-attribution). For each such pair
+// (newKBID, oldKBID), the edge oldKBID → newKBID is removed from
+// kbSupersededBy. The correct edge is added separately via
+// bulletinArchiveSupersedes.
+//
+// The Bulletin source is frozen (retired April 2017), so this map is a static
+// snapshot derived from the same archive markdown / Excel diff as
+// bulletinArchiveSupersedes.
+var bulletinArchiveSupersedesOverride = map[string][]string{
+	"2596915": {"2687505"},
+	"2772930": {"2626416"},
+	"2817480": {"2598253"},
+	"2843162": {"2827750"},
+	"2843163": {"2827750"},
+	"2899516": {"2553428"},
+	"2956138": {"2956058"},
+	"2965313": {"3085514"},
+	"2984938": {"3114983"},
+	"2984943": {"3114990"},
+	"3012168": {"2909213"},
+	"3012172": {"2909212"},
+	"3012176": {"2909210"},
+	"3021952": {"3012176"},
+	"3054793": {"3085583"},
+	"3054984": {"3054841"},
+	"3062577": {"3062577"},
+	"3081455": {"3081444"},
+	"3085584": {"2956151"},
+	"3085614": {"3055033"},
+	"3087038": {"3081444"},
+	"3097617": {"3081455"},
+	"3101360": {"2687413", "3055030"},
+	"3101370": {"3054929", "3055029"},
+	"3101371": {"3085583"},
+	"3101499": {"2956151"},
+	"3101506": {"3055029"},
+	"3101512": {"3055030"},
+	"3101520": {"3114993"},
+	"3101526": {"2553147"},
+	"3105213": {"3096448", "3097617"},
+	"3114740": {"3115116"},
+	"3114872": {"3115123"},
+	"3115014": {"3115121"},
+	"3115016": {"3114937"},
+	"3115020": {"3115025"},
+	"3115025": {"3114486"},
+	"3115041": {"3115094"},
+	"3115094": {"3142577", "3154208"},
+	"3115103": {"3114855"},
+	"3115107": {"3114421"},
+	"3115111": {"3115115"},
+	"3115116": {"3114990"},
+	"3115121": {"3054848"},
+	"3115130": {"3114402"},
+	"3115144": {"3114511"},
+	"3115170": {"3114888"},
+	"3115194": {"3115132"},
+	"3115195": {"3115121"},
+	"3115196": {"3115116"},
+	"3115198": {"3114888"},
+	"3115243": {"3114489"},
+	"3115244": {"3115121"},
+	"3115487": {"3115118"},
+	"3116869": {"3105213"},
+	"3116900": {"3105211"},
+	"3118268": {"3115262"},
+	"3118280": {"3115118"},
+	"3118284": {"3115452"},
+	"3118292": {"3115272"},
+	"3124263": {"3116900"},
+	"3124266": {"3116869"},
+	"3126041": {"3121918"},
+	"3135988": {"3099862"},
+	"3137721": {"3133699"},
+	"3155776": {"3114982"},
+	"3155777": {"3114987"},
+	"3165798": {"3114895"},
+	"3178688": {"3115131"},
+	"3193418": {"3033889"},
+	"3194371": {"3177725"},
+	"3196718": {"3184122"},
+	"3198218": {"3190847"},
+	"3198510": {"3081320"},
+	"3198798": {"3118307"},
 }

@@ -1,7 +1,8 @@
 package bulletin
 
 var (
-	ProductName               = productName
-	IECumChainEdges           = ieCumChainEdges
-	BulletinArchiveSupersedes = bulletinArchiveSupersedes
+	ProductName                       = productName
+	IECumChainEdges                   = ieCumChainEdges
+	BulletinArchiveSupersedes         = bulletinArchiveSupersedes
+	BulletinArchiveSupersedesOverride = bulletinArchiveSupersedesOverride
 )
