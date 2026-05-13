@@ -40,7 +40,7 @@ type Attack struct {
 	Deprecated     bool                     `json:"deprecated,omitempty"`
 	Revoked        bool                     `json:"revoked,omitempty"`
 	Version        string                   `json:"version,omitempty"`
-	Modified       *time.Time               `json:"modified,omitempty"`
+	Modified       time.Time                `json:"modified,omitzero"`
 	References     []referenceTypes.Reference `json:"references,omitempty"`
 	DataSource     sourceTypes.Source       `json:"data_source,omitzero"`
 }
@@ -63,37 +63,11 @@ func Compare(x, y Attack) int {
 		slices.Compare(x.Platforms, y.Platforms),
 		slices.Compare(x.Tactics, y.Tactics),
 		cmp.Compare(x.Shortname, y.Shortname),
-		boolCompare(x.IsSubtechnique, y.IsSubtechnique),
 		cmp.Compare(x.Parent, y.Parent),
-		boolCompare(x.Deprecated, y.Deprecated),
-		boolCompare(x.Revoked, y.Revoked),
 		cmp.Compare(x.Version, y.Version),
-		timeCompare(x.Modified, y.Modified),
+		x.Modified.Compare(y.Modified),
 		slices.CompareFunc(x.References, y.References, referenceTypes.Compare),
 		sourceTypes.Compare(x.DataSource, y.DataSource),
 	)
 }
 
-func boolCompare(x, y bool) int {
-	switch {
-	case x == y:
-		return 0
-	case !x && y:
-		return -1
-	default:
-		return 1
-	}
-}
-
-func timeCompare(x, y *time.Time) int {
-	switch {
-	case x == nil && y == nil:
-		return 0
-	case x == nil:
-		return -1
-	case y == nil:
-		return 1
-	default:
-		return x.Compare(*y)
-	}
-}

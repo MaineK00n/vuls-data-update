@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 
 	cweTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe"
+	relatedweaknessTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/cwe/relatedweakness"
 	referenceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/data/reference"
 	datasourceTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource"
 	repositoryTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/datasource/repository"
@@ -17,7 +18,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
-	fetchCWE "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cwe"
+	cwe "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/cwe"
 )
 
 type options struct {
@@ -100,7 +101,7 @@ func Extract(args string, opts ...Option) error {
 
 func extractWeakness(path, args, outDir string) error {
 	r := utiljson.NewJSONReader()
-	var w fetchCWE.Weakness
+	var w cwe.Weakness
 	if err := r.Read(path, args, &w); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
@@ -117,7 +118,7 @@ func extractWeakness(path, args, outDir string) error {
 		if p == "" {
 			continue
 		}
-		relatedAttack = append(relatedAttack, "CAPEC-"+p)
+		relatedAttack = append(relatedAttack, fmt.Sprintf("CAPEC-%s", p))
 	}
 	modes := make([]string, 0, len(w.ModesOfIntroduction))
 	for _, m := range w.ModesOfIntroduction {
@@ -126,9 +127,9 @@ func extractWeakness(path, args, outDir string) error {
 		}
 	}
 	platforms := collectPlatforms(w.ApplicablePlatforms)
-	rws := make([]cweTypes.RelatedWeakness, 0, len(w.RelatedWeaknesses))
+	rws := make([]relatedweaknessTypes.RelatedWeakness, 0, len(w.RelatedWeaknesses))
 	for _, rw := range w.RelatedWeaknesses {
-		rws = append(rws, cweTypes.RelatedWeakness{
+		rws = append(rws, relatedweaknessTypes.RelatedWeakness{
 			Nature: rw.Nature,
 			CWEID:  normalizeID(rw.CWEID),
 			ViewID: rw.ViewID,
@@ -167,7 +168,7 @@ func extractWeakness(path, args, outDir string) error {
 
 func extractCategory(path, args, outDir string) error {
 	r := utiljson.NewJSONReader()
-	var c fetchCWE.Category
+	var c cwe.Category
 	if err := r.Read(path, args, &c); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
@@ -196,7 +197,7 @@ func extractCategory(path, args, outDir string) error {
 
 func extractView(path, args, outDir string) error {
 	r := utiljson.NewJSONReader()
-	var v fetchCWE.View
+	var v cwe.View
 	if err := r.Read(path, args, &v); err != nil {
 		return errors.Wrapf(err, "read json %s", path)
 	}
@@ -230,10 +231,10 @@ func normalizeID(raw string) string {
 	if strings.HasPrefix(raw, "CWE-") {
 		return raw
 	}
-	return "CWE-" + raw
+	return fmt.Sprintf("CWE-%s", raw)
 }
 
-func collectPlatforms(ap fetchCWE.ApplicablePlatforms) []string {
+func collectPlatforms(ap cwe.ApplicablePlatforms) []string {
 	var out []string
 	for _, p := range ap.Language {
 		if name := platformLabel(p); name != "" {
@@ -258,7 +259,7 @@ func collectPlatforms(ap fetchCWE.ApplicablePlatforms) []string {
 	return out
 }
 
-func platformLabel(p fetchCWE.ApplicablePlatform) string {
+func platformLabel(p cwe.ApplicablePlatform) string {
 	switch {
 	case p.Name != "":
 		return p.Name
@@ -268,7 +269,7 @@ func platformLabel(p fetchCWE.ApplicablePlatform) string {
 	return ""
 }
 
-func extractReferences(refs []fetchCWE.Reference) []referenceTypes.Reference {
+func extractReferences(refs []cwe.Reference) []referenceTypes.Reference {
 	out := make([]referenceTypes.Reference, 0, len(refs))
 	for _, r := range refs {
 		if r.URL == "" {
