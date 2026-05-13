@@ -656,16 +656,25 @@ var ieCumOldReleaseMonth = map[string]string{
 }
 
 // msucUpdateGroupParsers lists the title formats recognised by
-// parseMSUCUpdateGroup, tried in order. layout is passed to time.Parse
-// together with the dateStr built by extract; this is the single source of
-// truth for normalising every recognised date shape to the same (year,
-// month) tuple. trackStr is the verbatim phrase Microsoft uses to label the
-// update class (e.g. "Security Monthly Quality Rollup", "Cumulative Security
-// Update for Internet Explorer"), matched verbatim by classify. extract may
-// return ok=false to signal that the title matched the regex but the entry-
-// specific date resolution failed (e.g. the old IE Cum KB ID is not in
-// ieCumOldReleaseMonth). Adding a new title format only needs a new entry
-// here.
+// parseMSUCUpdateGroup, tried in order. A regex match claims the title for
+// that parser — later parsers are not tried even if extract fails, since
+// the entries are ordered (modern → old) so a regex match is a definite
+// "this title belongs to this parser's class".
+//
+// layout is passed to time.Parse together with the dateStr built by
+// extract; this is the single source of truth for normalising every
+// recognised date shape to the same (year, month) tuple. trackStr is the
+// canonical phrase classify expects — most entries return the verbatim
+// Microsoft label (e.g. "Security Monthly Quality Rollup"), but a parser
+// may normalise several title variants onto one canonical phrase (e.g.
+// ieCumTitleModernRE collapses both "Security Update for Internet
+// Explorer" and "Cumulative Security Update for Internet Explorer" into a
+// single trackStr "Cumulative Security Update for Internet Explorer").
+// extract may return ok=false to signal that the title matched the regex
+// but the entry-specific date resolution failed (e.g. the old IE Cum KB
+// ID is not in ieCumOldReleaseMonth); parseMSUCUpdateGroup then reports
+// ok=false without trying later parsers. Adding a new title format only
+// needs a new entry here.
 var msucUpdateGroupParsers = []struct {
 	re      *regexp.Regexp
 	layout  string
