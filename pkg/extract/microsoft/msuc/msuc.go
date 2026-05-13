@@ -422,10 +422,12 @@ var monthlyTrackTitleOldRE = regexp.MustCompile(`^(January|February|March|April|
 
 // ieCumTitleModernRE matches the modern MSUC title for an Internet Explorer
 // cumulative security update ("YYYY-MM Cumulative Security Update for Internet
-// Explorer N for <OS-arch> (KBxxxxx)"), as published from 2017-04 onward when
-// Microsoft kept issuing IE updates for legacy OS releases (Win 7, Win 8.1,
-// Embedded 7, Server 2008 R2 / 2012 / 2012 R2). The "Cumulative " prefix is
-// occasionally omitted on out-of-band releases.
+// Explorer N for <OS-arch> (KBxxxxx)"). The YYYY-MM prefix first appears in
+// 2017-04 alongside the older un-prefixed format and the two coexist through
+// 2018-08; from 2018-09 onward Microsoft uses this modern format
+// consistently. Targets the legacy OS releases Microsoft kept issuing IE
+// updates for (Win 7, Win 8.1, Embedded 7, Server 2008 R2 / 2012 / 2012 R2).
+// The "Cumulative " prefix is occasionally omitted on out-of-band releases.
 var ieCumTitleModernRE = regexp.MustCompile(`^(\d{4})-(\d{2}) (?:Cumulative )?Security Update for Internet Explorer \d+(?: Service Pack \d+)? for (.+?) \(KB\d+\)$`)
 
 // ieCumTitleOldRE matches the older MSUC title format used during the
@@ -448,15 +450,17 @@ var ieCumTitleOldRE = regexp.MustCompile(`^(?:Cumulative )?Security Update for I
 //   - Bulletin era (≤ 2017-03): release month taken verbatim from each
 //     Microsoft Security Bulletin's date_posted field — the authoritative
 //     source while Bulletins were being published.
-//   - Post-Bulletin transition (2017-04 → 2018-08): release month taken from
-//     the catalog page's "Last Updated" field at scrape time. Microsoft moved
-//     IE cumulative updates onto the modern "YYYY-MM <title>" convention in
-//     2018-09, so this transition era is closed; no further KBs need to be
-//     added unless Microsoft ever re-releases an old IE cumulative.
+//   - Post-Bulletin transition (2017-04 → 2018-08): the old un-prefixed
+//     title and the new "YYYY-MM ..." title coexist; for the un-prefixed
+//     entries the release month is taken from the catalog page's "Last
+//     Updated" field at scrape time. From 2018-09 onward Microsoft uses
+//     the modern "YYYY-MM <title>" convention consistently, so this
+//     transition era is closed; no further KBs need to be added unless
+//     Microsoft ever re-releases an old IE cumulative.
 //
 // Because both eras are frozen (Bulletin retired April 2017, modern format
-// adopted from 2018-09), this map is deterministic and exhaustive for every
-// IE cumulative KB whose MSUC title lacks a YYYY-MM prefix.
+// fully adopted from 2018-09), this map is deterministic and exhaustive for
+// every IE cumulative KB whose MSUC title lacks a YYYY-MM prefix.
 var ieCumOldReleaseMonth = map[string]string{
 	"824145":  "2003-11",
 	"832894":  "2004-02",

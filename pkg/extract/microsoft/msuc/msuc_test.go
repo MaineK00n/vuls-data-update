@@ -608,7 +608,7 @@ func TestDeriveCrossTrackSupersedes(t *testing.T) {
 			},
 		},
 		{
-			name: "Preview ⊇ IECumulative (and via existing Preview ⊇ SecurityMonthly chain)",
+			name: "Preview ⊇ IECumulative — direct same-month edge",
 			args: args{kbs: []microsoftkbTypes.KB{
 				{
 					KBID: "4015551",
