@@ -34,7 +34,7 @@ type CAPEC struct {
 	PeerOf              []string                   `json:"peer_of,omitempty"`
 	AlternateTerms      []string                   `json:"alternate_terms,omitempty"`
 	Version             string                     `json:"version,omitempty"`
-	Modified            *time.Time                 `json:"modified,omitempty"`
+	Modified            time.Time                  `json:"modified,omitzero"`
 	References          []referenceTypes.Reference `json:"references,omitempty"`
 	DataSource          sourceTypes.Source         `json:"data_source,omitzero"`
 }
@@ -71,21 +71,8 @@ func Compare(x, y CAPEC) int {
 		slices.Compare(x.ChildOf, y.ChildOf),
 		slices.Compare(x.ParentOf, y.ParentOf),
 		cmp.Compare(x.Version, y.Version),
-		timeCompare(x.Modified, y.Modified),
+		x.Modified.Compare(y.Modified),
 		slices.CompareFunc(x.References, y.References, referenceTypes.Compare),
 		sourceTypes.Compare(x.DataSource, y.DataSource),
 	)
-}
-
-func timeCompare(x, y *time.Time) int {
-	switch {
-	case x == nil && y == nil:
-		return 0
-	case x == nil:
-		return -1
-	case y == nil:
-		return 1
-	default:
-		return x.Compare(*y)
-	}
 }

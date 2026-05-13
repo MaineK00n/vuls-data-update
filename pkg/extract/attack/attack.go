@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -17,7 +18,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
-	fetchAttack "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/attack"
+	attack "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/attack"
 )
 
 type options struct {
@@ -41,8 +42,8 @@ func WithDir(dir string) Option {
 // stix represents the minimal set of STIX fields we need for extraction.
 // The fetcher writes one JSON file per STIX object, which can be decoded
 // into any of the domain Enterprise/ICS/Mobile structs (they are structurally
-// compatible supersets). We use fetchAttack.Enterprise as the canonical form.
-type stixObject = fetchAttack.Enterprise
+// compatible supersets). We use attack.Enterprise as the canonical form.
+type stixObject = attack.Enterprise
 
 func Extract(args string, opts ...Option) error {
 	options := &options{
@@ -73,14 +74,10 @@ func Extract(args string, opts ...Option) error {
 		if d.IsDir() || filepath.Ext(path) != ".json" {
 			return nil
 		}
-		// skip non-object files (e.g. datasource.json if present)
-		if filepath.Base(path) == "datasource.json" {
-			return nil
-		}
 		// directory structure: <args>/<domain>/<type>/<uuid>.json
 		rel, err := filepath.Rel(args, path)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "rel %s", path)
 		}
 		parts := strings.Split(rel, string(filepath.Separator))
 		if len(parts) < 3 {
@@ -102,6 +99,9 @@ func Extract(args string, opts ...Option) error {
 			if o.Type == "x-mitre-tactic" && o.XMitreShortname != nil {
 				tacticShortname[o.ID] = *o.XMitreShortname
 			}
+		default:
+			// other STIX object types (relationship / malware / tool / identity / etc.)
+			// are loaded into `objects` but contribute no primary record here.
 		}
 		return nil
 	}); err != nil {
@@ -260,7 +260,12 @@ func convert(
 		Deprecated:     deprecated,
 		Revoked:        revoked,
 		Version:        version,
-		Modified:       o.Modified,
+		Modified: func() time.Time {
+			if o.Modified == nil {
+				return time.Time{}
+			}
+			return *o.Modified
+		}(),
 		References:     refs,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.Attack,

@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -18,7 +19,7 @@ import (
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/util"
 	utilgit "github.com/MaineK00n/vuls-data-update/pkg/extract/util/git"
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
-	fetchCapec "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/capec"
+	capec "github.com/MaineK00n/vuls-data-update/pkg/fetch/mitre/capec"
 )
 
 type options struct {
@@ -57,7 +58,7 @@ func Extract(args string, opts ...Option) error {
 	// First pass: load attack-pattern files, build UUID→CAPEC-ID index
 	attackPatternDir := filepath.Join(args, "attack-pattern")
 	uuidToCapec := make(map[string]string)
-	loaded := make(map[string]fetchCapec.Capec)
+	loaded := make(map[string]capec.Capec)
 	readers := make(map[string]*utiljson.JSONReader)
 	if _, err := os.Stat(attackPatternDir); err == nil {
 		if err := filepath.WalkDir(attackPatternDir, func(path string, d fs.DirEntry, err error) error {
@@ -67,15 +68,18 @@ func Extract(args string, opts ...Option) error {
 			if d.IsDir() || filepath.Ext(path) != ".json" {
 				return nil
 			}
+
 			r := utiljson.NewJSONReader()
-			var c fetchCapec.Capec
+			var c capec.Capec
 			if err := r.Read(path, args, &c); err != nil {
 				return errors.Wrapf(err, "read json %s", path)
 			}
+
 			capecID := findExternalID(c.ExternalReferences, "capec")
 			if capecID == "" {
 				return nil
 			}
+
 			uuidToCapec[c.ID] = capecID
 			loaded[capecID] = c
 			readers[capecID] = r
@@ -117,7 +121,7 @@ func Extract(args string, opts ...Option) error {
 	return nil
 }
 
-func convert(id string, c fetchCapec.Capec, uuidToCapec map[string]string, raws []string) capecTypes.CAPEC {
+func convert(id string, c capec.Capec, uuidToCapec map[string]string, raws []string) capecTypes.CAPEC {
 	relatedCWEs := make([]string, 0)
 	relatedAttacks := make([]string, 0)
 	refs := make([]referenceTypes.Reference, 0)
@@ -216,7 +220,12 @@ func convert(id string, c fetchCapec.Capec, uuidToCapec map[string]string, raws 
 		PeerOf:              resolveUUIDs(c.XCapecPeerOfRefs, uuidToCapec),
 		AlternateTerms:      append([]string(nil), c.XCapecAlternateTerms...),
 		Version:             version,
-		Modified:            c.Modified,
+		Modified: func() time.Time {
+			if c.Modified == nil {
+				return time.Time{}
+			}
+			return *c.Modified
+		}(),
 		References:          refs,
 		DataSource: sourceTypes.Source{
 			ID:   sourceTypes.CAPEC,
@@ -243,7 +252,7 @@ func normalizeCWE(raw string) string {
 	if strings.HasPrefix(raw, "CWE-") {
 		return raw
 	}
-	return "CWE-" + raw
+	return fmt.Sprintf("CWE-%s", raw)
 }
 
 func resolveUUIDs(uuids []string, index map[string]string) []string {
