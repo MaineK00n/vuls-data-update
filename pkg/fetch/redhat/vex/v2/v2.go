@@ -179,9 +179,9 @@ func (o options) fetchArchive(client *utilhttp.Client) (time.Time, error) {
 		return time.Time{}, errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
-	at, err := time.Parse(time.RFC1123, resp.Header.Get("Last-Modified"))
+	at, err := http.ParseTime(resp.Header.Get("Last-Modified"))
 	if err != nil {
-		return time.Time{}, errors.Wrapf(err, "parse Last-Modified. expected: RFC1123, actual: %q", resp.Header.Get("Last-Modified"))
+		return time.Time{}, errors.Wrapf(err, "parse Last-Modified. expected: HTTP-date (RFC 7231), actual: %q", resp.Header.Get("Last-Modified"))
 	}
 
 	d, err := zstd.NewReader(resp.Body)
