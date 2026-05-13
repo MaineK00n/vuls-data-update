@@ -1198,6 +1198,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Microsoft SQL Server 2022 for x64-based Systems (GDR)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU2)",
 			"Microsoft SQL Server 2025 for x64-based Systems (CU3)",
+			"Microsoft SQL Server 2025 for x64-based Systems (CU4)",
 			"Microsoft SQL Server 2025 for x64-based Systems (GDR)",
 			"SQL Server 2019 for Linux Containers",
 			"SQL Server Integration Services for Visual Studio 2019",
@@ -1440,6 +1441,7 @@ func buildFixedBuildCriterion(cveID, productName, rawFixedBuild string) (*criter
 			"Visual Studio Code - GitHub Pull Requests and Issues Extension",
 			"Visual Studio Code - JS Debug Extension",
 			"Visual Studio Code - Kubernetes Tools",
+			"Visual Studio Code - Live Preview extension",
 			"Visual Studio Code Remote - Containers Extension",
 			"Visual Studio Code Remote - SSH Extension",
 			"Visual Studio Code WSL Extension":
