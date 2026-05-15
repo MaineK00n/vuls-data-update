@@ -1011,7 +1011,11 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		if as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" }); len(as) > 0 {
+		if slices.ContainsFunc(extra.arches, func(x string) bool { return x != "src" }) {
+			as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" || x == "" })
+			if len(as) == 0 {
+				as = nil
+			}
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
