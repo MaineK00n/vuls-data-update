@@ -10,8 +10,11 @@ import (
 	"maps"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 
+	"github.com/knqyf263/go-cpe/common"
+	"github.com/knqyf263/go-cpe/naming"
 	"github.com/package-url/packageurl-go"
 	"github.com/pkg/errors"
 
@@ -265,6 +268,16 @@ type status struct {
 	product_status  string
 	affected_status string
 }
+type nameInfo struct {
+	cpe   string
+	major string
+}
+type versionInfo struct {
+	name            string
+	version         string
+	arch            string
+	modularitylabel string
+}
 
 // walkProductTree converts a CSAF VEX product_tree into a map of product_id ->
 // product, ready for buildDataComponents to consume.
@@ -283,17 +296,6 @@ type status struct {
 // grouping later. See
 // https://redhatproductsecurity.github.io/security-data-guidelines/vex-ga-details/
 func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]string) (map[v2.ProductID][]product, error) {
-	type nameInfo struct {
-		cpe   string
-		major string
-	}
-	type versionInfo struct {
-		name            string
-		version         string
-		arch            string
-		modularitylabel string
-	}
-
 	names := make(map[v2.ProductID]nameInfo)
 	versions := make(map[v2.ProductID]versionInfo)
 
@@ -313,21 +315,16 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 				}
 				switch branch.Category {
 				case "product_name":
-					if pih.CPE != "" {
-						names[branch.Product.ProductID] = nameInfo{
-							cpe:   pih.CPE,
-							major: majorFromCPE(pih.CPE),
-						}
+					if n := parseProductNameCPE(pih.CPE); n != nil {
+						names[branch.Product.ProductID] = *n
 					}
 				case "product_version":
-					if pih.PURL != "" {
-						v, err := parseRPMPurl(pih.PURL)
-						if err != nil {
-							return errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, branch.Product.ProductID)
-						}
-						if v != nil {
-							versions[branch.Product.ProductID] = *v
-						}
+					v, err := parseRPMPurl(pih.PURL)
+					if err != nil {
+						return errors.Wrapf(err, "parse purl. tracking_id: %q, product_id: %q", trackingID, branch.Product.ProductID)
+					}
+					if v != nil {
+						versions[branch.Product.ProductID] = *v
 					}
 				}
 			}
@@ -336,7 +333,7 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 		}
 		for _, child := range branch.Branches {
 			if err := walk(child); err != nil {
-				return err
+				return errors.Wrapf(err, "walk child branch. tracking_id: %q, name: %q, category: %q", trackingID, child.Name, child.Category)
 			}
 		}
 		return nil
@@ -383,9 +380,10 @@ func walkProductTree(trackingID string, pt v2.ProductTree, c2r map[string][]stri
 // (cargo, gem, generic, golang, maven, npm, oci, pypi) which the RPM-based
 // extractor does not handle. Any other prefix is an error so a new artifact
 // class triggers a deliberate decision instead of silent data loss.
-func parseRPMPurl(s string) (*struct {
-	name, version, arch, modularitylabel string
-}, error) {
+func parseRPMPurl(s string) (*versionInfo, error) {
+	if s == "" {
+		return nil, nil
+	}
 	if !strings.HasPrefix(s, "pkg:rpm/") {
 		// Skip every non-RPM PURL type observed in the VEX-GA feed. A
 		// brand-new type errors out so a human decides whether the new
@@ -418,7 +416,7 @@ func parseRPMPurl(s string) (*struct {
 			return nil, errors.Errorf("unexpected purl qualifier %q in %q", k, s)
 		}
 	}
-	out := &struct{ name, version, arch, modularitylabel string }{
+	out := &versionInfo{
 		name: instance.Name,
 		arch: quals["arch"],
 	}
@@ -439,46 +437,57 @@ func parseRPMPurl(s string) (*struct {
 	return out, nil
 }
 
+// parseProductNameCPE builds a nameInfo from a CSAF product_name CPE. Returns
+// nil for an empty CPE (no helper data) so the caller can skip without a
+// presence check.
+func parseProductNameCPE(cpe string) *nameInfo {
+	if cpe == "" {
+		return nil
+	}
+	return &nameInfo{
+		cpe:   cpe,
+		major: majorFromCPE(cpe),
+	}
+}
+
 // majorFromCPE returns the RHEL major version implied by a VEX-GA CPE, or "" when
 // the CPE is not RHEL-related. The channel suffix `::el<N>` takes priority over the
 // product version (so e.g. cpe:/a:redhat:rhel_dotnet:6.0::el7 → "7", not "6").
 func majorFromCPE(cpe string) string {
-	for _, n := range []string{"10", "9", "8", "7", "6", "5", "4", "3"} {
-		if strings.HasSuffix(cpe, "::el"+n) {
+	base, suffix, _ := strings.Cut(cpe, "::")
+
+	if n, ok := strings.CutPrefix(suffix, "el"); ok {
+		switch n {
+		case "3", "4", "5", "6", "7", "8", "9", "10":
 			return n
 		}
 	}
-	const op, ap = "cpe:/o:redhat:", "cpe:/a:redhat:"
-	var rest string
-	switch {
-	case strings.HasPrefix(cpe, op):
-		rest = cpe[len(op):]
-	case strings.HasPrefix(cpe, ap):
-		rest = cpe[len(ap):]
-	default:
+
+	wfn, err := naming.UnbindURI(base)
+	if err != nil {
 		return ""
 	}
-	product, version, ok := strings.Cut(rest, ":")
-	if !ok || !isRHELProduct(product) {
+	if part := wfn.GetString(common.AttributePart); part != "a" && part != "o" {
 		return ""
 	}
-	if idx := strings.Index(version, "::"); idx >= 0 {
-		version = version[:idx]
-	}
-	if version == "" {
+	if wfn.GetString(common.AttributeVendor) != "redhat" {
 		return ""
 	}
+	product := wfn.GetString(common.AttributeProduct)
+	if !isRHELProduct(product) {
+		return ""
+	}
+	version := strings.ReplaceAll(wfn.GetString(common.AttributeVersion), `\.`, ".")
+	if version == "" || version == "ANY" {
+		return ""
+	}
+
 	// RHEL 2.1 is the only release with a non-integer major version.
 	if product == "enterprise_linux" && strings.HasPrefix(version, "2.1") {
 		return "2.1"
 	}
 	major, _, _ := strings.Cut(version, ".")
-	for _, r := range major {
-		if r < '0' || r > '9' {
-			return ""
-		}
-	}
-	if major == "" {
+	if _, err := strconv.Atoi(major); err != nil {
 		return ""
 	}
 	return major
@@ -548,7 +557,6 @@ func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.
 				}
 				return pids
 			}() {
-
 				switch base := assm[p]; base.status.product_status {
 				case "unaffected":
 					if base.status.affected_status != "" {
