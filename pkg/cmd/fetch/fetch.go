@@ -4695,17 +4695,9 @@ func newCmdRedHatVEXV1() *cobra.Command {
 }
 
 func newCmdRedHatVEXV2() *cobra.Command {
-	options := &struct {
-		base
-		concurrency int
-		wait        time.Duration
-	}{
-		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v2"),
-			retry: 3,
-		},
-		concurrency: 10,
-		wait:        1 * time.Second,
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v2"),
+		retry: 3,
 	}
 
 	cmd := &cobra.Command{
@@ -4716,7 +4708,7 @@ func newCmdRedHatVEXV2() *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatVEXv2.Fetch(redhatVEXv2.WithDir(options.dir), redhatVEXv2.WithRetry(options.retry), redhatVEXv2.WithConcurrency(options.concurrency), redhatVEXv2.WithWait(options.wait)); err != nil {
+			if err := redhatVEXv2.Fetch(redhatVEXv2.WithDir(options.dir), redhatVEXv2.WithRetry(options.retry)); err != nil {
 				return errors.Wrap(err, "failed to fetch redhat vex v2")
 			}
 			return nil
@@ -4725,8 +4717,6 @@ func newCmdRedHatVEXV2() *cobra.Command {
 
 	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
-	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
-	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
 
 	return cmd
 }

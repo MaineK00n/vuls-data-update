@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/google/go-cmp/cmp"
 
@@ -29,13 +28,6 @@ func TestFetch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Pin the archive's mtime so Last-Modified (used by the fetcher
-			// to filter changes.csv / deletions.csv) is deterministic.
-			archived := time.Date(2024, 8, 4, 0, 0, 0, 0, time.UTC)
-			if err := os.Chtimes(filepath.Join(tt.testdata, "vex-archive.tar.zst"), archived, archived); err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.ServeFile(w, r, strings.TrimPrefix(r.URL.Path, "/"))
 			}))
@@ -47,7 +39,7 @@ func TestFetch(t *testing.T) {
 			}
 
 			dir := t.TempDir()
-			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0), v2.WithConcurrency(1), v2.WithWait(0))
+			err = v2.Fetch(v2.WithBaseURL(u), v2.WithDir(dir), v2.WithRetry(0))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)
