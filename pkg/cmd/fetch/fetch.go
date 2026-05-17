@@ -2488,7 +2488,7 @@ func newCmdMicrosoftBulletinArchive() *cobra.Command {
 		wait        time.Duration
 	}{
 		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletinarchive"),
+			dir:   filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletin", "archive"),
 			retry: 3,
 		},
 		concurrency: 5,
