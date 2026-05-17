@@ -87,7 +87,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Extract RedHat VEX")
+	slog.Info("Extract RedHat VEX v1")
 
 	br := utiljson.NewJSONReader()
 	var r2c repository2cpe.RepositoryToCPE
