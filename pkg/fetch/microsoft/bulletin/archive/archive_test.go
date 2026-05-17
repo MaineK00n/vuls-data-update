@@ -20,7 +20,7 @@ func TestFetch(t *testing.T) {
 		name     string
 		hasError bool
 	}{
-		{name: "happy path"},
+		{name: "happy"},
 	}
 
 	for _, tt := range tests {
@@ -28,9 +28,9 @@ func TestFetch(t *testing.T) {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
 				case r.URL.Path == "/toc.json":
-					http.ServeFile(w, r, "testdata/fixtures/toc.json")
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, "toc.json"))
 				case strings.HasPrefix(r.URL.Path, "/securitybulletins/"):
-					http.ServeFile(w, r, filepath.Join("testdata/fixtures", fmt.Sprintf("%s.md", strings.TrimPrefix(r.URL.Path, "/"))))
+					http.ServeFile(w, r, filepath.Join("testdata", "fixtures", tt.name, fmt.Sprintf("%s.md", strings.TrimPrefix(r.URL.Path, "/"))))
 				default:
 					http.NotFound(w, r)
 				}
@@ -39,7 +39,7 @@ func TestFetch(t *testing.T) {
 
 			dir := t.TempDir()
 			err := archive.Fetch(
-				archive.WithBaseURL(fmt.Sprintf("%s/", ts.URL)),
+				archive.WithBaseURL(ts.URL),
 				archive.WithDir(dir),
 				archive.WithRetry(0),
 			)
@@ -57,7 +57,7 @@ func TestFetch(t *testing.T) {
 						return nil
 					}
 					rel, file := filepath.Split(strings.TrimPrefix(path, dir))
-					want, err := os.ReadFile(filepath.Join("testdata", "golden", rel, file))
+					want, err := os.ReadFile(filepath.Join("testdata", "golden", tt.name, rel, file))
 					if err != nil {
 						return err
 					}
