@@ -893,9 +893,6 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 		// binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
-			if len(as) == 0 {
-				as = nil
-			}
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
@@ -934,9 +931,6 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 		// binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
-			if len(as) == 0 {
-				as = nil
-			}
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus: &fixstatusTypes.FixStatus{
