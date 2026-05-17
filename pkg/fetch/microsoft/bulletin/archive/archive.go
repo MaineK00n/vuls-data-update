@@ -136,9 +136,9 @@ func Fetch(opts ...Option) error {
 			return errors.Wrapf(err, "parse response url %q", resp.Request.URL.String())
 		}
 
-		frontmatter, sections, err := parseMarkdown(string(body))
+		frontmatter, mdBody, err := splitFrontmatter(string(body))
 		if err != nil {
-			return errors.Wrapf(err, "parse markdown for %s", msid)
+			return errors.Wrapf(err, "parse frontmatter for %s", msid)
 		}
 
 		year := yearOfMSID(msid)
@@ -149,7 +149,7 @@ func Fetch(opts ...Option) error {
 			Year:        year,
 			URL:         fmt.Sprintf("https://learn.microsoft.com/en-us/security-updates/securitybulletins/%s/%s", year, msid),
 			Frontmatter: frontmatter,
-			Sections:    sections,
+			Body:        mdBody,
 		}
 
 		out := filepath.Join(options.dir, msid[2:4], fmt.Sprintf("%s.json", upperMSID))
@@ -263,18 +263,6 @@ func yearOfMSID(msid string) string {
 	return strconv.Itoa(t.Year())
 }
 
-// parseMarkdown splits a bulletin page into its YAML frontmatter and a
-// tree of body sections keyed by ATX heading depth. Raw markdown content
-// is preserved verbatim inside each section's Body so the structural
-// split itself loses no source information.
-func parseMarkdown(raw string) (map[string]any, []Section, error) {
-	fm, body, err := splitFrontmatter(raw)
-	if err != nil {
-		return nil, nil, err
-	}
-	return fm, parseSections(body), nil
-}
-
 // splitFrontmatter extracts the leading YAML frontmatter (between two
 // "---" fences) from a markdown document and returns the parsed
 // frontmatter map plus the remainder of the document. A document without
@@ -339,93 +327,4 @@ func decodeYAMLNode(n *yaml.Node) any {
 	default:
 		return nil
 	}
-}
-
-// parseSections walks a markdown body and produces an ordered tree of
-// sections keyed by ATX heading depth. Lines preceding the first heading
-// are discarded; lines inside fenced code blocks are not interpreted as
-// headings. Each section's Body retains the exact source lines (including
-// blank lines and trailing whitespace) between its heading and the next
-// heading at the same or shallower depth.
-func parseSections(body string) []Section {
-	type node struct {
-		level    int
-		heading  string
-		body     strings.Builder
-		children []*node
-	}
-	var roots []*node
-	var stack []*node
-	appendBody := func(line string) {
-		if len(stack) == 0 {
-			return
-		}
-		stack[len(stack)-1].body.WriteString(line)
-	}
-
-	inFence := false
-	for line := range strings.SplitAfterSeq(body, "\n") {
-		stripped := strings.TrimRight(line, "\r\n")
-		if isFenceLine(stripped) {
-			inFence = !inFence
-			appendBody(line)
-			continue
-		}
-		if !inFence {
-			if level, heading, ok := parseATXHeading(stripped); ok {
-				for len(stack) > 0 && stack[len(stack)-1].level >= level {
-					stack = stack[:len(stack)-1]
-				}
-				n := &node{level: level, heading: heading}
-				if len(stack) == 0 {
-					roots = append(roots, n)
-				} else {
-					parent := stack[len(stack)-1]
-					parent.children = append(parent.children, n)
-				}
-				stack = append(stack, n)
-				continue
-			}
-		}
-		appendBody(line)
-	}
-
-	var convert func([]*node) []Section
-	convert = func(ns []*node) []Section {
-		if len(ns) == 0 {
-			return nil
-		}
-		out := make([]Section, len(ns))
-		for i, n := range ns {
-			out[i] = Section{
-				Level:    n.level,
-				Heading:  n.heading,
-				Body:     n.body.String(),
-				Children: convert(n.children),
-			}
-		}
-		return out
-	}
-	return convert(roots)
-}
-
-// parseATXHeading recognizes an ATX-style markdown heading
-// ("# ", "## ", ..., up to "###### ") and returns its depth and text.
-func parseATXHeading(line string) (int, string, bool) {
-	n := 0
-	for n < len(line) && line[n] == '#' {
-		n++
-	}
-	if n == 0 || n > 6 || n >= len(line) || line[n] != ' ' {
-		return 0, "", false
-	}
-	return n, strings.TrimSpace(line[n+1:]), true
-}
-
-// isFenceLine reports whether a (right-trimmed) line opens or closes a
-// fenced code block. The bulletin markdown only uses the "```" fence
-// style; "~~~" is accepted as well for safety.
-func isFenceLine(line string) bool {
-	trim := strings.TrimLeft(line, " ")
-	return strings.HasPrefix(trim, "```") || strings.HasPrefix(trim, "~~~")
 }
