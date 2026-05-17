@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const baseURL = "https://learn.microsoft.com/en-us/security-updates/"
+const baseURL = "https://learn.microsoft.com/en-us/security-updates"
 
 type options struct {
 	baseURL     string
@@ -102,14 +103,14 @@ func Fetch(opts ...Option) error {
 	slog.Info("Fetch Microsoft Bulletin Archive")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
-	refs, err := options.fetchTOC(client)
+	msids, err := options.fetchTOC(client)
 	if err != nil {
 		return errors.Wrap(err, "fetch TOC")
 	}
 
-	urls := make([]string, 0, len(refs))
-	for _, r := range refs {
-		u, err := url.JoinPath(options.baseURL, "securitybulletins", r.Year, r.MSID)
+	urls := make([]string, 0, len(msids))
+	for _, msid := range msids {
+		u, err := url.JoinPath(options.baseURL, "securitybulletins", yearOfMSID(msid), msid)
 		if err != nil {
 			return errors.Wrap(err, "url join")
 		}
@@ -129,20 +130,22 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "read response body")
 		}
 
-		year, msid, err := parseBulletinPath(resp.Request.URL.Path)
+		msid, err := parseBulletinPath(resp.Request.URL.Path)
 		if err != nil {
 			return errors.Wrapf(err, "parse response url %q", resp.Request.URL.String())
 		}
 
+		year := yearOfMSID(msid)
+		upperMSID := strings.ToUpper(msid)
+
 		arch := Archive{
-			ID:       strings.ToUpper(msid),
+			ID:       upperMSID,
 			Year:     year,
 			URL:      fmt.Sprintf("https://learn.microsoft.com/en-us/security-updates/securitybulletins/%s/%s", year, msid),
 			Markdown: string(body),
 		}
 
-		yy := year[2:]
-		out := filepath.Join(options.dir, yy, fmt.Sprintf("%s.json", strings.ToUpper(msid)))
+		out := filepath.Join(options.dir, msid[2:4], fmt.Sprintf("%s.json", upperMSID))
 		if err := util.Write(out, arch); err != nil {
 			return errors.Wrapf(err, "write %s", out)
 		}
@@ -155,7 +158,7 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-func (o options) fetchTOC(client *utilhttp.Client) ([]bulletinRef, error) {
+func (o options) fetchTOC(client *utilhttp.Client) ([]string, error) {
 	tocURL, err := url.JoinPath(o.baseURL, "toc.json")
 	if err != nil {
 		return nil, errors.Wrap(err, "url join")
@@ -177,14 +180,14 @@ func (o options) fetchTOC(client *utilhttp.Client) ([]bulletinRef, error) {
 		return nil, errors.Wrap(err, "decode TOC json")
 	}
 
-	var refs []bulletinRef
+	var msids []string
 	var walk func(n *tocNode)
 	walk = func(n *tocNode) {
 		if n == nil {
 			return
 		}
-		if year, msid, ok := splitBulletinHref(n.Href); ok {
-			refs = append(refs, bulletinRef{Year: year, MSID: msid})
+		if msid, ok := splitBulletinHref(n.Href); ok {
+			msids = append(msids, msid)
 		}
 		for _, c := range n.Items {
 			walk(c)
@@ -195,68 +198,60 @@ func (o options) fetchTOC(client *utilhttp.Client) ([]bulletinRef, error) {
 	}
 	walk(&toc)
 
-	return refs, nil
+	return msids, nil
 }
 
-// splitBulletinHref parses a TOC href of the form
-// "securitybulletins/<year>/<msid>" into its year and msid components.
-// Anything that doesn't match that exact two-segment shape under
-// "securitybulletins/" is rejected.
-func splitBulletinHref(href string) (year, msid string, ok bool) {
-	const prefix = "securitybulletins/"
-	rest, found := strings.CutPrefix(href, prefix)
-	if !found {
-		return "", "", false
+// splitBulletinHref returns the bulletin msid from a TOC href of the form
+// "securitybulletins/<year>/<msid>". The middle <year> segment is not
+// validated because the year is already encoded in the msid.
+func splitBulletinHref(href string) (string, bool) {
+	rest, ok := strings.CutPrefix(href, "securitybulletins/")
+	if !ok {
+		return "", false
 	}
-	year, msid, found = strings.Cut(rest, "/")
-	if !found || strings.Contains(msid, "/") {
-		return "", "", false
+	_, msid, ok := strings.Cut(rest, "/")
+	if !ok || strings.Contains(msid, "/") {
+		return "", false
 	}
-	if !isBulletinYear(year) || !isBulletinMSID(msid) {
-		return "", "", false
+	if !isBulletinMSID(msid) {
+		return "", false
 	}
-	return year, msid, true
+	return msid, true
 }
 
-// parseBulletinPath extracts (year, msid) from a response URL path of the
-// form ".../securitybulletins/<year>/<msid>".
-func parseBulletinPath(p string) (year, msid string, err error) {
-	msid = path.Base(p)
-	dir := path.Dir(p)
-	year = path.Base(dir)
-	parent := path.Base(path.Dir(dir))
-	if parent != "securitybulletins" || !isBulletinYear(year) || !isBulletinMSID(msid) {
-		return "", "", errors.Errorf("unexpected response path, want %q, got %q", ".../securitybulletins/<year>/ms<yy>-<nnn>", p)
+// parseBulletinPath extracts the bulletin msid from a response URL path of
+// the form ".../securitybulletins/<year>/<msid>".
+func parseBulletinPath(p string) (string, error) {
+	msid := path.Base(p)
+	if path.Base(path.Dir(path.Dir(p))) != "securitybulletins" || !isBulletinMSID(msid) {
+		return "", errors.Errorf("unexpected response path, want %q, got %q", ".../securitybulletins/<year>/ms<yy>-<nnn>", p)
 	}
-	return year, msid, nil
+	return msid, nil
 }
 
-// isBulletinYear reports whether s is a 4-digit year.
-func isBulletinYear(s string) bool {
-	if len(s) != 4 {
-		return false
-	}
-	for _, r := range s {
-		if r < '0' || r > '9' {
-			return false
-		}
-	}
-	return true
-}
-
-// isBulletinMSID reports whether s matches the canonical "ms<yy>-<nnn>"
-// bulletin identifier shape (lowercase).
+// isBulletinMSID reports whether s is a canonical "ms<yy>-<nnn>" bulletin ID.
 func isBulletinMSID(s string) bool {
-	if len(s) != 9 {
+	lhs, rhs, ok := strings.Cut(s, "-")
+	if !ok || len(rhs) != 3 {
 		return false
 	}
-	if s[0] != 'm' || s[1] != 's' || s[4] != '-' {
+	yy, ok := strings.CutPrefix(lhs, "ms")
+	if !ok {
 		return false
 	}
-	for _, i := range []int{2, 3, 5, 6, 7, 8} {
-		if s[i] < '0' || s[i] > '9' {
-			return false
-		}
+	if _, err := time.Parse("06", yy); err != nil {
+		return false
+	}
+	if _, err := strconv.ParseUint(rhs, 10, 64); err != nil {
+		return false
 	}
 	return true
+}
+
+// yearOfMSID returns the 4-digit year encoded in a validated msid's <yy>.
+// Go's "06" format maps yy >= 69 to 19xx and yy < 69 to 20xx, which spans
+// the Microsoft Security Bulletin range (ms98-001 through ms17-006).
+func yearOfMSID(msid string) string {
+	t, _ := time.Parse("06", msid[2:4])
+	return strconv.Itoa(t.Year())
 }
