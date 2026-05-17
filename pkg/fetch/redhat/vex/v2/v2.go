@@ -19,10 +19,7 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const (
-	baseURL     = "https://security.access.redhat.com/data/csaf/v2/vex-feed/"
-	archiveName = "vex-archive.tar.zst"
-)
+const baseURL = "https://security.access.redhat.com/data/csaf/v2/vex-feed/"
 
 type options struct {
 	baseURL string
@@ -90,49 +87,50 @@ func Fetch(opts ...Option) error {
 	slog.Info("Fetch RedHat CSAF VEX v2")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
-	if err := options.checkArchiveLatest(client); err != nil {
-		return errors.Wrap(err, "check archive latest")
+	name, err := options.fetchArchiveLatest(client)
+	if err != nil {
+		return errors.Wrap(err, "fetch archive latest")
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX v2 Archive")
-	if err := options.fetchArchive(client); err != nil {
+	slog.Info("Fetch RedHat CSAF VEX v2 Archive", slog.String("name", name))
+	if err := options.fetchArchive(client, name); err != nil {
 		return errors.Wrap(err, "fetch archive")
 	}
 
 	return nil
 }
 
-func (o options) checkArchiveLatest(client *utilhttp.Client) error {
+func (o options) fetchArchiveLatest(client *utilhttp.Client) (string, error) {
 	u, err := url.JoinPath(o.baseURL, "archive_latest.txt")
 	if err != nil {
-		return errors.Wrap(err, "url join")
+		return "", errors.Wrap(err, "url join")
 	}
 
 	resp, err := client.Get(u)
 	if err != nil {
-		return errors.Wrapf(err, "fetch %s", u)
+		return "", errors.Wrapf(err, "fetch %s", u)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return errors.Errorf("error response with status code %d", resp.StatusCode)
+		return "", errors.Errorf("error response with status code %d", resp.StatusCode)
 	}
 
 	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "read response body")
+		return "", errors.Wrap(err, "read response body")
 	}
 
-	if got := strings.TrimSpace(string(bs)); got != archiveName {
-		return errors.Errorf("unexpected archive_latest.txt content. expected: %q, actual: %q", archiveName, got)
+	name := strings.TrimSpace(string(bs))
+	if !strings.HasSuffix(name, ".tar.zst") {
+		return "", errors.Errorf("unexpected archive_latest.txt content. expected: %q, actual: %q", "<name>.tar.zst", name)
 	}
-
-	return nil
+	return name, nil
 }
 
-func (o options) fetchArchive(client *utilhttp.Client) error {
-	u, err := url.JoinPath(o.baseURL, archiveName)
+func (o options) fetchArchive(client *utilhttp.Client, name string) error {
+	u, err := url.JoinPath(o.baseURL, name)
 	if err != nil {
 		return errors.Wrap(err, "url join")
 	}
