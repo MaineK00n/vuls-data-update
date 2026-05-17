@@ -1011,6 +1011,11 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
+		// "Has any binary RPM" — anything other than "src" counts, including
+		// "" (binary RPMs without an arch qualifier, encoded by the upstream
+		// feed as "applies to all binary archs"). Without this outer check,
+		// pure ["src"] / [] product_versions would emit spurious empty
+		// binary criteria.
 		if slices.ContainsFunc(extra.arches, func(x string) bool { return x != "src" }) {
 			as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" || x == "" })
 			if len(as) == 0 {
