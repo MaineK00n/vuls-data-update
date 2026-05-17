@@ -1,10 +1,10 @@
 package archive_test
 
 import (
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,23 +30,16 @@ func TestFetch(t *testing.T) {
 				case r.URL.Path == "/toc.json":
 					http.ServeFile(w, r, "testdata/fixtures/toc.json")
 				case strings.HasPrefix(r.URL.Path, "/securitybulletins/"):
-					http.ServeFile(w, r, filepath.Join("testdata/fixtures", strings.TrimPrefix(r.URL.Path, "/")+".md"))
+					http.ServeFile(w, r, filepath.Join("testdata/fixtures", fmt.Sprintf("%s.md", strings.TrimPrefix(r.URL.Path, "/"))))
 				default:
 					http.NotFound(w, r)
 				}
 			}))
 			defer ts.Close()
 
-			tocU, err := url.JoinPath(ts.URL, "toc.json")
-			if err != nil {
-				t.Fatal(err)
-			}
-			pageBase := ts.URL + "/"
-
 			dir := t.TempDir()
-			err = archive.Fetch(
-				archive.WithTOCURL(tocU),
-				archive.WithPageBaseURL(pageBase),
+			err := archive.Fetch(
+				archive.WithBaseURL(fmt.Sprintf("%s/", ts.URL)),
 				archive.WithDir(dir),
 				archive.WithRetry(0),
 			)

@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"path"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 
@@ -18,19 +18,10 @@ import (
 	utilhttp "github.com/MaineK00n/vuls-data-update/pkg/fetch/util/http"
 )
 
-const (
-	tocURL      = "https://learn.microsoft.com/en-us/security-updates/toc.json"
-	pageBaseURL = "https://learn.microsoft.com/en-us/security-updates/"
-)
-
-var (
-	tocHrefRE     = regexp.MustCompile(`^securitybulletins/(\d{4})/(ms\d{2}-\d{3})$`)
-	responseURLRE = regexp.MustCompile(`/securitybulletins/(\d{4})/(ms\d{2}-\d{3})$`)
-)
+const baseURL = "https://learn.microsoft.com/en-us/security-updates/"
 
 type options struct {
-	tocURL      string
-	pageBaseURL string
+	baseURL     string
 	dir         string
 	retry       int
 	concurrency int
@@ -41,24 +32,14 @@ type Option interface {
 	apply(*options)
 }
 
-type tocURLOption string
+type baseURLOption string
 
-func (u tocURLOption) apply(opts *options) {
-	opts.tocURL = string(u)
+func (u baseURLOption) apply(opts *options) {
+	opts.baseURL = string(u)
 }
 
-func WithTOCURL(u string) Option {
-	return tocURLOption(u)
-}
-
-type pageBaseURLOption string
-
-func (u pageBaseURLOption) apply(opts *options) {
-	opts.pageBaseURL = string(u)
-}
-
-func WithPageBaseURL(u string) Option {
-	return pageBaseURLOption(u)
+func WithBaseURL(u string) Option {
+	return baseURLOption(u)
 }
 
 type dirOption string
@@ -103,9 +84,8 @@ func WithWait(wait time.Duration) Option {
 
 func Fetch(opts ...Option) error {
 	options := &options{
-		tocURL:      tocURL,
-		pageBaseURL: pageBaseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletinarchive"),
+		baseURL:     baseURL,
+		dir:         filepath.Join(util.CacheDir(), "fetch", "microsoft", "bulletin", "archive"),
 		retry:       3,
 		concurrency: 5,
 		wait:        1 * time.Second,
@@ -129,7 +109,7 @@ func Fetch(opts ...Option) error {
 
 	urls := make([]string, 0, len(refs))
 	for _, r := range refs {
-		u, err := url.JoinPath(options.pageBaseURL, "securitybulletins", r.Year, r.MSID)
+		u, err := url.JoinPath(options.baseURL, "securitybulletins", r.Year, r.MSID)
 		if err != nil {
 			return errors.Wrap(err, "url join")
 		}
@@ -149,11 +129,10 @@ func Fetch(opts ...Option) error {
 			return errors.Wrap(err, "read response body")
 		}
 
-		m := responseURLRE.FindStringSubmatch(resp.Request.URL.Path)
-		if m == nil {
-			return errors.Errorf("unexpected response URL. expected: %q, actual: %q", ".../securitybulletins/<year>/ms<yy>-<nnn>", resp.Request.URL.String())
+		year, msid, err := parseBulletinPath(resp.Request.URL.Path)
+		if err != nil {
+			return errors.Wrapf(err, "parse response url %q", resp.Request.URL.String())
 		}
-		year, msid := m[1], m[2]
 
 		arch := Archive{
 			ID:       strings.ToUpper(msid),
@@ -176,21 +155,15 @@ func Fetch(opts ...Option) error {
 	return nil
 }
 
-type bulletinRef struct {
-	Year string
-	MSID string
-}
-
-type tocNode struct {
-	Href     string     `json:"href"`
-	Items    []*tocNode `json:"items"`
-	Children []*tocNode `json:"children"`
-}
-
 func (o options) fetchTOC(client *utilhttp.Client) ([]bulletinRef, error) {
-	resp, err := client.Get(o.tocURL)
+	tocURL, err := url.JoinPath(o.baseURL, "toc.json")
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetch %s", o.tocURL)
+		return nil, errors.Wrap(err, "url join")
+	}
+
+	resp, err := client.Get(tocURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "fetch %s", tocURL)
 	}
 	defer resp.Body.Close()
 
@@ -210,8 +183,8 @@ func (o options) fetchTOC(client *utilhttp.Client) ([]bulletinRef, error) {
 		if n == nil {
 			return
 		}
-		if m := tocHrefRE.FindStringSubmatch(n.Href); m != nil {
-			refs = append(refs, bulletinRef{Year: m[1], MSID: m[2]})
+		if year, msid, ok := splitBulletinHref(n.Href); ok {
+			refs = append(refs, bulletinRef{Year: year, MSID: msid})
 		}
 		for _, c := range n.Items {
 			walk(c)
@@ -223,4 +196,67 @@ func (o options) fetchTOC(client *utilhttp.Client) ([]bulletinRef, error) {
 	walk(&toc)
 
 	return refs, nil
+}
+
+// splitBulletinHref parses a TOC href of the form
+// "securitybulletins/<year>/<msid>" into its year and msid components.
+// Anything that doesn't match that exact two-segment shape under
+// "securitybulletins/" is rejected.
+func splitBulletinHref(href string) (year, msid string, ok bool) {
+	const prefix = "securitybulletins/"
+	rest, found := strings.CutPrefix(href, prefix)
+	if !found {
+		return "", "", false
+	}
+	year, msid, found = strings.Cut(rest, "/")
+	if !found || strings.Contains(msid, "/") {
+		return "", "", false
+	}
+	if !isBulletinYear(year) || !isBulletinMSID(msid) {
+		return "", "", false
+	}
+	return year, msid, true
+}
+
+// parseBulletinPath extracts (year, msid) from a response URL path of the
+// form ".../securitybulletins/<year>/<msid>".
+func parseBulletinPath(p string) (year, msid string, err error) {
+	msid = path.Base(p)
+	dir := path.Dir(p)
+	year = path.Base(dir)
+	parent := path.Base(path.Dir(dir))
+	if parent != "securitybulletins" || !isBulletinYear(year) || !isBulletinMSID(msid) {
+		return "", "", errors.Errorf("unexpected response path, want %q, got %q", ".../securitybulletins/<year>/ms<yy>-<nnn>", p)
+	}
+	return year, msid, nil
+}
+
+// isBulletinYear reports whether s is a 4-digit year.
+func isBulletinYear(s string) bool {
+	if len(s) != 4 {
+		return false
+	}
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
+}
+
+// isBulletinMSID reports whether s matches the canonical "ms<yy>-<nnn>"
+// bulletin identifier shape (lowercase).
+func isBulletinMSID(s string) bool {
+	if len(s) != 9 {
+		return false
+	}
+	if s[0] != 'm' || s[1] != 's' || s[4] != '-' {
+		return false
+	}
+	for _, i := range []int{2, 3, 5, 6, 7, 8} {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+	return true
 }
