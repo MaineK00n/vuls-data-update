@@ -144,7 +144,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
 		ID:   sourceTypes.RedHatVEXv2,
-		Name: new("RedHat Enterprise Linux CSAF VEX"),
+		Name: new("RedHat Enterprise Linux CSAF VEX v2"),
 		Raw: func() []repositoryTypes.Repository {
 			var rs []repositoryTypes.Repository
 			r1, _ := utilgit.GetDataSourceRepository(vexDir)
