@@ -821,125 +821,125 @@ var ieCumChainEdges = map[string][]string{
 // under parent KB3210142). The trailing note attributes the bulletin from the
 // archive markdown where the supersedes edge appears (e.g., MS16-155).
 var bulletinArchiveSupersedes = map[string][]string{
-	"970238":  {"2849470"},                       // MS13-062: RPC EoP (XP SP3)
-	"981322":  {"2850869"},                       // MS13-060: Unicode Scripts Processor RCE (XP SP3 / Server 2003)
-	"982666":  {"3141083"},                       // MS16-058: IIS (Server 2008 Itanium SP2)
-	"2360937": {"2849470"},                       // MS13-062: RPC EoP (XP SP3)
-	"2536276": {"3000483"},                       // MS15-011: Group Policy RCE (Vista/Server 2008/Win7/Server 2008 R2)
+	"2797052": {"2809289"},                       // MS13-021: IE 6 Cumulative (XP SP3)
 	"2620712": {"2813170"},                       // MS13-031: Windows Kernel EoP (XP SP3)
 	"2621146": {"2772930"},                       // MS13-032: Active Directory DoS (Server 2003 SP2)
-	"2644615": {"2859537"},                       // MS13-063: Windows Kernel EoP (XP SP3)
 	"2646524": {"2820917"},                       // MS13-033: CSRSS EoP (XP SP3)
-	"2698035": {"2833951"},                       // MS13-052: .NET FW 1.0 SP3 (XP MCE 2005 SP3)
-	"2716435": {"2977322"},                       // MS14-044: SQL Server 2008 SP3 EoP (QFE branch)
-	"2729460": {"2972107"},                       // MS14-057: .NET FW 4.5/4.5.1/4.5.2 RCE (Server 2008 R2 SP1)
-	"2746164": {"2874216"},                       // MS13-061: Exchange Server 2010 SP2 RCE
-	"2756918": {"2973115"},                       // MS14-053: .NET FW 3.0 SP2 DoS (Server 2003 SP2)
-	"2760585": {"2984943"},                       // MS16-054: Office 2007 SP3 (Office re-release)
-	"2760591": {"2984938"},                       // MS16-054: Office 2007 SP3 (Office re-release)
-	"2790113": {"2859537"},                       // MS13-063: Windows Kernel EoP (Win7)
-	"2797052": {"2809289"},                       // MS13-021: IE 6 Cumulative (XP SP3)
-	"2804577": {"3035488"},                       // MS15-048: .NET FW 2.0 SP2 EoP (Server 2003 SP2)
-	"2808735": {"2850851"},                       // MS13-053: Kernel-Mode Drivers RCE (XP SP3)
 	"2813170": {"2829361"},                       // MS13-046: Kernel-Mode Drivers EoP (XP SP3)
-	"2826028": {"3054838"},                       // MS15-046: Excel Web App 2010 SP2 (Office Web Apps 2010 SP2)
-	"2826029": {"3054839"},                       // MS15-046: Excel Services (SharePoint 2010 SP2)
-	"2827328": {"2920791"},                       // MS15-012: Excel Viewer 2007 SP2 RCE
+	"2847204": {"2838727"},                       // MS13-047: IE 6 Cumulative (XP SP3)
+	"2829361": {"2839229"},                       // MS13-048: Windows Kernel info disclosure (XP SP3)
+	"2698035": {"2833951"},                       // MS13-052: .NET FW 1.0 SP3 (XP MCE 2005 SP3)
+	"2808735": {"2850851"},                       // MS13-053: Kernel-Mode Drivers RCE (XP SP3)
 	"2827751": {"2843162"},                       // MS13-054: Lync 2010 Attendee user-install (GDI+); Excel mis-attributed to admin-install KB
 	"2827752": {"2843163"},                       // MS13-054: Lync 2010 Attendee admin-install (GDI+)
-	"2829254": {"3042553"},                       // MS15-034: HTTP.sys RCE (Win8/Server 2012)
-	"2829361": {"2839229"},                       // MS13-048: Windows Kernel info disclosure (XP SP3)
+	"981322":  {"2850869"},                       // MS13-060: Unicode Scripts Processor RCE (XP SP3 / Server 2003)
+	"2746164": {"2874216"},                       // MS13-061: Exchange Server 2010 SP2 RCE
+	"970238":  {"2849470"},                       // MS13-062: RPC EoP (XP SP3)
+	"2360937": {"2849470"},                       // MS13-062: RPC EoP (XP SP3)
+	"2644615": {"2859537"},                       // MS13-063: Windows Kernel EoP (XP SP3)
+	"2790113": {"2859537"},                       // MS13-063: Windows Kernel EoP (Win7)
+	"2859537": {"2872339", "3033395"},            // 2872339=MS13-077 (SCM EoP, Win7 SP1); 3033395=MS15-025 (Kernel EoP, Server 2003 SP2)
+	"2866475": {"2880833"},                       // MS13-105: Exchange Server 2013 RCE
 	"2837615": {"2878236"},                       // MS14-017: Office Compatibility Pack SP3 (Word RCE)
+	"2863867": {"2878304"},                       // MS14-017: Office Word Viewer RCE
+	"2889496": {"2939132"},                       // MS14-017: Office for Mac 2011 (Word RCE)
+	"2936068": {"2953522", "2961851"},            // MS14-029: IE 8 / IE 11 (Win7 SP1) — IE update bundle
+	"2964444": {"2953522"},                       // MS14-029: IE 8 Cumulative (Win7 SP1)
+	"2961851": {"2957689"},                       // MS14-035: IE 11 Cumulative (Server 2008 R2 SP1)
+	"2957689": {"2962872", "2963952"},            // MS14-037: IE 8 (Vista SP2) / IE 11 (Win7 SP1) — IE Cum chain
+	"2716435": {"2977322"},                       // MS14-044: SQL Server 2008 SP3 EoP (QFE branch)
 	"2844286": {"2937610"},                       // MS14-046: .NET FW 3.5.1 sec-feature-bypass (Win7 SP1)
 	"2844287": {"2937608"},                       // MS14-046: .NET FW 2.0 SP2 sec-feature-bypass (Vista SP2)
 	"2844289": {"2966825"},                       // MS14-046: .NET FW 3.5 sec-feature-bypass (Server 2012)
-	"2847204": {"2838727"},                       // MS13-047: IE 6 Cumulative (XP SP3)
-	"2859537": {"2872339", "3033395"},            // 2872339=MS13-077 (SCM EoP, Win7 SP1); 3033395=MS15-025 (Kernel EoP, Server 2003 SP2)
-	"2863239": {"3035488"},                       // MS15-048: .NET FW 2.0 SP2 EoP (Server 2003 SP2)
-	"2863867": {"2878304"},                       // MS14-017: Office Word Viewer RCE
-	"2866475": {"2880833"},                       // MS13-105: Exchange Server 2013 RCE
-	"2876331": {"3046306"},                       // MS15-035: Graphics Component RCE (Server 2003/Vista/Server 2008/Win7/Server 2008 R2)
-	"2889496": {"2939132"},                       // MS14-017: Office for Mac 2011 (Word RCE)
-	"2889841": {"3178688"},                       // MS17-013: Office 2010 SP2 (Graphics Component)
 	"2898866": {"2966825"},                       // MS14-046: .NET FW 3.5 sec-feature-bypass (Server 2012)
 	"2898868": {"2966826"},                       // MS14-046: .NET FW 3.5 sec-feature-bypass (Win8.1)
-	"2901128": {"3098779"},                       // MS15-118: .NET FW 4.5.1/4.5.2 EoP (Win8.1)
-	"2936068": {"2953522", "2961851"},            // MS14-029: IE 8 / IE 11 (Win7 SP1) — IE update bundle
+	"2962872": {"2976627", "2977629"},            // 2976627=MS14-051 (IE 8, Win7 SP1); 2977629=MS14-052 (IE 11, Server 2008 R2 SP1)
+	"2756918": {"2973115"},                       // MS14-053: .NET FW 3.0 SP2 DoS (Server 2003 SP2)
+	"2729460": {"2972107"},                       // MS14-057: .NET FW 4.5/4.5.1/4.5.2 RCE (Server 2008 R2 SP1)
+	"3029449": {"3021952"},                       // MS15-009: IE 10 Cumulative (Win8/Server 2012/Win RT)
+	"2536276": {"3000483"},                       // MS15-011: Group Policy RCE (Vista/Server 2008/Win7/Server 2008 R2)
+	"2827328": {"2920791"},                       // MS15-012: Excel Viewer 2007 SP2 RCE
+	"3012176": {"3032359"},                       // MS15-018: IE 8 Cumulative (Server 2003/Vista/Server 2008/Win7/Server 2008 R2)
+	"3034196": {"3032359"},                       // MS15-018: IE 9/10/11 Cumulative (Vista/Server 2008/Win7/Server 2008 R2/Win8/Server 2012)
+	"3036197": {"3032359"},                       // MS15-018: IE 11 Cumulative (Win8.1/Server 2012 R2/Win RT 8.1)
+	"2962123": {"3039066"},                       // MS15-020: Windows Shell RCE (Win8.1/Server 2012 R2/Win RT 8.1)
+	"2829254": {"3042553"},                       // MS15-034: HTTP.sys RCE (Win8/Server 2012)
+	"2876331": {"3046306"},                       // MS15-035: Graphics Component RCE (Server 2003/Vista/Server 2008/Win7/Server 2008 R2)
+	"2974286": {"3046002"},                       // MS15-045: Windows Journal RCE (Win8.1/Server 2012 R2)
+	"2826028": {"3054838"},                       // MS15-046: Excel Web App 2010 SP2 (Office Web Apps 2010 SP2)
+	"2826029": {"3054839"},                       // MS15-046: Excel Services (SharePoint 2010 SP2)
 	"2956070": {"3054843"},                       // MS15-046: Office Web Apps 2010 SP2
 	"2956136": {"3054833"},                       // MS15-046: Word Automation Services (SharePoint 2010 SP2)
 	"2956208": {"3054847"},                       // MS15-046: SharePoint Foundation 2010 SP2
-	"2957689": {"2962872", "2963952"},            // MS14-037: IE 8 (Vista SP2) / IE 11 (Win7 SP1) — IE Cum chain
-	"2961851": {"2957689"},                       // MS14-035: IE 11 Cumulative (Server 2008 R2 SP1)
-	"2962123": {"3039066"},                       // MS15-020: Windows Shell RCE (Win8.1/Server 2012 R2/Win RT 8.1)
-	"2962872": {"2976627", "2977629"},            // 2976627=MS14-051 (IE 8, Win7 SP1); 2977629=MS14-052 (IE 11, Server 2008 R2 SP1)
-	"2964444": {"2953522"},                       // MS14-029: IE 8 Cumulative (Win7 SP1)
-	"2965155": {"3069392"},                       // MS15-072: Graphics Component EoP (Win8.1/Server 2012 R2)
-	"2973408": {"3092601"},                       // MS15-119: Winsock EoP (Win8.1/Server 2012 R2)
-	"2974286": {"3046002"},                       // MS15-045: Windows Journal RCE (Win8.1/Server 2012 R2)
-	"3003381": {"3062577"},                       // MS15-062: AD FS 2.0 EoP (Server 2008 SP2)
-	"3012176": {"3032359"},                       // MS15-018: IE 8 Cumulative (Server 2003/Vista/Server 2008/Win7/Server 2008 R2)
-	"3029449": {"3021952"},                       // MS15-009: IE 10 Cumulative (Win8/Server 2012/Win RT)
-	"3034196": {"3032359"},                       // MS15-018: IE 9/10/11 Cumulative (Vista/Server 2008/Win7/Server 2008 R2/Win8/Server 2012)
-	"3036197": {"3032359"},                       // MS15-018: IE 11 Cumulative (Win8.1/Server 2012 R2/Win RT 8.1)
-	"3050514": {"3061518"},                       // MS15-055: Schannel info disclosure (Win8/Server 2012)
 	"3051737": {"3048688"},                       // MS15-046: Office for Mac 2011
+	"3054888": {"3085544"},                       // MS15-046: Office 2007 SP3 (V4.0 Oct 2015 re-release of 2965282) — archive-only
+	"2804577": {"3035488"},                       // MS15-048: .NET FW 2.0 SP2 EoP (Server 2003 SP2)
+	"2863239": {"3035488"},                       // MS15-048: .NET FW 2.0 SP2 EoP (Server 2003 SP2)
+	"3050514": {"3061518"},                       // MS15-055: Schannel info disclosure (Win8/Server 2012)
+	"3003381": {"3062577"},                       // MS15-062: AD FS 2.0 EoP (Server 2008 SP2)
+	"2965155": {"3069392"},                       // MS15-072: Graphics Component EoP (Win8.1/Server 2012 R2)
+	"3081444": {"3081455"},                       // MS15-095: Microsoft Edge Cumulative (Win10) — MS15-097/098/101/102/105 also republished
+	"3062157": {"3087126"},                       // MS15-103: Exchange Server 2013 CU8 info disclosure
+	"2901128": {"3098779"},                       // MS15-118: .NET FW 4.5.1/4.5.2 EoP (Win8.1)
+	"2973408": {"3092601"},                       // MS15-119: Winsock EoP (Win8.1/Server 2012 R2)
+	"3124001": {"3134214"},                       // MS16-018: Kernel-Mode Drivers EoP (Server 2012)
+	"3138327": {"3142577"},                       // MS16-042: Word 2016 for Mac — archive-only
+	"3138328": {"3154208"},                       // MS16-042: Word for Mac 2011 — archive-only
+	"3148198": {"3154070"},                       // MS16-051: IE 9 Cumulative (Vista SP2)
+	"2760585": {"2984943"},                       // MS16-054: Office 2007 SP3 (Office re-release)
+	"2760591": {"2984938"},                       // MS16-054: Office 2007 SP3 (Office re-release)
 	"3054841": {"3101520"},                       // MS16-054: Office 2010 SP2 (32-bit)
 	"3054848": {"3054984"},                       // MS16-054: Office 2010 SP2 (32-bit)
-	"3054888": {"3085544"},                       // MS15-046: Office 2007 SP3 (V4.0 Oct 2015 re-release of 2965282) — archive-only
-	"3062157": {"3087126"},                       // MS15-103: Exchange Server 2013 CU8 info disclosure
-	"3081444": {"3081455"},                       // MS15-095: Microsoft Edge Cumulative (Win10) — MS15-097/098/101/102/105 also republished
-	"3114421": {"3114740"},                       // MS16-070: Visio 2007 SP3
 	"3114486": {"3115016"},                       // MS16-054: Office 2013 SP1 (32-bit)
-	"3114527": {"3115144"},                       // MS16-070: Office 2016 (64-bit)
-	"3114742": {"3114893"},                       // MS16-099: Office 2007 SP3
 	"3114855": {"3115094"},                       // MS16-054: Word 2016 (32-bit)
-	"3114892": {"3115107"},                       // MS16-070: Excel 2007 SP3
-	"3114895": {"3115111"},                       // MS16-070: Office Compatibility Pack SP3
-	"3114927": {"3115014"},                       // MS16-070: Word Automation Services (SharePoint 2013 SP1)
-	"3114934": {"3115170"},                       // MS16-070: Office Web Apps Server 2013 SP1
 	"3114982": {"3115115"},                       // MS16-054: Office Compatibility Pack SP3
 	"3114983": {"3115116"},                       // MS16-054: Word 2007 SP3
 	"3114987": {"3115132"},                       // MS16-054: Office Word Viewer
 	"3114990": {"3115121"},                       // MS16-054: Office 2010 SP2 (32-bit)
 	"3114993": {"3115123"},                       // MS16-054: Word 2010 SP2 (32-bit)
+	"3115309": {"3115464"},                       // MS16-054 V2.0 (Aug 2016): Office Compatibility Pack SP3 — archive-only
+	"3142577": {"3155777"},                       // MS16-054: Word 2016 for Mac
+	"3154208": {"3155776"},                       // MS16-054: Word for Mac 2011
+	"982666":  {"3141083"},                       // MS16-058: IIS (Server 2008 Itanium SP2)
+	"3114421": {"3114740"},                       // MS16-070: Visio 2007 SP3
+	"3114527": {"3115144"},                       // MS16-070: Office 2016 (64-bit)
+	"3114892": {"3115107"},                       // MS16-070: Excel 2007 SP3
+	"3114895": {"3115111"},                       // MS16-070: Office Compatibility Pack SP3
+	"3114927": {"3115014"},                       // MS16-070: Word Automation Services (SharePoint 2013 SP1)
+	"3114934": {"3115170"},                       // MS16-070: Office Web Apps Server 2013 SP1
 	"3115115": {"3115194"},                       // MS16-070: Office Compatibility Pack SP3
 	"3115116": {"3115195"},                       // MS16-070: Word 2007 SP3
 	"3115117": {"3115196"},                       // MS16-070: Word Automation Services (SharePoint 2010 SP2)
 	"3115124": {"3115244"},                       // MS16-070: Office Web Apps 2010 SP2
 	"3115132": {"3115187"},                       // MS16-070: Office Word Viewer
-	"3115254": {"3115487"},                       // MS16-107: PowerPoint 2013 SP1 (32-bit)
-	"3115309": {"3115464"},                       // MS16-054 V2.0 (Aug 2016): Office Compatibility Pack SP3 — archive-only
+	"3114742": {"3114893"},                       // MS16-099: Office 2007 SP3
 	"3115311": {"3115465"},                       // MS16-099: Word 2007 SP3
 	"3115393": {"3115480"},                       // MS16-099: Office Word Viewer
 	"3115395": {"3115479"},                       // MS16-099: Office Word Viewer
+	"3175024": {"3185330"},                       // MS16-101: Windows Authentication (Server 2008 R2 SP1)
+	"3157569": {"3175887"},                       // MS16-102: Windows PDF Library (Win8.1)
+	"3115254": {"3115487"},                       // MS16-107: PowerPoint 2013 SP1 (32-bit)
+	"3185319": {"3185330", "3185331", "3185332"}, // MS16-118: IE Cumulative (Win7/8.1/Server 2008 R2/2012/2012 R2/Win RT) — Monthly Rollup KBs supersede 3185319 in MS16-104; archive-only (Monthly Rollup KBs)
+	"3142041": {"3188735"},                       // MS16-120: .NET FW 3.0 SP2 (Vista SP2) — Graphics Component
+	"3142042": {"3188740"},                       // MS16-120: .NET FW 3.5.1 (Win7 SP1) — Graphics Component
+	"3142043": {"3188741"},                       // MS16-120: .NET FW 3.5 (Server 2012) — Graphics Component
+	"3142045": {"3188743"},                       // MS16-120: .NET FW 3.5 (Win8.1) — Graphics Component
 	"3115443": {"3118352"},                       // MS16-121: Word Automation Services (SharePoint 2013 SP1) — archive-only
 	"3115466": {"3118377"},                       // MS16-121: Word Automation Services (SharePoint 2010 SP2) — archive-only
 	"3115472": {"3118384"},                       // MS16-121: Office Web Apps 2010 SP2 — archive-only
 	"3118270": {"3118360"},                       // MS16-121: Office Web Apps Server 2013 SP1 — archive-only
 	"3118299": {"3127897"},                       // MS16-121: Office Online Server — archive-only
-	"3124001": {"3134214"},                       // MS16-018: Kernel-Mode Drivers EoP (Server 2012)
-	"3138327": {"3142577"},                       // MS16-042: Word 2016 for Mac — archive-only
-	"3138328": {"3154208"},                       // MS16-042: Word for Mac 2011 — archive-only
-	"3141542": {"3178687"},                       // MS17-014: Word 2010 SP2 (32-bit)
-	"3142041": {"3188735"},                       // MS16-120: .NET FW 3.0 SP2 (Vista SP2) — Graphics Component
-	"3142042": {"3188740"},                       // MS16-120: .NET FW 3.5.1 (Win7 SP1) — Graphics Component
-	"3142043": {"3188741"},                       // MS16-120: .NET FW 3.5 (Server 2012) — Graphics Component
-	"3142045": {"3188743"},                       // MS16-120: .NET FW 3.5 (Win8.1) — Graphics Component
-	"3142577": {"3155777"},                       // MS16-054: Word 2016 for Mac
-	"3148198": {"3154070"},                       // MS16-051: IE 9 Cumulative (Vista SP2)
-	"3154208": {"3155776"},                       // MS16-054: Word for Mac 2011
-	"3157569": {"3175887"},                       // MS16-102: Windows PDF Library (Win8.1)
-	"3163244": {"3210129"},                       // MS16-155: .NET FW 2.0 SP2 (Vista/Server 2008 SP2) — Monthly Rollup component of parent KB3210142, archive-only
-	"3175024": {"3185330"},                       // MS16-101: Windows Authentication (Server 2008 R2 SP1)
 	"3184122": {"3194371"},                       // MS16-135: Kernel-Mode Drivers (Vista SP2)
-	"3185319": {"3185330", "3185331", "3185332"}, // MS16-118: IE Cumulative (Win7/8.1/Server 2008 R2/2012/2012 R2/Win RT) — Monthly Rollup KBs supersede 3185319 in MS16-104; archive-only (Monthly Rollup KBs)
 	"3185330": {"3197868"},                       // MS16-142: IE 11 Monthly Rollup (Win7 SP1 / Server 2008 R2 SP1) — archive-only (Excel has Security Only KBs)
 	"3185331": {"3197874"},                       // MS16-142: IE 11 Monthly Rollup (Win8.1 / Server 2012 R2 / Win RT 8.1) — archive-only
 	"3185332": {"3197877"},                       // MS16-142: IE 10 Monthly Rollup (Server 2012) — archive-only
-	"3188744": {"3210129", "3210136", "3210139"}, // MS16-155: .NET FW 2.0 SP2 / 4.5.2 / 4.6 (Vista/Server 2008 SP2) — Monthly Rollup components of parent KB3210142, archive-only
 	"3197655": {"3203621"},                       // MS16-144: IE 9 Cumulative (Vista SP2)
 	"3197877": {"3205409"},                       // MS16-144: IE 10 Monthly Rollup (Server 2012) — archive-only
+	"3163244": {"3210129"},                       // MS16-155: .NET FW 2.0 SP2 (Vista/Server 2008 SP2) — Monthly Rollup component of parent KB3210142, archive-only
+	"3188744": {"3210129", "3210136", "3210139"}, // MS16-155: .NET FW 2.0 SP2 / 4.5.2 / 4.6 (Vista/Server 2008 SP2) — Monthly Rollup components of parent KB3210142, archive-only
 	"3204808": {"3216775"},                       // MS17-004: LSASS DoS (Server 2008 SP2)
+	"2889841": {"3178688"},                       // MS17-013: Office 2010 SP2 (Graphics Component)
+	"3141542": {"3178687"},                       // MS17-014: Word 2010 SP2 (32-bit)
 }
 
 // bulletinArchiveSupersedesOverride drops supersedes edges that
@@ -964,50 +964,59 @@ var bulletinArchiveSupersedes = map[string][]string{
 // origin so reviewers can verify the edge against the corresponding archive
 // page (the "Updates Replaced" column of the Affected Software table).
 var bulletinArchiveSupersedesOverride = map[string][]string{
-	"2596915": {"2687505"},            // MS16-070: Visio Viewer 2007 SP3; Excel cites MS13-023[2687505] (different component_kb in archive)
 	"2772930": {"2626416"},            // MS13-032: AD Lightweight Directory Services (Server 2003 SP2); Excel cites MS11-095[2626416] (AD Application Mode, sibling component)
 	"2817480": {"2598253"},            // MS13-054: Office 2003 SP3 (GDI+); Excel cites MS12-034[2598253] (different component_kb in archive)
 	"2843162": {"2827750"},            // MS13-054: Lync 2010 Attendee user-install (GDI+); Excel cites MS13-041[2827750] (Lync admin-install sibling)
 	"2843163": {"2827750"},            // MS13-054: Lync 2010 Attendee admin-install (GDI+); Excel cites MS13-041[2827750] (same sibling mis-attribution)
-	"2899516": {"2553428"},            // MS15-116: Pinyin IME 2010 (Office 2010); Excel cites MS15-033[2553428] (Word 2010, sibling component)
-	"2956138": {"2956058"},            // MS15-022: Office 2010 SP2; Excel cites MS15-012[2956058] (different component_kb in archive)
-	"2965313": {"3085514"},            // MS15-116: Word 2010 SP2 (Office 2010); Excel cites MS15-110[3085514] (Visio 2010, sibling component)
-	"2984938": {"3114983"},            // MS16-054: Office 2007 SP3; Excel cites MS16-042[3114983] (Word 2007 SP3, sibling component)
-	"2984943": {"3114990"},            // MS16-054: Office 2007 SP3; Excel cites MS16-042[3114990] (Office 2010 SP2, different product)
 	"3012168": {"2909213"},            // MS14-084: VBScript 5.6; Excel cites MS14-011[2909213] (different chain in archive)
 	"3012172": {"2909212"},            // MS14-084: VBScript 5.7; Excel cites MS14-011[2909212] (different chain in archive)
 	"3012176": {"2909210"},            // MS14-084: VBScript 5.8; Excel cites MS14-011[2909210] (different chain in archive)
 	"3021952": {"3012176"},            // MS15-009: IE Cumulative; Excel cites MS14-084[3012176] (VBScript 5.8, sibling component)
-	"3054793": {"3085583"},            // MS15-116: InfoPath 2013 (Office 2013); Excel cites MS15-110[3085583] (Excel 2013, sibling component)
-	"3054984": {"3054841"},            // MS16-054: Office 2010 SP2; Excel cites MS15-046[3054841] (different component_kb in archive)
+	"2956138": {"2956058"},            // MS15-022: Office 2010 SP2; Excel cites MS15-012[2956058] (different component_kb in archive)
 	"3062577": {"3062577"},            // MS15-062: AD FS 2.0/2.1; Excel claims KB3062577 supersedes itself
 	"3081455": {"3081444"},            // MS15-091/093/094/...(Win10): Edge/.NET; Excel cites MS15-093[3081444] (IE 11, sibling chain)
-	"3085584": {"2956151"},            // MS15-116: Access 2013 (Office 2013); Excel cites MS15-022[2956151] (different component_kb)
-	"3085614": {"3055033"},            // MS15-116: Project 2010 (Office 2010); Excel cites MS15-081[3055033] (PowerPoint 2010, sibling component)
 	"3087038": {"3081444"},            // MS15-094: IE Cumulative; Excel cites MS15-093[3081444] (IE 11, sibling chain)
 	"3097617": {"3081455"},            // MS15-106/107/109/111(Win10): Edge/IE 11; Excel cites MS15-094/095[3081455] (different component_kb)
+	"3105213": {"3096448", "3097617"}, // MS15-112/113/115/118/119/122(Win10): Edge/.NET/IE; Excel cites MS15-107[3096448] and MS15-106[3097617] — sibling chains
+	"2899516": {"2553428"},            // MS15-116: Pinyin IME 2010 (Office 2010); Excel cites MS15-033[2553428] (Word 2010, sibling component)
+	"2965313": {"3085514"},            // MS15-116: Word 2010 SP2 (Office 2010); Excel cites MS15-110[3085514] (Visio 2010, sibling component)
+	"3054793": {"3085583"},            // MS15-116: InfoPath 2013 (Office 2013); Excel cites MS15-110[3085583] (Excel 2013, sibling component)
+	"3085584": {"2956151"},            // MS15-116: Access 2013 (Office 2013); Excel cites MS15-022[2956151] (different component_kb)
+	"3085614": {"3055033"},            // MS15-116: Project 2010 (Office 2010); Excel cites MS15-081[3055033] (PowerPoint 2010, sibling component)
 	"3101360": {"2687413", "3055030"}, // MS15-116: Office 2013 SP1; Excel cites MS13-075[2687413] (Pinyin IME) and MS15-081[3055030] (Word 2013) — sibling components
 	"3101370": {"3054929", "3055029"}, // MS15-116: Word 2013 SP1 (Office 2013); Excel cites MS15-081[3054929] (Visio 2013) and [3055029] (PowerPoint 2013) — sibling components
 	"3101371": {"3085583"},            // MS15-116: OneNote 2013 (Office 2013); Excel cites MS15-110[3085583] (Excel 2013, sibling component)
 	"3101499": {"2956151"},            // MS15-116: Excel 2013 (Office 2013); Excel cites MS15-022[2956151] (different component_kb)
 	"3101506": {"3055029"},            // MS15-116: Project 2013 (Office 2013); Excel cites MS15-081[3055029] (PowerPoint 2013, sibling component)
 	"3101512": {"3055030"},            // MS15-116: Office 2016; Excel cites MS15-081[3055030] (Word 2013, different product)
-	"3101520": {"3114993"},            // MS16-054: Office 2010 SP2; Excel cites MS16-042[3114993] (Word 2010 SP2, sibling component)
 	"3101526": {"2553147"},            // MS15-116: Visio 2010 SP2 (Office 2010); Excel cites MS13-042[2553147] (Publisher 2010, sibling component)
-	"3105213": {"3096448", "3097617"}, // MS15-112/113/115/118/119/122(Win10): Edge/.NET/IE; Excel cites MS15-107[3096448] and MS15-106[3097617] — sibling chains
+	"3116869": {"3105213"},            // MS15-124/125/128/132/133/135(Win10): Edge/IE 11; Excel cites MS15-112[3105213] (different chain in archive)
+	"3116900": {"3105211"},            // MS15-124/125/128/132/133/135(Win10 1511): Edge/IE 11; Excel cites MS15-112[3105211] (different chain in archive)
+	"3124263": {"3116900"},            // MS16-001/002/005/007/008(Win10 1511): Edge/IE 11; Excel cites MS15-124[3116900] (different chain in archive)
+	"3124266": {"3116869"},            // MS16-001/002/005/007/008(Win10): Edge/IE 11; Excel cites MS15-124[3116869] (different chain in archive)
+	"3126041": {"3121918"},            // MS16-014: Kerberos/Win-platform; Excel cites MS16-007[3121918] (different component_kb)
+	"3137721": {"3133699"},            // MS16-015: Office for Mac 2011 (Excel/Word); Excel cites MS16-004[3133699] (Office for Mac 2011 trio, sibling component)
+	"3135988": {"3099862"},            // MS16-035: .NET 3.5.1; Excel cites MS12-025[3099862] (different chain, replaces via MS15-128)
+	"2984938": {"3114983"},            // MS16-054: Office 2007 SP3; Excel cites MS16-042[3114983] (Word 2007 SP3, sibling component)
+	"2984943": {"3114990"},            // MS16-054: Office 2007 SP3; Excel cites MS16-042[3114990] (Office 2010 SP2, different product)
+	"3054984": {"3054841"},            // MS16-054: Office 2010 SP2; Excel cites MS15-046[3054841] (different component_kb in archive)
+	"3101520": {"3114993"},            // MS16-054: Office 2010 SP2; Excel cites MS16-042[3114993] (Word 2010 SP2, sibling component)
+	"3115016": {"3114937"},            // MS16-054: Office 2013 SP1; Excel cites MS16-042[3114937] (Word 2013, sibling component)
+	"3115025": {"3114486"},            // MS16-054: Word 2013 SP1; Excel cites MS16-004[3114486] (Office 2013 SP1, different component_kb)
+	"3115094": {"3142577", "3154208"}, // MS16-054: Word 2016; Excel cites MS16-042[3142577] (Word 2016 for Mac) and [3154208] (Word for Mac 2011) — different platforms
+	"3115103": {"3114855"},            // MS16-054: Office 2016; Excel cites MS16-029[3114855] (Word 2016, sibling component)
+	"3115116": {"3114990"},            // MS16-054: Word 2007 SP3; Excel cites MS16-042[3114990] (Office 2010 SP2, different product)
+	"3115121": {"3054848"},            // MS16-054: Office 2010 SP2; Excel cites MS15-046[3054848] (different component_kb)
+	"3155776": {"3114982"},            // MS16-054: Word for Mac 2011; Excel cites MS16-042[3114982] (different component_kb in archive)
+	"3155777": {"3114987"},            // MS16-054: Word 2016 for Mac; Excel cites MS16-042[3114987] (different component_kb in archive)
+	"2596915": {"2687505"},            // MS16-070: Visio Viewer 2007 SP3; Excel cites MS13-023[2687505] (different component_kb in archive)
 	"3114740": {"3115116"},            // MS16-070: Visio 2007 SP3; Excel cites MS16-054[3115116] (Word 2007 SP3, sibling component)
 	"3114872": {"3115123"},            // MS16-070: Visio 2010 SP2; Excel cites MS16-054[3115123] (Word 2010 SP2, sibling component)
 	"3115014": {"3115121"},            // MS16-070: Word Automation Services (SharePoint 2013); Excel cites MS16-054[3115121] (Office 2010 SP2, different product)
-	"3115016": {"3114937"},            // MS16-054: Office 2013 SP1; Excel cites MS16-042[3114937] (Word 2013, sibling component)
 	"3115020": {"3115025"},            // MS16-070: Visio 2013 SP1; Excel cites MS16-054[3115025] (Word 2013, sibling component)
-	"3115025": {"3114486"},            // MS16-054: Word 2013 SP1; Excel cites MS16-004[3114486] (Office 2013 SP1, different component_kb)
 	"3115041": {"3115094"},            // MS16-070: Visio 2016 (Office 2016); Excel cites MS16-054[3115094] (Word 2016, sibling component)
-	"3115094": {"3142577", "3154208"}, // MS16-054: Word 2016; Excel cites MS16-042[3142577] (Word 2016 for Mac) and [3154208] (Word for Mac 2011) — different platforms
-	"3115103": {"3114855"},            // MS16-054: Office 2016; Excel cites MS16-029[3114855] (Word 2016, sibling component)
 	"3115107": {"3114421"},            // MS16-070: Excel 2007 SP3; Excel cites MS16-004[3114421] (Visio 2007 SP3, sibling component)
 	"3115111": {"3115115"},            // MS16-070: Office Compatibility Pack SP3; Excel cites MS16-054[3115115] (different component_kb)
-	"3115116": {"3114990"},            // MS16-054: Word 2007 SP3; Excel cites MS16-042[3114990] (Office 2010 SP2, different product)
-	"3115121": {"3054848"},            // MS16-054: Office 2010 SP2; Excel cites MS15-046[3054848] (different component_kb)
 	"3115130": {"3114402"},            // MS16-070: Excel 2010 SP2; Excel cites MS16-004[3114402] (Visio 2010 SP2, sibling component)
 	"3115144": {"3114511"},            // MS16-070: Office 2016; Excel cites MS16-004[3114511] (Visio 2016, sibling component)
 	"3115170": {"3114888"},            // MS16-070: Office Web Apps Server 2013; Excel cites MS16-042[3114888] (Excel 2010 SP2, different product)
@@ -1017,26 +1026,17 @@ var bulletinArchiveSupersedesOverride = map[string][]string{
 	"3115198": {"3114888"},            // MS16-070: Office 2010 SP2; Excel cites MS16-042[3114888] (Excel 2010 SP2, sibling component)
 	"3115243": {"3114489"},            // MS16-070: Word 2010 SP2; Excel cites MS16-004[3114489] (Visio 2013, different product)
 	"3115244": {"3115121"},            // MS16-070: Office Web Apps 2010 SP2; Excel cites MS16-054[3115121] (Office 2010 SP2, different product)
+	"3165798": {"3114895"},            // MS16-070: Word 2016 for Mac; Excel cites MS16-042[3114895] (different component_kb in archive)
 	"3115487": {"3115118"},            // MS16-107: PowerPoint 2013 SP1; Excel cites MS16-088[3115118] (PowerPoint 2010 SP2, different product)
-	"3116869": {"3105213"},            // MS15-124/125/128/132/133/135(Win10): Edge/IE 11; Excel cites MS15-112[3105213] (different chain in archive)
-	"3116900": {"3105211"},            // MS15-124/125/128/132/133/135(Win10 1511): Edge/IE 11; Excel cites MS15-112[3105211] (different chain in archive)
 	"3118268": {"3115262"},            // MS16-107: Office 2013 SP1; Excel cites MS16-088[3115262] (Excel 2013, sibling component)
 	"3118280": {"3115118"},            // MS16-107: Outlook 2013 SP1; Excel cites MS16-088[3115118] (PowerPoint 2010 SP2, different product)
 	"3118284": {"3115452"},            // MS16-107: Excel 2013 SP1; Excel cites MS16-099[3115452] (different component_kb in archive)
 	"3118292": {"3115272"},            // MS16-107: Office 2016; Excel cites MS16-088[3115272] (Excel 2016, sibling component)
-	"3124263": {"3116900"},            // MS16-001/002/005/007/008(Win10 1511): Edge/IE 11; Excel cites MS15-124[3116900] (different chain in archive)
-	"3124266": {"3116869"},            // MS16-001/002/005/007/008(Win10): Edge/IE 11; Excel cites MS15-124[3116869] (different chain in archive)
-	"3126041": {"3121918"},            // MS16-014: Kerberos/Win-platform; Excel cites MS16-007[3121918] (different component_kb)
-	"3135988": {"3099862"},            // MS16-035: .NET 3.5.1; Excel cites MS12-025[3099862] (different chain, replaces via MS15-128)
-	"3137721": {"3133699"},            // MS16-015: Office for Mac 2011 (Excel/Word); Excel cites MS16-004[3133699] (Office for Mac 2011 trio, sibling component)
-	"3155776": {"3114982"},            // MS16-054: Word for Mac 2011; Excel cites MS16-042[3114982] (different component_kb in archive)
-	"3155777": {"3114987"},            // MS16-054: Word 2016 for Mac; Excel cites MS16-042[3114987] (different component_kb in archive)
-	"3165798": {"3114895"},            // MS16-070: Word 2016 for Mac; Excel cites MS16-042[3114895] (different component_kb in archive)
-	"3178688": {"3115131"},            // MS17-013: Office 2010 SP2; Excel cites MS16-097[3115131] (Office 2010 SP2, different chain)
 	"3193418": {"3033889"},            // MS16-130: Windows Server 2008/Vista; Excel cites MS15-020[3033889] (different component_kb)
-	"3194371": {"3177725"},            // MS16-135: Windows Server 2008; Excel cites MS16-098[3177725] (different component_kb)
 	"3196718": {"3184122"},            // MS16-130: Windows Server 2008/Vista; Excel cites MS16-116[3184122] (different component_kb)
 	"3198218": {"3190847"},            // MS16-131: Windows Vista SP2; Excel cites MS16-122[3190847] (different component_kb)
-	"3198510": {"3081320"},            // MS16-137: Windows Server 2008; Excel cites MS15-121[3081320] (different component_kb)
 	"3198798": {"3118307"},            // MS16-133: Office for Mac (Excel/Word 2016 for Mac); Excel cites MS16-121[3118307] (different component_kb)
+	"3194371": {"3177725"},            // MS16-135: Windows Server 2008; Excel cites MS16-098[3177725] (different component_kb)
+	"3198510": {"3081320"},            // MS16-137: Windows Server 2008; Excel cites MS15-121[3081320] (different component_kb)
+	"3178688": {"3115131"},            // MS17-013: Office 2010 SP2; Excel cites MS16-097[3115131] (Office 2010 SP2, different chain)
 }
