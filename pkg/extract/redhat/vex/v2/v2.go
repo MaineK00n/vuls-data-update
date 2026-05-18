@@ -886,11 +886,14 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		// "Has any binary RPM" — anything other than "src" counts, including
-		// "" (binary RPMs without an arch qualifier, encoded by the upstream
-		// feed as "applies to all binary archs"). Without this outer check,
-		// pure ["src"] / [] product_versions would emit spurious empty
-		// binary criteria.
+		// "Has any binary RPM" — anything other than "src" counts. The "src"
+		// element is intentionally excluded; "" represents a binary entry
+		// without an arch qualifier in the PURL, which appears for:
+		//   - vex-v2 fixed/affected: binary applies to all archs
+		//   - vex-v1 affected: version-less package-level reference (module
+		//     metadata)
+		// Without this outer check, pure ["src"] / [] product_versions would
+		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
 			vcs = append(vcs, vcTypes.Criterion{
@@ -924,11 +927,14 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 2)
 
-		// "Has any binary RPM" — anything other than "src" counts, including
-		// "" (binary RPMs without an arch qualifier, encoded by the upstream
-		// feed as "applies to all binary archs"). Without this outer check,
-		// pure ["src"] / [] product_versions would emit spurious empty
-		// binary criteria.
+		// "Has any binary RPM" — anything other than "src" counts. The "src"
+		// element is intentionally excluded; "" represents a binary entry
+		// without an arch qualifier in the PURL, which appears for:
+		//   - vex-v2 fixed/affected: binary applies to all archs
+		//   - vex-v1 affected: version-less package-level reference (module
+		//     metadata)
+		// Without this outer check, pure ["src"] / [] product_versions would
+		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
 			vcs = append(vcs, vcTypes.Criterion{
