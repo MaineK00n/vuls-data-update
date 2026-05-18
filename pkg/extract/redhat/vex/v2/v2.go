@@ -886,13 +886,12 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		// "Has any binary RPM" — anything other than "src" counts. The "src"
-		// element is intentionally excluded; "" represents a binary entry
-		// whose PURL lacks an arch qualifier (Red Hat uses this for binaries
-		// that apply to all archs, and for version-less package-level
-		// references such as module metadata).
-		// Without this outer check, pure ["src"] / [] product_versions would
-		// emit spurious empty binary criteria.
+		// "Has any binary RPM" — anything other than "src" counts. The
+		// "src" element is intentionally excluded; "" represents a vex-v2
+		// binary entry whose PURL omits the arch qualifier — Red Hat uses
+		// this form when the binary applies to all archs. Without this
+		// outer check, a ["src"] / [""] product_versions list would emit
+		// a spurious empty binary criterion.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
@@ -925,13 +924,12 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 2)
 
-		// "Has any binary RPM" — anything other than "src" counts. The "src"
-		// element is intentionally excluded; "" represents a binary entry
-		// whose PURL lacks an arch qualifier (Red Hat uses this for binaries
-		// that apply to all archs, and for version-less package-level
-		// references such as module metadata).
-		// Without this outer check, pure ["src"] / [] product_versions would
-		// emit spurious empty binary criteria.
+		// "Has any binary RPM" — anything other than "src" counts. The
+		// "src" element is intentionally excluded; "" represents a vex-v2
+		// binary entry whose PURL omits the arch qualifier — Red Hat uses
+		// this form when the binary applies to all archs. Without this
+		// outer check, a ["src"] / [""] product_versions list would emit
+		// a spurious empty binary criterion.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
