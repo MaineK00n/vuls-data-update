@@ -1,0 +1,114 @@
+{
+	"id": "MS13-054",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS13-054",
+				"title": "Vulnerability in GDI+ Could Allow Remote Code Execution",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2013/ms13-054"
+					}
+				],
+				"published": "2013-07-09T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Lync 2010 Attendee (admin level install)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Lync 2010 Attendee (user level install)"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2013-3129",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2013-3129"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Lync 2010 Attendee (admin level install)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Lync 2010 Attendee (user level install)"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Lync 2010 Attendee (admin level install)",
+											"kb_id": "2843163"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Lync 2010 Attendee (admin level install)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Lync 2010 Attendee (user level install)",
+											"kb_id": "2843162"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Lync 2010 Attendee (user level install)"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-054.json"
+		]
+	}
+}

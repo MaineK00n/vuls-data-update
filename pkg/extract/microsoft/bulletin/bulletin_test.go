@@ -255,6 +255,15 @@ func TestBulletinArchiveSupersedes(t *testing.T) {
 // wrong component_kb (Excel mis-attribution); the Microsoft Learn archive
 // records a different ancestry. Each test asserts that the override would
 // remove the wrong edge.
+//
+// End-to-end coverage of the deletion loop in extract() is provided by the
+// MS13-054 fixture (testdata/fixtures/13/MS13-054.json): its two rows are
+// the Lync 2010 Attendee user/admin install components (KB2843162/2843163)
+// whose Excel-cited supersedes (MS13-041[2827750]) is dropped by this
+// override map and whose correct supersedes (KB2827751/2827752) is then
+// added by bulletinArchiveSupersedes. The TestExtract golden run asserts
+// the resulting microsoftkb files contain only the corrected edges and
+// that KB2827750 does not surface (no remaining inbound edges).
 func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 	tests := []struct {
 		name    string

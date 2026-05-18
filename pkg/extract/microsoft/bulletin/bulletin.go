@@ -820,6 +820,11 @@ var ieCumChainEdges = map[string][]string{
 // "Monthly Rollup Release" component package KBs (e.g., MS16-155 lists 3210129
 // under parent KB3210142). The trailing note attributes the bulletin from the
 // archive markdown where the supersedes edge appears (e.g., MS16-155).
+//
+// Ordering convention: entries are sorted by (bulletin year, bulletin number,
+// KBID) — the primary bulletin is taken from the first MS<YY>-<NNN> token in
+// the trailing comment so reviewers can scan the archive pages in chronology.
+// New entries must follow this convention.
 var bulletinArchiveSupersedes = map[string][]string{
 	"2797052": {"2809289"},                       // MS13-021: IE 6 Cumulative (XP SP3)
 	"2620712": {"2813170"},                       // MS13-031: Windows Kernel EoP (XP SP3)
@@ -963,6 +968,12 @@ var bulletinArchiveSupersedes = map[string][]string{
 // mis-attributes to) plus a product/component hint and the old KB's actual
 // origin so reviewers can verify the edge against the corresponding archive
 // page (the "Updates Replaced" column of the Affected Software table).
+//
+// Ordering convention: same as bulletinArchiveSupersedes — entries are sorted
+// by (bulletin year, bulletin number, KBID), with the primary bulletin taken
+// from the first MS<YY>-<NNN> token in the trailing comment. Entries whose
+// comment lists several bulletins (e.g., "MS15-091/093/094/...(Win10)") sort
+// under the first one. New entries must follow this convention.
 var bulletinArchiveSupersedesOverride = map[string][]string{
 	"2772930": {"2626416"},            // MS13-032: AD Lightweight Directory Services (Server 2003 SP2); Excel cites MS11-095[2626416] (AD Application Mode, sibling component)
 	"2817480": {"2598253"},            // MS13-054: Office 2003 SP3 (GDI+); Excel cites MS12-034[2598253] (different component_kb in archive)

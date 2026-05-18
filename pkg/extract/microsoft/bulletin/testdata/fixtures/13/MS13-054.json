@@ -1,0 +1,32 @@
+[
+	{
+		"date_posted": "[$-70009]7/9/2013",
+		"bulletin_id": "MS13-054",
+		"bulletin_kb": "2848295",
+		"bulletin_severity": "Critical",
+		"bulletin_impact": "Remote Code Execution",
+		"title": "Vulnerability in GDI+ Could Allow Remote Code Execution",
+		"affected_product": "Microsoft Lync 2010 Attendee (user level install)",
+		"component_kb": "2843162",
+		"impact": "Remote Code Execution",
+		"severity": "Critical",
+		"supersedes": "MS13-041[2827750]",
+		"reboot": "Maybe",
+		"cves": "CVE-2013-3129"
+	},
+	{
+		"date_posted": "[$-70009]7/9/2013",
+		"bulletin_id": "MS13-054",
+		"bulletin_kb": "2848295",
+		"bulletin_severity": "Critical",
+		"bulletin_impact": "Remote Code Execution",
+		"title": "Vulnerability in GDI+ Could Allow Remote Code Execution",
+		"affected_product": "Microsoft Lync 2010 Attendee (admin level install)",
+		"component_kb": "2843163",
+		"impact": "Remote Code Execution",
+		"severity": "Critical",
+		"supersedes": "MS13-041[2827750]",
+		"reboot": "Maybe",
+		"cves": "CVE-2013-3129"
+	}
+]

@@ -1,0 +1,18 @@
+{
+	"kb_id": "2843162",
+	"url": "https://support.microsoft.com/help/2843162",
+	"products": [
+		"Microsoft Lync 2010 Attendee (user level install)"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2827751"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-054.json"
+		]
+	}
+}
