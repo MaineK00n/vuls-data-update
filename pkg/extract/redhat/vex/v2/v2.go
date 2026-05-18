@@ -888,10 +888,9 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		// "Has any binary RPM" — anything other than "src" counts. The "src"
 		// element is intentionally excluded; "" represents a binary entry
-		// without an arch qualifier in the PURL, which appears for:
-		//   - vex-v1 affected: version-less package-level reference (module
-		//     metadata)
-		//   - vex-v2 fixed/affected: binary applies to all archs
+		// whose PURL lacks an arch qualifier (Red Hat uses this for binaries
+		// that apply to all archs, and for version-less package-level
+		// references such as module metadata).
 		// Without this outer check, pure ["src"] / [] product_versions would
 		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
@@ -928,10 +927,9 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		// "Has any binary RPM" — anything other than "src" counts. The "src"
 		// element is intentionally excluded; "" represents a binary entry
-		// without an arch qualifier in the PURL, which appears for:
-		//   - vex-v1 affected: version-less package-level reference (module
-		//     metadata)
-		//   - vex-v2 fixed/affected: binary applies to all archs
+		// whose PURL lacks an arch qualifier (Red Hat uses this for binaries
+		// that apply to all archs, and for version-less package-level
+		// references such as module metadata).
 		// Without this outer check, pure ["src"] / [] product_versions would
 		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
