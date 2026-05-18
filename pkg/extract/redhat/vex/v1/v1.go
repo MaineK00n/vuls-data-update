@@ -950,12 +950,12 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		// "Has any binary RPM" — anything other than "src" counts. The
-		// "src" element is intentionally excluded; "" represents a vex-v1
-		// binary entry whose PURL omits both version and arch — i.e., a
-		// version-less package-level reference (module metadata). Without
-		// this outer check, a ["src"] / [""] product_versions list would
-		// emit a spurious empty binary criterion.
+		// "Has any binary RPM" — anything other than "src" counts. In the
+		// vex-v1 fixed branch, a version is always present, and the v1
+		// PURL parser only permits arch="" when version is empty, so the
+		// "" arch case cannot occur here. Without this outer check, a
+		// pure ["src"] product_versions list would emit a spurious empty
+		// binary criterion.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
@@ -969,7 +969,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" }),
+						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }),
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -988,12 +988,15 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 2)
 
-		// "Has any binary RPM" — anything other than "src" counts. The
-		// "src" element is intentionally excluded; "" represents a vex-v1
-		// binary entry whose PURL omits both version and arch — i.e., a
-		// version-less package-level reference (module metadata). Without
-		// this outer check, a ["src"] / [""] product_versions list would
-		// emit a spurious empty binary criterion.
+		// "Has any binary RPM" — anything other than "src" counts. In
+		// vex-v1, "src" marks the source RPM (handled separately below)
+		// and "" marks a version-less binary RPM reference (module
+		// metadata), which legitimately means "the package is affected
+		// on all archs" since no specific arch info is available. The
+		// DeleteFunc strips "" out of the emitted Architectures slice;
+		// the resulting empty slice is interpreted by downstream
+		// binary.Accept as "matches any arch", matching the upstream
+		// intent for a module-metadata reference.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,

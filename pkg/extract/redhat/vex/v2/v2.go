@@ -886,13 +886,14 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		// "Has any binary RPM" — anything other than "src" counts. The
-		// "src" element is intentionally excluded; "" represents a vex-v2
-		// binary entry whose PURL omits the arch qualifier — Red Hat uses
-		// this form when the binary applies to all archs. Without this
-		// outer check, a ["src"] / [""] product_versions list would emit
-		// a spurious empty binary criterion.
-		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
+		// In vex-v2, RPM PURLs follow Red Hat's CSAF 2.0 convention:
+		// source RPMs carry arch="src" and binary RPMs omit the arch
+		// qualifier (parsed as ""). Specific arches like "x86_64" never
+		// appear. Emit a binary criterion when the "" binary marker is
+		// present; Architectures is intentionally left nil so the
+		// downstream binary.Accept matcher treats it as "matches any
+		// arch" — the intended "applies to all archs" semantics.
+		if slices.Contains(p2.archs, "") {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
@@ -905,7 +906,6 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" }),
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -924,13 +924,13 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 2)
 
-		// "Has any binary RPM" — anything other than "src" counts. The
-		// "src" element is intentionally excluded; "" represents a vex-v2
-		// binary entry whose PURL omits the arch qualifier — Red Hat uses
-		// this form when the binary applies to all archs. Without this
-		// outer check, a ["src"] / [""] product_versions list would emit
-		// a spurious empty binary criterion.
-		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
+		// Same vex-v2 RPM PURL convention as the fixed branch above:
+		// source RPMs carry arch="src", binary RPMs omit the arch
+		// qualifier (parsed as ""), and specific arches like "x86_64"
+		// never appear. Emit a binary criterion when the "" marker is
+		// present; Architectures is left nil so downstream binary.Accept
+		// treats it as "matches any arch".
+		if slices.Contains(p2.archs, "") {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus: &fixstatusTypes.FixStatus{
@@ -946,7 +946,6 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" }),
 					},
 				},
 			})
