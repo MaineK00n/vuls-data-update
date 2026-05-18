@@ -804,13 +804,13 @@ var bulletinArchiveSupersedes = map[string][]string{
 	"981322":  {"2850869"},                       // MS13-060: Unicode Scripts Processor RCE (XP SP3 / Server 2003)
 	"982666":  {"3141083"},                       // MS16-058: IIS (Server 2008 Itanium SP2)
 	"2360937": {"2849470"},                       // MS13-062: RPC EoP (XP SP3)
-	"2536276": {"3000483"},                       // MS15-011: Group Policy RCE (Server 2003 SP2)
+	"2536276": {"3000483"},                       // MS15-011: Group Policy RCE (Vista/Server 2008/Win7/Server 2008 R2)
 	"2620712": {"2813170"},                       // MS13-031: Windows Kernel EoP (XP SP3)
 	"2621146": {"2772930"},                       // MS13-032: Active Directory DoS (Server 2003 SP2)
 	"2644615": {"2859537"},                       // MS13-063: Windows Kernel EoP (XP SP3)
 	"2646524": {"2820917"},                       // MS13-033: CSRSS EoP (XP SP3)
 	"2698035": {"2833951"},                       // MS13-052: .NET FW 1.0 SP3 (XP MCE 2005 SP3)
-	"2716435": {"2977321"},                       // MS14-044: SQL Server 2008 SP3 EoP
+	"2716435": {"2977322"},                       // MS14-044: SQL Server 2008 SP3 EoP (QFE branch)
 	"2729460": {"2972107"},                       // MS14-057: .NET FW 4.5/4.5.1/4.5.2 RCE (Server 2008 R2 SP1)
 	"2746164": {"2874216"},                       // MS13-061: Exchange Server 2010 SP2 RCE
 	"2756918": {"2973115"},                       // MS14-053: .NET FW 3.0 SP2 DoS (Server 2003 SP2)
@@ -826,7 +826,7 @@ var bulletinArchiveSupersedes = map[string][]string{
 	"2827328": {"2920791"},                       // MS15-012: Excel Viewer 2007 SP2 RCE
 	"2827751": {"2843162"},                       // MS13-054: Lync 2010 Attendee user-install (GDI+); Excel mis-attributed to admin-install KB
 	"2827752": {"2843163"},                       // MS13-054: Lync 2010 Attendee admin-install (GDI+)
-	"2829254": {"3042553"},                       // MS15-034: HTTP.sys RCE (Win7 SP1)
+	"2829254": {"3042553"},                       // MS15-034: HTTP.sys RCE (Win8/Server 2012)
 	"2829361": {"2839229"},                       // MS13-048: Windows Kernel info disclosure (XP SP3)
 	"2837615": {"2878236"},                       // MS14-017: Office Compatibility Pack SP3 (Word RCE)
 	"2844286": {"2937610"},                       // MS14-046: .NET FW 3.5.1 sec-feature-bypass (Win7 SP1)
@@ -837,30 +837,30 @@ var bulletinArchiveSupersedes = map[string][]string{
 	"2863239": {"3035488"},                       // MS15-048: .NET FW 2.0 SP2 EoP (Server 2003 SP2)
 	"2863867": {"2878304"},                       // MS14-017: Office Word Viewer RCE
 	"2866475": {"2880833"},                       // MS13-105: Exchange Server 2013 RCE
-	"2876331": {"3046306"},                       // MS15-035: Graphics Component RCE (Server 2003 SP2)
+	"2876331": {"3046306"},                       // MS15-035: Graphics Component RCE (Server 2003/Vista/Server 2008/Win7/Server 2008 R2)
 	"2889496": {"2939132"},                       // MS14-017: Office for Mac 2011 (Word RCE)
 	"2889841": {"3178688"},                       // MS17-013: Office 2010 SP2 (Graphics Component)
 	"2898866": {"2966825"},                       // MS14-046: .NET FW 3.5 sec-feature-bypass (Server 2012)
 	"2898868": {"2966826"},                       // MS14-046: .NET FW 3.5 sec-feature-bypass (Win8.1)
-	"2901128": {"3097997"},                       // MS15-118: .NET FW 4.5.1/4.5.2 EoP (Win8.1)
+	"2901128": {"3098779"},                       // MS15-118: .NET FW 4.5.1/4.5.2 EoP (Win8.1)
 	"2936068": {"2953522", "2961851"},            // MS14-029: IE 8 / IE 11 (Win7 SP1) — IE update bundle
 	"2956070": {"3054843"},                       // MS15-046: Office Web Apps 2010 SP2
-	"2956136": {"3054833"},                       // MS15-033: Word Automation Services (SharePoint 2010 SP2)
+	"2956136": {"3054833"},                       // MS15-046: Word Automation Services (SharePoint 2010 SP2)
 	"2956208": {"3054847"},                       // MS15-046: SharePoint Foundation 2010 SP2
 	"2957689": {"2962872", "2963952"},            // MS14-037: IE 8 (Vista SP2) / IE 11 (Win7 SP1) — IE Cum chain
 	"2961851": {"2957689"},                       // MS14-035: IE 11 Cumulative (Server 2008 R2 SP1)
-	"2962123": {"3039066"},                       // MS15-020: Windows Shell RCE (Windows RT)
+	"2962123": {"3039066"},                       // MS15-020: Windows Shell RCE (Win8.1/Server 2012 R2/Win RT 8.1)
 	"2962872": {"2976627", "2977629"},            // 2976627=MS14-051 (IE 8, Win7 SP1); 2977629=MS14-052 (IE 11, Server 2008 R2 SP1)
 	"2964444": {"2953522"},                       // MS14-029: IE 8 Cumulative (Win7 SP1)
-	"2965155": {"3069392"},                       // MS15-072: Graphics Component EoP (Server 2012 R2 Server Core)
-	"2973408": {"3092601"},                       // MS15-119: Winsock EoP (Vista SP2)
-	"2974286": {"3046002"},                       // MS15-045: Windows Journal RCE (Server 2012)
+	"2965155": {"3069392"},                       // MS15-072: Graphics Component EoP (Win8.1/Server 2012 R2)
+	"2973408": {"3092601"},                       // MS15-119: Winsock EoP (Win8.1/Server 2012 R2)
+	"2974286": {"3046002"},                       // MS15-045: Windows Journal RCE (Win8.1/Server 2012 R2)
 	"3003381": {"3062577"},                       // MS15-062: AD FS 2.0 EoP (Server 2008 SP2)
-	"3012176": {"3032359"},                       // MS15-018: IE 6 Cumulative (Server 2003 Itanium SP2)
-	"3029449": {"3021952"},                       // MS15-009: IE 8 (Server 2008 x64 SP2)
-	"3034196": {"3032359"},                       // MS15-018: IE 6 Cumulative (Server 2003 Itanium SP2)
-	"3036197": {"3032359"},                       // MS15-018: IE 6 Cumulative (Server 2003 Itanium SP2)
-	"3050514": {"3061518"},                       // MS15-055: Schannel info disclosure (Win8.1)
+	"3012176": {"3032359"},                       // MS15-018: IE 8 Cumulative (Server 2003/Vista/Server 2008/Win7/Server 2008 R2)
+	"3029449": {"3021952"},                       // MS15-009: IE 10 Cumulative (Win8/Server 2012/Win RT)
+	"3034196": {"3032359"},                       // MS15-018: IE 9/10/11 Cumulative (Vista/Server 2008/Win7/Server 2008 R2/Win8/Server 2012)
+	"3036197": {"3032359"},                       // MS15-018: IE 11 Cumulative (Win8.1/Server 2012 R2/Win RT 8.1)
+	"3050514": {"3061518"},                       // MS15-055: Schannel info disclosure (Win8/Server 2012)
 	"3051737": {"3048688"},                       // MS15-046: Office for Mac 2011
 	"3054841": {"3101520"},                       // MS16-054: Office 2010 SP2 (32-bit)
 	"3054848": {"3054984"},                       // MS16-054: Office 2010 SP2 (32-bit)
@@ -905,7 +905,7 @@ var bulletinArchiveSupersedes = map[string][]string{
 	"3142043": {"3188741"},                       // MS16-120: .NET FW 3.5 (Server 2012) — Graphics Component
 	"3142045": {"3188743"},                       // MS16-120: .NET FW 3.5 (Win8.1) — Graphics Component
 	"3142577": {"3155777"},                       // MS16-054: Word 2016 for Mac
-	"3148198": {"4014661"},                       // MS16-051: IE 9 Cumulative (Vista SP2)
+	"3148198": {"3154070"},                       // MS16-051: IE 9 Cumulative (Vista SP2)
 	"3154208": {"3155776"},                       // MS16-054: Word for Mac 2011
 	"3157569": {"3175887"},                       // MS16-102: Windows PDF Library (Win8.1)
 	"3163244": {"3210129"},                       // MS16-155: .NET FW 2.0 SP2 (Vista/Server 2008 SP2) — Monthly Rollup component of parent KB3210142, archive-only
