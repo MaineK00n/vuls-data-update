@@ -1,0 +1,44 @@
+{
+	"kb_id": "3185319",
+	"url": "https://support.microsoft.com/help/3185319",
+	"superseded_by": [
+		{
+			"kb_id": "3185330"
+		},
+		{
+			"kb_id": "3185331"
+		},
+		{
+			"kb_id": "3185332"
+		},
+		{
+			"kb_id": "3192391"
+		},
+		{
+			"kb_id": "3192392"
+		},
+		{
+			"kb_id": "3197655"
+		},
+		{
+			"kb_id": "3197867"
+		},
+		{
+			"kb_id": "3197876"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "3175443"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/01/MS01-050.json",
+			"fixtures/08/MS08-069.json",
+			"fixtures/14/MS14-010.json",
+			"fixtures/17/MS17-023.json"
+		]
+	}
+}

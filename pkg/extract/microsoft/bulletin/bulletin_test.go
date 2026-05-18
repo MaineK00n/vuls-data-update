@@ -231,7 +231,7 @@ func TestBulletinArchiveSupersedes(t *testing.T) {
 			newKBID: "2962872",
 		},
 		{
-			name:    "MS17-006 IE 11 Win 7 SP1: 3197655 → 3203621 (cross-month Excel gap)",
+			name:    "MS16-144 IE 9 Cumulative (Vista SP2): 3197655 → 3203621",
 			oldKBID: "3197655",
 			newKBID: "3203621",
 		},

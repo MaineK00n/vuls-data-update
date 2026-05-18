@@ -1,0 +1,29 @@
+{
+	"kb_id": "944533",
+	"url": "https://support.microsoft.com/help/944533",
+	"superseded_by": [
+		{
+			"kb_id": "947864"
+		}
+	],
+	"supersedes": [
+		{
+			"kb_id": "883939"
+		},
+		{
+			"kb_id": "890923"
+		},
+		{
+			"kb_id": "942615"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/01/MS01-050.json",
+			"fixtures/08/MS08-069.json",
+			"fixtures/14/MS14-010.json",
+			"fixtures/17/MS17-023.json"
+		]
+	}
+}

@@ -507,16 +507,19 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		groups[rootID] = g
 	}
 
-	// A1: merge IE Cumulative in-track chain edges for KBs this file emits.
-	// Microsoft frequently stops publishing month-to-month supersedes for IE 10/11
-	// KBs starting Nov 2016 (MS16-142), leaving the chain incomplete. The Bulletin
-	// source is frozen (retired April 2017), so ieCumChainEdges is a static
-	// snapshot of the chain — see its doc comment for provenance.
-	for oldKBID := range kbProducts {
-		newKBIDs, ok := ieCumChainEdges[oldKBID]
-		if !ok {
-			continue
-		}
+	// A1: merge IE Cumulative in-track chain edges. Microsoft frequently stops
+	// publishing month-to-month supersedes for IE 10/11 KBs starting Nov 2016
+	// (MS16-142), leaving the chain incomplete. The Bulletin source is frozen
+	// (retired April 2017), so ieCumChainEdges is a static snapshot of the chain
+	// — see its doc comment for provenance.
+	//
+	// We iterate the map's keys (not kbProducts) so that entries whose oldKBID
+	// is itself absent from BulletinSearch.xlsx (e.g., Monthly Rollup KBs like
+	// 3197874/3198585/3198586/3200970) still contribute their supersedes edge.
+	// The downstream loop below emits a KB record for any KBID present only in
+	// kbSupersededBy, so those orphan oldKBs surface as standalone KB entries
+	// carrying just their SupersededBy info, completing the chain.
+	for oldKBID, newKBIDs := range ieCumChainEdges {
 		if _, exists := kbSupersededBy[oldKBID]; !exists {
 			kbSupersededBy[oldKBID] = make(map[string]struct{})
 		}
@@ -528,12 +531,10 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	// Merge supersedes edges recovered from the Bulletin archive markdown
 	// (https://learn.microsoft.com/en-us/security-updates/securitybulletins/...)
 	// where BulletinSearch.xlsx omits them. See bulletinArchiveSupersedes for
-	// provenance.
-	for oldKBID := range kbProducts {
-		newKBIDs, ok := bulletinArchiveSupersedes[oldKBID]
-		if !ok {
-			continue
-		}
+	// provenance. Same iteration strategy as ieCumChainEdges above: iterate the
+	// map's keys so that archive-only oldKBs (Monthly Rollup KBs not present as
+	// component_kbs in xlsx) still contribute their supersedes edges.
+	for oldKBID, newKBIDs := range bulletinArchiveSupersedes {
 		if _, exists := kbSupersededBy[oldKBID]; !exists {
 			kbSupersededBy[oldKBID] = make(map[string]struct{})
 		}
@@ -592,6 +593,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		}
 		kbs = append(kbs, microsoftkbTypes.KB{
 			KBID:         oldKBID,
+			URL:          fmt.Sprintf("https://support.microsoft.com/help/%s", oldKBID),
 			SupersededBy: ss,
 			DataSource: sourceTypes.Source{
 				ID:   sourceTypes.MicrosoftBulletin,

@@ -56,10 +56,18 @@
 			"kb_id": "2925418"
 		}
 	],
+	"supersedes": [
+		{
+			"kb_id": "2898785"
+		}
+	],
 	"data_source": {
 		"id": "microsoft-bulletin",
 		"raws": [
-			"fixtures/14/MS14-010.json"
+			"fixtures/01/MS01-050.json",
+			"fixtures/08/MS08-069.json",
+			"fixtures/14/MS14-010.json",
+			"fixtures/17/MS17-023.json"
 		]
 	}
 }
