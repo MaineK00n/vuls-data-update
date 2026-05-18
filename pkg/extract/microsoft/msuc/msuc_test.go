@@ -54,7 +54,7 @@ func TestExtract(t *testing.T) {
 }
 
 func TestDeriveCrossTrackSupersedes(t *testing.T) {
-	// Silence parseMonthlyTrackTitle's slog.Warn during the "invalid month
+	// Silence parseMSUCUpdateGroup's slog.Warn during the "invalid month
 	// digits" negative case. The warning is intentional at runtime (so an
 	// operator notices if Microsoft ever publishes a malformed title), but
 	// the test only asserts on edge synthesis behaviour, so the log line
@@ -524,6 +524,224 @@ func TestDeriveCrossTrackSupersedes(t *testing.T) {
 							UpdateID:   "U-Sm",
 							Title:      "2017-04 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)",
 							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "4015546", UpdateID: "U-So"}},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "SecurityMonthly ⊇ IECumulative — modern format (date in title)",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "2017-04 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)"},
+					},
+				},
+				{
+					KBID: "4014661",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "2017-04 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4014661)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4015549",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:   "U-Sm",
+							Title:      "2017-04 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015549)",
+							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "4014661", UpdateID: "U-Ie"}},
+						},
+					},
+				},
+				{
+					KBID: "4014661",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-Ie",
+							Title:        "2017-04 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4014661)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "4015549", UpdateID: "U-Sm"}},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "SecurityMonthly ⊇ IECumulative — old format (date from ieCumOldReleaseMonth)",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4012215",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "March, 2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4012215)"},
+					},
+				},
+				{
+					KBID: "4012204",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4012204)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4012215",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:   "U-Sm",
+							Title:      "March, 2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4012215)",
+							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "4012204", UpdateID: "U-Ie"}},
+						},
+					},
+				},
+				{
+					KBID: "4012204",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-Ie",
+							Title:        "Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4012204)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "4012215", UpdateID: "U-Sm"}},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "Preview ⊇ IECumulative — direct same-month edge",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4015551",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Pv", Title: "2017-04 Preview of Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015551)"},
+					},
+				},
+				{
+					KBID: "4014661",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "2017-04 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4014661)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4015551",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:   "U-Pv",
+							Title:      "2017-04 Preview of Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4015551)",
+							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "4014661", UpdateID: "U-Ie"}},
+						},
+					},
+				},
+				{
+					KBID: "4014661",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-Ie",
+							Title:        "2017-04 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4014661)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "4015551", UpdateID: "U-Pv"}},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "SecurityOnly does NOT pair with IECumulative (no edge synthesised)",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-So", Title: "2017-04 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)"},
+					},
+				},
+				{
+					KBID: "4014661",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "2017-04 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4014661)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4015546",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-So", Title: "2017-04 Security Only Quality Update for Windows 7 for x64-based Systems (KB4015546)"},
+					},
+				},
+				{
+					KBID: "4014661",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "2017-04 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB4014661)"},
+					},
+				},
+			},
+		},
+		{
+			name: "IE Cum old format with KBID not in ieCumOldReleaseMonth is silently skipped",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "4012215",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "March, 2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4012215)"},
+					},
+				},
+				{
+					KBID: "9999999",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB9999999)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "4012215",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "March, 2017 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB4012215)"},
+					},
+				},
+				{
+					KBID: "9999999",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based Systems (KB9999999)"},
+					},
+				},
+			},
+		},
+		{
+			name: "IE Cum 'lowercase systems' (modern format inconsistency) is normalized and pairs with MR",
+			args: args{kbs: []microsoftkbTypes.KB{
+				{
+					KBID: "5011552",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Sm", Title: "2022-03 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB5011552)"},
+					},
+				},
+				{
+					KBID: "5011486",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{UpdateID: "U-Ie", Title: "2022-03 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based systems (KB5011486)"},
+					},
+				},
+			}},
+			want: []microsoftkbTypes.KB{
+				{
+					KBID: "5011552",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:   "U-Sm",
+							Title:      "2022-03 Security Monthly Quality Rollup for Windows 7 for x64-based Systems (KB5011552)",
+							Supersedes: []microsoftkbSupersedesTypes.Supersedes{{KBID: "5011486", UpdateID: "U-Ie"}},
+						},
+					},
+				},
+				{
+					KBID: "5011486",
+					Updates: []microsoftkbUpdateTypes.Update{
+						{
+							UpdateID:     "U-Ie",
+							Title:        "2022-03 Cumulative Security Update for Internet Explorer 11 for Windows 7 for x64-based systems (KB5011486)",
+							SupersededBy: []microsoftkbSupersededByTypes.SupersededBy{{KBID: "5011552", UpdateID: "U-Sm"}},
 						},
 					},
 				},
