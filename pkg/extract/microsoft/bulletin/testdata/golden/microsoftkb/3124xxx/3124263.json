@@ -6,11 +6,6 @@
 			"kb_id": "3135173"
 		}
 	],
-	"supersedes": [
-		{
-			"kb_id": "3116900"
-		}
-	],
 	"data_source": {
 		"id": "microsoft-bulletin",
 		"raws": [

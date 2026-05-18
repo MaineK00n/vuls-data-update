@@ -546,12 +546,10 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	// Drop supersedes edges that BulletinSearch.xlsx attributes to the wrong
 	// component_kb (typically Excel cites the supersedes of a sibling component
 	// release in the same bulletin). See bulletinArchiveSupersedesOverride for
-	// provenance.
-	for newKBID := range kbProducts {
-		oldKBIDs, ok := bulletinArchiveSupersedesOverride[newKBID]
-		if !ok {
-			continue
-		}
+	// provenance. Same iteration strategy as the merge loops above: iterate the
+	// map's keys so that no override entry is silently dropped if its newKBID
+	// happens to be absent from kbProducts.
+	for newKBID, oldKBIDs := range bulletinArchiveSupersedesOverride {
 		for _, oldKBID := range oldKBIDs {
 			news, ok := kbSupersededBy[oldKBID]
 			if !ok {
