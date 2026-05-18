@@ -720,10 +720,10 @@ type productsWithMaxPid struct {
 }
 
 func compareAdvisory(a, b advisory) int {
-	if c := cmp.Compare(a.id, b.id); c != 0 {
-		return c
-	}
-	return cmp.Compare(a.date, b.date)
+	return cmp.Or(
+		cmp.Compare(a.id, b.id),
+		cmp.Compare(a.date, b.date),
+	)
 }
 
 func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[v2.ProductID][]product, assm map[v2.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
@@ -889,13 +889,12 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 		// "Has any binary RPM" — anything other than "src" counts. The "src"
 		// element is intentionally excluded; "" represents a binary entry
 		// without an arch qualifier in the PURL, which appears for:
-		//   - vex-v2 fixed/affected: binary applies to all archs
 		//   - vex-v1 affected: version-less package-level reference (module
 		//     metadata)
+		//   - vex-v2 fixed/affected: binary applies to all archs
 		// Without this outer check, pure ["src"] / [] product_versions would
 		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
-			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
@@ -908,7 +907,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: as,
+						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" }),
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -930,13 +929,12 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 		// "Has any binary RPM" — anything other than "src" counts. The "src"
 		// element is intentionally excluded; "" represents a binary entry
 		// without an arch qualifier in the PURL, which appears for:
-		//   - vex-v2 fixed/affected: binary applies to all archs
 		//   - vex-v1 affected: version-less package-level reference (module
 		//     metadata)
+		//   - vex-v2 fixed/affected: binary applies to all archs
 		// Without this outer check, pure ["src"] / [] product_versions would
 		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
-			as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" })
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus: &fixstatusTypes.FixStatus{
@@ -952,7 +950,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: as,
+						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" }),
 					},
 				},
 			})

@@ -1014,13 +1014,12 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 		// "Has any binary RPM" — anything other than "src" counts. The "src"
 		// element is intentionally excluded; "" represents a binary entry
 		// without an arch qualifier in the PURL, which appears for:
-		//   - vex-v2 fixed/affected: binary applies to all archs
 		//   - vex-v1 affected: version-less package-level reference (module
 		//     metadata)
+		//   - vex-v2 fixed/affected: binary applies to all archs
 		// Without this outer check, pure ["src"] / [] product_versions would
 		// emit spurious empty binary criteria.
 		if slices.ContainsFunc(extra.arches, func(x string) bool { return x != "src" }) {
-			as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" || x == "" })
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
@@ -1033,7 +1032,7 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 							}
 							return pk.name
 						}(),
-						Architectures: as,
+						Architectures: slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" || x == "" }),
 					},
 				},
 				Affected: &affectedTypes.Affected{
