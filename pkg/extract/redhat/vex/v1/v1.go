@@ -1,4 +1,4 @@
-package vex
+package v1
 
 import (
 	"encoding/hex"
@@ -48,7 +48,7 @@ import (
 	utiljson "github.com/MaineK00n/vuls-data-update/pkg/extract/util/json"
 	utiltime "github.com/MaineK00n/vuls-data-update/pkg/extract/util/time"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
-	"github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
+	v1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v1"
 )
 
 type options struct {
@@ -76,7 +76,7 @@ type extractor struct {
 
 func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 	options := &options{
-		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex"),
+		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex", "v1"),
 	}
 
 	for _, o := range opts {
@@ -87,7 +87,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Extract RedHat VEX")
+	slog.Info("Extract RedHat VEX v1")
 
 	br := utiljson.NewJSONReader()
 	var r2c repository2cpe.RepositoryToCPE
@@ -115,7 +115,7 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 			r:      br.Copy(),
 		}
 
-		var vuln vex.VEX
+		var vuln v1.VEX
 		if err := e.r.Read(path, e.vexDir, &vuln); err != nil {
 			return errors.Wrapf(err, "read %s", path)
 		}
@@ -140,8 +140,8 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 	}
 
 	if err := util.Write(filepath.Join(options.dir, "datasource.json"), datasourceTypes.DataSource{
-		ID:   sourceTypes.RedHatVEX,
-		Name: new("RedHat Enterprise Linux CSAF VEX"),
+		ID:   sourceTypes.RedHatVEXv1,
+		Name: new("RedHat Enterprise Linux CSAF VEX v1"),
 		Raw: func() []repositoryTypes.Repository {
 			var rs []repositoryTypes.Repository
 			r1, _ := utilgit.GetDataSourceRepository(vexDir)
@@ -169,8 +169,8 @@ func Extract(vexDir, repository2cpeDir string, opts ...Option) error {
 	return nil
 }
 
-func (e extractor) extract(vuln vex.VEX, c2r map[string][]string) (dataTypes.Data, error) {
-	pm, err := walkProductTree(vuln.Document.Tracking.ID, vuln.ProductTree, c2r)
+func (e extractor) extract(vuln v1.VEX, c2r map[string][]string) (dataTypes.Data, error) {
+	pm, err := walkProductTree(vuln.ProductTree, c2r)
 	if err != nil {
 		return dataTypes.Data{}, errors.Wrap(err, "walk product_tree")
 	}
@@ -191,7 +191,7 @@ func (e extractor) extract(vuln vex.VEX, c2r map[string][]string) (dataTypes.Dat
 		Vulnerabilities: vs,
 		Detections:      ds,
 		DataSource: sourceTypes.Source{
-			ID:   sourceTypes.RedHatVEX,
+			ID:   sourceTypes.RedHatVEXv1,
 			Raws: e.r.Paths(),
 		},
 	}, nil
@@ -230,9 +230,9 @@ type status struct {
 	affected_status string
 }
 
-func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]string) (map[vex.ProductID][]product, error) {
-	var f func(m map[vex.ProductID]vex.FullProductName, branch vex.Branch) error
-	f = func(m map[vex.ProductID]vex.FullProductName, branch vex.Branch) error {
+func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.ProductID][]product, error) {
+	var f func(m map[v1.ProductID]v1.FullProductName, branch v1.Branch) error
+	f = func(m map[v1.ProductID]v1.FullProductName, branch v1.Branch) error {
 		for _, b := range branch.Branches {
 			if err := f(m, b); err != nil {
 				return errors.Wrap(err, "walk product_tree")
@@ -252,34 +252,34 @@ func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]str
 		}
 	}
 
-	fpnm := make(map[vex.ProductID]vex.FullProductName)
+	fpnm := make(map[v1.ProductID]v1.FullProductName)
 	for _, b := range pt.Branches {
 		if err := f(fpnm, b); err != nil {
 			return nil, errors.Wrap(err, "walk product_tree")
 		}
 	}
 
-	rm := make(map[vex.ProductID][]vex.ProductID)
+	rm := make(map[v1.ProductID][]v1.ProductID)
 	for _, r := range pt.Relationships {
 		rm[r.FullProductName.ProductID] = append(rm[r.FullProductName.ProductID], r.ProductReference, r.RelatesToProductReference)
 	}
 
-	var f2 func(tree map[vex.ProductID][]vex.ProductID, node vex.ProductID) []vex.ProductID
-	f2 = func(tree map[vex.ProductID][]vex.ProductID, node vex.ProductID) []vex.ProductID {
+	var f2 func(tree map[v1.ProductID][]v1.ProductID, node v1.ProductID) []v1.ProductID
+	f2 = func(tree map[v1.ProductID][]v1.ProductID, node v1.ProductID) []v1.ProductID {
 		if _, ok := tree[node]; !ok {
-			return []vex.ProductID{node}
+			return []v1.ProductID{node}
 		}
 
-		var leaves []vex.ProductID
+		var leaves []v1.ProductID
 		for _, n := range tree[node] {
 			leaves = append(leaves, f2(tree, n)...)
 		}
 		return leaves
 	}
 
-	pm := make(map[vex.ProductID][]product)
-	for root := range func() map[vex.ProductID]struct{} {
-		rs := make(map[vex.ProductID]struct{}, len(rm))
+	pm := make(map[v1.ProductID][]product)
+	for root := range func() map[v1.ProductID]struct{} {
+		rs := make(map[v1.ProductID]struct{}, len(rm))
 		for id := range rm {
 			rs[id] = struct{}{}
 		}
@@ -317,6 +317,19 @@ func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]str
 							return nil, errors.Wrapf(err, "parse %q", fpn.ProductIdentificationHelper.PURL)
 						}
 						m := instance.Qualifiers.Map()
+						// repository_id (src RPMs, info already reachable via
+						// CPE→repository2cpe) and distro (only on non-RHEL
+						// "Hummingbird" products filtered out downstream) are
+						// intentionally parsed-but-ignored. A brand-new key
+						// errors out so a human decides whether the new
+						// metadata should be processed.
+						for k := range m {
+							switch k {
+							case "arch", "epoch", "rpmmod", "repository_id", "distro":
+							default:
+								return nil, errors.Errorf("unexpected purl qualifier %q in %q", k, fpn.ProductIdentificationHelper.PURL)
+							}
+						}
 
 						switch rpmmod := m["rpmmod"]; rpmmod {
 						case "":
@@ -350,15 +363,7 @@ func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]str
 							case "":
 								ss := strings.Split(rpmmod, ":")
 								if len(ss) < 2 {
-									// FIXME: Some vendor data has rpmmod with only module name (no stream). This should be an error, but until the vendor corrects the data, skip this product with a warning.
-									// https://issues.redhat.com/projects/SECDATA/issues/SECDATA-1206
-									switch trackingID {
-									case "CVE-2024-6923":
-										slog.Warn("skip product with unexpected rpmmod format", slog.String("tracking_id", trackingID), slog.String("expected", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>"), slog.String("purl", fpn.ProductIdentificationHelper.PURL))
-										return nil, nil
-									default:
-										return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
-									}
+									return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", "pkg:rpm/redhat/<name>?arch=<arch>(&epoch=<epoch>)&rpmmod=<<module>:<stream>>", fpn.ProductIdentificationHelper.PURL)
 								}
 								p.modularitylabel = fmt.Sprintf("%s:%s", ss[0], ss[1])
 								p.name = instance.Name
@@ -391,12 +396,19 @@ func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]str
 							}
 						}
 					default:
-						for _, s := range []string{"pkg:oci/", "pkg:maven/", "pkg:generic/", "pkg:koji/", "pkg:npm/"} {
+						// Skip every non-RPM PURL type observed in the legacy
+						// vex feed. A brand-new type errors out so a human
+						// decides whether the new artifact class should be
+						// processed or just added to this skip list — silent
+						// data loss is worse than a loud failure.
+						for _, s := range []string{
+							"pkg:generic/", "pkg:maven/", "pkg:npm/", "pkg:oci/",
+						} {
 							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
 								return nil, nil
 							}
 						}
-						return nil, errors.Errorf("unexpected purl format. expected: %q, actual: %q", []string{"pkg:rpm/...", "pkg:oci/...", "pkg:maven/...", "pkg:generic/...", "pkg:koji/...", "pkg:npm/..."}, fpn.ProductIdentificationHelper.PURL)
+						return nil, errors.Errorf("unexpected purl prefix: %q", fpn.ProductIdentificationHelper.PURL)
 					}
 				}
 			}
@@ -573,12 +585,12 @@ func walkProductTree(trackingID string, pt vex.ProductTree, c2r map[string][]str
 	return pm, nil
 }
 
-func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[vex.ProductID]assessment, vulnerabilityContentTypes.Content, error) {
+func walkVulnerabilities(vulns []v1.Vulnerability, pids []v1.ProductID) (map[v1.ProductID]assessment, vulnerabilityContentTypes.Content, error) {
 	if len(vulns) != 1 {
 		return nil, vulnerabilityContentTypes.Content{}, errors.Errorf("unexpected vulnerabilities length. expected: %d, actual: %d", 1, len(vulns))
 	}
 
-	assm := make(map[vex.ProductID]assessment)
+	assm := make(map[v1.ProductID]assessment)
 
 	if err := func() error {
 		if len(vulns[0].ProductStatus.FirstAffected) > 0 || len(vulns[0].ProductStatus.FirstFixed) > 0 || len(vulns[0].ProductStatus.LastAffected) > 0 || len(vulns[0].ProductStatus.Recommended) > 0 {
@@ -616,7 +628,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 
 	if err := func() error {
 		for _, f := range vulns[0].Flags {
-			for _, p := range func() []vex.ProductID {
+			for _, p := range func() []v1.ProductID {
 				if len(f.ProductIDs) > 0 {
 					return f.ProductIDs
 				}
@@ -642,7 +654,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 
 	if err := func() error {
 		for _, r := range vulns[0].Remediations {
-			for _, p := range func() []vex.ProductID {
+			for _, p := range func() []v1.ProductID {
 				if len(r.ProductIDs) > 0 {
 					return r.ProductIDs
 				}
@@ -708,7 +720,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 
 	if err := func() error {
 		for _, t := range vulns[0].Threats {
-			for _, p := range func() []vex.ProductID {
+			for _, p := range func() []v1.ProductID {
 				if len(t.ProductIDs) > 0 {
 					return t.ProductIDs
 				}
@@ -735,7 +747,7 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 		ID:    vulnerabilityContentTypes.VulnerabilityID(vulns[0].CVE),
 		Title: vulns[0].Title,
 		Description: func() string {
-			if i := slices.IndexFunc(vulns[0].Notes, func(e vex.Note) bool {
+			if i := slices.IndexFunc(vulns[0].Notes, func(e v1.Note) bool {
 				return e.Category == "description"
 			}); i >= 0 {
 				return vulns[0].Notes[i].Text
@@ -761,7 +773,6 @@ func walkVulnerabilities(vulns []vex.Vulnerability, pids []vex.ProductID) (map[v
 			}
 			return rs
 		}(),
-		Published: utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, vulns[0].ReleaseDate),
 	}, nil
 }
 
@@ -775,11 +786,11 @@ type product2 struct {
 }
 
 type productsWithMaxPid struct {
-	maxPid vex.ProductID
+	maxPid v1.ProductID
 	p2sm   map[string][]product2 // key: product2.cpe
 }
 
-func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[vex.ProductID][]product, assm map[vex.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
+func buildDataComponents(doc v1.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[v1.ProductID][]product, assm map[v1.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
 	baseVulnerability.Published = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.InitialReleaseDate)
 	baseVulnerability.Modified = utiltime.Parse([]string{"2006-01-02T15:04:05-07:00"}, doc.Tracking.CurrentReleaseDate)
 	for pid, assessment := range assm {
@@ -804,9 +815,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 			}
 			assessment, found := assm[pid]
 			if !found {
-				// FIXME: what to do?
-				slog.Warn("advisory/severity/status not found for pid", slog.String("product_id", string(pid)))
-				continue
+				return nil, nil, nil, errors.Errorf("no product_status entry for pid that appears in product_tree. cve: %s, product_id: %s", baseVulnerability.ID, pid)
 			}
 
 			pmax, found := apm[assessment]
@@ -825,7 +834,7 @@ func buildDataComponents(doc vex.Document, baseVulnerability vulnerabilityConten
 					},
 				}
 			} else {
-				pmax.maxPid = vex.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
+				pmax.maxPid = v1.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
 				switch i := slices.IndexFunc(pmax.p2sm[p.cpe], func(p2 product2) bool {
 					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
 				}); i {
@@ -941,7 +950,13 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		if as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }); len(as) > 0 {
+		// "Has any binary RPM" — anything other than "src" counts. In the
+		// vex-v1 fixed branch, a version is always present, and the v1
+		// PURL parser only permits arch="" when version is empty, so the
+		// "" arch case cannot occur here. Without this outer check, a
+		// pure ["src"] product_versions list would emit a spurious empty
+		// binary criterion.
+		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
@@ -954,7 +969,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: as,
+						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }),
 					},
 				},
 				Affected: &affectedTypes.Affected{
@@ -973,7 +988,16 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 
 		vcs := make([]vcTypes.Criterion, 0, 2)
 
-		if as := slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" }); len(as) > 0 {
+		// "Has any binary RPM" — anything other than "src" counts. In
+		// vex-v1, "src" marks the source RPM (handled separately below)
+		// and "" marks a version-less binary RPM reference (module
+		// metadata), which legitimately means "the package is affected
+		// on all archs" since no specific arch info is available. The
+		// DeleteFunc strips "" out of the emitted Architectures slice;
+		// the resulting empty slice is interpreted by downstream
+		// binary.Accept as "matches any arch", matching the upstream
+		// intent for a module-metadata reference.
+		if slices.ContainsFunc(p2.archs, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus: &fixstatusTypes.FixStatus{
@@ -989,12 +1013,7 @@ func buildVersionCriterion(p2 product2, assessment assessment) ([]vcTypes.Criter
 							}
 							return p2.name
 						}(),
-						Architectures: func() []string {
-							if slices.Contains(as, "") {
-								return nil
-							}
-							return as
-						}(),
+						Architectures: slices.DeleteFunc(slices.Clone(p2.archs), func(x string) bool { return x == "src" || x == "" }),
 					},
 				},
 			})

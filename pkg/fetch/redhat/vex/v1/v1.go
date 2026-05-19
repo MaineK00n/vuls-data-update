@@ -1,4 +1,4 @@
-package vex
+package v1
 
 import (
 	"archive/tar"
@@ -89,7 +89,7 @@ func WithWait(wait time.Duration) Option {
 func Fetch(opts ...Option) error {
 	options := &options{
 		baseURL:     baseURL,
-		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
+		dir:         filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v1"),
 		retry:       3,
 		concurrency: 10,
 		wait:        1 * time.Second,
@@ -103,7 +103,7 @@ func Fetch(opts ...Option) error {
 		return errors.Wrapf(err, "remove %s", options.dir)
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX")
+	slog.Info("Fetch RedHat CSAF VEX v1")
 	client := utilhttp.NewClient(utilhttp.WithClientRetryMax(options.retry))
 
 	at, err := options.fetchArchiveDate(client)
@@ -111,17 +111,17 @@ func Fetch(opts ...Option) error {
 		return errors.Wrap(err, "fetch archive date")
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX Archive", slog.String("date", at.Format("2006-01-02")))
+	slog.Info("Fetch RedHat CSAF VEX v1 Archive", slog.String("date", at.Format("2006-01-02")))
 	if err := options.fetchArchive(client, at); err != nil {
 		return errors.Wrap(err, "fetch archive")
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX Changes")
+	slog.Info("Fetch RedHat CSAF VEX v1 Changes")
 	if err := options.fetchChanges(client, at); err != nil {
 		return errors.Wrap(err, "fetch changes")
 	}
 
-	slog.Info("Fetch RedHat CSAF VEX Deletions")
+	slog.Info("Fetch RedHat CSAF VEX v1 Deletions")
 	if err := options.fetchDeletions(client, at); err != nil {
 		return errors.Wrap(err, "fetch deletions")
 	}

@@ -1,4 +1,4 @@
-package vex
+package v2
 
 type VEX struct {
 	Document        Document        `json:"document"`

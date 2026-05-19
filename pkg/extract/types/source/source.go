@@ -138,7 +138,8 @@ const (
 	RedHatOSV                  SourceID = "redhat-osv"
 	RedHatOVALv1               SourceID = "redhat-ovalv1"
 	RedHatOVALv2               SourceID = "redhat-ovalv2"
-	RedHatVEX                  SourceID = "redhat-vex"
+	RedHatVEXv1                SourceID = "redhat-vex" // legacy value kept for db compatibility (was "redhat-vex" before the v1/v2 split)
+	RedHatVEXv2                SourceID = "redhat-vex-v2"
 	RockyErrata                SourceID = "rocky-errata"
 	RockyOSV                   SourceID = "rocky-osv"
 	RubygemsDB                 SourceID = "rubygems-db"

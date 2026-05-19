@@ -1,10 +1,10 @@
-package vex_test
+package v2_test
 
 import (
 	"path/filepath"
 	"testing"
 
-	"github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex"
+	"github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex/v2"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
 
@@ -29,7 +29,7 @@ func TestExtract(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
-			err := vex.Extract(utiltest.QueryUnescapeFileTree(t, tt.args.vex), tt.args.repository2cpe, vex.WithDir(dir))
+			err := v2.Extract(utiltest.QueryUnescapeFileTree(t, tt.args.vex), tt.args.repository2cpe, v2.WithDir(dir))
 			switch {
 			case err != nil && !tt.hasError:
 				t.Error("unexpected error:", err)

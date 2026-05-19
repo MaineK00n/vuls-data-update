@@ -152,7 +152,8 @@ import (
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/oval/v2"
 	redhatPackageManifest "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/package-manifest"
 	redhatRepositoryToCPE "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/repository2cpe"
-	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex"
+	redhatVEXv1 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v1"
+	redhatVEXv2 "github.com/MaineK00n/vuls-data-update/pkg/fetch/redhat/vex/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/errata"
 	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/fetch/rocky/osv"
 	"github.com/MaineK00n/vuls-data-update/pkg/fetch/rootio"
@@ -269,7 +270,7 @@ func NewCmdFetch() *cobra.Command {
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(), newCmdRedHatAppstreamLifecycle(), newCmdRedHatPackageManifest(),
+		newCmdRedHatOVALRepositoryToCPE(), newCmdRedHatOVALV1(), newCmdRedHatOVALV2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEXV1(), newCmdRedHatVEXV2(), newCmdRedHatOSV(), newCmdRedHatAppstreamLifecycle(), newCmdRedHatPackageManifest(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRootio(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
@@ -4609,15 +4610,15 @@ func newCmdRedHatOVALV1() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv1",
-		Short: "Fetch RedHat Enterprise Linux OVALv1 data source",
+		Use:   "redhat-oval-v1",
+		Short: "Fetch RedHat Enterprise Linux OVAL v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-ovalv1
+			$ vuls-data-update fetch redhat-oval-v1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := redhatOVALv1.Fetch(redhatOVALv1.WithDir(options.dir), redhatOVALv1.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat ovalv1")
+				return errors.Wrap(err, "failed to fetch redhat oval v1")
 			}
 			return nil
 		},
@@ -4636,15 +4637,15 @@ func newCmdRedHatOVALV2() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv2",
-		Short: "Fetch RedHat Enterprise Linux OVALv2 data source",
+		Use:   "redhat-oval-v2",
+		Short: "Fetch RedHat Enterprise Linux OVAL v2 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-ovalv2
+			$ vuls-data-update fetch redhat-oval-v2
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if err := redhatOVALv2.Fetch(redhatOVALv2.WithDir(options.dir), redhatOVALv2.WithRetry(options.retry)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat ovalv2")
+				return errors.Wrap(err, "failed to fetch redhat oval v2")
 			}
 			return nil
 		},
@@ -4656,14 +4657,14 @@ func newCmdRedHatOVALV2() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedHatVEX() *cobra.Command {
+func newCmdRedHatVEXV1() *cobra.Command {
 	options := &struct {
 		base
 		concurrency int
 		wait        time.Duration
 	}{
 		base: base{
-			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex"),
+			dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v1"),
 			retry: 3,
 		},
 		concurrency: 10,
@@ -4671,15 +4672,15 @@ func newCmdRedHatVEX() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-vex",
-		Short: "Fetch RedHat Enterprise Linux CSAF VEX data source",
+		Use:   "redhat-vex-v1",
+		Short: "Fetch RedHat Enterprise Linux CSAF VEX v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update fetch redhat-vex
+			$ vuls-data-update fetch redhat-vex-v1
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
-			if err := redhatVEX.Fetch(redhatVEX.WithDir(options.dir), redhatVEX.WithRetry(options.retry), redhatVEX.WithConcurrency(options.concurrency), redhatVEX.WithWait(options.wait)); err != nil {
-				return errors.Wrap(err, "failed to fetch redhat vex")
+			if err := redhatVEXv1.Fetch(redhatVEXv1.WithDir(options.dir), redhatVEXv1.WithRetry(options.retry), redhatVEXv1.WithConcurrency(options.concurrency), redhatVEXv1.WithWait(options.wait)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat vex v1")
 			}
 			return nil
 		},
@@ -4689,6 +4690,33 @@ func newCmdRedHatVEX() *cobra.Command {
 	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 	cmd.Flags().IntVarP(&options.concurrency, "concurrency", "", options.concurrency, "number of concurrent http requests")
 	cmd.Flags().DurationVarP(&options.wait, "wait", "", options.wait, "wait duration")
+
+	return cmd
+}
+
+func newCmdRedHatVEXV2() *cobra.Command {
+	options := &base{
+		dir:   filepath.Join(util.CacheDir(), "fetch", "redhat", "vex", "v2"),
+		retry: 3,
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-vex-v2",
+		Short: "Fetch RedHat Enterprise Linux CSAF VEX v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update fetch redhat-vex-v2
+		`),
+		Args: cobra.NoArgs,
+		RunE: func(_ *cobra.Command, _ []string) error {
+			if err := redhatVEXv2.Fetch(redhatVEXv2.WithDir(options.dir), redhatVEXv2.WithRetry(options.retry)); err != nil {
+				return errors.Wrap(err, "failed to fetch redhat vex v2")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output fetch results to specified directory")
+	cmd.Flags().IntVarP(&options.retry, "retry", "", options.retry, "number of retry http request")
 
 	return cmd
 }

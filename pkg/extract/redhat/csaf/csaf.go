@@ -1011,7 +1011,13 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 
 		vcs := make([]vcTypes.Criterion, 0, 1)
 
-		if as := slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" }); len(as) > 0 {
+		// "Has any binary RPM" — anything other than "src" counts. The "src"
+		// element is the only non-binary marker in csaf data; arch-less
+		// PURLs are rejected upstream as a hard error, so no empty-string
+		// filter is needed below. Without this outer check, a pure ["src"]
+		// product_versions list would emit a spurious empty binary
+		// criterion.
+		if slices.ContainsFunc(extra.arches, func(x string) bool { return x != "src" }) {
 			vcs = append(vcs, vcTypes.Criterion{
 				Vulnerable: true,
 				FixStatus:  &fixstatusTypes.FixStatus{Class: fixstatusTypes.ClassFixed},
@@ -1024,7 +1030,7 @@ func buildVersionCriterion(pk productKey, extra productExtra, status status) ([]
 							}
 							return pk.name
 						}(),
-						Architectures: as,
+						Architectures: slices.DeleteFunc(slices.Clone(extra.arches), func(x string) bool { return x == "src" }),
 					},
 				},
 				Affected: &affectedTypes.Affected{

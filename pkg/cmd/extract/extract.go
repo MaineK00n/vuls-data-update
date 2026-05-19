@@ -104,7 +104,8 @@ import (
 	redhatOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/osv"
 	redhatOVALv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/oval/v1"
 	redhatOVALv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/oval/v2"
-	redhatVEX "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex"
+	redhatVEXv1 "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex/v1"
+	redhatVEXv2 "github.com/MaineK00n/vuls-data-update/pkg/extract/redhat/vex/v2"
 	rockyErrata "github.com/MaineK00n/vuls-data-update/pkg/extract/rocky/errata"
 	rockyOSV "github.com/MaineK00n/vuls-data-update/pkg/extract/rocky/osv"
 	rubygemsDB "github.com/MaineK00n/vuls-data-update/pkg/extract/rubygems/db"
@@ -188,7 +189,7 @@ func NewCmdExtract() *cobra.Command {
 		newCmdPipGHSA(), newCmdPipGLSA(), newCmdPipOSV(), newCmdPipDB(),
 		newCmdPubGHSA(), newCmdPubOSV(),
 		newCmdROSV(),
-		newCmdRedHatOVALv1(), newCmdRedHatOVALv2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEX(), newCmdRedHatOSV(),
+		newCmdRedHatOVALv1(), newCmdRedHatOVALv2(), newCmdRedHatCVE(), newCmdRedHatCVRF(), newCmdRedHatCSAF(), newCmdRedHatVEXv1(), newCmdRedHatVEXv2(), newCmdRedHatOSV(),
 		newCmdRockyErrata(), newCmdRockyOSV(),
 		newCmdRubygemsGHSA(), newCmdRubygemsGLSA(), newCmdRubygemsOSV(), newCmdRubygemsDB(),
 		newCmdSnort(),
@@ -2472,15 +2473,15 @@ func newCmdRedHatOVALv1() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv1 <Raw RedHat OVALv1 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
-		Short: "Extract RedHat OVALv1 data source",
+		Use:   "redhat-oval-v1 <Raw RedHat OVAL v1 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
+		Short: "Extract RedHat OVAL v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-ovalv1 vuls-data-raw-redhat-ovalv1 vuls-data-raw-redhat-repository-to-cpe
+			$ vuls-data-update extract redhat-oval-v1 vuls-data-raw-redhat-oval-v1 vuls-data-raw-redhat-repository-to-cpe
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := redhatOVALv1.Extract(args[0], args[1], redhatOVALv1.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract redhat ovalv1")
+				return errors.Wrap(err, "failed to extract redhat oval v1")
 			}
 			return nil
 		},
@@ -2497,15 +2498,15 @@ func newCmdRedHatOVALv2() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-ovalv2 <Raw RedHat OVALv2 Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
-		Short: "Extract RedHat OVALv2 data source",
+		Use:   "redhat-oval-v2 <Raw RedHat OVAL v2 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
+		Short: "Extract RedHat OVAL v2 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-ovalv2 vuls-data-raw-redhat-ovalv2 vuls-data-raw-redhat-repository-to-cpe
+			$ vuls-data-update extract redhat-oval-v2 vuls-data-raw-redhat-oval-v2 vuls-data-raw-redhat-repository-to-cpe
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
 			if err := redhatOVALv2.Extract(args[0], args[1], redhatOVALv2.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract redhat ovalv2")
+				return errors.Wrap(err, "failed to extract redhat oval v2")
 			}
 			return nil
 		},
@@ -2572,7 +2573,7 @@ func newCmdRedHatCSAF() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-csaf <Raw RedHat CSAF Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
+		Use:   "redhat-csaf <Raw RedHat CSAF Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
 		Short: "Extract RedHat CSAF data source",
 		Example: heredoc.Doc(`
 			$ vuls-data-update extract redhat-csaf vuls-data-raw-redhat-csaf vuls-data-raw-redhat-repository-to-cpe
@@ -2591,21 +2592,46 @@ func newCmdRedHatCSAF() *cobra.Command {
 	return cmd
 }
 
-func newCmdRedHatVEX() *cobra.Command {
+func newCmdRedHatVEXv1() *cobra.Command {
 	options := &base{
-		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex"),
+		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex", "v1"),
 	}
 
 	cmd := &cobra.Command{
-		Use:   "redhat-vex <Raw RedHat VEX Repository PATH> <Raw RedHat Repositoy to CPE Repository PATH>",
-		Short: "Extract RedHat VEX data source",
+		Use:   "redhat-vex-v1 <Raw RedHat VEX v1 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
+		Short: "Extract RedHat VEX v1 data source",
 		Example: heredoc.Doc(`
-			$ vuls-data-update extract redhat-vex vuls-data-raw-redhat-vex vuls-data-raw-redhat-repository-to-cpe
+			$ vuls-data-update extract redhat-vex-v1 vuls-data-raw-redhat-vex-v1 vuls-data-raw-redhat-repository-to-cpe
 		`),
 		Args: cobra.ExactArgs(2),
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := redhatVEX.Extract(args[0], args[1], redhatVEX.WithDir(options.dir)); err != nil {
-				return errors.Wrap(err, "failed to extract redhat vex")
+			if err := redhatVEXv1.Extract(args[0], args[1], redhatVEXv1.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract redhat vex v1")
+			}
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&options.dir, "dir", "d", options.dir, "output extract results to specified directory")
+
+	return cmd
+}
+
+func newCmdRedHatVEXv2() *cobra.Command {
+	options := &base{
+		dir: filepath.Join(util.CacheDir(), "extract", "redhat", "vex", "v2"),
+	}
+
+	cmd := &cobra.Command{
+		Use:   "redhat-vex-v2 <Raw RedHat VEX v2 Repository PATH> <Raw RedHat Repository to CPE Repository PATH>",
+		Short: "Extract RedHat VEX v2 data source",
+		Example: heredoc.Doc(`
+			$ vuls-data-update extract redhat-vex-v2 vuls-data-raw-redhat-vex-v2 vuls-data-raw-redhat-repository-to-cpe
+		`),
+		Args: cobra.ExactArgs(2),
+		RunE: func(_ *cobra.Command, args []string) error {
+			if err := redhatVEXv2.Extract(args[0], args[1], redhatVEXv2.WithDir(options.dir)); err != nil {
+				return errors.Wrap(err, "failed to extract redhat vex v2")
 			}
 			return nil
 		},
