@@ -1,0 +1,21 @@
+{
+	"kb_id": "3108664",
+	"url": "https://support.microsoft.com/help/3108664",
+	"products": [
+		"Windows 7 for 32-bit Systems Service Pack 1",
+		"Windows 7 for x64-based Systems Service Pack 1",
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+		"Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2",
+		"Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Windows Vista Service Pack 2",
+		"Windows Vista x64 Edition Service Pack 2"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/16/MS16-007.json"
+		]
+	}
+}
