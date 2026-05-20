@@ -512,11 +512,12 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		// returns false on nil.
 		naCVEsKB := bulletinArchiveKBNotApplicable[row.ComponentKB]
 		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(string(rootID), row.AffectedProduct, row.AffectedComponent)]
+		misattribCVEs := bulletinArchiveMisattributedCVEs[string(rootID)]
 		filteredIDs := ids
-		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 {
+		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 || len(misattribCVEs) > 0 {
 			filteredIDs = make([]string, 0, len(ids))
 			for _, cve := range ids {
-				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) {
+				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) || slices.Contains(misattribCVEs, cve) {
 					continue
 				}
 				filteredIDs = append(filteredIDs, cve)
@@ -3896,4 +3897,61 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 10": {"CVE-2017-0012", "CVE-2017-0033", "CVE-2017-0049", "CVE-2017-0154"},
 		"Internet Explorer 11": {"CVE-2017-0154"},
 	},
+}
+
+// bulletinArchiveMisattributedCVEs lists per-bulletin CVE IDs that
+// BulletinSearch.xlsx erroneously attributes to the bulletin — CVE IDs that
+// do not appear anywhere in the bulletin's archive markdown. Source: full
+// set difference of (xlsx cves cell tokens) − (CVE-YYYY-NNNN regex hits in
+// the bulletin's archive markdown body), across the entire 1554-bulletin
+// corpus.
+//
+// These split into three patterns:
+//   - Leading-zero / 5-digit suffix anomalies (CVE-2017-00016, etc.)
+//   - Off-by-one neighbours (CVE-2011-3403 vs the bulletin's CVE-2011-3404)
+//   - Out-of-bulletin attributions with no clear neighbour
+//
+// The likely-correct CVE noted in inline comments is informational only —
+// the filter drops the bad CVE without remapping. The remapped CVE is
+// already attributed to its real bulletin elsewhere in the corpus, or to
+// none if Microsoft never published it.
+var bulletinArchiveMisattributedCVEs = map[string][]string{
+	// MS06-012: CVE not in markdown; no near neighbour in MS06-012.
+	"MS06-012": {"CVE-2006-4131"},
+	// MS06-021: CVEs not in markdown; no near neighbours in MS06-021.
+	"MS06-021": {"CVE-2006-2283", "CVE-2006-4089"},
+	// MS08-032: cross-year mis-tag (CVE-2007-* in an MS08 bulletin).
+	"MS08-032": {"CVE-2007-0675"},
+	// MS11-056: likely off-by-one of CVE-2011-1284.
+	"MS11-056": {"CVE-2011-1285"},
+	// MS11-099: likely off-by-one of CVE-2011-3404 (which IS in MS11-099
+	// markdown); CVE-2011-3403 appears in MS11-096's markdown instead.
+	"MS11-099": {"CVE-2011-3403"},
+	// MS13-028: CVEs not in markdown; no near neighbours in MS13-028.
+	"MS13-028": {"CVE-2013-2013", "CVE-2013-2014"},
+	// MS13-037: likely off-by-one of CVE-2013-1312; CVE-2013-1313 appears in
+	// MS13-020's markdown instead.
+	"MS13-037": {"CVE-2013-1313"},
+	// MS13-059: likely off-by-one of CVE-2013-3184; CVE-2013-3181 appears in
+	// MS13-060's markdown instead.
+	"MS13-059": {"CVE-2013-3181"},
+	// MS14-051: likely off-by-one of CVE-2014-2796; CVE-2014-2799 appears in
+	// MS14-052's markdown instead.
+	"MS14-051": {"CVE-2014-2799"},
+	// MS15-036: 5-digit suffix anomaly; CVE-2015-16453 does not exist as a
+	// canonical CVE ID (no leading-zero variant matches MS15-036's contents).
+	"MS15-036": {"CVE-2015-16453"},
+	// MS15-048: 5-digit suffix anomaly; CVE-2015-16723 does not exist as a
+	// canonical CVE ID.
+	"MS15-048": {"CVE-2015-16723"},
+	// MS16-003: likely off-by-one of CVE-2016-0002; CVE-2016-0003 appears in
+	// MS16-002's markdown instead.
+	"MS16-003": {"CVE-2016-0003"},
+	// MS16-079: cross-year mis-tag; CVE-2015-6016 not in any MS16 bulletin.
+	"MS16-079": {"CVE-2015-6016"},
+	// MS16-144: CVE not in markdown; no near neighbour in MS16-144.
+	"MS16-144": {"CVE-2016-7293"},
+	// MS17-012: leading-zero typo of CVE-2017-0016 (which IS in MS17-012
+	// markdown). The xlsx cell records "CVE-2017-00016".
+	"MS17-012": {"CVE-2017-00016"},
 }
