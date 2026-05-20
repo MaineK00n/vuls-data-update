@@ -1,0 +1,13 @@
+{
+	"kb_id": "924999",
+	"url": "https://support.microsoft.com/help/924999",
+	"products": [
+		"Microsoft Word 2004 for Mac"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/06/MS06-060.json"
+		]
+	}
+}

@@ -311,53 +311,107 @@ func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 
 func Test_normalizeArchiveComponentKey(t *testing.T) {
 	type args struct {
-		product   string
-		component string
+		bulletinID string
+		product    string
+		component  string
 	}
 	tests := []struct {
 		name string
 		args args
 		want string
 	}{
+		// IE/Edge global vocabulary — the default branch of normalizeArchiveComponentKey,
+		// reached only when bulletinID is not one of the MS06-* product-keyed cases.
+		// Cases below use representative IE Cumulative bulletin IDs (MS14-010, MS16-037).
 		{
 			name: "IE 11 on legacy Windows 7",
-			args: args{product: "Windows 7 for x64-based Systems Service Pack 1", component: "Windows Internet Explorer 11"},
+			args: args{bulletinID: "MS14-010", product: "Windows 7 for x64-based Systems Service Pack 1", component: "Windows Internet Explorer 11"},
 			want: "Internet Explorer 11",
 		},
 		{
 			name: "IE 11 on Windows 10",
-			args: args{product: "Windows 10 for x64-based Systems", component: "Internet Explorer 11"},
+			args: args{bulletinID: "MS16-037", product: "Windows 10 for x64-based Systems", component: "Internet Explorer 11"},
 			want: "Internet Explorer 11 on Windows 10",
 		},
 		{
 			name: "IE 9 (Internet Explorer prefix)",
-			args: args{product: "Windows Server 2008 for x64-based Systems Service Pack 2", component: "Internet Explorer 9"},
+			args: args{bulletinID: "MS14-010", product: "Windows Server 2008 for x64-based Systems Service Pack 2", component: "Internet Explorer 9"},
 			want: "Internet Explorer 9",
 		},
 		{
 			name: "IE 6.0 (Microsoft Internet Explorer prefix)",
-			args: args{product: "Microsoft Windows Server 2003 Service Pack 2", component: "Microsoft Internet Explorer 6.0"},
+			args: args{bulletinID: "MS14-010", product: "Microsoft Windows Server 2003 Service Pack 2", component: "Microsoft Internet Explorer 6.0"},
 			want: "Internet Explorer 6",
 		},
 		{
 			name: "Microsoft Edge",
-			args: args{product: "Windows 10 for x64-based Systems", component: "Microsoft Edge"},
+			args: args{bulletinID: "MS16-037", product: "Windows 10 for x64-based Systems", component: "Microsoft Edge"},
 			want: "Microsoft Edge",
 		},
+		// Per-bulletin non-IE product vocabularies.
 		{
-			name: "non-IE component returns empty",
-			args: args{product: "Microsoft Office 2010 Service Pack 1 (32-bit editions)", component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)"},
+			name: "MS06-012 PowerPoint 2000 SP3 → bundled markdown column",
+			args: args{bulletinID: "MS06-012", product: "Microsoft Office 2000 Service Pack 3", component: "Microsoft PowerPoint 2000 Service Pack 3"},
+			want: "Microsoft PowerPoint 2000",
+		},
+		{
+			// Dispatch is present for forward compatibility but the current
+			// BulletinSearch.xlsx never carries these rows under MS06-020.
+			name: "MS06-020 Win 2000 SP4 (hypothetical Excel row) → markdown column",
+			args: args{bulletinID: "MS06-020", product: "Microsoft Windows 2000 Service Pack 4", component: ""},
+			want: "Windows 2000",
+		},
+		{
+			name: "MS06-020 Server 2003 SP1 (hypothetical Excel row) → markdown column",
+			args: args{bulletinID: "MS06-020", product: "Microsoft Windows Server 2003 Service Pack 1", component: ""},
+			want: "Windows Server 2003 Service Pack 1",
+		},
+		{
+			name: "MS06-039 Project 2000 (component is null, match affected_product)",
+			args: args{bulletinID: "MS06-039", product: "Microsoft Project 2000", component: ""},
+			want: "Microsoft Project 2000",
+		},
+		// MS06-060 is intentionally absent from normalizeArchiveComponentKey
+		// — its NA cells are captured by KB-keyed entries in
+		// bulletinArchiveKBNotApplicable (KB923088/923089/923090/924998/924999),
+		// not via component-keyed narrowing. Verify the default branch returns
+		// "" so the row passes through to the KB-keyed filter.
+		{
+			name: "MS06-060 Word 2003 SP1 row passes through normalizer (KB-keyed instead)",
+			args: args{bulletinID: "MS06-060", product: "Microsoft Office 2003 Service Pack 1", component: "Microsoft Word 2003 Service Pack 1"},
 			want: "",
 		},
 		{
-			name: "empty component returns empty",
-			args: args{product: "Windows 7 for x64-based Systems Service Pack 1", component: ""},
+			name: "MS06-060 Works Suite row with null component passes through (KB-keyed instead)",
+			args: args{bulletinID: "MS06-060", product: "Microsoft Works Suite 2004", component: ""},
+			want: "",
+		},
+		{
+			name: "MS06-078 WMP 6.4 → \"all operating systems\" column",
+			args: args{bulletinID: "MS06-078", product: "Microsoft Windows XP Service Pack 2", component: "Microsoft Windows Media Player 6.4"},
+			want: "Windows Media Player 6.4 (All operating systems)",
+		},
+		// Bulletin-specific vocabulary does NOT apply outside its bulletin.
+		{
+			name: "MS06-012 PowerPoint key not recognized in a different bulletin",
+			args: args{bulletinID: "MS07-001", product: "Microsoft Office 2000 Service Pack 3", component: "Microsoft PowerPoint 2000 Service Pack 3"},
+			want: "",
+		},
+		// Negative cases.
+		{
+			name: "non-IE component in an IE-vocabulary bulletin returns empty",
+			args: args{bulletinID: "MS14-010", product: "Microsoft Office 2010 Service Pack 1 (32-bit editions)", component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)"},
+			want: "",
+		},
+		{
+			name: "empty component in IE Cumulative bulletin (default IE/Edge branch) returns empty",
+			args: args{bulletinID: "MS14-010", product: "Windows 7 for x64-based Systems Service Pack 1", component: ""},
 			want: "",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := bulletin.NormalizeArchiveComponentKey(tt.args.product, tt.args.component); got != tt.want {
+			if got := bulletin.NormalizeArchiveComponentKey(tt.args.bulletinID, tt.args.product, tt.args.component); got != tt.want {
 				t.Errorf("normalizeArchiveComponentKey() = %v, want %v", got, tt.want)
 			}
 		})
@@ -389,6 +443,25 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				componentKB: "2804576",
 				cve:         "CVE-2013-1337",
 			},
+			// MS06-060 NA via KB-keyed. KB923089 is shared by Word 2002 SP3 +
+			// Works Suite 2004/2005/2006 — per the Microsoft footnote "Works
+			// Suite severity = Word 2002 severity", so the Word 2002 column's
+			// NA cell drops CVE-2006-4693 from all four rows simultaneously.
+			{
+				name:        "MS06-060 KB923089 (Word 2002 SP3 + Works Suite 2004/2005/2006) NA for CVE-2006-4693",
+				componentKB: "923089",
+				cve:         "CVE-2006-4693",
+			},
+			{
+				name:        "MS06-060 KB924998 (Office v. X for Mac) NA for CVE-2006-3651 (Word for Mac column)",
+				componentKB: "924998",
+				cve:         "CVE-2006-3651",
+			},
+			{
+				name:        "MS06-060 KB924999 (Word 2004 for Mac) NA for CVE-2006-4534 (Word for Mac column)",
+				componentKB: "924999",
+				cve:         "CVE-2006-4534",
+			},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
@@ -410,16 +483,42 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			cve        string
 		}{
 			{
-				name:       "MS16-037 IE 11 NA for CVE-2016-0159 (CVE-rows × IE-version cols)",
+				name:       "MS16-037 IE 11 NA for CVE-2016-0159 (IE Cumulative, CVE-rows × IE-version cols)",
 				bulletinID: "MS16-037",
 				component:  "Internet Explorer 11",
 				cve:        "CVE-2016-0159",
 			},
 			{
-				name:       "MS14-010 IE 11 NA for CVE-2014-0269 (verified by golden diff)",
+				name:       "MS14-010 IE 11 NA for CVE-2014-0269 (IE Cumulative, verified by golden diff)",
 				bulletinID: "MS14-010",
 				component:  "Internet Explorer 11",
 				cve:        "CVE-2014-0269",
+			},
+			{
+				name:       "MS06-012 PowerPoint 2000 NA for CVE-2005-4131 (Office cross-product table)",
+				bulletinID: "MS06-012",
+				component:  "Microsoft PowerPoint 2000",
+				cve:        "CVE-2005-4131",
+			},
+			{
+				name:       "MS06-020 Win 2000 NA for CVE-2006-0024 (no current Excel row triggers; kept for completeness)",
+				bulletinID: "MS06-020",
+				component:  "Windows 2000",
+				cve:        "CVE-2006-0024",
+			},
+			{
+				name:       "MS06-039 Project 2000 NA for CVE-2006-0033",
+				bulletinID: "MS06-039",
+				component:  "Microsoft Project 2000",
+				cve:        "CVE-2006-0033",
+			},
+			// MS06-060 NA cells are encoded in bulletinArchiveKBNotApplicable
+			// (KB-keyed), not here. See the corresponding KB-keyed test cases.
+			{
+				name:       "MS06-078 WMP 6.4 NA for CVE-2006-6134",
+				bulletinID: "MS06-078",
+				component:  "Windows Media Player 6.4 (All operating systems)",
+				cve:        "CVE-2006-6134",
 			},
 		}
 		for _, tt := range tests {

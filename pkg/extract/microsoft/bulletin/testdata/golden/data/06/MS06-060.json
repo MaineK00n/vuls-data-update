@@ -1,0 +1,438 @@
+{
+	"id": "MS06-060",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS06-060",
+				"title": "Vulnerabilities in Microsoft Word Could Allow Remote Code Execution",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2006/ms06-060"
+					}
+				],
+				"published": "2006-10-10T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Office v. X for Mac"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2002 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2004 for Mac"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2004"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2005"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2006"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "MS06-060",
+				"title": "Vulnerabilities in Microsoft Word Could Allow Remote Code Execution",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Critical"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2006/ms06-060"
+					}
+				],
+				"published": "2006-10-10T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2000 Service Pack 3"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2006-3647",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2006-3647"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Office v. X for Mac"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2000 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2002 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2004 for Mac"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2004"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2005"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2006"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2006-3651",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2006-3651"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2000 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2002 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2004"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2005"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2006"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2006-4534",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2006-4534"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2000 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2002 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2004"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2005"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Works Suite 2006"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2006-4693",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2006-4693"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Office v. X for Mac"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft Word 2004 for Mac"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Office v. X for Mac",
+											"kb_id": "924998"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Office v. X for Mac"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Word 2000 Service Pack 3",
+											"kb_id": "923090"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Word 2000 Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Word 2002 Service Pack 3",
+											"kb_id": "923089"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Word 2002 Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Word 2003 Service Pack 1",
+											"kb_id": "923088"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Word 2003 Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Word 2003 Service Pack 2",
+											"kb_id": "923088"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Word 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Word 2004 for Mac",
+											"kb_id": "924999"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Word 2004 for Mac"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Works Suite 2004",
+											"kb_id": "923089"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Works Suite 2004"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Works Suite 2005",
+											"kb_id": "923089"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Works Suite 2005"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft Works Suite 2006",
+											"kb_id": "923089"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft Works Suite 2006"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/06/MS06-060.json"
+		]
+	}
+}
