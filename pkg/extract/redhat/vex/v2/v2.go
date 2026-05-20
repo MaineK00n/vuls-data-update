@@ -214,49 +214,51 @@ type assessment struct {
 	// advisories holds every vendor_fix erratum reported for this product.
 	// VEX-GA can reference the same fixed pid from multiple RHSAs (e.g. a
 	// re-issued advisory or sibling errata for variant streams) — see
-	// CVE-2007-6015 / CVE-2023-48022 for examples.
-	// Kept sorted-and-deduplicated so two assessments that differ only in
-	// insertion order produce the same key.
-	advisories []advisory
+	// CVE-2007-6015 / CVE-2023-48022 for examples. Modeled as a set so
+	// downstream consumers (calculateTag, buildAdvisories) extract canonical
+	// sorted views at use time and the insertion site does not have to
+	// maintain ordering.
+	advisories map[advisory]struct{}
 	severity   severity
 	status     status
 	mitigation string
 	workaround string
 }
 
+// assessmentKey adapts assessment into a map-comparable shape by flattening
+// the non-comparable `advisories` set field into a canonical string. Other
+// fields are copied through verbatim (they are already comparable). Two
+// assessments with content-equal advisories produce equal assessmentKey
+// values regardless of original insertion order, so it is safe to use as a
+// bucket key when grouping per (major, assessment).
+type assessmentKey struct {
+	advisoriesCanonical string
+	severity            severity
+	status              status
+	mitigation          string
+	workaround          string
+}
+
+func keyOf(a assessment) assessmentKey {
+	var sb strings.Builder
+	for _, ad := range sortedAdvisories(a.advisories) {
+		sb.WriteString(ad.id)
+		sb.WriteByte(0)
+		sb.WriteString(ad.date)
+		sb.WriteByte(1)
+	}
+	return assessmentKey{
+		advisoriesCanonical: sb.String(),
+		severity:            a.severity,
+		status:              a.status,
+		mitigation:          a.mitigation,
+		workaround:          a.workaround,
+	}
+}
+
 type advisory struct {
 	id   string
 	date string
-}
-
-// assessmentKey is the comparable summary of an assessment, suitable for use
-// as a map key. Only the advisories slice needs encoding; every other field
-// is already a comparable value type.
-type assessmentKey struct {
-	advisoriesKey string
-	severity      severity
-	status        status
-	mitigation    string
-	workaround    string
-}
-
-func (a assessment) key() assessmentKey {
-	var sb strings.Builder
-	for i, x := range a.advisories {
-		if i > 0 {
-			sb.WriteByte('\x01')
-		}
-		sb.WriteString(x.id)
-		sb.WriteByte('\x00')
-		sb.WriteString(x.date)
-	}
-	return assessmentKey{
-		advisoriesKey: sb.String(),
-		severity:      a.severity,
-		status:        a.status,
-		mitigation:    a.mitigation,
-		workaround:    a.workaround,
-	}
 }
 
 type severity struct {
@@ -606,17 +608,14 @@ func walkVulnerabilities(vulns []v2.Vulnerability, pids []v2.ProductID) (map[v2.
 					assm[p] = base
 				case "vendor_fix":
 					base := assm[p]
-					ad := advisory{
+					if base.advisories == nil {
+						base.advisories = map[advisory]struct{}{}
+					}
+					base.advisories[advisory{
 						id:   strings.TrimPrefix(r.URL, "https://access.redhat.com/errata/"),
 						date: r.Date,
-					}
-					// Skip exact duplicates; otherwise insert in sorted order
-					// (by id, then date) so the assessment key is stable
-					// regardless of remediation declaration order.
-					if i, ok := slices.BinarySearchFunc(base.advisories, ad, compareAdvisory); !ok {
-						base.advisories = slices.Insert(base.advisories, i, ad)
-						assm[p] = base
-					}
+					}] = struct{}{}
+					assm[p] = base
 				default:
 					return errors.Errorf("unexpected remediation category. expected: %q, actual: %q", []string{"mitigation", "no_fix_planned", "none_available", "vendor_fix", "workaround"}, r.Category)
 				}
@@ -710,20 +709,15 @@ type product2 struct {
 	archs           []string
 }
 
-type productsWithMaxPid struct {
-	maxPid v2.ProductID
-	// assessment retained so emission can recover the full assessment
-	// (including the advisories slice that the assessmentKey collapses
-	// into an opaque string).
-	assessment assessment
-	p2sm       map[string][]product2 // key: product2.cpe
-}
-
 func compareAdvisory(a, b advisory) int {
 	return cmp.Or(
 		cmp.Compare(a.id, b.id),
 		cmp.Compare(a.date, b.date),
 	)
+}
+
+func sortedAdvisories(s map[advisory]struct{}) []advisory {
+	return slices.SortedFunc(maps.Keys(s), compareAdvisory)
 }
 
 func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContentTypes.Content, pm map[v2.ProductID][]product, assm map[v2.ProductID]assessment) ([]advisoryTypes.Advisory, []vulnerabilityTypes.Vulnerability, []detectionTypes.Detection, error) {
@@ -736,140 +730,124 @@ func buildDataComponents(doc v2.Document, baseVulnerability vulnerabilityContent
 		}
 	}
 
-	// major -> assessmentKey -> productsWithMaxPid (full assessment carried inside).
-	apmm := make(map[string]map[assessmentKey]productsWithMaxPid)
+	// Bucket products by (major, assessmentKey). assessmentKey is the
+	// comparable adaptation of assessment used as the map key; the original
+	// assessment (with its advisories set intact) is preserved in the
+	// bucket value for downstream emission.
+	type bucketKey struct {
+		major string
+		ak    assessmentKey
+	}
+	type bucketValue struct {
+		assessment assessment
+		products   []product
+	}
+	buckets := map[bucketKey]*bucketValue{}
 	for pid, ps := range pm {
+		a, found := assm[pid]
+		if !found {
+			return nil, nil, nil, errors.Errorf("no product_status entry for pid that appears in product_tree. cve: %s, product_id: %s", baseVulnerability.ID, pid)
+		}
 		for _, p := range ps {
 			if p.name == "" {
 				return nil, nil, nil, errors.Errorf("empty package name for pid. cve: %s, product_id: %s", baseVulnerability.ID, pid)
 			}
-
-			apm, found := apmm[p.major]
-			if !found {
-				apm = map[assessmentKey]productsWithMaxPid{}
+			bk := bucketKey{p.major, keyOf(a)}
+			bv := buckets[bk]
+			if bv == nil {
+				bv = &bucketValue{assessment: a}
+				buckets[bk] = bv
 			}
-			assessment, found := assm[pid]
-			if !found {
-				return nil, nil, nil, errors.Errorf("no product_status entry for pid that appears in product_tree. cve: %s, product_id: %s", baseVulnerability.ID, pid)
-			}
+			bv.products = append(bv.products, p)
+		}
+	}
 
-			key := assessment.key()
-			pmax, found := apm[key]
-			if !found {
-				pmax = productsWithMaxPid{
-					maxPid:     pid,
-					assessment: assessment,
-					p2sm: map[string][]product2{
-						p.cpe: {{
-							name:            p.name,
-							version:         p.version,
-							modularitylabel: p.modularitylabel,
-							cpe:             p.cpe,
-							archs:           []string{p.arch},
-							repositories:    p.repositories,
-						}},
-					},
+	// One Detection per major; collect Conditions per bucket. Bucket
+	// iteration order is non-deterministic but downstream Detection.Sort()
+	// canonicalizes the final emit order.
+	condsPerMajor := map[string][]conditionTypes.Condition{}
+	var vs []vulnerabilityTypes.Vulnerability
+	var as []advisoryTypes.Advisory
+
+	for bk, bv := range buckets {
+		// Group products by cpe, deduplicating by (name, version,
+		// modularitylabel) and accumulating archs across duplicates.
+		p2sm := map[string][]product2{}
+		for _, p := range bv.products {
+			existing := p2sm[p.cpe]
+			idx := slices.IndexFunc(existing, func(p2 product2) bool {
+				return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
+			})
+			if idx == -1 {
+				p2sm[p.cpe] = append(existing, product2{
+					name:            p.name,
+					version:         p.version,
+					modularitylabel: p.modularitylabel,
+					cpe:             p.cpe,
+					archs:           []string{p.arch},
+					repositories:    p.repositories,
+				})
+			} else if !slices.Contains(existing[idx].archs, p.arch) {
+				existing[idx].archs = append(existing[idx].archs, p.arch)
+			}
+		}
+
+		tag := calculateTag(bk.major, bv.assessment)
+		es := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, bk.major))
+		seg := []segmentTypes.Segment{{Ecosystem: es, Tag: tag}}
+
+		ca := criteriaTypes.Criteria{Operator: criteriaTypes.CriteriaOperatorTypeOR}
+		for _, p2s := range p2sm {
+			subCa := criteriaTypes.Criteria{
+				Operator:     criteriaTypes.CriteriaOperatorTypeOR,
+				Repositories: p2s[0].repositories,
+			}
+			for _, p2 := range p2s {
+				vcs, err := buildVersionCriterion(p2, bv.assessment)
+				if err != nil {
+					return nil, nil, nil, errors.Wrap(err, "build version criterion")
 				}
-			} else {
-				pmax.maxPid = v2.ProductID(slices.Max([]string{string(pmax.maxPid), string(pid)}))
-				switch i := slices.IndexFunc(pmax.p2sm[p.cpe], func(p2 product2) bool {
-					return p2.name == p.name && p2.version == p.version && p2.modularitylabel == p.modularitylabel
-				}); i {
-				case -1:
-					pmax.p2sm[p.cpe] = append(pmax.p2sm[p.cpe], product2{
-						name:            p.name,
-						version:         p.version,
-						modularitylabel: p.modularitylabel,
-						cpe:             p.cpe,
-						archs:           []string{p.arch},
-						repositories:    p.repositories,
+				for _, vc := range vcs {
+					subCa.Criterions = append(subCa.Criterions, criterionTypes.Criterion{
+						Type:    criterionTypes.CriterionTypeVersion,
+						Version: &vc,
 					})
-				default:
-					if !slices.Contains(pmax.p2sm[p.cpe][i].archs, p.arch) {
-						pmax.p2sm[p.cpe][i].archs = append(pmax.p2sm[p.cpe][i].archs, p.arch)
-					}
 				}
 			}
-			apm[key] = pmax
-			apmm[p.major] = apm
+			if len(subCa.Criterions) > 0 {
+				ca.Criterias = append(ca.Criterias, subCa)
+			}
+		}
+		if len(ca.Criterias) > 0 {
+			condsPerMajor[bk.major] = append(condsPerMajor[bk.major], conditionTypes.Condition{
+				Criteria: ca,
+				Tag:      tag,
+			})
+		}
+
+		v, err := buildVulnerability(baseVulnerability, bv.assessment)
+		if err != nil {
+			return nil, nil, nil, errors.Wrap(err, "build vulnerability")
+		}
+		vs = append(vs, vulnerabilityTypes.Vulnerability{
+			Content:  v,
+			Segments: seg,
+		})
+
+		// One Advisory entry per RHSA; same segments shared across them
+		// because they all attest to the same (env, pkg) fix combination.
+		for _, content := range buildAdvisories(bv.assessment) {
+			as = append(as, advisoryTypes.Advisory{
+				Content:  content,
+				Segments: seg,
+			})
 		}
 	}
 
 	var ds []detectionTypes.Detection
-	var vs []vulnerabilityTypes.Vulnerability
-	var as []advisoryTypes.Advisory
-
-	for major, apm := range apmm {
-		var conds []conditionTypes.Condition
-		es := ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major))
-		for _, pmax := range apm {
-			assessment := pmax.assessment
-			tag := calculateTag(pmax)
-			ss := []segmentTypes.Segment{{
-				Ecosystem: es,
-				Tag:       tag,
-			}}
-			ca := criteriaTypes.Criteria{
-				Operator: criteriaTypes.CriteriaOperatorTypeOR,
-			}
-
-			for _, p2s := range pmax.p2sm {
-				subCa := criteriaTypes.Criteria{
-					Operator:     criteriaTypes.CriteriaOperatorTypeOR,
-					Repositories: p2s[0].repositories,
-				}
-
-				for _, p2 := range p2s {
-					vcs, err := buildVersionCriterion(p2, assessment)
-					if err != nil {
-						return nil, nil, nil, errors.Wrap(err, "build version criterion")
-					}
-					for _, vc := range vcs {
-						subCa.Criterions = append(subCa.Criterions, criterionTypes.Criterion{
-							Type:    criterionTypes.CriterionTypeVersion,
-							Version: &vc,
-						})
-					}
-				}
-				if len(subCa.Criterions) > 0 {
-					ca.Criterias = append(ca.Criterias, subCa)
-				}
-			}
-			if len(ca.Criterias) > 0 {
-				conds = append(conds, conditionTypes.Condition{
-					Criteria: ca,
-					Tag:      tag,
-				})
-			}
-
-			v, err := buildVulnerability(baseVulnerability, assessment)
-			if err != nil {
-				return nil, nil, nil, errors.Wrap(err, "build vulnerability")
-			}
-			vs = append(vs, vulnerabilityTypes.Vulnerability{
-				Content:  v,
-				Segments: ss,
-			})
-
-			// One Advisory entry per RHSA; same segments shared across them
-			// because they all attest to the same (env, pkg) fix combination.
-			for _, content := range buildAdvisories(assessment) {
-				as = append(as, advisoryTypes.Advisory{
-					Content: content,
-					Segments: []segmentTypes.Segment{{
-						Ecosystem: es,
-						Tag:       tag,
-					}},
-				})
-			}
-		}
-
-		if len(conds) == 0 {
-			continue
-		}
-
+	for major, conds := range condsPerMajor {
 		ds = append(ds, detectionTypes.Detection{
-			Ecosystem:  es,
+			Ecosystem:  ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
 			Conditions: conds,
 		})
 	}
@@ -1051,7 +1029,7 @@ func buildVulnerability(baseVulnerability vulnerabilityContentTypes.Content, ass
 
 func buildAdvisories(assessment assessment) []advisoryContentTypes.Content {
 	out := make([]advisoryContentTypes.Content, 0, len(assessment.advisories))
-	for _, ad := range assessment.advisories {
+	for _, ad := range sortedAdvisories(assessment.advisories) {
 		out = append(out, advisoryContentTypes.Content{
 			ID: advisoryContentTypes.AdvisoryID(ad.id),
 			References: []referenceTypes.Reference{{
@@ -1064,20 +1042,28 @@ func buildAdvisories(assessment assessment) []advisoryContentTypes.Content {
 	return out
 }
 
-func calculateTag(pmax productsWithMaxPid) segmentTypes.DetectionTag {
-	h := fnv.New128()
-	h.Write([]byte(pmax.maxPid))
-	dst := make([]byte, 36)
-	uuid := h.Sum(nil)
-	hex.Encode(dst, uuid[:4])
+// calculateTag produces a tag of the form
+//
+//	<major>-<product_status>-<affected_status>-<fnv64(assessment content)>
+//
+// The hash suffix is derived from the bucket's assessment (advisories,
+// CVSS strings, impact, mitigation, workaround) so the tag is a pure
+// function of the bucket's identity rather than being anchored to an
+// arbitrary "max pid" pick. status fields contribute via the prefix.
+func calculateTag(major string, a assessment) segmentTypes.DetectionTag {
+	h := fnv.New64()
+	for _, ad := range sortedAdvisories(a.advisories) {
+		h.Write(fmt.Appendf(nil, "%s\x00%s\x01", ad.id, ad.date))
+	}
+	h.Write(fmt.Appendf(nil, "\x02%s\x02%s\x02%s\x02%s\x02%s",
+		a.severity.cvss2, a.severity.cvss3, a.severity.impact,
+		a.mitigation, a.workaround))
+	hashed := h.Sum(nil)
+	var dst [18]byte
+	hex.Encode(dst[:8], hashed[:4])
 	dst[8] = '-'
-	hex.Encode(dst[9:13], uuid[4:6])
+	hex.Encode(dst[9:13], hashed[4:6])
 	dst[13] = '-'
-	hex.Encode(dst[14:18], uuid[6:8])
-	dst[18] = '-'
-	hex.Encode(dst[19:23], uuid[8:10])
-	dst[23] = '-'
-	hex.Encode(dst[24:], uuid[10:])
-
-	return segmentTypes.DetectionTag(dst)
+	hex.Encode(dst[14:], hashed[6:])
+	return segmentTypes.DetectionTag(fmt.Sprintf("%s-%s-%s-%s", major, a.status.product_status, a.status.affected_status, dst))
 }
