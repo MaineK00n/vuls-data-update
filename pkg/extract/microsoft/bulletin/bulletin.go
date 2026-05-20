@@ -3916,12 +3916,20 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 // already attributed to its real bulletin elsewhere in the corpus, or to
 // none if Microsoft never published it.
 var bulletinArchiveMisattributedCVEs = map[string][]string{
-	// MS06-012: CVE not in markdown; no near neighbour in MS06-012.
+	// MS06-012: year-typo of CVE-2005-4131 (which IS in MS06-012's markdown —
+	// "Excel eBay Vulnerability"). The xlsx records the year as 2006.
 	"MS06-012": {"CVE-2006-4131"},
-	// MS06-021: CVEs not in markdown; no near neighbours in MS06-021.
+	// MS06-021: CVE-2006-4089 is a year-typo of CVE-2005-4089 (which IS in
+	// MS06-021's markdown — "CSS Cross-Domain Information Disclosure
+	// Vulnerability"). CVE-2006-2283 has no near neighbour in MS06-021's
+	// markdown and is kept on the conservative assumption that the markdown
+	// is authoritative.
 	"MS06-021": {"CVE-2006-2283", "CVE-2006-4089"},
-	// MS08-032: cross-year mis-tag (CVE-2007-* in an MS08 bulletin).
-	"MS08-032": {"CVE-2007-0675"},
+	// (MS08-032 / CVE-2007-0675 omitted: the archive markdown at
+	// ms08-032.md is mis-mapped — its content is actually MS16-011's —
+	// so the absence-in-markdown signal cannot distinguish typo from real
+	// attribution. CVE-2007-0675 is a real ActiveX-related vulnerability
+	// addressed by the MS08-032 Cumulative ActiveX Kill Bit update.)
 	// MS11-056: likely off-by-one of CVE-2011-1284.
 	"MS11-056": {"CVE-2011-1285"},
 	// MS11-099: likely off-by-one of CVE-2011-3404 (which IS in MS11-099
