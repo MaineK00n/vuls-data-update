@@ -1,0 +1,15 @@
+{
+	"kb_id": "2631813",
+	"url": "https://support.microsoft.com/help/2631813",
+	"superseded_by": [
+		{
+			"kb_id": "3110329"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/16/MS16-007.json"
+		]
+	}
+}

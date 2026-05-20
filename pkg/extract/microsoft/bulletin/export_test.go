@@ -5,4 +5,5 @@ var (
 	IECumChainEdges                   = ieCumChainEdges
 	BulletinArchiveSupersedes         = bulletinArchiveSupersedes
 	BulletinArchiveSupersedesOverride = bulletinArchiveSupersedesOverride
+	BulletinArchiveKBNotApplicable    = bulletinArchiveKBNotApplicable
 )

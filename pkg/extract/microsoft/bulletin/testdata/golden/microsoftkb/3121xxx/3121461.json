@@ -1,0 +1,19 @@
+{
+	"kb_id": "3121461",
+	"url": "https://support.microsoft.com/help/3121461",
+	"products": [
+		"Windows 7 for 32-bit Systems Service Pack 1",
+		"Windows 7 for x64-based Systems Service Pack 1",
+		"Windows 8 for 32-bit Systems",
+		"Windows 8 for x64-based Systems",
+		"Windows 8.1 for 32-bit Systems",
+		"Windows 8.1 for x64-based Systems",
+		"Windows Server 2012 R2"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/16/MS16-007.json"
+		]
+	}
+}

@@ -308,3 +308,39 @@ func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 		})
 	}
 }
+
+// TestBulletinArchiveNotApplicable verifies known entries in the static
+// bulletinArchiveKBNotApplicable map. The map is regenerated from the frozen
+// Bulletin archive markdown corpus (1554 bulletins, retired April 2017), so
+// any regression in its structure (e.g., a generator change dropping a
+// recognized header label, or stripping a CVE attribution) should fail
+// this test.
+func TestBulletinArchiveNotApplicable(t *testing.T) {
+	tests := []struct {
+		name        string
+		componentKB string
+		cve         string
+	}{
+		{
+			name:        "MS16-007 KB3108664 NA for CVE-2016-0019 (per-CVE columns under \"Operating System\" header)",
+			componentKB: "3108664",
+			cve:         "CVE-2016-0019",
+		},
+		{
+			name:        "MS13-040 KB2804576 (.NET 4) NA for CVE-2013-1337 (under \"Affected Software\" header)",
+			componentKB: "2804576",
+			cve:         "CVE-2013-1337",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cves, ok := bulletin.BulletinArchiveKBNotApplicable[tt.componentKB]
+			if !ok {
+				t.Fatalf("bulletinArchiveKBNotApplicable has no entry for KB%s", tt.componentKB)
+			}
+			if !slices.Contains(cves, tt.cve) {
+				t.Errorf("bulletinArchiveKBNotApplicable[%q] = %v, want to contain %q", tt.componentKB, cves, tt.cve)
+			}
+		})
+	}
+}

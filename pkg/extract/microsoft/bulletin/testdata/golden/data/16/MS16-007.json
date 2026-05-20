@@ -1,0 +1,1404 @@
+{
+	"id": "MS16-007",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS16-007",
+				"title": "Security Update for Microsoft Windows to Address Remote Code Execution",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-007"
+					}
+				],
+				"published": "2016-01-12T00:00:00Z",
+				"optional": {
+					"impact": "Remote Code Execution"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2 (server core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2016-0014",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2016-0014"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2 (server core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-0015",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2016-0015"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-0016",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2016-0016"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-0018",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2016-0018"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for 32-bit systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 8.1 for x64-based systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2012 R2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-0019",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2016-0019"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 10 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2016-0020",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2016-0020"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 10 Version 1511 for 32-bit Systems",
+											"kb_id": "3124263"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 10 Version 1511 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 10 Version 1511 for x64-based Systems",
+											"kb_id": "3124263"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 10 Version 1511 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 10 for 32-bit Systems",
+											"kb_id": "3124266"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 10 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 10 for x64-based Systems",
+											"kb_id": "3124266"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 10 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for 32-bit Systems",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for 32-bit Systems",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for 32-bit Systems",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for 32-bit Systems",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 8 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for x64-based Systems",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for x64-based Systems",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for x64-based Systems",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8 for x64-based Systems",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 8 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for 32-bit Systems",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for 32-bit Systems",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for 32-bit Systems",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for 32-bit Systems",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 8.1 for 32-bit systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for x64-based Systems",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for x64-based Systems",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for x64-based Systems",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows 8.1 for x64-based Systems",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows 8.1 for x64-based systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows RT",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows RT",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows RT"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2012"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012 (Server Core installation)",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012 R2",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012 R2",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012 R2",
+											"kb_id": "3121461"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012 R2",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2012 R2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Server 2012 R2 (Server Core installation)",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Server 2012 R2 (server core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista Service Pack 2",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista Service Pack 2",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista Service Pack 2",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista Service Pack 2",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "3108664"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "3109560"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "3110329"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "3121918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/16/MS16-007.json"
+		]
+	}
+}
