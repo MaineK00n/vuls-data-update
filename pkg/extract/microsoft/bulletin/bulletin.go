@@ -311,6 +311,42 @@ func productName(product, component string) string {
 	}
 }
 
+// normalizeArchiveComponentKey maps a bulletin row's (affected_product, affected_component)
+// to a stable key used by bulletinArchiveComponentNotApplicable. The key matches the
+// column-header form of the archive markdown's "Vulnerability Severity Ratings and Impact"
+// table — one of "Internet Explorer 6/7/8/9/10/11", "Internet Explorer 11 on Windows 10",
+// or "Microsoft Edge". Returns "" for any other component (older IE 5.x, non-IE/Edge, etc.).
+//
+// The accepted input variants are enumerated explicitly rather than parsed, since
+// BulletinSearch.xlsx uses a small, frozen vocabulary ("Windows Internet Explorer N",
+// "Microsoft Internet Explorer N.0", "Internet Explorer N", "Microsoft Edge") and IE
+// only shipped through version 11. The archive markdown's column-header vocabulary
+// differs from the canonical names produced by microsoftutil.NormalizeProductName, so
+// the two normalizers are intentionally kept independent.
+func normalizeArchiveComponentKey(affectedProduct, affectedComponent string) string {
+	switch strings.Join(strings.Fields(affectedComponent), " ") {
+	case "Microsoft Edge":
+		return "Microsoft Edge"
+	case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
+		return "Internet Explorer 6"
+	case "Windows Internet Explorer 7":
+		return "Internet Explorer 7"
+	case "Windows Internet Explorer 8":
+		return "Internet Explorer 8"
+	case "Internet Explorer 9", "Windows Internet Explorer 9":
+		return "Internet Explorer 9"
+	case "Internet Explorer 10", "Windows Internet Explorer 10":
+		return "Internet Explorer 10"
+	case "Internet Explorer 11", "Windows Internet Explorer 11":
+		if strings.Contains(affectedProduct, "Windows 10") {
+			return "Internet Explorer 11 on Windows 10"
+		}
+		return "Internet Explorer 11"
+	default:
+		return ""
+	}
+}
+
 // isOSPlatform reports whether s is a Windows OS, SharePoint Server, or similar platform name.
 func isOSPlatform(s string) bool {
 	s = strings.TrimPrefix(s, "Microsoft ")
@@ -380,23 +416,29 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		}
 
 		// Filter CVEs that the Bulletin archive markdown explicitly marks as
-		// "Not applicable" for this row's componentKB. BulletinSearch.xlsx groups
-		// every CVE of a bulletin row in a single comma-separated cves cell, so
-		// a CVE that only applies to a subset of OSes/components in the bulletin
-		// gets attributed to every row of that bulletin. The archive markdown's
-		// per-cell "Not applicable" markers in OS/Software-rows × CVE-cols
-		// matrix tables narrow attribution back to the authoritative
-		// per-(KB, CVE) pair. See bulletinArchiveKBNotApplicable below.
+		// "Not applicable" for this row's (componentKB) or (bulletin, component)
+		// pair. BulletinSearch.xlsx groups every CVE of a bulletin row in a
+		// single comma-separated cves cell, so a CVE that only applies to a
+		// subset of OSes/IE versions in the bulletin gets attributed to every
+		// row of that bulletin. The archive markdown's per-cell "Not applicable"
+		// markers narrow this back to the authoritative per-(KB, CVE) and
+		// per-(bulletin, component, CVE) attribution — see the two static maps
+		// bulletinArchiveKBNotApplicable (KB-keyed, from OS/Software-rows ×
+		// CVE-cols tables) and bulletinArchiveComponentNotApplicable
+		// ((bulletin, component)-keyed, from CVE-rows × IE-version-cols
+		// severity tables) below.
 		//
-		// Most rows have no narrowing entry (the map covers 429 KBs out of the
-		// full BulletinSearch.xlsx KB universe), so look up the per-KB NA list
-		// once per row and skip the per-CVE filter loop when there is nothing
-		// to drop.
+		// Most rows have no narrowing entry on either side, so look up both NA
+		// lists once per row and skip the per-CVE filter loop entirely when
+		// there is nothing to drop. Nil slices are fine here — slices.Contains
+		// returns false on nil.
+		naCVEsKB := bulletinArchiveKBNotApplicable[row.ComponentKB]
+		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(row.AffectedProduct, row.AffectedComponent)]
 		filteredIDs := ids
-		if naCVEs, ok := bulletinArchiveKBNotApplicable[row.ComponentKB]; ok {
+		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 {
 			filteredIDs = make([]string, 0, len(ids))
 			for _, cve := range ids {
-				if slices.Contains(naCVEs, cve) {
+				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) {
 					continue
 				}
 				filteredIDs = append(filteredIDs, cve)
@@ -1939,4 +1981,252 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"4038788": {"CVE-2016-0143", "CVE-2016-0145", "CVE-2016-0167"},
 	// MS16-039: Windows 10 Version 1709 for 32-bit Systems (+ 1 variant)
 	"4093112": {"CVE-2016-0145", "CVE-2016-0165", "CVE-2016-0167"},
+}
+
+// bulletinArchiveComponentNotApplicable lists per-bulletin component-keyed
+// NA CVEs from "Vulnerability Severity Ratings and Impact" tables that index
+// by CVE row and component (IE-version / Edge) column (e.g. MS16-037 IE
+// Cumulative).
+// componentKey is one of:
+//
+//	"Internet Explorer 6/7/8/9/10/11"
+//	"Internet Explorer 11 on Windows 10"
+//	"Microsoft Edge"
+//
+// At extract time, the row's affected_component (Excel column G) is
+// normalized via normalizeArchiveComponentKey() and matched against this map.
+var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
+	"MS14-010": {
+		"Internet Explorer 6":  {"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"},
+		"Internet Explorer 7":  {"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"},
+		"Internet Explorer 8":  {"CVE-2014-0267", "CVE-2014-0270", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"},
+		"Internet Explorer 9":  {"CVE-2014-0267", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0280", "CVE-2014-0289", "CVE-2014-0290"},
+		"Internet Explorer 10": {"CVE-2014-0267", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0280", "CVE-2014-0283", "CVE-2014-0289", "CVE-2014-0290"},
+		"Internet Explorer 11": {"CVE-2014-0269", "CVE-2014-0272", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0280", "CVE-2014-0283", "CVE-2014-0284"},
+	},
+	"MS14-012": {
+		"Internet Explorer 6":  {"CVE-2014-0297", "CVE-2014-0298", "CVE-2014-0304", "CVE-2014-0306", "CVE-2014-0307", "CVE-2014-0308", "CVE-2014-0309", "CVE-2014-0312", "CVE-2014-0313", "CVE-2014-0314", "CVE-2014-0321", "CVE-2014-0322", "CVE-2014-0324", "CVE-2014-4112"},
+		"Internet Explorer 7":  {"CVE-2014-0297", "CVE-2014-0298", "CVE-2014-0304", "CVE-2014-0306", "CVE-2014-0307", "CVE-2014-0308", "CVE-2014-0309", "CVE-2014-0312", "CVE-2014-0313", "CVE-2014-0314", "CVE-2014-0321", "CVE-2014-0322", "CVE-2014-0324", "CVE-2014-4112"},
+		"Internet Explorer 8":  {"CVE-2014-0298", "CVE-2014-0304", "CVE-2014-0307", "CVE-2014-0313", "CVE-2014-0314", "CVE-2014-0321", "CVE-2014-0322", "CVE-2014-4112"},
+		"Internet Explorer 9":  {"CVE-2014-0302", "CVE-2014-0303", "CVE-2014-0304", "CVE-2014-0313", "CVE-2014-0321", "CVE-2014-4112"},
+		"Internet Explorer 10": {"CVE-2014-0302", "CVE-2014-0303", "CVE-2014-0304", "CVE-2014-0306", "CVE-2014-0307", "CVE-2014-4112"},
+		"Internet Explorer 11": {"CVE-2014-0302", "CVE-2014-0303", "CVE-2014-0306", "CVE-2014-0307", "CVE-2014-0309", "CVE-2014-0314", "CVE-2014-0322"},
+	},
+	"MS14-018": {
+		"Internet Explorer 6":  {"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1755", "CVE-2014-1760"},
+		"Internet Explorer 7":  {"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1755", "CVE-2014-1760"},
+		"Internet Explorer 8":  {"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1752", "CVE-2014-1755", "CVE-2014-1760"},
+		"Internet Explorer 9":  {"CVE-2014-1752", "CVE-2014-1760"},
+		"Internet Explorer 10": {"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1752", "CVE-2014-1753", "CVE-2014-1755", "CVE-2014-1760"},
+		"Internet Explorer 11": {"CVE-2014-0325", "CVE-2014-1751", "CVE-2014-1752", "CVE-2014-1753", "CVE-2014-1755"},
+	},
+	"MS14-035": {
+		"Internet Explorer 6":  {"CVE-2014-1764", "CVE-2014-1766", "CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1773", "CVE-2014-1774", "CVE-2014-1777", "CVE-2014-1778", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1783", "CVE-2014-1784", "CVE-2014-1785", "CVE-2014-1786", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1791", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1795", "CVE-2014-1797", "CVE-2014-1800", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-1805", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2758", "CVE-2014-2759", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2765", "CVE-2014-2766", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2775", "CVE-2014-2776", "CVE-2014-2777", "CVE-2014-2782"},
+		"Internet Explorer 7":  {"CVE-2014-1766", "CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1773", "CVE-2014-1774", "CVE-2014-1777", "CVE-2014-1778", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1783", "CVE-2014-1784", "CVE-2014-1785", "CVE-2014-1786", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1795", "CVE-2014-1796", "CVE-2014-1797", "CVE-2014-1800", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-1805", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2758", "CVE-2014-2759", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2765", "CVE-2014-2766", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2775", "CVE-2014-2776", "CVE-2014-2777", "CVE-2014-2782"},
+		"Internet Explorer 8":  {"CVE-2014-1766", "CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1773", "CVE-2014-1774", "CVE-2014-1777", "CVE-2014-1780", "CVE-2014-1782", "CVE-2014-1783", "CVE-2014-1784", "CVE-2014-1785", "CVE-2014-1786", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1794", "CVE-2014-1795", "CVE-2014-1797", "CVE-2014-1802", "CVE-2014-1805", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2758", "CVE-2014-2759", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2765", "CVE-2014-2766", "CVE-2014-2767", "CVE-2014-2769", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2775", "CVE-2014-2776", "CVE-2014-2782"},
+		"Internet Explorer 9":  {"CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1777", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1785", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1797", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-2753", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2767", "CVE-2014-2768", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2773", "CVE-2014-2776"},
+		"Internet Explorer 10": {"CVE-2014-1769", "CVE-2014-1774", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1785", "CVE-2014-1788", "CVE-2014-1792", "CVE-2014-1804", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2767", "CVE-2014-2768", "CVE-2014-2770", "CVE-2014-2772", "CVE-2014-2773", "CVE-2014-2776"},
+		"Internet Explorer 11": {"CVE-2014-1774", "CVE-2014-1781", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1792", "CVE-2014-1804", "CVE-2014-2754", "CVE-2014-2767", "CVE-2014-2768", "CVE-2014-2770", "CVE-2014-2773"},
+	},
+	"MS14-037": {
+		"Internet Explorer 6":  {"CVE-2014-1763", "CVE-2014-2783", "CVE-2014-2785", "CVE-2014-2786", "CVE-2014-2787", "CVE-2014-2789", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2792", "CVE-2014-2795", "CVE-2014-2798", "CVE-2014-2801", "CVE-2014-2802", "CVE-2014-2803", "CVE-2014-2804", "CVE-2014-2806", "CVE-2014-2813", "CVE-2014-4066"},
+		"Internet Explorer 7":  {"CVE-2014-1763", "CVE-2014-2786", "CVE-2014-2787", "CVE-2014-2789", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2792", "CVE-2014-2795", "CVE-2014-2798", "CVE-2014-2801", "CVE-2014-2802", "CVE-2014-2803", "CVE-2014-2804", "CVE-2014-2806", "CVE-2014-2813", "CVE-2014-4066"},
+		"Internet Explorer 8":  {"CVE-2014-1763", "CVE-2014-2785", "CVE-2014-2786", "CVE-2014-2787", "CVE-2014-2788", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2792", "CVE-2014-2794", "CVE-2014-2801", "CVE-2014-2802", "CVE-2014-2806", "CVE-2014-2813", "CVE-2014-4066"},
+		"Internet Explorer 9":  {"CVE-2014-2785", "CVE-2014-2787", "CVE-2014-2788", "CVE-2014-2790", "CVE-2014-2794", "CVE-2014-2797", "CVE-2014-2801", "CVE-2014-2802", "CVE-2014-2806", "CVE-2014-4066"},
+		"Internet Explorer 10": {"CVE-2014-2785", "CVE-2014-2787", "CVE-2014-2788", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2794", "CVE-2014-2797", "CVE-2014-2802", "CVE-2014-2806", "CVE-2014-4066"},
+		"Internet Explorer 11": {"CVE-2014-2785", "CVE-2014-2788", "CVE-2014-2791", "CVE-2014-2794", "CVE-2014-2797", "CVE-2014-2803"},
+	},
+	"MS14-051": {
+		"Internet Explorer 6":  {"CVE-2014-2784", "CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2819", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4051", "CVE-2014-4052", "CVE-2014-4055", "CVE-2014-4056", "CVE-2014-4057", "CVE-2014-4058", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"},
+		"Internet Explorer 7":  {"CVE-2014-2784", "CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4051", "CVE-2014-4052", "CVE-2014-4055", "CVE-2014-4057", "CVE-2014-4058", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"},
+		"Internet Explorer 8":  {"CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4052", "CVE-2014-4055", "CVE-2014-4057", "CVE-2014-4058", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"},
+		"Internet Explorer 9":  {"CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4055", "CVE-2014-4057", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"},
+		"Internet Explorer 10": {"CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-4057", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"},
+		"Internet Explorer 11": {"CVE-2014-2818", "CVE-2014-2821", "CVE-2014-2824", "CVE-2014-4052", "CVE-2014-4056"},
+	},
+	"MS14-052": {
+		"Internet Explorer 6":  {"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4092", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4098", "CVE-2014-4099", "CVE-2014-4101", "CVE-2014-4102"},
+		"Internet Explorer 7":  {"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4092", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4098", "CVE-2014-4099", "CVE-2014-4101", "CVE-2014-4102"},
+		"Internet Explorer 8":  {"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4099", "CVE-2014-4101", "CVE-2014-4102"},
+		"Internet Explorer 9":  {"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4086", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4101", "CVE-2014-4102"},
+		"Internet Explorer 10": {"CVE-2014-4086", "CVE-2014-4087", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4101"},
+		"Internet Explorer 11": {"CVE-2014-4082", "CVE-2014-4084", "CVE-2014-4086", "CVE-2014-4093"},
+	},
+	"MS14-056": {
+		"Internet Explorer 6":  {"CVE-2014-4123", "CVE-2014-4124", "CVE-2014-4126", "CVE-2014-4129", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4138", "CVE-2014-4140", "CVE-2014-4141"},
+		"Internet Explorer 7":  {"CVE-2014-4126", "CVE-2014-4129", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4138", "CVE-2014-4140", "CVE-2014-4141"},
+		"Internet Explorer 8":  {"CVE-2014-4126", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4133", "CVE-2014-4137", "CVE-2014-4138", "CVE-2014-4140"},
+		"Internet Explorer 9":  {"CVE-2014-4126", "CVE-2014-4129", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4133", "CVE-2014-4134", "CVE-2014-4137", "CVE-2014-4138"},
+		"Internet Explorer 10": {"CVE-2014-4129", "CVE-2014-4130", "CVE-2014-4132", "CVE-2014-4133", "CVE-2014-4134", "CVE-2014-4137", "CVE-2014-4138"},
+		"Internet Explorer 11": {"CVE-2014-4127", "CVE-2014-4129", "CVE-2014-4133", "CVE-2014-4134", "CVE-2014-4137"},
+	},
+	"MS14-065": {
+		"Internet Explorer 6":  {"CVE-2014-6323", "CVE-2014-6337", "CVE-2014-6339", "CVE-2014-6342", "CVE-2014-6343", "CVE-2014-6344", "CVE-2014-6345", "CVE-2014-6346", "CVE-2014-6347", "CVE-2014-6348", "CVE-2014-6349", "CVE-2014-6350", "CVE-2014-6351"},
+		"Internet Explorer 7":  {"CVE-2014-6337", "CVE-2014-6339", "CVE-2014-6342", "CVE-2014-6343", "CVE-2014-6344", "CVE-2014-6345", "CVE-2014-6346", "CVE-2014-6347", "CVE-2014-6348", "CVE-2014-6349", "CVE-2014-6350", "CVE-2014-6351"},
+		"Internet Explorer 8":  {"CVE-2014-6337", "CVE-2014-6342", "CVE-2014-6343", "CVE-2014-6345", "CVE-2014-6347", "CVE-2014-6348", "CVE-2014-6349", "CVE-2014-6350"},
+		"Internet Explorer 9":  {"CVE-2014-6337", "CVE-2014-6347", "CVE-2014-6349", "CVE-2014-6350"},
+		"Internet Explorer 10": {"CVE-2014-6339", "CVE-2014-6342", "CVE-2014-6344", "CVE-2014-6347", "CVE-2014-6348"},
+		"Internet Explorer 11": {"CVE-2014-6339", "CVE-2014-6342", "CVE-2014-6344", "CVE-2014-6345", "CVE-2014-6348", "CVE-2014-6353"},
+	},
+	"MS14-080": {
+		"Internet Explorer 6":  {"CVE-2014-6327", "CVE-2014-6328", "CVE-2014-6329", "CVE-2014-6330", "CVE-2014-6363", "CVE-2014-6365", "CVE-2014-6368", "CVE-2014-6369", "CVE-2014-6373", "CVE-2014-6375", "CVE-2014-6376"},
+		"Internet Explorer 7":  {"CVE-2014-6327", "CVE-2014-6328", "CVE-2014-6329", "CVE-2014-6330", "CVE-2014-6363", "CVE-2014-6365", "CVE-2014-6368", "CVE-2014-6369", "CVE-2014-6373", "CVE-2014-6375", "CVE-2014-6376"},
+		"Internet Explorer 8":  {"CVE-2014-6327", "CVE-2014-6329", "CVE-2014-6330", "CVE-2014-6363", "CVE-2014-6366", "CVE-2014-6368", "CVE-2014-6369", "CVE-2014-6373", "CVE-2014-6376"},
+		"Internet Explorer 9":  {"CVE-2014-6327", "CVE-2014-6329", "CVE-2014-6366", "CVE-2014-6368", "CVE-2014-6373", "CVE-2014-6375", "CVE-2014-6376", "CVE-2014-8966"},
+		"Internet Explorer 10": {"CVE-2014-6327", "CVE-2014-6329", "CVE-2014-6330", "CVE-2014-6366", "CVE-2014-6368", "CVE-2014-6375", "CVE-2014-6376", "CVE-2014-8966"},
+		"Internet Explorer 11": {"CVE-2014-6330", "CVE-2014-6366", "CVE-2014-6373", "CVE-2014-6375", "CVE-2014-8966"},
+	},
+	"MS15-009": {
+		"Internet Explorer 6":  {"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0019", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0028", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0038", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0042", "CVE-2015-0043", "CVE-2015-0044", "CVE-2015-0046", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0054", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069", "CVE-2015-0071"},
+		"Internet Explorer 7":  {"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0019", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0028", "CVE-2015-0029", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0038", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0042", "CVE-2015-0043", "CVE-2015-0044", "CVE-2015-0046", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069", "CVE-2015-0071"},
+		"Internet Explorer 8":  {"CVE-2015-0018", "CVE-2015-0019", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0028", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0038", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0042", "CVE-2015-0046", "CVE-2015-0048", "CVE-2015-0052", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069", "CVE-2015-0071"},
+		"Internet Explorer 9":  {"CVE-2015-0018", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0029", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0045", "CVE-2015-0049", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0053", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069"},
+		"Internet Explorer 10": {"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0028", "CVE-2015-0029", "CVE-2015-0037", "CVE-2015-0040", "CVE-2015-0044", "CVE-2015-0045", "CVE-2015-0048", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0053", "CVE-2015-0066", "CVE-2015-0067"},
+		"Internet Explorer 11": {"CVE-2014-8967", "CVE-2015-0019", "CVE-2015-0021", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0028", "CVE-2015-0029", "CVE-2015-0044", "CVE-2015-0045", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0053", "CVE-2015-0067"},
+	},
+	"MS15-018": {
+		"Internet Explorer 6":  {"CVE-2015-0032", "CVE-2015-0056", "CVE-2015-0072", "CVE-2015-0099", "CVE-2015-0100", "CVE-2015-1622", "CVE-2015-1623", "CVE-2015-1624", "CVE-2015-1626", "CVE-2015-1627"},
+		"Internet Explorer 7":  {"CVE-2015-0032", "CVE-2015-0056", "CVE-2015-0072", "CVE-2015-0099", "CVE-2015-0100", "CVE-2015-1622", "CVE-2015-1623", "CVE-2015-1624", "CVE-2015-1626"},
+		"Internet Explorer 8":  {"CVE-2015-0056", "CVE-2015-0072", "CVE-2015-0099", "CVE-2015-1622", "CVE-2015-1623", "CVE-2015-1626"},
+		"Internet Explorer 9":  {"CVE-2015-0056", "CVE-2015-0099", "CVE-2015-0100", "CVE-2015-1622", "CVE-2015-1623", "CVE-2015-1626"},
+		"Internet Explorer 10": {"CVE-2015-0056", "CVE-2015-0100", "CVE-2015-1623", "CVE-2015-1626"},
+		"Internet Explorer 11": {"CVE-2015-0099", "CVE-2015-0100"},
+	},
+	"MS15-032": {
+		"Internet Explorer 6":  {"CVE-2015-1657", "CVE-2015-1659", "CVE-2015-1660", "CVE-2015-1662", "CVE-2015-1665", "CVE-2015-1667", "CVE-2015-1668"},
+		"Internet Explorer 7":  {"CVE-2015-1657", "CVE-2015-1659", "CVE-2015-1660", "CVE-2015-1662", "CVE-2015-1665", "CVE-2015-1667", "CVE-2015-1668"},
+		"Internet Explorer 8":  {"CVE-2015-1657", "CVE-2015-1659", "CVE-2015-1660", "CVE-2015-1662", "CVE-2015-1665", "CVE-2015-1668"},
+		"Internet Explorer 9":  {"CVE-2015-1659", "CVE-2015-1662", "CVE-2015-1665", "CVE-2015-1668"},
+		"Internet Explorer 10": {"CVE-2015-1659", "CVE-2015-1660", "CVE-2015-1662", "CVE-2015-1665"},
+		"Internet Explorer 11": {"CVE-2015-1660"},
+	},
+	"MS15-043": {
+		"Internet Explorer 6":  {"CVE-2015-1658", "CVE-2015-1684", "CVE-2015-1685", "CVE-2015-1686", "CVE-2015-1688", "CVE-2015-1689", "CVE-2015-1691", "CVE-2015-1692", "CVE-2015-1705", "CVE-2015-1706", "CVE-2015-1708", "CVE-2015-1709", "CVE-2015-1711", "CVE-2015-1712", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"},
+		"Internet Explorer 7":  {"CVE-2015-1658", "CVE-2015-1684", "CVE-2015-1685", "CVE-2015-1686", "CVE-2015-1689", "CVE-2015-1691", "CVE-2015-1705", "CVE-2015-1706", "CVE-2015-1708", "CVE-2015-1709", "CVE-2015-1711", "CVE-2015-1712", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"},
+		"Internet Explorer 8":  {"CVE-2015-1658", "CVE-2015-1685", "CVE-2015-1689", "CVE-2015-1705", "CVE-2015-1706", "CVE-2015-1711", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"},
+		"Internet Explorer 9":  {"CVE-2015-1658", "CVE-2015-1685", "CVE-2015-1706", "CVE-2015-1711", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"},
+		"Internet Explorer 10": {"CVE-2015-1658", "CVE-2015-1685", "CVE-2015-1691", "CVE-2015-1706", "CVE-2015-1708", "CVE-2015-1711", "CVE-2015-1712", "CVE-2015-1713", "CVE-2015-1717", "CVE-2015-1718"},
+		"Internet Explorer 11": {"CVE-2015-1691", "CVE-2015-1708", "CVE-2015-1712"},
+	},
+	"MS15-056": {
+		"Internet Explorer 6":  {"CVE-2015-1730", "CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1741", "CVE-2015-1742", "CVE-2015-1743", "CVE-2015-1747", "CVE-2015-1748", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1752", "CVE-2015-1753", "CVE-2015-1754", "CVE-2015-1755", "CVE-2015-1765"},
+		"Internet Explorer 7":  {"CVE-2015-1730", "CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1741", "CVE-2015-1742", "CVE-2015-1747", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1752", "CVE-2015-1753", "CVE-2015-1754", "CVE-2015-1755", "CVE-2015-1765"},
+		"Internet Explorer 8":  {"CVE-2015-1730", "CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1741", "CVE-2015-1742", "CVE-2015-1747", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1752", "CVE-2015-1753", "CVE-2015-1755", "CVE-2015-1765"},
+		"Internet Explorer 9":  {"CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1742", "CVE-2015-1747", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1753", "CVE-2015-1754", "CVE-2015-1755"},
+		"Internet Explorer 10": {"CVE-2015-1687", "CVE-2015-1730", "CVE-2015-1732", "CVE-2015-1742", "CVE-2015-1747", "CVE-2015-1750", "CVE-2015-1753", "CVE-2015-1754"},
+		"Internet Explorer 11": {"CVE-2015-1687", "CVE-2015-1730", "CVE-2015-1751", "CVE-2015-1754"},
+	},
+	"MS15-065": {
+		"Internet Explorer 6":  {"CVE-2015-1729", "CVE-2015-1733", "CVE-2015-1738", "CVE-2015-1767", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2388", "CVE-2015-2389", "CVE-2015-2391", "CVE-2015-2398", "CVE-2015-2401", "CVE-2015-2402", "CVE-2015-2403", "CVE-2015-2408", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2414", "CVE-2015-2419", "CVE-2015-2425"},
+		"Internet Explorer 7":  {"CVE-2015-1729", "CVE-2015-1733", "CVE-2015-1738", "CVE-2015-1767", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2388", "CVE-2015-2389", "CVE-2015-2391", "CVE-2015-2398", "CVE-2015-2401", "CVE-2015-2403", "CVE-2015-2408", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2414", "CVE-2015-2419", "CVE-2015-2425"},
+		"Internet Explorer 8":  {"CVE-2015-1729", "CVE-2015-1767", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2389", "CVE-2015-2391", "CVE-2015-2401", "CVE-2015-2408", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2419", "CVE-2015-2425"},
+		"Internet Explorer 9":  {"CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2389", "CVE-2015-2403", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2419", "CVE-2015-2425"},
+		"Internet Explorer 10": {"CVE-2015-1738", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2388", "CVE-2015-2391", "CVE-2015-2403", "CVE-2015-2425"},
+		"Internet Explorer 11": {"CVE-2015-1738", "CVE-2015-2388", "CVE-2015-2391", "CVE-2015-2403"},
+	},
+	"MS15-079": {
+		"Internet Explorer 7":                {"CVE-2015-2442", "CVE-2015-2443", "CVE-2015-2444", "CVE-2015-2445", "CVE-2015-2446", "CVE-2015-2447", "CVE-2015-2448", "CVE-2015-2450", "CVE-2015-2451"},
+		"Internet Explorer 8":                {"CVE-2015-2443", "CVE-2015-2445", "CVE-2015-2446", "CVE-2015-2447", "CVE-2015-2448", "CVE-2015-2450", "CVE-2015-2451"},
+		"Internet Explorer 9":                {"CVE-2015-2443", "CVE-2015-2445", "CVE-2015-2446", "CVE-2015-2447"},
+		"Internet Explorer 10":               {"CVE-2015-2446", "CVE-2015-2447"},
+		"Internet Explorer 11":               {"CVE-2015-2445", "CVE-2015-2448"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2015-2443", "CVE-2015-2444", "CVE-2015-2445", "CVE-2015-2447", "CVE-2015-2448", "CVE-2015-2450", "CVE-2015-2451", "CVE-2015-2452"},
+	},
+	"MS15-094": {
+		"Internet Explorer 7":                {"CVE-2015-2483", "CVE-2015-2484", "CVE-2015-2485", "CVE-2015-2489", "CVE-2015-2491", "CVE-2015-2493", "CVE-2015-2501", "CVE-2015-2541", "CVE-2015-2542"},
+		"Internet Explorer 8":                {"CVE-2015-2483", "CVE-2015-2484", "CVE-2015-2485", "CVE-2015-2489", "CVE-2015-2491", "CVE-2015-2501", "CVE-2015-2541", "CVE-2015-2542"},
+		"Internet Explorer 9":                {"CVE-2015-2483", "CVE-2015-2484", "CVE-2015-2489", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2542"},
+		"Internet Explorer 10":               {"CVE-2015-2489", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501"},
+		"Internet Explorer 11":               {"CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2015-2483", "CVE-2015-2487", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541"},
+	},
+	"MS15-106": {
+		"Internet Explorer 7":                {"CVE-2015-2482", "CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6046", "CVE-2015-6047", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6052", "CVE-2015-6053", "CVE-2015-6055", "CVE-2015-6056", "CVE-2015-6059"},
+		"Internet Explorer 8":                {"CVE-2015-6042", "CVE-2015-6045", "CVE-2015-6046", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6053", "CVE-2015-6056"},
+		"Internet Explorer 9":                {"CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6053"},
+		"Internet Explorer 10":               {"CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6053"},
+		"Internet Explorer 11":               {"CVE-2015-6044", "CVE-2015-6050"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6048", "CVE-2015-6050", "CVE-2015-6051"},
+	},
+	"MS15-112": {
+		"Internet Explorer 7":                {"CVE-2015-2427", "CVE-2015-6064", "CVE-2015-6065", "CVE-2015-6068", "CVE-2015-6069", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6078", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6081", "CVE-2015-6082", "CVE-2015-6084", "CVE-2015-6085", "CVE-2015-6086", "CVE-2015-6088", "CVE-2015-6089"},
+		"Internet Explorer 8":                {"CVE-2015-2427", "CVE-2015-6064", "CVE-2015-6065", "CVE-2015-6068", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6078", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6082", "CVE-2015-6084", "CVE-2015-6085", "CVE-2015-6086", "CVE-2015-6088"},
+		"Internet Explorer 9":                {"CVE-2015-6064", "CVE-2015-6068", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6082", "CVE-2015-6084", "CVE-2015-6085"},
+		"Internet Explorer 10":               {"CVE-2015-2427", "CVE-2015-6068", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6082"},
+		"Internet Explorer 11":               {"CVE-2015-2427"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2015-2427", "CVE-2015-6082"},
+	},
+	"MS15-124": {
+		"Internet Explorer 7":                {"CVE-2015-6083", "CVE-2015-6134", "CVE-2015-6135", "CVE-2015-6136", "CVE-2015-6138", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6144", "CVE-2015-6147", "CVE-2015-6148", "CVE-2015-6149", "CVE-2015-6151", "CVE-2015-6152", "CVE-2015-6153", "CVE-2015-6155", "CVE-2015-6156", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160", "CVE-2015-6162", "CVE-2015-6164"},
+		"Internet Explorer 8":                {"CVE-2015-6134", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6148", "CVE-2015-6152", "CVE-2015-6153", "CVE-2015-6155", "CVE-2015-6156", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160", "CVE-2015-6162", "CVE-2015-6164"},
+		"Internet Explorer 9":                {"CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6152", "CVE-2015-6153", "CVE-2015-6155", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160", "CVE-2015-6162"},
+		"Internet Explorer 10":               {"CVE-2015-6134", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6153", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160"},
+		"Internet Explorer 11":               {"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6152", "CVE-2015-6162"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6150", "CVE-2015-6152", "CVE-2015-6162", "CVE-2015-6164"},
+	},
+	"MS16-001": {
+		"Internet Explorer 7": {"CVE-2016-0002", "CVE-2016-0005"},
+		"Internet Explorer 8": {"CVE-2016-0005"},
+	},
+	"MS16-009": {
+		"Internet Explorer 9":                {"CVE-2016-0041", "CVE-2016-0062", "CVE-2016-0064"},
+		"Internet Explorer 10":               {"CVE-2016-0062", "CVE-2016-0071"},
+		"Internet Explorer 11":               {"CVE-2016-0064", "CVE-2016-0071"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2016-0064", "CVE-2016-0071"},
+	},
+	"MS16-023": {
+		"Internet Explorer 9":                {"CVE-2016-0102", "CVE-2016-0103", "CVE-2016-0104", "CVE-2016-0106", "CVE-2016-0108", "CVE-2016-0109", "CVE-2016-0110", "CVE-2016-0114"},
+		"Internet Explorer 10":               {"CVE-2016-0102", "CVE-2016-0103", "CVE-2016-0106", "CVE-2016-0108", "CVE-2016-0109", "CVE-2016-0114"},
+		"Internet Explorer 11":               {"CVE-2016-0104"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2016-0103", "CVE-2016-0104", "CVE-2016-0106", "CVE-2016-0113", "CVE-2016-0114"},
+	},
+	"MS16-037": {
+		"Internet Explorer 9":                {"CVE-2016-0160", "CVE-2016-0164", "CVE-2016-0166"},
+		"Internet Explorer 10":               {"CVE-2016-0159", "CVE-2016-0160", "CVE-2016-0166"},
+		"Internet Explorer 11":               {"CVE-2016-0159"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2016-0159", "CVE-2016-0164"},
+	},
+	"MS16-051": {
+		"Internet Explorer 9":  {"CVE-2016-0188", "CVE-2016-0194"},
+		"Internet Explorer 10": {"CVE-2016-0188"},
+		"Internet Explorer 11": {"CVE-2016-0188"},
+	},
+	"MS16-063": {
+		"Internet Explorer 9":  {"CVE-2016-3202", "CVE-2016-3210"},
+		"Internet Explorer 10": {"CVE-2016-3210"},
+	},
+	"MS16-084": {
+		"Internet Explorer 9":                {"CVE-2016-3243", "CVE-2016-3260", "CVE-2016-3261", "CVE-2016-3277"},
+		"Internet Explorer 10":               {"CVE-2016-3260", "CVE-2016-3261"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2016-3245"},
+	},
+	"MS16-095": {
+		"Internet Explorer 9":  {"CVE-2016-3288", "CVE-2016-3289", "CVE-2016-3290", "CVE-2016-3321", "CVE-2016-3322"},
+		"Internet Explorer 10": {"CVE-2016-3288", "CVE-2016-3289", "CVE-2016-3290", "CVE-2016-3322"},
+	},
+	"MS16-104": {
+		"Internet Explorer 9":  {"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3292", "CVE-2016-3295", "CVE-2016-3325"},
+		"Internet Explorer 10": {"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3325"},
+		"Internet Explorer 11": {"CVE-2016-3325"},
+	},
+	"MS16-118": {
+		"Internet Explorer 9":                {"CVE-2016-3331", "CVE-2016-3383", "CVE-2016-3387", "CVE-2016-3388", "CVE-2016-3390"},
+		"Internet Explorer 10":               {"CVE-2016-3331", "CVE-2016-3390"},
+		"Internet Explorer 11":               {"CVE-2016-3331"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2016-3383"},
+	},
+	"MS16-142": {
+		"Internet Explorer 9":  {"CVE-2016-7196", "CVE-2016-7241"},
+		"Internet Explorer 10": {"CVE-2016-7241"},
+	},
+	"MS16-144": {
+		"Internet Explorer 9":                {"CVE-2016-7281", "CVE-2016-7284", "CVE-2016-7287"},
+		"Internet Explorer 10":               {"CVE-2016-7287"},
+		"Internet Explorer 11 on Windows 10": {"CVE-2016-7278", "CVE-2016-7284"},
+	},
+	"MS17-006": {
+		"Internet Explorer 9":  {"CVE-2017-0012", "CVE-2017-0018", "CVE-2017-0033", "CVE-2017-0037", "CVE-2017-0049", "CVE-2017-0154"},
+		"Internet Explorer 10": {"CVE-2017-0012", "CVE-2017-0033", "CVE-2017-0049", "CVE-2017-0154"},
+		"Internet Explorer 11": {"CVE-2017-0154"},
+	},
 }

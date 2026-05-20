@@ -309,38 +309,133 @@ func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 	}
 }
 
-// TestBulletinArchiveNotApplicable verifies known entries in the static
-// bulletinArchiveKBNotApplicable map. The map is regenerated from the frozen
-// Bulletin archive markdown corpus (1554 bulletins, retired April 2017), so
-// any regression in its structure (e.g., a generator change dropping a
-// recognized header label, or stripping a CVE attribution) should fail
-// this test.
-func TestBulletinArchiveNotApplicable(t *testing.T) {
+func Test_normalizeArchiveComponentKey(t *testing.T) {
+	type args struct {
+		product   string
+		component string
+	}
 	tests := []struct {
-		name        string
-		componentKB string
-		cve         string
+		name string
+		args args
+		want string
 	}{
 		{
-			name:        "MS16-007 KB3108664 NA for CVE-2016-0019 (per-CVE columns under \"Operating System\" header)",
-			componentKB: "3108664",
-			cve:         "CVE-2016-0019",
+			name: "IE 11 on legacy Windows 7",
+			args: args{product: "Windows 7 for x64-based Systems Service Pack 1", component: "Windows Internet Explorer 11"},
+			want: "Internet Explorer 11",
 		},
 		{
-			name:        "MS13-040 KB2804576 (.NET 4) NA for CVE-2013-1337 (under \"Affected Software\" header)",
-			componentKB: "2804576",
-			cve:         "CVE-2013-1337",
+			name: "IE 11 on Windows 10",
+			args: args{product: "Windows 10 for x64-based Systems", component: "Internet Explorer 11"},
+			want: "Internet Explorer 11 on Windows 10",
+		},
+		{
+			name: "IE 9 (Internet Explorer prefix)",
+			args: args{product: "Windows Server 2008 for x64-based Systems Service Pack 2", component: "Internet Explorer 9"},
+			want: "Internet Explorer 9",
+		},
+		{
+			name: "IE 6.0 (Microsoft Internet Explorer prefix)",
+			args: args{product: "Microsoft Windows Server 2003 Service Pack 2", component: "Microsoft Internet Explorer 6.0"},
+			want: "Internet Explorer 6",
+		},
+		{
+			name: "Microsoft Edge",
+			args: args{product: "Windows 10 for x64-based Systems", component: "Microsoft Edge"},
+			want: "Microsoft Edge",
+		},
+		{
+			name: "non-IE component returns empty",
+			args: args{product: "Microsoft Office 2010 Service Pack 1 (32-bit editions)", component: "Microsoft Word 2010 Service Pack 1 (32-bit editions)"},
+			want: "",
+		},
+		{
+			name: "empty component returns empty",
+			args: args{product: "Windows 7 for x64-based Systems Service Pack 1", component: ""},
+			want: "",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cves, ok := bulletin.BulletinArchiveKBNotApplicable[tt.componentKB]
-			if !ok {
-				t.Fatalf("bulletinArchiveKBNotApplicable has no entry for KB%s", tt.componentKB)
-			}
-			if !slices.Contains(cves, tt.cve) {
-				t.Errorf("bulletinArchiveKBNotApplicable[%q] = %v, want to contain %q", tt.componentKB, cves, tt.cve)
+			if got := bulletin.NormalizeArchiveComponentKey(tt.args.product, tt.args.component); got != tt.want {
+				t.Errorf("normalizeArchiveComponentKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}
+}
+
+// TestBulletinArchiveNotApplicable verifies known entries in the two static
+// maps used to correct Excel's lossy per-CVE attribution. Both maps are
+// regenerated from the frozen Bulletin archive markdown corpus (1554
+// bulletins, retired April 2017), so any regression in their structure
+// (e.g., a generator change dropping a recognized header label, or
+// stripping a CVE attribution) should fail this test. End-to-end coverage
+// that the filter actually drops the over-attributed CVEs is provided by
+// the MS14-010 golden test.
+func TestBulletinArchiveNotApplicable(t *testing.T) {
+	t.Run("KB-keyed", func(t *testing.T) {
+		tests := []struct {
+			name        string
+			componentKB string
+			cve         string
+		}{
+			{
+				name:        "MS16-007 KB3108664 NA for CVE-2016-0019 (per-CVE columns under \"Operating System\" header)",
+				componentKB: "3108664",
+				cve:         "CVE-2016-0019",
+			},
+			{
+				name:        "MS13-040 KB2804576 (.NET 4) NA for CVE-2013-1337 (under \"Affected Software\" header)",
+				componentKB: "2804576",
+				cve:         "CVE-2013-1337",
+			},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				cves, ok := bulletin.BulletinArchiveKBNotApplicable[tt.componentKB]
+				if !ok {
+					t.Fatalf("bulletinArchiveKBNotApplicable has no entry for KB%s", tt.componentKB)
+				}
+				if !slices.Contains(cves, tt.cve) {
+					t.Errorf("bulletinArchiveKBNotApplicable[%q] = %v, want to contain %q", tt.componentKB, cves, tt.cve)
+				}
+			})
+		}
+	})
+	t.Run("Component-keyed", func(t *testing.T) {
+		tests := []struct {
+			name       string
+			bulletinID string
+			component  string
+			cve        string
+		}{
+			{
+				name:       "MS16-037 IE 11 NA for CVE-2016-0159 (CVE-rows × IE-version cols)",
+				bulletinID: "MS16-037",
+				component:  "Internet Explorer 11",
+				cve:        "CVE-2016-0159",
+			},
+			{
+				name:       "MS14-010 IE 11 NA for CVE-2014-0269 (verified by golden diff)",
+				bulletinID: "MS14-010",
+				component:  "Internet Explorer 11",
+				cve:        "CVE-2014-0269",
+			},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				perComp, ok := bulletin.BulletinArchiveComponentNotApplicable[tt.bulletinID]
+				if !ok {
+					t.Fatalf("bulletinArchiveComponentNotApplicable has no entry for %s", tt.bulletinID)
+				}
+				cves, ok := perComp[tt.component]
+				if !ok {
+					t.Fatalf("bulletinArchiveComponentNotApplicable[%q][%q] missing", tt.bulletinID, tt.component)
+				}
+				if !slices.Contains(cves, tt.cve) {
+					t.Errorf("bulletinArchiveComponentNotApplicable[%q][%q] = %v, want to contain %q", tt.bulletinID, tt.component, cves, tt.cve)
+				}
+			})
+		}
+	})
 }
