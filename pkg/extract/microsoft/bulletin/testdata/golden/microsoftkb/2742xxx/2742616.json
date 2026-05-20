@@ -1,0 +1,16 @@
+{
+	"kb_id": "2742616",
+	"url": "https://support.microsoft.com/help/2742616",
+	"products": [
+		"Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems",
+		"Microsoft .NET Framework 3.5 on Windows Server 2012",
+		"Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

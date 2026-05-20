@@ -1,0 +1,31 @@
+{
+	"kb_id": "2742601",
+	"url": "https://support.microsoft.com/help/2742601",
+	"products": [
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2633874"
+		},
+		{
+			"kb_id": "2656374"
+		},
+		{
+			"kb_id": "2686833"
+		},
+		{
+			"kb_id": "979910"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

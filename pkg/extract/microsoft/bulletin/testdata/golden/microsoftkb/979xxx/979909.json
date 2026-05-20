@@ -1,0 +1,15 @@
+{
+	"kb_id": "979909",
+	"url": "https://support.microsoft.com/help/979909",
+	"superseded_by": [
+		{
+			"kb_id": "2742596"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

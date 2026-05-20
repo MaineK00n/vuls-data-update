@@ -1,0 +1,29 @@
+{
+	"kb_id": "2742597",
+	"url": "https://support.microsoft.com/help/2742597",
+	"products": [
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2",
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2656370"
+		},
+		{
+			"kb_id": "2698023"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

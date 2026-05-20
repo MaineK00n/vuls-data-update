@@ -1,0 +1,42 @@
+{
+	"kb_id": "2742595",
+	"url": "https://support.microsoft.com/help/2742595",
+	"products": [
+		"Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2",
+		"Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3",
+		"Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems",
+		"Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1",
+		"Microsoft .NET Framework 4 on Windows 7 for x64-based Systems",
+		"Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1",
+		"Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-based Systems",
+		"Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+		"Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems",
+		"Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+		"Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+		"Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4 on Windows Vista Service Pack 2",
+		"Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2633870"
+		},
+		{
+			"kb_id": "2656368"
+		},
+		{
+			"kb_id": "2686827"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

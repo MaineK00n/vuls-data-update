@@ -314,11 +314,7 @@ func productName(product, component string) string {
 // normalizeArchiveComponentKey maps a bulletin row's (bulletin_id, affected_product,
 // affected_component) tuple to a stable key used by bulletinArchiveComponentNotApplicable.
 // The key matches the column-header form of the archive markdown's per-vulnerability
-// table for the bulletin — for MS14-* IE Cumulative bulletins this is the
-// "Severity Ratings and Impact" table; for MS06-* this is the older
-// "Severity Ratings and Vulnerability Identifiers" table. The two share the
-// same per-CVE-row × per-product-column shape but use different column-header
-// vocabularies.
+// severity table for the bulletin.
 //
 // Two vocabularies coexist:
 //
@@ -1234,12 +1230,72 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS06-060: Microsoft Word 2004 for Mac (Office 2004 for Mac suite row).
 	// Word for Mac column NA for CVE-2006-3651 and CVE-2006-4534.
 	"924999": {"CVE-2006-3651", "CVE-2006-4534"},
+	// MS10-065: Internet Information Services 5.1 on Windows XP Service Pack 3 (+ 13 variants)
+	"2124261": {"CVE-2010-2730", "CVE-2010-2731"},
+	// MS10-065: Internet Information Services 7.5 on Windows 7 for 32-bit Systems (+ 3 variants)
+	"2271195": {"CVE-2010-1899", "CVE-2010-2731"},
+	// MS10-065: Internet Information Services 5.1 on Windows XP Service Pack 3
+	"2290570": {"CVE-2010-1899", "CVE-2010-2730"},
 	// MS16-107: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"2553432": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-070: Microsoft Visio Viewer 2007 Service Pack 3
 	"2596915": {"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"},
 	// MS16-107: Microsoft Office Compatibility Pack Service Pack 3
 	"2597974": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	// MS12-074: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 3 (+ 8 variants)
+	"2698023": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2003 Service Pack 2
+	"2698032": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet PC Edition 2005 Service Pack 3 and Windows XP Media Center Edition 2005 Service Pack 3
+	"2698035": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-054: Windows XP Service Pack 3 (+ 21 variants)
+	"2705219": {"CVE-2012-1851", "CVE-2012-1852", "CVE-2012-1853"},
+	// MS12-054: Windows XP Service Pack 3 (+ 21 variants)
+	"2712808": {"CVE-2012-1850", "CVE-2012-1852", "CVE-2012-1853"},
+	// MS12-074: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 18 variants)
+	"2729449": {"CVE-2012-1896", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows XP Service Pack 3 (+ 4 variants)
+	"2729450": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
+	"2729451": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2729452": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2729453": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2729460": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 2 variants)
+	"2729462": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 18 variants)
+	"2737019": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS12-074: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2737083": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS12-074: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2737084": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS13-004: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Microsoft Windows XP Service Pack 3 (+ 8 variants)
+	"2742597": {"CVE-2013-0003"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
+	"2742598": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2742599": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2
+	"2742604": {"CVE-2013-0003"},
+	// MS13-004: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet PC Edition 2005 Service Pack 3 and Windows XP Media Center Edition 2005 Service Pack 3
+	"2742607": {"CVE-2013-0003"},
+	// MS13-004: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2742613": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2742614": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2742616": {"CVE-2013-0001"},
+	// MS12-074: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2756872": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4777"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
+	"2756920": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2756921": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2756923": {"CVE-2013-0001"},
 	// MS13-085: Microsoft Office 2007 Service Pack 3
 	"2760585": {"CVE-2013-3890"},
 	// MS13-085: Microsoft Office 2007 Service Pack 3
@@ -1975,15 +2031,15 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-106: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3185614": {"CVE-2016-3356", "CVE-2016-3372"},
 	// MS16-106: Windows Vista Service Pack 2 (+ 18 variants)
-	"3185911": {"CVE-2016-3356"},
+	"3185911": {"CVE-2016-3349", "CVE-2016-3356"},
 	// MS16-107: Microsoft Word for Mac 2011
 	"3186805": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-107: Microsoft Excel 2016 for Mac (+ 3 variants)
 	"3186807": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-110: Windows 8.1 for 32-bit Systems (+ 2 variants)
 	"3187754": {"CVE-2016-3346", "CVE-2016-3368", "CVE-2016-3369"},
-	// MS16-110: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant)
-	"3189866": {"CVE-2016-3369", "CVE-2016-3372"},
+	// MS16-106: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant); MS16-110: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant)
+	"3189866": {"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"},
 	// MS16-123: Windows Vista Service Pack 2 (+ 6 variants)
 	"3191203": {"CVE-2016-3341", "CVE-2016-7185"},
 	// MS16-124: Windows Vista Service Pack 2 (+ 6 variants)

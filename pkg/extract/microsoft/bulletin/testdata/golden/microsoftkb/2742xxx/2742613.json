@@ -1,0 +1,25 @@
+{
+	"kb_id": "2742613",
+	"url": "https://support.microsoft.com/help/2742613",
+	"products": [
+		"Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1",
+		"Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1",
+		"Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+		"Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+		"Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2",
+		"Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2729460"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"kb_id": "2742607",
+	"url": "https://support.microsoft.com/help/2742607",
+	"products": [
+		"Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3",
+		"Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2604042"
+		},
+		{
+			"kb_id": "2656378"
+		},
+		{
+			"kb_id": "2698035"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

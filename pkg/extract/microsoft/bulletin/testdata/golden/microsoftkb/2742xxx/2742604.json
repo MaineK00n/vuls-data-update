@@ -1,0 +1,24 @@
+{
+	"kb_id": "2742604",
+	"url": "https://support.microsoft.com/help/2742604",
+	"products": [
+		"Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2604078"
+		},
+		{
+			"kb_id": "2656376"
+		},
+		{
+			"kb_id": "2698032"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}
