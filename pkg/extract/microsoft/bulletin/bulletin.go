@@ -399,29 +399,39 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		}
 	default:
 		// IE/Edge global vocabulary for IE Cumulative bulletins (MS14-* through MS17-*).
-		switch component {
-		case "Microsoft Edge":
-			return "Microsoft Edge"
-		case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
-			return "Internet Explorer 6"
-		case "Windows Internet Explorer 7":
-			return "Internet Explorer 7"
-		case "Windows Internet Explorer 8":
-			return "Internet Explorer 8"
-		case "Internet Explorer 9", "Windows Internet Explorer 9":
-			return "Internet Explorer 9"
-		case "Internet Explorer 10", "Windows Internet Explorer 10":
-			return "Internet Explorer 10"
-		case "Internet Explorer 11", "Windows Internet Explorer 11":
-			switch {
-			case strings.Contains(product, "Windows 10"):
-				return "Internet Explorer 11 on Windows 10"
-			default:
+		// MS14-* through MS16-* place the IE/Edge identity in the affected_component
+		// column with the OS in affected_product; MS17-006 (and likely the broader
+		// MS17 era) swaps the two — IE in affected_product, OS in affected_component.
+		// Try both columns to cover both layouts.
+		for _, s := range []string{component, product} {
+			switch s {
+			case "Microsoft Edge":
+				return "Microsoft Edge"
+			case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
+				return "Internet Explorer 6"
+			case "Windows Internet Explorer 7":
+				return "Internet Explorer 7"
+			case "Windows Internet Explorer 8":
+				return "Internet Explorer 8"
+			case "Internet Explorer 9", "Windows Internet Explorer 9":
+				return "Internet Explorer 9"
+			case "Internet Explorer 10", "Windows Internet Explorer 10":
+				return "Internet Explorer 10"
+			case "Internet Explorer 11", "Windows Internet Explorer 11":
+				// "on Windows 10" qualifier lives in the OTHER column from the IE
+				// identity — whichever column matched the IE name above, scan the
+				// other for the Windows 10 marker.
+				other := component
+				if s == component {
+					other = product
+				}
+				if strings.Contains(other, "Windows 10") {
+					return "Internet Explorer 11 on Windows 10"
+				}
 				return "Internet Explorer 11"
 			}
-		default:
-			return ""
 		}
+		return ""
 	}
 }
 
