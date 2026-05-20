@@ -41,7 +41,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--316532f4-a0ed-5568"
+					"tag": "8-fixed--ec4c323d-27fd-e200"
 				}
 			]
 		}
@@ -111,7 +111,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--316532f4-a0ed-5568"
+					"tag": "8-fixed--ec4c323d-27fd-e200"
 				}
 			]
 		},
@@ -167,7 +167,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--316532f4-a0ed-5568"
+					"tag": "8-fixed--ec4c323d-27fd-e200"
 				}
 			]
 		}
@@ -355,7 +355,7 @@
 							}
 						]
 					},
-					"tag": "8-fixed--316532f4-a0ed-5568"
+					"tag": "8-fixed--ec4c323d-27fd-e200"
 				}
 			]
 		}

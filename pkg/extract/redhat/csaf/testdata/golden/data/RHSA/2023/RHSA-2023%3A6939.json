@@ -209,7 +209,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		}
@@ -287,7 +287,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -375,7 +375,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -451,7 +451,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -527,7 +527,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -595,7 +595,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -669,7 +669,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -737,7 +737,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -811,7 +811,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -885,7 +885,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -959,7 +959,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1039,7 +1039,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1113,7 +1113,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1185,7 +1185,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1255,7 +1255,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1329,7 +1329,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1393,7 +1393,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		},
@@ -1465,7 +1465,7 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		}
@@ -3552,7 +3552,7 @@
 							}
 						]
 					},
-					"tag": "8-fixed--42ea70c6-b398-42db"
+					"tag": "8-fixed--88b7a73c-6fc8-ad86"
 				}
 			]
 		}

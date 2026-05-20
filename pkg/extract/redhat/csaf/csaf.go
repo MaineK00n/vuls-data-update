@@ -842,7 +842,7 @@ func buildDataComponents(baseAdvisory advisoryContentTypes.Content, baseVulnerab
 			for major, pidsPerMajor := range pidsm {
 				segment := segmentTypes.Segment{
 					Ecosystem: ecosystemTypes.Ecosystem(fmt.Sprintf("%s:%s", ecosystemTypes.EcosystemTypeRedHat, major)),
-					Tag:       calculateTag(major, pidsPerMajor, status),
+					Tag:       calculateTag(major, vassGroupString, status),
 				}
 
 				adv.Segments = append(adv.Segments, segment)
@@ -1100,15 +1100,19 @@ func buildSeverities(sev severity) ([]severityTypes.Severity, error) {
 	return ss, nil
 }
 
-func calculateTag(major string, pids []csaf.ProductID, status status) segmentTypes.DetectionTag {
-	maxPid := func() []byte {
-		if len(pids) == 0 {
-			return nil
-		}
-		return []byte(slices.Max(pids))
-	}()
+// calculateTag produces a tag of the form
+//
+//	<major>-<product_status>-<affected_status>-<fnv64(vassGroupString)>
+//
+// The hash suffix is derived from the bucket's canonical identity
+// (vassGroupString — the deterministically-marshaled "{cveID → assessment}"
+// map that defines this bucket) so the tag is a pure function of the
+// bucket's identity. The previous version hashed slices.Max(pids), which
+// only happened to discriminate buckets in practice and could collide
+// across vassGroups whose pid sets shared the same max value.
+func calculateTag(major string, vassGroupString string, status status) segmentTypes.DetectionTag {
 	h := fnv.New64()
-	h.Write(maxPid)
+	h.Write([]byte(vassGroupString))
 	dst := make([]byte, 18)
 	hashed := h.Sum(nil)
 	hex.Encode(dst, hashed[:4])

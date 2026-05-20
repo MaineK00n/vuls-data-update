@@ -113,51 +113,51 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--608a79bb-2e34-1163"
+					"tag": "8-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--bbae5af6-d574-14b7"
+					"tag": "8-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--c9a8ff43-76fb-3b18"
+					"tag": "8-fixed--634d6357-9c35-4297"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-608a79bb-2e34-1163"
+					"tag": "8-unaffected-vulnerable_code_not_present-3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-bbae5af6-d574-14b7"
+					"tag": "8-unaffected-vulnerable_code_not_present-45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
+					"tag": "8-unaffected-vulnerable_code_not_present-634d6357-9c35-4297"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+					"tag": "9-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+					"tag": "9-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--ed494b4a-555c-d18a"
+					"tag": "9-fixed--634d6357-9c35-4297"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-29c2fe94-cbbe-85ff"
+					"tag": "9-unaffected-vulnerable_code_not_present-3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-6f5c40c1-dc0e-2369"
+					"tag": "9-unaffected-vulnerable_code_not_present-45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
+					"tag": "9-unaffected-vulnerable_code_not_present-634d6357-9c35-4297"
 				}
 			]
 		}
@@ -223,27 +223,27 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--608a79bb-2e34-1163"
+					"tag": "8-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--bbae5af6-d574-14b7"
+					"tag": "8-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--c9a8ff43-76fb-3b18"
+					"tag": "8-fixed--634d6357-9c35-4297"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+					"tag": "9-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+					"tag": "9-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--ed494b4a-555c-d18a"
+					"tag": "9-fixed--634d6357-9c35-4297"
 				}
 			]
 		},
@@ -315,27 +315,27 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--bbae5af6-d574-14b7"
+					"tag": "8-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-608a79bb-2e34-1163"
+					"tag": "8-unaffected-vulnerable_code_not_present-45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
+					"tag": "8-unaffected-vulnerable_code_not_present-634d6357-9c35-4297"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+					"tag": "9-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-29c2fe94-cbbe-85ff"
+					"tag": "9-unaffected-vulnerable_code_not_present-45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
+					"tag": "9-unaffected-vulnerable_code_not_present-634d6357-9c35-4297"
 				}
 			]
 		},
@@ -411,27 +411,27 @@
 			"segments": [
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-fixed--608a79bb-2e34-1163"
+					"tag": "8-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-bbae5af6-d574-14b7"
+					"tag": "8-unaffected-vulnerable_code_not_present-3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:8",
-					"tag": "8-unaffected-vulnerable_code_not_present-c9a8ff43-76fb-3b18"
+					"tag": "8-unaffected-vulnerable_code_not_present-634d6357-9c35-4297"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+					"tag": "9-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-6f5c40c1-dc0e-2369"
+					"tag": "9-unaffected-vulnerable_code_not_present-3fd07a28-d5be-945a"
 				},
 				{
 					"ecosystem": "redhat:9",
-					"tag": "9-unaffected-vulnerable_code_not_present-ed494b4a-555c-d18a"
+					"tag": "9-unaffected-vulnerable_code_not_present-634d6357-9c35-4297"
 				}
 			]
 		}
@@ -457,7 +457,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-django",
+													"name": "python3.11-jinja2",
 													"architectures": [
 														"noarch"
 													]
@@ -467,11 +467,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:4.2.19-1.el8pc"
+														"lt": "0:3.1.5-1.el8pc"
 													}
 												],
 												"fixed": [
-													"0:4.2.19-1.el8pc"
+													"0:3.1.5-1.el8pc"
 												]
 											}
 										}
@@ -496,7 +496,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-django",
+													"name": "python3.11-jinja2",
 													"architectures": [
 														"noarch"
 													]
@@ -506,11 +506,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:4.2.19-1.el8pc"
+														"lt": "0:3.1.5-1.el8pc"
 													}
 												],
 												"fixed": [
-													"0:4.2.19-1.el8pc"
+													"0:3.1.5-1.el8pc"
 												]
 											}
 										}
@@ -524,7 +524,7 @@
 							}
 						]
 					},
-					"tag": "8-fixed--608a79bb-2e34-1163"
+					"tag": "8-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"criteria": {
@@ -543,7 +543,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-jinja2",
+													"name": "python3.11-django",
 													"architectures": [
 														"noarch"
 													]
@@ -553,11 +553,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:3.1.5-1.el8pc"
+														"lt": "0:4.2.19-1.el8pc"
 													}
 												],
 												"fixed": [
-													"0:3.1.5-1.el8pc"
+													"0:4.2.19-1.el8pc"
 												]
 											}
 										}
@@ -582,7 +582,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-jinja2",
+													"name": "python3.11-django",
 													"architectures": [
 														"noarch"
 													]
@@ -592,11 +592,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:3.1.5-1.el8pc"
+														"lt": "0:4.2.19-1.el8pc"
 													}
 												],
 												"fixed": [
-													"0:3.1.5-1.el8pc"
+													"0:4.2.19-1.el8pc"
 												]
 											}
 										}
@@ -610,7 +610,7 @@
 							}
 						]
 					},
-					"tag": "8-fixed--bbae5af6-d574-14b7"
+					"tag": "8-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"criteria": {
@@ -3065,7 +3065,7 @@
 							}
 						]
 					},
-					"tag": "8-fixed--c9a8ff43-76fb-3b18"
+					"tag": "8-fixed--634d6357-9c35-4297"
 				}
 			]
 		},
@@ -3089,7 +3089,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-django",
+													"name": "python3.11-jinja2",
 													"architectures": [
 														"noarch"
 													]
@@ -3099,11 +3099,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:4.2.19-1.el9pc"
+														"lt": "0:3.1.5-1.el9pc"
 													}
 												],
 												"fixed": [
-													"0:4.2.19-1.el9pc"
+													"0:3.1.5-1.el9pc"
 												]
 											}
 										}
@@ -3128,7 +3128,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-django",
+													"name": "python3.11-jinja2",
 													"architectures": [
 														"noarch"
 													]
@@ -3138,11 +3138,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:4.2.19-1.el9pc"
+														"lt": "0:3.1.5-1.el9pc"
 													}
 												],
 												"fixed": [
-													"0:4.2.19-1.el9pc"
+													"0:3.1.5-1.el9pc"
 												]
 											}
 										}
@@ -3156,7 +3156,7 @@
 							}
 						]
 					},
-					"tag": "9-fixed--29c2fe94-cbbe-85ff"
+					"tag": "9-fixed--3fd07a28-d5be-945a"
 				},
 				{
 					"criteria": {
@@ -3175,7 +3175,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-jinja2",
+													"name": "python3.11-django",
 													"architectures": [
 														"noarch"
 													]
@@ -3185,11 +3185,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:3.1.5-1.el9pc"
+														"lt": "0:4.2.19-1.el9pc"
 													}
 												],
 												"fixed": [
-													"0:3.1.5-1.el9pc"
+													"0:4.2.19-1.el9pc"
 												]
 											}
 										}
@@ -3214,7 +3214,7 @@
 											"package": {
 												"type": "binary",
 												"binary": {
-													"name": "python3.11-jinja2",
+													"name": "python3.11-django",
 													"architectures": [
 														"noarch"
 													]
@@ -3224,11 +3224,11 @@
 												"type": "rpm",
 												"range": [
 													{
-														"lt": "0:3.1.5-1.el9pc"
+														"lt": "0:4.2.19-1.el9pc"
 													}
 												],
 												"fixed": [
-													"0:3.1.5-1.el9pc"
+													"0:4.2.19-1.el9pc"
 												]
 											}
 										}
@@ -3242,7 +3242,7 @@
 							}
 						]
 					},
-					"tag": "9-fixed--6f5c40c1-dc0e-2369"
+					"tag": "9-fixed--45dc97a6-2f44-0046"
 				},
 				{
 					"criteria": {
@@ -5697,7 +5697,7 @@
 							}
 						]
 					},
-					"tag": "9-fixed--ed494b4a-555c-d18a"
+					"tag": "9-fixed--634d6357-9c35-4297"
 				}
 			]
 		}
