@@ -3967,6 +3967,12 @@ var bulletinArchiveMisattributedCVEs = map[string][]string{
 	"MS16-003": {"CVE-2016-0003"},
 	// MS16-079: cross-year mis-tag; CVE-2015-6016 not in any MS16 bulletin.
 	"MS16-079": {"CVE-2015-6016"},
+	// MS16-084: Microsoft retracted this CVE in the V1.1 (2017-03-17) revision
+	// of the bulletin — "Removed CVE-2016-3276 from the Vulnerability Severity
+	// Ratings and Impact table and from the Vulnerability Information because
+	// Internet Explorer 9, Internet Explorer 10, and Internet Explorer 11 are
+	// not affected by this vulnerability." BulletinSearch.xlsx still lists it.
+	"MS16-084": {"CVE-2016-3276"},
 	// MS16-144: CVE not in markdown; no near neighbour in MS16-144.
 	"MS16-144": {"CVE-2016-7293"},
 	// MS17-012: leading-zero typo of CVE-2017-0016 (which IS in MS17-012
