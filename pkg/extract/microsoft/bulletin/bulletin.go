@@ -404,29 +404,44 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		// to MS14-MS16: IE identity lives in affected_product, OS lives in
 		// affected_component.
 		return ieEdgeComponentKey(product, component)
-	// Mixed-applicability bulletins where a KB shared across multiple
-	// per-CVE matrix tables marks the CVE "Not applicable" for some
-	// product rows but "Critical"/"Important"/etc. for others. A KB-keyed
-	// filter would over-broadly drop the applicable rows too, so the NA
-	// cells are encoded product-keyed in
+	// Mixed-applicability bulletins where a KB is shared across multiple
+	// xlsx rows whose per-CVE matrix cells differ in NA status: the same
+	// (KB, CVE) pair is "Not applicable" for some product rows and
+	// "Critical"/"Important"/etc. for others. This shape covers two
+	// generator-side variants:
+	//
+	//   - Single-table mixed: the differing cells live in the same
+	//     per-CVE matrix table at different product rows. The common
+	//     case — e.g. MS16-106 / KB3185911 / CVE-2016-3349 is "Not
+	//     affected" on the Vista/Server 2008/Win 7/Server 2008 R2 rows
+	//     of the bulletin's single OS-rows × CVE-cols matrix table but
+	//     "Important Elevation of Privilege" on the Win 8.1+ rows.
+	//   - Multi-table mixed: the KB appears in more than one per-CVE
+	//     matrix table of the same bulletin (e.g. an OS-only table and
+	//     a .NET Framework component table). See the multi-table
+	//     discussion below.
+	//
+	// In both variants a KB-keyed filter would over-broadly drop the
+	// applicable rows too, so the NA cells are encoded product-keyed in
 	// bulletinArchiveComponentNotApplicable; the dispatch here returns
 	// the row's affected_product (whitespace-normalized at the top of
 	// this function via strings.Fields/Join) so the inner key matches
-	// the markdown's per-CVE matrix table row[0] product label after the
-	// same whitespace collapse.
+	// the markdown's matrix table row[0] product label after the same
+	// whitespace collapse.
 	//
-	// None of these bulletins have IE/Edge rows (they are Office / Windows
-	// kernel / Graphics / etc.), so the IE/Edge default-branch dispatch is
-	// not needed for them.
+	// None of these bulletins have IE/Edge rows (they are Office /
+	// Windows kernel / Graphics / etc.), so the IE/Edge default-branch
+	// dispatch is not needed for them.
 	//
 	// Five of these bulletins (MS15-097, MS15-128, MS16-107, MS16-133,
-	// MS17-018) have a KB that appears in multiple per-CVE matrix tables
-	// of the same bulletin. Whether that creates an unfilterable FP is a
-	// per-(KB, CVE) question, not a per-KB one: if a specific (KB, CVE)
-	// pair only appears in one of those tables, product-keyed dispatch
-	// is still safe for that pair (the conflicting cells live under
-	// different CVE columns and therefore can't disagree with each
-	// other). The generator emits product-keyed entries only for the
+	// MS17-018) fall into the multi-table-mixed variant: a KB appears
+	// in multiple per-CVE matrix tables of the same bulletin. Whether
+	// that creates an unfilterable FP is a per-(KB, CVE) question, not
+	// a per-KB one: if a specific (KB, CVE) pair only appears in one of
+	// those tables, product-keyed dispatch is still safe for that pair
+	// (the conflicting cells live under different CVE columns and
+	// therefore can't disagree with each other). The generator emits
+	// product-keyed entries only for the
 	// safe pairs and silently drops any pair whose markdown cells truly
 	// span tables with conflicting NA state. The lone such pair across
 	// the corpus — MS15-128 / KB3116869 / CVE-2015-6108 — is the only
