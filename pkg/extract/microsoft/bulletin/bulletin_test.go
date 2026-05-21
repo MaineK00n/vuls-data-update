@@ -565,13 +565,14 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				component:  "Windows Server 2008 for 32-bit Systems Service Pack 2",
 				cve:        "CVE-2016-3349",
 			},
-			// MS15-128's KB3109094 and KB3116869 both span multiple Format A
-			// tables of the bulletin (OS-level + .NET Framework component),
-			// so neither KB-keyed nor product-keyed dispatch can safely
-			// filter the mixed-applicability cells — they are intentionally
-			// not represented in either map. The over-attribution FP
-			// persists as a known trade-off; see mixedProductKeyedBulletins
-			// in bulletin.go for the rationale.
+			// MS15-128's KB3109094 and KB3116869 both span multiple per-CVE
+			// matrix tables of the bulletin (an OS-level table and a .NET
+			// Framework component table), so neither KB-keyed nor
+			// product-keyed dispatch can safely filter the mixed-
+			// applicability cells — they are intentionally not represented
+			// in either map. The over-attribution FP persists as a known
+			// trade-off; see the dispatch comment in
+			// normalizeArchiveComponentKey for the rationale.
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
