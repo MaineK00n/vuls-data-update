@@ -498,6 +498,11 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				componentKB: "3189866",
 				cve:         "CVE-2016-3349",
 			},
+			{
+				name:        "MS16-107 KB3185852 (Microsoft Visio 2016) NA for CVE-2016-3357 (multi-table-KB bulletin where per-(KB, CVE) is single-table and uniformly NA — newly reachable after the per-(KB, CVE) classification fix)",
+				componentKB: "3185852",
+				cve:         "CVE-2016-3357",
+			},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
@@ -565,14 +570,46 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				component:  "Windows Server 2008 for 32-bit Systems Service Pack 2",
 				cve:        "CVE-2016-3349",
 			},
-			// MS15-128's KB3109094 and KB3116869 both span multiple per-CVE
-			// matrix tables of the bulletin (an OS-level table and a .NET
-			// Framework component table), so neither KB-keyed nor
-			// product-keyed dispatch can safely filter the mixed-
-			// applicability cells — they are intentionally not represented
-			// in either map. The over-attribution FP persists as a known
-			// trade-off; see the dispatch comment in
-			// normalizeArchiveComponentKey for the rationale.
+			// Bulletins where the same KB appears in multiple per-CVE matrix
+			// tables of the bulletin, but the per-(KB, CVE) cells are
+			// single-table — so product-keyed dispatch is still safe for those
+			// specific pairs even though the KB itself spans tables.
+			{
+				name:       "MS15-097 Windows Vista SP2 NA for CVE-2015-2527 (KB3087039 spans two per-CVE tables; this (KB, CVE) appears only in T1, mixed across OS rows there)",
+				bulletinID: "MS15-097",
+				component:  "Windows Vista Service Pack 2",
+				cve:        "CVE-2015-2527",
+			},
+			{
+				name:       "MS15-128 Windows 7 SP1 NA for CVE-2015-6106 (KB3116869 spans OS+component tables; the cross-table-mixed (KB, CVE-2015-6108) pair is correctly excluded — see below)",
+				bulletinID: "MS15-128",
+				component:  "Windows 7 for 32-bit Systems Service Pack 1",
+				cve:        "CVE-2015-6106",
+			},
+			{
+				name:       "MS16-107 Microsoft Office 2013 SP1 NA for CVE-2016-3357 (multi-table-KB bulletin newly reachable via dispatch)",
+				bulletinID: "MS16-107",
+				component:  "Microsoft Office 2013 Service Pack 1 (32-bit editions)",
+				cve:        "CVE-2016-3357",
+			},
+			{
+				name:       "MS16-133 Microsoft Word for Mac 2011 NA for CVE-2016-7228 (multi-table-KB bulletin newly reachable via dispatch)",
+				bulletinID: "MS16-133",
+				component:  "Microsoft Word for Mac 2011",
+				cve:        "CVE-2016-7228",
+			},
+			{
+				name:       "MS17-018 Windows Server 2016 (Server Core) NA for CVE-2017-0024 (multi-table-KB bulletin newly reachable via dispatch)",
+				bulletinID: "MS17-018",
+				component:  "Windows Server 2016 for x64-based Systems(Server Core installation)",
+				cve:        "CVE-2017-0024",
+			},
+			// The one (KB, CVE) pair that genuinely cannot be filtered: MS15-128 /
+			// KB3116869 / CVE-2015-6108 is "Not applicable" in the OS-level table
+			// but "Critical Remote Code Execution" in the same bulletin's
+			// component-level table, with the same xlsx affected_product label
+			// for both. Cross-table-mixed at the (KB, CVE) grain — no static map
+			// shape can disambiguate. Documented as a known FP.
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
