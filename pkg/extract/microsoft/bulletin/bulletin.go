@@ -3556,7 +3556,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3185611": {"CVE-2016-3356", "CVE-2016-3372"},
 	// MS16-106: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3185614": {"CVE-2016-3356", "CVE-2016-3372"},
-	// MS16-107: Microsoft Visio 2016 (32-bit editions) (+ 1 variant)
+	// MS16-107: Microsoft Visio 2016 (32-bit editions)
 	"3185852": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-106: Windows Vista Service Pack 2 (+ 18 variants)
 	"3185911": {"CVE-2016-3356"},
