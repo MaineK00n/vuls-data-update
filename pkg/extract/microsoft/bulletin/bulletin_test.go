@@ -409,8 +409,11 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 			want: "",
 		},
 		// MS17-006 (and likely the broader MS17 era) swaps the IE identity into
-		// affected_product and the OS into affected_component. Verify that the
-		// default branch finds the IE key in either column.
+		// affected_product and the OS into affected_component, so it has its
+		// own case in the dispatch (the default branch handles the MS14-MS16
+		// layout where IE is in affected_component). Verify that the
+		// MS17-006 case correctly maps the swapped columns to the same IE
+		// key vocabulary.
 		{
 			name: "MS17-006 swap: IE 9 in affected_product, OS in affected_component",
 			args: args{bulletinID: "MS17-006", product: "Internet Explorer 9", component: "Windows Vista Service Pack 2"},

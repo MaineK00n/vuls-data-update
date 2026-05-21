@@ -344,11 +344,13 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 
 	// Dispatch by bulletin_id. Each MS06-* case uses its own product vocabulary
 	// (matched against affected_product or affected_component depending on which
-	// column the Excel side carries the identity in); the default case handles
-	// IE Cumulative bulletins (MS14-* through MS17-*) via the shared IE/Edge
-	// global vocabulary. Verified that no MS06-* bulletin in this dispatch has
-	// IE/Edge rows in BulletinSearch.xlsx, so the default branch is unreachable
-	// for the listed bulletins by design.
+	// column the Excel side carries the identity in). MS17-006 has its own
+	// case because the MS17 era swapped the IE/OS columns relative to MS14-MS16
+	// (see the case below). The default case handles the remaining IE Cumulative
+	// bulletins (MS14-* through MS16-*) via the shared IE/Edge global
+	// vocabulary. Verified that no MS06-* bulletin in this dispatch has IE/Edge
+	// rows in BulletinSearch.xlsx, so the default branch is unreachable for
+	// the listed bulletins by design.
 	switch bulletinID {
 	case "MS06-012":
 		// markdown columns bundle Word/Excel/Outlook/etc.; only the two PowerPoint
