@@ -1,0 +1,31 @@
+{
+	"kb_id": "2742596",
+	"url": "https://support.microsoft.com/help/2742596",
+	"products": [
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+	],
+	"supersedes": [
+		{
+			"kb_id": "2633880"
+		},
+		{
+			"kb_id": "2656369"
+		},
+		{
+			"kb_id": "2686828"
+		},
+		{
+			"kb_id": "979909"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

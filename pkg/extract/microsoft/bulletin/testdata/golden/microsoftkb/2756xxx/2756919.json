@@ -1,0 +1,17 @@
+{
+	"kb_id": "2756919",
+	"url": "https://support.microsoft.com/help/2756919",
+	"products": [
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"kb_id": "2756920",
+	"url": "https://support.microsoft.com/help/2756920",
+	"products": [
+		"Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems",
+		"Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems",
+		"Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-based Systems",
+		"Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems",
+		"Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

@@ -1,6 +1,12 @@
 {
 	"kb_id": "2756918",
 	"url": "https://support.microsoft.com/help/2756918",
+	"products": [
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+		"Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+	],
 	"superseded_by": [
 		{
 			"kb_id": "2973115"
@@ -12,6 +18,7 @@
 			"fixtures/01/MS01-050.json",
 			"fixtures/06/MS06-060.json",
 			"fixtures/08/MS08-069.json",
+			"fixtures/13/MS13-004.json",
 			"fixtures/13/MS13-054.json",
 			"fixtures/14/MS14-010.json",
 			"fixtures/16/MS16-007.json",

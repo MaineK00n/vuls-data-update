@@ -462,6 +462,21 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				componentKB: "924999",
 				cve:         "CVE-2006-4534",
 			},
+			{
+				name:        "MS13-004 KB2742613 (.NET 4.5) NA for CVE-2013-0001 (explicit \"Not applicable\" cell; KB appears as \"(KB2742613)\" — covered by extended regex)",
+				componentKB: "2742613",
+				cve:         "CVE-2013-0001",
+			},
+			{
+				name:        "MS16-106 KB3185911 NA for CVE-2016-3356 (markdown uses \"Not applicable\" — uniformly NA across all 19 xlsx rows of this shared KB)",
+				componentKB: "3185911",
+				cve:         "CVE-2016-3356",
+			},
+			{
+				name:        "MS16-106 KB3189866 (Windows 10 Version 1607) NA for CVE-2016-3349 (markdown uses \"Not affected\" — exercises the legacy-marker predicate; uniformly NA across both xlsx rows of this shared KB)",
+				componentKB: "3189866",
+				cve:         "CVE-2016-3349",
+			},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {

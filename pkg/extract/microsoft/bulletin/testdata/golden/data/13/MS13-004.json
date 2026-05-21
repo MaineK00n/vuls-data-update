@@ -1,0 +1,3144 @@
+{
+	"id": "MS13-004",
+	"advisories": [
+		{
+			"content": {
+				"id": "MS13-004",
+				"title": "Vulnerabilities in .NET Framework Could Allow Elevation of Privilege",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "None"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2013/ms13-004"
+					}
+				],
+				"published": "2013-01-08T00:00:00Z",
+				"optional": {
+					"impact": "Elevation of Privilege"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "MS13-004",
+				"title": "Vulnerabilities in .NET Framework Could Allow Elevation of Privilege",
+				"severity": [
+					{
+						"type": "vendor",
+						"source": "security@microsoft.com",
+						"vendor": "Important"
+					}
+				],
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2013/ms13-004"
+					}
+				],
+				"published": "2013-01-08T00:00:00Z",
+				"optional": {
+					"impact": "Elevation of Privilege"
+				}
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2013-0001",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2013-0001"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2013-0002",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2013-0002"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2013-0003",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2013-0003"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2013-0004",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2013-0004"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows RT"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2"
+				},
+				{
+					"ecosystem": "microsoft",
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"detections": [
+		{
+			"ecosystem": "microsoft",
+			"conditions": [
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3",
+											"kb_id": "2742607"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Media Center Edition 2005 Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3",
+											"kb_id": "2742607"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.0 Service Pack 3 on Microsoft Windows XP Tablet PC Edition 2005 Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2742604"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2742597"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 1.1 Service Pack 1 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2742596"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2742596"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2742596"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2742596"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2742596"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2742601"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2742601"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2742601"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2",
+											"kb_id": "2742601"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2742601"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2756918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2756918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2756918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2756918"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2756919"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2756919"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2756919"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2",
+											"kb_id": "2756919"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2756919"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems",
+											"kb_id": "2742616"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems",
+											"kb_id": "2756923"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems",
+											"kb_id": "2742616"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems",
+											"kb_id": "2756923"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows Server 2012",
+											"kb_id": "2742616"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows Server 2012",
+											"kb_id": "2756923"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)",
+											"kb_id": "2742616"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)",
+											"kb_id": "2756923"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems",
+											"kb_id": "2742598"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems",
+											"kb_id": "2756920"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2742599"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2756921"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems",
+											"kb_id": "2742598"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems",
+											"kb_id": "2756920"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2742599"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2756921"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-based Systems",
+											"kb_id": "2742598"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-based Systems",
+											"kb_id": "2756920"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "2742599"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "2756921"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems",
+											"kb_id": "2742598"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems",
+											"kb_id": "2756920"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)",
+											"kb_id": "2742598"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)",
+											"kb_id": "2756920"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2742599"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2756921"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+											"kb_id": "2742599"
+										}
+									},
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+											"kb_id": "2756921"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 3.5.1 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows Server 2003 x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Professional x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Microsoft Windows XP Service Pack 3"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-based Systems",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-based Systems Service Pack 1",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for Itanium-Based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-based Systems Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for Itanium-Based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2742595"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4 on Windows Vista x64 Edition Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for 32-bit Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows 7 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems",
+											"kb_id": "2742614"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows 8 for x64-based Systems",
+											"kb_id": "2742614"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows 8 for x64-based Systems"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows RT",
+											"kb_id": "2742614"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows RT"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for 32-bit Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2008 for x64-based Systems Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Server 2012",
+											"kb_id": "2742614"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Server 2012 (Server Core installation)",
+											"kb_id": "2742614"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Server 2012 (Server Core installation)"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista Service Pack 2"
+				},
+				{
+					"criteria": {
+						"operator": "OR",
+						"criterias": [
+							{
+								"operator": "AND",
+								"criterions": [
+									{
+										"type": "kb",
+										"kb": {
+											"product": "Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2",
+											"kb_id": "2742613"
+										}
+									}
+								]
+							}
+						]
+					},
+					"tag": "Microsoft .NET Framework 4.5 on Windows Vista x64 Edition Service Pack 2"
+				}
+			]
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/13/MS13-004.json"
+		]
+	}
+}

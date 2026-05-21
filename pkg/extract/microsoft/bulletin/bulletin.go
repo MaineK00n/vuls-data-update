@@ -314,11 +314,7 @@ func productName(product, component string) string {
 // normalizeArchiveComponentKey maps a bulletin row's (bulletin_id, affected_product,
 // affected_component) tuple to a stable key used by bulletinArchiveComponentNotApplicable.
 // The key matches the column-header form of the archive markdown's per-vulnerability
-// table for the bulletin — for MS14-* IE Cumulative bulletins this is the
-// "Severity Ratings and Impact" table; for MS06-* this is the older
-// "Severity Ratings and Vulnerability Identifiers" table. The two share the
-// same per-CVE-row × per-product-column shape but use different column-header
-// vocabularies.
+// severity table for the bulletin.
 //
 // Two vocabularies coexist:
 //
@@ -1208,8 +1204,35 @@ var bulletinArchiveSupersedesOverride = map[string][]string{
 	"3178688": {"3115131"},            // MS17-013: Office 2010 SP2; Excel cites MS16-097[3115131] (Office 2010 SP2, different chain)
 }
 
-// bulletinArchiveKBNotApplicable lists (componentKB → []CVE) pairs that
-// the Bulletin archive markdown table explicitly marks "Not applicable".
+// bulletinArchiveKBNotApplicable lists (componentKB → []CVE) pairs whose
+// cell in the Bulletin archive markdown per-CVE Severity Ratings matrix
+// table is one of the two semantically-equivalent NA markers Microsoft
+// uses:
+//
+//   - "Not applicable" — the dominant phrasing across the archive.
+//   - "Not affected"   — a legacy spelling that appears in a small set
+//     of MS00-MS16 bulletins (notably MS16-106). Same semantic: the
+//     row's product is not affected by the CVE.
+//
+// Other cell markers that look superficially similar must NOT be
+// treated as NA, because they describe products that ARE affected:
+//
+//   - "No severity rating" / "Defense in Depth" — Microsoft's footnote
+//     (e.g. MS13-004) explains the product is affected by the
+//     vulnerability, the known attack vectors are merely blocked in a
+//     default configuration, and customers should still install the
+//     update. CVE attribution must remain for these rows.
+//
+// The TestBulletinArchiveNotApplicable / KB-keyed table in
+// bulletin_test.go contains a regression-guard case for each marker
+// path (one "Not applicable", one "Not affected").
+//
+// KB-keyed entries are non-lossy only when every xlsx row sharing the
+// KB has an NA cell for the CVE; pairs where some rows are NA and
+// others have an applicable severity across the same bulletin would
+// over-broadly drop CVE attribution on the affected rows, so those are
+// deliberately omitted from this map.
+//
 // Inline "// MS<id>: <product>" comments identify the source bulletin(s)
 // for review traceability — see bulletinArchiveSupersedes for the same convention.
 // Entries are ordered by numeric KB value so 6-digit pre-2010 KBs precede
@@ -1234,12 +1257,72 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS06-060: Microsoft Word 2004 for Mac (Office 2004 for Mac suite row).
 	// Word for Mac column NA for CVE-2006-3651 and CVE-2006-4534.
 	"924999": {"CVE-2006-3651", "CVE-2006-4534"},
+	// MS10-065: Internet Information Services 5.1 on Windows XP Service Pack 3 (+ 13 variants)
+	"2124261": {"CVE-2010-2730", "CVE-2010-2731"},
+	// MS10-065: Internet Information Services 7.5 on Windows 7 for 32-bit Systems (+ 3 variants)
+	"2271195": {"CVE-2010-1899", "CVE-2010-2731"},
+	// MS10-065: Internet Information Services 5.1 on Windows XP Service Pack 3
+	"2290570": {"CVE-2010-1899", "CVE-2010-2730"},
 	// MS16-107: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"2553432": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-070: Microsoft Visio Viewer 2007 Service Pack 3
 	"2596915": {"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"},
 	// MS16-107: Microsoft Office Compatibility Pack Service Pack 3
 	"2597974": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	// MS12-074: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 3 (+ 8 variants)
+	"2698023": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2003 Service Pack 2
+	"2698032": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet PC Edition 2005 Service Pack 3 and Windows XP Media Center Edition 2005 Service Pack 3
+	"2698035": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-054: Windows XP Service Pack 3 (+ 21 variants)
+	"2705219": {"CVE-2012-1851"},
+	// MS12-054: Windows XP Service Pack 3 (+ 21 variants)
+	"2712808": {"CVE-2012-1850", "CVE-2012-1852", "CVE-2012-1853"},
+	// MS12-074: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 18 variants)
+	"2729449": {"CVE-2012-1896", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows XP Service Pack 3 (+ 4 variants)
+	"2729450": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
+	"2729451": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2729452": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2729453": {"CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2729460": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 2 variants)
+	"2729462": {"CVE-2012-1896", "CVE-2012-4777"},
+	// MS12-074: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 18 variants)
+	"2737019": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS12-074: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2737083": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS12-074: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2737084": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS13-004: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Microsoft Windows XP Service Pack 3 (+ 8 variants)
+	"2742597": {"CVE-2013-0003"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
+	"2742598": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2742599": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2
+	"2742604": {"CVE-2013-0003"},
+	// MS13-004: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet PC Edition 2005 Service Pack 3 and Windows XP Media Center Edition 2005 Service Pack 3
+	"2742607": {"CVE-2013-0003"},
+	// MS13-004: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2742613": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2742614": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2742616": {"CVE-2013-0001"},
+	// MS12-074: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2756872": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4777"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
+	"2756920": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2756921": {"CVE-2013-0001"},
+	// MS13-004: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2756923": {"CVE-2013-0001"},
 	// MS13-085: Microsoft Office 2007 Service Pack 3
 	"2760585": {"CVE-2013-3890"},
 	// MS13-085: Microsoft Office 2007 Service Pack 3
@@ -1271,7 +1354,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS13-086: Microsoft Word 2007 Service Pack 3
 	"2827330": {"CVE-2013-3891"},
 	// MS13-046: Windows XP Service Pack 3 (Win32k.sys) (+ 21 variants)
-	"2829361": {"CVE-2013-1332", "CVE-2013-1333"},
+	"2829361": {"CVE-2013-1332"},
 	// MS13-046: Windows Vista Service Pack 2 (dxgkrnl.sys) (+ 16 variants)
 	"2830290": {"CVE-2013-1333", "CVE-2013-1334"},
 	// MS13-052: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 7 variants)
@@ -1351,7 +1434,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-148: Microsoft Office 2007 Service Pack 3
 	"2883033": {"CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
 	// MS13-081: Windows XP Service Pack 3 (+ 20 variants)
-	"2883150": {"CVE-2013-3128", "CVE-2013-3200", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888"},
+	"2883150": {"CVE-2013-3128", "CVE-2013-3200", "CVE-2013-3888"},
 	// MS13-081: Windows XP Service Pack 3 (+ 16 variants)
 	"2884256": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
 	// MS13-085: Microsoft Office for Mac 2011
@@ -1401,15 +1484,13 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS15-097: Windows 10 for 32-bit Systems (+ 1 variant)
 	"3081455": {"CVE-2015-2510"},
 	// MS15-097: Windows Vista Service Pack 2 (+ 21 variants)
-	"3087039": {"CVE-2015-2508", "CVE-2015-2510", "CVE-2015-2527", "CVE-2015-2529"},
+	"3087039": {"CVE-2015-2508", "CVE-2015-2510"},
 	// MS15-097: Windows Vista Service Pack 2 (+ 6 variants)
 	"3087135": {"CVE-2015-2506", "CVE-2015-2507", "CVE-2015-2508", "CVE-2015-2511", "CVE-2015-2512", "CVE-2015-2517", "CVE-2015-2518", "CVE-2015-2527", "CVE-2015-2529", "CVE-2015-2546"},
 	// MS16-054: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"3101520": {"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 8 variants)
 	"3108664": {"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0018", "CVE-2016-0019"},
-	// MS15-128: Windows 7 for 32-bit Systems Service Pack 1 (+ 14 variants)
-	"3109094": {"CVE-2015-6106"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 14 variants)
 	"3109560": {"CVE-2016-0014", "CVE-2016-0016", "CVE-2016-0018", "CVE-2016-0019", "CVE-2016-0020"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 16 variants)
@@ -1681,11 +1762,11 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-107: Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
 	"3115487": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS15-128: Windows 10 for 32-bit Systems (+ 1 variant)
-	"3116869": {"CVE-2015-6106", "CVE-2015-6108"},
+	"3116869": {"CVE-2015-6106"},
 	// MS15-128: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3116900": {"CVE-2015-6106", "CVE-2015-6108"},
 	// MS16-107: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
-	"3118268": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	"3118268": {"CVE-2016-0137", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-107: Microsoft Office Web Apps Server 2013 Service Pack 1
 	"3118270": {"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"},
 	// MS16-107: Microsoft Outlook 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
@@ -1739,13 +1820,13 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-005: Windows 10 for 32-bit Systems (+ 1 variant); MS16-007: Windows 10 for 32-bit Systems (+ 1 variant)
 	"3124266": {"CVE-2016-0009", "CVE-2016-0020"},
 	// MS16-014: Windows Vista Service Pack 2 (+ 10 variants)
-	"3126041": {"CVE-2016-0040", "CVE-2016-0041", "CVE-2016-0042", "CVE-2016-0044"},
+	"3126041": {"CVE-2016-0040", "CVE-2016-0041", "CVE-2016-0044"},
 	// MS16-014: Windows 8.1 for 32-bit Systems (+ 3 variants)
 	"3126434": {"CVE-2016-0040", "CVE-2016-0041", "CVE-2016-0042", "CVE-2016-0049"},
 	// MS16-014: Windows Vista Service Pack 2 (+ 18 variants)
 	"3126587": {"CVE-2016-0040", "CVE-2016-0042", "CVE-2016-0044", "CVE-2016-0049"},
 	// MS16-014: Windows Vista Service Pack 2 (+ 18 variants)
-	"3126593": {"CVE-2016-0040", "CVE-2016-0041", "CVE-2016-0044", "CVE-2016-0049"},
+	"3126593": {"CVE-2016-0041", "CVE-2016-0044"},
 	// MS16-133: Microsoft Office Compatibility Pack Service Pack 3
 	"3127889": {"CVE-2016-7230", "CVE-2016-7232"},
 	// MS16-148: Excel Services on Microsoft SharePoint Server 2007 Service Pack 3 (32-bit edition) (+ 1 variant)
@@ -1819,17 +1900,15 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-148: Microsoft Word Viewer
 	"3128044": {"CVE-2016-7262", "CVE-2016-7264", "CVE-2016-7265", "CVE-2016-7266", "CVE-2016-7267"},
 	// MS16-015: Microsoft Excel 2016 for Mac (+ 1 variant)
-	"3134241": {"CVE-2016-0022", "CVE-2016-0052", "CVE-2016-0053", "CVE-2016-0054", "CVE-2016-0055", "CVE-2016-0056"},
+	"3134241": {"CVE-2016-0053", "CVE-2016-0055", "CVE-2016-0056"},
 	// MS16-014: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3135173": {"CVE-2016-0040", "CVE-2016-0044"},
 	// MS16-014: Windows 10 for 32-bit Systems (+ 1 variant)
 	"3135174": {"CVE-2016-0040", "CVE-2016-0044"},
-	// MS16-045: Windows Server 2012 (+ 1 variant)
-	"3135456": {"CVE-2016-0090"},
 	// MS16-028: Windows 8.1 for 32-bit Systems (+ 5 variants)
 	"3137513": {"CVE-2016-0118"},
 	// MS16-015: Microsoft Excel for Mac 2011 (+ 1 variant)
-	"3137721": {"CVE-2016-0022", "CVE-2016-0052", "CVE-2016-0053", "CVE-2016-0054", "CVE-2016-0055", "CVE-2016-0056"},
+	"3137721": {"CVE-2016-0053", "CVE-2016-0055", "CVE-2016-0056"},
 	// MS16-029: Microsoft Word 2016 for Mac
 	"3138327": {"CVE-2016-0021", "CVE-2016-0057"},
 	// MS16-029: Microsoft Word for Mac 2011
@@ -1856,14 +1935,12 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3155776": {"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"},
 	// MS16-054: Microsoft Word 2016 for Mac
 	"3155777": {"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"},
-	// MS16-067: Windows 8.1 for 32-bit Systems (+ 2 variants)
-	"3155784": {"CVE-2016-0190"},
 	// MS16-055: Windows Vista Service Pack 2 (+ 18 variants)
 	"3156013": {"CVE-2016-0184", "CVE-2016-0195"},
 	// MS16-055: Windows Vista Service Pack 2 (+ 17 variants)
 	"3156016": {"CVE-2016-0168", "CVE-2016-0169", "CVE-2016-0170", "CVE-2016-0195"},
 	// MS16-062: Windows Vista Service Pack 2 (+ 18 variants)
-	"3156017": {"CVE-2016-0171", "CVE-2016-0173", "CVE-2016-0174", "CVE-2016-0175", "CVE-2016-0176", "CVE-2016-0196"},
+	"3156017": {"CVE-2016-0171", "CVE-2016-0173", "CVE-2016-0174", "CVE-2016-0175", "CVE-2016-0196"},
 	// MS16-055: Windows Vista Service Pack 2 (+ 18 variants)
 	"3156019": {"CVE-2016-0168", "CVE-2016-0169", "CVE-2016-0170", "CVE-2016-0184"},
 	// MS16-073: Windows Vista Service Pack 2 (+ 18 variants)
@@ -1884,16 +1961,14 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3165798": {"CVE-2016-3233", "CVE-2016-3234", "CVE-2016-3235"},
 	// MS16-101: Windows Vista Service Pack 2 (+ 6 variants)
 	"3167679": {"CVE-2016-3300"},
-	// MS16-090: Windows Vista Service Pack 2 (+ 16 variants)
-	"3168965": {"CVE-2016-3250"},
 	// MS16-092: Windows 8.1 for 32-bit Systems (+ 6 variants)
 	"3169704": {"CVE-2016-3258"},
 	// MS16-092: Windows 8.1 for 32-bit Systems (+ 6 variants)
 	"3170377": {"CVE-2016-3272"},
 	// MS16-088: Microsoft Excel 2016 for Mac (+ 1 variant)
-	"3170460": {"CVE-2016-3278", "CVE-2016-3279", "CVE-2016-3280", "CVE-2016-3281", "CVE-2016-3282", "CVE-2016-3283", "CVE-2016-3284"},
+	"3170460": {"CVE-2016-3278", "CVE-2016-3279", "CVE-2016-3283"},
 	// MS16-088: Microsoft Excel for Mac 2011 (+ 1 variant)
-	"3170463": {"CVE-2016-3278", "CVE-2016-3279", "CVE-2016-3280", "CVE-2016-3281", "CVE-2016-3282", "CVE-2016-3283", "CVE-2016-3284"},
+	"3170463": {"CVE-2016-3278", "CVE-2016-3279", "CVE-2016-3283"},
 	// MS17-014: Excel Services on Microsoft SharePoint Server 2013 Service Pack 1
 	"3172431": {"CVE-2017-0006", "CVE-2017-0020", "CVE-2017-0030", "CVE-2017-0052", "CVE-2017-0105"},
 	// MS17-014: Microsoft Office Web Apps Server 2013 Service Pack 1
@@ -1902,8 +1977,6 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3172464": {"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0105"},
 	// MS17-014: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
 	"3172542": {"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"},
-	// MS16-111: Windows 7 for 32-bit Systems Service Pack 1 (+ 11 variants)
-	"3175024": {"CVE-2016-3372"},
 	// MS16-097: Windows 10 for 32-bit Systems (+ 1 variant)
 	"3176492": {"CVE-2016-3303", "CVE-2016-3304"},
 	// MS16-097: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
@@ -1912,8 +1985,6 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3176495": {"CVE-2016-3303", "CVE-2016-3304"},
 	// MS16-101: Windows 8.1 for 32-bit Systems (+ 6 variants)
 	"3177108": {"CVE-2016-3237"},
-	// MS16-097: Windows 8.1 for 32-bit Systems (+ 6 variants)
-	"3178034": {"CVE-2016-3303", "CVE-2016-3304"},
 	// MS17-013: Microsoft Word Viewer
 	"3178653": {"CVE-2017-0014", "CVE-2017-0060", "CVE-2017-0073"},
 	// MS17-014: Microsoft Excel 2016 (32-bit edition) (+ 1 variant)
@@ -1953,7 +2024,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-099: Microsoft Word for Mac 2011
 	"3179162": {"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"},
 	// MS16-099: Microsoft OneNote 2016 for Mac (+ 1 variant)
-	"3179163": {"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"},
+	"3179163": {"CVE-2016-3318"},
 	// MS16-123: Windows Vista Service Pack 2 (+ 6 variants)
 	"3183431": {"CVE-2016-3266", "CVE-2016-3341", "CVE-2016-3376", "CVE-2016-7211"},
 	// MS16-110: Windows Vista Service Pack 2 (+ 16 variants)
@@ -1962,8 +2033,6 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3184711": {"CVE-2016-3378", "CVE-2016-3379"},
 	// MS16-108: Microsoft Exchange Server 2010 Service Pack 3
 	"3184728": {"CVE-2016-3378", "CVE-2016-3379"},
-	// MS16-108: Microsoft Exchange Server 2013 Service Pack 1 (+ 2 variants)
-	"3184736": {"CVE-2016-3379"},
 	// MS16-101: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants); MS16-123: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants); MS16-124: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
 	"3185330": {"CVE-2016-0073", "CVE-2016-0075", "CVE-2016-0079", "CVE-2016-3300", "CVE-2016-3341"},
 	// MS16-101: Windows 8.1 for 32-bit Systems (+ 4 variants); MS16-124: Windows 8.1 for 32-bit Systems (+ 4 variants)
@@ -1979,11 +2048,11 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-107: Microsoft Word for Mac 2011
 	"3186805": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-107: Microsoft Excel 2016 for Mac (+ 3 variants)
-	"3186807": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	"3186807": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3381"},
 	// MS16-110: Windows 8.1 for 32-bit Systems (+ 2 variants)
 	"3187754": {"CVE-2016-3346", "CVE-2016-3368", "CVE-2016-3369"},
-	// MS16-110: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant)
-	"3189866": {"CVE-2016-3369", "CVE-2016-3372"},
+	// MS16-106: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant); MS16-110: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant)
+	"3189866": {"CVE-2016-3349", "CVE-2016-3369", "CVE-2016-3372"},
 	// MS16-123: Windows Vista Service Pack 2 (+ 6 variants)
 	"3191203": {"CVE-2016-3341", "CVE-2016-7185"},
 	// MS16-124: Windows Vista Service Pack 2 (+ 6 variants)
@@ -1999,7 +2068,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-101: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3192441": {"CVE-2016-3300"},
 	// MS16-135: Windows Vista Service Pack 2 (+ 6 variants)
-	"3194371": {"CVE-2016-7214", "CVE-2016-7215", "CVE-2016-7246", "CVE-2016-7255"},
+	"3194371": {"CVE-2016-7214", "CVE-2016-7215", "CVE-2016-7246"},
 	// MS16-101: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant)
 	"3194798": {"CVE-2016-3300"},
 	// MS16-132: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants); MS16-137: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
@@ -2021,13 +2090,13 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-137: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3198586": {"CVE-2016-7220"},
 	// MS16-133: Microsoft Excel 2016 for Mac (+ 1 variant)
-	"3198798": {"CVE-2016-7230", "CVE-2016-7231", "CVE-2016-7232", "CVE-2016-7233", "CVE-2016-7234", "CVE-2016-7235", "CVE-2016-7236", "CVE-2016-7244", "CVE-2016-7245"},
+	"3198798": {"CVE-2016-7230", "CVE-2016-7231", "CVE-2016-7232", "CVE-2016-7233", "CVE-2016-7235", "CVE-2016-7244", "CVE-2016-7245"},
 	// MS16-148: Microsoft Excel 2016 for Mac (+ 1 variant)
-	"3198800": {"CVE-2016-7257", "CVE-2016-7268", "CVE-2016-7274", "CVE-2016-7290", "CVE-2016-7291", "CVE-2016-7300"},
+	"3198800": {"CVE-2016-7268", "CVE-2016-7290", "CVE-2016-7291", "CVE-2016-7300"},
 	// MS16-133: Microsoft Excel for Mac 2011 (+ 1 variant)
-	"3198807": {"CVE-2016-7213", "CVE-2016-7228", "CVE-2016-7229", "CVE-2016-7230", "CVE-2016-7231", "CVE-2016-7232", "CVE-2016-7236", "CVE-2016-7244", "CVE-2016-7245"},
+	"3198807": {"CVE-2016-7230", "CVE-2016-7244", "CVE-2016-7245"},
 	// MS16-148: Microsoft Excel for Mac 2011 (+ 2 variants)
-	"3198808": {"CVE-2016-7257", "CVE-2016-7263", "CVE-2016-7264", "CVE-2016-7266", "CVE-2016-7268", "CVE-2016-7274", "CVE-2016-7276", "CVE-2016-7290", "CVE-2016-7291", "CVE-2016-7300"},
+	"3198808": {"CVE-2016-7266", "CVE-2016-7300"},
 	// MS16-137: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants)
 	"3200970": {"CVE-2016-7220"},
 	// MS16-132: Windows Vista Service Pack 2 (+ 6 variants)
@@ -2061,21 +2130,21 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS17-012: Windows Server 2008 for 32-bit Systems Service Pack 2 (+ 1 variant)
 	"4012021": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0039", "CVE-2017-0057", "CVE-2017-0100"},
 	// MS17-008: Windows 7 for x64-based Systems Service Pack 1 (+ 2 variants); MS17-012: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants); MS17-017: Windows 7 for x64-based Systems Service Pack 1 (+ 2 variants); MS17-018: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
-	"4012212": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0104"},
+	"4012212": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"},
 	// MS17-008: Windows 8.1 for x64-based Systems (+ 2 variants); MS17-011: Windows 8.1 for 32-bit Systems (+ 3 variants); MS17-012: Windows 8.1 for 32-bit Systems (+ 3 variants); MS17-013: Windows 8.1 for 32-bit Systems (+ 3 variants); MS17-017: Windows 8.1 for 32-bit Systems (+ 3 variants); MS17-018: Windows 8.1 for 32-bit Systems (+ 3 variants)
-	"4012213": {"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
+	"4012213": {"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-008: Windows Server 2012 (+ 1 variant); MS17-011: Windows Server 2012 (+ 1 variant); MS17-012: Windows Server 2012 (+ 1 variant); MS17-013: Windows Server 2012 (+ 1 variant); MS17-017: Windows Server 2012 (+ 1 variant); MS17-018: Windows Server 2012 (+ 1 variant)
 	"4012214": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-008: Windows 7 for x64-based Systems Service Pack 1 (+ 2 variants); MS17-012: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants); MS17-017: Windows 7 for x64-based Systems Service Pack 1 (+ 2 variants); MS17-018: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
-	"4012215": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0104"},
+	"4012215": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0074", "CVE-2017-0078", "CVE-2017-0095", "CVE-2017-0098"},
 	// MS17-008: Windows 8.1 for x64-based Systems (+ 2 variants); MS17-011: Windows 8.1 for 32-bit Systems (+ 4 variants); MS17-012: Windows 8.1 for 32-bit Systems (+ 4 variants); MS17-013: Windows 8.1 for 32-bit Systems (+ 4 variants); MS17-017: Windows 8.1 for 32-bit Systems (+ 4 variants); MS17-018: Windows 8.1 for 32-bit Systems (+ 4 variants)
-	"4012216": {"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
+	"4012216": {"CVE-2017-0007", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-008: Windows Server 2012 (+ 1 variant); MS17-011: Windows Server 2012 (+ 1 variant); MS17-012: Windows Server 2012 (+ 1 variant); MS17-013: Windows Server 2012 (+ 1 variant); MS17-017: Windows Server 2012 (+ 1 variant); MS17-018: Windows Server 2012 (+ 1 variant)
-	"4012217": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0063", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
+	"4012217": {"CVE-2017-0007", "CVE-2017-0016", "CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0057", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0080", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0095", "CVE-2017-0098", "CVE-2017-0101", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-013: Windows Vista Service Pack 2 (+ 6 variants); MS17-018: Windows Vista Service Pack 2 (+ 6 variants)
 	"4012497": {"CVE-2017-0014", "CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0038", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0078", "CVE-2017-0108"},
 	// MS17-013: Windows Vista Service Pack 2 (+ 6 variants)
-	"4012583": {"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0038", "CVE-2017-0047", "CVE-2017-0061", "CVE-2017-0063"},
+	"4012583": {"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0047", "CVE-2017-0061", "CVE-2017-0063"},
 	// MS17-013: Windows Vista Service Pack 2 (+ 6 variants)
 	"4012584": {"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0038", "CVE-2017-0047", "CVE-2017-0060", "CVE-2017-0062", "CVE-2017-0073", "CVE-2017-0108"},
 	// MS17-008: Windows 10 for x64-based Systems; MS17-011: Windows 10 for 32-bit Systems (+ 1 variant); MS17-012: Windows 10 for 32-bit Systems (+ 1 variant); MS17-013: Windows 10 for 32-bit Systems (+ 1 variant); MS17-017: Windows 10 for 32-bit Systems (+ 1 variant); MS17-018: Windows 10 for 32-bit Systems (+ 1 variant)
@@ -2083,7 +2152,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS17-008: Windows 10 Version 1511 for x64-based Systems; MS17-011: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-012: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-013: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-017: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-018: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"4013198": {"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-011: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-012: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-013: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-017: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-018: Windows Server 2016 for x64-based Systems (+ 3 variants)
-	"4013429": {"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0038", "CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0078", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
+	"4013429": {"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-013: Windows Vista Service Pack 2 (+ 4 variants)
 	"4017018": {"CVE-2017-0001", "CVE-2017-0005", "CVE-2017-0014", "CVE-2017-0025", "CVE-2017-0047", "CVE-2017-0060", "CVE-2017-0061", "CVE-2017-0062", "CVE-2017-0063", "CVE-2017-0073", "CVE-2017-0108"},
 	// MS16-111: Windows 10 Version 1703 for 32-bit Systems (+ 1 variant)
