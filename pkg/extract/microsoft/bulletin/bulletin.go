@@ -397,40 +397,41 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		default:
 			return ""
 		}
+	case "MS17-006":
+		// MS17-006 (and likely the wider MS17 era) swaps the columns relative
+		// to MS14-MS16: IE identity lives in affected_product, OS lives in
+		// affected_component.
+		return ieEdgeComponentKey(product, component)
 	default:
-		// IE/Edge global vocabulary for IE Cumulative bulletins (MS14-* through MS17-*).
-		// MS14-* through MS16-* place the IE/Edge identity in the affected_component
-		// column with the OS in affected_product; MS17-006 (and likely the broader
-		// MS17 era) swaps the two — IE in affected_product, OS in affected_component.
-		// Try both columns to cover both layouts.
-		for _, s := range []string{component, product} {
-			switch s {
-			case "Microsoft Edge":
-				return "Microsoft Edge"
-			case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
-				return "Internet Explorer 6"
-			case "Windows Internet Explorer 7":
-				return "Internet Explorer 7"
-			case "Windows Internet Explorer 8":
-				return "Internet Explorer 8"
-			case "Internet Explorer 9", "Windows Internet Explorer 9":
-				return "Internet Explorer 9"
-			case "Internet Explorer 10", "Windows Internet Explorer 10":
-				return "Internet Explorer 10"
-			case "Internet Explorer 11", "Windows Internet Explorer 11":
-				// "on Windows 10" qualifier lives in the OTHER column from the IE
-				// identity — whichever column matched the IE name above, scan the
-				// other for the Windows 10 marker.
-				other := component
-				if s == component {
-					other = product
-				}
-				if strings.Contains(other, "Windows 10") {
-					return "Internet Explorer 11 on Windows 10"
-				}
-				return "Internet Explorer 11"
-			}
+		// MS14-* through MS16-* IE Cumulative layout: IE identity in
+		// affected_component, OS in affected_product.
+		return ieEdgeComponentKey(component, product)
+	}
+}
+
+// ieEdgeComponentKey maps an (IE/Edge identity, OS) tuple to the shared
+// componentKey vocabulary used by bulletinArchiveComponentNotApplicable for
+// IE Cumulative bulletins. Returns "" when ieField is not an IE/Edge string.
+func ieEdgeComponentKey(ieField, osField string) string {
+	switch ieField {
+	case "Microsoft Edge":
+		return "Microsoft Edge"
+	case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
+		return "Internet Explorer 6"
+	case "Windows Internet Explorer 7":
+		return "Internet Explorer 7"
+	case "Windows Internet Explorer 8":
+		return "Internet Explorer 8"
+	case "Internet Explorer 9", "Windows Internet Explorer 9":
+		return "Internet Explorer 9"
+	case "Internet Explorer 10", "Windows Internet Explorer 10":
+		return "Internet Explorer 10"
+	case "Internet Explorer 11", "Windows Internet Explorer 11":
+		if strings.Contains(osField, "Windows 10") {
+			return "Internet Explorer 11 on Windows 10"
 		}
+		return "Internet Explorer 11"
+	default:
 		return ""
 	}
 }
