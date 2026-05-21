@@ -13,6 +13,7 @@ type weakness struct {
 	Abstraction         string `xml:"Abstraction,attr"`
 	Structure           string `xml:"Structure,attr"`
 	Status              string `xml:"Status,attr"`
+	Diagram             string `xml:"Diagram,attr"`
 	Description         string `xml:"Description"`
 	ExtendedDescription struct {
 		Text string `xml:",innerxml"`
@@ -92,9 +93,10 @@ type weakness struct {
 	RelatedAttackPatterns []struct {
 		CAPECID string `xml:"CAPEC_ID,attr"`
 	} `xml:"Related_Attack_Patterns>Related_Attack_Pattern"`
-	Notes             []Note   `xml:"Notes>Note"`
-	AffectedResources []string `xml:"Affected_Resources>Affected_Resource"`
-	FunctionalAreas   []string `xml:"Functional_Areas>Functional_Area"`
+	Notes             []Note       `xml:"Notes>Note"`
+	AffectedResources []string     `xml:"Affected_Resources>Affected_Resource"`
+	FunctionalAreas   []string     `xml:"Functional_Areas>Functional_Area"`
+	MappingNotes      mappingNotes `xml:"Mapping_Notes"`
 }
 
 type category struct {
@@ -135,6 +137,7 @@ type category struct {
 	} `xml:"References>Reference"`
 	Notes            []Note            `xml:"Notes>Note"`
 	TaxonomyMappings []TaxonomyMapping `xml:"Taxonomy_Mappings>Taxonomy_Mapping"`
+	MappingNotes     mappingNotes      `xml:"Mapping_Notes"`
 }
 
 type view struct {
@@ -176,7 +179,21 @@ type view struct {
 		ExternalReferenceID string `xml:"External_Reference_ID,attr" json:"external_reference_id,omitempty"`
 		Section             string `xml:"Section,attr" json:"section,omitempty"`
 	} `xml:"References>Reference"`
-	Filter string `xml:"Filter"`
+	Filter       string       `xml:"Filter"`
+	MappingNotes mappingNotes `xml:"Mapping_Notes"`
+}
+
+type mappingNotes struct {
+	Usage     string `xml:"Usage"`
+	Rationale string `xml:"Rationale"`
+	Comments  string `xml:"Comments"`
+	Reasons   []struct {
+		Type string `xml:"Type,attr"`
+	} `xml:"Reasons>Reason"`
+	Suggestions []struct {
+		CWEID   string `xml:"CWE_ID,attr"`
+		Comment string `xml:"Comment,attr"`
+	} `xml:"Suggestions>Suggestion"`
 }
 
 type Weakness struct {
@@ -185,6 +202,7 @@ type Weakness struct {
 	Abstraction           string                 `json:"abstraction,omitempty"`
 	Structure             string                 `json:"structure,omitempty"`
 	Status                string                 `json:"status,omitempty"`
+	Diagram               string                 `json:"diagram,omitempty"`
 	Description           string                 `json:"description,omitempty"`
 	ExtendedDescription   string                 `json:"extended_description,omitempty"`
 	RelatedWeaknesses     []RelatedWeakness      `json:"related_weaknesses,omitempty"`
@@ -206,6 +224,24 @@ type Weakness struct {
 	Notes                 []Note                 `json:"notes,omitempty"`
 	AffectedResources     []string               `json:"affected_resources,omitempty"`
 	FunctionalAreas       []string               `json:"functional_areas,omitempty"`
+	MappingNotes          MappingNotes           `json:"mapping_notes,omitzero"`
+}
+
+type MappingNotes struct {
+	Usage       string       `json:"usage,omitempty"`
+	Rationale   string       `json:"rationale,omitempty"`
+	Comments    string       `json:"comments,omitempty"`
+	Reasons     []Reason     `json:"reasons,omitempty"`
+	Suggestions []Suggestion `json:"suggestions,omitempty"`
+}
+
+type Reason struct {
+	Type string `json:"type,omitempty"`
+}
+
+type Suggestion struct {
+	CWEID   string `json:"cweid,omitempty"`
+	Comment string `json:"comment,omitempty"`
 }
 
 type RelatedWeakness struct {
@@ -341,6 +377,7 @@ type Category struct {
 	References       []Reference       `json:"references,omitempty"`
 	Notes            []Note            `json:"notes,omitempty"`
 	TaxonomyMappings []TaxonomyMapping `json:"taxonomy_mappings,omitempty"`
+	MappingNotes     MappingNotes      `json:"mapping_notes,omitzero"`
 }
 
 type HasMember struct {
@@ -367,6 +404,7 @@ type View struct {
 	ContentHistory ContentHistory `json:"content_history,omitzero"`
 	References     []Reference    `json:"references,omitempty"`
 	Filter         string         `json:"filter,omitempty"`
+	MappingNotes   MappingNotes   `json:"mapping_notes,omitzero"`
 }
 
 type Audience struct {

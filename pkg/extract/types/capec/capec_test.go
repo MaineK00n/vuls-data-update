@@ -6,7 +6,7 @@ import (
 	capecTypes "github.com/MaineK00n/vuls-data-update/pkg/extract/types/capec"
 )
 
-func TestCAPEC_Sort(t *testing.T) {
+func TestCapec_Sort(t *testing.T) {
 	tests := []struct {
 		name string
 		d    *capecTypes.CAPEC

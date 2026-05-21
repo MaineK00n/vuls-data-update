@@ -35,6 +35,7 @@ type Enterprise struct {
 		KillChainName string `json:"kill_chain_name"`
 		PhaseName     string `json:"phase_name"`
 	} `json:"kill_chain_phases,omitempty"`
+	Labels                  []string   `json:"labels,omitempty"`
 	LastSeen                *time.Time `json:"last_seen,omitempty"`
 	Modified                *time.Time `json:"modified,omitempty"`
 	Name                    *string    `json:"name,omitempty"`
@@ -46,6 +47,7 @@ type Enterprise struct {
 	TacticRefs              []string   `json:"tactic_refs,omitempty"`
 	TargetRef               *string    `json:"target_ref,omitempty"`
 	XMitreAliases           []string   `json:"x_mitre_aliases,omitempty"`
+	XMitreAnalyticRefs      []string   `json:"x_mitre_analytic_refs,omitempty"`
 	XMitreAttackSpecVersion string     `json:"x_mitre_attack_spec_version"`
 	XMitreCollectionLayers  []string   `json:"x_mitre_collection_layers,omitempty"`
 	XMitreContents          []struct {
@@ -64,14 +66,27 @@ type Enterprise struct {
 	XMitreImpactType           []string `json:"x_mitre_impact_type,omitempty"`
 	XMitreIsSubtechnique       *bool    `json:"x_mitre_is_subtechnique,omitempty"`
 	XMitreLastSeenCitation     *string  `json:"x_mitre_last_seen_citation,omitempty"`
-	XMitreModifiedByRef        *string  `json:"x_mitre_modified_by_ref,omitempty"`
-	XMitreNetworkRequirements  *bool    `json:"x_mitre_network_requirements,omitempty"`
-	XMitrePermissionsRequired  []string `json:"x_mitre_permissions_required,omitempty"`
-	XMitrePlatforms            []string `json:"x_mitre_platforms,omitempty"`
-	XMitreRemoteSupport        *bool    `json:"x_mitre_remote_support,omitempty"`
-	XMitreShortname            *string  `json:"x_mitre_shortname,omitempty"`
-	XMitreSystemRequirements   []string `json:"x_mitre_system_requirements,omitempty"`
-	XMitreVersion              *string  `json:"x_mitre_version,omitempty"`
+	XMitreLogSourceReferences  []struct {
+		XMitreDataComponentRef string `json:"x_mitre_data_component_ref"`
+		Name                   string `json:"name"`
+		Channel                string `json:"channel"`
+	} `json:"x_mitre_log_source_references,omitempty"`
+	XMitreLogSources []struct {
+		Name    string `json:"name"`
+		Channel string `json:"channel"`
+	} `json:"x_mitre_log_sources,omitempty"`
+	XMitreModifiedByRef   *string `json:"x_mitre_modified_by_ref,omitempty"`
+	XMitreMutableElements []struct {
+		Field       string `json:"field"`
+		Description string `json:"description"`
+	} `json:"x_mitre_mutable_elements,omitempty"`
+	XMitreNetworkRequirements *bool    `json:"x_mitre_network_requirements,omitempty"`
+	XMitrePermissionsRequired []string `json:"x_mitre_permissions_required,omitempty"`
+	XMitrePlatforms           []string `json:"x_mitre_platforms,omitempty"`
+	XMitreRemoteSupport       *bool    `json:"x_mitre_remote_support,omitempty"`
+	XMitreShortname           *string  `json:"x_mitre_shortname,omitempty"`
+	XMitreSystemRequirements  []string `json:"x_mitre_system_requirements,omitempty"`
+	XMitreVersion             *string  `json:"x_mitre_version,omitempty"`
 }
 
 type ics struct {
@@ -117,6 +132,7 @@ type ICS struct {
 	TacticRefs              []string   `json:"tactic_refs,omitempty"`
 	TargetRef               *string    `json:"target_ref,omitempty"`
 	XMitreAliases           []string   `json:"x_mitre_aliases,omitempty"`
+	XMitreAnalyticRefs      []string   `json:"x_mitre_analytic_refs,omitempty"`
 	XMitreAttackSpecVersion string     `json:"x_mitre_attack_spec_version"`
 	XMitreCollectionLayers  []string   `json:"x_mitre_collection_layers,omitempty"`
 	XMitreContents          []struct {
@@ -132,7 +148,20 @@ type ICS struct {
 	XMitreFirstSeenCitation   *string  `json:"x_mitre_first_seen_citation,omitempty"`
 	XMitreIsSubtechnique      *bool    `json:"x_mitre_is_subtechnique,omitempty"`
 	XMitreLastSeenCitation    *string  `json:"x_mitre_last_seen_citation,omitempty"`
-	XMitreModifiedByRef       *string  `json:"x_mitre_modified_by_ref,omitempty"`
+	XMitreLogSourceReferences []struct {
+		XMitreDataComponentRef string `json:"x_mitre_data_component_ref"`
+		Name                   string `json:"name"`
+		Channel                string `json:"channel"`
+	} `json:"x_mitre_log_source_references,omitempty"`
+	XMitreLogSources []struct {
+		Name    string `json:"name"`
+		Channel string `json:"channel"`
+	} `json:"x_mitre_log_sources,omitempty"`
+	XMitreModifiedByRef   *string `json:"x_mitre_modified_by_ref,omitempty"`
+	XMitreMutableElements []struct {
+		Field       string `json:"field"`
+		Description string `json:"description"`
+	} `json:"x_mitre_mutable_elements,omitempty"`
 	XMitrePermissionsRequired []string `json:"x_mitre_permissions_required,omitempty"`
 	XMitrePlatforms           []string `json:"x_mitre_platforms,omitempty"`
 	XMitreRelatedAssets       []struct {
@@ -176,6 +205,7 @@ type Mobile struct {
 		KillChainName string `json:"kill_chain_name"`
 		PhaseName     string `json:"phase_name"`
 	} `json:"kill_chain_phases,omitempty"`
+	Labels                  []string   `json:"labels,omitempty"`
 	LastSeen                *time.Time `json:"last_seen,omitempty"`
 	Modified                *time.Time `json:"modified,omitempty"`
 	Name                    *string    `json:"name,omitempty"`
@@ -187,24 +217,38 @@ type Mobile struct {
 	TacticRefs              []string   `json:"tactic_refs,omitempty"`
 	TargetRef               *string    `json:"target_ref,omitempty"`
 	XMitreAliases           []string   `json:"x_mitre_aliases,omitempty"`
+	XMitreAnalyticRefs      []string   `json:"x_mitre_analytic_refs,omitempty"`
 	XMitreAttackSpecVersion string     `json:"x_mitre_attack_spec_version"`
 	XMitreCollectionLayers  []string   `json:"x_mitre_collection_layers,omitempty"`
 	XMitreContents          []struct {
 		ObjectModified time.Time `json:"object_modified"`
 		ObjectRef      string    `json:"object_ref"`
 	} `json:"x_mitre_contents,omitempty"`
-	XMitreContributors      []string `json:"x_mitre_contributors,omitempty"`
-	XMitreDataSourceRef     *string  `json:"x_mitre_data_source_ref,omitempty"`
-	XMitreDeprecated        *bool    `json:"x_mitre_deprecated,omitempty"`
-	XMitreDetection         *string  `json:"x_mitre_detection,omitempty"`
-	XMitreDomains           []string `json:"x_mitre_domains,omitempty"`
-	XMitreFirstSeenCitation *string  `json:"x_mitre_first_seen_citation,omitempty"`
-	XMitreIsSubtechnique    *bool    `json:"x_mitre_is_subtechnique,omitempty"`
-	XMitreLastSeenCitation  *string  `json:"x_mitre_last_seen_citation,omitempty"`
-	XMitreModifiedByRef     *string  `json:"x_mitre_modified_by_ref,omitempty"`
-	XMitreOldAttackID       *string  `json:"x_mitre_old_attack_id,omitempty"`
-	XMitrePlatforms         []string `json:"x_mitre_platforms,omitempty"`
-	XMitreShortname         *string  `json:"x_mitre_shortname,omitempty"`
-	XMitreTacticType        []string `json:"x_mitre_tactic_type,omitempty"`
-	XMitreVersion           *string  `json:"x_mitre_version,omitempty"`
+	XMitreContributors        []string `json:"x_mitre_contributors,omitempty"`
+	XMitreDataSourceRef       *string  `json:"x_mitre_data_source_ref,omitempty"`
+	XMitreDeprecated          *bool    `json:"x_mitre_deprecated,omitempty"`
+	XMitreDetection           *string  `json:"x_mitre_detection,omitempty"`
+	XMitreDomains             []string `json:"x_mitre_domains,omitempty"`
+	XMitreFirstSeenCitation   *string  `json:"x_mitre_first_seen_citation,omitempty"`
+	XMitreIsSubtechnique      *bool    `json:"x_mitre_is_subtechnique,omitempty"`
+	XMitreLastSeenCitation    *string  `json:"x_mitre_last_seen_citation,omitempty"`
+	XMitreLogSourceReferences []struct {
+		XMitreDataComponentRef string `json:"x_mitre_data_component_ref"`
+		Name                   string `json:"name"`
+		Channel                string `json:"channel"`
+	} `json:"x_mitre_log_source_references,omitempty"`
+	XMitreLogSources []struct {
+		Name    string `json:"name"`
+		Channel string `json:"channel"`
+	} `json:"x_mitre_log_sources,omitempty"`
+	XMitreModifiedByRef   *string `json:"x_mitre_modified_by_ref,omitempty"`
+	XMitreMutableElements []struct {
+		Field       string `json:"field"`
+		Description string `json:"description"`
+	} `json:"x_mitre_mutable_elements,omitempty"`
+	XMitreOldAttackID *string  `json:"x_mitre_old_attack_id,omitempty"`
+	XMitrePlatforms   []string `json:"x_mitre_platforms,omitempty"`
+	XMitreShortname   *string  `json:"x_mitre_shortname,omitempty"`
+	XMitreTacticType  []string `json:"x_mitre_tactic_type,omitempty"`
+	XMitreVersion     *string  `json:"x_mitre_version,omitempty"`
 }

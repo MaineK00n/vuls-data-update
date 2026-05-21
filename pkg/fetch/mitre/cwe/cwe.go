@@ -268,6 +268,7 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			Abstraction:           w.Abstraction,
 			Structure:             w.Structure,
 			Status:                w.Status,
+			Diagram:               w.Diagram,
 			Description:           w.Description,
 			ExtendedDescription:   w.ExtendedDescription.Text,
 			RelatedWeaknesses:     w.RelatedWeaknesses,
@@ -289,6 +290,25 @@ func convertWeaknesses(weaknesses []weakness, exRefs map[string]ExternalReferenc
 			Notes:                 w.Notes,
 			AffectedResources:     w.AffectedResources,
 			FunctionalAreas:       w.FunctionalAreas,
+			MappingNotes: MappingNotes{
+				Usage:     w.MappingNotes.Usage,
+				Rationale: w.MappingNotes.Rationale,
+				Comments:  w.MappingNotes.Comments,
+				Reasons: func() []Reason {
+					var rs []Reason
+					for _, r := range w.MappingNotes.Reasons {
+						rs = append(rs, Reason{Type: r.Type})
+					}
+					return rs
+				}(),
+				Suggestions: func() []Suggestion {
+					var ss []Suggestion
+					for _, s := range w.MappingNotes.Suggestions {
+						ss = append(ss, Suggestion{CWEID: s.CWEID, Comment: s.Comment})
+					}
+					return ss
+				}(),
+			},
 		})
 	}
 	return converted
@@ -353,6 +373,25 @@ func convertCategories(categories []category, exRefs map[string]ExternalReferenc
 			References:       references,
 			Notes:            c.Notes,
 			TaxonomyMappings: c.TaxonomyMappings,
+			MappingNotes: MappingNotes{
+				Usage:     c.MappingNotes.Usage,
+				Rationale: c.MappingNotes.Rationale,
+				Comments:  c.MappingNotes.Comments,
+				Reasons: func() []Reason {
+					var rs []Reason
+					for _, r := range c.MappingNotes.Reasons {
+						rs = append(rs, Reason{Type: r.Type})
+					}
+					return rs
+				}(),
+				Suggestions: func() []Suggestion {
+					var ss []Suggestion
+					for _, s := range c.MappingNotes.Suggestions {
+						ss = append(ss, Suggestion{CWEID: s.CWEID, Comment: s.Comment})
+					}
+					return ss
+				}(),
+			},
 		})
 	}
 	return converted
@@ -419,7 +458,27 @@ func convertViews(views []view, exRefs map[string]ExternalReference) []View {
 			ContentHistory: contentHistory,
 			References:     references,
 			Filter:         v.Filter,
+			MappingNotes: MappingNotes{
+				Usage:     v.MappingNotes.Usage,
+				Rationale: v.MappingNotes.Rationale,
+				Comments:  v.MappingNotes.Comments,
+				Reasons: func() []Reason {
+					var rs []Reason
+					for _, r := range v.MappingNotes.Reasons {
+						rs = append(rs, Reason{Type: r.Type})
+					}
+					return rs
+				}(),
+				Suggestions: func() []Suggestion {
+					var ss []Suggestion
+					for _, s := range v.MappingNotes.Suggestions {
+						ss = append(ss, Suggestion{CWEID: s.CWEID, Comment: s.Comment})
+					}
+					return ss
+				}(),
+			},
 		})
 	}
 	return converted
 }
+
