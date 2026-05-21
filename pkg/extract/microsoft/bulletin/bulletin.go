@@ -404,21 +404,44 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		// to MS14-MS16: IE identity lives in affected_product, OS lives in
 		// affected_component.
 		return ieEdgeComponentKey(product, component)
+	// Mixed-applicability bulletins where a KB shared across multiple
+	// per-CVE matrix tables marks the CVE "Not applicable" for some
+	// product rows but "Critical"/"Important"/etc. for others. A KB-keyed
+	// filter would over-broadly drop the applicable rows too, so the NA
+	// cells are encoded product-keyed in
+	// bulletinArchiveComponentNotApplicable; the dispatch here returns
+	// the row's affected_product unchanged so the inner key matches the
+	// markdown's per-CVE matrix table row[0] product label.
+	//
+	// None of these bulletins have IE/Edge rows (they are Office / Windows
+	// kernel / Graphics / etc.), so the IE/Edge default-branch dispatch is
+	// not needed for them.
+	//
+	// Five of these bulletins (MS15-097, MS15-128, MS16-107, MS16-133,
+	// MS17-018) have a KB that appears in multiple per-CVE matrix tables
+	// of the same bulletin. Whether that creates an unfilterable FP is a
+	// per-(KB, CVE) question, not a per-KB one: if a specific (KB, CVE)
+	// pair only appears in one of those tables, product-keyed dispatch
+	// is still safe for that pair (the conflicting cells live under
+	// different CVE columns and therefore can't disagree with each
+	// other). The generator emits product-keyed entries only for the
+	// safe pairs and silently drops any pair whose markdown cells truly
+	// span tables with conflicting NA state. The lone such pair across
+	// the corpus — MS15-128 / KB3116869 / CVE-2015-6108 — is the only
+	// known remaining FP trade-off.
+	case "MS12-054", "MS12-074",
+		"MS13-046", "MS13-081",
+		"MS15-097", "MS15-128",
+		"MS16-014", "MS16-015", "MS16-045", "MS16-062", "MS16-067", "MS16-088",
+		"MS16-090", "MS16-097", "MS16-099", "MS16-106", "MS16-107", "MS16-108", "MS16-111",
+		"MS16-133", "MS16-135", "MS16-148",
+		"MS17-012", "MS17-013", "MS17-017", "MS17-018":
+		return product
 	default:
 		// MS14-* through MS16-* IE Cumulative layout: IE identity in
 		// affected_component, OS in affected_product.
 		if key := ieEdgeComponentKey(component, product); key != "" {
 			return key
-		}
-		// Fall back to product-keyed dispatch for bulletins where the same KB
-		// spans multiple xlsx rows whose per-CVE table cells have mixed
-		// applicability — see bulletinArchiveKBNotApplicable for the
-		// rationale. The product label here is taken verbatim from the row's
-		// affected_product cell and matches the markdown's per-CVE Severity
-		// Ratings table row[0] product label, which is the inner key of
-		// bulletinArchiveComponentNotApplicable for these bulletins.
-		if mixedProductKeyedBulletins[bulletinID] {
-			return product
 		}
 		return ""
 	}
@@ -449,33 +472,6 @@ func ieEdgeComponentKey(ieField, osField string) string {
 	default:
 		return ""
 	}
-}
-
-// mixedProductKeyedBulletins lists bulletin IDs whose KB-keyed NA cells include
-// at least one (KB, CVE) pair where the KB is shared across xlsx rows with
-// mixed per-CVE applicability (some NA, some applicable) AND the same KB
-// appears in only one Format A table of the bulletin (so the xlsx
-// affected_product unambiguously maps to a specific markdown row). For those
-// bulletins the per-(KB, CVE) NA cells are stored product-keyed in
-// bulletinArchiveComponentNotApplicable, and the dispatch above returns the
-// row's affected_product unchanged as the key.
-//
-// Five additional bulletins (MS15-097, MS15-128, MS16-107, MS16-133,
-// MS17-018) have mixed-applicability KBs that span multiple Format A tables
-// of the same bulletin (e.g., MS15-128 KB3116869 is NA in the OS-level
-// table but applicable in the .NET Framework component table for the same
-// product label). xlsx loses the table-level distinction, so even
-// product-keyed dispatch cannot safely filter those without risking FN. They
-// are intentionally absent from this list — their FPs persist as a known
-// trade-off.
-var mixedProductKeyedBulletins = map[string]bool{
-	"MS12-054": true, "MS12-074": true,
-	"MS13-046": true, "MS13-081": true,
-	"MS16-014": true, "MS16-015": true, "MS16-045": true, "MS16-062": true,
-	"MS16-067": true, "MS16-088": true, "MS16-090": true, "MS16-097": true,
-	"MS16-099": true, "MS16-106": true, "MS16-108": true, "MS16-111": true,
-	"MS16-135": true, "MS16-148": true,
-	"MS17-012": true, "MS17-013": true, "MS17-017": true,
 }
 
 // isOSPlatform reports whether s is a Windows OS, SharePoint Server, or similar platform name.
