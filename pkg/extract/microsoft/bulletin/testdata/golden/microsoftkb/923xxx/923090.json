@@ -1,0 +1,18 @@
+{
+	"kb_id": "923090",
+	"url": "https://support.microsoft.com/help/923090",
+	"products": [
+		"Microsoft Word 2000 Service Pack 3"
+	],
+	"supersedes": [
+		{
+			"kb_id": "917345"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/06/MS06-060.json"
+		]
+	}
+}

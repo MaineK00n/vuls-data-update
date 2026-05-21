@@ -311,39 +311,129 @@ func productName(product, component string) string {
 	}
 }
 
-// normalizeArchiveComponentKey maps a bulletin row's (affected_product, affected_component)
-// to a stable key used by bulletinArchiveComponentNotApplicable. The key matches the
-// column-header form of the archive markdown's "Vulnerability Severity Ratings and Impact"
-// table — one of "Internet Explorer 6/7/8/9/10/11", "Internet Explorer 11 on Windows 10",
-// or "Microsoft Edge". Returns "" for any other component (older IE 5.x, non-IE/Edge, etc.).
+// normalizeArchiveComponentKey maps a bulletin row's (bulletin_id, affected_product,
+// affected_component) tuple to a stable key used by bulletinArchiveComponentNotApplicable.
+// The key matches the column-header form of the archive markdown's per-vulnerability
+// table for the bulletin — for MS14-* IE Cumulative bulletins this is the
+// "Severity Ratings and Impact" table; for MS06-* this is the older
+// "Severity Ratings and Vulnerability Identifiers" table. The two share the
+// same per-CVE-row × per-product-column shape but use different column-header
+// vocabularies.
+//
+// Two vocabularies coexist:
+//
+//   - A bulletin-agnostic IE/Edge vocabulary for IE Cumulative bulletins, one
+//     key per IE version: "Internet Explorer 6", "Internet Explorer 7",
+//     "Internet Explorer 8", "Internet Explorer 9", "Internet Explorer 10",
+//     "Internet Explorer 11", "Internet Explorer 11 on Windows 10", and
+//     "Microsoft Edge".
+//   - Per-bulletin product vocabularies for a small set of pre-IE-Cumulative
+//     bulletins (MS06-012, MS06-020, MS06-039, MS06-078) where each
+//     bulletin's markdown table uses its own column-header product strings,
+//     taken verbatim from the bulletin. MS06-060 is intentionally absent
+//     here — its NA cells are captured by bulletinArchiveKBNotApplicable
+//     because some xlsx rows (Works Suite 2004/2005/2006) have
+//     affected_component=null and cannot be matched by a component-keyed
+//     narrowing alone.
+//
+// Returns "" when the row does not map to any narrowing key (the common case;
+// most rows have no NA narrowing on the component axis).
 //
 // The accepted input variants are enumerated explicitly rather than parsed, since
-// BulletinSearch.xlsx uses a small, frozen vocabulary ("Windows Internet Explorer N",
-// "Microsoft Internet Explorer N.0", "Internet Explorer N", "Microsoft Edge") and IE
-// only shipped through version 11. The archive markdown's column-header vocabulary
-// differs from the canonical names produced by microsoftutil.NormalizeProductName, so
-// the two normalizers are intentionally kept independent.
-func normalizeArchiveComponentKey(affectedProduct, affectedComponent string) string {
-	switch strings.Join(strings.Fields(affectedComponent), " ") {
-	case "Microsoft Edge":
-		return "Microsoft Edge"
-	case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
-		return "Internet Explorer 6"
-	case "Windows Internet Explorer 7":
-		return "Internet Explorer 7"
-	case "Windows Internet Explorer 8":
-		return "Internet Explorer 8"
-	case "Internet Explorer 9", "Windows Internet Explorer 9":
-		return "Internet Explorer 9"
-	case "Internet Explorer 10", "Windows Internet Explorer 10":
-		return "Internet Explorer 10"
-	case "Internet Explorer 11", "Windows Internet Explorer 11":
-		if strings.Contains(affectedProduct, "Windows 10") {
-			return "Internet Explorer 11 on Windows 10"
+// BulletinSearch.xlsx uses a small, frozen vocabulary for each bulletin. The
+// archive markdown's column-header vocabulary differs from the canonical names
+// produced by microsoftutil.NormalizeProductName, so the two normalizers are
+// intentionally kept independent.
+func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent string) string {
+	product := strings.Join(strings.Fields(affectedProduct), " ")
+	component := strings.Join(strings.Fields(affectedComponent), " ")
+
+	// Dispatch by bulletin_id. Each MS06-* case uses its own product vocabulary
+	// (matched against affected_product or affected_component depending on which
+	// column the Excel side carries the identity in); the default case handles
+	// IE Cumulative bulletins (MS14-* through MS17-*) via the shared IE/Edge
+	// global vocabulary. Verified that no MS06-* bulletin in this dispatch has
+	// IE/Edge rows in BulletinSearch.xlsx, so the default branch is unreachable
+	// for the listed bulletins by design.
+	switch bulletinID {
+	case "MS06-012":
+		// markdown columns bundle Word/Excel/Outlook/etc.; only the two PowerPoint
+		// columns carry NA cells, so only those rows need a narrowing key.
+		switch component {
+		case "Microsoft PowerPoint 2000 Service Pack 3":
+			return "Microsoft PowerPoint 2000"
+		case "Microsoft PowerPoint 2002 Service Pack 3":
+			return "Microsoft PowerPoint 2002"
+		default:
+			return ""
 		}
-		return "Internet Explorer 11"
+	case "MS06-020":
+		// The markdown table marks CVE-2005-2628 and CVE-2006-0024 NA on the
+		// Win 2000 / Server 2003 / Server 2003 SP1 columns. BulletinSearch.xlsx
+		// does not list rows for those product strings in the current corpus
+		// (only Win 98 / 98 SE / ME and Win XP variants are present), so these
+		// cases do not activate in practice. They are kept for completeness so
+		// the map reflects the markdown data faithfully.
+		switch product {
+		case "Microsoft Windows 2000", "Microsoft Windows 2000 Service Pack 4":
+			return "Windows 2000"
+		case "Microsoft Windows Server 2003":
+			return "Windows Server 2003"
+		case "Microsoft Windows Server 2003 Service Pack 1":
+			return "Windows Server 2003 Service Pack 1"
+		default:
+			return ""
+		}
+	case "MS06-039":
+		switch product {
+		case "Microsoft Project 2000":
+			return "Microsoft Project 2000"
+		default:
+			return ""
+		}
+	// MS06-060 is intentionally not narrowed here. The Microsoft Works Suite
+	// 2004/2005/2006 rows have affected_component=null in BulletinSearch.xlsx
+	// and share component_kb 923089 with Word 2002 SP3 — per the markdown
+	// footnote "The Microsoft Works Suite 2004/2005/2006 severity rating is
+	// the same as the Microsoft Word 2002 severity rating." A component-keyed
+	// narrowing built on affected_component cannot reach the Works Suite
+	// rows. Instead, MS06-060's per-(KB, CVE) NA cells are encoded in
+	// bulletinArchiveKBNotApplicable (KB923088/923089/923090/924998/924999),
+	// where the natural sharing of component_kb across Word-equivalent rows
+	// (Word 2002 SP3 + Works Suite 2004/2005/2006 all under KB923089)
+	// captures every NA cell of the bulletin in five entries.
+	case "MS06-078":
+		switch component {
+		case "Microsoft Windows Media Player 6.4":
+			return "Windows Media Player 6.4 (All operating systems)"
+		default:
+			return ""
+		}
 	default:
-		return ""
+		// IE/Edge global vocabulary for IE Cumulative bulletins (MS14-* through MS17-*).
+		switch component {
+		case "Microsoft Edge":
+			return "Microsoft Edge"
+		case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
+			return "Internet Explorer 6"
+		case "Windows Internet Explorer 7":
+			return "Internet Explorer 7"
+		case "Windows Internet Explorer 8":
+			return "Internet Explorer 8"
+		case "Internet Explorer 9", "Windows Internet Explorer 9":
+			return "Internet Explorer 9"
+		case "Internet Explorer 10", "Windows Internet Explorer 10":
+			return "Internet Explorer 10"
+		case "Internet Explorer 11", "Windows Internet Explorer 11":
+			switch {
+			case strings.Contains(product, "Windows 10"):
+				return "Internet Explorer 11 on Windows 10"
+			default:
+				return "Internet Explorer 11"
+			}
+		default:
+			return ""
+		}
 	}
 }
 
@@ -433,7 +523,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		// there is nothing to drop. Nil slices are fine here — slices.Contains
 		// returns false on nil.
 		naCVEsKB := bulletinArchiveKBNotApplicable[row.ComponentKB]
-		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(row.AffectedProduct, row.AffectedComponent)]
+		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(string(rootID), row.AffectedProduct, row.AffectedComponent)]
 		filteredIDs := ids
 		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 {
 			filteredIDs = make([]string, 0, len(ids))
@@ -1122,7 +1212,28 @@ var bulletinArchiveSupersedesOverride = map[string][]string{
 // the Bulletin archive markdown table explicitly marks "Not applicable".
 // Inline "// MS<id>: <product>" comments identify the source bulletin(s)
 // for review traceability — see bulletinArchiveSupersedes for the same convention.
+// Entries are ordered by numeric KB value so 6-digit pre-2010 KBs precede
+// 7-digit MS10+ KBs in ascending order.
 var bulletinArchiveKBNotApplicable = map[string][]string{
+	// MS06-060: Microsoft Word 2003 SP1/SP2 (+ Office 2003 SP1/SP2 row pair). Per the
+	// archive markdown's per-CVE table the Word 2003 column is "Not applicable" for
+	// CVE-2006-4693.
+	"923088": {"CVE-2006-4693"},
+	// MS06-060: Microsoft Word 2002 SP3 (Office XP SP3) + Microsoft Works Suite
+	// 2004/2005/2006. The bulletin's footnote states "The Microsoft Works Suite
+	// 2004/2005/2006 severity rating is the same as the Microsoft Word 2002 severity
+	// rating", and BulletinSearch.xlsx confirms all four rows share component_kb
+	// 923089. The Word 2002 column is NA for CVE-2006-4693.
+	"923089": {"CVE-2006-4693"},
+	// MS06-060: Microsoft Word 2000 SP3 (Office 2000 SP3). Word 2000 column NA
+	// for CVE-2006-4693.
+	"923090": {"CVE-2006-4693"},
+	// MS06-060: Microsoft Office v. X for Mac (Office X for Mac suite row). Word
+	// for Mac column NA for CVE-2006-3651 and CVE-2006-4534.
+	"924998": {"CVE-2006-3651", "CVE-2006-4534"},
+	// MS06-060: Microsoft Word 2004 for Mac (Office 2004 for Mac suite row).
+	// Word for Mac column NA for CVE-2006-3651 and CVE-2006-4534.
+	"924999": {"CVE-2006-3651", "CVE-2006-4534"},
 	// MS16-107: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"2553432": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-070: Microsoft Visio Viewer 2007 Service Pack 3
@@ -1984,18 +2095,52 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 }
 
 // bulletinArchiveComponentNotApplicable lists per-bulletin component-keyed
-// NA CVEs from "Vulnerability Severity Ratings and Impact" tables that index
-// by CVE row and component (IE-version / Edge) column (e.g. MS16-037 IE
-// Cumulative).
-// componentKey is one of:
+// NA CVEs from the archive markdown's per-vulnerability table that indexes
+// by CVE row and component / product column. The table title varies by
+// bulletin era: "Severity Ratings and Impact" for MS14-* IE Cumulative
+// bulletins; "Severity Ratings and Vulnerability Identifiers" for the
+// older MS06-* entries.
 //
-//	"Internet Explorer 6/7/8/9/10/11"
-//	"Internet Explorer 11 on Windows 10"
-//	"Microsoft Edge"
+// Two flavors share the same map:
 //
-// At extract time, the row's affected_component (Excel column G) is
-// normalized via normalizeArchiveComponentKey() and matched against this map.
+//   - IE Cumulative bulletins (34 entries, MS14-010 through MS17-006) use a
+//     shared IE/Edge vocabulary, one key per IE version: "Internet Explorer 6",
+//     "Internet Explorer 7", "Internet Explorer 8", "Internet Explorer 9",
+//     "Internet Explorer 10", "Internet Explorer 11", "Internet Explorer 11
+//     on Windows 10", and "Microsoft Edge".
+//   - Older Office / Windows / Word / WMP bulletins (MS06-012, MS06-020,
+//     MS06-039, MS06-078) use bulletin-specific product strings, taken
+//     verbatim from the bulletin's markdown column header (e.g.
+//     "Microsoft PowerPoint 2000", "Windows Server 2003", "Microsoft Project
+//     2000", "Windows Media Player 6.4 (All operating systems)"). MS06-060
+//     is handled by KB-keyed entries instead — see
+//     bulletinArchiveKBNotApplicable comments for KB923088/923089/923090/
+//     924998/924999.
+//
+// At extract time, the row's (bulletin_id, affected_product, affected_component)
+// is normalized via normalizeArchiveComponentKey() and matched against this map.
 var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
+	"MS06-012": {
+		"Microsoft PowerPoint 2000": {"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"},
+		"Microsoft PowerPoint 2002": {"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"},
+	},
+	// MS06-020 entries do not activate in the current Excel corpus (no row lists
+	// Win 2000 / Server 2003 product strings under MS06-020); kept so the map
+	// reflects the markdown table faithfully. See normalizeArchiveComponentKey.
+	"MS06-020": {
+		"Windows 2000":                       {"CVE-2005-2628", "CVE-2006-0024"},
+		"Windows Server 2003":                {"CVE-2005-2628", "CVE-2006-0024"},
+		"Windows Server 2003 Service Pack 1": {"CVE-2005-2628", "CVE-2006-0024"},
+	},
+	"MS06-039": {
+		"Microsoft Project 2000": {"CVE-2006-0033"},
+	},
+	// MS06-060 NA cells are encoded as KB-keyed entries in
+	// bulletinArchiveKBNotApplicable — see the comment in
+	// normalizeArchiveComponentKey for the rationale.
+	"MS06-078": {
+		"Windows Media Player 6.4 (All operating systems)": {"CVE-2006-6134"},
+	},
 	"MS14-010": {
 		"Internet Explorer 6":  {"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"},
 		"Internet Explorer 7":  {"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"},

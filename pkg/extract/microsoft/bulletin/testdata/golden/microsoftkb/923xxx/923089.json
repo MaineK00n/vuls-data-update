@@ -1,0 +1,21 @@
+{
+	"kb_id": "923089",
+	"url": "https://support.microsoft.com/help/923089",
+	"products": [
+		"Microsoft Word 2002 Service Pack 3",
+		"Microsoft Works Suite 2004",
+		"Microsoft Works Suite 2005",
+		"Microsoft Works Suite 2006"
+	],
+	"supersedes": [
+		{
+			"kb_id": "917335"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/06/MS06-060.json"
+		]
+	}
+}

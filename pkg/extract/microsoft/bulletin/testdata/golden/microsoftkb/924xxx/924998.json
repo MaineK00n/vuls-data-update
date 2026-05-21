@@ -1,0 +1,13 @@
+{
+	"kb_id": "924998",
+	"url": "https://support.microsoft.com/help/924998",
+	"products": [
+		"Microsoft Office v. X for Mac"
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/06/MS06-060.json"
+		]
+	}
+}

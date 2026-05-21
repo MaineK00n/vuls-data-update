@@ -1,0 +1,19 @@
+{
+	"kb_id": "923088",
+	"url": "https://support.microsoft.com/help/923088",
+	"products": [
+		"Microsoft Word 2003 Service Pack 1",
+		"Microsoft Word 2003 Service Pack 2"
+	],
+	"supersedes": [
+		{
+			"kb_id": "917334"
+		}
+	],
+	"data_source": {
+		"id": "microsoft-bulletin",
+		"raws": [
+			"fixtures/06/MS06-060.json"
+		]
+	}
+}
