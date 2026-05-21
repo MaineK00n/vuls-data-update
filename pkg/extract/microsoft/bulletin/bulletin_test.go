@@ -5,6 +5,10 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+
+	fetchbulletin "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
 )
@@ -732,6 +736,61 @@ func TestBulletinArchiveCVECorrections(t *testing.T) {
 			}
 			if fix != tt.wantFix {
 				t.Errorf("bulletinArchiveCVECorrections[%q][%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
+			}
+		})
+	}
+}
+
+func TestApplyRowSplits(t *testing.T) {
+	tests := []struct {
+		name string
+		in   []fetchbulletin.Bulletin
+		want []fetchbulletin.Bulletin
+	}{
+		{
+			name: "row without a split entry is passed through unchanged",
+			in: []fetchbulletin.Bulletin{
+				{BulletinID: "MS15-097", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3087039", CVEs: "CVE-2015-2506,CVE-2015-2507"},
+			},
+			want: []fetchbulletin.Bulletin{
+				{BulletinID: "MS15-097", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3087039", CVEs: "CVE-2015-2506,CVE-2015-2507"},
+			},
+		},
+		{
+			name: "MS15-128 KB3116869 Win 10 32-bit row is split into OS-only + .NET 3.5 rows",
+			in: []fetchbulletin.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107,CVE-2015-6108"},
+			},
+			want: []fetchbulletin.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107"},
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6108"},
+			},
+		},
+		{
+			name: "lowercase bulletin_id matches the dispatch case-insensitively",
+			in: []fetchbulletin.Bulletin{
+				{BulletinID: "ms15-128", AffectedProduct: "Windows 10 for x64-based Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6108"},
+			},
+			want: []fetchbulletin.Bulletin{
+				{BulletinID: "ms15-128", AffectedProduct: "Windows 10 for x64-based Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106"},
+				{BulletinID: "ms15-128", AffectedProduct: "Windows 10 for x64-based Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6108"},
+			},
+		},
+		{
+			name: "row whose KB does not match an entry is passed through unchanged",
+			in: []fetchbulletin.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3109094", CVEs: "CVE-2015-6106"},
+			},
+			want: []fetchbulletin.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3109094", CVEs: "CVE-2015-6106"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := bulletin.ApplyRowSplits(tt.in)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("ApplyRowSplits() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
