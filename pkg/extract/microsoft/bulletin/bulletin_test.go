@@ -429,6 +429,36 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 			args: args{bulletinID: "MS17-006", product: "Internet Explorer 11", component: "Windows 10 for x64-based Systems"},
 			want: "Internet Explorer 11 on Windows 10",
 		},
+		// Mixed-applicability bulletins return the whitespace-normalized
+		// affected_product as the inner key, so the filter looks the xlsx
+		// label up verbatim in bulletinArchiveComponentNotApplicable. Verify
+		// that the dispatch returns the product string (not empty) for a few
+		// representative bulletins across MS12-, MS15-, MS16-, and MS17-.
+		{
+			name: "MS16-106 mixed-applicability: returns affected_product (Win Server 2008 SP2)",
+			args: args{bulletinID: "MS16-106", product: "Windows Server 2008 for 32-bit Systems Service Pack 2", component: ""},
+			want: "Windows Server 2008 for 32-bit Systems Service Pack 2",
+		},
+		{
+			name: "MS16-106 mixed-applicability: collapses internal whitespace runs",
+			args: args{bulletinID: "MS16-106", product: "Windows Server  2008  for 32-bit Systems Service Pack 2", component: ""},
+			want: "Windows Server 2008 for 32-bit Systems Service Pack 2",
+		},
+		{
+			name: "MS17-018 mixed-applicability: returns Server 2016 Server Core label (must match the spaced variant in the map)",
+			args: args{bulletinID: "MS17-018", product: "Windows Server 2016 for x64-based Systems (Server Core installation)", component: ""},
+			want: "Windows Server 2016 for x64-based Systems (Server Core installation)",
+		},
+		{
+			name: "MS15-128 mixed-applicability: returns Windows 7 SP1",
+			args: args{bulletinID: "MS15-128", product: "Windows 7 for 32-bit Systems Service Pack 1", component: ""},
+			want: "Windows 7 for 32-bit Systems Service Pack 1",
+		},
+		{
+			name: "MS12-054 mixed-applicability: returns Windows 7",
+			args: args{bulletinID: "MS12-054", product: "Windows 7 for 32-bit Systems", component: ""},
+			want: "Windows 7 for 32-bit Systems",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -601,7 +631,7 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			{
 				name:       "MS17-018 Windows Server 2016 (Server Core) NA for CVE-2017-0024 (multi-table-KB bulletin newly reachable via dispatch)",
 				bulletinID: "MS17-018",
-				component:  "Windows Server 2016 for x64-based Systems(Server Core installation)",
+				component:  "Windows Server 2016 for x64-based Systems (Server Core installation)",
 				cve:        "CVE-2017-0024",
 			},
 			// The one (KB, CVE) pair that genuinely cannot be filtered: MS15-128 /

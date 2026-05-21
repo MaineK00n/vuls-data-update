@@ -410,8 +410,10 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// filter would over-broadly drop the applicable rows too, so the NA
 	// cells are encoded product-keyed in
 	// bulletinArchiveComponentNotApplicable; the dispatch here returns
-	// the row's affected_product unchanged so the inner key matches the
-	// markdown's per-CVE matrix table row[0] product label.
+	// the row's affected_product (whitespace-normalized at the top of
+	// this function via strings.Fields/Join) so the inner key matches
+	// the markdown's per-CVE matrix table row[0] product label after the
+	// same whitespace collapse.
 	//
 	// None of these bulletins have IE/Edge rows (they are Office / Windows
 	// kernel / Graphics / etc.), so the IE/Edge default-branch dispatch is
@@ -3695,30 +3697,40 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 }
 
 // bulletinArchiveComponentNotApplicable lists per-bulletin component-keyed
-// NA CVEs from the archive markdown's per-vulnerability table that indexes
-// by CVE row and component / product column. The table title varies by
-// bulletin era: "Severity Ratings and Impact" for MS14-* IE Cumulative
-// bulletins; "Severity Ratings and Vulnerability Identifiers" for the
-// older MS06-* entries.
+// NA CVEs from the archive markdown's per-vulnerability tables. Three
+// flavors share the same map shape, distinguished by what the inner key
+// represents and which markdown table the entries are sourced from:
 //
-// Two flavors share the same map:
-//
-//   - IE Cumulative bulletins (34 entries, MS14-010 through MS17-006) use a
-//     shared IE/Edge vocabulary, one key per IE version: "Internet Explorer 6",
-//     "Internet Explorer 7", "Internet Explorer 8", "Internet Explorer 9",
-//     "Internet Explorer 10", "Internet Explorer 11", "Internet Explorer 11
-//     on Windows 10", and "Microsoft Edge".
+//   - IE Cumulative bulletins (MS14-010 through MS17-006) use a shared
+//     IE/Edge vocabulary, one inner key per IE version: "Internet Explorer
+//     6", "Internet Explorer 7", "Internet Explorer 8", "Internet Explorer
+//     9", "Internet Explorer 10", "Internet Explorer 11", "Internet
+//     Explorer 11 on Windows 10", and "Microsoft Edge". Sourced from the
+//     "Severity Ratings and Impact" table (CVE rows × IE-version columns).
 //   - Older Office / Windows / Word / WMP bulletins (MS06-012, MS06-020,
 //     MS06-039, MS06-078) use bulletin-specific product strings, taken
 //     verbatim from the bulletin's markdown column header (e.g.
-//     "Microsoft PowerPoint 2000", "Windows Server 2003", "Microsoft Project
-//     2000", "Windows Media Player 6.4 (All operating systems)"). MS06-060
-//     is handled by KB-keyed entries instead — see
+//     "Microsoft PowerPoint 2000", "Windows Server 2003", "Microsoft
+//     Project 2000", "Windows Media Player 6.4 (All operating systems)").
+//     MS06-060 is handled by KB-keyed entries instead — see
 //     bulletinArchiveKBNotApplicable comments for KB923088/923089/923090/
 //     924998/924999.
+//   - Mixed-applicability bulletins (MS12-054, MS12-074, MS13-046,
+//     MS13-081, MS15-097, MS15-128, MS16-014/015/045/062/067/088/090/
+//     097/099/106/107/108/111/133/135/148, MS17-012/013/017/018) use the
+//     row's xlsx affected_product string verbatim (whitespace-normalized)
+//     as the inner key. Sourced from the per-CVE matrix tables that
+//     share a KB across multiple xlsx rows with differing per-CVE NA
+//     status — see the case clause in normalizeArchiveComponentKey for
+//     the dispatch list and rationale.
 //
 // At extract time, the row's (bulletin_id, affected_product, affected_component)
-// is normalized via normalizeArchiveComponentKey() and matched against this map.
+// is normalized via normalizeArchiveComponentKey() and matched against
+// this map. For the third flavor, the inner key must match the
+// affected_product cell of the row exactly after whitespace
+// normalization, so map entries should be copied verbatim from xlsx
+// (note e.g. the space before "(Server Core installation)" in
+// MS17-018's keys).
 var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 	"MS06-012": {
 		"Microsoft PowerPoint 2000": {"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"},
@@ -4243,8 +4255,8 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":     {"CVE-2017-0101"},
 	},
 	"MS17-018": {
-		"Windows Server 2016 for x64-based Systems":                           {"CVE-2017-0078"},
-		"Windows Server 2016 for x64-based Systems(Server Core installation)": {"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"},
+		"Windows Server 2016 for x64-based Systems":                            {"CVE-2017-0078"},
+		"Windows Server 2016 for x64-based Systems (Server Core installation)": {"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"},
 	},
 }
 
