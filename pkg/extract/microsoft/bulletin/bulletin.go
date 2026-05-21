@@ -1207,15 +1207,32 @@ var bulletinArchiveSupersedesOverride = map[string][]string{
 // bulletinArchiveKBNotApplicable lists (componentKB → []CVE) pairs whose
 // cell in the Bulletin archive markdown per-CVE Severity Ratings matrix
 // table is one of the two semantically-equivalent NA markers Microsoft
-// uses: "Not applicable" (the dominant phrasing) or "Not affected"
-// (a legacy spelling that appears in a small set of MS00-MS16 bulletins,
-// notably MS16-106). Both are treated as NA by the generator's is_na()
-// predicate — see the comment on that function in gen_static_map.py for
-// the rationale, and the bulletin_test.go "Not affected" case for the
-// runtime regression guard. Pairs where the KB's rows mix NA and an
-// applicable severity across different OS/component rows of the same
-// bulletin are deliberately omitted (KB-keyed entries are non-lossy only
-// when uniformly NA across all rows sharing the KB).
+// uses:
+//
+//   - "Not applicable" — the dominant phrasing across the archive.
+//   - "Not affected"   — a legacy spelling that appears in a small set
+//     of MS00-MS16 bulletins (notably MS16-106). Same semantic: the
+//     row's product is not affected by the CVE.
+//
+// Other cell markers that look superficially similar must NOT be
+// treated as NA, because they describe products that ARE affected:
+//
+//   - "No severity rating" / "Defense in Depth" — Microsoft's footnote
+//     (e.g. MS13-004) explains the product is affected by the
+//     vulnerability, the known attack vectors are merely blocked in a
+//     default configuration, and customers should still install the
+//     update. CVE attribution must remain for these rows.
+//
+// The TestBulletinArchiveNotApplicable / KB-keyed table in
+// bulletin_test.go contains a regression-guard case for each marker
+// path (one "Not applicable", one "Not affected").
+//
+// KB-keyed entries are non-lossy only when every xlsx row sharing the
+// KB has an NA cell for the CVE; pairs where some rows are NA and
+// others have an applicable severity across the same bulletin would
+// over-broadly drop CVE attribution on the affected rows, so those are
+// deliberately omitted from this map.
+//
 // Inline "// MS<id>: <product>" comments identify the source bulletin(s)
 // for review traceability — see bulletinArchiveSupersedes for the same convention.
 // Entries are ordered by numeric KB value so 6-digit pre-2010 KBs precede
