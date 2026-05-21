@@ -556,6 +556,22 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				component:  "Windows Media Player 6.4 (All operating systems)",
 				cve:        "CVE-2006-6134",
 			},
+			// Product-keyed mixed-applicability cases: the KB is shared across
+			// xlsx rows whose per-CVE table cells differ in NA status, so the
+			// filter dispatches on affected_product unchanged.
+			{
+				name:       "MS16-106 Windows Server 2008 NA for CVE-2016-3349 (KB3185911 shared with Win 8.1+ where the CVE is applicable)",
+				bulletinID: "MS16-106",
+				component:  "Windows Server 2008 for 32-bit Systems Service Pack 2",
+				cve:        "CVE-2016-3349",
+			},
+			// MS15-128's KB3109094 and KB3116869 both span multiple Format A
+			// tables of the bulletin (OS-level + .NET Framework component),
+			// so neither KB-keyed nor product-keyed dispatch can safely
+			// filter the mixed-applicability cells — they are intentionally
+			// not represented in either map. The over-attribution FP
+			// persists as a known trade-off; see mixedProductKeyedBulletins
+			// in bulletin.go for the rationale.
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
