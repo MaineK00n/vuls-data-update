@@ -443,9 +443,9 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// therefore can't disagree with each other). The generator emits
 	// product-keyed entries only for the
 	// safe pairs and silently drops any pair whose markdown cells truly
-	// span tables with conflicting NA state. The lone such pair across
-	// the corpus — MS15-128 / KB3116869 / CVE-2015-6108 — is the only
-	// known remaining FP trade-off.
+	// span tables with conflicting NA state. The one such pair across
+	// the corpus (MS15-128 / KB3116869 / CVE-2015-6108) is recovered by
+	// bulletinArchiveRowSplit — see that map's doc comment.
 	case "MS12-054", "MS12-074",
 		"MS13-046", "MS13-081",
 		"MS15-097", "MS15-128",
@@ -517,6 +517,89 @@ func isOSPlatform(s string) bool {
 	}
 }
 
+// componentSplit describes a synthetic per-component row that should be
+// emitted alongside an OS-only xlsx row. See bulletinArchiveRowSplit.
+type componentSplit struct {
+	Component string   // affected_component value to set on the synthesized row
+	CVEs      []string // CVEs to move from the OS row to the synthesized row
+}
+
+// bulletinArchiveRowSplit captures per-component CVE attributions that
+// Microsoft documents in component matrix tables but BulletinSearch.xlsx
+// collapses into the OS-only row (because Microsoft did not emit a
+// distinct xlsx row for the OS + component configuration). At extract
+// time, the listed CVEs are moved from the OS row's cves to a
+// synthesized row carrying the listed affected_component, preserving
+// the markdown's per-configuration precision and producing a separate
+// detection segment for the (OS + component) configuration.
+//
+// Map shape: bulletinID → component_kb → []componentSplit
+//
+// Each entry encodes a specific markdown row from a component matrix
+// table whose configuration is reachable in production (i.e. customers
+// could have that OS + component combination installed) but absent
+// from xlsx as a standalone row. Without the split, a scanner would
+// either flag the OS row for CVEs it isn't actually exposed to (FP) or
+// silently miss the configuration entirely.
+//
+// Example: MS15-128 / KB3116869 — the bulletin's .NET Framework 3.5
+// component matrix table marks Win 10 / KB3116869 as Critical RCE for
+// CVE-2015-6108, but xlsx only carries the OS-only Win 10 row
+// (cves=CVE-2015-6106,CVE-2015-6107,CVE-2015-6108, affected_component
+// absent). Splitting the .NET 3.5 attribution off produces two
+// detection rows: the OS-only row covering CVE-2015-6107, and a
+// synthesized "Windows 10 + .NET Framework 3.5" row covering
+// CVE-2015-6108 (CVE-2015-6106 is dropped earlier by
+// bulletinArchiveKBNotApplicable as truly NA for Win 10).
+var bulletinArchiveRowSplit = map[string]map[string][]componentSplit{
+	"MS15-128": {
+		"3116869": {
+			{Component: "Microsoft .NET Framework 3.5", CVEs: []string{"CVE-2015-6108"}},
+		},
+	},
+}
+
+// applyRowSplits returns a copy of rows expanded by bulletinArchiveRowSplit.
+// For each row whose (bulletin_id, component_kb) matches an entry, the
+// matching CVEs are removed from the original row's cves string and one
+// synthesized row per split entry is appended carrying the listed
+// affected_component and only the listed CVEs.
+func applyRowSplits(rows []bulletin.Bulletin) []bulletin.Bulletin {
+	out := make([]bulletin.Bulletin, 0, len(rows))
+	for _, row := range rows {
+		splits, ok := bulletinArchiveRowSplit[strings.ToUpper(row.BulletinID)][row.ComponentKB]
+		if !ok {
+			out = append(out, row)
+			continue
+		}
+
+		movedCVEs := make(map[string]struct{})
+		for _, sp := range splits {
+			for _, cve := range sp.CVEs {
+				movedCVEs[cve] = struct{}{}
+			}
+		}
+
+		var keptTokens []string
+		for token := range strings.SplitSeq(row.CVEs, ",") {
+			if _, drop := movedCVEs[strings.TrimSpace(token)]; drop {
+				continue
+			}
+			keptTokens = append(keptTokens, token)
+		}
+		row.CVEs = strings.Join(keptTokens, ",")
+		out = append(out, row)
+
+		for _, sp := range splits {
+			synth := row
+			synth.AffectedComponent = sp.Component
+			synth.CVEs = strings.Join(sp.CVEs, ",")
+			out = append(out, synth)
+		}
+	}
+	return out
+}
+
 func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
 	type dataGroup struct {
 		advisories []advisoryTypes.Advisory
@@ -527,6 +610,8 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	groups := make(map[dataTypes.RootID]dataGroup)
 	kbProducts := make(map[string]map[string]struct{})
 	kbSupersededBy := make(map[string]map[string]struct{}) // old KBID → set of new KBIDs
+
+	rows = applyRowSplits(rows)
 
 	for _, row := range rows {
 		if row.AffectedProduct == "" {
