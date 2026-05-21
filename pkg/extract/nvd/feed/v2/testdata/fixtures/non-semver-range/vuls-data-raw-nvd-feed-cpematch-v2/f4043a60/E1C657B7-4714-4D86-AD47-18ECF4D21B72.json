@@ -1,0 +1,23 @@
+{
+	"criteria": "cpe:2.3:a:cisco:nexus_dashboard:*:*:*:*:*:*:*:*",
+	"matchCriteriaId": "E1C657B7-4714-4D86-AD47-18ECF4D21B72",
+	"versionEndExcluding": "3.1(1k)",
+	"created": "2025-03-20T17:22:07.240",
+	"lastModified": "2025-04-21T13:58:21.877",
+	"cpeLastModified": "2025-04-22T14:50:51.960",
+	"status": "Active",
+	"matches": [
+		{
+			"cpeName": "cpe:2.3:a:cisco:nexus_dashboard:-:*:*:*:*:*:*:*",
+			"cpeNameId": "0437CDAF-6BC4-4424-AA63-895D123E9156"
+		},
+		{
+			"cpeName": "cpe:2.3:a:cisco:nexus_dashboard:1.1:*:*:*:*:*:*:*",
+			"cpeNameId": "FD50C10A-EF4F-4766-99F1-4BE10F9AAC0F"
+		},
+		{
+			"cpeName": "cpe:2.3:a:cisco:nexus_dashboard:1.1\\(0c\\):*:*:*:*:*:*:*",
+			"cpeNameId": "E7546E54-C174-464F-A552-D251A3471627"
+		}
+	]
+}
