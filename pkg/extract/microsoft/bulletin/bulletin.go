@@ -1204,8 +1204,18 @@ var bulletinArchiveSupersedesOverride = map[string][]string{
 	"3178688": {"3115131"},            // MS17-013: Office 2010 SP2; Excel cites MS16-097[3115131] (Office 2010 SP2, different chain)
 }
 
-// bulletinArchiveKBNotApplicable lists (componentKB → []CVE) pairs that
-// the Bulletin archive markdown table explicitly marks "Not applicable".
+// bulletinArchiveKBNotApplicable lists (componentKB → []CVE) pairs whose
+// cell in the Bulletin archive markdown per-CVE Severity Ratings matrix
+// table is one of the two semantically-equivalent NA markers Microsoft
+// uses: "Not applicable" (the dominant phrasing) or "Not affected"
+// (a legacy spelling that appears in a small set of MS00-MS16 bulletins,
+// notably MS16-106). Both are treated as NA by the generator's is_na()
+// predicate — see the comment on that function in gen_static_map.py for
+// the rationale, and the bulletin_test.go "Not affected" case for the
+// runtime regression guard. Pairs where the KB's rows mix NA and an
+// applicable severity across different OS/component rows of the same
+// bulletin are deliberately omitted (KB-keyed entries are non-lossy only
+// when uniformly NA across all rows sharing the KB).
 // Inline "// MS<id>: <product>" comments identify the source bulletin(s)
 // for review traceability — see bulletinArchiveSupersedes for the same convention.
 // Entries are ordered by numeric KB value so 6-digit pre-2010 KBs precede
