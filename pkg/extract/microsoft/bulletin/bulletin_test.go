@@ -468,9 +468,9 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				cve:         "CVE-2013-0001",
 			},
 			{
-				name:        "MS16-106 KB3185911 (Server 2008 Win32k.sys) NA for CVE-2016-3349 (markdown uses \"Not affected\" — covered by extended is_na predicate)",
+				name:        "MS16-106 KB3185911 NA for CVE-2016-3356 (markdown uses \"Not applicable\" — uniformly NA across all 19 xlsx rows of this shared KB)",
 				componentKB: "3185911",
-				cve:         "CVE-2016-3349",
+				cve:         "CVE-2016-3356",
 			},
 		}
 		for _, tt := range tests {
