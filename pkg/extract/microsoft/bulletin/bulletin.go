@@ -522,15 +522,26 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 		// returns false on nil.
 		naCVEsKB := bulletinArchiveKBNotApplicable[row.ComponentKB]
 		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(string(rootID), row.AffectedProduct, row.AffectedComponent)]
-		misattribCVEs := bulletinArchiveMisattributedCVEs[string(rootID)]
+		corrections := bulletinArchiveCVECorrections[string(rootID)]
 		filteredIDs := ids
-		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 || len(misattribCVEs) > 0 {
+		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 || len(corrections) > 0 {
 			filteredIDs = make([]string, 0, len(ids))
 			for _, cve := range ids {
-				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) || slices.Contains(misattribCVEs, cve) {
+				// Apply xlsx CVE token correction first (remap typo → canonical
+				// CVE, or drop when fix is empty). The corrected token then
+				// flows through the NA filters like any other CVE.
+				if fix, ok := corrections[cve]; ok {
+					if fix == "" {
+						continue
+					}
+					cve = fix
+				}
+				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) {
 					continue
 				}
-				filteredIDs = append(filteredIDs, cve)
+				if !slices.Contains(filteredIDs, cve) {
+					filteredIDs = append(filteredIDs, cve)
+				}
 			}
 		}
 
@@ -3909,73 +3920,74 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 	},
 }
 
-// bulletinArchiveMisattributedCVEs lists per-bulletin CVE IDs that
-// BulletinSearch.xlsx erroneously attributes to the bulletin — CVE IDs that
-// do not appear anywhere in the bulletin's archive markdown. Source: full
-// set difference of (xlsx cves cell tokens) − (CVE-YYYY-NNNN regex hits in
-// the bulletin's archive markdown body), across the entire 1554-bulletin
-// corpus.
+// bulletinArchiveCVECorrections maps per-bulletin BulletinSearch.xlsx CVE
+// tokens that do not appear in the bulletin's archive markdown to a
+// correction action. Source: full set difference of (xlsx cves cell tokens)
+// − (CVE-YYYY-NNNN regex hits in the bulletin's archive markdown body),
+// across the entire 1554-bulletin corpus.
 //
-// These split into three patterns:
-//   - Leading-zero / 5-digit suffix anomalies (CVE-2017-00016, etc.)
-//   - Off-by-one neighbours (CVE-2011-3403 vs the bulletin's CVE-2011-3404)
-//   - Out-of-bulletin attributions with no clear neighbour
+// Each entry is one of two actions:
+//   - non-empty fix: replace the bad xlsx token with the named correct CVE.
+//     Used when the markdown identifies the real CVE the xlsx token typo'd
+//     into AND that real CVE is absent from the xlsx cves cell — so a plain
+//     drop would lose the attribution entirely.
+//   - empty fix:     drop the bad xlsx token. Used when (a) the candidate
+//     real CVE is already present in the xlsx cell (drop is sufficient,
+//     attribution preserved), (b) no plausible candidate exists, or (c) the
+//     bulletin formally retracted the CVE (e.g. MS16-084 / V1.1).
 //
-// The likely-correct CVE noted in inline comments is informational only —
-// the filter drops the bad CVE without remapping. The remapped CVE is
-// already attributed to its real bulletin elsewhere in the corpus, or to
-// none if Microsoft never published it.
-var bulletinArchiveMisattributedCVEs = map[string][]string{
-	// MS06-012: year-typo of CVE-2005-4131 (which IS in MS06-012's markdown —
-	// "Excel eBay Vulnerability"). The xlsx records the year as 2006.
-	"MS06-012": {"CVE-2006-4131"},
-	// MS06-021: CVE-2006-4089 is a year-typo of CVE-2005-4089 (which IS in
-	// MS06-021's markdown — "CSS Cross-Domain Information Disclosure
-	// Vulnerability"). CVE-2006-2283 has no near neighbour in MS06-021's
-	// markdown and is kept on the conservative assumption that the markdown
-	// is authoritative.
-	"MS06-021": {"CVE-2006-2283", "CVE-2006-4089"},
+// The three xlsx-side typo patterns observed:
+//   - Year-shift  : CVE-2006-4131 → CVE-2005-4131 (MS06-012)
+//   - Off-by-one  : CVE-2011-3403 → CVE-2011-3404 (MS11-099)
+//   - Leading 0   : CVE-2017-00016 → CVE-2017-0016 (MS17-012)
+var bulletinArchiveCVECorrections = map[string]map[string]string{
+	// MS06-012: year-typo of CVE-2005-4131 ("Excel eBay Vulnerability") —
+	// remap (CVE-2005-4131 not in xlsx).
+	"MS06-012": {"CVE-2006-4131": "CVE-2005-4131"},
+	// MS06-021: CVE-2006-4089 is a year-typo of CVE-2005-4089 ("CSS
+	// Cross-Domain Information Disclosure") — remap (CVE-2005-4089 not in
+	// xlsx). CVE-2006-2283 has no candidate in MS06-021's markdown — drop.
+	"MS06-021": {"CVE-2006-2283": "", "CVE-2006-4089": "CVE-2005-4089"},
 	// (MS08-032 / CVE-2007-0675 omitted: the archive markdown at
-	// ms08-032.md is mis-mapped — its content is actually MS16-011's —
-	// so the absence-in-markdown signal cannot distinguish typo from real
-	// attribution. CVE-2007-0675 is a real ActiveX-related vulnerability
-	// addressed by the MS08-032 Cumulative ActiveX Kill Bit update.)
-	// MS11-056: likely off-by-one of CVE-2011-1284.
-	"MS11-056": {"CVE-2011-1285"},
-	// MS11-099: likely off-by-one of CVE-2011-3404 (which IS in MS11-099
-	// markdown); CVE-2011-3403 appears in MS11-096's markdown instead.
-	"MS11-099": {"CVE-2011-3403"},
-	// MS13-028: CVEs not in markdown; no near neighbours in MS13-028.
-	"MS13-028": {"CVE-2013-2013", "CVE-2013-2014"},
-	// MS13-037: likely off-by-one of CVE-2013-1312; CVE-2013-1313 appears in
-	// MS13-020's markdown instead.
-	"MS13-037": {"CVE-2013-1313"},
-	// MS13-059: likely off-by-one of CVE-2013-3184; CVE-2013-3181 appears in
-	// MS13-060's markdown instead.
-	"MS13-059": {"CVE-2013-3181"},
-	// MS14-051: likely off-by-one of CVE-2014-2796; CVE-2014-2799 appears in
-	// MS14-052's markdown instead.
-	"MS14-051": {"CVE-2014-2799"},
-	// MS15-036: 5-digit suffix anomaly; CVE-2015-16453 does not exist as a
-	// canonical CVE ID (no leading-zero variant matches MS15-036's contents).
-	"MS15-036": {"CVE-2015-16453"},
-	// MS15-048: 5-digit suffix anomaly; CVE-2015-16723 does not exist as a
-	// canonical CVE ID.
-	"MS15-048": {"CVE-2015-16723"},
-	// MS16-003: likely off-by-one of CVE-2016-0002; CVE-2016-0003 appears in
-	// MS16-002's markdown instead.
-	"MS16-003": {"CVE-2016-0003"},
-	// MS16-079: cross-year mis-tag; CVE-2015-6016 not in any MS16 bulletin.
-	"MS16-079": {"CVE-2015-6016"},
-	// MS16-084: Microsoft retracted this CVE in the V1.1 (2017-03-17) revision
-	// of the bulletin — "Removed CVE-2016-3276 from the Vulnerability Severity
-	// Ratings and Impact table and from the Vulnerability Information because
-	// Internet Explorer 9, Internet Explorer 10, and Internet Explorer 11 are
-	// not affected by this vulnerability." BulletinSearch.xlsx still lists it.
-	"MS16-084": {"CVE-2016-3276"},
-	// MS16-144: CVE not in markdown; no near neighbour in MS16-144.
-	"MS16-144": {"CVE-2016-7293"},
-	// MS17-012: leading-zero typo of CVE-2017-0016 (which IS in MS17-012
-	// markdown). The xlsx cell records "CVE-2017-00016".
-	"MS17-012": {"CVE-2017-00016"},
+	// ms08-032.md is mis-mapped — its content is actually MS16-011's — so
+	// the absence-in-markdown signal cannot distinguish typo from real
+	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
+	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
+	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
+	"MS11-056": {"CVE-2011-1285": "CVE-2011-1284"},
+	// MS11-099: off-by-one of CVE-2011-3404 — remap (3404 not in xlsx).
+	// CVE-2011-3403 itself appears in MS11-096's markdown.
+	"MS11-099": {"CVE-2011-3403": "CVE-2011-3404"},
+	// MS13-028: no candidate in markdown — drop both.
+	"MS13-028": {"CVE-2013-2013": "", "CVE-2013-2014": ""},
+	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
+	// CVE-2013-1313 appears in MS13-020's markdown.
+	"MS13-037": {"CVE-2013-1313": ""},
+	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
+	// CVE-2013-3181 appears in MS13-060's markdown.
+	"MS13-059": {"CVE-2013-3181": ""},
+	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
+	// CVE-2014-2799 appears in MS14-052's markdown.
+	"MS14-051": {"CVE-2014-2799": ""},
+	// MS15-036: 5-digit suffix anomaly; no clean canonical-form candidate —
+	// drop.
+	"MS15-036": {"CVE-2015-16453": ""},
+	// MS15-048: 5-digit suffix anomaly; no clean canonical-form candidate —
+	// drop.
+	"MS15-048": {"CVE-2015-16723": ""},
+	// MS16-003: off-by-one of CVE-2016-0002 — remap (0002 not in xlsx).
+	// CVE-2016-0003 appears in MS16-002's markdown.
+	"MS16-003": {"CVE-2016-0003": "CVE-2016-0002"},
+	// MS16-079: cross-year mis-tag of CVE-2015-6015 — remap (6015 not in
+	// xlsx). CVE-2015-6016 not in any MS16 bulletin.
+	"MS16-079": {"CVE-2015-6016": "CVE-2015-6015"},
+	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
+	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
+	// affected." Drop, no correction.
+	"MS16-084": {"CVE-2016-3276": ""},
+	// MS16-144: no candidate in markdown — drop.
+	"MS16-144": {"CVE-2016-7293": ""},
+	// MS17-012: leading-zero typo of CVE-2017-0016 — remap (0016 not in
+	// xlsx; the xlsx cell carries "CVE-2017-00016" with an extra zero).
+	"MS17-012": {"CVE-2017-00016": "CVE-2017-0016"},
 }
