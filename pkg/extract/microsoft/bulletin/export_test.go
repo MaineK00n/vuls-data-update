@@ -8,4 +8,5 @@ var (
 	NormalizeArchiveComponentKey          = normalizeArchiveComponentKey
 	BulletinArchiveKBNotApplicable        = bulletinArchiveKBNotApplicable
 	BulletinArchiveComponentNotApplicable = bulletinArchiveComponentNotApplicable
+	BulletinArchiveCVECorrections         = bulletinArchiveCVECorrections
 )

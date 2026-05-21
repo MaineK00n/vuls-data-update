@@ -508,26 +508,41 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 
 		// Filter CVEs that the Bulletin archive markdown explicitly marks as
 		// "Not applicable" for this row's (componentKB) or (bulletin, component)
-		// pair. BulletinSearch.xlsx groups every CVE of a bulletin row in a
-		// single comma-separated cves cell, so a CVE that only applies to a
-		// subset of OSes/IE versions in the bulletin gets attributed to every
-		// row of that bulletin. The archive markdown's per-cell "Not applicable"
-		// markers narrow this back to the authoritative per-(KB, CVE) and
-		// per-(bulletin, component, CVE) attribution — see the two static maps
-		// bulletinArchiveKBNotApplicable (KB-keyed, from OS/Software-rows ×
-		// CVE-cols tables) and bulletinArchiveComponentNotApplicable
-		// ((bulletin, component)-keyed, from CVE-rows × IE-version-cols
-		// severity tables) below.
+		// pair, and apply per-bulletin xlsx CVE token corrections (remap typo
+		// → canonical CVE, or drop when the canonical form is absent from the
+		// markdown). BulletinSearch.xlsx groups every CVE of a bulletin row
+		// in a single comma-separated cves cell, so a CVE that only applies
+		// to a subset of OSes/IE versions in the bulletin gets attributed to
+		// every row of that bulletin. The archive markdown's per-cell "Not
+		// applicable" markers narrow this back to the authoritative per-(KB,
+		// CVE) and per-(bulletin, component, CVE) attribution — see the two
+		// static maps bulletinArchiveKBNotApplicable (KB-keyed, from
+		// OS/Software-rows × CVE-cols tables) and
+		// bulletinArchiveComponentNotApplicable ((bulletin, component)-keyed,
+		// from CVE-rows × IE-version-cols severity tables) below.
+		// bulletinArchiveCVECorrections handles xlsx tokens that are absent
+		// from the bulletin's markdown body (year-typos, off-by-one suffixes,
+		// retracted CVEs, etc.).
 		//
-		// Most rows have no narrowing entry on either side, so look up both NA
-		// lists once per row and skip the per-CVE filter loop entirely when
-		// there is nothing to drop. Nil slices are fine here — slices.Contains
-		// returns false on nil.
+		// Most rows have no NA entry and no corrections, so look up all three
+		// inputs once per row and skip the per-CVE filter/remap loop entirely
+		// when there is nothing to drop or remap. When the loop does run,
+		// build sets for the NA lists and the dedup tracking so each CVE
+		// costs O(1) instead of O(n) — some IE Cumulative rows carry 30-50+
+		// CVEs against equally large NA lists.
 		naCVEsKB := bulletinArchiveKBNotApplicable[row.ComponentKB]
 		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(string(rootID), row.AffectedProduct, row.AffectedComponent)]
 		corrections := bulletinArchiveCVECorrections[string(rootID)]
 		filteredIDs := ids
 		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 || len(corrections) > 0 {
+			naSet := make(map[string]struct{}, len(naCVEsKB)+len(naCVEsComp))
+			for _, c := range naCVEsKB {
+				naSet[c] = struct{}{}
+			}
+			for _, c := range naCVEsComp {
+				naSet[c] = struct{}{}
+			}
+			seen := make(map[string]struct{}, len(ids))
 			filteredIDs = make([]string, 0, len(ids))
 			for _, cve := range ids {
 				// Apply xlsx CVE token correction first (remap typo → canonical
@@ -539,12 +554,14 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 					}
 					cve = fix
 				}
-				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) {
+				if _, na := naSet[cve]; na {
 					continue
 				}
-				if !slices.Contains(filteredIDs, cve) {
-					filteredIDs = append(filteredIDs, cve)
+				if _, dup := seen[cve]; dup {
+					continue
 				}
+				seen[cve] = struct{}{}
+				filteredIDs = append(filteredIDs, cve)
 			}
 		}
 
