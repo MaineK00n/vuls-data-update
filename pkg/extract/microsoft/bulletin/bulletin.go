@@ -407,7 +407,20 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	default:
 		// MS14-* through MS16-* IE Cumulative layout: IE identity in
 		// affected_component, OS in affected_product.
-		return ieEdgeComponentKey(component, product)
+		if key := ieEdgeComponentKey(component, product); key != "" {
+			return key
+		}
+		// Fall back to product-keyed dispatch for bulletins where the same KB
+		// spans multiple xlsx rows whose per-CVE table cells have mixed
+		// applicability — see bulletinArchiveKBNotApplicable for the
+		// rationale. The product label here is taken verbatim from the row's
+		// affected_product cell and matches the markdown's per-CVE Severity
+		// Ratings table row[0] product label, which is the inner key of
+		// bulletinArchiveComponentNotApplicable for these bulletins.
+		if mixedProductKeyedBulletins[bulletinID] {
+			return product
+		}
+		return ""
 	}
 }
 
@@ -436,6 +449,33 @@ func ieEdgeComponentKey(ieField, osField string) string {
 	default:
 		return ""
 	}
+}
+
+// mixedProductKeyedBulletins lists bulletin IDs whose KB-keyed NA cells include
+// at least one (KB, CVE) pair where the KB is shared across xlsx rows with
+// mixed per-CVE applicability (some NA, some applicable) AND the same KB
+// appears in only one Format A table of the bulletin (so the xlsx
+// affected_product unambiguously maps to a specific markdown row). For those
+// bulletins the per-(KB, CVE) NA cells are stored product-keyed in
+// bulletinArchiveComponentNotApplicable, and the dispatch above returns the
+// row's affected_product unchanged as the key.
+//
+// Five additional bulletins (MS15-097, MS15-128, MS16-107, MS16-133,
+// MS17-018) have mixed-applicability KBs that span multiple Format A tables
+// of the same bulletin (e.g., MS15-128 KB3116869 is NA in the OS-level
+// table but applicable in the .NET Framework component table for the same
+// product label). xlsx loses the table-level distinction, so even
+// product-keyed dispatch cannot safely filter those without risking FN. They
+// are intentionally absent from this list — their FPs persist as a known
+// trade-off.
+var mixedProductKeyedBulletins = map[string]bool{
+	"MS12-054": true, "MS12-074": true,
+	"MS13-046": true, "MS13-081": true,
+	"MS16-014": true, "MS16-015": true, "MS16-045": true, "MS16-062": true,
+	"MS16-067": true, "MS16-088": true, "MS16-090": true, "MS16-097": true,
+	"MS16-099": true, "MS16-106": true, "MS16-108": true, "MS16-111": true,
+	"MS16-135": true, "MS16-148": true,
+	"MS17-012": true, "MS17-013": true, "MS17-017": true,
 }
 
 // isOSPlatform reports whether s is a Windows OS, SharePoint Server, or similar platform name.
@@ -3688,9 +3728,6 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Microsoft PowerPoint 2000": {"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"},
 		"Microsoft PowerPoint 2002": {"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"},
 	},
-	// MS06-020 entries do not activate in the current Excel corpus (no row lists
-	// Win 2000 / Server 2003 product strings under MS06-020); kept so the map
-	// reflects the markdown table faithfully. See normalizeArchiveComponentKey.
 	"MS06-020": {
 		"Windows 2000":                       {"CVE-2005-2628", "CVE-2006-0024"},
 		"Windows Server 2003":                {"CVE-2005-2628", "CVE-2006-0024"},
@@ -3699,11 +3736,81 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 	"MS06-039": {
 		"Microsoft Project 2000": {"CVE-2006-0033"},
 	},
-	// MS06-060 NA cells are encoded as KB-keyed entries in
-	// bulletinArchiveKBNotApplicable — see the comment in
-	// normalizeArchiveComponentKey for the rationale.
 	"MS06-078": {
 		"Windows Media Player 6.4 (All operating systems)": {"CVE-2006-6134"},
+	},
+	"MS12-054": {
+		"Windows 7 for 32-bit Systems":                                                           {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows 7 for x64-based Systems":                                                        {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2003 Service Pack 2":                                                     {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2003 with SP2 for Itanium-based Systems":                                 {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2003 x64 Edition Service Pack 2":                                         {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 R2 for Itanium-based Systems":                                       {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1":                        {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 R2 for x64-based Systems":                                           {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 R2 for x64-based Systems (Server Core installation)":                {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":                            {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":                                  {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":       {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                           {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                               {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)":    {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Vista Service Pack 2":                                                           {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows Vista x64 Edition Service Pack 2":                                               {"CVE-2012-1852", "CVE-2012-1853"},
+		"Windows XP Professional x64 Edition Service Pack 2":                                     {"CVE-2012-1853"},
+	},
+	"MS12-074": {
+		"Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems":    {"CVE-2012-1895"},
+		"Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems": {"CVE-2012-1895"},
+		"Microsoft .NET Framework 3.5 on Windows Server 2012":             {"CVE-2012-1895"},
+	},
+	"MS13-046": {
+		"Windows 8 for 32-bit Systems (ntoskrnl.exe)":                                                         {"CVE-2013-1333"},
+		"Windows 8 for 64-bit Systems (ntoskrnl.exe)":                                                         {"CVE-2013-1333"},
+		"Windows RT (ntoskrnl.exe)":                                                                           {"CVE-2013-1333"},
+		"Windows Server 2003 Service Pack 2 (Win32k.sys)":                                                     {"CVE-2013-1333"},
+		"Windows Server 2003 with SP2 for Itanium-based Systems (Win32k.sys)":                                 {"CVE-2013-1333"},
+		"Windows Server 2003 x64 Edition Service Pack 2 (Win32k.sys)":                                         {"CVE-2013-1333"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1 (Win32k.sys)":                        {"CVE-2013-1333"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation) (Win32k.sys)": {"CVE-2013-1333"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Win32k.sys)":                            {"CVE-2013-1333"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation) (Win32k.sys)":       {"CVE-2013-1333"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Win32k.sys)":                                  {"CVE-2013-1333"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2 (Win32k.sys)":                           {"CVE-2013-1333"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation) (Win32k.sys)":    {"CVE-2013-1333"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Win32k.sys)":                               {"CVE-2013-1333"},
+		"Windows Server 2012 (Server Core installation) (ntoskrnl.exe)":                                       {"CVE-2013-1333"},
+		"Windows Server 2012 (ntoskrnl.exe)":                                                                  {"CVE-2013-1333"},
+		"Windows Vista Service Pack 2 (Win32k.sys)":                                                           {"CVE-2013-1333"},
+		"Windows Vista x64 Edition Service Pack 2 (Win32k.sys)":                                               {"CVE-2013-1333"},
+		"Windows XP Professional x64 Edition Service Pack 2 (Win32k.sys)":                                     {"CVE-2013-1333"},
+		"Windows XP Service Pack 3 (Win32k.sys)":                                                              {"CVE-2013-1333"},
+	},
+	"MS13-081": {
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2013-3880"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2013-3880"},
+		"Windows 8 for 32-bit Systems":                                                           {"CVE-2013-3881"},
+		"Windows 8 for 64-bit Systems":                                                           {"CVE-2013-3881"},
+		"Windows RT":                                                                             {"CVE-2013-3881"},
+		"Windows Server 2003 Service Pack 2":                                                     {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2003 with SP2 for Itanium-based Systems":                                 {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2003 x64 Edition Service Pack 2":                                         {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1":                        {"CVE-2013-3880"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":                            {"CVE-2013-3880"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2013-3880"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":                                  {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":       {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                           {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                               {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Server 2012":                                                                    {"CVE-2013-3881"},
+		"Windows Server 2012 (Server Core installation)":                                         {"CVE-2013-3881"},
+		"Windows Vista Service Pack 2":                                                           {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows Vista x64 Edition Service Pack 2":                                               {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows XP Professional x64 Edition Service Pack 2":                                     {"CVE-2013-3880", "CVE-2013-3881"},
+		"Windows XP Service Pack 3":                                                              {"CVE-2013-3880", "CVE-2013-3881"},
 	},
 	"MS14-010": {
 		"Internet Explorer 6":  {"CVE-2014-0267", "CVE-2014-0268", "CVE-2014-0270", "CVE-2014-0272", "CVE-2014-0273", "CVE-2014-0274", "CVE-2014-0276", "CVE-2014-0277", "CVE-2014-0278", "CVE-2014-0279", "CVE-2014-0281", "CVE-2014-0283", "CVE-2014-0284", "CVE-2014-0287", "CVE-2014-0288", "CVE-2014-0289", "CVE-2014-0290", "CVE-2014-0293"},
@@ -3849,6 +3956,25 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 11":               {"CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2015-2483", "CVE-2015-2487", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541"},
 	},
+	"MS15-097": {
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows 8 for 32-bit Systems":                                                           {"CVE-2015-2529"},
+		"Windows 8 for x64-based Systems":                                                        {"CVE-2015-2529"},
+		"Windows RT":                                                                             {"CVE-2015-2529"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1":                        {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":                            {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":                                  {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":       {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                           {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                               {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)":    {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Server 2012":                                                                    {"CVE-2015-2529"},
+		"Windows Server 2012 (Server Core installation)":                                         {"CVE-2015-2529"},
+		"Windows Vista Service Pack 2":                                                           {"CVE-2015-2527", "CVE-2015-2529"},
+		"Windows Vista x64 Edition Service Pack 2":                                               {"CVE-2015-2527", "CVE-2015-2529"},
+	},
 	"MS15-106": {
 		"Internet Explorer 7":                {"CVE-2015-2482", "CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6046", "CVE-2015-6047", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6052", "CVE-2015-6053", "CVE-2015-6055", "CVE-2015-6056", "CVE-2015-6059"},
 		"Internet Explorer 8":                {"CVE-2015-6042", "CVE-2015-6045", "CVE-2015-6046", "CVE-2015-6050", "CVE-2015-6051", "CVE-2015-6053", "CVE-2015-6056"},
@@ -3873,6 +3999,23 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 11":               {"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6152", "CVE-2015-6162"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6150", "CVE-2015-6152", "CVE-2015-6162", "CVE-2015-6164"},
 	},
+	"MS15-128": {
+		"Windows 7 for 32-bit Systems Service Pack 1":                     {"CVE-2015-6106"},
+		"Windows 7 for x64-based Systems Service Pack 1":                  {"CVE-2015-6106"},
+		"Windows 8 for 32-bit Systems":                                    {"CVE-2015-6106"},
+		"Windows 8 for x64-based Systems":                                 {"CVE-2015-6106"},
+		"Windows 8.1 for 32-bit Systems":                                  {"CVE-2015-6106"},
+		"Windows 8.1 for x64-based Systems":                               {"CVE-2015-6106"},
+		"Windows RT":                                                      {"CVE-2015-6106"},
+		"Windows RT 8.1":                                                  {"CVE-2015-6106"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1": {"CVE-2015-6106"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":     {"CVE-2015-6106"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2015-6106"},
+		"Windows Server 2012":                               {"CVE-2015-6106"},
+		"Windows Server 2012 (Server Core installation)":    {"CVE-2015-6106"},
+		"Windows Server 2012 R2":                            {"CVE-2015-6106"},
+		"Windows Server 2012 R2 (Server Core installation)": {"CVE-2015-6106"},
+	},
 	"MS16-001": {
 		"Internet Explorer 7": {"CVE-2016-0002", "CVE-2016-0005"},
 		"Internet Explorer 8": {"CVE-2016-0005"},
@@ -3882,6 +4025,28 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 10":               {"CVE-2016-0062", "CVE-2016-0071"},
 		"Internet Explorer 11":               {"CVE-2016-0064", "CVE-2016-0071"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2016-0064", "CVE-2016-0071"},
+	},
+	"MS16-014": {
+		"Windows 8.1 for 32-bit Systems":                        {"CVE-2016-0040", "CVE-2016-0049"},
+		"Windows 8.1 for x64-based Systems":                     {"CVE-2016-0040", "CVE-2016-0049"},
+		"Windows RT 8.1":                                        {"CVE-2016-0040", "CVE-2016-0049"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2": {"CVE-2016-0042", "CVE-2016-0049"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":    {"CVE-2016-0042", "CVE-2016-0049"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                        {"CVE-2016-0042", "CVE-2016-0049"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                            {"CVE-2016-0042", "CVE-2016-0049"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)": {"CVE-2016-0042", "CVE-2016-0049"},
+		"Windows Server 2012":                               {"CVE-2016-0040"},
+		"Windows Server 2012 (Server Core installation)":    {"CVE-2016-0040"},
+		"Windows Server 2012 R2":                            {"CVE-2016-0040", "CVE-2016-0049"},
+		"Windows Server 2012 R2 (Server Core installation)": {"CVE-2016-0040", "CVE-2016-0049"},
+		"Windows Vista Service Pack 2":                      {"CVE-2016-0042", "CVE-2016-0049"},
+		"Windows Vista x64 Edition Service Pack 2":          {"CVE-2016-0042", "CVE-2016-0049"},
+	},
+	"MS16-015": {
+		"Microsoft Excel 2016 for Mac": {"CVE-2016-0022", "CVE-2016-0052"},
+		"Microsoft Excel for Mac 2011": {"CVE-2016-0022", "CVE-2016-0052"},
+		"Microsoft Word 2016 for Mac":  {"CVE-2016-0054"},
+		"Microsoft Word for Mac 2011":  {"CVE-2016-0054"},
 	},
 	"MS16-023": {
 		"Internet Explorer 9":                {"CVE-2016-0102", "CVE-2016-0103", "CVE-2016-0104", "CVE-2016-0106", "CVE-2016-0108", "CVE-2016-0109", "CVE-2016-0110", "CVE-2016-0114"},
@@ -3895,34 +4060,145 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 11":               {"CVE-2016-0159"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2016-0159", "CVE-2016-0164"},
 	},
+	"MS16-045": {
+		"Windows Server 2012":                            {"CVE-2016-0090"},
+		"Windows Server 2012 (Server Core installation)": {"CVE-2016-0090"},
+	},
 	"MS16-051": {
 		"Internet Explorer 9":  {"CVE-2016-0188", "CVE-2016-0194"},
 		"Internet Explorer 10": {"CVE-2016-0188"},
 		"Internet Explorer 11": {"CVE-2016-0188"},
 	},
+	"MS16-062": {
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":                               {"CVE-2016-0176"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":    {"CVE-2016-0176"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                        {"CVE-2016-0176"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                            {"CVE-2016-0176"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)": {"CVE-2016-0176"},
+		"Windows Vista Service Pack 2":                                                        {"CVE-2016-0176"},
+		"Windows Vista x64 Edition Service Pack 2":                                            {"CVE-2016-0176"},
+	},
 	"MS16-063": {
 		"Internet Explorer 9":  {"CVE-2016-3202", "CVE-2016-3210"},
 		"Internet Explorer 10": {"CVE-2016-3210"},
+	},
+	"MS16-067": {
+		"Windows 8.1 for 32-bit Systems":    {"CVE-2016-0190"},
+		"Windows 8.1 for x64-based Systems": {"CVE-2016-0190"},
+		"Windows RT 8.1":                    {"CVE-2016-0190"},
 	},
 	"MS16-084": {
 		"Internet Explorer 9":                {"CVE-2016-3243", "CVE-2016-3260", "CVE-2016-3261", "CVE-2016-3277"},
 		"Internet Explorer 10":               {"CVE-2016-3260", "CVE-2016-3261"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2016-3245"},
 	},
+	"MS16-088": {
+		"Microsoft Excel 2016 for Mac": {"CVE-2016-3280", "CVE-2016-3281", "CVE-2016-3282"},
+		"Microsoft Excel for Mac 2011": {"CVE-2016-3280", "CVE-2016-3281", "CVE-2016-3282"},
+		"Microsoft Word 2016 for Mac":  {"CVE-2016-3284"},
+		"Microsoft Word for Mac 2011":  {"CVE-2016-3284"},
+	},
+	"MS16-090": {
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2016-3250"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2016-3250"},
+		"Windows 8.1 for 32-bit Systems":                                                         {"CVE-2016-3250"},
+		"Windows 8.1 for x64-based Systems":                                                      {"CVE-2016-3250"},
+		"Windows RT 8.1":                                                                         {"CVE-2016-3250"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1":                        {"CVE-2016-3250"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":                            {"CVE-2016-3250"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2016-3250"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":                                  {"CVE-2016-3250"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":       {"CVE-2016-3250"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                           {"CVE-2016-3250"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                               {"CVE-2016-3250"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)":    {"CVE-2016-3250"},
+		"Windows Server 2012 R2":                                                                 {"CVE-2016-3250"},
+		"Windows Server 2012 R2 (Server Core installation)":                                      {"CVE-2016-3250"},
+		"Windows Vista Service Pack 2":                                                           {"CVE-2016-3250"},
+		"Windows Vista x64 Edition Service Pack 2":                                               {"CVE-2016-3250"},
+	},
 	"MS16-095": {
 		"Internet Explorer 9":  {"CVE-2016-3288", "CVE-2016-3289", "CVE-2016-3290", "CVE-2016-3321", "CVE-2016-3322"},
 		"Internet Explorer 10": {"CVE-2016-3288", "CVE-2016-3289", "CVE-2016-3290", "CVE-2016-3322"},
+	},
+	"MS16-097": {
+		"Windows 8.1 for 32-bit Systems":                    {"CVE-2016-3303", "CVE-2016-3304"},
+		"Windows 8.1 for x64-based Systems":                 {"CVE-2016-3303", "CVE-2016-3304"},
+		"Windows RT 8.1":                                    {"CVE-2016-3303", "CVE-2016-3304"},
+		"Windows Server 2012":                               {"CVE-2016-3303", "CVE-2016-3304"},
+		"Windows Server 2012 (Server Core installation)":    {"CVE-2016-3303", "CVE-2016-3304"},
+		"Windows Server 2012 R2":                            {"CVE-2016-3303", "CVE-2016-3304"},
+		"Windows Server 2012 R2 (Server Core installation)": {"CVE-2016-3303", "CVE-2016-3304"},
+	},
+	"MS16-099": {
+		"Microsoft OneNote 2016 for Mac": {"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317"},
+		"Microsoft Word 2016 for Mac":    {"CVE-2016-3315"},
 	},
 	"MS16-104": {
 		"Internet Explorer 9":  {"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3292", "CVE-2016-3295", "CVE-2016-3325"},
 		"Internet Explorer 10": {"CVE-2016-3247", "CVE-2016-3291", "CVE-2016-3325"},
 		"Internet Explorer 11": {"CVE-2016-3325"},
 	},
+	"MS16-106": {
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2016-3349"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2016-3349"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1":                        {"CVE-2016-3349"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":                            {"CVE-2016-3349"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2016-3349"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":                                  {"CVE-2016-3349"},
+		"Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)":       {"CVE-2016-3349"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2":                           {"CVE-2016-3349"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":                               {"CVE-2016-3349"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2 (Server Core installation)":    {"CVE-2016-3349"},
+		"Windows Vista Service Pack 2":                                                           {"CVE-2016-3349"},
+		"Windows Vista x64 Edition Service Pack 2":                                               {"CVE-2016-3349"},
+	},
+	"MS16-107": {
+		"Microsoft Excel 2016 for Mac":                           {"CVE-2016-3357", "CVE-2016-3360", "CVE-2016-3366"},
+		"Microsoft Office 2013 RT Service Pack 1":                {"CVE-2016-0137", "CVE-2016-0141"},
+		"Microsoft Office 2013 Service Pack 1 (32-bit editions)": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357"},
+		"Microsoft Office 2013 Service Pack 1 (64-bit editions)": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357"},
+		"Microsoft Outlook 2016 for Mac":                         {"CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3360"},
+		"Microsoft PowerPoint 2016 for Mac":                      {"CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3366"},
+		"Microsoft Word 2016 for Mac":                            {"CVE-2016-3358", "CVE-2016-3360", "CVE-2016-3366"},
+	},
+	"MS16-108": {
+		"Microsoft Exchange Server 2013 Cumulative Update 12": {"CVE-2016-3379"},
+		"Microsoft Exchange Server 2013 Cumulative Update 13": {"CVE-2016-3379"},
+		"Microsoft Exchange Server 2013 Service Pack 1":       {"CVE-2016-3379"},
+	},
+	"MS16-111": {
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2016-3372"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2016-3372"},
+		"Windows 8.1 for 32-bit Systems":                                                         {"CVE-2016-3372"},
+		"Windows 8.1 for x64-based Systems":                                                      {"CVE-2016-3372"},
+		"Windows RT 8.1":                                                                         {"CVE-2016-3372"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1":                        {"CVE-2016-3372"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":                            {"CVE-2016-3372"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2016-3372"},
+		"Windows Server 2012":                                                                    {"CVE-2016-3372"},
+		"Windows Server 2012 (Server Core installation)":                                         {"CVE-2016-3372"},
+		"Windows Server 2012 R2":                                                                 {"CVE-2016-3372"},
+		"Windows Server 2012 R2 (Server Core installation)":                                      {"CVE-2016-3372"},
+	},
 	"MS16-118": {
 		"Internet Explorer 9":                {"CVE-2016-3331", "CVE-2016-3383", "CVE-2016-3387", "CVE-2016-3388", "CVE-2016-3390"},
 		"Internet Explorer 10":               {"CVE-2016-3331", "CVE-2016-3390"},
 		"Internet Explorer 11":               {"CVE-2016-3331"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2016-3383"},
+	},
+	"MS16-133": {
+		"Microsoft Excel 2016 for Mac": {"CVE-2016-7234"},
+		"Microsoft Excel for Mac 2011": {"CVE-2016-7232"},
+		"Microsoft Word 2016 for Mac":  {"CVE-2016-7236"},
+		"Microsoft Word for Mac 2011":  {"CVE-2016-7213", "CVE-2016-7228", "CVE-2016-7229", "CVE-2016-7231", "CVE-2016-7236"},
+	},
+	"MS16-135": {
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":        {"CVE-2016-7255"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2": {"CVE-2016-7255"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":     {"CVE-2016-7255"},
+		"Windows Vista Service Pack 2":                                 {"CVE-2016-7255"},
+		"Windows Vista x64 Edition Service Pack 2":                     {"CVE-2016-7255"},
 	},
 	"MS16-142": {
 		"Internet Explorer 9":  {"CVE-2016-7196", "CVE-2016-7241"},
@@ -3933,10 +4209,46 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 10":               {"CVE-2016-7287"},
 		"Internet Explorer 11 on Windows 10": {"CVE-2016-7278", "CVE-2016-7284"},
 	},
+	"MS16-148": {
+		"Microsoft Excel 2016 for Mac":           {"CVE-2016-7257", "CVE-2016-7274"},
+		"Microsoft Excel for Mac 2011":           {"CVE-2016-7268"},
+		"Microsoft Office 2016 (32-bit edition)": {"CVE-2016-7275", "CVE-2016-7277"},
+		"Microsoft Office 2016 (64-bit edition)": {"CVE-2016-7275", "CVE-2016-7277"},
+		"Microsoft Office for Mac 2011":          {"CVE-2016-7290", "CVE-2016-7291"},
+		"Microsoft Word for Mac 2011":            {"CVE-2016-7257", "CVE-2016-7263", "CVE-2016-7264", "CVE-2016-7274", "CVE-2016-7276"},
+	},
 	"MS17-006": {
 		"Internet Explorer 9":  {"CVE-2017-0012", "CVE-2017-0018", "CVE-2017-0033", "CVE-2017-0037", "CVE-2017-0049", "CVE-2017-0154"},
 		"Internet Explorer 10": {"CVE-2017-0012", "CVE-2017-0033", "CVE-2017-0049", "CVE-2017-0154"},
 		"Internet Explorer 11": {"CVE-2017-0154"},
+	},
+	"MS17-012": {
+		"Windows 10 Version 1607 for 32-bit Systems":                                             {"CVE-2017-0104"},
+		"Windows 10 Version 1607 for x64-based Systems":                                          {"CVE-2017-0104"},
+		"Windows 7 for 32-bit Systems Service Pack 1":                                            {"CVE-2017-0104"},
+		"Windows 7 for x64-based Systems Service Pack 1":                                         {"CVE-2017-0104"},
+		"Windows 8.1 for 32-bit Systems":                                                         {"CVE-2017-0104"},
+		"Windows 8.1 for x64-based Systems":                                                      {"CVE-2017-0104"},
+		"Windows RT 8.1":                                                                         {"CVE-2017-0104"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)": {"CVE-2017-0104"},
+	},
+	"MS17-013": {
+		"Windows Server 2008 for 32-bit Systems Service Pack 2":        {"CVE-2017-0038"},
+		"Windows Server 2008 for Itanium-based Systems Service Pack 2": {"CVE-2017-0038"},
+		"Windows Server 2008 for x64-based Systems Service Pack 2":     {"CVE-2017-0038"},
+		"Windows Server 2012 (Server Core installation)":               {"CVE-2017-0063"},
+		"Windows Server 2016 for x64-based Systems":                    {"CVE-2017-0038"},
+		"Windows Vista Service Pack 2":                                 {"CVE-2017-0038"},
+		"Windows Vista x64 Edition Service Pack 2":                     {"CVE-2017-0038"},
+	},
+	"MS17-017": {
+		"Windows 7 for x64-based Systems Service Pack 1":                  {"CVE-2017-0101"},
+		"Windows Server 2008 R2 for Itanium-based Systems Service Pack 1": {"CVE-2017-0101"},
+		"Windows Server 2008 R2 for x64-based Systems Service Pack 1":     {"CVE-2017-0101"},
+	},
+	"MS17-018": {
+		"Windows Server 2016 for x64-based Systems":                           {"CVE-2017-0078"},
+		"Windows Server 2016 for x64-based Systems(Server Core installation)": {"CVE-2017-0024", "CVE-2017-0026", "CVE-2017-0078"},
 	},
 }
 
