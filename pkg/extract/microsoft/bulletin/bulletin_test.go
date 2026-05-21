@@ -431,7 +431,8 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 		},
 		// Mixed-applicability bulletins return the whitespace-normalized
 		// affected_product as the inner key, so the filter looks the xlsx
-		// label up verbatim in bulletinArchiveComponentNotApplicable. Verify
+		// label up in bulletinArchiveComponentNotApplicable after the same
+		// whitespace normalization (strings.Fields/Join collapse). Verify
 		// that the dispatch returns the product string (not empty) for a few
 		// representative bulletins across MS12-, MS15-, MS16-, and MS17-.
 		{
@@ -592,8 +593,11 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				cve:        "CVE-2006-6134",
 			},
 			// Product-keyed mixed-applicability cases: the KB is shared across
-			// xlsx rows whose per-CVE table cells differ in NA status, so the
-			// filter dispatches on affected_product unchanged.
+			// multiple xlsx rows whose per-CVE matrix cells differ in NA
+			// status, so the filter dispatches on the whitespace-normalized
+			// affected_product (NormalizeArchiveComponentKey collapses
+			// whitespace via strings.Fields/Join before returning) and the
+			// map's inner keys must match that normalized form.
 			{
 				name:       "MS16-106 Windows Server 2008 NA for CVE-2016-3349 (KB3185911 shared with Win 8.1+ where the CVE is applicable)",
 				bulletinID: "MS16-106",
