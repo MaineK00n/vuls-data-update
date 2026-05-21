@@ -472,6 +472,11 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				componentKB: "3185911",
 				cve:         "CVE-2016-3356",
 			},
+			{
+				name:        "MS16-106 KB3189866 (Windows 10 Version 1607) NA for CVE-2016-3349 (markdown uses \"Not affected\" — exercises the legacy-marker predicate; uniformly NA across both xlsx rows of this shared KB)",
+				componentKB: "3189866",
+				cve:         "CVE-2016-3349",
+			},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
