@@ -5,8 +5,11 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+
 	"github.com/MaineK00n/vuls-data-update/pkg/extract/microsoft/bulletin"
 	utiltest "github.com/MaineK00n/vuls-data-update/pkg/extract/util/test"
+	fetch "github.com/MaineK00n/vuls-data-update/pkg/fetch/microsoft/bulletin"
 )
 
 func TestExtract(t *testing.T) {
@@ -644,12 +647,14 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 				innerKey:   "Windows Server 2016 for x64-based Systems (Server Core installation)",
 				cve:        "CVE-2017-0024",
 			},
-			// The one (KB, CVE) pair that genuinely cannot be filtered: MS15-128 /
-			// KB3116869 / CVE-2015-6108 is "Not applicable" in the OS-level table
-			// but "Critical Remote Code Execution" in the same bulletin's
-			// component-level table, with the same xlsx affected_product label
-			// for both. Cross-table-mixed at the (KB, CVE) grain — no static map
-			// shape can disambiguate. Documented as a known FP.
+			// MS15-128 / KB3116869 / CVE-2015-6108 is "Not applicable" in the
+			// OS-level table but "Critical Remote Code Execution" in the same
+			// bulletin's component-level table, with the same xlsx
+			// affected_product label for both. A static (bulletin, component)
+			// NA map cannot disambiguate at this grain. This case is now
+			// handled by bulletinArchiveComponentReattribution, which splits
+			// the OS-only xlsx row into an OS-only row + a synthesized
+			// "OS + .NET Framework 3.5" row carrying CVE-2015-6108.
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
@@ -738,6 +743,89 @@ func TestBulletinArchiveCVECorrections(t *testing.T) {
 			}
 			if fix != tt.wantFix {
 				t.Errorf("bulletinArchiveCVECorrections[%q][%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
+			}
+		})
+	}
+}
+
+func TestApplyComponentReattributions(t *testing.T) {
+	tests := []struct {
+		name string
+		in   []fetch.Bulletin
+		want []fetch.Bulletin
+	}{
+		{
+			name: "row without a split entry is passed through unchanged",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-097", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3087039", CVEs: "CVE-2015-2506,CVE-2015-2507"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-097", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3087039", CVEs: "CVE-2015-2506,CVE-2015-2507"},
+			},
+		},
+		{
+			name: "MS15-128 KB3116869 Win 10 32-bit row is split into OS-only + .NET 3.5 rows",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107,CVE-2015-6108"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107"},
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6108"},
+			},
+		},
+		{
+			name: "lowercase bulletin_id matches the dispatch case-insensitively",
+			in: []fetch.Bulletin{
+				{BulletinID: "ms15-128", AffectedProduct: "Windows 10 for x64-based Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6108"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "ms15-128", AffectedProduct: "Windows 10 for x64-based Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106"},
+				{BulletinID: "ms15-128", AffectedProduct: "Windows 10 for x64-based Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6108"},
+			},
+		},
+		{
+			name: "row whose KB does not match an entry is passed through unchanged",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3109094", CVEs: "CVE-2015-6106"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 7 for 32-bit Systems Service Pack 1", ComponentKB: "3109094", CVEs: "CVE-2015-6106"},
+			},
+		},
+		{
+			name: "row that already has affected_component is passed through unchanged even if it matches the dispatch",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107,CVE-2015-6108"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107,CVE-2015-6108"},
+			},
+		},
+		{
+			name: "synth row is skipped when none of the entry's CVEs are present on the source row",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107"},
+			},
+		},
+		{
+			name: "parseCVEs normalizes \"CVE-CVE-\" prefix duplication before comparison",
+			in: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-CVE-2015-6106,CVE-2015-6107,CVE-CVE-2015-6108"},
+			},
+			want: []fetch.Bulletin{
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", ComponentKB: "3116869", CVEs: "CVE-2015-6106,CVE-2015-6107"},
+				{BulletinID: "MS15-128", AffectedProduct: "Windows 10 for 32-bit Systems", AffectedComponent: "Microsoft .NET Framework 3.5", ComponentKB: "3116869", CVEs: "CVE-2015-6108"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := bulletin.ApplyComponentReattributions(tt.in)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("ApplyComponentReattributions() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

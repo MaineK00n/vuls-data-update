@@ -443,9 +443,9 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// therefore can't disagree with each other). The generator emits
 	// product-keyed entries only for the safe pairs and silently drops
 	// any pair whose markdown cells truly span tables with conflicting
-	// NA state. The lone such pair across the corpus — MS15-128 /
-	// KB3116869 / CVE-2015-6108 — is the only known remaining FP
-	// trade-off.
+	// NA state. The one such pair across the corpus (MS15-128 /
+	// KB3116869 / CVE-2015-6108) is recovered by bulletinArchiveComponentReattribution
+	// — see that map's doc comment.
 	case "MS12-054", "MS12-074",
 		"MS13-046", "MS13-081",
 		"MS15-097", "MS15-128",
@@ -517,6 +517,157 @@ func isOSPlatform(s string) bool {
 	}
 }
 
+// componentReattribution describes a synthetic per-component row that should be
+// emitted alongside an OS-only xlsx row. See bulletinArchiveComponentReattribution.
+type componentReattribution struct {
+	Component string   // affected_component value to set on the synthesized row
+	CVEs      []string // CVEs to move from the OS row to the synthesized row
+}
+
+// bulletinArchiveComponentReattribution captures per-component CVE attributions that
+// Microsoft documents in component matrix tables but BulletinSearch.xlsx
+// collapses into the OS-only row (because Microsoft did not emit a
+// distinct xlsx row for the OS + component configuration). At extract
+// time, the listed CVEs are moved from the OS row's cves to a
+// synthesized row carrying the listed affected_component, preserving
+// the markdown's per-configuration precision and producing a separate
+// detection segment for the (OS + component) configuration.
+//
+// Map shape: bulletinID → component_kb → []componentReattribution
+//
+// Each entry encodes a specific markdown row from a component matrix
+// table whose configuration is reachable in production (i.e. customers
+// could have that OS + component combination installed) but absent
+// from xlsx as a standalone row. Without the split, a scanner would
+// either flag the OS row for CVEs it isn't actually exposed to (FP) or
+// silently miss the configuration entirely.
+//
+// Example: MS15-128 / KB3116869 — the bulletin's .NET Framework 3.5
+// component matrix table marks Win 10 / KB3116869 as Critical RCE for
+// CVE-2015-6108, but xlsx only carries the OS-only Win 10 row
+// (cves=CVE-2015-6106,CVE-2015-6107,CVE-2015-6108, affected_component
+// absent). Splitting the .NET 3.5 attribution off produces two
+// detection rows: the OS-only row covering CVE-2015-6107, and a
+// synthesized "Windows 10 + .NET Framework 3.5" row covering
+// CVE-2015-6108 (CVE-2015-6106 is dropped earlier by
+// bulletinArchiveKBNotApplicable as truly NA for Win 10).
+//
+// MS15-128 / KB3116869 / CVE-2015-6108 is the ONLY such case in the
+// MSRC bulletin archive corpus. A corpus-wide audit (per-(KB, CVE)
+// cross-table cell scan + xlsx component-row presence check) surfaced
+// no other bulletins where (a) the markdown documents a component
+// configuration with a CVE that the OS-only context marks NA AND (b)
+// xlsx is missing the (OS + component, KB) row. Additional candidates
+// the audit surfaced (e.g. MS08-040, MS09-004, MS09-024, MS09-062,
+// MS12-027) turned out to share applicability between OS-only and
+// OS+component contexts, so the xlsx OS row already attributes the
+// CVEs correctly — no reattribution needed. The map is therefore
+// expected to stay at one entry unless Microsoft re-publishes the
+// archive in a structurally different way.
+var bulletinArchiveComponentReattribution = map[string]map[string][]componentReattribution{
+	"MS15-128": {
+		"3116869": {
+			{Component: "Microsoft .NET Framework 3.5", CVEs: []string{"CVE-2015-6108"}},
+		},
+	},
+}
+
+// applyComponentReattributions returns a copy of rows expanded by
+// bulletinArchiveComponentReattribution. For each row whose
+// (bulletin_id, component_kb) matches an entry, the matching CVEs are
+// removed from the original row's cves string and one synthesized row
+// per reattribution entry is appended carrying the listed
+// affected_component and only the CVEs that were actually present on
+// the source row.
+//
+// Three invariants guard against accidental data corruption:
+//
+//   - Only OS-only rows (affected_component empty) are eligible. Rows
+//     that already carry an affected_component value are real
+//     component rows and are passed through unchanged, even if their
+//     (bulletin_id, component_kb) collides with a map entry — rewriting
+//     them would silently corrupt Microsoft's own component attribution.
+//   - CVE token comparison goes through parseCVEs so historical xlsx
+//     format anomalies ("CVE-CVE-...", concatenated CVEs, whitespace,
+//     case) are normalized the same way the main extract path does. A
+//     row whose cves cell fails parseCVEs is passed through unchanged;
+//     the main extract loop surfaces the parse error with full context.
+//   - Only the intersection of (map entry's CVEs) ∩ (row's actual CVEs)
+//     is moved. If a map entry lists a CVE that isn't on the source
+//     row, that CVE is skipped (not synthesized). If none of an entry's
+//     CVEs are present, the entire synth row is dropped. This makes
+//     accidental map mistypes manifest as "no change" rather than as
+//     silent over-attribution.
+func applyComponentReattributions(rows []bulletin.Bulletin) []bulletin.Bulletin {
+	out := make([]bulletin.Bulletin, 0, len(rows))
+	for _, row := range rows {
+		// Pass through rows that already carry a real affected_component
+		// value — they are not the OS-only rows the map targets.
+		if row.AffectedComponent != "" {
+			out = append(out, row)
+			continue
+		}
+
+		reattributions, ok := bulletinArchiveComponentReattribution[strings.ToUpper(row.BulletinID)][row.ComponentKB]
+		if !ok {
+			out = append(out, row)
+			continue
+		}
+
+		parsed, err := parseCVEs(row.CVEs)
+		if err != nil {
+			// Best-effort: defer the error to the main extract loop, which
+			// will surface it with full context. Pass the row through
+			// unchanged so we don't silently mutate a malformed row.
+			out = append(out, row)
+			continue
+		}
+		present := make(map[string]struct{}, len(parsed))
+		for _, c := range parsed {
+			present[c] = struct{}{}
+		}
+
+		// Build the synthesized rows from the intersection of each entry's
+		// CVEs and the row's actual CVEs. Empty intersections are dropped.
+		movedAll := make(map[string]struct{})
+		synths := make([]componentReattribution, 0, len(reattributions))
+		for _, r := range reattributions {
+			actual := make([]string, 0, len(r.CVEs))
+			for _, c := range r.CVEs {
+				if _, ok := present[c]; ok {
+					actual = append(actual, c)
+					movedAll[c] = struct{}{}
+				}
+			}
+			if len(actual) == 0 {
+				continue
+			}
+			synths = append(synths, componentReattribution{Component: r.Component, CVEs: actual})
+		}
+
+		// Rebuild row.CVEs from the parsed list excluding moved CVEs. This
+		// also re-canonicalises any anomalies parseCVEs handled, so the
+		// downstream loop sees the normalized form.
+		kept := make([]string, 0, len(parsed))
+		for _, c := range parsed {
+			if _, drop := movedAll[c]; drop {
+				continue
+			}
+			kept = append(kept, c)
+		}
+		row.CVEs = strings.Join(kept, ",")
+		out = append(out, row)
+
+		for _, r := range synths {
+			synth := row
+			synth.AffectedComponent = r.Component
+			synth.CVEs = strings.Join(r.CVEs, ",")
+			out = append(out, synth)
+		}
+	}
+	return out
+}
+
 func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []microsoftkbTypes.KB, error) {
 	type dataGroup struct {
 		advisories []advisoryTypes.Advisory
@@ -528,7 +679,7 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 	kbProducts := make(map[string]map[string]struct{})
 	kbSupersededBy := make(map[string]map[string]struct{}) // old KBID → set of new KBIDs
 
-	for _, row := range rows {
+	for _, row := range applyComponentReattributions(rows) {
 		if row.AffectedProduct == "" {
 			switch strings.ToUpper(row.BulletinID) {
 			case "MS01-002", "MS01-050":
