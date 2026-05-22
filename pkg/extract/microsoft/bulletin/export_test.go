@@ -9,8 +9,7 @@ var (
 	BulletinArchiveKBNotApplicable        = bulletinArchiveKBNotApplicable
 	BulletinArchiveComponentNotApplicable = bulletinArchiveComponentNotApplicable
 	BulletinArchiveCVECorrections         = bulletinArchiveCVECorrections
-	BulletinArchiveComponentReattribution = bulletinArchiveComponentReattribution
+	BulletinArchiveAmendments             = bulletinArchiveAmendments
 	ApplyComponentReattributions          = applyComponentReattributions
-	BulletinArchiveCVEAdditions           = bulletinArchiveCVEAdditions
 	ApplyCVEAdditions                     = applyCVEAdditions
 )
