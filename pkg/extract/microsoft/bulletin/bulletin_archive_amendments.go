@@ -107,10 +107,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS02-019": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2002-0153"}}}},
 	"MS02-038": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2002-0644", "CVE-2002-0645"}}}},
 	"MS06-007": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2006-0021"}}}},
+	// MS06-012: year-typo of CVE-2005-4131 ("Excel eBay Vulnerability") —
+	// remap (CVE-2005-4131 not in xlsx).
 	"MS06-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Microsoft PowerPoint 2000", Drop: []string{"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"}},
 			{Component: "Microsoft PowerPoint 2002", Drop: []string{"CVE-2005-4131", "CVE-2006-0028", "CVE-2006-0029", "CVE-2006-0030", "CVE-2006-0031"}},
+			{Remap: map[string]string{"CVE-2006-4131": "CVE-2005-4131"}},
 		},
 	},
 	"MS06-015": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2004-2289", "CVE-2006-0012"}}}},
@@ -121,7 +124,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2003 Service Pack 1", Drop: []string{"CVE-2005-2628", "CVE-2006-0024"}},
 		},
 	},
-	"MS06-021": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2005-4089", "CVE-2006-1303", "CVE-2006-1626", "CVE-2006-1992", "CVE-2006-2218", "CVE-2006-2382", "CVE-2006-2383", "CVE-2006-2384", "CVE-2006-2385"}}}},
+	// MS06-021: CVE-2006-4089 is a year-typo of CVE-2005-4089 ("CSS
+	// Cross-Domain Information Disclosure") — remap (CVE-2005-4089 not in
+	// xlsx). CVE-2006-2283 has no candidate in MS06-021's markdown — drop.
+	"MS06-021": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2005-4089", "CVE-2006-1303", "CVE-2006-1626", "CVE-2006-1992", "CVE-2006-2218", "CVE-2006-2382", "CVE-2006-2383", "CVE-2006-2384", "CVE-2006-2385"}},
+			{Remap: map[string]string{"CVE-2006-2283": "", "CVE-2006-4089": "CVE-2005-4089"}},
+		},
+	},
 	"MS06-039": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2006-0007", "CVE-2006-0033"}},
@@ -147,6 +158,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS09-020": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}}}},
 	"MS09-072": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"}}}},
 	"MS11-050": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1246", "CVE-2011-1250", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1261", "CVE-2011-1262", "CVE-2011-1346"}}}},
+	// (MS08-032 / CVE-2007-0675 omitted: the archive markdown at
+	// ms08-032.md is mis-mapped — its content is actually MS16-011's — so
+	// the absence-in-markdown signal cannot distinguish typo from real
+	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
+	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
+	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
+	"MS11-056": {CVEAdjustments: []cveAdjustment{{Remap: map[string]string{"CVE-2011-1285": "CVE-2011-1284"}}}},
 	// MS11-057 includes CVE-2011-1347 because the bulletin's update FAQ
 	// states "this update addresses a Protected Mode bypass issue,
 	// publicly disclosed". The CVE is not in the main vulnerability
@@ -154,7 +172,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS11-057": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1257", "CVE-2011-1347", "CVE-2011-1960", "CVE-2011-1961", "CVE-2011-1962", "CVE-2011-1963", "CVE-2011-1964", "CVE-2011-2383"}}}},
 	"MS11-091": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1508", "CVE-2011-3410", "CVE-2011-3411", "CVE-2011-3412"}}}},
 	"MS11-096": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-3403"}}}},
-	"MS11-099": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1992", "CVE-2011-2019", "CVE-2011-3389", "CVE-2011-3404"}}}},
+	// MS11-099: off-by-one of CVE-2011-3404 — remap (3404 not in xlsx).
+	// CVE-2011-3403 itself appears in MS11-096's markdown.
+	"MS11-099": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2011-1992", "CVE-2011-2019", "CVE-2011-3389", "CVE-2011-3404"}},
+			{Remap: map[string]string{"CVE-2011-3403": "CVE-2011-3404"}},
+		},
+	},
 	"MS11-100": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-3414", "CVE-2011-3415", "CVE-2011-3416", "CVE-2011-3417", "CVE-2012-0160", "CVE-2012-0161"}}}},
 	"MS12-039": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1849", "CVE-2012-1858"}}}},
 	"MS12-054": {
@@ -190,7 +215,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS12-080": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2012-3214", "CVE-2012-3217", "CVE-2012-4791"}}}},
-	"MS13-028": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2013-1303", "CVE-2013-1304", "CVE-2013-1338"}}}},
+	// MS13-028: no candidate in markdown — drop both.
+	"MS13-028": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2013-1303", "CVE-2013-1304", "CVE-2013-1338"}},
+			{Remap: map[string]string{"CVE-2013-2013": "", "CVE-2013-2014": ""}},
+		},
+	},
+	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
+	// CVE-2013-1313 appears in MS13-020's markdown.
+	"MS13-037": {CVEAdjustments: []cveAdjustment{{Remap: map[string]string{"CVE-2013-1313": ""}}}},
 	"MS13-046": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 8 for 32-bit Systems (ntoskrnl.exe)", Drop: []string{"CVE-2013-1333"}},
@@ -215,7 +249,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows XP Service Pack 3 (Win32k.sys)", Drop: []string{"CVE-2013-1333"}},
 		},
 	},
-	"MS13-059": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3192", "CVE-2013-3193", "CVE-2013-3194", "CVE-2013-3199"}}}},
+	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
+	// CVE-2013-3181 appears in MS13-060's markdown.
+	"MS13-059": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3192", "CVE-2013-3193", "CVE-2013-3194", "CVE-2013-3199"}},
+			{Remap: map[string]string{"CVE-2013-3181": ""}},
+		},
+	},
 	"MS13-063": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}}}},
 	"MS13-072": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"}}}},
 	"MS13-076": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2013-1341", "CVE-2013-1342", "CVE-2013-1343", "CVE-2013-1344", "CVE-2013-3864", "CVE-2013-3865", "CVE-2013-3866"}}}},
@@ -294,6 +335,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-2785", "CVE-2014-2788", "CVE-2014-2791", "CVE-2014-2794", "CVE-2014-2797", "CVE-2014-2803"}},
 		},
 	},
+	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
+	// CVE-2014-2799 appears in MS14-052's markdown.
 	"MS14-051": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-2784", "CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2819", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4051", "CVE-2014-4052", "CVE-2014-4055", "CVE-2014-4056", "CVE-2014-4057", "CVE-2014-4058", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"}},
@@ -302,6 +345,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2014-2796", "CVE-2014-2808", "CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2818", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-2825", "CVE-2014-4050", "CVE-2014-4055", "CVE-2014-4057", "CVE-2014-4067", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2014-2810", "CVE-2014-2811", "CVE-2014-2821", "CVE-2014-2822", "CVE-2014-2823", "CVE-2014-2824", "CVE-2014-4057", "CVE-2014-4145", "CVE-2014-6354", "CVE-2014-8985"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-2818", "CVE-2014-2821", "CVE-2014-2824", "CVE-2014-4052", "CVE-2014-4056"}},
+			{Remap: map[string]string{"CVE-2014-2799": ""}},
 		},
 	},
 	"MS14-052": {
@@ -377,7 +421,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-1660"}},
 		},
 	},
-	"MS15-036": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-1640", "CVE-2015-1653"}}}},
+	// MS15-036: 5-digit suffix anomaly; no clean canonical-form candidate —
+	// drop.
+	"MS15-036": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2015-1640", "CVE-2015-1653"}},
+			{Remap: map[string]string{"CVE-2015-16453": ""}},
+		},
+	},
 	"MS15-043": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1658", "CVE-2015-1684", "CVE-2015-1685", "CVE-2015-1686", "CVE-2015-1688", "CVE-2015-1689", "CVE-2015-1691", "CVE-2015-1692", "CVE-2015-1705", "CVE-2015-1706", "CVE-2015-1708", "CVE-2015-1709", "CVE-2015-1711", "CVE-2015-1712", "CVE-2015-1713", "CVE-2015-1714", "CVE-2015-1717", "CVE-2015-1718"}},
@@ -388,7 +439,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-1691", "CVE-2015-1708", "CVE-2015-1712"}},
 		},
 	},
-	"MS15-048": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-1672", "CVE-2015-1673"}}}},
+	// MS15-048: 5-digit suffix anomaly; no clean canonical-form candidate —
+	// drop.
+	"MS15-048": {
+		CVEAdjustments: []cveAdjustment{
+			{Add: []string{"CVE-2015-1672", "CVE-2015-1673"}},
+			{Remap: map[string]string{"CVE-2015-16723": ""}},
+		},
+	},
 	"MS15-056": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1730", "CVE-2015-1731", "CVE-2015-1732", "CVE-2015-1736", "CVE-2015-1737", "CVE-2015-1739", "CVE-2015-1741", "CVE-2015-1742", "CVE-2015-1743", "CVE-2015-1747", "CVE-2015-1748", "CVE-2015-1750", "CVE-2015-1751", "CVE-2015-1752", "CVE-2015-1753", "CVE-2015-1754", "CVE-2015-1755", "CVE-2015-1765"}},
@@ -515,6 +573,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-002": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0003", "CVE-2016-0024"}}}},
+	// MS16-003: off-by-one of CVE-2016-0002 — remap (0002 not in xlsx).
+	// CVE-2016-0003 appears in MS16-002's markdown.
+	"MS16-003": {CVEAdjustments: []cveAdjustment{{Remap: map[string]string{"CVE-2016-0003": "CVE-2016-0002"}}}},
 	"MS16-004": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-6117", "CVE-2015-6177", "CVE-2016-0010", "CVE-2016-0011", "CVE-2016-0012", "CVE-2016-0035"}}}},
 	"MS16-009": {
 		CVEAdjustments: []cveAdjustment{
@@ -608,13 +669,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-077": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-3213", "CVE-2016-3236", "CVE-2016-3299"}}}},
+	// MS16-079: cross-year mis-tag of CVE-2015-6015 — remap (6015 not in
+	// xlsx). CVE-2015-6016 not in any MS16 bulletin.
+	"MS16-079": {CVEAdjustments: []cveAdjustment{{Remap: map[string]string{"CVE-2015-6016": "CVE-2015-6015"}}}},
 	"MS16-083": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4121", "CVE-2016-4122", "CVE-2016-4123", "CVE-2016-4124", "CVE-2016-4125", "CVE-2016-4126", "CVE-2016-4127", "CVE-2016-4128", "CVE-2016-4129", "CVE-2016-4130", "CVE-2016-4131", "CVE-2016-4132", "CVE-2016-4133", "CVE-2016-4134", "CVE-2016-4135", "CVE-2016-4136", "CVE-2016-4137", "CVE-2016-4138", "CVE-2016-4139", "CVE-2016-4140", "CVE-2016-4141", "CVE-2016-4142", "CVE-2016-4143", "CVE-2016-4144", "CVE-2016-4145", "CVE-2016-4146", "CVE-2016-4147", "CVE-2016-4148", "CVE-2016-4149", "CVE-2016-4150", "CVE-2016-4151", "CVE-2016-4152", "CVE-2016-4153", "CVE-2016-4154", "CVE-2016-4155", "CVE-2016-4156", "CVE-2016-4166", "CVE-2016-4171"}}}},
+	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
+	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
+	// affected." Drop, no correction.
 	"MS16-084": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2016-3204", "CVE-2016-3240", "CVE-2016-3241", "CVE-2016-3242", "CVE-2016-3243", "CVE-2016-3245", "CVE-2016-3248", "CVE-2016-3259", "CVE-2016-3260", "CVE-2016-3261", "CVE-2016-3264", "CVE-2016-3273", "CVE-2016-3274", "CVE-2016-3277"}},
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-3243", "CVE-2016-3260", "CVE-2016-3261", "CVE-2016-3277"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2016-3260", "CVE-2016-3261"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2016-3245"}},
+			{Remap: map[string]string{"CVE-2016-3276": ""}},
 		},
 	},
 	"MS16-088": {
@@ -773,11 +841,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2016-7241"}},
 		},
 	},
+	// MS16-144: no candidate in markdown — drop.
 	"MS16-144": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-7281", "CVE-2016-7284", "CVE-2016-7287"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2016-7287"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2016-7278", "CVE-2016-7284"}},
+			{Remap: map[string]string{"CVE-2016-7293": ""}},
 		},
 	},
 	"MS16-148": {
@@ -803,6 +873,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS17-007": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-0009", "CVE-2017-0010", "CVE-2017-0011", "CVE-2017-0012", "CVE-2017-0015", "CVE-2017-0017", "CVE-2017-0023", "CVE-2017-0032", "CVE-2017-0033", "CVE-2017-0034", "CVE-2017-0035", "CVE-2017-0037", "CVE-2017-0065", "CVE-2017-0066", "CVE-2017-0067", "CVE-2017-0068", "CVE-2017-0069", "CVE-2017-0070", "CVE-2017-0071", "CVE-2017-0094", "CVE-2017-0131", "CVE-2017-0132", "CVE-2017-0133", "CVE-2017-0134", "CVE-2017-0135", "CVE-2017-0136", "CVE-2017-0137", "CVE-2017-0138", "CVE-2017-0140", "CVE-2017-0141", "CVE-2017-0150", "CVE-2017-0151"}}}},
 	"MS17-011": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0084", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0118", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0121", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"}}}},
+	// MS17-012: leading-zero typo of CVE-2017-0016 — remap (0016 not in
+	// xlsx; the xlsx cell carries "CVE-2017-00016" with an extra zero).
 	"MS17-012": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Windows 10 Version 1607 for 32-bit Systems", Drop: []string{"CVE-2017-0104"}},
@@ -813,6 +885,7 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows 8.1 for x64-based Systems", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2017-0104"}},
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)", Drop: []string{"CVE-2017-0104"}},
+			{Remap: map[string]string{"CVE-2017-00016": "CVE-2017-0016"}},
 		},
 	},
 	"MS17-013": {

@@ -680,11 +680,11 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 	})
 }
 
-// TestBulletinArchiveCVECorrections verifies known entries in the static
-// bulletinArchiveCVECorrections map. The map captures per-bulletin
-// BulletinSearch.xlsx CVE tokens that do not appear in the bulletin's
-// archive markdown, mapped either to a remapped canonical CVE (non-empty
-// fix) or to a drop action (empty fix). Both branches are exercised below.
+// TestBulletinArchiveCVECorrections verifies known CVE token remap/drop
+// entries in bulletinArchiveAmendments. Each per-bulletin CVEAdjustments
+// list may carry a Remap map keyed by the xlsx CVE token; a non-empty
+// value remaps to a canonical CVE, an empty value drops the token.
+// Both branches are exercised below.
 func TestBulletinArchiveCVECorrections(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -736,19 +736,27 @@ func TestBulletinArchiveCVECorrections(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			perBulletin, ok := bulletin.BulletinArchiveCVECorrections[tt.bulletinID]
+			ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 			if !ok {
 				if tt.wantOK {
-					t.Fatalf("bulletinArchiveCVECorrections has no entry for %s", tt.bulletinID)
+					t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 				}
 				return
 			}
-			fix, ok := perBulletin[tt.token]
-			if ok != tt.wantOK {
-				t.Errorf("bulletinArchiveCVECorrections[%q][%q] ok = %v, want %v", tt.bulletinID, tt.token, ok, tt.wantOK)
+			var fix string
+			found := false
+			for _, adj := range ad.CVEAdjustments {
+				if v, ok := adj.Remap[tt.token]; ok {
+					fix = v
+					found = true
+					break
+				}
+			}
+			if found != tt.wantOK {
+				t.Errorf("bulletinArchiveAmendments[%q] Remap[%q] ok = %v, want %v", tt.bulletinID, tt.token, found, tt.wantOK)
 			}
 			if fix != tt.wantFix {
-				t.Errorf("bulletinArchiveCVECorrections[%q][%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
+				t.Errorf("bulletinArchiveAmendments[%q] Remap[%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
 			}
 		})
 	}
