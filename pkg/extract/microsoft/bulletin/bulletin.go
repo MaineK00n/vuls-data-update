@@ -326,11 +326,9 @@ func productName(product, component string) string {
 //   - Per-bulletin product vocabularies for a small set of pre-IE-Cumulative
 //     bulletins (MS06-012, MS06-020, MS06-039, MS06-078) where each
 //     bulletin's markdown table uses its own column-header product strings,
-//     taken verbatim from the bulletin. MS06-060 is intentionally absent
-//     here — its NA cells are captured by bulletinArchiveKBNotApplicable
-//     because some xlsx rows (Works Suite 2004/2005/2006) have
-//     affected_component=null and cannot be matched by a component-keyed
-//     narrowing alone.
+//     taken verbatim from the bulletin. MS06-060 is handled by KB-keyed
+//     entries instead — its Works Suite rows have affected_component=null
+//     and cannot be matched by a component-keyed narrowing alone.
 //
 // Returns "" when the row does not map to any narrowing key (the common case;
 // most rows have no NA narrowing on the component axis).
@@ -346,11 +344,13 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 
 	// Dispatch by bulletin_id. Each MS06-* case uses its own product vocabulary
 	// (matched against affected_product or affected_component depending on which
-	// column the Excel side carries the identity in); the default case handles
-	// IE Cumulative bulletins (MS14-* through MS17-*) via the shared IE/Edge
-	// global vocabulary. Verified that no MS06-* bulletin in this dispatch has
-	// IE/Edge rows in BulletinSearch.xlsx, so the default branch is unreachable
-	// for the listed bulletins by design.
+	// column the Excel side carries the identity in). MS17-006 has its own
+	// case because the MS17 era swapped the IE/OS columns relative to MS14-MS16
+	// (see the case below). The default case handles the remaining IE Cumulative
+	// bulletins (MS14-* through MS16-*) via the shared IE/Edge global
+	// vocabulary. Verified that no MS06-* bulletin in this dispatch has IE/Edge
+	// rows in BulletinSearch.xlsx, so the default branch is unreachable for
+	// the listed bulletins by design.
 	switch bulletinID {
 	case "MS06-012":
 		// markdown columns bundle Word/Excel/Outlook/etc.; only the two PowerPoint
@@ -387,17 +387,11 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		default:
 			return ""
 		}
-	// MS06-060 is intentionally not narrowed here. The Microsoft Works Suite
-	// 2004/2005/2006 rows have affected_component=null in BulletinSearch.xlsx
-	// and share component_kb 923089 with Word 2002 SP3 — per the markdown
-	// footnote "The Microsoft Works Suite 2004/2005/2006 severity rating is
-	// the same as the Microsoft Word 2002 severity rating." A component-keyed
-	// narrowing built on affected_component cannot reach the Works Suite
-	// rows. Instead, MS06-060's per-(KB, CVE) NA cells are encoded in
-	// bulletinArchiveKBNotApplicable (KB923088/923089/923090/924998/924999),
-	// where the natural sharing of component_kb across Word-equivalent rows
-	// (Word 2002 SP3 + Works Suite 2004/2005/2006 all under KB923089)
-	// captures every NA cell of the bulletin in five entries.
+	// MS06-060 is handled by KB-keyed entries — see the comment at the top
+	// of bulletinArchiveKBNotApplicable for KB923088/923089/923090/924998/
+	// 924999. The component-keyed switch is intentionally absent because
+	// some xlsx rows (Works Suite 2004/2005/2006) have affected_component=
+	// null and cannot be matched by a component-keyed narrowing alone.
 	case "MS06-078":
 		switch component {
 		case "Microsoft Windows Media Player 6.4":
@@ -405,31 +399,42 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 		default:
 			return ""
 		}
+	case "MS17-006":
+		// MS17-006 (and likely the wider MS17 era) swaps the columns relative
+		// to MS14-MS16: IE identity lives in affected_product, OS lives in
+		// affected_component.
+		return ieEdgeComponentKey(product, component)
 	default:
-		// IE/Edge global vocabulary for IE Cumulative bulletins (MS14-* through MS17-*).
-		switch component {
-		case "Microsoft Edge":
-			return "Microsoft Edge"
-		case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
-			return "Internet Explorer 6"
-		case "Windows Internet Explorer 7":
-			return "Internet Explorer 7"
-		case "Windows Internet Explorer 8":
-			return "Internet Explorer 8"
-		case "Internet Explorer 9", "Windows Internet Explorer 9":
-			return "Internet Explorer 9"
-		case "Internet Explorer 10", "Windows Internet Explorer 10":
-			return "Internet Explorer 10"
-		case "Internet Explorer 11", "Windows Internet Explorer 11":
-			switch {
-			case strings.Contains(product, "Windows 10"):
-				return "Internet Explorer 11 on Windows 10"
-			default:
-				return "Internet Explorer 11"
-			}
-		default:
-			return ""
+		// MS14-* through MS16-* IE Cumulative layout: IE identity in
+		// affected_component, OS in affected_product.
+		return ieEdgeComponentKey(component, product)
+	}
+}
+
+// ieEdgeComponentKey maps an (IE/Edge identity, OS) tuple to the shared
+// componentKey vocabulary used by bulletinArchiveComponentNotApplicable for
+// IE Cumulative bulletins. Returns "" when ieField is not an IE/Edge string.
+func ieEdgeComponentKey(ieField, osField string) string {
+	switch ieField {
+	case "Microsoft Edge":
+		return "Microsoft Edge"
+	case "Microsoft Internet Explorer 6.0", "Microsoft Internet Explorer 6.0 Service Pack 1":
+		return "Internet Explorer 6"
+	case "Windows Internet Explorer 7":
+		return "Internet Explorer 7"
+	case "Windows Internet Explorer 8":
+		return "Internet Explorer 8"
+	case "Internet Explorer 9", "Windows Internet Explorer 9":
+		return "Internet Explorer 9"
+	case "Internet Explorer 10", "Windows Internet Explorer 10":
+		return "Internet Explorer 10"
+	case "Internet Explorer 11", "Windows Internet Explorer 11":
+		if strings.Contains(osField, "Windows 10") {
+			return "Internet Explorer 11 on Windows 10"
 		}
+		return "Internet Explorer 11"
+	default:
+		return ""
 	}
 }
 
@@ -503,30 +508,59 @@ func (e extractor) extract(rows []bulletin.Bulletin) ([]dataTypes.Data, []micros
 
 		// Filter CVEs that the Bulletin archive markdown explicitly marks as
 		// "Not applicable" for this row's (componentKB) or (bulletin, component)
-		// pair. BulletinSearch.xlsx groups every CVE of a bulletin row in a
-		// single comma-separated cves cell, so a CVE that only applies to a
-		// subset of OSes/IE versions in the bulletin gets attributed to every
-		// row of that bulletin. The archive markdown's per-cell "Not applicable"
-		// markers narrow this back to the authoritative per-(KB, CVE) and
-		// per-(bulletin, component, CVE) attribution — see the two static maps
-		// bulletinArchiveKBNotApplicable (KB-keyed, from OS/Software-rows ×
-		// CVE-cols tables) and bulletinArchiveComponentNotApplicable
-		// ((bulletin, component)-keyed, from CVE-rows × IE-version-cols
-		// severity tables) below.
+		// pair, and apply per-bulletin xlsx CVE token corrections (remap typo
+		// → canonical CVE, or drop when the canonical form is absent from the
+		// markdown). BulletinSearch.xlsx groups every CVE of a bulletin row
+		// in a single comma-separated cves cell, so a CVE that only applies
+		// to a subset of OSes/IE versions in the bulletin gets attributed to
+		// every row of that bulletin. The archive markdown's per-cell "Not
+		// applicable" markers narrow this back to the authoritative per-(KB,
+		// CVE) and per-(bulletin, component, CVE) attribution — see the two
+		// static maps bulletinArchiveKBNotApplicable (KB-keyed, from
+		// OS/Software-rows × CVE-cols tables) and
+		// bulletinArchiveComponentNotApplicable ((bulletin, component)-keyed,
+		// from CVE-rows × IE-version-cols severity tables) below.
+		// bulletinArchiveCVECorrections handles xlsx tokens that are absent
+		// from the bulletin's markdown body (year-typos, off-by-one suffixes,
+		// retracted CVEs, etc.).
 		//
-		// Most rows have no narrowing entry on either side, so look up both NA
-		// lists once per row and skip the per-CVE filter loop entirely when
-		// there is nothing to drop. Nil slices are fine here — slices.Contains
-		// returns false on nil.
+		// Most rows have no NA entry and no corrections, so look up all three
+		// inputs once per row and skip the per-CVE filter/remap loop entirely
+		// when there is nothing to drop or remap. When the loop does run,
+		// build sets for the NA lists and the dedup tracking so each CVE
+		// costs O(1) instead of O(n) — some IE Cumulative rows carry 30-50+
+		// CVEs against equally large NA lists.
 		naCVEsKB := bulletinArchiveKBNotApplicable[row.ComponentKB]
 		naCVEsComp := bulletinArchiveComponentNotApplicable[string(rootID)][normalizeArchiveComponentKey(string(rootID), row.AffectedProduct, row.AffectedComponent)]
+		corrections := bulletinArchiveCVECorrections[string(rootID)]
 		filteredIDs := ids
-		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 {
+		if len(naCVEsKB) > 0 || len(naCVEsComp) > 0 || len(corrections) > 0 {
+			naSet := make(map[string]struct{}, len(naCVEsKB)+len(naCVEsComp))
+			for _, c := range naCVEsKB {
+				naSet[c] = struct{}{}
+			}
+			for _, c := range naCVEsComp {
+				naSet[c] = struct{}{}
+			}
+			seen := make(map[string]struct{}, len(ids))
 			filteredIDs = make([]string, 0, len(ids))
 			for _, cve := range ids {
-				if slices.Contains(naCVEsKB, cve) || slices.Contains(naCVEsComp, cve) {
+				// Apply xlsx CVE token correction first (remap typo → canonical
+				// CVE, or drop when fix is empty). The corrected token then
+				// flows through the NA filters like any other CVE.
+				if fix, ok := corrections[cve]; ok {
+					if fix == "" {
+						continue
+					}
+					cve = fix
+				}
+				if _, na := naSet[cve]; na {
 					continue
 				}
+				if _, dup := seen[cve]; dup {
+					continue
+				}
+				seen[cve] = struct{}{}
 				filteredIDs = append(filteredIDs, cve)
 			}
 		}
@@ -1235,12 +1269,13 @@ var bulletinArchiveSupersedesOverride = map[string][]string{
 //
 // Inline "// MS<id>: <product>" comments identify the source bulletin(s)
 // for review traceability — see bulletinArchiveSupersedes for the same convention.
-// Entries are ordered by numeric KB value so 6-digit pre-2010 KBs precede
-// 7-digit MS10+ KBs in ascending order.
 var bulletinArchiveKBNotApplicable = map[string][]string{
+	// MS08-044: Microsoft Office 2003 Service Pack 2
+	"921598": {"CVE-2008-3020"},
 	// MS06-060: Microsoft Word 2003 SP1/SP2 (+ Office 2003 SP1/SP2 row pair). Per the
 	// archive markdown's per-CVE table the Word 2003 column is "Not applicable" for
-	// CVE-2006-4693.
+	// CVE-2006-4693. (Manually added because gen_static_map.py does not yet
+	// recognise MS06-060's "Vulnerability Identifiers" header layout.)
 	"923088": {"CVE-2006-4693"},
 	// MS06-060: Microsoft Word 2002 SP3 (Office XP SP3) + Microsoft Works Suite
 	// 2004/2005/2006. The bulletin's footnote states "The Microsoft Works Suite
@@ -1251,34 +1286,678 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS06-060: Microsoft Word 2000 SP3 (Office 2000 SP3). Word 2000 column NA
 	// for CVE-2006-4693.
 	"923090": {"CVE-2006-4693"},
+	// MS09-010: Microsoft Windows 2000 Service Pack 4 (+ 4 variants)
+	"923561": {"CVE-2009-0088"},
 	// MS06-060: Microsoft Office v. X for Mac (Office X for Mac suite row). Word
 	// for Mac column NA for CVE-2006-3651 and CVE-2006-4534.
 	"924998": {"CVE-2006-3651", "CVE-2006-4534"},
 	// MS06-060: Microsoft Word 2004 for Mac (Office 2004 for Mac suite row).
 	// Word for Mac column NA for CVE-2006-3651 and CVE-2006-4534.
 	"924999": {"CVE-2006-3651", "CVE-2006-4534"},
+	// MS08-040: Microsoft SQL Server 2000 Desktop Engine (WMSDE) (+ 2 variants)
+	"941203": {"CVE-2008-0086", "CVE-2008-0106"},
+	// MS07-064: DirectX 9.0 on Microsoft Windows 2000 Service Pack 4 (+ 7 variants)
+	"941568": {"CVE-2007-3901"},
+	// MS07-069: Internet Explorer 5.01 Service Pack 4 on Microsoft Windows 2000 Service Pack 4
+	"942615": {"CVE-2007-3903", "CVE-2007-5344"},
+	// MS09-043: Microsoft Office 2003 Web Components Service Pack 1 for the 2007 Microsoft Office System
+	"947318": {"CVE-2009-1534"},
+	// MS09-043: Microsoft Office 2003 Service Pack 3 (+ 1 variant)
+	"947319": {"CVE-2009-1534"},
+	// MS09-043: Microsoft Office 2000 Web Components Service Pack 3
+	"947320": {"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"},
+	// MS09-043: Microsoft Internet Security and Acceleration Server 2004 Standard Edition Service Pack 3 (+ 3 variants)
+	"947826": {"CVE-2009-1534"},
+	// MS08-040: SQL Server 2005 Service Pack 1 and SQL Server 2005 Service Pack 2 (+ 4 variants)
+	"948109": {"CVE-2008-0086"},
+	// MS08-040: SQL Server 2000 Service Pack 4 (+ 2 variants)
+	"948110": {"CVE-2008-0106"},
+	// MS08-040: SQL Server 7.0 Service Pack 4 (+ 1 variant)
+	"948113": {"CVE-2008-0086", "CVE-2008-0106"},
+	// MS08-051: Microsoft Office PowerPoint Viewer 2003
+	"949041": {"CVE-2008-1455"},
+	// MS08-070: Microsoft Office Project 2003 Service Pack 3
+	"949045": {"CVE-2008-3704", "CVE-2008-4252", "CVE-2008-4254", "CVE-2008-4256"},
+	// MS08-070: Microsoft Office Project 2007 and Microsoft Office Project 2007 Service Pack 1
+	"949046": {"CVE-2008-3704", "CVE-2008-4252", "CVE-2008-4253", "CVE-2008-4254", "CVE-2008-4256"},
+	// MS08-051: Microsoft Office PowerPoint 2000 Service Pack 3 (+ 5 variants)
+	"949785": {"CVE-2008-0120", "CVE-2008-0121"},
+	// MS08-031: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4
+	"950759": {"CVE-2008-1442"},
+	// MS08-036: Windows Vista and Windows Vista Service Pack 1 (+ 4 variants)
+	"950762": {"CVE-2008-1440"},
+	// MS08-069: Microsoft XML Core Services 5.0 on Microsoft Office 2003 Service Pack 3 (+ 1 variant)
+	"951535": {"CVE-2007-0099", "CVE-2008-4029"},
+	// MS08-069: Microsoft XML Core Services 5.0 on 2007 Microsoft Office System and 2007 Microsoft Office System Service Pack 1 (+ 2 variants)
+	"951550": {"CVE-2007-0099", "CVE-2008-4029"},
+	// MS08-069: Microsoft XML Core Services 5.0 on Microsoft Office SharePoint Server 2007 and Microsoft Office SharePoint Server 200... (+ 2 variants)
+	"951597": {"CVE-2007-0099", "CVE-2008-4029"},
+	// MS08-033: Microsoft Windows 2000 Service Pack 4 with DirectX 7.0 (+ 11 variants)
+	"951698": {"CVE-2008-0011", "CVE-2008-1444"},
+	// MS09-012: Microsoft Windows 2000 Service Pack 4 (+ 10 variants)
+	"952004": {"CVE-2009-0078", "CVE-2009-0079", "CVE-2009-0080"},
+	// MS08-076: Windows Media Services 2008 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Serv... (+ 1 variant)
+	"952068": {"CVE-2008-3010"},
+	// MS08-037: Windows XP Service Pack 2 and Windows XP Service Pack 3 (+ 3 variants)
+	"953230": {"CVE-2008-1447", "CVE-2008-1454"},
+	// MS09-061: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4 (+ 7 variants)
+	"953297": {"CVE-2009-0091", "CVE-2009-2497"},
+	// MS09-061: Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2003 Service Pack 2
+	"953298": {"CVE-2009-0091", "CVE-2009-2497"},
+	// MS08-039: Microsoft Exchange Server 2003 Service Pack 2 (+ 2 variants)
+	"953747": {"CVE-2008-2247", "CVE-2008-2248"},
+	// MS08-051: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats and Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 1
+	"954038": {"CVE-2008-0120", "CVE-2008-0121"},
+	// MS08-069: Microsoft XML Core Services 4.0 when installed on Microsoft Windows 2000 Service Pack 4 (+ 14 variants)
+	"954430": {"CVE-2007-0099"},
+	// MS08-069: Microsoft XML Core Services 6.0 when installed on Microsoft Windows 2000 Service Pack 4 (+ 11 variants)
+	"954459": {"CVE-2007-0099", "CVE-2008-4029"},
+	// MS08-051: Microsoft Office 2004 for Mac
+	"956343": {"CVE-2008-0120", "CVE-2008-0121"},
+	// MS08-058: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 9 variants)
+	"956390": {"CVE-2008-3472", "CVE-2008-3473", "CVE-2008-3474", "CVE-2008-3475", "CVE-2008-3476"},
+	// MS09-062: Microsoft .NET Framework 2.0 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4 (+ 1 variant)
+	"957488": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS08-070: Microsoft Office FrontPage 2002 Service Pack 3
+	"957797": {"CVE-2008-3704", "CVE-2008-4252", "CVE-2008-4254", "CVE-2008-4255", "CVE-2008-4256"},
+	// MS09-005: Microsoft Office Visio 2007 Service Pack 1
+	"957831": {"CVE-2009-0097"},
+	// MS08-073: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 16 variants)
+	"958215": {"CVE-2008-4258", "CVE-2008-4259", "CVE-2008-4260", "CVE-2008-4261"},
+	// MS08-070: Microsoft Visual Studio .NET 2002 Service Pack 1
+	"958392": {"CVE-2008-4252", "CVE-2008-4253", "CVE-2008-4254"},
+	// MS08-070: Microsoft Visual Studio .NET 2003 Service Pack 1
+	"958393": {"CVE-2008-4252", "CVE-2008-4253", "CVE-2008-4254"},
+	// MS09-001: Windows Vista and Windows Vista Service Pack 1 (+ 4 variants)
+	"958687": {"CVE-2008-4834"},
+	// MS09-006: Windows XP Professional x64 Edition Service Pack 2 (+ 8 variants)
+	"958690": {"CVE-2009-0083"},
+	// MS09-062: Microsoft Internet Explorer 6 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4 (+ 10 variants)
+	"958869": {"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-2504", "CVE-2009-2518", "CVE-2009-2528", "CVE-2009-3126"},
+	// MS09-003: Microsoft Exchange Server 2007 Service Pack 1
+	"959241": {"CVE-2009-0099"},
+	// MS09-010: Microsoft Office Converter Pack
+	"960476": {"CVE-2008-4841", "CVE-2009-0087", "CVE-2009-0235"},
+	// MS09-010: Windows XP Service Pack 2 (+ 3 variants)
+	"960477": {"CVE-2008-4841", "CVE-2009-0088", "CVE-2009-0235"},
+	// MS09-013: Windows Vista Service Pack 1 (+ 4 variants)
+	"960803": {"CVE-2009-0089"},
+	// MS09-022: Windows XP Service Pack 2 and Windows XP Service Pack 3 (+ 9 variants)
+	"961501": {"CVE-2009-0228"},
+	// MS09-016: Microsoft Internet Security and Acceleration Server 2004 Service Pack 3
+	"961759": {"CVE-2009-0237"},
+	// MS09-008: Windows Server 2008 for 32-bit Systems (+ 1 variant)
+	"962238": {"CVE-2009-0093", "CVE-2009-0094"},
+	// MS09-014: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 16 variants)
+	"963027": {"CVE-2008-2540", "CVE-2009-0551", "CVE-2009-0552", "CVE-2009-0553"},
+	// MS09-017: Microsoft Works 8.5
+	"967043": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-017: Microsoft Works 9
+	"967044": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-017: Microsoft Office PowerPoint 2000 Service Pack 3 (+ 4 variants)
+	"967340": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-048: Microsoft Windows 2000 Service Pack 4 (+ 5 variants)
+	"967723": {"CVE-2009-1925"},
+	// MS09-043: Microsoft Office Small Business Accounting 2006
+	"968377": {"CVE-2009-1534"},
+	// MS09-025: Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2 (+ 4 variants)
+	"968537": {"CVE-2009-1126"},
+	// MS09-043: Microsoft Visual Studio .NET 2003 Service Pack 1
+	"969172": {"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"},
+	// MS09-021: Microsoft Office Excel 2000 Service Pack 3 (+ 7 variants)
+	"969462": {"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-1134"},
+	// MS09-027: Microsoft Office Word 2000 Service Pack 3 (+ 1 variant)
+	"969514": {"CVE-2009-0563", "CVE-2009-0565"},
+	// MS09-027: Microsoft Office Word Viewer 2003 Service Pack 3 (+ 1 variant)
+	"969614": {"CVE-2009-0565"},
+	// MS09-017: PowerPoint Viewer 2003
+	"969615": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-017: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 1 and Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"969618": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-017: Microsoft Office 2004 for Mac
+	"969661": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-021: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 1 and Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"969679": {"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"},
+	// MS09-021: Microsoft Office Excel Viewer
+	"969686": {"CVE-2009-0549", "CVE-2009-0558", "CVE-2009-0559"},
+	// MS09-021: Microsoft Office SharePoint Server 2007 Service Pack 1 and Microsoft Office SharePoint Server 2007 Service Pack 2 (32... (+ 1 variant)
+	"969737": {"CVE-2009-0549", "CVE-2009-0557", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-0560", "CVE-2009-1134"},
+	// MS09-018: Active Directory on Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"969805": {"CVE-2009-1138"},
+	// MS09-039: Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"969883": {"CVE-2009-1924"},
+	// MS09-019: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 24 variants)
+	"969897": {"CVE-2007-3091", "CVE-2009-1140", "CVE-2009-1141", "CVE-2009-1528", "CVE-2009-1529", "CVE-2009-1530", "CVE-2009-1531", "CVE-2009-1532"},
+	// MS09-065: Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2 (+ 4 variants)
+	"969947": {"CVE-2009-2514"},
+	// MS09-017: PowerPoint Viewer 2007 Service Pack 1 and PowerPoint Viewer 2007 Service Pack 2
+	"970059": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-061: Microsoft Silverlight 2 when installed on Mac (+ 2 variants)
+	"970363": {"CVE-2009-0090", "CVE-2009-0091"},
+	// MS09-018: Active Directory Application Mode (ADAM) when installed on Windows XP Professional Service Pack 2 and Windows XP Prof... (+ 1 variant)
+	"970437": {"CVE-2009-1138"},
+	// MS09-020: Microsoft Internet Information Services (IIS) 5.0 on Microsoft Windows 2000 Service Pack 4 (+ 5 variants)
+	"970483": {"CVE-2009-1122", "CVE-2009-1535"},
+	// MS09-062: SQL Server 2005 Service Pack 3 (+ 2 variants)
+	"970892": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: SQL Server 2005 Service Pack 2 (+ 2 variants)
+	"970895": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-044: Microsoft Windows 2000 Service Pack 4 (+ 8 variants)
+	"970927": {"CVE-2009-1929"},
+	// MS09-062: Microsoft Visual Studio .NET 2003 Service Pack 1
+	"971022": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft Visual Studio 2005 Service Pack 1
+	"971023": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft Visual FoxPro 8.0 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4
+	"971104": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft Visual FoxPro 9.0 Service Pack 2 when installed on Microsoft Windows 2000 Service Pack 4
+	"971105": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4
+	"971108": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows 2000 Service Pack 4
+	"971111": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft Report Viewer 2005 Service Pack 1 Redistributable Package
+	"971117": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft Report Viewer 2008 Redistributable Package
+	"971118": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-043: Microsoft BizTalk Server 2002
+	"971388": {"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"},
+	// MS10-012: Microsoft Windows 2000 Service Pack 4 (+ 5 variants)
+	"971468": {"CVE-2010-0021"},
+	// MS09-058: Microsoft Windows 2000 Service Pack 4 (+ 14 variants)
+	"971486": {"CVE-2009-2516", "CVE-2009-2517"},
+	// MS09-017: Microsoft Office 2008 for Mac
+	"971822": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-017: Open XML File Format Converter for Mac
+	"971824": {"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"},
+	// MS09-062: Microsoft Visual Studio 2008
+	"972221": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-034: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4
+	"972260": {"CVE-2009-1917"},
+	// MS09-047: Windows Media Services 9.1 on Windows Server 2003 Service Pack 2 (+ 3 variants)
+	"972554": {"CVE-2009-2499"},
+	// MS09-062: Microsoft Office 2003 Service Pack 3 (+ 1 variant)
+	"972580": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: 2007 Microsoft Office System Service Pack 1 (+ 5 variants)
+	"972581": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-067: Microsoft Office Excel 2003 Service Pack 3 (+ 1 variant)
+	"972652": {"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"},
+	// MS09-067: Microsoft Office Excel Viewer 2003 Service Pack 3
+	"973484": {"CVE-2009-3130", "CVE-2009-3133"},
+	// MS09-062: Microsoft Works 8.5
+	"973636": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-067: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 1 and Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"973704": {"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"},
+	// MS09-067: Microsoft Office Excel Viewer Service Pack 1 and Microsoft Office Excel Viewer Service Pack 2
+	"973707": {"CVE-2009-3127", "CVE-2009-3128", "CVE-2009-3130", "CVE-2009-3133"},
+	// MS09-047: Microsoft Media Foundation on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2 (+ 3 variants)
+	"973812": {"CVE-2009-2498"},
+	// MS09-044: Remote Desktop Connection Client for Mac 2.0
+	"974283": {"CVE-2009-1929"},
+	// MS09-071: Microsoft Windows 2000 Service Pack 4 (+ 15 variants)
+	"974318": {"CVE-2009-2505", "CVE-2009-3677"},
+	// MS09-061: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet Edition 2005 Service Pack 2, Windows XP Tablet Editi... (+ 28 variants)
+	"974378": {"CVE-2009-0090", "CVE-2009-0091", "CVE-2009-2497"},
+	// MS09-054: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 12 variants)
+	"974455": {"CVE-2009-1547", "CVE-2009-2530", "CVE-2009-2531"},
+	// MS09-061: Microsoft .NET Framework 2.0 on Windows Vista (+ 3 variants)
+	"974468": {"CVE-2009-0090", "CVE-2009-0091"},
+	// MS09-061: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Server 2008 for 32-bit Systems Service Pack 2 (+ 2 variants)
+	"974470": {"CVE-2009-0090", "CVE-2009-0091"},
+	// MS09-062: Microsoft Office Project 2002 Service Pack 1
+	"974811": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-053: Microsoft Internet Information Services 7.0 on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service... (+ 4 variants)
+	"975254": {"CVE-2009-3023"},
+	// MS09-062: Microsoft Platform SDK Redistributable: GDI+
+	"975337": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-062: Microsoft Visio 2002 Service Pack 2
+	"975365": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS10-004: Microsoft Office PowerPoint 2002 Service Pack 3 (+ 1 variant)
+	"975416": {"CVE-2010-0029", "CVE-2010-0033", "CVE-2010-0034"},
+	// MS09-062: Microsoft Forefront Client Security 1.0 when installed on Microsoft Windows 2000 Service Pack 4
+	"975962": {"CVE-2009-2518", "CVE-2009-2528"},
+	// MS09-072: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 28 variants)
+	"976325": {"CVE-2009-2493", "CVE-2009-3671", "CVE-2009-3672", "CVE-2009-3673", "CVE-2009-3674"},
+	// MS10-024: Microsoft Exchange Server 2003 Service Pack 2
+	"976702": {"CVE-2010-0025"},
+	// MS10-024: Microsoft Exchange Server 2000 Service Pack 3
+	"976703": {"CVE-2010-0024"},
+	// MS09-067: Microsoft Office 2008 for Mac
+	"976828": {"CVE-2009-3128"},
+	// MS09-067: Microsoft Office 2004 for Mac
+	"976830": {"CVE-2009-3128"},
+	// MS09-067: Open XML File Format Converter for Mac
+	"976831": {"CVE-2009-3128"},
+	// MS10-015: Windows XP Professional x64 Edition Service Pack 2 (+ 6 variants)
+	"977165": {"CVE-2010-0232", "CVE-2010-0233"},
+	// MS10-002: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 29 variants)
+	"978207": {"CVE-2009-4074", "CVE-2010-0027", "CVE-2010-0244", "CVE-2010-0245", "CVE-2010-0246", "CVE-2010-0247", "CVE-2010-0248", "CVE-2010-0249"},
+	// MS10-006: Microsoft Windows 2000 Service Pack 4 (+ 14 variants)
+	"978251": {"CVE-2010-0016", "CVE-2010-0017"},
+	// MS10-017: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 1 and Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"978380": {"CVE-2010-0257", "CVE-2010-0262", "CVE-2010-0264"},
+	// MS10-017: Microsoft Office Excel Viewer Service Pack 1 and Microsoft Office Excel Viewer Service Pack 2
+	"978383": {"CVE-2010-0257", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0264"},
+	// MS10-033: Windows Media Format Runtime 9 on Microsoft Windows 2000 Service Pack 4 (+ 4 variants)
+	"978695": {"CVE-2010-1880"},
+	// MS10-058: Windows Vista Service Pack 2 (+ 4 variants)
+	"978886": {"CVE-2010-1893"},
+	// MS10-033: Windows Media Encoder 9 x86 when installed on Microsoft Windows 2000 Service Pack 4 (+ 7 variants)
+	"979332": {"CVE-2010-1880"},
+	// MS10-017: Microsoft Office SharePoint Server 2007 Service Pack 1 (32-bit editions) and Microsoft Office SharePoint Server 2007 ... (+ 1 variant)
+	"979439": {"CVE-2010-0257", "CVE-2010-0258", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0264"},
+	// MS10-039: Microsoft Office InfoPath 2007 Service Pack 1 and Microsoft Office InfoPath 2007 Service Pack 2
+	"979441": {"CVE-2010-0817", "CVE-2010-1264"},
+	// MS10-039: Microsoft Office SharePoint Server 2007 Service Pack 1 and Microsoft Office SharePoint Server 2007 Service Pack 2 (32... (+ 1 variant)
+	"979445": {"CVE-2010-0817", "CVE-2010-1264"},
+	// MS10-033: Asycfilt.dll (COM component) on Microsoft Windows 2000 Service Pack 4 (+ 12 variants)
+	"979482": {"CVE-2010-1880"},
+	// MS10-032: Windows 7 for 32-bit Systems (+ 3 variants)
+	"979559": {"CVE-2010-0484"},
+	// MS10-004: Microsoft Office 2004 for Mac
+	"979674": {"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"},
+	// MS10-021: Microsoft Windows 2000 Service Pack 4 (+ 16 variants)
+	"979683": {"CVE-2010-0234", "CVE-2010-0235", "CVE-2010-0236", "CVE-2010-0237", "CVE-2010-0238", "CVE-2010-0481", "CVE-2010-0482", "CVE-2010-0810"},
+	// MS10-033: Windows Media Encoder 9 x64 when installed on Windows XP Professional x64 Edition Service Pack 2 (+ 6 variants)
+	"979902": {"CVE-2010-1880"},
+	// MS10-017: Microsoft Office Excel 2002 Service Pack 3 (+ 2 variants)
+	"980150": {"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262", "CVE-2010-0263", "CVE-2010-0264"},
+	// MS10-018: Internet Explorer 5.01 Service Pack 4 when installed on Microsoft Windows 2000 Service Pack 4 (+ 28 variants)
+	"980182": {"CVE-2010-0267", "CVE-2010-0488", "CVE-2010-0489", "CVE-2010-0490", "CVE-2010-0491", "CVE-2010-0492", "CVE-2010-0494", "CVE-2010-0805", "CVE-2010-0806", "CVE-2010-0807"},
+	// MS10-034: Microsoft Windows 2000 Service Pack 4 (+ 2 variants)
+	"980195": {"CVE-2010-0811"},
+	// MS10-020: Microsoft Windows 2000 Service Pack 4 (+ 10 variants)
+	"980232": {"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0476", "CVE-2010-0477"},
+	// MS10-049: Windows Vista Service Pack 1 and Windows Vista Service Pack 2 (+ 8 variants)
+	"980436": {"CVE-2010-2566"},
+	// MS10-017: Microsoft Office 2004 for Mac
+	"980837": {"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0263"},
+	// MS10-017: Microsoft Office 2008 for Mac
+	"980839": {"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"},
+	// MS10-017: Open XML File Format Converter for Mac
+	"980840": {"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"},
+	// MS10-039: Microsoft Office InfoPath 2003 Service Pack 3
+	"980923": {"CVE-2010-0817", "CVE-2010-1264"},
+	// MS10-019: Authenticode Signature Verification 5.1 (+ 5 variants)
+	"981210": {"CVE-2010-0486", "CVE-2010-0487"},
+	// MS10-024: Microsoft Exchange Server 2007 Service Pack 2 for x64-based Systems
+	"981383": {"CVE-2010-0025"},
+	// MS10-024: Microsoft Exchange Server 2010 for x64-based Systems
+	"981401": {"CVE-2010-0025"},
+	// MS10-024: Microsoft Exchange Server 2007 Service Pack 1 for x64-based Systems
+	"981407": {"CVE-2010-0025"},
+	// MS10-047: Windows XP Service Pack 3 (+ 9 variants)
+	"981852": {"CVE-2010-1888", "CVE-2010-1889", "CVE-2010-1890"},
+	// MS10-073: Windows XP Service Pack 3 (+ 8 variants)
+	"981957": {"CVE-2010-2549"},
+	// MS10-054: Windows XP Service Pack 3 (+ 4 variants)
+	"982214": {"CVE-2010-2551", "CVE-2010-2552"},
+	// MS10-038: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 1 and Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"982331": {"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"},
+	// MS10-038: Microsoft Office Excel Viewer Service Pack 1 and Microsoft Office Excel Viewer Service Pack 2
+	"982333": {"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1253", "CVE-2010-1254"},
+	// MS10-044: Microsoft Office Access 2007 Service Pack 1 and Microsoft Office Access 2007 Service Pack 2
+	"982335": {"CVE-2010-1881"},
+	// MS10-035: Internet Explorer 6 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4 (+ 15 variants)
+	"982381": {"CVE-2010-0255", "CVE-2010-1257", "CVE-2010-1260", "CVE-2010-1261"},
+	// MS10-060: Microsoft Silverlight 2 when installed on Mac (+ 2 variants)
+	"982926": {"CVE-2010-0019"},
+	// MS10-060: Microsoft .NET Framework 3.5 when installed on Windows XP Service Pack 3 (+ 9 variants)
+	"983582": {"CVE-2010-0019"},
+	// MS10-060: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 3 variants)
+	"983590": {"CVE-2010-0019"},
+	// MS10-038: Microsoft Office Excel 2003 Service Pack 3 (+ 3 variants)
+	"2027452": {"CVE-2010-0822", "CVE-2010-0824", "CVE-2010-1245", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1249", "CVE-2010-1250", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1253", "CVE-2010-1254"},
+	// MS10-038: Microsoft Office 2008 for Mac
+	"2028864": {"CVE-2010-0824", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1251", "CVE-2010-1252", "CVE-2010-1254"},
+	// MS10-038: Microsoft Office 2004 for Mac
+	"2028866": {"CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1254"},
+	// MS10-038: Open XML File Format Converter for Mac
+	"2078051": {"CVE-2010-0824", "CVE-2010-1246", "CVE-2010-1247", "CVE-2010-1248", "CVE-2010-1251", "CVE-2010-1252"},
+	// MS10-056: Microsoft Works 9
+	"2092914": {"CVE-2010-1901", "CVE-2010-1902", "CVE-2010-1903"},
 	// MS10-065: Internet Information Services 5.1 on Windows XP Service Pack 3 (+ 13 variants)
 	"2124261": {"CVE-2010-2730", "CVE-2010-2731"},
+	// MS10-048: Windows Vista Service Pack 1 and Windows Vista Service Pack 2 (+ 8 variants)
+	"2160329": {"CVE-2010-1894", "CVE-2010-1895", "CVE-2010-1896"},
+	// MS10-053: Internet Explorer 6 for Windows XP Service Pack 3 (+ 26 variants)
+	"2183461": {"CVE-2010-2557", "CVE-2010-2559"},
+	// MS10-060: Microsoft .NET Framework 2.0 Service Pack 1 on Windows Vista Service Pack 1 (+ 29 variants)
+	"2265906": {"CVE-2010-0019"},
+	// MS10-056: Microsoft Office Word 2007 Service Pack 2
+	"2269638": {"CVE-2010-1903"},
 	// MS10-065: Internet Information Services 7.5 on Windows 7 for 32-bit Systems (+ 3 variants)
 	"2271195": {"CVE-2010-1899", "CVE-2010-2731"},
+	// MS10-056: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2277947": {"CVE-2010-1903"},
+	// MS10-056: Microsoft Office 2008 for Mac
+	"2284162": {"CVE-2010-1903"},
+	// MS10-056: Microsoft Office 2004 for Mac
+	"2284171": {"CVE-2010-1903"},
+	// MS10-056: Open XML File Format Converter for Mac
+	"2284179": {"CVE-2010-1903"},
+	// MS10-105: Microsoft Office 2007 Service Pack 2
+	"2288931": {"CVE-2010-3946", "CVE-2010-3947", "CVE-2010-3949", "CVE-2010-3950"},
+	// MS10-105: Microsoft Office 2010 (32-bit editions) (+ 1 variant)
+	"2289078": {"CVE-2010-3946", "CVE-2010-3947", "CVE-2010-3949", "CVE-2010-3950"},
+	// MS10-087: Microsoft Office 2007 Service Pack 2
+	"2289158": {"CVE-2010-2573", "CVE-2010-3336"},
+	// MS10-087: Microsoft Office 2010 (32-bit editions) (+ 1 variant)
+	"2289161": {"CVE-2010-2573", "CVE-2010-3336"},
+	// MS10-105: Microsoft Office 2003 Service Pack 3
+	"2289163": {"CVE-2010-3947", "CVE-2010-3949", "CVE-2010-3950", "CVE-2010-3951", "CVE-2010-3952"},
+	// MS10-087: Microsoft Office XP Service Pack 3
+	"2289169": {"CVE-2010-3337"},
+	// MS10-087: Microsoft Office 2003 Service Pack 3
+	"2289187": {"CVE-2010-3336", "CVE-2010-3337"},
 	// MS10-065: Internet Information Services 5.1 on Windows XP Service Pack 3
 	"2290570": {"CVE-2010-1899", "CVE-2010-2730"},
+	// MS10-103: Microsoft Publisher 2003 Service Pack 3 (+ 3 variants)
+	"2292970": {"CVE-2010-2569", "CVE-2010-2571", "CVE-2010-3954", "CVE-2010-3955"},
+	// MS10-079: Microsoft Word 2003 Service Pack 3 (+ 5 variants)
+	"2293194": {"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"},
+	// MS10-080: Microsoft Excel 2002 Service Pack 3 (+ 2 variants)
+	"2293211": {"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3232", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240", "CVE-2010-3241", "CVE-2010-3242"},
+	// MS10-088: Microsoft Office 2004 for Mac
+	"2293386": {"CVE-2010-2572"},
+	// MS10-080: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2344875": {"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"},
+	// MS10-079: Microsoft Word Viewer
+	"2345009": {"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220"},
+	// MS10-079: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2345043": {"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221"},
+	// MS10-080: Microsoft Excel Viewer Service Pack 2
+	"2345088": {"CVE-2010-3230", "CVE-2010-3231", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3236", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3241", "CVE-2010-3242"},
+	// MS10-072: Microsoft SharePoint Foundation 2010
+	"2345322": {"CVE-2010-3243"},
+	// MS10-072: Microsoft Groove Server 2010
+	"2346298": {"CVE-2010-3243"},
+	// MS10-072: Microsoft Office Web Apps
+	"2346411": {"CVE-2010-3243"},
+	// MS10-071: Internet Explorer 6 for Windows XP Service Pack 3 (+ 26 variants)
+	"2360131": {"CVE-2010-0808", "CVE-2010-3243", "CVE-2010-3324", "CVE-2010-3326", "CVE-2010-3329"},
+	// MS11-011: Windows XP Professional x64 Edition Service Pack 2 (+ 12 variants)
+	"2393802": {"CVE-2011-0045"},
+	// MS10-088: Microsoft PowerPoint Viewer 2007 Service Pack 2
+	"2413381": {"CVE-2010-2572"},
+	// MS10-090: Internet Explorer 6 for Windows XP Service Pack 3 (+ 26 variants)
+	"2416400": {"CVE-2010-3340", "CVE-2010-3345"},
+	// MS10-079: Microsoft Office 2004 for Mac; MS10-080: Microsoft Office 2004 for Mac
+	"2422343": {"CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3239", "CVE-2010-3240"},
+	// MS10-079: Microsoft Office 2008 for Mac; MS10-080: Microsoft Office 2008 for Mac
+	"2422352": {"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"},
+	// MS10-079: Open XML File Format Converter for Mac; MS10-080: Open XML File Format Converter for Mac
+	"2422398": {"CVE-2010-2747", "CVE-2010-2748", "CVE-2010-2750", "CVE-2010-3215", "CVE-2010-3216", "CVE-2010-3217", "CVE-2010-3218", "CVE-2010-3219", "CVE-2010-3220", "CVE-2010-3221", "CVE-2010-3230", "CVE-2010-3233", "CVE-2010-3234", "CVE-2010-3235", "CVE-2010-3237", "CVE-2010-3238", "CVE-2010-3239", "CVE-2010-3240"},
+	// MS10-087: Microsoft Office 2004 for Mac
+	"2423930": {"CVE-2010-3337"},
+	// MS11-013: Windows 7 for 32-bit Systems and Windows 7 for 32-bit Systems Service Pack 1 (+ 3 variants)
+	"2425227": {"CVE-2011-0043"},
+	// MS10-105: Microsoft Works 9
+	"2431831": {"CVE-2010-3945", "CVE-2010-3946", "CVE-2010-3949", "CVE-2010-3951", "CVE-2010-3952"},
+	// MS10-098: Windows XP Service Pack 3 (+ 12 variants)
+	"2436673": {"CVE-2010-3941", "CVE-2010-3944"},
+	// MS11-074: Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions) (+ 4 variants)
+	"2451858": {"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1892", "CVE-2011-1893"},
+	// MS10-087: Microsoft Office for Mac 2011
+	"2454823": {"CVE-2010-2573", "CVE-2010-3334", "CVE-2010-3337"},
+	// MS11-021: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2466156": {"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0979", "CVE-2011-0980"},
+	// MS11-021: Microsoft Excel Viewer Service Pack 2
+	"2466158": {"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0980"},
+	// MS10-087: Open XML File Format Converter for Mac
+	"2476511": {"CVE-2010-2573", "CVE-2010-3337"},
+	// MS10-087: Microsoft Office 2008 for Mac
+	"2476512": {"CVE-2010-2573", "CVE-2010-3337"},
+	// MS11-013: Windows XP Service Pack 3 (+ 4 variants)
+	"2478971": {"CVE-2011-0091"},
+	// MS11-012: Windows 7 for 32-bit Systems and Windows 7 for 32-bit Systems Service Pack 1 (+ 3 variants)
+	"2479628": {"CVE-2011-0087"},
+	// MS11-015: Windows XP Service Pack 3 (+ 2 variants)
+	"2479943": {"CVE-2011-0032", "CVE-2011-0042"},
+	// MS11-003: Internet Explorer 6 for Windows XP Service Pack 3 (+ 14 variants)
+	"2482017": {"CVE-2011-0038"},
+	// MS11-021: Microsoft Excel 2003 Service Pack 3 (+ 3 variants)
+	"2489279": {"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"},
+	// MS11-022: Microsoft PowerPoint 2002 Service Pack 3 (+ 4 variants)
+	"2489283": {"CVE-2011-0655", "CVE-2011-0976"},
+	// MS11-074: Microsoft Windows SharePoint Services 3.0 Service Pack 2 (32-bit versions) (+ 1 variant)
+	"2493987": {"CVE-2011-0653", "CVE-2011-1890"},
+	// MS11-074: Microsoft Windows SharePoint Services 2.0
+	"2494007": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1892"},
+	// MS11-018: Internet Explorer 8 for Windows XP Service Pack 3 (+ 11 variants)
+	"2497640": {"CVE-2011-0094", "CVE-2011-1245"},
+	// MS11-015: Windows XP Media Center Edition 2005 Service Pack 3
+	"2502898": {"CVE-2011-0032"},
+	// MS11-021: Microsoft Office 2004 for Mac; MS11-023: Microsoft Office 2004 for Mac
+	"2505924": {"CVE-2011-0101", "CVE-2011-0107"},
+	// MS11-021: Microsoft Office 2008 for Mac; MS11-023: Microsoft Office 2008 for Mac
+	"2505927": {"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"},
+	// MS11-021: Open XML File Format Converter for Mac; MS11-023: Open XML File Format Converter for Mac
+	"2505935": {"CVE-2011-0101", "CVE-2011-0107", "CVE-2011-0978"},
+	// MS11-056: Windows Vista Service Pack 1 and Windows Vista Service Pack 2 (+ 8 variants)
+	"2507938": {"CVE-2011-1283", "CVE-2011-1870"},
+	// MS11-027: Windows Server 2003 Service Pack 2 (+ 11 variants)
+	"2508272": {"CVE-2010-0811", "CVE-2010-3973", "CVE-2011-1243"},
+	// MS11-074: Microsoft Groove Server 2010 and Microsoft Groove Server 2010 Service Pack 1
+	"2508965": {"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-022: Microsoft PowerPoint Viewer
+	"2519984": {"CVE-2011-0976"},
+	// MS11-021: Microsoft Office for Mac 2011; MS11-022: Microsoft Office for Mac 2011
+	"2525412": {"CVE-2011-0097", "CVE-2011-0098", "CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0976", "CVE-2011-0978", "CVE-2011-0980"},
+	// MS11-050: Internet Explorer 6 for Windows XP Service Pack 3 (+ 21 variants)
+	"2530548": {"CVE-2011-1246", "CVE-2011-1251", "CVE-2011-1252", "CVE-2011-1254", "CVE-2011-1255", "CVE-2011-1256", "CVE-2011-1258", "CVE-2011-1260", "CVE-2011-1262"},
+	// MS11-042: Windows Vista Service Pack 1 and Windows Vista Service Pack 2 (+ 8 variants)
+	"2535512": {"CVE-2011-1868"},
+	// MS11-045: Microsoft Excel 2003 Service Pack 3 (+ 3 variants)
+	"2537146": {"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"},
+	// MS11-036: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2540162": {"CVE-2011-1270"},
+	// MS11-045: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2541012": {"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"},
+	// MS11-045: Microsoft Excel Viewer Service Pack 2
+	"2541015": {"CVE-2011-1275", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"},
+	// MS11-036: Microsoft PowerPoint 2007 Service Pack 2 (+ 3 variants)
+	"2545814": {"CVE-2011-1270"},
+	// MS11-074: Microsoft Office Groove 2007 Service Pack 2
+	"2552997": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-074: Microsoft Office Groove Management Server 2007 Service Pack 2
+	"2552998": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-074: Microsoft Office Groove Data Bridge Server 2007 Service Pack 2
+	"2552999": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-074: Microsoft Office Forms Server 2007 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2553005": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-072: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2553074": {"CVE-2011-1986"},
+	// MS11-072: Microsoft Excel Viewer Service Pack 2
+	"2553075": {"CVE-2011-1986"},
+	// MS11-072: Microsoft Office 2007 Service Pack 2
+	"2553089": {"CVE-2011-1986"},
+	// MS11-072: Microsoft Office 2010 and Microsoft Office 2010 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"2553091": {"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"},
+	// MS11-072: Excel Services installed on Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2553093": {"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988"},
+	// MS15-033: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"2553164": {"CVE-2015-1639", "CVE-2015-1651"},
+	// MS15-081: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2553313": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS12-030: Microsoft Office 2010 (32-bit editions) (+ 3 variants)
+	"2553371": {"CVE-2012-0143"},
+	// MS15-110: Microsoft SharePoint Server 2010 Service Pack 2
+	"2553405": {"CVE-2015-6037", "CVE-2015-6039"},
+	// MS13-067: Microsoft Business Productivity Servers on Microsoft SharePoint Server 2010 Service Pack 1 (+ 1 variant)
+	"2553408": {"CVE-2013-1315", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"},
+	// MS12-050: Microsoft InfoPath 2010 (32-bit editions) (+ 3 variants)
+	"2553431": {"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"},
 	// MS16-107: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"2553432": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	// MS11-045: Microsoft Office for Mac 2011
+	"2555784": {"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"},
+	// MS11-045: Microsoft Office 2008 for Mac
+	"2555785": {"CVE-2011-1278"},
+	// MS11-045: Microsoft Office 2004 for Mac
+	"2555786": {"CVE-2011-1277"},
+	// MS11-045: Open XML File Format Converter for Mac
+	"2555787": {"CVE-2011-1278"},
+	// MS11-054: Windows XP Service Pack 3 (+ 13 variants)
+	"2555917": {"CVE-2011-1877", "CVE-2011-1886", "CVE-2011-1887", "CVE-2011-1888"},
+	// MS11-057: Internet Explorer 6 for Windows XP Service Pack 3 (+ 11 variants)
+	"2559049": {"CVE-2011-1257", "CVE-2011-1963"},
+	// MS11-060: Microsoft Visio 2010 (32-bit editions) and Microsoft Visio 2010 (32-bit editions) Service Pack 1 (+ 1 variant)
+	"2560978": {"CVE-2011-1979"},
+	// MS11-058: Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"2562485": {"CVE-2011-1966"},
+	// MS11-064: Windows Vista Service Pack 2 (+ 4 variants)
+	"2563894": {"CVE-2011-1965"},
+	// MS11-074: Microsoft SharePoint Workspace 2010 and Microsoft SharePoint Workspace 2010 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"2566445": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-074: Microsoft Office Web Apps 2010 and Microsoft Office Web Apps 2010 Service Pack 1
+	"2566449": {"CVE-2011-0653", "CVE-2011-1252", "CVE-2011-1890", "CVE-2011-1891", "CVE-2011-1893"},
+	// MS11-077: Windows XP Service Pack 3 (+ 4 variants)
+	"2567053": {"CVE-2011-2002"},
+	// MS11-073: Microsoft Office 2003 Service Pack 3
+	"2584052": {"CVE-2011-1982"},
+	// MS11-073: Microsoft Office 2010 and Microsoft Office 2010 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"2584066": {"CVE-2011-1980"},
+	// MS11-081: Internet Explorer 7 for Windows XP Service Pack 3 (+ 33 variants)
+	"2586448": {"CVE-2011-1996", "CVE-2011-1997", "CVE-2011-1998", "CVE-2011-1999"},
+	// MS11-072: Microsoft Excel 2003 Service Pack 3 (+ 5 variants)
+	"2587505": {"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-1988", "CVE-2011-1990"},
+	// MS12-050: Microsoft Groove Server 2010 (+ 1 variant)
+	"2589325": {"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"},
+	// MS12-034: Microsoft Office 2010 (32-bit editions) (+ 3 variants)
+	"2589337": {"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"},
+	// MS15-116: Microsoft Access 2007 Service Pack 3
+	"2596614": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-081: Microsoft Office 2007 Service Pack 3
+	"2596650": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS12-050: Microsoft InfoPath 2007 Service Pack 2 (+ 1 variant)
+	"2596666": {"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"},
+	// MS15-110: Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
+	"2596670": {"CVE-2015-6037", "CVE-2015-6039"},
+	// MS15-116: Microsoft Project 2007 Service Pack 3
+	"2596770": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS12-030: Microsoft Excel Viewer
+	"2596842": {"CVE-2012-0143"},
+	// MS11-094: Microsoft Office Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats Service Pack 2
+	"2596843": {"CVE-2011-3396"},
+	// MS14-022: Microsoft SharePoint Designer 2007 Service Pack 3 (ewd)
+	"2596861": {"CVE-2014-1754", "CVE-2014-1813"},
+	// MS11-094: Microsoft PowerPoint Viewer 2007 Service Pack 2
+	"2596912": {"CVE-2011-3396"},
 	// MS16-070: Microsoft Visio Viewer 2007 Service Pack 3
 	"2596915": {"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"},
+	// MS12-030: Microsoft Office Compatibility Pack Service Pack 2 (+ 1 variant)
+	"2597162": {"CVE-2012-0143"},
+	// MS12-030: Microsoft Office 2007 Service Pack 2 (+ 1 variant)
+	"2597969": {"CVE-2012-0143"},
+	// MS13-072: Microsoft Office 2007 Service Pack 3 (msptls)
+	"2597973": {"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"},
 	// MS16-107: Microsoft Office Compatibility Pack Service Pack 3
 	"2597974": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	// MS12-050: Microsoft Office Web Apps 2010 (+ 1 variant)
+	"2598239": {"CVE-2012-1862", "CVE-2012-1863"},
+	// MS15-081: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2598244": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2477"},
+	// MS12-034: Microsoft Office 2003 Service Pack 3
+	"2598253": {"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"},
+	// MS11-072: Microsoft Office 2008 for Mac
+	"2598781": {"CVE-2011-1986", "CVE-2011-1990"},
+	// MS11-072: Microsoft Office 2004 for Mac
+	"2598782": {"CVE-2011-1986", "CVE-2011-1990"},
+	// MS11-072: Microsoft Office for Mac 2011
+	"2598783": {"CVE-2011-1986", "CVE-2011-1988", "CVE-2011-1990"},
+	// MS11-072: Open XML File Format Converter for Mac
+	"2598785": {"CVE-2011-1986", "CVE-2011-1990"},
+	// MS11-091: Microsoft Publisher 2007 Service Pack 2 and Microsoft Publisher 2007 Service Pack 3
+	"2607702": {"CVE-2011-3411"},
+	// MS11-099: Internet Explorer 6 for Windows XP Service Pack 3 (+ 33 variants)
+	"2618444": {"CVE-2011-1992", "CVE-2011-2019"},
+	// MS11-090: Windows Vista Service Pack 2 (+ 8 variants)
+	"2618451": {"CVE-2011-3397"},
+	// MS12-020: Windows XP Service Pack 3 (+ 9 variants)
+	"2621440": {"CVE-2012-0152"},
+	// MS12-004: Windows 7 for 32-bit Systems and Windows 7 for 32-bit Systems Service Pack 1 (+ 5 variants)
+	"2636391": {"CVE-2012-0003"},
+	// MS12-034: Microsoft Silverlight 5 when installed on Mac (+ 2 variants)
+	"2636927": {"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"},
+	// MS11-100: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
+	"2638420": {"CVE-2011-3415"},
+	// MS11-094: Microsoft PowerPoint 2010 (32-bit editions) (+ 1 variant)
+	"2639142": {"CVE-2011-3413"},
+	// MS11-094: Microsoft Office 2008 for Mac
+	"2644354": {"CVE-2011-3396"},
+	// MS12-009: Windows XP Professional x64 Edition Service Pack 2 (+ 7 variants)
+	"2645640": {"CVE-2012-0148", "CVE-2012-0149"},
+	// MS12-010: Internet Explorer 6 for Windows XP Service Pack 3 (+ 26 variants)
+	"2647516": {"CVE-2012-0011", "CVE-2012-0012", "CVE-2012-0155"},
+	// MS12-016: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 16 variants)
+	"2651026": {"CVE-2012-0015"},
+	// MS11-100: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 3 (+ 7 variants)
+	"2656353": {"CVE-2011-3415"},
+	// MS11-100: Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2003 Service Pack 2
+	"2656358": {"CVE-2011-3415"},
+	// MS12-030: Microsoft Excel 2003 Service Pack 3 (+ 6 variants)
+	"2663830": {"CVE-2012-0143", "CVE-2012-0185"},
+	// MS12-011: Microsoft Office SharePoint Server 2010 and Microsoft Office SharePoint Server 2010 Service Pack 1
+	"2663841": {"CVE-2012-0017"},
+	// MS12-030: Microsoft Office 2008 for Mac
+	"2665346": {"CVE-2012-0141", "CVE-2012-0185"},
+	// MS12-030: Microsoft Office for Mac 2011
+	"2665351": {"CVE-2012-0142", "CVE-2012-0143", "CVE-2012-0185"},
+	// MS12-016: Microsoft Silverlight 4 when installed on Mac
+	"2668562": {"CVE-2012-0015"},
+	// MS12-023: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2675157": {"CVE-2012-0169", "CVE-2012-0170", "CVE-2012-0172"},
+	// MS12-076: Microsoft Office Compatibility Pack Service Pack 2 (+ 1 variant)
+	"2687311": {"CVE-2012-1887"},
+	// MS12-076: Microsoft Excel Viewer
+	"2687313": {"CVE-2012-1885", "CVE-2012-1887"},
+	// MS12-064: Microsoft Office Compatibility Pack Service Pack 2 (+ 1 variant)
+	"2687314": {"CVE-2012-0182"},
+	// MS12-064: Microsoft Office Web Apps 2010 Service Pack 1
+	"2687401": {"CVE-2012-0182"},
+	// MS15-116: Microsoft InfoPath 2007 Service Pack 3
+	"2687406": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-081: Microsoft Office 2007 Service Pack 3
+	"2687409": {"CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS13-024: Microsoft SharePoint Foundation 2010 Service Pack 1
+	"2687418": {"CVE-2013-0083"},
+	// MS12-064: Microsoft Word Viewer
+	"2687485": {"CVE-2012-0182"},
+	// MS12-032: Windows Vista Service Pack 2 (+ 4 variants)
+	"2688338": {"CVE-2012-0179"},
+	// MS12-034: Microsoft Silverlight 4 when installed on Mac (+ 2 variants)
+	"2690729": {"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0176", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"},
+	// MS12-050: Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions) (+ 9 variants)
+	"2695502": {"CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862", "CVE-2012-1863"},
 	// MS12-074: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 3 (+ 8 variants)
 	"2698023": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
 	// MS12-074: Microsoft .NET Framework 1.1 Service Pack 1 on Windows Server 2003 Service Pack 2
 	"2698032": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
 	// MS12-074: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet PC Edition 2005 Service Pack 3 and Windows XP Media Center Edition 2005 Service Pack 3
 	"2698035": {"CVE-2012-1896", "CVE-2012-4776", "CVE-2012-4777"},
+	// MS12-037: Internet Explorer 6 for Windows XP Service Pack 3 (+ 24 variants)
+	"2699988": {"CVE-2012-1523", "CVE-2012-1858", "CVE-2012-1873", "CVE-2012-1874", "CVE-2012-1875", "CVE-2012-1881"},
+	// MS12-039: Microsoft Lync 2010 Attendant (32-bit) (+ 1 variant)
+	"2702444": {"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1858"},
 	// MS12-054: Windows XP Service Pack 3 (+ 21 variants)
 	"2705219": {"CVE-2012-1851"},
+	// MS12-042: Windows XP Service Pack 3 (+ 1 variant)
+	"2707511": {"CVE-2012-0217"},
+	// MS12-039: Microsoft Communicator 2007 R2
+	"2708980": {"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1849"},
+	// MS12-041: Windows XP Professional x64 Edition Service Pack 2 (+ 16 variants)
+	"2709162": {"CVE-2012-1868"},
+	// MS12-042: Windows 7 for x64-based Systems (+ 3 variants)
+	"2709715": {"CVE-2012-1515"},
 	// MS12-054: Windows XP Service Pack 3 (+ 21 variants)
 	"2712808": {"CVE-2012-1850", "CVE-2012-1852", "CVE-2012-1853"},
+	// MS12-073: Microsoft FTP Service 7.0 for IIS 7.0 when installed on Windows Vista Service Pack 2 (+ 15 variants)
+	"2716513": {"CVE-2012-2531"},
+	// MS12-076: Microsoft Excel 2003 Service Pack 3
+	"2720184": {"CVE-2012-2543"},
+	// MS12-052: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2722913": {"CVE-2012-1526", "CVE-2012-2523"},
 	// MS12-074: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 18 variants)
 	"2729449": {"CVE-2012-1896", "CVE-2012-4777"},
 	// MS12-074: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Windows XP Service Pack 3 (+ 4 variants)
@@ -1293,12 +1972,16 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2729460": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4777"},
 	// MS12-074: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 2 variants)
 	"2729462": {"CVE-2012-1896", "CVE-2012-4777"},
+	// MS12-073: Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Vista Service Pack 2 (+ 15 variants)
+	"2733829": {"CVE-2012-2531", "CVE-2012-2532"},
 	// MS12-074: Microsoft .NET Framework 4 when installed on Windows XP Service Pack 3 (+ 18 variants)
 	"2737019": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
 	// MS12-074: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
 	"2737083": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
 	// MS12-074: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
 	"2737084": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4776"},
+	// MS12-064: Microsoft Word 2003 Service Pack 3 (+ 3 variants)
+	"2742319": {"CVE-2012-0182"},
 	// MS13-004: Microsoft .NET Framework 1.1 Service Pack 1 when installed on Microsoft Windows XP Service Pack 3 (+ 8 variants)
 	"2742597": {"CVE-2013-0003"},
 	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
@@ -1315,6 +1998,8 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2742614": {"CVE-2013-0001"},
 	// MS13-004: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
 	"2742616": {"CVE-2013-0001"},
+	// MS12-063: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2744842": {"CVE-2012-1529", "CVE-2012-2546", "CVE-2012-2548", "CVE-2012-2557"},
 	// MS12-074: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
 	"2756872": {"CVE-2012-1895", "CVE-2012-1896", "CVE-2012-2519", "CVE-2012-4777"},
 	// MS13-004: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems (+ 4 variants)
@@ -1323,10 +2008,46 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2756921": {"CVE-2013-0001"},
 	// MS13-004: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
 	"2756923": {"CVE-2013-0001"},
+	// MS13-002: Microsoft XML Core Services 6.0 on Windows XP Service Pack 3 (+ 25 variants)
+	"2757638": {"CVE-2013-0006", "CVE-2013-0007"},
+	// MS13-002: Microsoft XML Core Services 4.0 when installed on Windows XP Service Pack 3 (+ 26 variants)
+	"2758694": {"CVE-2013-0006"},
+	// MS13-002: Microsoft XML Core Services 6.0 on Windows Server 2003 Service Pack 2
+	"2758696": {"CVE-2013-0006"},
+	// MS13-072: Microsoft Office 2007 Service Pack 3 (mso)
+	"2760411": {"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"},
 	// MS13-085: Microsoft Office 2007 Service Pack 3
 	"2760585": {"CVE-2013-3890"},
+	// MS13-073: Microsoft Office Compatibility Pack Service Pack 3
+	"2760588": {"CVE-2013-3158"},
+	// MS13-067: Excel Services on Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
+	"2760589": {"CVE-2013-1330", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"},
+	// MS13-073: Microsoft Excel Viewer
+	"2760590": {"CVE-2013-3158"},
 	// MS13-085: Microsoft Office 2007 Service Pack 3
 	"2760591": {"CVE-2013-3890"},
+	// MS13-067: Excel Services on Microsoft SharePoint Server 2010 Service Pack 1 (+ 1 variant)
+	"2760595": {"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"},
+	// MS12-050: Microsoft Windows SharePoint Services 2.0
+	"2760604": {"CVE-2012-1858", "CVE-2012-1859", "CVE-2012-1860", "CVE-2012-1861", "CVE-2012-1862"},
+	// MS13-067: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 1 (+ 1 variant)
+	"2760755": {"CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3858"},
+	// MS13-072: Microsoft Office Compatibility Pack Service Pack 3
+	"2760823": {"CVE-2013-3160", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3856"},
+	// MS12-075: Windows XP Professional x64 Edition Service Pack 2 (+ 19 variants)
+	"2761226": {"CVE-2012-2530", "CVE-2012-2553"},
+	// MS12-077: Internet Explorer 6 for Windows XP Service Pack 3 (+ 30 variants)
+	"2761465": {"CVE-2012-4782", "CVE-2012-4787"},
+	// MS12-076: Microsoft Office for Mac 2011
+	"2764047": {"CVE-2012-1886"},
+	// MS12-076: Microsoft Office 2008 for Mac
+	"2764048": {"CVE-2012-1886", "CVE-2012-2543"},
+	// MS14-023: Microsoft Office 2007 Service Pack 3 (proofing tools) (Simplified Chinese only)
+	"2767772": {"CVE-2014-1808"},
+	// MS13-016: Windows 8 for 32-bit Systems (+ 4 variants)
+	"2778344": {"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"},
+	// MS13-009: Internet Explorer 6 for Windows XP Service Pack 3 (+ 44 variants)
+	"2792100": {"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"},
 	// MS13-040: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 14 variants)
 	"2804576": {"CVE-2013-1337"},
 	// MS13-040: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows XP Service Pack 3 (+ 4 variants)
@@ -1337,8 +2058,22 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2804580": {"CVE-2013-1337"},
 	// MS13-040: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
 	"2804584": {"CVE-2013-1337"},
+	// MS13-036: Windows XP Service Pack 3 (+ 9 variants)
+	"2808735": {"CVE-2013-1291", "CVE-2013-1292", "CVE-2013-1293"},
+	// MS13-021: Internet Explorer 6 for Windows XP Service Pack 3 (+ 28 variants)
+	"2809289": {"CVE-2013-0091", "CVE-2013-1288"},
+	// MS14-022: Microsoft SharePoint Designer 2010 Service Pack 1 (32-bit versions) (+ 3 variants)
+	"2810069": {"CVE-2014-1754", "CVE-2014-1813"},
+	// MS13-031: Windows XP Service Pack 3 (+ 21 variants)
+	"2813170": {"CVE-2013-1284"},
+	// MS13-072: Microsoft Office 2003 Service Pack 3 (mso)
+	"2817474": {"CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3850", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3857", "CVE-2013-3858"},
+	// MS15-116: Microsoft Publisher 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2817478": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
 	// MS13-085: Microsoft Office 2013 (32-bit editions) (+ 2 variants)
 	"2817623": {"CVE-2013-3890"},
+	// MS13-072: Microsoft Word Viewer
+	"2817683": {"CVE-2013-3853", "CVE-2013-3854"},
 	// MS13-086: Microsoft Word 2003 Service Pack 3
 	"2826020": {"CVE-2013-3892"},
 	// MS13-085: Microsoft Office 2010 Service Pack 1 (32-bit editions) (+ 3 variants)
@@ -1355,8 +2090,12 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2827330": {"CVE-2013-3891"},
 	// MS13-046: Windows XP Service Pack 3 (Win32k.sys) (+ 21 variants)
 	"2829361": {"CVE-2013-1332"},
+	// MS13-037: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2829530": {"CVE-2013-0811", "CVE-2013-1297", "CVE-2013-1306", "CVE-2013-1307", "CVE-2013-1310", "CVE-2013-1311", "CVE-2013-1312", "CVE-2013-3140"},
 	// MS13-046: Windows Vista Service Pack 2 (dxgkrnl.sys) (+ 16 variants)
 	"2830290": {"CVE-2013-1333", "CVE-2013-1334"},
+	// MS13-042: Microsoft Publisher 2007 Service Pack 3 (+ 2 variants)
+	"2830397": {"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"},
 	// MS13-052: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 7 variants)
 	"2832407": {"CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3171", "CVE-2013-3178"},
 	// MS13-052: Microsoft .NET Framework 3.0 Service Pack 2 when installed on Microsoft Windows XP Service Pack 3 (+ 3 variants)
@@ -1385,10 +2124,20 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2833958": {"CVE-2013-3129", "CVE-2013-3171", "CVE-2013-3178"},
 	// MS13-052: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
 	"2833959": {"CVE-2013-3129", "CVE-2013-3171", "CVE-2013-3178"},
+	// MS13-067: Microsoft SharePoint Portal Server 2003 Service Pack 3 (+ 12 variants)
+	"2834052": {"CVE-2013-1315", "CVE-2013-1330", "CVE-2013-3179", "CVE-2013-3180", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3857", "CVE-2013-3858"},
 	// MS13-052: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 14 variants)
 	"2835393": {"CVE-2013-3129", "CVE-2013-3171", "CVE-2013-3178"},
 	// MS13-052: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 3 variants)
 	"2835622": {"CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3171", "CVE-2013-3178"},
+	// MS14-022: Microsoft SharePoint Server 2010 Service Pack 1 (coreserver) (+ 1 variant)
+	"2837598": {"CVE-2014-1754", "CVE-2014-1813"},
+	// MS15-081: Microsoft Office 2007 Service Pack 3
+	"2837610": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469"},
+	// MS15-070: Excel Services on Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
+	"2837612": {"CVE-2015-2375", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"},
+	// MS13-047: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2838727": {"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"},
 	// MS13-052: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 14 variants)
 	"2840628": {"CVE-2013-3129", "CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3178"},
 	// MS13-052: Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows XP Service Pack 3 (+ 8 variants)
@@ -1409,58 +2158,460 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"2844287": {"CVE-2013-3129", "CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3178"},
 	// MS13-052: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
 	"2844289": {"CVE-2013-3129", "CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3178"},
+	// MS13-072: Microsoft Word 2010 Service Pack 1 (32-bit editions) (+ 5 variants)
+	"2845537": {"CVE-2013-3160", "CVE-2013-3847", "CVE-2013-3848", "CVE-2013-3849", "CVE-2013-3851", "CVE-2013-3852", "CVE-2013-3853", "CVE-2013-3854", "CVE-2013-3855", "CVE-2013-3856", "CVE-2013-3858"},
+	// MS13-055: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2846071": {"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"},
 	// MS13-081: Windows XP Service Pack 3 (+ 21 variants)
 	"2847311": {"CVE-2013-3200", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
 	// MS13-052: Microsoft Silverlight 5 when installed on Mac (+ 7 variants)
 	"2847559": {"CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3171"},
+	// MS13-053: Windows 8 for 32-bit Systems (win32k.sys) (+ 4 variants)
+	"2850851": {"CVE-2013-3167", "CVE-2013-3172", "CVE-2013-3660"},
 	// MS13-081: Windows Vista Service Pack 2 (+ 7 variants)
 	"2855844": {"CVE-2013-3200", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
+	// MS13-082: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 14 variants)
+	"2858302": {"CVE-2013-3128"},
+	// MS13-063: Windows XP Service Pack 3 (+ 10 variants)
+	"2859537": {"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"},
+	// MS13-082: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 7 variants)
+	"2861188": {"CVE-2013-3860", "CVE-2013-3861"},
+	// MS13-082: Microsoft .NET Framework 3.0 Service Pack 2 when installed on Microsoft Windows XP Service Pack 3 (+ 3 variants)
+	"2861189": {"CVE-2013-3860", "CVE-2013-3861"},
+	// MS13-082: Microsoft .NET Framework 3.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 3 variants)
+	"2861190": {"CVE-2013-3860", "CVE-2013-3861"},
+	// MS13-082: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 2 variants)
+	"2861191": {"CVE-2013-3860", "CVE-2013-3861"},
+	// MS13-082: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 3 variants)
+	"2861193": {"CVE-2013-3860", "CVE-2013-3861"},
+	// MS13-082: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2861194": {"CVE-2013-3860", "CVE-2013-3861"},
+	// MS13-082: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2861208": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 3.5 Service Pack 1 when installed on Windows XP Service Pack 3 (+ 9 variants)
+	"2861697": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2861698": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2861702": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2861704": {"CVE-2013-3128"},
 	// MS13-081: Windows XP Service Pack 3 (+ 21 variants)
 	"2862330": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
 	// MS13-081: Windows XP Service Pack 3 (+ 21 variants)
 	"2862335": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
+	// MS13-059: Internet Explorer 6 for Windows XP Service Pack 3 (+ 33 variants)
+	"2862772": {"CVE-2013-3184", "CVE-2013-3186", "CVE-2013-3187", "CVE-2013-3188", "CVE-2013-3189", "CVE-2013-3190", "CVE-2013-3191", "CVE-2013-3193", "CVE-2013-3194"},
+	// MS13-082: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows XP Service Pack 3 (+ 4 variants)
+	"2863239": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2863240": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2863243": {"CVE-2013-3128"},
+	// MS13-082: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2863253": {"CVE-2013-3128"},
 	// MS13-081: Windows 8 for 32-bit Systems (+ 4 variants)
 	"2863725": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
+	// MS15-059: Microsoft Office 2007 Service Pack 3 (file format converters)
+	"2863812": {"CVE-2015-1770"},
+	// MS15-059: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2863817": {"CVE-2015-1759", "CVE-2015-1770"},
+	// MS14-022: Microsoft SharePoint Server 2013 (coreserverloc)
+	"2863829": {"CVE-2014-1813"},
+	// MS14-022: Microsoft SharePoint Designer 2013 (64-bit versions) (spd)
+	"2863836": {"CVE-2014-1754", "CVE-2014-1813"},
+	// MS14-022: SharePoint Server 2013 Client Components SDK (32-bit version) (+ 1 variant)
+	"2863854": {"CVE-2014-1813"},
+	// MS14-001: Microsoft Word Viewer
+	"2863867": {"CVE-2014-0259"},
+	// MS14-017: Word Automation Services on Microsoft SharePoint Server 2013 (+ 1 variant)
+	"2863907": {"CVE-2014-1757", "CVE-2014-1758"},
 	// MS13-081: Windows Vista Service Pack 2 (+ 16 variants)
 	"2864202": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
 	// MS13-081: Windows XP Service Pack 3 (+ 17 variants)
 	"2868038": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
+	// MS13-069: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2870699": {"CVE-2013-3201", "CVE-2013-3202", "CVE-2013-3203", "CVE-2013-3204", "CVE-2013-3205", "CVE-2013-3206", "CVE-2013-3207", "CVE-2013-3208", "CVE-2013-3209", "CVE-2013-3845"},
 	// MS13-081: Windows Vista Service Pack 2 (+ 11 variants)
 	"2876284": {"CVE-2013-3128", "CVE-2013-3200", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3894"},
+	// MS13-076: Windows Server 2012 (+ 2 variants)
+	"2876315": {"CVE-2013-1341"},
+	// MS13-073: Microsoft Office for Mac 2011
+	"2877813": {"CVE-2013-3158", "CVE-2013-3159"},
+	// MS14-017: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 1 (+ 1 variant)
+	"2878220": {"CVE-2014-1757", "CVE-2014-1758"},
+	// MS15-116: Microsoft InfoPath 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2878230": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS14-017: Microsoft Office Compatibility Pack Service Pack 3
+	"2878236": {"CVE-2014-1758"},
+	// MS14-023: Microsoft Office 2010 Service Pack 1 (32-bit editions) (proofing tools) (Simplified Chinese only) (+ 3 variants)
+	"2878284": {"CVE-2014-1808"},
+	// MS14-017: Microsoft Word Viewer
+	"2878304": {"CVE-2014-1757", "CVE-2014-1758"},
+	// MS14-023: Microsoft Office 2013 (32-bit editions) (mso) (+ 5 variants)
+	"2878316": {"CVE-2014-1756"},
+	// MS13-080: Internet Explorer 6 for Windows XP Service Pack 3 (+ 40 variants)
+	"2879017": {"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"},
+	// MS14-023: Microsoft Office 2013 (32-bit editions) (proofing tools) (+ 5 variants)
+	"2880463": {"CVE-2014-1808"},
+	// MS15-116: Microsoft Publisher 2007 Service Pack 3
+	"2880506": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS16-004: Microsoft Office 2010 Service Pack 2 (32-bit editions)
+	"2881029": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Office 2007 Service Pack 3
+	"2881067": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS15-022: Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
+	"2881068": {"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"},
 	// MS15-044: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"2881073": {"CVE-2015-1670"},
 	// MS15-044: Microsoft Office 2007 Service Pack 3
 	"2883029": {"CVE-2015-1670"},
 	// MS16-148: Microsoft Office 2007 Service Pack 3
 	"2883033": {"CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
+	// MS14-081: Word Automation Services on Microsoft SharePoint Server 2013 (+ 1 variant)
+	"2883050": {"CVE-2014-6356"},
 	// MS13-081: Windows XP Service Pack 3 (+ 20 variants)
 	"2883150": {"CVE-2013-3128", "CVE-2013-3200", "CVE-2013-3888"},
+	// MS13-080: Internet Explorer 11 for Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"2884101": {"CVE-2013-3872", "CVE-2013-3873", "CVE-2013-3874", "CVE-2013-3875", "CVE-2013-3882", "CVE-2013-3885", "CVE-2013-3886"},
 	// MS13-081: Windows XP Service Pack 3 (+ 16 variants)
 	"2884256": {"CVE-2013-3128", "CVE-2013-3879", "CVE-2013-3880", "CVE-2013-3881", "CVE-2013-3888", "CVE-2013-3894"},
+	// MS13-084: Microsoft Windows SharePoint Services 3.0 Service Pack 3 (32-bit versions) (+ 8 variants)
+	"2885089": {"CVE-2013-3889", "CVE-2013-3895"},
+	// MS13-091: Microsoft Office 2010 Service Pack 1 (32-bit editions) (+ 6 variants)
+	"2885093": {"CVE-2013-0082", "CVE-2013-1324", "CVE-2013-1325"},
+	// MS13-101: Windows Vista Service Pack 2 (+ 11 variants)
+	"2887069": {"CVE-2013-3899", "CVE-2013-3902", "CVE-2013-3903", "CVE-2013-5058"},
+	// MS13-088: Internet Explorer 6 for Windows XP Service Pack 3 (+ 44 variants)
+	"2888505": {"CVE-2013-3871", "CVE-2013-3908", "CVE-2013-3909", "CVE-2013-3910", "CVE-2013-3911", "CVE-2013-3912", "CVE-2013-3914", "CVE-2013-3916"},
 	// MS13-085: Microsoft Office for Mac 2011
 	"2889496": {"CVE-2013-3890"},
 	// MS16-148: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"2889841": {"CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
+	// MS15-116: Microsoft OneNote 2007 Service Pack 3
+	"2889915": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS13-101: Windows XP Service Pack 3 (+ 26 variants)
+	"2893984": {"CVE-2013-3907"},
+	// MS13-097: Internet Explorer 6 for Windows XP Service Pack 3 (+ 47 variants)
+	"2898785": {"CVE-2013-5045", "CVE-2013-5046", "CVE-2013-5049", "CVE-2013-5051", "CVE-2013-5052"},
+	// MS14-009: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 14 variants)
+	"2898855": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows XP Service Pack 3 (+ 4 variants)
+	"2898856": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2898857": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2898858": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2
+	"2898860": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2898864": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2898865": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2898866": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"2898868": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5.1 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2898869": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5.1 when installed on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2898870": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5.1 on Windows 8.1 for 32-bit Systems (+ 4 variants)
+	"2898871": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS15-116: Microsoft Office 2007 IME (Japanese) Service Pack 3
+	"2899473": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Pinyin IME 2010 (32-bit version) (+ 1 variant)
+	"2899516": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS14-081: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2899518": {"CVE-2014-6356"},
+	// MS14-081: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"2899581": {"CVE-2014-6356"},
+	// MS14-009: Microsoft .NET Framework 4 when installed on Microsoft Windows XP Service Pack 3 (+ 14 variants)
+	"2901110": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows XP Service Pack 3 (+ 4 variants)
+	"2901111": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2901112": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2901113": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2
+	"2901115": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2901118": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2901119": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2901120": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"2901125": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5.1 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2901126": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5.1 when installed on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2901127": {"CVE-2014-0257", "CVE-2014-0295"},
+	// MS14-009: Microsoft .NET Framework 4.5.1 on Windows 8.1 for 32-bit Systems (+ 4 variants)
+	"2901128": {"CVE-2014-0257", "CVE-2014-0295"},
 	// MS13-105: Microsoft Exchange Server 2007 Service Pack 3
 	"2903911": {"CVE-2013-5072"},
+	// MS14-009: Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet PC Edition 2005 Service Pack 3 and Windows XP Media Center Edition 2005 Service Pack 3
+	"2904878": {"CVE-2014-0253", "CVE-2014-0295"},
+	// MS15-116: Microsoft Access 2016 (32-bit edition) (+ 1 variant)
+	"2910978": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS14-009: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2911501": {"CVE-2014-0253", "CVE-2014-0257"},
+	// MS14-009: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2911502": {"CVE-2014-0253", "CVE-2014-0257"},
+	// MS14-001: Microsoft Word 2003 Service Pack 3 (+ 7 variants)
+	"2916605": {"CVE-2014-0258", "CVE-2014-0259"},
+	// MS15-116: Microsoft Publisher 2016 (32-bit edition) (+ 1 variant)
+	"2920680": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-081: Microsoft Word 2016 (32-bit editions) (+ 1 variant)
+	"2920691": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-099: Microsoft Excel 2016 (32-bit editions) (+ 1 variant); MS15-110: Microsoft Excel 2016 (32-bit edition) (+ 1 variant)
+	"2920693": {"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545", "CVE-2015-2557"},
+	// MS15-116: Microsoft Project 2016 (32-bit edition) (+ 1 variant)
+	"2920698": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-081: Microsoft Visio 2016 (32-bit editions) (+ 1 variant)
+	"2920708": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-116: Microsoft OneNote 2016 (32-bit edition) (+ 1 variant)
+	"2920726": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS16-004: Microsoft Office 2016 (32-bit edition)
+	"2920727": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS14-081: Microsoft Word Viewer
+	"2920729": {"CVE-2014-6356"},
+	// MS15-012: Microsoft Excel 2013 (32-bit editions) (+ 5 variants)
+	"2920753": {"CVE-2015-0064", "CVE-2015-0065"},
+	// MS15-012: Microsoft Excel 2007 Service Pack 3
+	"2920788": {"CVE-2015-0064", "CVE-2015-0065"},
+	// MS14-083: Microsoft Excel Viewer; MS15-012: Microsoft Excel Viewer
+	"2920791": {"CVE-2014-6361", "CVE-2015-0064", "CVE-2015-0065"},
+	// MS15-012: Word Automation Services
+	"2920810": {"CVE-2015-0063", "CVE-2015-0065"},
+	// MS14-017: Microsoft Office for Mac 2011
+	"2939132": {"CVE-2014-1757", "CVE-2014-1758"},
+	// MS14-017: Microsoft Word 2003 Service Pack 3 (+ 15 variants)
+	"2949660": {"CVE-2014-1757", "CVE-2014-1758"},
+	// MS14-022: Microsoft Windows SharePoint Services 3.0 Service Pack 3 (32-bit versions) (+ 21 variants)
+	"2952166": {"CVE-2014-1754", "CVE-2014-1813"},
+	// MS15-012: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2956058": {"CVE-2015-0063", "CVE-2015-0065"},
 	// MS16-029: Microsoft Office 2010 Service Pack 2 (32-bit editions)
 	"2956063": {"CVE-2016-0021", "CVE-2016-0134"},
+	// MS15-012: Microsoft Word 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2956066": {"CVE-2015-0063", "CVE-2015-0065"},
+	// MS15-012: Microsoft Web Applications 2010 Service Pack 2
+	"2956070": {"CVE-2015-0063", "CVE-2015-0065"},
+	// MS15-012: Microsoft Office 2010 Service Pack 2 (32-bit editions) (proofing tools) (+ 1 variant)
+	"2956073": {"CVE-2015-0064", "CVE-2015-0065"},
+	// MS15-012: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2956081": {"CVE-2015-0064", "CVE-2015-0065"},
+	// MS15-012: Microsoft Word Viewer
+	"2956092": {"CVE-2015-0063", "CVE-2015-0065"},
+	// MS15-012: Microsoft Office Compatibility Pack Service Pack 3
+	"2956097": {"CVE-2015-0064", "CVE-2015-0065"},
+	// MS15-012: Microsoft Office Compatibility Pack Service Pack 3
+	"2956098": {"CVE-2015-0063", "CVE-2015-0065"},
+	// MS15-012: Microsoft Word 2007 Service Pack 3
+	"2956099": {"CVE-2015-0063"},
 	// MS16-029: Microsoft Office 2007 Service Pack 3
 	"2956110": {"CVE-2016-0021", "CVE-2016-0134"},
+	// MS15-022: Microsoft Office 2013 (32-bit editions) (+ 5 variants)
+	"2956151": {"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"},
+	// MS15-022: Microsoft Word Viewer
+	"2956188": {"CVE-2015-0085", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"},
+	// MS15-022: Microsoft Excel Viewer
+	"2956189": {"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"},
+	// MS14-028: Windows Server 2012 R2 (+ 1 variant)
+	"2962073": {"CVE-2014-0256"},
+	// MS15-070: Microsoft Office Compatibility Pack Service Pack 3
+	"2965208": {"CVE-2015-2375", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2424"},
+	// MS15-070: Microsoft Excel Viewer 2007 Service Pack 3
+	"2965209": {"CVE-2015-2375", "CVE-2015-2377", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"},
+	// MS15-033: Microsoft Office Compatibility Pack Service Pack 3
+	"2965210": {"CVE-2015-1639"},
+	// MS15-033: Word Automation Services on Microsoft SharePoint Server 2013 Service Pack 1
+	"2965215": {"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1651"},
+	// MS15-036: Microsoft SharePoint Server 2013 Service Pack 1
+	"2965219": {"CVE-2015-1640"},
+	// MS15-033: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2965236": {"CVE-2015-1639", "CVE-2015-1651"},
+	// MS15-081: Microsoft Visio 2007 Service Pack 3
+	"2965280": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-070: Microsoft PowerPoint 2007 Service Pack 3
+	"2965283": {"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"},
+	// MS15-033: Microsoft Word Viewer
+	"2965289": {"CVE-2015-1639", "CVE-2015-1641"},
+	// MS15-081: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2965310": {"CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-116: Microsoft Word 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"2965313": {"CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS14-057: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2968292": {"CVE-2014-4073", "CVE-2014-4121"},
+	// MS14-057: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2968294": {"CVE-2014-4073", "CVE-2014-4121"},
+	// MS14-057: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2968295": {"CVE-2014-4073", "CVE-2014-4121"},
+	// MS14-057: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"2968296": {"CVE-2014-4073", "CVE-2014-4121"},
+	// MS14-057: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2972098": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2972100": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2972101": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"2972103": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"2972105": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2 (+ 12 variants)
+	"2972106": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4.5/4.5.1/4.5.2 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2972107": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS15-046: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"2975808": {"CVE-2015-1683"},
+	// MS14-044: Microsoft SQL Server 2014 for x64-based Systems
+	"2977315": {"CVE-2014-4061"},
+	// MS14-044: Microsoft SQL Server 2008 R2 for 32-bit Systems Service Pack 2 (+ 2 variants)
+	"2977320": {"CVE-2014-1820"},
+	// MS14-044: Microsoft SQL Server 2008 for 32-bit Systems Service Pack 3 (+ 2 variants)
+	"2977321": {"CVE-2014-1820"},
+	// MS14-044: Microsoft SQL Server 2012 for 32-bit Systems Service Pack 1
+	"2977326": {"CVE-2014-1820"},
+	// MS14-057: Microsoft .NET Framework 4.5.1/4.5.2 on Windows 8.1 for 32-bit Systems (+ 4 variants)
+	"2978041": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4.5/4.5.1/4.5.2 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2978042": {"CVE-2014-4073", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"2979568": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"2979570": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"2979571": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"2979573": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"2979574": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2 (+ 12 variants)
+	"2979575": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4.5.1/4.5.2 on Windows 8.1 for 32-bit Systems (+ 4 variants)
+	"2979576": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4.5/4.5.1/4.5.2 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"2979577": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-057: Microsoft .NET Framework 4.5/4.5.1/4.5.2 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"2979578": {"CVE-2014-4121", "CVE-2014-4122"},
+	// MS14-055: Microsoft Lync Server 2010 (Response Group Service)
+	"2982388": {"CVE-2014-4070", "CVE-2014-4071"},
+	// MS14-055: Microsoft Lync Server 2013 (Response Group Service)
+	"2982389": {"CVE-2014-4070", "CVE-2014-4071"},
+	// MS14-055: Microsoft Lync Server 2013 (Web Components Server)
+	"2982390": {"CVE-2014-4068", "CVE-2014-4071"},
 	// MS16-054: Microsoft Office 2007 Service Pack 3
 	"2984938": {"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"},
+	// MS15-022: Microsoft Office 2007 Service Pack 3
+	"2984939": {"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"},
 	// MS16-054: Microsoft Office 2007 Service Pack 3
 	"2984943": {"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"},
+	// MS14-055: Microsoft Lync Server 2013 (Server)
+	"2986072": {"CVE-2014-4068", "CVE-2014-4070"},
 	// MS16-133: Microsoft Office 2007 Service Pack 3
 	"2986253": {"CVE-2016-7233", "CVE-2016-7234", "CVE-2016-7235", "CVE-2016-7236", "CVE-2016-7244"},
+	// MS15-081: Microsoft Office Compatibility Pack Service Pack 3
+	"2986254": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS14-075: Microsoft Exchange Server 2010 Service Pack 3
+	"2986475": {"CVE-2014-6325", "CVE-2014-6326", "CVE-2014-6336"},
+	// MS14-055: Microsoft Lync Server 2013 (Core Components)
+	"2992965": {"CVE-2014-4070", "CVE-2014-4071"},
+	// MS14-045: Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"2993651": {"CVE-2014-4064"},
+	// MS14-075: Microsoft Exchange Server 2007 Service Pack 3
+	"2996150": {"CVE-2014-6325", "CVE-2014-6326", "CVE-2014-6336"},
 	// MS16-070: Microsoft Visio Viewer 2010 (32-bit Edition) (+ 1 variant)
 	"2999465": {"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"},
+	// MS14-064: Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"3006226": {"CVE-2014-6352"},
+	// MS14-081: Microsoft Word 2007 Service Pack 3 (+ 11 variants)
+	"3017301": {"CVE-2014-6356", "CVE-2014-6357"},
+	// MS14-083: Microsoft Excel 2013 (32-bit editions) (+ 5 variants)
+	"3017347": {"CVE-2014-6360"},
+	// MS14-081: Microsoft Office for Mac 2011
+	"3018888": {"CVE-2014-6356"},
+	// MS15-048: Microsoft .NET Framework 1.1 Service Pack 1 on Microsoft Windows Server 2003 Service Pack 2
+	"3023211": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"3023213": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"3023215": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"3023217": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"3023219": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"3023220": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2 (+ 12 variants)
+	"3023221": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 4.5.1/4.5.2 on Windows 8.1 for 32-bit Systems (+ 4 variants)
+	"3023222": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 4.5/4.5.1/4.5.2 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"3023223": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 4.5/4.5.1/4.5.2 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"3023224": {"CVE-2015-1672"},
+	// MS15-048: Microsoft .NET Framework 3.5.1 on Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
+	"3032655": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2 (+ 12 variants)
+	"3032662": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 4.5.1/4.5.2 on Windows 8.1 for 32-bit Systems (+ 4 variants)
+	"3032663": {"CVE-2015-1673"},
+	// MS15-020: Windows Server 2003 Service Pack 2 (+ 19 variants)
+	"3033889": {"CVE-2015-0096"},
+	// MS15-048: Microsoft .NET Framework 2.0 Service Pack 2 on Windows Vista Service Pack 2 (+ 4 variants)
+	"3035485": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems (+ 3 variants)
+	"3035486": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 3.5 on Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"3035487": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 2.0 Service Pack 2 when installed on Microsoft Windows Server 2003 Service Pack 2 (+ 2 variants)
+	"3035488": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 4.5/4.5.1/4.5.2 on Windows 8 for 32-bit Systems (+ 4 variants)
+	"3035489": {"CVE-2015-1673"},
+	// MS15-048: Microsoft .NET Framework 4.5/4.5.1/4.5.2 when installed on Windows Vista Service Pack 2 (+ 7 variants)
+	"3035490": {"CVE-2015-1673"},
+	// MS15-025: Windows Server 2003 Service Pack 2 (3033395-v2) (+ 2 variants)
+	"3038680": {"CVE-2015-0073"},
+	// MS15-022: Microsoft Excel 2007 Service Pack 3 (+ 32 variants)
+	"3038999": {"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"},
+	// MS15-020: Windows Server 2003 Service Pack 2 (+ 24 variants)
+	"3039066": {"CVE-2015-0081"},
+	// MS15-081: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3039734": {"CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-046: Microsoft SharePoint Server 2013 Service Pack 1
+	"3039736": {"CVE-2015-1683"},
 	// MS16-029: Microsoft Office 2013 Service Pack 1 (32-bit editions)
 	"3039746": {"CVE-2016-0021", "CVE-2016-0134"},
+	// MS15-046: Microsoft Office Web Apps Server 2013 Service Pack 1
+	"3039748": {"CVE-2015-1683"},
 	// MS16-015: Microsoft SharePoint Server 2013 Service Pack 1
 	"3039768": {"CVE-2016-0039"},
 	// MS15-044: Microsoft Lync 2013 Service Pack 1 (32-bit) (Skype for Business) (+ 3 variants)
 	"3039779": {"CVE-2015-1670"},
+	// MS16-004: Microsoft Office 2013 Service Pack 1 (32-bit editions)
+	"3039794": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS15-081: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3039798": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-038: Windows Server 2003 Service Pack 2 (+ 1 variant)
+	"3045999": {"CVE-2015-1643"},
+	// MS15-068: Windows Server 2008 for x64-based Systems Service Pack 2 (+ 6 variants)
+	"3046339": {"CVE-2015-2361"},
+	// MS15-033: Microsoft Word 2007 Service Pack 3 (+ 8 variants)
+	"3048019": {"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"},
+	// MS15-046: Microsoft Office for Mac 2011
+	"3048688": {"CVE-2015-1683"},
+	// MS15-038: Microsoft Windows Server 2003 for Itanium-based Systems Service Pack 2
+	"3049576": {"CVE-2015-1643"},
+	// MS15-053: JScript 5.8 and VBScript 5.8 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+	"3050941": {"CVE-2015-1684"},
+	// MS15-053: JScript 5.7 and VBScript 5.7 on Windows Server 2003 Service Pack 2 (+ 8 variants)
+	"3050945": {"CVE-2015-1684"},
+	// MS15-053: JScript 5.6 and VBScript 5.6 on Windows Server 2003 Service Pack 2 (+ 1 variant)
+	"3050946": {"CVE-2015-1684"},
 	// MS15-044: Microsoft Lync 2010 (32-bit) (+ 1 variant)
 	"3051464": {"CVE-2015-1670"},
 	// MS15-044: Microsoft Lync 2010 Attendee[1] (user level install)
@@ -1469,28 +2620,276 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3051466": {"CVE-2015-1670"},
 	// MS15-044: Microsoft Live Meeting 2007 Console[1]
 	"3051467": {"CVE-2015-1670"},
+	// MS15-033: Microsoft Office for Mac 2011
+	"3051737": {"CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"},
+	// MS15-036: Microsoft Project Server 2010 Service Pack 2 (+ 2 variants)
+	"3052044": {"CVE-2015-1640", "CVE-2015-1653"},
+	// MS15-116: Microsoft InfoPath 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3054793": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-081: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3054816": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2477"},
+	// MS15-046: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"3054833": {"CVE-2015-1683"},
+	// MS15-046: Excel Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"3054839": {"CVE-2015-1683"},
+	// MS15-046: Microsoft PowerPoint Viewer
+	"3054840": {"CVE-2015-1683"},
+	// MS15-046: Microsoft Office Web Apps 2010 Service Pack 2
+	"3054843": {"CVE-2015-1683"},
+	// MS15-081: Word Automation Services on Microsoft SharePoint Server 2013 Service Pack 1
+	"3054858": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-070: Excel Services on Microsoft SharePoint Server 2013 Service Pack 1
+	"3054861": {"CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"},
 	// MS16-107: Microsoft SharePoint Server 2013 Service Pack 1
 	"3054862": {"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"},
+	// MS15-081: Microsoft Visio 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3054876": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Office 2007 Service Pack 3
+	"3054888": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Visio 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3054929": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-070: Microsoft Word Viewer
+	"3054958": {"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"},
+	// MS15-081: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"3054960": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-070: Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3054963": {"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"},
+	// MS15-070: Excel Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"3054968": {"CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"},
 	// MS16-107: Microsoft PowerPoint Viewer
 	"3054969": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	// MS15-070: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3054971": {"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"},
+	// MS15-081: Microsoft Word Web Apps 2010 Service Pack 2
+	"3054974": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-116: Microsoft OneNote 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3054978": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
 	// MS16-054: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"3054984": {"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"},
+	// MS15-081: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3054991": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Excel 2007 Service Pack 3
+	"3054992": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-099: Microsoft Office Compatibility Pack Service Pack 3
+	"3054993": {"CVE-2015-2545"},
+	// MS15-110: Excel Services on Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
+	"3054994": {"CVE-2015-2555", "CVE-2015-6037"},
+	// MS15-099: Microsoft Excel Viewer
+	"3054995": {"CVE-2015-2545"},
+	// MS15-070: Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3054999": {"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"},
+	// MS15-081: Microsoft Office Web Apps Server 2013 Service Pack 1
+	"3055003": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3055029": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Word 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3055030": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3055033": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3055037": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Word 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3055039": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3055044": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft PowerPoint 2007 Service Pack 3
+	"3055051": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Word 2007 Service Pack 3
+	"3055052": {"CVE-2015-1642", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Word Viewer
+	"3055053": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-081: Microsoft Word Viewer
+	"3055054": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469"},
+	// MS15-033: Microsoft Outlook for Mac for Office 365
+	"3055707": {"CVE-2015-1639", "CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"},
 	// MS15-044: Microsoft Silverlight 5 when installed on Mac (+ 5 variants)
 	"3056819": {"CVE-2015-1670"},
+	// MS15-046: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 19 variants)
+	"3057181": {"CVE-2015-1683"},
+	// MS15-053: VBScript 5.6 on Windows Server 2003 Service Pack 2 (+ 14 variants)
+	"3057263": {"CVE-2015-1684", "CVE-2015-1686"},
 	// MS15-104: Skype for Business Server 2015
 	"3061064": {"CVE-2015-2532"},
+	// MS15-069: Windows 8.1 for 32-bit Systems (+ 3 variants)
+	"3061512": {"CVE-2015-2369"},
+	// MS15-069: Windows Server 2003 Service Pack 2 (+ 10 variants)
+	"3067903": {"CVE-2015-2368"},
+	// MS15-069: Windows 7 for 32-bit Systems Service Pack 1 (+ 2 variants)
+	"3070738": {"CVE-2015-2369"},
+	// MS15-070: Microsoft Excel 2007 Service Pack 3 (+ 13 variants)
+	"3072620": {"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"},
+	// MS15-082: Windows Vista Service Pack 2 (+ 21 variants)
+	"3075220": {"CVE-2015-2473"},
+	// MS15-082: Windows Vista Service Pack 2 (+ 1 variant)
+	"3075221": {"CVE-2015-2473"},
+	// MS15-080: Windows 10 for 64-bit Systems
+	"3078662": {"CVE-2015-2460", "CVE-2015-2463", "CVE-2015-2464"},
+	// MS15-109: Windows Server 2008 for 32-bit Systems Service Pack 2 (+ 17 variants)
+	"3080446": {"CVE-2015-2548"},
+	// MS15-081: Microsoft Office for Mac 2011
+	"3081349": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467"},
 	// MS15-080: Windows 10 for 32-bit Systems (+ 1 variant)
 	"3081436": {"CVE-2015-2432", "CVE-2015-2453", "CVE-2015-2454", "CVE-2015-2460", "CVE-2015-2463", "CVE-2015-2464"},
-	// MS15-097: Windows 10 for 32-bit Systems (+ 1 variant)
-	"3081455": {"CVE-2015-2510"},
+	// MS15-097: Windows 10 for 32-bit Systems (+ 1 variant); MS15-102: Windows 10 for 32-bit Systems (+ 1 variant)
+	"3081455": {"CVE-2015-2510", "CVE-2015-2525"},
+	// MS15-102: Windows 8 for 32-bit Systems (+ 9 variants)
+	"3082089": {"CVE-2015-2525"},
+	// MS15-081: Microsoft Office for Mac 2016
+	"3082420": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2466", "CVE-2015-2467", "CVE-2015-2469", "CVE-2015-2470"},
+	// MS15-102: Windows Vista Service Pack 2 (+ 21 variants)
+	"3084135": {"CVE-2015-2524", "CVE-2015-2528"},
+	// MS15-116: Word Automation Services on Microsoft SharePoint Server 2013 Service Pack 1
+	"3085477": {"CVE-2015-6038", "CVE-2015-6094"},
+	// MS15-099: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3085502": {"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2545"},
+	// MS15-116: Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"3085511": {"CVE-2015-6038", "CVE-2015-6094"},
+	// MS15-110: Microsoft Visio 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085514": {"CVE-2015-2555", "CVE-2015-2558"},
+	// MS15-110: Microsoft Office Web Apps 2010 Service Pack 2
+	"3085520": {"CVE-2015-2555", "CVE-2015-2558"},
+	// MS15-099: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085526": {"CVE-2015-2545"},
+	// MS15-131: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085528": {"CVE-2015-6040", "CVE-2015-6122", "CVE-2015-6124", "CVE-2015-6172", "CVE-2015-6177"},
+	// MS15-081: Microsoft Office 2016 (32-bit editions) (+ 1 variant)
+	"3085538": {"CVE-2015-1642", "CVE-2015-2423", "CVE-2015-2467", "CVE-2015-2468", "CVE-2015-2469", "CVE-2015-2470", "CVE-2015-2477"},
+	// MS15-110: Microsoft Visio 2007 Service Pack 3
+	"3085542": {"CVE-2015-2555", "CVE-2015-2558"},
+	// MS15-099: Microsoft Excel 2007 Service Pack 3
+	"3085543": {"CVE-2015-2545"},
+	// MS15-046: Microsoft Office 2007 Service Pack 3
+	"3085544": {"CVE-2015-1682"},
+	// MS15-116: Microsoft PowerPoint 2007 Service Pack 3
+	"3085548": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-131: Microsoft Office 2007 Service Pack 3
+	"3085549": {"CVE-2015-6040", "CVE-2015-6122", "CVE-2015-6124", "CVE-2015-6172", "CVE-2015-6177"},
+	// MS15-116: Microsoft Office Compatibility Pack Service Pack 3
+	"3085551": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Word 2007 Service Pack 3
+	"3085552": {"CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-099: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085560": {"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2523"},
+	// MS15-116: Microsoft Publisher 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3085561": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-110: Microsoft SharePoint Server 2013 Service Pack 1
+	"3085567": {"CVE-2015-2556", "CVE-2015-6037"},
+	// MS15-110: Microsoft Office Web Apps Server 2013 Service Pack 1
+	"3085571": {"CVE-2015-2555", "CVE-2015-2558"},
+	// MS15-099: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3085572": {"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2523"},
+	// MS15-110: Microsoft SharePoint Foundation 2013 Service Pack 1
+	"3085582": {"CVE-2015-2556"},
+	// MS15-110: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3085583": {"CVE-2015-2557"},
+	// MS15-116: Microsoft Access 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3085584": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085594": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-110: Microsoft Excel Web App 2010 Service Pack 2
+	"3085595": {"CVE-2015-2555", "CVE-2015-2558"},
+	// MS15-110: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085609": {"CVE-2015-2557"},
+	// MS15-116: Microsoft Project 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3085614": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-110: Microsoft Excel 2007 Service Pack 3
+	"3085615": {"CVE-2015-2555", "CVE-2015-2557"},
+	// MS15-110: Microsoft Office Compatibility Pack Service Pack 3
+	"3085618": {"CVE-2015-2555", "CVE-2015-2557"},
+	// MS15-110: Microsoft Excel Viewer
+	"3085619": {"CVE-2015-2555", "CVE-2015-2557"},
+	// MS15-099: Microsoft Office 2007 Service Pack 3
+	"3085620": {"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2523"},
+	// MS15-099: Microsoft Office 2016 (32-bit editions) (+ 1 variant)
+	"3085635": {"CVE-2015-2520", "CVE-2015-2521", "CVE-2015-2523"},
 	// MS15-097: Windows Vista Service Pack 2 (+ 21 variants)
 	"3087039": {"CVE-2015-2508", "CVE-2015-2510"},
 	// MS15-097: Windows Vista Service Pack 2 (+ 6 variants)
 	"3087135": {"CVE-2015-2506", "CVE-2015-2507", "CVE-2015-2508", "CVE-2015-2511", "CVE-2015-2512", "CVE-2015-2517", "CVE-2015-2518", "CVE-2015-2527", "CVE-2015-2529", "CVE-2015-2546"},
+	// MS15-099: Microsoft Excel for Mac 2011
+	"3088501": {"CVE-2015-2521", "CVE-2015-2545"},
+	// MS15-099: Microsoft Excel 2016 for Mac
+	"3088502": {"CVE-2015-2521", "CVE-2015-2545"},
+	// MS15-101: Windows Vista Service Pack 2 (+ 19 variants)
+	"3089662": {"CVE-2015-2526"},
+	// MS15-110: Microsoft Excel 2016 for Mac
+	"3097264": {"CVE-2015-2557"},
+	// MS15-110: Microsoft Excel for Mac 2011
+	"3097266": {"CVE-2015-2557"},
+	// MS15-109: Windows 10 for 32-bit Systems (+ 1 variant)
+	"3097617": {"CVE-2015-2548"},
+	// MS15-116: Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3101359": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3101360": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Excel Services on Microsoft SharePoint Server 2013 Service Pack 1
+	"3101364": {"CVE-2015-6093"},
+	// MS15-116: Microsoft Visio 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3101365": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office Web Apps Server 2013 Service Pack 1
+	"3101367": {"CVE-2015-6038", "CVE-2015-6094"},
+	// MS15-116: Microsoft Word 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3101370": {"CVE-2015-6038", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft OneNote 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3101371": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3101499": {"CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6123"},
+	// MS15-116: Microsoft Project 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3101506": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Visio 2016 (32-bit edition) (+ 1 variant)
+	"3101507": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft PowerPoint 2016 (32-bit edition) (+ 1 variant)
+	"3101509": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Excel 2016 (32-bit edition) (+ 1 variant)
+	"3101510": {"CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office 2016 (32-bit edition) (+ 1 variant)
+	"3101512": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Word 2016 (32-bit edition) (+ 1 variant)
+	"3101513": {"CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office 2016 (32-bit edition) (+ 1 variant)
+	"3101514": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6094", "CVE-2015-6123"},
 	// MS16-054: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"3101520": {"CVE-2016-0126", "CVE-2016-0183", "CVE-2016-0198"},
+	// MS15-116: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3101521": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Excel Services on Microsoft SharePoint Server 2010 Service Pack 2
+	"3101525": {"CVE-2015-6093", "CVE-2015-6094"},
+	// MS15-116: Microsoft Visio 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3101526": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3101529": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-131: Microsoft Word 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3101532": {"CVE-2015-6040", "CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6177"},
+	// MS15-116: Microsoft Office Web Apps 2010 Service Pack 2
+	"3101533": {"CVE-2015-6038", "CVE-2015-6094"},
+	// MS15-116: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3101543": {"CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6123"},
+	// MS15-116: Microsoft Access 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3101544": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Visio 2007 Service Pack 3
+	"3101553": {"CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Excel 2007 Service Pack 3
+	"3101554": {"CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office 2007 Service Pack 3
+	"3101555": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Office Compatibility Pack Service Pack 3
+	"3101558": {"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Excel Services on Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
+	"3101559": {"CVE-2015-6093", "CVE-2015-6094"},
+	// MS15-116: Microsoft Excel Viewer
+	"3101560": {"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Word Viewer
+	"3101564": {"CVE-2015-2503", "CVE-2015-6038", "CVE-2015-6093", "CVE-2015-6094", "CVE-2015-6123"},
+	// MS15-116: Microsoft Excel for Mac 2011
+	"3102924": {"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"},
+	// MS15-116: Microsoft Excel 2016 for Mac
+	"3102925": {"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"},
+	// MS15-118: Windows Vista Service Pack 2 (+ 21 variants)
+	"3104507": {"CVE-2015-6099", "CVE-2015-6115"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 8 variants)
 	"3108664": {"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0018", "CVE-2016-0019"},
+	// MS15-128: Windows 7 for 32-bit Systems Service Pack 1 (+ 14 variants); MS15-135: Windows Vista Service Pack 2 (+ 21 variants)
+	"3109094": {"CVE-2015-6175"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 14 variants)
 	"3109560": {"CVE-2016-0014", "CVE-2016-0016", "CVE-2016-0018", "CVE-2016-0019", "CVE-2016-0020"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 16 variants)
@@ -1501,28 +2900,94 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3114338": {"CVE-2016-0054"},
 	// MS16-099: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
 	"3114340": {"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317"},
+	// MS15-131: Microsoft Word 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3114342": {"CVE-2015-6040", "CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6177"},
+	// MS15-131: Microsoft Word 2016 (32-bit edition) (+ 1 variant)
+	"3114382": {"CVE-2015-6040", "CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6124", "CVE-2015-6177"},
 	// MS16-148: Microsoft Publisher 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"3114395": {"CVE-2016-7274", "CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7290", "CVE-2016-7291"},
+	// MS16-004: Microsoft PowerPoint 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114396": {"CVE-2016-0010", "CVE-2016-0035"},
 	// MS16-099: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"3114400": {"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317"},
 	// MS16-015: Excel Services on Microsoft SharePoint Server 2010 Service Pack 2
 	"3114401": {"CVE-2016-0022", "CVE-2016-0052", "CVE-2016-0053"},
+	// MS16-004: Microsoft Visio 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114402": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS15-131: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114403": {"CVE-2015-6040", "CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6177"},
 	// MS16-015: Microsoft Office Web Apps 2010 Service Pack 2
 	"3114407": {"CVE-2016-0022", "CVE-2016-0052", "CVE-2016-0053"},
 	// MS16-029: Microsoft InfoPath 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
 	"3114414": {"CVE-2016-0057", "CVE-2016-0134"},
+	// MS15-131: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114415": {"CVE-2015-6118", "CVE-2015-6124", "CVE-2015-6172", "CVE-2015-6177"},
+	// MS16-004: Microsoft Visio 2007 Service Pack 3
+	"3114421": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS15-131: Microsoft Excel 2007 Service Pack 3
+	"3114422": {"CVE-2015-6118", "CVE-2015-6124", "CVE-2015-6172"},
 	// MS16-029: Microsoft InfoPath 2007 Service Pack 3
 	"3114426": {"CVE-2016-0057", "CVE-2016-0134"},
+	// MS16-004: Microsoft PowerPoint 2007 Service Pack 3
+	"3114429": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS15-131: Microsoft Office Compatibility Pack Service Pack 3
+	"3114431": {"CVE-2015-6118", "CVE-2015-6124", "CVE-2015-6172"},
 	// MS16-015: Excel Services on Microsoft SharePoint Server 2007 Service Pack 3 (32-bit editions) (+ 1 variant)
 	"3114432": {"CVE-2016-0022", "CVE-2016-0052", "CVE-2016-0053"},
+	// MS15-131: Microsoft Excel Viewer
+	"3114433": {"CVE-2015-6118", "CVE-2015-6124", "CVE-2015-6172"},
 	// MS16-099: Microsoft Office 2007 Service Pack 3
 	"3114442": {"CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3317"},
 	// MS16-099: Microsoft OneNote 2007 Service Pack 3
 	"3114456": {"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317", "CVE-2016-3318"},
+	// MS15-131: Microsoft Office Compatibility Pack Service Pack 3
+	"3114457": {"CVE-2015-6040", "CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6177"},
+	// MS15-131: Microsoft Word 2007 Service Pack 3
+	"3114458": {"CVE-2015-6040", "CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6177"},
 	// MS16-015: Word Automation Services on Microsoft SharePoint Server 2013 Service Pack 1
 	"3114481": {"CVE-2016-0054"},
+	// MS16-004: Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3114482": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3114486": {"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"},
+	// MS16-004: Microsoft Visio 2013 Service Pack 1 (32-bit editions) (+ 1 variant)
+	"3114489": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Word 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3114494": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
+	"3114504": {"CVE-2016-0010"},
+	// MS16-004: Microsoft Visio 2016 (32-bit edition) (+ 1 variant)
+	"3114511": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft PowerPoint 2016 (32-bit edition) (+ 1 variant)
+	"3114518": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Excel 2016 (32-bit edition) (+ 1 variant)
+	"3114520": {"CVE-2016-0010"},
+	// MS16-004: Microsoft Word 2016 (32-bit edition) (+ 1 variant)
+	"3114526": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Office 2016 (32-bit edition) (+ 1 variant)
+	"3114527": {"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"},
+	// MS16-004: Microsoft Excel 2007 Service Pack 3
+	"3114540": {"CVE-2016-0010"},
+	// MS16-004: Microsoft Office 2007 Service Pack 3
+	"3114541": {"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"},
+	// MS16-004: Microsoft Office Compatibility Pack Service Pack 3
+	"3114546": {"CVE-2015-0012", "CVE-2016-0010", "CVE-2016-0012"},
+	// MS16-004: Microsoft Excel Viewer
+	"3114547": {"CVE-2015-0012", "CVE-2016-0010", "CVE-2016-0012"},
 	// MS16-015: Microsoft Office Compatibility Pack Service Pack 3
 	"3114548": {"CVE-2016-0054", "CVE-2016-0055"},
+	// MS16-004: Microsoft Word 2007 Service Pack 3
+	"3114549": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114553": {"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"},
+	// MS16-004: Microsoft Office 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114554": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Word 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114557": {"CVE-2016-0010", "CVE-2016-0035"},
+	// MS16-004: Microsoft Excel 2010 Service Pack 2 (32-bit editions) (+ 1 variant)
+	"3114564": {"CVE-2016-0010"},
+	// MS16-004: Microsoft Word Viewer
+	"3114569": {"CVE-2015-0012", "CVE-2016-0012", "CVE-2016-0035"},
 	// MS16-029: Microsoft Office 2016 (32-bit edition)
 	"3114690": {"CVE-2016-0021", "CVE-2016-0134"},
 	// MS16-015: Microsoft Excel 2016 (32-bit edition) (+ 1 variant)
@@ -1761,12 +3226,12 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3115480": {"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0198", "CVE-2016-3313", "CVE-2016-3315", "CVE-2016-3316", "CVE-2016-3318"},
 	// MS16-107: Microsoft PowerPoint 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
 	"3115487": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
-	// MS15-128: Windows 10 for 32-bit Systems (+ 1 variant)
-	"3116869": {"CVE-2015-6106"},
-	// MS15-128: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
-	"3116900": {"CVE-2015-6106", "CVE-2015-6108"},
+	// MS15-128: Windows 10 for 32-bit Systems (+ 1 variant); MS15-132: Windows 10 for 32-bit Systems (+ 1 variant)
+	"3116869": {"CVE-2015-6106", "CVE-2015-6128"},
+	// MS15-128: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS15-132: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS15-135: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
+	"3116900": {"CVE-2015-6106", "CVE-2015-6108", "CVE-2015-6128", "CVE-2015-6175"},
 	// MS16-107: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
-	"3118268": {"CVE-2016-0137", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
+	"3118268": {"CVE-2016-0137", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3364", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-107: Microsoft Office Web Apps Server 2013 Service Pack 1
 	"3118270": {"CVE-2016-3358", "CVE-2016-3362", "CVE-2016-3365"},
 	// MS16-107: Microsoft Outlook 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
@@ -1807,6 +3272,10 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3118395": {"CVE-2016-7230", "CVE-2016-7232"},
 	// MS16-133: Microsoft Office 2007 Service Pack 3
 	"3118396": {"CVE-2016-7233", "CVE-2016-7234", "CVE-2016-7235", "CVE-2016-7236", "CVE-2016-7245"},
+	// MS15-131: Microsoft Excel for Mac 2011
+	"3119517": {"CVE-2015-6118", "CVE-2015-6124", "CVE-2015-6172", "CVE-2015-6177"},
+	// MS15-131: Microsoft Excel 2016 for Mac
+	"3119518": {"CVE-2015-6118", "CVE-2015-6122", "CVE-2015-6124", "CVE-2015-6172", "CVE-2015-6177"},
 	// MS16-007: Windows 7 for 32-bit Systems Service Pack 1 (+ 6 variants)
 	"3121461": {"CVE-2016-0014", "CVE-2016-0015", "CVE-2016-0016", "CVE-2016-0019", "CVE-2016-0020"},
 	// MS16-007: Windows Vista Service Pack 2 (+ 21 variants)
@@ -1864,7 +3333,7 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	// MS16-148: Microsoft Office 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
 	"3127968": {"CVE-2016-7274", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
 	// MS16-148: Microsoft Office 2016 (32-bit edition) (+ 1 variant)
-	"3127986": {"CVE-2016-7274", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
+	"3127986": {"CVE-2016-7274", "CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
 	// MS16-148: Microsoft Word Viewer
 	"3127995": {"CVE-2016-7275", "CVE-2016-7276", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
 	// MS16-148: Microsoft Excel 2013 Service Pack 1 (32-bit editions) (+ 2 variants)
@@ -1899,6 +3368,10 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3128043": {"CVE-2016-7274", "CVE-2016-7275", "CVE-2016-7277", "CVE-2016-7289", "CVE-2016-7290", "CVE-2016-7291"},
 	// MS16-148: Microsoft Word Viewer
 	"3128044": {"CVE-2016-7262", "CVE-2016-7264", "CVE-2016-7265", "CVE-2016-7266", "CVE-2016-7267"},
+	// MS16-004: Microsoft Excel for Mac 2011 (+ 2 variants)
+	"3133699": {"CVE-2015-0012", "CVE-2016-0012"},
+	// MS16-004: Microsoft Excel 2016 for Mac (+ 2 variants)
+	"3133711": {"CVE-2015-0012", "CVE-2016-0012"},
 	// MS16-015: Microsoft Excel 2016 for Mac (+ 1 variant)
 	"3134241": {"CVE-2016-0053", "CVE-2016-0055", "CVE-2016-0056"},
 	// MS16-014: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
@@ -1943,6 +3416,10 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3156017": {"CVE-2016-0171", "CVE-2016-0173", "CVE-2016-0174", "CVE-2016-0175", "CVE-2016-0196"},
 	// MS16-055: Windows Vista Service Pack 2 (+ 18 variants)
 	"3156019": {"CVE-2016-0168", "CVE-2016-0169", "CVE-2016-0170", "CVE-2016-0184"},
+	// MS16-053: VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2
+	"3156764": {"CVE-2016-0187"},
+	// MS16-053: VBScript 5.7 on Windows Vista Service Pack 2 (+ 3 variants)
+	"3158991": {"CVE-2016-0187"},
 	// MS16-073: Windows Vista Service Pack 2 (+ 18 variants)
 	"3161664": {"CVE-2016-3232"},
 	// MS16-073: Windows 10 for 32-bit Systems (+ 1 variant); MS16-080: Windows 10 for 32-bit Systems (+ 1 variant)
@@ -2043,6 +3520,8 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3185611": {"CVE-2016-3356", "CVE-2016-3372"},
 	// MS16-106: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS16-111: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"3185614": {"CVE-2016-3356", "CVE-2016-3372"},
+	// MS16-107: Microsoft Visio 2016 (32-bit editions) (+ 1 variant)
+	"3185852": {"CVE-2016-0137", "CVE-2016-0141", "CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3359", "CVE-2016-3360", "CVE-2016-3361", "CVE-2016-3362", "CVE-2016-3363", "CVE-2016-3365", "CVE-2016-3366", "CVE-2016-3381"},
 	// MS16-106: Windows Vista Service Pack 2 (+ 18 variants)
 	"3185911": {"CVE-2016-3356"},
 	// MS16-107: Microsoft Word for Mac 2011
@@ -2069,6 +3548,16 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3192441": {"CVE-2016-3300"},
 	// MS16-135: Windows Vista Service Pack 2 (+ 6 variants)
 	"3194371": {"CVE-2016-7214", "CVE-2016-7215", "CVE-2016-7246"},
+	// MS16-136: Microsoft SQL Server 2014 Service Pack 2 for 32-bit Systems (+ 1 variant)
+	"3194714": {"CVE-2016-7249", "CVE-2016-7251", "CVE-2016-7252", "CVE-2016-7254"},
+	// MS16-136: Microsoft SQL Server 2016 for x64-based Systems
+	"3194716": {"CVE-2016-7253", "CVE-2016-7254"},
+	// MS16-136: Microsoft SQL Server 2012 for 32-bit Systems Service Pack 2 (+ 1 variant)
+	"3194719": {"CVE-2016-7249", "CVE-2016-7250", "CVE-2016-7251", "CVE-2016-7252"},
+	// MS16-136: Microsoft SQL Server 2014 Service Pack 1 for 32-bit Systems (+ 1 variant)
+	"3194720": {"CVE-2016-7249", "CVE-2016-7251", "CVE-2016-7252", "CVE-2016-7254"},
+	// MS16-136: Microsoft SQL Server 2012 for 32-bit Systems Service Pack 3 (+ 1 variant)
+	"3194721": {"CVE-2016-7249", "CVE-2016-7250", "CVE-2016-7251", "CVE-2016-7252"},
 	// MS16-101: Windows 10 Version 1607 for 32-bit Systems (+ 1 variant)
 	"3194798": {"CVE-2016-3300"},
 	// MS16-132: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants); MS16-137: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
@@ -2101,6 +3590,8 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3200970": {"CVE-2016-7220"},
 	// MS16-132: Windows Vista Service Pack 2 (+ 6 variants)
 	"3203859": {"CVE-2016-7205", "CVE-2016-7217"},
+	// MS16-148: Microsoft Auto Updater for Mac
+	"3204068": {"CVE-2016-7263", "CVE-2016-7264", "CVE-2016-7266", "CVE-2016-7268"},
 	// MS16-146: Windows Vista Service Pack 2 (+ 6 variants)
 	"3204724": {"CVE-2016-7272", "CVE-2016-7273"},
 	// MS16-146: Windows 10 for 32-bit Systems (+ 1 variant)
@@ -2119,6 +3610,8 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"3205409": {"CVE-2016-7257", "CVE-2016-7273"},
 	// MS16-146: Windows Vista Service Pack 2 (+ 6 variants)
 	"3205638": {"CVE-2016-7257", "CVE-2016-7273"},
+	// MS16-155: Windows Vista for 32-bit Systems Service Pack 2 (+ 16 variants)
+	"3205640": {"CVE-2016-7270"},
 	// MS16-146: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants)
 	"3206632": {"CVE-2016-7257"},
 	// MS16-146: Windows 7 for 32-bit Systems Service Pack 1 (+ 4 variants)
@@ -2151,6 +3644,8 @@ var bulletinArchiveKBNotApplicable = map[string][]string{
 	"4012606": {"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-008: Windows 10 Version 1511 for x64-based Systems; MS17-011: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-012: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-013: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-017: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant); MS17-018: Windows 10 Version 1511 for 32-bit Systems (+ 1 variant)
 	"4013198": {"CVE-2017-0021", "CVE-2017-0024", "CVE-2017-0039", "CVE-2017-0051", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0104", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
+	// MS17-014: Microsoft Excel for Mac 2011 (+ 3 variants)
+	"4013241": {"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"},
 	// MS17-011: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-012: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-013: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-017: Windows 10 Version 1607 for 32-bit Systems (+ 3 variants); MS17-018: Windows Server 2016 for x64-based Systems (+ 3 variants)
 	"4013429": {"CVE-2017-0039", "CVE-2017-0061", "CVE-2017-0072", "CVE-2017-0079", "CVE-2017-0082", "CVE-2017-0083", "CVE-2017-0085", "CVE-2017-0086", "CVE-2017-0087", "CVE-2017-0088", "CVE-2017-0089", "CVE-2017-0090", "CVE-2017-0091", "CVE-2017-0092", "CVE-2017-0101", "CVE-2017-0103", "CVE-2017-0108", "CVE-2017-0111", "CVE-2017-0112", "CVE-2017-0113", "CVE-2017-0114", "CVE-2017-0115", "CVE-2017-0116", "CVE-2017-0117", "CVE-2017-0119", "CVE-2017-0120", "CVE-2017-0122", "CVE-2017-0123", "CVE-2017-0124", "CVE-2017-0125", "CVE-2017-0126", "CVE-2017-0127", "CVE-2017-0128"},
 	// MS17-013: Windows Vista Service Pack 2 (+ 4 variants)
@@ -2443,4 +3938,76 @@ var bulletinArchiveComponentNotApplicable = map[string]map[string][]string{
 		"Internet Explorer 10": {"CVE-2017-0012", "CVE-2017-0033", "CVE-2017-0049", "CVE-2017-0154"},
 		"Internet Explorer 11": {"CVE-2017-0154"},
 	},
+}
+
+// bulletinArchiveCVECorrections maps per-bulletin BulletinSearch.xlsx CVE
+// tokens that do not appear in the bulletin's archive markdown to a
+// correction action. Source: full set difference of (xlsx cves cell tokens)
+// − (CVE-YYYY-NNNN regex hits in the bulletin's archive markdown body),
+// across the entire 1554-bulletin corpus.
+//
+// Each entry is one of two actions:
+//   - non-empty fix: replace the bad xlsx token with the named correct CVE.
+//     Used when the markdown identifies the real CVE the xlsx token typo'd
+//     into AND that real CVE is absent from the xlsx cves cell — so a plain
+//     drop would lose the attribution entirely.
+//   - empty fix:     drop the bad xlsx token. Used when (a) the candidate
+//     real CVE is already present in the xlsx cell (drop is sufficient,
+//     attribution preserved), (b) no plausible candidate exists, or (c) the
+//     bulletin formally retracted the CVE (e.g. MS16-084 / V1.1).
+//
+// The three xlsx-side typo patterns observed:
+//   - Year-shift  : CVE-2006-4131 → CVE-2005-4131 (MS06-012)
+//   - Off-by-one  : CVE-2011-3403 → CVE-2011-3404 (MS11-099)
+//   - Leading 0   : CVE-2017-00016 → CVE-2017-0016 (MS17-012)
+var bulletinArchiveCVECorrections = map[string]map[string]string{
+	// MS06-012: year-typo of CVE-2005-4131 ("Excel eBay Vulnerability") —
+	// remap (CVE-2005-4131 not in xlsx).
+	"MS06-012": {"CVE-2006-4131": "CVE-2005-4131"},
+	// MS06-021: CVE-2006-4089 is a year-typo of CVE-2005-4089 ("CSS
+	// Cross-Domain Information Disclosure") — remap (CVE-2005-4089 not in
+	// xlsx). CVE-2006-2283 has no candidate in MS06-021's markdown — drop.
+	"MS06-021": {"CVE-2006-2283": "", "CVE-2006-4089": "CVE-2005-4089"},
+	// (MS08-032 / CVE-2007-0675 omitted: the archive markdown at
+	// ms08-032.md is mis-mapped — its content is actually MS16-011's — so
+	// the absence-in-markdown signal cannot distinguish typo from real
+	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
+	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
+	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
+	"MS11-056": {"CVE-2011-1285": "CVE-2011-1284"},
+	// MS11-099: off-by-one of CVE-2011-3404 — remap (3404 not in xlsx).
+	// CVE-2011-3403 itself appears in MS11-096's markdown.
+	"MS11-099": {"CVE-2011-3403": "CVE-2011-3404"},
+	// MS13-028: no candidate in markdown — drop both.
+	"MS13-028": {"CVE-2013-2013": "", "CVE-2013-2014": ""},
+	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
+	// CVE-2013-1313 appears in MS13-020's markdown.
+	"MS13-037": {"CVE-2013-1313": ""},
+	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
+	// CVE-2013-3181 appears in MS13-060's markdown.
+	"MS13-059": {"CVE-2013-3181": ""},
+	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
+	// CVE-2014-2799 appears in MS14-052's markdown.
+	"MS14-051": {"CVE-2014-2799": ""},
+	// MS15-036: 5-digit suffix anomaly; no clean canonical-form candidate —
+	// drop.
+	"MS15-036": {"CVE-2015-16453": ""},
+	// MS15-048: 5-digit suffix anomaly; no clean canonical-form candidate —
+	// drop.
+	"MS15-048": {"CVE-2015-16723": ""},
+	// MS16-003: off-by-one of CVE-2016-0002 — remap (0002 not in xlsx).
+	// CVE-2016-0003 appears in MS16-002's markdown.
+	"MS16-003": {"CVE-2016-0003": "CVE-2016-0002"},
+	// MS16-079: cross-year mis-tag of CVE-2015-6015 — remap (6015 not in
+	// xlsx). CVE-2015-6016 not in any MS16 bulletin.
+	"MS16-079": {"CVE-2015-6016": "CVE-2015-6015"},
+	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
+	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
+	// affected." Drop, no correction.
+	"MS16-084": {"CVE-2016-3276": ""},
+	// MS16-144: no candidate in markdown — drop.
+	"MS16-144": {"CVE-2016-7293": ""},
+	// MS17-012: leading-zero typo of CVE-2017-0016 — remap (0016 not in
+	// xlsx; the xlsx cell carries "CVE-2017-00016" with an extra zero).
+	"MS17-012": {"CVE-2017-00016": "CVE-2017-0016"},
 }

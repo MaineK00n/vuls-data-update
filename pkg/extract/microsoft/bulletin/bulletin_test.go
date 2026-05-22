@@ -408,6 +408,27 @@ func Test_normalizeArchiveComponentKey(t *testing.T) {
 			args: args{bulletinID: "MS14-010", product: "Windows 7 for x64-based Systems Service Pack 1", component: ""},
 			want: "",
 		},
+		// MS17-006 (and likely the broader MS17 era) swaps the IE identity into
+		// affected_product and the OS into affected_component, so it has its
+		// own case in the dispatch (the default branch handles the MS14-MS16
+		// layout where IE is in affected_component). Verify that the
+		// MS17-006 case correctly maps the swapped columns to the same IE
+		// key vocabulary.
+		{
+			name: "MS17-006 swap: IE 9 in affected_product, OS in affected_component",
+			args: args{bulletinID: "MS17-006", product: "Internet Explorer 9", component: "Windows Vista Service Pack 2"},
+			want: "Internet Explorer 9",
+		},
+		{
+			name: "MS17-006 swap: IE 11 on legacy Windows 7 via swapped columns",
+			args: args{bulletinID: "MS17-006", product: "Internet Explorer 11", component: "Windows 7 for x64-based Systems Service Pack 1"},
+			want: "Internet Explorer 11",
+		},
+		{
+			name: "MS17-006 swap: IE 11 on Windows 10 — Windows 10 marker is in component",
+			args: args{bulletinID: "MS17-006", product: "Internet Explorer 11", component: "Windows 10 for x64-based Systems"},
+			want: "Internet Explorer 11 on Windows 10",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -552,4 +573,78 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			})
 		}
 	})
+}
+
+// TestBulletinArchiveCVECorrections verifies known entries in the static
+// bulletinArchiveCVECorrections map. The map captures per-bulletin
+// BulletinSearch.xlsx CVE tokens that do not appear in the bulletin's
+// archive markdown, mapped either to a remapped canonical CVE (non-empty
+// fix) or to a drop action (empty fix). Both branches are exercised below.
+func TestBulletinArchiveCVECorrections(t *testing.T) {
+	tests := []struct {
+		name       string
+		bulletinID string
+		token      string
+		wantFix    string
+		wantOK     bool
+	}{
+		{
+			name:       "MS06-012 remap: year-typo CVE-2006-4131 → CVE-2005-4131",
+			bulletinID: "MS06-012",
+			token:      "CVE-2006-4131",
+			wantFix:    "CVE-2005-4131",
+			wantOK:     true,
+		},
+		{
+			name:       "MS11-056 remap: off-by-one CVE-2011-1285 → CVE-2011-1284",
+			bulletinID: "MS11-056",
+			token:      "CVE-2011-1285",
+			wantFix:    "CVE-2011-1284",
+			wantOK:     true,
+		},
+		{
+			name:       "MS16-084 drop: CVE-2016-3276 retracted by Microsoft V1.1 revision",
+			bulletinID: "MS16-084",
+			token:      "CVE-2016-3276",
+			wantFix:    "",
+			wantOK:     true,
+		},
+		{
+			name:       "MS06-021 drop: CVE-2006-2283 has no candidate in markdown",
+			bulletinID: "MS06-021",
+			token:      "CVE-2006-2283",
+			wantFix:    "",
+			wantOK:     true,
+		},
+		{
+			name:       "no entry for unknown bulletin",
+			bulletinID: "MS00-000",
+			token:      "CVE-1999-9999",
+			wantOK:     false,
+		},
+		{
+			name:       "known bulletin but unknown token returns ok=false",
+			bulletinID: "MS06-012",
+			token:      "CVE-2099-0001",
+			wantOK:     false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			perBulletin, ok := bulletin.BulletinArchiveCVECorrections[tt.bulletinID]
+			if !ok {
+				if tt.wantOK {
+					t.Fatalf("bulletinArchiveCVECorrections has no entry for %s", tt.bulletinID)
+				}
+				return
+			}
+			fix, ok := perBulletin[tt.token]
+			if ok != tt.wantOK {
+				t.Errorf("bulletinArchiveCVECorrections[%q][%q] ok = %v, want %v", tt.bulletinID, tt.token, ok, tt.wantOK)
+			}
+			if fix != tt.wantFix {
+				t.Errorf("bulletinArchiveCVECorrections[%q][%q] = %q, want %q", tt.bulletinID, tt.token, fix, tt.wantFix)
+			}
+		})
+	}
 }
