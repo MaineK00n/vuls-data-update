@@ -485,16 +485,19 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 	t.Run("KB-keyed", func(t *testing.T) {
 		tests := []struct {
 			name        string
+			bulletinID  string
 			componentKB string
 			cve         string
 		}{
 			{
 				name:        "MS16-007 KB3108664 NA for CVE-2016-0019 (per-CVE columns under \"Operating System\" header)",
+				bulletinID:  "MS16-007",
 				componentKB: "3108664",
 				cve:         "CVE-2016-0019",
 			},
 			{
 				name:        "MS13-040 KB2804576 (.NET 4) NA for CVE-2013-1337 (under \"Affected Software\" header)",
+				bulletinID:  "MS13-040",
 				componentKB: "2804576",
 				cve:         "CVE-2013-1337",
 			},
@@ -504,48 +507,65 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			// NA cell drops CVE-2006-4693 from all four rows simultaneously.
 			{
 				name:        "MS06-060 KB923089 (Word 2002 SP3 + Works Suite 2004/2005/2006) NA for CVE-2006-4693",
+				bulletinID:  "MS06-060",
 				componentKB: "923089",
 				cve:         "CVE-2006-4693",
 			},
 			{
 				name:        "MS06-060 KB924998 (Office v. X for Mac) NA for CVE-2006-3651 (Word for Mac column)",
+				bulletinID:  "MS06-060",
 				componentKB: "924998",
 				cve:         "CVE-2006-3651",
 			},
 			{
 				name:        "MS06-060 KB924999 (Word 2004 for Mac) NA for CVE-2006-4534 (Word for Mac column)",
+				bulletinID:  "MS06-060",
 				componentKB: "924999",
 				cve:         "CVE-2006-4534",
 			},
 			{
 				name:        "MS13-004 KB2742613 (.NET 4.5) NA for CVE-2013-0001 (explicit \"Not applicable\" cell; KB appears as \"(KB2742613)\" — covered by extended regex)",
+				bulletinID:  "MS13-004",
 				componentKB: "2742613",
 				cve:         "CVE-2013-0001",
 			},
 			{
 				name:        "MS16-106 KB3185911 NA for CVE-2016-3356 (markdown uses \"Not applicable\" — uniformly NA across all 19 xlsx rows of this shared KB)",
+				bulletinID:  "MS16-106",
 				componentKB: "3185911",
 				cve:         "CVE-2016-3356",
 			},
 			{
 				name:        "MS16-106 KB3189866 (Windows 10 Version 1607) NA for CVE-2016-3349 (markdown uses \"Not affected\" — exercises the legacy-marker predicate; uniformly NA across both xlsx rows of this shared KB)",
+				bulletinID:  "MS16-106",
 				componentKB: "3189866",
 				cve:         "CVE-2016-3349",
 			},
 			{
 				name:        "MS16-107 KB3185852 (Microsoft Visio 2016) NA for CVE-2016-3357 (multi-table-KB bulletin where per-(KB, CVE) is single-table and uniformly NA — newly reachable after the per-(KB, CVE) classification fix)",
+				bulletinID:  "MS16-107",
 				componentKB: "3185852",
 				cve:         "CVE-2016-3357",
 			},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				cves, ok := bulletin.BulletinArchiveKBNotApplicable[tt.componentKB]
+				ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 				if !ok {
-					t.Fatalf("bulletinArchiveKBNotApplicable has no entry for KB%s", tt.componentKB)
+					t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 				}
-				if !slices.Contains(cves, tt.cve) {
-					t.Errorf("bulletinArchiveKBNotApplicable[%q] = %v, want to contain %q", tt.componentKB, cves, tt.cve)
+				found := false
+				for _, adj := range ad.CVEAdjustments {
+					if adj.KB != tt.componentKB {
+						continue
+					}
+					if slices.Contains(adj.Drop, tt.cve) {
+						found = true
+						break
+					}
+				}
+				if !found {
+					t.Errorf("bulletinArchiveAmendments[%q] CVEAdjustments has no KB=%q Drop %q", tt.bulletinID, tt.componentKB, tt.cve)
 				}
 			})
 		}

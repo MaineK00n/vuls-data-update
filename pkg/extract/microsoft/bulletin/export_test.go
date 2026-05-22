@@ -6,7 +6,6 @@ var (
 	BulletinArchiveSupersedes         = bulletinArchiveSupersedes
 	BulletinArchiveSupersedesOverride = bulletinArchiveSupersedesOverride
 	NormalizeArchiveComponentKey      = normalizeArchiveComponentKey
-	BulletinArchiveKBNotApplicable    = bulletinArchiveKBNotApplicable
 	BulletinArchiveAmendments         = bulletinArchiveAmendments
 	ApplyComponentReattributions      = applyComponentReattributions
 	ApplyCVEAdditions                 = applyCVEAdditions
