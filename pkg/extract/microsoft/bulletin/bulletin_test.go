@@ -547,41 +547,47 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			})
 		}
 	})
-	t.Run("Component-keyed", func(t *testing.T) {
+	t.Run("Per-bulletin inner-key", func(t *testing.T) {
+		// bulletinArchiveComponentNotApplicable's inner key has three flavors
+		// (see the map's doc comment): IE/Edge vocabulary keys, MS06-* column
+		// header strings, and whitespace-normalized affected_product strings
+		// for the mixed-applicability bulletins. This subtest covers all three.
 		tests := []struct {
 			name       string
 			bulletinID string
-			component  string
+			innerKey   string
 			cve        string
 		}{
+			// IE/Edge vocabulary flavor.
 			{
 				name:       "MS16-037 IE 11 NA for CVE-2016-0159 (IE Cumulative, CVE-rows × IE-version cols)",
 				bulletinID: "MS16-037",
-				component:  "Internet Explorer 11",
+				innerKey:   "Internet Explorer 11",
 				cve:        "CVE-2016-0159",
 			},
 			{
 				name:       "MS14-010 IE 11 NA for CVE-2014-0269 (IE Cumulative, verified by golden diff)",
 				bulletinID: "MS14-010",
-				component:  "Internet Explorer 11",
+				innerKey:   "Internet Explorer 11",
 				cve:        "CVE-2014-0269",
 			},
+			// MS06-* column-header vocabulary flavor.
 			{
 				name:       "MS06-012 PowerPoint 2000 NA for CVE-2005-4131 (Office cross-product table)",
 				bulletinID: "MS06-012",
-				component:  "Microsoft PowerPoint 2000",
+				innerKey:   "Microsoft PowerPoint 2000",
 				cve:        "CVE-2005-4131",
 			},
 			{
 				name:       "MS06-020 Win 2000 NA for CVE-2006-0024 (no current Excel row triggers; kept for completeness)",
 				bulletinID: "MS06-020",
-				component:  "Windows 2000",
+				innerKey:   "Windows 2000",
 				cve:        "CVE-2006-0024",
 			},
 			{
 				name:       "MS06-039 Project 2000 NA for CVE-2006-0033",
 				bulletinID: "MS06-039",
-				component:  "Microsoft Project 2000",
+				innerKey:   "Microsoft Project 2000",
 				cve:        "CVE-2006-0033",
 			},
 			// MS06-060 NA cells are encoded in bulletinArchiveKBNotApplicable
@@ -589,19 +595,19 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			{
 				name:       "MS06-078 WMP 6.4 NA for CVE-2006-6134",
 				bulletinID: "MS06-078",
-				component:  "Windows Media Player 6.4 (All operating systems)",
+				innerKey:   "Windows Media Player 6.4 (All operating systems)",
 				cve:        "CVE-2006-6134",
 			},
-			// Product-keyed mixed-applicability cases: the KB is shared across
-			// multiple xlsx rows whose per-CVE matrix cells differ in NA
-			// status, so the filter dispatches on the whitespace-normalized
-			// affected_product (NormalizeArchiveComponentKey collapses
-			// whitespace via strings.Fields/Join before returning) and the
-			// map's inner keys must match that normalized form.
+			// Mixed-applicability product-keyed flavor: the KB is shared
+			// across multiple xlsx rows whose per-CVE matrix cells differ
+			// in NA status, so the filter dispatches on the whitespace-
+			// normalized affected_product (NormalizeArchiveComponentKey
+			// collapses whitespace via strings.Fields/Join before returning)
+			// and the inner key here is that normalized affected_product.
 			{
 				name:       "MS16-106 Windows Server 2008 NA for CVE-2016-3349 (KB3185911 shared with Win 8.1+ where the CVE is applicable)",
 				bulletinID: "MS16-106",
-				component:  "Windows Server 2008 for 32-bit Systems Service Pack 2",
+				innerKey:   "Windows Server 2008 for 32-bit Systems Service Pack 2",
 				cve:        "CVE-2016-3349",
 			},
 			// Bulletins where the same KB appears in multiple per-CVE matrix
@@ -611,31 +617,31 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 			{
 				name:       "MS15-097 Windows Vista SP2 NA for CVE-2015-2527 (KB3087039 spans two per-CVE tables; this (KB, CVE) appears only in T1, mixed across OS rows there)",
 				bulletinID: "MS15-097",
-				component:  "Windows Vista Service Pack 2",
+				innerKey:   "Windows Vista Service Pack 2",
 				cve:        "CVE-2015-2527",
 			},
 			{
 				name:       "MS15-128 Windows 7 SP1 NA for CVE-2015-6106 (KB3116869 spans OS+component tables; the cross-table-mixed (KB, CVE-2015-6108) pair is correctly excluded — see below)",
 				bulletinID: "MS15-128",
-				component:  "Windows 7 for 32-bit Systems Service Pack 1",
+				innerKey:   "Windows 7 for 32-bit Systems Service Pack 1",
 				cve:        "CVE-2015-6106",
 			},
 			{
 				name:       "MS16-107 Microsoft Office 2013 SP1 NA for CVE-2016-3357 (multi-table-KB bulletin newly reachable via dispatch)",
 				bulletinID: "MS16-107",
-				component:  "Microsoft Office 2013 Service Pack 1 (32-bit editions)",
+				innerKey:   "Microsoft Office 2013 Service Pack 1 (32-bit editions)",
 				cve:        "CVE-2016-3357",
 			},
 			{
 				name:       "MS16-133 Microsoft Word for Mac 2011 NA for CVE-2016-7228 (multi-table-KB bulletin newly reachable via dispatch)",
 				bulletinID: "MS16-133",
-				component:  "Microsoft Word for Mac 2011",
+				innerKey:   "Microsoft Word for Mac 2011",
 				cve:        "CVE-2016-7228",
 			},
 			{
 				name:       "MS17-018 Windows Server 2016 (Server Core) NA for CVE-2017-0024 (multi-table-KB bulletin newly reachable via dispatch)",
 				bulletinID: "MS17-018",
-				component:  "Windows Server 2016 for x64-based Systems (Server Core installation)",
+				innerKey:   "Windows Server 2016 for x64-based Systems (Server Core installation)",
 				cve:        "CVE-2017-0024",
 			},
 			// The one (KB, CVE) pair that genuinely cannot be filtered: MS15-128 /
@@ -647,16 +653,16 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				perComp, ok := bulletin.BulletinArchiveComponentNotApplicable[tt.bulletinID]
+				perKey, ok := bulletin.BulletinArchiveComponentNotApplicable[tt.bulletinID]
 				if !ok {
 					t.Fatalf("bulletinArchiveComponentNotApplicable has no entry for %s", tt.bulletinID)
 				}
-				cves, ok := perComp[tt.component]
+				cves, ok := perKey[tt.innerKey]
 				if !ok {
-					t.Fatalf("bulletinArchiveComponentNotApplicable[%q][%q] missing", tt.bulletinID, tt.component)
+					t.Fatalf("bulletinArchiveComponentNotApplicable[%q][%q] missing", tt.bulletinID, tt.innerKey)
 				}
 				if !slices.Contains(cves, tt.cve) {
-					t.Errorf("bulletinArchiveComponentNotApplicable[%q][%q] = %v, want to contain %q", tt.bulletinID, tt.component, cves, tt.cve)
+					t.Errorf("bulletinArchiveComponentNotApplicable[%q][%q] = %v, want to contain %q", tt.bulletinID, tt.innerKey, cves, tt.cve)
 				}
 			})
 		}
