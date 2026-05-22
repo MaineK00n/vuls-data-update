@@ -3415,6 +3415,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows RT 8.1", Drop: []string{"CVE-2016-0190"}},
 		},
 	},
+	// MS16-068's CVE summary table documents CVE-2016-3215 as
+	// "Critical / RCE (Only Windows 10 Version 1511 is affected)" in
+	// natural-language narrowing rather than a per-CVE matrix table —
+	// so gen_static_map.py's Format A parser, which looks for explicit
+	// "Not applicable" cells, did not surface this NA. The same xlsx
+	// row of KB3163017 (Win 10 RTM Edge cumulative) appears in both
+	// MS16-073 and MS16-080 where the per-CVE matrix tables *do* mark
+	// it NA, so the legacy global lookup propagated the filter to
+	// MS16-068's rows too. Restated here explicitly under MS16-068's
+	// own amendments to preserve the filter under per-bulletin scope.
+	"MS16-068": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "3163017", Drop: []string{"CVE-2016-3215"}},
+		},
+	},
 	"MS16-070": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2596915", Drop: []string{"CVE-2016-0025", "CVE-2016-3233", "CVE-2016-3234"}},
