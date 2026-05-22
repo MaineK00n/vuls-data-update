@@ -154,10 +154,12 @@ func Test_productName(t *testing.T) {
 	}
 }
 
-// TestIECumChainEdges verifies known edges in the static ieCumChainEdges map.
-// The map is exhaustively generated from the frozen Bulletin corpus, so any
-// regression in its structure (e.g., missing edges across the Nov 2016 MS16-142
-// gap that A1 was specifically designed to bridge) should fail this test.
+// TestIECumChainEdges verifies known IE Cumulative chain edges in the
+// per-bulletin amendments. Edges are aggregated globally at extract time
+// (across all bulletins' IECumChain maps), bridging the Nov 2016 MS16-142
+// gap that the chain-merge loop specifically targets. Verification scans
+// every bulletin's IECumChain for the (oldKB → newKB) edge — accurate
+// owner attribution is best-effort and not required for the chain walk.
 func TestIECumChainEdges(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -192,12 +194,17 @@ func TestIECumChainEdges(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			news, ok := bulletin.IECumChainEdges[tt.oldKBID]
-			if !ok {
-				t.Fatalf("ieCumChainEdges has no entry for KB%s", tt.oldKBID)
+			found := false
+			for _, ad := range bulletin.BulletinArchiveAmendments {
+				if news, ok := ad.IECumChain[tt.oldKBID]; ok {
+					if slices.Contains(news, tt.newKBID) {
+						found = true
+						break
+					}
+				}
 			}
-			if !slices.Contains(news, tt.newKBID) {
-				t.Errorf("ieCumChainEdges[%q] = %v, want to contain %q", tt.oldKBID, news, tt.newKBID)
+			if !found {
+				t.Errorf("no bulletinArchiveAmendments[*].IECumChain contains edge %q → %q", tt.oldKBID, tt.newKBID)
 			}
 		})
 	}
