@@ -1,6 +1,10 @@
 {
 	"kb_id": "3185611",
 	"url": "https://support.microsoft.com/help/3185611",
+	"products": [
+		"Windows 10 for 32-bit Systems",
+		"Windows 10 for x64-based Systems"
+	],
 	"superseded_by": [
 		{
 			"kb_id": "3192440"
@@ -21,6 +25,7 @@
 			"fixtures/13/MS13-054.json",
 			"fixtures/14/MS14-010.json",
 			"fixtures/16/MS16-007.json",
+			"fixtures/16/MS16-106.json",
 			"fixtures/17/MS17-023.json"
 		]
 	}
