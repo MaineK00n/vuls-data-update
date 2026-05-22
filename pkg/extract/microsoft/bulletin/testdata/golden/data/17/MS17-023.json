@@ -31,6 +31,127 @@
 			]
 		}
 	],
+	"vulnerabilities": [
+		{
+			"content": {
+				"id": "CVE-2017-2997",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-2997"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2017-2998",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-2998"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2017-2999",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-2999"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2017-3000",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-3000"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2017-3001",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-3001"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2017-3002",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-3002"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		},
+		{
+			"content": {
+				"id": "CVE-2017-3003",
+				"references": [
+					{
+						"source": "security@microsoft.com",
+						"url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-3003"
+					}
+				]
+			},
+			"segments": [
+				{
+					"ecosystem": "microsoft",
+					"tag": "Adobe Flash Player on Windows 10 Version 1511 for x64-based Systems"
+				}
+			]
+		}
+	],
 	"detections": [
 		{
 			"ecosystem": "microsoft",
