@@ -402,7 +402,7 @@ func walkProductTree(pt v1.ProductTree, c2r map[string][]string) (map[v1.Product
 						// processed or just added to this skip list — silent
 						// data loss is worse than a loud failure.
 						for _, s := range []string{
-							"pkg:generic/", "pkg:maven/", "pkg:npm/", "pkg:oci/",
+							"pkg:generic/", "pkg:maven/", "pkg:npm/", "pkg:oci/", "pkg:pypi/",
 						} {
 							if strings.HasPrefix(fpn.ProductIdentificationHelper.PURL, s) {
 								return nil, nil
