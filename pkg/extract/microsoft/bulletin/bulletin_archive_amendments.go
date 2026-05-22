@@ -827,7 +827,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS13-009": {CVEAdjustments: []cveAdjustment{{KB: "2792100", Drop: []string{"CVE-2013-0015", "CVE-2013-0018", "CVE-2013-0019", "CVE-2013-0020", "CVE-2013-0022", "CVE-2013-0023", "CVE-2013-0024", "CVE-2013-0025", "CVE-2013-0026", "CVE-2013-0028", "CVE-2013-0029"}}}},
 	"MS13-016": {CVEAdjustments: []cveAdjustment{{KB: "2778344", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}}}},
-	"MS13-021": {CVEAdjustments: []cveAdjustment{{KB: "2809289", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}}}},
+	"MS13-021": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2809289", Drop: []string{"CVE-2013-0091", "CVE-2013-1288"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2797052": {Add: []string{"2809289"}},
+		},
+	},
 	"MS13-024": {CVEAdjustments: []cveAdjustment{{KB: "2687418", Drop: []string{"CVE-2013-0083"}}}},
 	// MS13-028: no candidate in markdown — drop both.
 	"MS13-028": {
@@ -836,7 +843,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Remap: map[string]string{"CVE-2013-2013": "", "CVE-2013-2014": ""}},
 		},
 	},
-	"MS13-031": {CVEAdjustments: []cveAdjustment{{KB: "2813170", Drop: []string{"CVE-2013-1284"}}}},
+	"MS13-031": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2813170", Drop: []string{"CVE-2013-1284"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2620712": {Add: []string{"2813170"}},
+		},
+	},
+	"MS13-032": {
+		Supersedes: map[string]supersedesAdjust{
+			"2621146": {Add: []string{"2772930"}},
+			"2772930": {Override: []string{"2626416"}},
+		},
+	},
+	"MS13-033": {
+		Supersedes: map[string]supersedesAdjust{
+			"2646524": {Add: []string{"2820917"}},
+		},
+	},
 	"MS13-036": {CVEAdjustments: []cveAdjustment{{KB: "2808735", Drop: []string{"CVE-2013-1291", "CVE-2013-1292", "CVE-2013-1293"}}}},
 	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
 	// CVE-2013-1313 appears in MS13-020's markdown.
@@ -881,8 +906,23 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows XP Professional x64 Edition Service Pack 2 (Win32k.sys)", Drop: []string{"CVE-2013-1333"}},
 			{Component: "Windows XP Service Pack 3 (Win32k.sys)", Drop: []string{"CVE-2013-1333"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2813170": {Add: []string{"2829361"}},
+		},
 	},
-	"MS13-047": {CVEAdjustments: []cveAdjustment{{KB: "2838727", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}}}},
+	"MS13-047": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2838727", Drop: []string{"CVE-2013-3110", "CVE-2013-3111", "CVE-2013-3114", "CVE-2013-3116", "CVE-2013-3117", "CVE-2013-3118", "CVE-2013-3119", "CVE-2013-3120", "CVE-2013-3122", "CVE-2013-3123", "CVE-2013-3124", "CVE-2013-3125", "CVE-2013-3126", "CVE-2013-3141"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2847204": {Add: []string{"2838727"}},
+		},
+	},
+	"MS13-048": {
+		Supersedes: map[string]supersedesAdjust{
+			"2829361": {Add: []string{"2839229"}},
+		},
+	},
 	"MS13-052": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2832407", Drop: []string{"CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3171", "CVE-2013-3178"}},
@@ -913,8 +953,27 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2844289", Drop: []string{"CVE-2013-3129", "CVE-2013-3131", "CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3178"}},
 			{KB: "2847559", Drop: []string{"CVE-2013-3132", "CVE-2013-3133", "CVE-2013-3134", "CVE-2013-3171"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2698035": {Add: []string{"2833951"}},
+		},
 	},
-	"MS13-053": {CVEAdjustments: []cveAdjustment{{KB: "2850851", Drop: []string{"CVE-2013-3167", "CVE-2013-3172", "CVE-2013-3660"}}}},
+	"MS13-053": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2850851", Drop: []string{"CVE-2013-3167", "CVE-2013-3172", "CVE-2013-3660"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2808735": {Add: []string{"2850851"}},
+		},
+	},
+	"MS13-054": {
+		Supersedes: map[string]supersedesAdjust{
+			"2817480": {Override: []string{"2598253"}},
+			"2827751": {Add: []string{"2843162"}},
+			"2827752": {Add: []string{"2843163"}},
+			"2843162": {Override: []string{"2827750"}},
+			"2843163": {Override: []string{"2827750"}},
+		},
+	},
 	"MS13-055": {CVEAdjustments: []cveAdjustment{{KB: "2846071", Drop: []string{"CVE-2013-3115", "CVE-2013-3143", "CVE-2013-3144", "CVE-2013-3145", "CVE-2013-3146", "CVE-2013-3147", "CVE-2013-3149", "CVE-2013-3150", "CVE-2013-3151", "CVE-2013-3152", "CVE-2013-3161", "CVE-2013-3162", "CVE-2013-3163", "CVE-2013-3164", "CVE-2013-3846"}}}},
 	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
 	// CVE-2013-3181 appears in MS13-060's markdown.
@@ -925,10 +984,30 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Remap: map[string]string{"CVE-2013-3181": ""}},
 		},
 	},
+	"MS13-060": {
+		Supersedes: map[string]supersedesAdjust{
+			"981322": {Add: []string{"2850869"}},
+		},
+	},
+	"MS13-061": {
+		Supersedes: map[string]supersedesAdjust{
+			"2746164": {Add: []string{"2874216"}},
+		},
+	},
+	"MS13-062": {
+		Supersedes: map[string]supersedesAdjust{
+			"970238":  {Add: []string{"2849470"}},
+			"2360937": {Add: []string{"2849470"}},
+		},
+	},
 	"MS13-063": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
 			{KB: "2859537", Drop: []string{"CVE-2013-2556", "CVE-2013-3196", "CVE-2013-3197", "CVE-2013-3198"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2644615": {Add: []string{"2859537"}},
+			"2790113": {Add: []string{"2859537"}},
 		},
 	},
 	"MS13-067": {
@@ -963,6 +1042,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2013-1341", "CVE-2013-1342", "CVE-2013-1343", "CVE-2013-1344", "CVE-2013-3864", "CVE-2013-3865", "CVE-2013-3866"}},
 			{KB: "2876315", Drop: []string{"CVE-2013-1341"}},
+		},
+	},
+	"MS13-077": {
+		Supersedes: map[string]supersedesAdjust{
+			"2859537": {Add: []string{"2872339", "3033395"}},
 		},
 	},
 	"MS13-080": {
@@ -1055,7 +1139,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2893984", Drop: []string{"CVE-2013-3907"}},
 		},
 	},
-	"MS13-105": {CVEAdjustments: []cveAdjustment{{KB: "2903911", Drop: []string{"CVE-2013-5072"}}}},
+	"MS13-105": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "2903911", Drop: []string{"CVE-2013-5072"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2866475": {Add: []string{"2880833"}},
+		},
+	},
 	"MS14-001": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2863867", Drop: []string{"CVE-2014-0259"}},
@@ -1122,6 +1213,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2939132", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
 			{KB: "2949660", Drop: []string{"CVE-2014-1757", "CVE-2014-1758"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2837615": {Add: []string{"2878236"}},
+			"2863867": {Add: []string{"2878304"}},
+			"2889496": {Add: []string{"2939132"}},
+		},
 	},
 	"MS14-018": {
 		CVEAdjustments: []cveAdjustment{
@@ -1153,6 +1249,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS14-028": {CVEAdjustments: []cveAdjustment{{KB: "2962073", Drop: []string{"CVE-2014-0256"}}}},
+	"MS14-029": {
+		Supersedes: map[string]supersedesAdjust{
+			"2936068": {Add: []string{"2953522", "2961851"}},
+			"2964444": {Add: []string{"2953522"}},
+		},
+	},
 	"MS14-035": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-1764", "CVE-2014-1766", "CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1773", "CVE-2014-1774", "CVE-2014-1777", "CVE-2014-1778", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1783", "CVE-2014-1784", "CVE-2014-1785", "CVE-2014-1786", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1791", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1795", "CVE-2014-1797", "CVE-2014-1800", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-1805", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2758", "CVE-2014-2759", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2765", "CVE-2014-2766", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2775", "CVE-2014-2776", "CVE-2014-2777", "CVE-2014-2782"}},
@@ -1161,6 +1263,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2014-1769", "CVE-2014-1772", "CVE-2014-1777", "CVE-2014-1780", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1785", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1792", "CVE-2014-1794", "CVE-2014-1797", "CVE-2014-1802", "CVE-2014-1804", "CVE-2014-2753", "CVE-2014-2755", "CVE-2014-2756", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2763", "CVE-2014-2764", "CVE-2014-2767", "CVE-2014-2768", "CVE-2014-2769", "CVE-2014-2770", "CVE-2014-2771", "CVE-2014-2772", "CVE-2014-2773", "CVE-2014-2776"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2014-1769", "CVE-2014-1774", "CVE-2014-1781", "CVE-2014-1782", "CVE-2014-1785", "CVE-2014-1788", "CVE-2014-1792", "CVE-2014-1804", "CVE-2014-2753", "CVE-2014-2754", "CVE-2014-2755", "CVE-2014-2760", "CVE-2014-2761", "CVE-2014-2767", "CVE-2014-2768", "CVE-2014-2770", "CVE-2014-2772", "CVE-2014-2773", "CVE-2014-2776"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-1774", "CVE-2014-1781", "CVE-2014-1788", "CVE-2014-1789", "CVE-2014-1790", "CVE-2014-1792", "CVE-2014-1804", "CVE-2014-2754", "CVE-2014-2767", "CVE-2014-2768", "CVE-2014-2770", "CVE-2014-2773"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2961851": {Add: []string{"2957689"}},
 		},
 	},
 	"MS14-037": {
@@ -1172,6 +1277,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2014-2785", "CVE-2014-2787", "CVE-2014-2788", "CVE-2014-2790", "CVE-2014-2791", "CVE-2014-2794", "CVE-2014-2797", "CVE-2014-2802", "CVE-2014-2806", "CVE-2014-4066"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-2785", "CVE-2014-2788", "CVE-2014-2791", "CVE-2014-2794", "CVE-2014-2797", "CVE-2014-2803"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2957689": {Add: []string{"2962872", "2963952"}},
+		},
 	},
 	"MS14-044": {
 		CVEAdjustments: []cveAdjustment{
@@ -1180,8 +1288,20 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2977321", Drop: []string{"CVE-2014-1820"}},
 			{KB: "2977326", Drop: []string{"CVE-2014-1820"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2716435": {Add: []string{"2977322"}},
+		},
 	},
 	"MS14-045": {CVEAdjustments: []cveAdjustment{{KB: "2993651", Drop: []string{"CVE-2014-4064"}}}},
+	"MS14-046": {
+		Supersedes: map[string]supersedesAdjust{
+			"2844286": {Add: []string{"2937610"}},
+			"2844287": {Add: []string{"2937608"}},
+			"2844289": {Add: []string{"2966825"}},
+			"2898866": {Add: []string{"2966825"}},
+			"2898868": {Add: []string{"2966826"}},
+		},
+	},
 	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
 	// CVE-2014-2799 appears in MS14-052's markdown.
 	"MS14-051": {
@@ -1194,6 +1314,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-2818", "CVE-2014-2821", "CVE-2014-2824", "CVE-2014-4052", "CVE-2014-4056"}},
 			{Remap: map[string]string{"CVE-2014-2799": ""}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2962872": {Add: []string{"2976627", "2977629"}},
+		},
 	},
 	"MS14-052": {
 		CVEAdjustments: []cveAdjustment{
@@ -1203,6 +1326,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2014-4080", "CVE-2014-4084", "CVE-2014-4086", "CVE-2014-4087", "CVE-2014-4089", "CVE-2014-4091", "CVE-2014-4093", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4101", "CVE-2014-4102"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2014-4086", "CVE-2014-4087", "CVE-2014-4095", "CVE-2014-4096", "CVE-2014-4101"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-4082", "CVE-2014-4084", "CVE-2014-4086", "CVE-2014-4093"}},
+		},
+	},
+	"MS14-053": {
+		Supersedes: map[string]supersedesAdjust{
+			"2756918": {Add: []string{"2973115"}},
 		},
 	},
 	"MS14-055": {
@@ -1249,6 +1377,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2979577", Drop: []string{"CVE-2014-4121", "CVE-2014-4122"}},
 			{KB: "2979578", Drop: []string{"CVE-2014-4121", "CVE-2014-4122"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2729460": {Add: []string{"2972107"}},
+		},
 	},
 	"MS14-064": {CVEAdjustments: []cveAdjustment{{KB: "3006226", Drop: []string{"CVE-2014-6352"}}}},
 	"MS14-065": {
@@ -1294,6 +1425,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3017347", Drop: []string{"CVE-2014-6360"}},
 		},
 	},
+	"MS14-084": {
+		Supersedes: map[string]supersedesAdjust{
+			"3012168": {Override: []string{"2909213"}},
+			"3012172": {Override: []string{"2909212"}},
+			"3012176": {Override: []string{"2909210"}},
+		},
+	},
 	"MS15-009": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0019", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0028", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0038", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0042", "CVE-2015-0043", "CVE-2015-0044", "CVE-2015-0046", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0054", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069", "CVE-2015-0071"}},
@@ -1302,6 +1440,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2015-0018", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0027", "CVE-2015-0029", "CVE-2015-0035", "CVE-2015-0037", "CVE-2015-0039", "CVE-2015-0040", "CVE-2015-0045", "CVE-2015-0049", "CVE-2015-0051", "CVE-2015-0052", "CVE-2015-0053", "CVE-2015-0055", "CVE-2015-0066", "CVE-2015-0068", "CVE-2015-0069"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2014-8967", "CVE-2015-0018", "CVE-2015-0028", "CVE-2015-0029", "CVE-2015-0037", "CVE-2015-0040", "CVE-2015-0044", "CVE-2015-0045", "CVE-2015-0048", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0053", "CVE-2015-0066", "CVE-2015-0067"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2014-8967", "CVE-2015-0019", "CVE-2015-0021", "CVE-2015-0023", "CVE-2015-0025", "CVE-2015-0028", "CVE-2015-0029", "CVE-2015-0044", "CVE-2015-0045", "CVE-2015-0048", "CVE-2015-0049", "CVE-2015-0050", "CVE-2015-0051", "CVE-2015-0053", "CVE-2015-0067"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3021952": {Override: []string{"3012176"}},
+			"3029449": {Add: []string{"3021952"}},
+		},
+	},
+	"MS15-011": {
+		Supersedes: map[string]supersedesAdjust{
+			"2536276": {Add: []string{"3000483"}},
 		},
 	},
 	"MS15-012": {
@@ -1320,6 +1467,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2956098", Drop: []string{"CVE-2015-0063", "CVE-2015-0065"}},
 			{KB: "2956099", Drop: []string{"CVE-2015-0063"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2827328": {Add: []string{"2920791"}},
+		},
 	},
 	"MS15-018": {
 		CVEAdjustments: []cveAdjustment{
@@ -1331,11 +1481,19 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2015-0056", "CVE-2015-0100", "CVE-2015-1623", "CVE-2015-1626"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-0099", "CVE-2015-0100"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3012176": {Add: []string{"3032359"}},
+			"3034196": {Add: []string{"3032359"}},
+			"3036197": {Add: []string{"3032359"}},
+		},
 	},
 	"MS15-020": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3033889", Drop: []string{"CVE-2015-0096"}},
 			{KB: "3039066", Drop: []string{"CVE-2015-0081"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2962123": {Add: []string{"3039066"}},
 		},
 	},
 	"MS15-022": {
@@ -1346,6 +1504,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2956189", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 			{KB: "2984939", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
 			{KB: "3038999", Drop: []string{"CVE-2015-0086", "CVE-2015-0097", "CVE-2015-1633", "CVE-2015-1636"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2956138": {Override: []string{"2956058"}},
 		},
 	},
 	"MS15-025": {CVEAdjustments: []cveAdjustment{{KB: "3038680", Drop: []string{"CVE-2015-0073"}}}},
@@ -1370,6 +1531,16 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3048019", Drop: []string{"CVE-2015-1639", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
 			{KB: "3051737", Drop: []string{"CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
 			{KB: "3055707", Drop: []string{"CVE-2015-1639", "CVE-2015-1641", "CVE-2015-1649", "CVE-2015-1650", "CVE-2015-1651"}},
+		},
+	},
+	"MS15-034": {
+		Supersedes: map[string]supersedesAdjust{
+			"2829254": {Add: []string{"3042553"}},
+		},
+	},
+	"MS15-035": {
+		Supersedes: map[string]supersedesAdjust{
+			"2876331": {Add: []string{"3046306"}},
 		},
 	},
 	// MS15-036: 5-digit suffix anomaly; no clean canonical-form candidate —
@@ -1410,6 +1581,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3056819", Drop: []string{"CVE-2015-1670"}},
 		},
 	},
+	"MS15-045": {
+		Supersedes: map[string]supersedesAdjust{
+			"2974286": {Add: []string{"3046002"}},
+		},
+	},
 	"MS15-046": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "2975808", Drop: []string{"CVE-2015-1683"}},
@@ -1422,6 +1598,15 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3054843", Drop: []string{"CVE-2015-1683"}},
 			{KB: "3057181", Drop: []string{"CVE-2015-1683"}},
 			{KB: "3085544", Drop: []string{"CVE-2015-1682"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2826028": {Add: []string{"3054838"}},
+			"2826029": {Add: []string{"3054839"}},
+			"2956070": {Add: []string{"3054843"}},
+			"2956136": {Add: []string{"3054833"}},
+			"2956208": {Add: []string{"3054847"}},
+			"3051737": {Add: []string{"3048688"}},
+			"3054888": {Add: []string{"3085544"}},
 		},
 	},
 	// MS15-048: 5-digit suffix anomaly; no clean canonical-form candidate —
@@ -1450,6 +1635,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3035490", Drop: []string{"CVE-2015-1673"}},
 			{Remap: map[string]string{"CVE-2015-16723": ""}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2804577": {Add: []string{"3035488"}},
+			"2863239": {Add: []string{"3035488"}},
+		},
 	},
 	"MS15-053": {
 		CVEAdjustments: []cveAdjustment{
@@ -1457,6 +1646,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3050945", Drop: []string{"CVE-2015-1684"}},
 			{KB: "3050946", Drop: []string{"CVE-2015-1684"}},
 			{KB: "3057263", Drop: []string{"CVE-2015-1684", "CVE-2015-1686"}},
+		},
+	},
+	"MS15-055": {
+		Supersedes: map[string]supersedesAdjust{
+			"3050514": {Add: []string{"3061518"}},
 		},
 	},
 	"MS15-056": {
@@ -1476,6 +1670,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS15-061": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-1719", "CVE-2015-1720", "CVE-2015-1721", "CVE-2015-1722", "CVE-2015-1723", "CVE-2015-1724", "CVE-2015-1725", "CVE-2015-1726", "CVE-2015-1727", "CVE-2015-1768", "CVE-2015-2360"}}}},
+	"MS15-062": {
+		Supersedes: map[string]supersedesAdjust{
+			"3003381": {Add: []string{"3062577"}},
+			"3062577": {Override: []string{"3062577"}},
+		},
+	},
 	"MS15-065": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 6", Drop: []string{"CVE-2015-1729", "CVE-2015-1733", "CVE-2015-1738", "CVE-2015-1767", "CVE-2015-2383", "CVE-2015-2384", "CVE-2015-2388", "CVE-2015-2389", "CVE-2015-2391", "CVE-2015-2398", "CVE-2015-2401", "CVE-2015-2402", "CVE-2015-2403", "CVE-2015-2408", "CVE-2015-2411", "CVE-2015-2412", "CVE-2015-2414", "CVE-2015-2419", "CVE-2015-2425"}},
@@ -1507,6 +1707,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3054971", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2415", "CVE-2015-2424"}},
 			{KB: "3054999", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415"}},
 			{KB: "3072620", Drop: []string{"CVE-2015-2375", "CVE-2015-2376", "CVE-2015-2377", "CVE-2015-2378", "CVE-2015-2379", "CVE-2015-2380", "CVE-2015-2415", "CVE-2015-2424"}},
+		},
+	},
+	"MS15-072": {
+		Supersedes: map[string]supersedesAdjust{
+			"2965155": {Add: []string{"3069392"}},
 		},
 	},
 	"MS15-079": {
@@ -1570,6 +1775,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3075221", Drop: []string{"CVE-2015-2473"}},
 		},
 	},
+	"MS15-091": {
+		Supersedes: map[string]supersedesAdjust{
+			"3081455": {Override: []string{"3081444"}},
+		},
+	},
 	"MS15-094": {
 		CVEAdjustments: []cveAdjustment{
 			{Add: []string{"CVE-2015-2483", "CVE-2015-2484", "CVE-2015-2485", "CVE-2015-2486", "CVE-2015-2487", "CVE-2015-2489", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2492", "CVE-2015-2493", "CVE-2015-2494", "CVE-2015-2496", "CVE-2015-2498", "CVE-2015-2499", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541", "CVE-2015-2542"}},
@@ -1579,6 +1789,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2015-2489", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-2483", "CVE-2015-2487", "CVE-2015-2490", "CVE-2015-2491", "CVE-2015-2493", "CVE-2015-2500", "CVE-2015-2501", "CVE-2015-2541"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3087038": {Override: []string{"3081444"}},
+		},
+	},
+	"MS15-095": {
+		Supersedes: map[string]supersedesAdjust{
+			"3081444": {Add: []string{"3081455"}},
 		},
 	},
 	"MS15-097": {
@@ -1630,6 +1848,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3084135", Drop: []string{"CVE-2015-2524", "CVE-2015-2528"}},
 		},
 	},
+	"MS15-103": {
+		Supersedes: map[string]supersedesAdjust{
+			"3062157": {Add: []string{"3087126"}},
+		},
+	},
 	"MS15-104": {CVEAdjustments: []cveAdjustment{{KB: "3061064", Drop: []string{"CVE-2015-2532"}}}},
 	"MS15-106": {
 		CVEAdjustments: []cveAdjustment{
@@ -1640,6 +1863,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6045", "CVE-2015-6053"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-6044", "CVE-2015-6050"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-6042", "CVE-2015-6044", "CVE-2015-6048", "CVE-2015-6050", "CVE-2015-6051"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3097617": {Override: []string{"3081455"}},
 		},
 	},
 	"MS15-109": {
@@ -1679,6 +1905,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2015-2427", "CVE-2015-6068", "CVE-2015-6072", "CVE-2015-6073", "CVE-2015-6075", "CVE-2015-6077", "CVE-2015-6079", "CVE-2015-6080", "CVE-2015-6082"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-2427"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-2427", "CVE-2015-6082"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3105213": {Override: []string{"3096448", "3097617"}},
 		},
 	},
 	"MS15-116": {
@@ -1741,8 +1970,34 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3102924", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
 			{KB: "3102925", Drop: []string{"CVE-2015-2503", "CVE-2015-6091", "CVE-2015-6092", "CVE-2015-6093"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2899516": {Override: []string{"2553428"}},
+			"2965313": {Override: []string{"3085514"}},
+			"3054793": {Override: []string{"3085583"}},
+			"3085584": {Override: []string{"2956151"}},
+			"3085614": {Override: []string{"3055033"}},
+			"3101360": {Override: []string{"2687413", "3055030"}},
+			"3101370": {Override: []string{"3054929", "3055029"}},
+			"3101371": {Override: []string{"3085583"}},
+			"3101499": {Override: []string{"2956151"}},
+			"3101506": {Override: []string{"3055029"}},
+			"3101512": {Override: []string{"3055030"}},
+			"3101526": {Override: []string{"2553147"}},
+		},
 	},
-	"MS15-118": {CVEAdjustments: []cveAdjustment{{KB: "3104507", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}}}},
+	"MS15-118": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "3104507", Drop: []string{"CVE-2015-6099", "CVE-2015-6115"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2901128": {Add: []string{"3098779"}},
+		},
+	},
+	"MS15-119": {
+		Supersedes: map[string]supersedesAdjust{
+			"2973408": {Add: []string{"3092601"}},
+		},
+	},
 	"MS15-124": {
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2015-6083", "CVE-2015-6134", "CVE-2015-6135", "CVE-2015-6136", "CVE-2015-6138", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6144", "CVE-2015-6147", "CVE-2015-6148", "CVE-2015-6149", "CVE-2015-6151", "CVE-2015-6152", "CVE-2015-6153", "CVE-2015-6155", "CVE-2015-6156", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160", "CVE-2015-6162", "CVE-2015-6164"}},
@@ -1751,6 +2006,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2015-6134", "CVE-2015-6139", "CVE-2015-6140", "CVE-2015-6141", "CVE-2015-6142", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6153", "CVE-2015-6157", "CVE-2015-6158", "CVE-2015-6159", "CVE-2015-6160"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6152", "CVE-2015-6162"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2015-6134", "CVE-2015-6141", "CVE-2015-6143", "CVE-2015-6145", "CVE-2015-6146", "CVE-2015-6147", "CVE-2015-6149", "CVE-2015-6150", "CVE-2015-6152", "CVE-2015-6162", "CVE-2015-6164"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3116869": {Override: []string{"3105213"}},
+			"3116900": {Override: []string{"3105211"}},
 		},
 	},
 	"MS15-128": {
@@ -1812,6 +2071,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		CVEAdjustments: []cveAdjustment{
 			{Component: "Internet Explorer 7", Drop: []string{"CVE-2016-0002", "CVE-2016-0005"}},
 			{Component: "Internet Explorer 8", Drop: []string{"CVE-2016-0005"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3124263": {Override: []string{"3116900"}},
+			"3124266": {Override: []string{"3116869"}},
 		},
 	},
 	"MS16-002": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0003", "CVE-2016-0024"}}}},
@@ -1903,6 +2166,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0042", "CVE-2016-0049"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3126041": {Override: []string{"3121918"}},
+		},
 	},
 	"MS16-015": {
 		CVEAdjustments: []cveAdjustment{
@@ -1934,6 +2200,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Excel for Mac 2011", Drop: []string{"CVE-2016-0022", "CVE-2016-0052"}},
 			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-0054"}},
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-0054"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3137721": {Override: []string{"3133699"}},
+		},
+	},
+	"MS16-018": {
+		Supersedes: map[string]supersedesAdjust{
+			"3124001": {Add: []string{"3134214"}},
 		},
 	},
 	"MS16-022": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0964", "CVE-2016-0965", "CVE-2016-0966", "CVE-2016-0967", "CVE-2016-0968", "CVE-2016-0969", "CVE-2016-0970", "CVE-2016-0971", "CVE-2016-0972", "CVE-2016-0973", "CVE-2016-0974", "CVE-2016-0975", "CVE-2016-0976", "CVE-2016-0977", "CVE-2016-0978", "CVE-2016-0979", "CVE-2016-0980", "CVE-2016-0981", "CVE-2016-0982", "CVE-2016-0983", "CVE-2016-0984", "CVE-2016-0985"}}}},
@@ -1971,6 +2245,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3114901", Drop: []string{"CVE-2016-0021", "CVE-2016-0057"}},
 			{KB: "3138327", Drop: []string{"CVE-2016-0021", "CVE-2016-0057"}},
 			{KB: "3138328", Drop: []string{"CVE-2016-0021", "CVE-2016-0057"}},
+		},
+	},
+	"MS16-035": {
+		Supersedes: map[string]supersedesAdjust{
+			"3135988": {Override: []string{"3099862"}},
 		},
 	},
 	"MS16-036": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-8652", "CVE-2015-8655", "CVE-2015-8658", "CVE-2016-0960", "CVE-2016-0961", "CVE-2016-0962", "CVE-2016-0963", "CVE-2016-0986", "CVE-2016-0987", "CVE-2016-0988", "CVE-2016-0989", "CVE-2016-0990", "CVE-2016-0991", "CVE-2016-0993", "CVE-2016-0994", "CVE-2016-0995", "CVE-2016-0996", "CVE-2016-1001", "CVE-2016-1005", "CVE-2016-1010"}}}},
@@ -2011,6 +2290,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3142577", Drop: []string{"CVE-2016-0127", "CVE-2016-0136", "CVE-2016-0139"}},
 			{KB: "3154208", Drop: []string{"CVE-2016-0122", "CVE-2016-0127", "CVE-2016-0136"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3138327": {Add: []string{"3142577"}},
+			"3138328": {Add: []string{"3154208"}},
+		},
 	},
 	"MS16-045": {
 		CVEAdjustments: []cveAdjustment{
@@ -2024,6 +2307,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-0188", "CVE-2016-0194"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2016-0188"}},
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2016-0188"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3148198": {Add: []string{"3154070"}},
 		},
 	},
 	"MS16-053": {
@@ -2055,12 +2341,45 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3155776", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 			{KB: "3155777", Drop: []string{"CVE-2016-0126", "CVE-2016-0140", "CVE-2016-0183"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2760585": {Add: []string{"2984943"}},
+			"2760591": {Add: []string{"2984938"}},
+			"2984938": {Override: []string{"3114983"}},
+			"2984943": {Override: []string{"3114990"}},
+			"3054841": {Add: []string{"3101520"}},
+			"3054848": {Add: []string{"3054984"}},
+			"3054984": {Override: []string{"3054841"}},
+			"3101520": {Override: []string{"3114993"}},
+			"3114486": {Add: []string{"3115016"}},
+			"3114855": {Add: []string{"3115094"}},
+			"3114982": {Add: []string{"3115115"}},
+			"3114983": {Add: []string{"3115116"}},
+			"3114987": {Add: []string{"3115132"}},
+			"3114990": {Add: []string{"3115121"}},
+			"3114993": {Add: []string{"3115123"}},
+			"3115016": {Override: []string{"3114937"}},
+			"3115025": {Override: []string{"3114486"}},
+			"3115094": {Override: []string{"3142577", "3154208"}},
+			"3115103": {Override: []string{"3114855"}},
+			"3115116": {Override: []string{"3114990"}},
+			"3115121": {Override: []string{"3054848"}},
+			"3115309": {Add: []string{"3115464"}},
+			"3142577": {Add: []string{"3155777"}},
+			"3154208": {Add: []string{"3155776"}},
+			"3155776": {Override: []string{"3114982"}},
+			"3155777": {Override: []string{"3114987"}},
+		},
 	},
 	"MS16-055": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3156013", Drop: []string{"CVE-2016-0184", "CVE-2016-0195"}},
 			{KB: "3156016", Drop: []string{"CVE-2016-0168", "CVE-2016-0169", "CVE-2016-0170", "CVE-2016-0195"}},
 			{KB: "3156019", Drop: []string{"CVE-2016-0168", "CVE-2016-0169", "CVE-2016-0170", "CVE-2016-0184"}},
+		},
+	},
+	"MS16-058": {
+		Supersedes: map[string]supersedesAdjust{
+			"982666": {Add: []string{"3141083"}},
 		},
 	},
 	"MS16-062": {
@@ -2112,6 +2431,37 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3115243", Drop: []string{"CVE-2016-3233", "CVE-2016-3235"}},
 			{KB: "3165796", Drop: []string{"CVE-2016-3233", "CVE-2016-3234", "CVE-2016-3235"}},
 			{KB: "3165798", Drop: []string{"CVE-2016-3233", "CVE-2016-3234", "CVE-2016-3235"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"2596915": {Override: []string{"2687505"}},
+			"3114421": {Add: []string{"3114740"}},
+			"3114527": {Add: []string{"3115144"}},
+			"3114740": {Override: []string{"3115116"}},
+			"3114872": {Override: []string{"3115123"}},
+			"3114892": {Add: []string{"3115107"}},
+			"3114895": {Add: []string{"3115111"}},
+			"3114927": {Add: []string{"3115014"}},
+			"3114934": {Add: []string{"3115170"}},
+			"3115014": {Override: []string{"3115121"}},
+			"3115020": {Override: []string{"3115025"}},
+			"3115041": {Override: []string{"3115094"}},
+			"3115107": {Override: []string{"3114421"}},
+			"3115111": {Override: []string{"3115115"}},
+			"3115115": {Add: []string{"3115194"}},
+			"3115116": {Add: []string{"3115195"}},
+			"3115117": {Add: []string{"3115196"}},
+			"3115124": {Add: []string{"3115244"}},
+			"3115130": {Override: []string{"3114402"}},
+			"3115132": {Add: []string{"3115187"}},
+			"3115144": {Override: []string{"3114511"}},
+			"3115170": {Override: []string{"3114888"}},
+			"3115194": {Override: []string{"3115132"}},
+			"3115195": {Override: []string{"3115121"}},
+			"3115196": {Override: []string{"3115116"}},
+			"3115198": {Override: []string{"3114888"}},
+			"3115243": {Override: []string{"3114489"}},
+			"3115244": {Override: []string{"3115121"}},
+			"3165798": {Override: []string{"3114895"}},
 		},
 	},
 	"MS16-073": {
@@ -2258,6 +2608,12 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft OneNote 2016 for Mac", Drop: []string{"CVE-2016-3313", "CVE-2016-3316", "CVE-2016-3317"}},
 			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-3315"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3114742": {Add: []string{"3114893"}},
+			"3115311": {Add: []string{"3115465"}},
+			"3115393": {Add: []string{"3115480"}},
+			"3115395": {Add: []string{"3115479"}},
+		},
 	},
 	"MS16-101": {
 		CVEAdjustments: []cveAdjustment{
@@ -2272,6 +2628,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3192440", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3192441", Drop: []string{"CVE-2016-3300"}},
 			{KB: "3194798", Drop: []string{"CVE-2016-3300"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3175024": {Add: []string{"3185330"}},
+		},
+	},
+	"MS16-102": {
+		Supersedes: map[string]supersedesAdjust{
+			"3157569": {Add: []string{"3175887"}},
 		},
 	},
 	"MS16-104": {
@@ -2345,6 +2709,14 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft PowerPoint 2016 for Mac", Drop: []string{"CVE-2016-3357", "CVE-2016-3358", "CVE-2016-3366"}},
 			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-3358", "CVE-2016-3360", "CVE-2016-3366"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3115254": {Add: []string{"3115487"}},
+			"3115487": {Override: []string{"3115118"}},
+			"3118268": {Override: []string{"3115262"}},
+			"3118280": {Override: []string{"3115118"}},
+			"3118284": {Override: []string{"3115452"}},
+			"3118292": {Override: []string{"3115272"}},
+		},
 	},
 	// MS16-108 covers the Oracle Outside In Libraries Vulnerabilities
 	// per Oracle Critical Patch Update Advisory - July 2016. The CVEs
@@ -2397,6 +2769,26 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 11", Drop: []string{"CVE-2016-3331"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2016-3383"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3185319": {Add: []string{"3185330", "3185331", "3185332"}},
+		},
+	},
+	"MS16-120": {
+		Supersedes: map[string]supersedesAdjust{
+			"3142041": {Add: []string{"3188735"}},
+			"3142042": {Add: []string{"3188740"}},
+			"3142043": {Add: []string{"3188741"}},
+			"3142045": {Add: []string{"3188743"}},
+		},
+	},
+	"MS16-121": {
+		Supersedes: map[string]supersedesAdjust{
+			"3115443": {Add: []string{"3118352"}},
+			"3115466": {Add: []string{"3118377"}},
+			"3115472": {Add: []string{"3118384"}},
+			"3118270": {Add: []string{"3118360"}},
+			"3118299": {Add: []string{"3127897"}},
+		},
 	},
 	"MS16-123": {
 		CVEAdjustments: []cveAdjustment{
@@ -2420,6 +2812,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS16-127": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4273", "CVE-2016-4286", "CVE-2016-6981", "CVE-2016-6982", "CVE-2016-6983", "CVE-2016-6984", "CVE-2016-6985", "CVE-2016-6986", "CVE-2016-6987", "CVE-2016-6989", "CVE-2016-6990", "CVE-2016-6992"}}}},
 	"MS16-128": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7855"}}}},
+	"MS16-130": {
+		Supersedes: map[string]supersedesAdjust{
+			"3193418": {Override: []string{"3033889"}},
+			"3196718": {Override: []string{"3184122"}},
+		},
+	},
+	"MS16-131": {
+		Supersedes: map[string]supersedesAdjust{
+			"3198218": {Override: []string{"3190847"}},
+		},
+	},
 	"MS16-132": {
 		CVEAdjustments: []cveAdjustment{
 			{KB: "3197867", Drop: []string{"CVE-2016-7217", "CVE-2016-7220"}},
@@ -2460,6 +2863,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word 2016 for Mac", Drop: []string{"CVE-2016-7236"}},
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-7213", "CVE-2016-7228", "CVE-2016-7229", "CVE-2016-7231", "CVE-2016-7236"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3198798": {Override: []string{"3118307"}},
+		},
 	},
 	"MS16-134": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0026", "CVE-2016-3332", "CVE-2016-3333", "CVE-2016-3334", "CVE-2016-3335", "CVE-2016-3338", "CVE-2016-3340", "CVE-2016-3342", "CVE-2016-3343", "CVE-2016-7184"}}}},
 	"MS16-135": {
@@ -2471,6 +2877,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2016-7255"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-7255"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3184122": {Add: []string{"3194371"}},
+			"3194371": {Override: []string{"3177725"}},
 		},
 	},
 	"MS16-136": {
@@ -2495,6 +2905,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3198586", Drop: []string{"CVE-2016-7220"}},
 			{KB: "3200970", Drop: []string{"CVE-2016-7220"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3198510": {Override: []string{"3081320"}},
+		},
 	},
 	"MS16-138": {
 		CVEAdjustments: []cveAdjustment{
@@ -2510,6 +2923,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 9", Drop: []string{"CVE-2016-7196", "CVE-2016-7241"}},
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2016-7241"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"3185330": {Add: []string{"3197868"}},
+			"3185331": {Add: []string{"3197874"}},
+			"3185332": {Add: []string{"3197877"}},
+		},
 	},
 	// MS16-144: no candidate in markdown — drop.
 	"MS16-144": {
@@ -2518,6 +2936,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Internet Explorer 10", Drop: []string{"CVE-2016-7287"}},
 			{Component: "Internet Explorer 11 on Windows 10", Drop: []string{"CVE-2016-7278", "CVE-2016-7284"}},
 			{Remap: map[string]string{"CVE-2016-7293": ""}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3197655": {Add: []string{"3203621"}},
+			"3197877": {Add: []string{"3205409"}},
 		},
 	},
 	"MS16-146": {
@@ -2574,8 +2996,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-154": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7867", "CVE-2016-7868", "CVE-2016-7869", "CVE-2016-7870", "CVE-2016-7871", "CVE-2016-7872", "CVE-2016-7873", "CVE-2016-7874", "CVE-2016-7875", "CVE-2016-7876", "CVE-2016-7877", "CVE-2016-7878", "CVE-2016-7879", "CVE-2016-7880", "CVE-2016-7881", "CVE-2016-7890", "CVE-2016-7892"}}}},
-	"MS16-155": {CVEAdjustments: []cveAdjustment{{KB: "3205640", Drop: []string{"CVE-2016-7270"}}}},
+	"MS16-155": {
+		CVEAdjustments: []cveAdjustment{
+			{KB: "3205640", Drop: []string{"CVE-2016-7270"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3163244": {Add: []string{"3210129"}},
+			"3188744": {Add: []string{"3210129", "3210136", "3210139"}},
+		},
+	},
 	"MS17-003": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-2925", "CVE-2017-2926", "CVE-2017-2927", "CVE-2017-2928", "CVE-2017-2930", "CVE-2017-2931", "CVE-2017-2932", "CVE-2017-2933", "CVE-2017-2934", "CVE-2017-2935", "CVE-2017-2936", "CVE-2017-2937"}}}},
+	"MS17-004": {
+		Supersedes: map[string]supersedesAdjust{
+			"3204808": {Add: []string{"3216775"}},
+		},
+	},
 	"MS17-005": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-2982", "CVE-2017-2984", "CVE-2017-2985", "CVE-2017-2986", "CVE-2017-2987", "CVE-2017-2988", "CVE-2017-2990", "CVE-2017-2991", "CVE-2017-2992", "CVE-2017-2993", "CVE-2017-2994", "CVE-2017-2995", "CVE-2017-2996"}}}},
 	"MS17-006": {
 		CVEAdjustments: []cveAdjustment{
@@ -2663,6 +3098,10 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2017-0038"}},
 		},
+		Supersedes: map[string]supersedesAdjust{
+			"2889841": {Add: []string{"3178688"}},
+			"3178688": {Override: []string{"3115131"}},
+		},
 	},
 	"MS17-014": {
 		CVEAdjustments: []cveAdjustment{
@@ -2686,6 +3125,9 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3178690", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"}},
 			{KB: "3178694", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0105"}},
 			{KB: "4013241", Drop: []string{"CVE-2017-0006", "CVE-2017-0019", "CVE-2017-0020", "CVE-2017-0027", "CVE-2017-0029", "CVE-2017-0030", "CVE-2017-0031", "CVE-2017-0052", "CVE-2017-0053", "CVE-2017-0105"}},
+		},
+		Supersedes: map[string]supersedesAdjust{
+			"3141542": {Add: []string{"3178687"}},
 		},
 	},
 	"MS17-017": {

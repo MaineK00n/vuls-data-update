@@ -203,57 +203,67 @@ func TestIECumChainEdges(t *testing.T) {
 	}
 }
 
-// TestBulletinArchiveSupersedes verifies known edges in the static
-// bulletinArchiveSupersedes map. The map captures supersedes that the frozen
-// BulletinSearch.xlsx omits but the Microsoft Learn bulletin archive records,
-// so any regression in its structure should fail this test.
+// TestBulletinArchiveSupersedes verifies known supersedes Add edges in the
+// per-bulletin amendments. Each bulletin's Supersedes[oldKB].Add lists the
+// new KBs that supersede oldKB (recovered from the bulletin's archive
+// markdown where BulletinSearch.xlsx omits the edge).
 func TestBulletinArchiveSupersedes(t *testing.T) {
 	tests := []struct {
-		name    string
-		oldKBID string
-		newKBID string
+		name       string
+		bulletinID string
+		oldKBID    string
+		newKBID    string
 	}{
 		{
-			name:    "MS13-054 Lync 2010 Attendee user install: 2827751 → 2843162 (Excel attributed Lync admin KB instead)",
-			oldKBID: "2827751",
-			newKBID: "2843162",
+			name:       "MS13-054 Lync 2010 Attendee user install: 2827751 → 2843162 (Excel attributed Lync admin KB instead)",
+			bulletinID: "MS13-054",
+			oldKBID:    "2827751",
+			newKBID:    "2843162",
 		},
 		{
-			name:    "MS13-054 Lync 2010 Attendee admin install: 2827752 → 2843163",
-			oldKBID: "2827752",
-			newKBID: "2843163",
+			name:       "MS13-054 Lync 2010 Attendee admin install: 2827752 → 2843163",
+			bulletinID: "MS13-054",
+			oldKBID:    "2827752",
+			newKBID:    "2843163",
 		},
 		{
-			name:    "MS14-029 IE Win Server: 2936068 → 2953522 (Excel missed)",
-			oldKBID: "2936068",
-			newKBID: "2953522",
+			name:       "MS14-029 IE Win Server: 2936068 → 2953522 (Excel missed)",
+			bulletinID: "MS14-029",
+			oldKBID:    "2936068",
+			newKBID:    "2953522",
 		},
 		{
-			name:    "MS14-035 IE Cum May → Jun via 2957689 → 2962872 (chain continuation Excel split)",
-			oldKBID: "2957689",
-			newKBID: "2962872",
+			name:       "MS14-037 IE 8 (Vista SP2) / IE 11 (Win7 SP1) IE Cum chain: 2957689 → 2962872",
+			bulletinID: "MS14-037",
+			oldKBID:    "2957689",
+			newKBID:    "2962872",
 		},
 		{
-			name:    "MS16-144 IE 9 Cumulative (Vista SP2): 3197655 → 3203621",
-			oldKBID: "3197655",
-			newKBID: "3203621",
+			name:       "MS16-144 IE 9 Cumulative (Vista SP2): 3197655 → 3203621",
+			bulletinID: "MS16-144",
+			oldKBID:    "3197655",
+			newKBID:    "3203621",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			news, ok := bulletin.BulletinArchiveSupersedes[tt.oldKBID]
+			ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 			if !ok {
-				t.Fatalf("bulletinArchiveSupersedes has no entry for KB%s", tt.oldKBID)
+				t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 			}
-			if !slices.Contains(news, tt.newKBID) {
-				t.Errorf("bulletinArchiveSupersedes[%q] = %v, want to contain %q", tt.oldKBID, news, tt.newKBID)
+			adj, ok := ad.Supersedes[tt.oldKBID]
+			if !ok {
+				t.Fatalf("bulletinArchiveAmendments[%q].Supersedes has no entry for KB%s", tt.bulletinID, tt.oldKBID)
+			}
+			if !slices.Contains(adj.Add, tt.newKBID) {
+				t.Errorf("bulletinArchiveAmendments[%q].Supersedes[%q].Add = %v, want to contain %q", tt.bulletinID, tt.oldKBID, adj.Add, tt.newKBID)
 			}
 		})
 	}
 }
 
-// TestBulletinArchiveSupersedesOverride verifies known entries in the static
-// bulletinArchiveSupersedesOverride map. These are KB pairs where the frozen
+// TestBulletinArchiveSupersedesOverride verifies known supersedes Override
+// edges in the per-bulletin amendments. These are KB pairs where the frozen
 // BulletinSearch.xlsx Supersedes column attributes the supersedes to the
 // wrong component_kb (Excel mis-attribution); the Microsoft Learn archive
 // records a different ancestry. Each test asserts that the override would
@@ -263,50 +273,58 @@ func TestBulletinArchiveSupersedes(t *testing.T) {
 // MS13-054 fixture (testdata/fixtures/13/MS13-054.json): its two rows are
 // the Lync 2010 Attendee user/admin install components (KB2843162/2843163)
 // whose Excel-cited supersedes (MS13-041[2827750]) is dropped by this
-// override map and whose correct supersedes (KB2827751/2827752) is then
-// added by bulletinArchiveSupersedes. The TestExtract golden run asserts
-// the resulting microsoftkb files contain only the corrected edges and
-// that KB2827750 does not surface (no remaining inbound edges).
+// override and whose correct supersedes (KB2827751/2827752) is then added
+// by the same bulletin's Supersedes Add edges.
 func TestBulletinArchiveSupersedesOverride(t *testing.T) {
 	tests := []struct {
-		name    string
-		newKBID string
-		oldKBID string
+		name       string
+		bulletinID string
+		newKBID    string
+		oldKBID    string
 	}{
 		{
-			name:    "MS13-054 Lync 2010 Attendee user install (2843162): drop wrong edge from KB2827750 (which actually fixes the 64-bit pkg)",
-			newKBID: "2843162",
-			oldKBID: "2827750",
+			name:       "MS13-054 Lync 2010 Attendee user install (2843162): drop wrong edge from KB2827750 (which actually fixes the 64-bit pkg)",
+			bulletinID: "MS13-054",
+			newKBID:    "2843162",
+			oldKBID:    "2827750",
 		},
 		{
-			name:    "MS13-054 Lync 2010 Attendee admin install (2843163): drop wrong edge from KB2827750",
-			newKBID: "2843163",
-			oldKBID: "2827750",
+			name:       "MS13-054 Lync 2010 Attendee admin install (2843163): drop wrong edge from KB2827750",
+			bulletinID: "MS13-054",
+			newKBID:    "2843163",
+			oldKBID:    "2827750",
 		},
 		{
-			name:    "MS15-062 ADFS (3062577): drop self-supersedes (Excel claims KB3062577 supersedes itself)",
-			newKBID: "3062577",
-			oldKBID: "3062577",
+			name:       "MS15-062 ADFS (3062577): drop self-supersedes (Excel claims KB3062577 supersedes itself)",
+			bulletinID: "MS15-062",
+			newKBID:    "3062577",
+			oldKBID:    "3062577",
 		},
 		{
-			name:    "MS16-054 Word 2016 (3115094): drop wrong edge from KB3142577 (Excel cited a later unrelated KB)",
-			newKBID: "3115094",
-			oldKBID: "3142577",
+			name:       "MS16-054 Word 2016 (3115094): drop wrong edge from KB3142577 (Excel cited a later unrelated KB)",
+			bulletinID: "MS16-054",
+			newKBID:    "3115094",
+			oldKBID:    "3142577",
 		},
 		{
-			name:    "MS16-054 Word 2016 (3115094): drop wrong edge from KB3154208",
-			newKBID: "3115094",
-			oldKBID: "3154208",
+			name:       "MS16-054 Word 2016 (3115094): drop wrong edge from KB3154208",
+			bulletinID: "MS16-054",
+			newKBID:    "3115094",
+			oldKBID:    "3154208",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			olds, ok := bulletin.BulletinArchiveSupersedesOverride[tt.newKBID]
+			ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 			if !ok {
-				t.Fatalf("bulletinArchiveSupersedesOverride has no entry for KB%s", tt.newKBID)
+				t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 			}
-			if !slices.Contains(olds, tt.oldKBID) {
-				t.Errorf("bulletinArchiveSupersedesOverride[%q] = %v, want to contain %q", tt.newKBID, olds, tt.oldKBID)
+			adj, ok := ad.Supersedes[tt.newKBID]
+			if !ok {
+				t.Fatalf("bulletinArchiveAmendments[%q].Supersedes has no entry for KB%s", tt.bulletinID, tt.newKBID)
+			}
+			if !slices.Contains(adj.Override, tt.oldKBID) {
+				t.Errorf("bulletinArchiveAmendments[%q].Supersedes[%q].Override = %v, want to contain %q", tt.bulletinID, tt.newKBID, adj.Override, tt.oldKBID)
 			}
 		})
 	}
