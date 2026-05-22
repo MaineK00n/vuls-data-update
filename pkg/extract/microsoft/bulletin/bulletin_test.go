@@ -658,16 +658,22 @@ func TestBulletinArchiveNotApplicable(t *testing.T) {
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				perKey, ok := bulletin.BulletinArchiveComponentNotApplicable[tt.bulletinID]
+				ad, ok := bulletin.BulletinArchiveAmendments[tt.bulletinID]
 				if !ok {
-					t.Fatalf("bulletinArchiveComponentNotApplicable has no entry for %s", tt.bulletinID)
+					t.Fatalf("bulletinArchiveAmendments has no entry for %s", tt.bulletinID)
 				}
-				cves, ok := perKey[tt.innerKey]
-				if !ok {
-					t.Fatalf("bulletinArchiveComponentNotApplicable[%q][%q] missing", tt.bulletinID, tt.innerKey)
+				found := false
+				for _, adj := range ad.CVEAdjustments {
+					if adj.Component != tt.innerKey {
+						continue
+					}
+					if slices.Contains(adj.Drop, tt.cve) {
+						found = true
+						break
+					}
 				}
-				if !slices.Contains(cves, tt.cve) {
-					t.Errorf("bulletinArchiveComponentNotApplicable[%q][%q] = %v, want to contain %q", tt.bulletinID, tt.innerKey, cves, tt.cve)
+				if !found {
+					t.Errorf("bulletinArchiveAmendments[%q] CVEAdjustments has no Drop %q for component %q", tt.bulletinID, tt.cve, tt.innerKey)
 				}
 			})
 		}
