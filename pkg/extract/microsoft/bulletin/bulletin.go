@@ -441,11 +441,11 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// those tables, product-keyed dispatch is still safe for that pair
 	// (the conflicting cells live under different CVE columns and
 	// therefore can't disagree with each other). The generator emits
-	// product-keyed entries only for the
-	// safe pairs and silently drops any pair whose markdown cells truly
-	// span tables with conflicting NA state. The lone such pair across
-	// the corpus — MS15-128 / KB3116869 / CVE-2015-6108 — is the only
-	// known remaining FP trade-off.
+	// product-keyed entries only for the safe pairs and silently drops
+	// any pair whose markdown cells truly span tables with conflicting
+	// NA state. The lone such pair across the corpus — MS15-128 /
+	// KB3116869 / CVE-2015-6108 — is the only known remaining FP
+	// trade-off.
 	case "MS12-054", "MS12-074",
 		"MS13-046", "MS13-081",
 		"MS15-097", "MS15-128",
