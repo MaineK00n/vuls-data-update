@@ -460,7 +460,7 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 	// Office app mixed-shape bulletins: some xlsx rows carry the app
 	// identity (e.g. "Microsoft Word 2007") in affected_component while
 	// other rows for the same bulletin are OS-level with component empty.
-	// Return component when set so Format B Component-Drop keys keyed by
+	// Return component when set so per-product Component-Drop keys keyed by
 	// the Office app name match; fall back to product for the OS rows.
 	case "MS10-019", "MS10-079", "MS10-080", "MS10-103",
 		"MS11-021", "MS11-022", "MS11-036", "MS11-045", "MS11-072", "MS11-091", "MS11-094",
@@ -498,8 +498,8 @@ func normalizeArchiveComponentKey(bulletinID, affectedProduct, affectedComponent
 
 // ieCumStripVersionDotZero strips the ".0" minor-version suffix from
 // "Internet Explorer X.0" identifiers (so xlsx-form "Internet Explorer 6.0"
-// matches the markdown-form "Internet Explorer 6" used in Format B labels).
-// Leaves multi-digit minor versions like "Internet Explorer 5.01" alone.
+// matches the markdown-form "Internet Explorer 6" used in archive markdown
+// labels). Leaves multi-digit minor versions like "Internet Explorer 5.01" alone.
 var ieCumStripVersionDotZero = regexp.MustCompile(`Internet Explorer (\d+)\.0(\s|$)`)
 
 // ieCumCombinedKey returns the canonical "Internet Explorer X (Service Pack Y) for OS"
@@ -835,11 +835,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"937143": {"939653"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS07-064 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS07-064.
+	// TODO: the per-product NA entries below come from MS07-064's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS07-064.
 	//   - DirectX 10.0 on Windows Vista
 	//   - DirectX 10.0 on Windows Vista x64 Edition
 	//   - DirectX 9.0 on Microsoft Windows 2000 Service Pack 4
@@ -888,11 +890,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3124266": {"3135174"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS08-033 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS08-033.
+	// TODO: the per-product NA entries below come from MS08-033's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-033.
 	//   - Microsoft Windows 2000 Service Pack 4 with DirectX 7.0
 	//   - Microsoft Windows 2000 Service Pack 4 with DirectX 9.0, DirectX 9.0a, DirectX 9.0b, or DirectX 9.0c
 	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
@@ -913,11 +917,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-1444"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS08-036 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS08-036.
+	// TODO: the per-product NA entries below come from MS08-036's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-036.
 	//   - Windows Server 2008 for Itanium-based Systems
 	"MS08-036": {
 		CVEAdjustments: []cveAdjustment{
@@ -947,11 +953,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Exchange Server 2007 Service Pack 1", Drop: []string{"CVE-2008-2247"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS08-040 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS08-040.
+	// TODO: the per-product NA entries below come from MS08-040's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-040.
 	//   - Windows Internal Database (WYukon) Service Pack 2
 	//   - Windows Internal Database (WYukon) x64 Edition Service Pack 2
 	"MS08-040": {
@@ -976,11 +984,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "956343", Drop: []string{"CVE-2008-0120", "CVE-2008-0121"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS08-058 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS08-058.
+	// TODO: the per-product NA entries below come from MS08-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-058.
 	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Vista x64 Edition and Internet Explorer 7 in Windows Vista x64 Edition Service Pack 1
@@ -1023,11 +1033,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "958393", Drop: []string{"CVE-2008-4252", "CVE-2008-4253", "CVE-2008-4254"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS08-073 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS08-073.
+	// TODO: the per-product NA entries below come from MS08-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-073.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
@@ -1062,11 +1074,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"956390": {"958215"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS08-076 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS08-076.
+	// TODO: the per-product NA entries below come from MS08-076's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS08-076.
 	//   - Windows Media Services 2008 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
 	//   - Windows Media Services 2008 on Windows Server 2008 for x64-based Systems and Windows Server 2008 for x64-based Systems Service Pack 2
 	"MS08-078": {
@@ -1074,11 +1088,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"958215": {"960714"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-001 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-001.
+	// TODO: the per-product NA entries below come from MS09-001's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-001.
 	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-001": {
 		CVEAdjustments: []cveAdjustment{
@@ -1092,11 +1108,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	"MS09-003": {CVEAdjustments: []cveAdjustment{{KB: "959241", Drop: []string{"CVE-2009-0099"}}}},
 	"MS09-005": {CVEAdjustments: []cveAdjustment{{KB: "957831", Drop: []string{"CVE-2009-0097"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-006 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-006.
+	// TODO: the per-product NA entries below come from MS09-006's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-006.
 	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-006": {
@@ -1118,11 +1136,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems", Drop: []string{"CVE-2009-0093", "CVE-2009-0094"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-010 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-010.
+	// TODO: the per-product NA entries below come from MS09-010's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-010.
 	//   - Microsoft Office Word 2000 Service Pack 3
 	//   - Microsoft Office Word 2002 Service Pack 3
 	"MS09-010": {
@@ -1133,11 +1153,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2008-4841", "CVE-2009-0088"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-012 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-012.
+	// TODO: the per-product NA entries below come from MS09-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-012.
 	//   - Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-012": {
@@ -1159,11 +1181,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-0079"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-013 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-013.
+	// TODO: the per-product NA entries below come from MS09-013's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-013.
 	//   - Windows Server 2008 for Itanium-based Systems
 	"MS09-013": {
 		CVEAdjustments: []cveAdjustment{
@@ -1176,11 +1200,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"960714": {"963027"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-014 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-014.
+	// TODO: the per-product NA entries below come from MS09-014's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-014.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP1 for Itanium-based Systems and Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems
@@ -1213,11 +1239,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS09-016": {CVEAdjustments: []cveAdjustment{{KB: "961759", Drop: []string{"CVE-2009-0237"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-017 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-017.
+	// TODO: the per-product NA entries below come from MS09-017's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-017.
 	//   - Microsoft Office PowerPoint 2000 Service Pack 3
 	//   - Microsoft Office PowerPoint 2002 Service Pack 3
 	//   - Microsoft Office PowerPoint 2003 Service Pack 3
@@ -1235,20 +1263,24 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "971824", Drop: []string{"CVE-2009-0220", "CVE-2009-0221", "CVE-2009-0222", "CVE-2009-0223", "CVE-2009-0225", "CVE-2009-0226", "CVE-2009-0227", "CVE-2009-0556", "CVE-2009-1128", "CVE-2009-1129", "CVE-2009-1130", "CVE-2009-1131", "CVE-2009-1137"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-018 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-018.
+	// TODO: the per-product NA entries below come from MS09-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-018.
 	//   - Active Directory on Windows Server 2003 Service Pack 2
 	//   - Active Directory on Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Active Directory on Windows Server 2003 x64 Edition Service Pack 2
 	"MS09-018": {CVEAdjustments: []cveAdjustment{{KB: "970437", Drop: []string{"CVE-2009-1138"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-019 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-019.
+	// TODO: the per-product NA entries below come from MS09-019's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-019.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1290,11 +1322,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"963027": {"969897"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-020 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-020.
+	// TODO: the per-product NA entries below come from MS09-020's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-020.
 	//   - Microsoft Internet Information Services (IIS) 5.0 on Microsoft Windows 2000 Service Pack 4
 	//   - Microsoft Internet Information Services (IIS) 5.1 on Windows XP Professional Service Pack 2 and Windows XP Professional Service Pack 3
 	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 Service Pack 2
@@ -1302,11 +1336,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows Server 2003 x64 Edition Service Pack 2
 	//   - Microsoft Internet Information Services (IIS) 6.0 on Windows XP Professional x64 Edition Service Pack 2
 	"MS09-020": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2009-1122", "CVE-2009-1535", "CVE-2009-1676"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-021 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-021.
+	// TODO: the per-product NA entries below come from MS09-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-021.
 	//   - Microsoft Office Excel 2000 Service Pack 3
 	//   - Microsoft Office Excel 2002 Service Pack 3
 	//   - Microsoft Office Excel 2003 Service Pack 3
@@ -1322,11 +1358,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "969737", Drop: []string{"CVE-2009-0549", "CVE-2009-0557", "CVE-2009-0558", "CVE-2009-0559", "CVE-2009-0560", "CVE-2009-1134"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-022 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-022.
+	// TODO: the per-product NA entries below come from MS09-022's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-022.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
@@ -1344,11 +1382,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-0228"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-025 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-025.
+	// TODO: the per-product NA entries below come from MS09-025's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-025.
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
 	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
@@ -1360,11 +1400,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-1126"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-027 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-027.
+	// TODO: the per-product NA entries below come from MS09-027's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-027.
 	//   - Microsoft Office Word 2000 Service Pack 3
 	//   - Microsoft Office Word 2003 Service Pack 3
 	"MS09-027": {CVEAdjustments: []cveAdjustment{{KB: "969614", Drop: []string{"CVE-2009-0565"}}}},
@@ -1376,11 +1418,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"969897": {"972260"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-039 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-039.
+	// TODO: the per-product NA entries below come from MS09-039's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-039.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-039": {
 		CVEAdjustments: []cveAdjustment{
@@ -1399,11 +1443,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Office 2000 Web Components Service Pack 3", Drop: []string{"CVE-2009-0562", "CVE-2009-1136", "CVE-2009-2496"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-044 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-044.
+	// TODO: the per-product NA entries below come from MS09-044's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-044.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-044": {
 		CVEAdjustments: []cveAdjustment{
@@ -1418,21 +1464,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition", Drop: []string{"CVE-2009-1929"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-047 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-047.
+	// TODO: the per-product NA entries below come from MS09-047's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-047.
 	//   - Microsoft Media Foundation on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
 	//   - Microsoft Media Foundation on Windows Server 2008 for x64-based Systems and Windows Server 2008 for x64-based Systems Service Pack 2
 	//   - Microsoft Media Foundation on Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
 	//   - Microsoft Media Foundation on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
 	"MS09-047": {CVEAdjustments: []cveAdjustment{{KB: "972554", Drop: []string{"CVE-2009-2499"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-048 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-048.
+	// TODO: the per-product NA entries below come from MS09-048's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-048.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS09-048": {
 		CVEAdjustments: []cveAdjustment{
@@ -1444,21 +1494,25 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2009-1925"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-053 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-053.
+	// TODO: the per-product NA entries below come from MS09-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-053.
 	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for 32-bit Systems and Windows Server 2008 for 32-bit Systems Service Pack 2
 	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Microsoft Internet Information Services 7.0 on Windows Server 2008 for x64-based bit Systems and Windows Server 2008 for x64-based Systems Service Pack 2
 	//   - Microsoft Internet Information Services 7.0 on Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
 	//   - Microsoft Internet Information Services 7.0 on Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-054 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-054.
+	// TODO: the per-product NA entries below come from MS09-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-054.
 	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems
 	//   - Internet Explorer 8 in Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
 	//   - Internet Explorer 8 in Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
@@ -1484,11 +1538,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"972260": {"974455"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-058 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-058.
+	// TODO: the per-product NA entries below come from MS09-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-058.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1511,11 +1567,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-2516", "CVE-2009-2517"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-061 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-061.
+	// TODO: the per-product NA entries below come from MS09-061's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-061.
 	//   - Microsoft .NET Framework 1.0 Service Pack 3 on Windows XP Tablet Edition 2005 Service Pack 2, Windows XP Tablet Edition 2005 Service Pack 3, Windows XP Media Center Edition 2005 Service Pack 2, and Windows XP Media Center Edition 2005 Service Pack 3
 	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
 	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows XP Service Pack 2 and Windows XP Service Pack 3
@@ -1557,11 +1615,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "974470", Drop: []string{"CVE-2009-0090", "CVE-2009-0091"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-062 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-062.
+	// TODO: the per-product NA entries below come from MS09-062's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-062.
 	//   - Microsoft Internet Explorer 6 Service Pack 1 when installed on Microsoft Windows 2000 Service Pack 4
 	//   - Microsoft Office Project 2002 Service Pack 1
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
@@ -1598,11 +1658,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 1", Drop: []string{"CVE-2009-2500", "CVE-2009-2501", "CVE-2009-2502", "CVE-2009-2503", "CVE-2009-3126"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-065 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-065.
+	// TODO: the per-product NA entries below come from MS09-065's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-065.
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
 	//   - Windows Vista, Windows Vista Service Pack 1, and Windows Vista Service Pack 2
@@ -1614,11 +1676,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-2514"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-067 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-067.
+	// TODO: the per-product NA entries below come from MS09-067's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-067.
 	//   - Microsoft Office Excel 2003 Service Pack 3
 	//   - Microsoft Office Excel 2007 Service Pack 1 and Microsoft Office Excel 2007 Service Pack 2
 	"MS09-067": {
@@ -1631,11 +1695,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "976831", Drop: []string{"CVE-2009-3128"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-071 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-071.
+	// TODO: the per-product NA entries below come from MS09-071's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-071.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1659,11 +1725,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2009-3677"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS09-072 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS09-072.
+	// TODO: the per-product NA entries below come from MS09-072's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS09-072.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1712,11 +1780,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"974455": {"976325"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-002 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-002.
+	// TODO: the per-product NA entries below come from MS10-002's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-002.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1764,19 +1834,23 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"976325": {"978207"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-004 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-004.
+	// TODO: the per-product NA entries below come from MS10-004's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-004.
 	//   - Microsoft Office PowerPoint 2002 Service Pack 3
 	//   - Microsoft Office PowerPoint 2003 Service Pack 3
 	"MS10-004": {CVEAdjustments: []cveAdjustment{{KB: "979674", Drop: []string{"CVE-2010-0029", "CVE-2010-0030", "CVE-2010-0032", "CVE-2010-0033", "CVE-2010-0034"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-006 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-006.
+	// TODO: the per-product NA entries below come from MS10-006's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-006.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1799,11 +1873,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0016"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-012 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-012.
+	// TODO: the per-product NA entries below come from MS10-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-012.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS10-012": {
 		CVEAdjustments: []cveAdjustment{
@@ -1815,11 +1891,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-0021"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-015 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-015.
+	// TODO: the per-product NA entries below come from MS10-015's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-015.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
@@ -1832,11 +1910,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2010-0232"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-017 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-017.
+	// TODO: the per-product NA entries below come from MS10-017's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-017.
 	//   - Microsoft Office Excel 2002 Service Pack 3
 	//   - Microsoft Office Excel 2003 Service Pack 3
 	//   - Microsoft Office Excel 2007 Service Pack 1 and Microsoft Office Excel 2007 Service Pack 2
@@ -1850,11 +1930,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "980840", Drop: []string{"CVE-2010-0257", "CVE-2010-0260", "CVE-2010-0261", "CVE-2010-0262"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-018 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-018.
+	// TODO: the per-product NA entries below come from MS10-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-018.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1912,11 +1994,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Cabinet File Viewer Shell Extension 6.1", Drop: []string{"CVE-2010-0486"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-020 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-020.
+	// TODO: the per-product NA entries below come from MS10-020's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-020.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Windows Vista x64 Edition, Windows Vista x64 Edition Service Pack 1, and Windows Vista x64 Edition Service Pack 2
@@ -1935,11 +2019,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 for x64-based Systems Service Pack 2", Drop: []string{"CVE-2009-3676", "CVE-2010-0270", "CVE-2010-0477"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-021 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-021.
+	// TODO: the per-product NA entries below come from MS10-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-021.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -1975,11 +2061,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "981407", Drop: []string{"CVE-2010-0025"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-032 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-032.
+	// TODO: the per-product NA entries below come from MS10-032's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-032.
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-032": {
 		CVEAdjustments: []cveAdjustment{
@@ -1996,19 +2084,23 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "979902", Drop: []string{"CVE-2010-1880"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-034 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-034.
+	// TODO: the per-product NA entries below come from MS10-034's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-034.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-034": {CVEAdjustments: []cveAdjustment{{Component: "Microsoft Windows 2000 Service Pack 4", Drop: []string{"CVE-2010-0811"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-035 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-035.
+	// TODO: the per-product NA entries below come from MS10-035's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-035.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2038,11 +2130,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"980182": {"982381"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-038 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-038.
+	// TODO: the per-product NA entries below come from MS10-038's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-038.
 	//   - Microsoft Office Excel 2003 Service Pack 3
 	//   - Microsoft Office Excel 2007 Service Pack 1
 	//   - Microsoft Office Excel 2007 Service Pack 2
@@ -2063,17 +2157,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "980923", Drop: []string{"CVE-2010-0817", "CVE-2010-1264"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-044 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-044.
+	// TODO: the per-product NA entries below come from MS10-044's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-044.
 	//   - Microsoft Office Access 2007 Service Pack 1 and Microsoft Office Access 2007 Service Pack 2
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-047 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-047.
+	// TODO: the per-product NA entries below come from MS10-047's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-047.
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-047": {
@@ -2092,11 +2190,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1888"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-048 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-048.
+	// TODO: the per-product NA entries below come from MS10-048's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-048.
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-048": {
@@ -2114,11 +2214,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-1894", "CVE-2010-1895"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-049 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-049.
+	// TODO: the per-product NA entries below come from MS10-049's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-049.
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-049": {
@@ -2136,11 +2238,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2010-2566"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-053 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-053.
+	// TODO: the per-product NA entries below come from MS10-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-053.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2183,11 +2287,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"982381": {"2183461"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-054 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-054.
+	// TODO: the per-product NA entries below come from MS10-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-054.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS10-054": {
 		CVEAdjustments: []cveAdjustment{
@@ -2197,11 +2303,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2010-2551", "CVE-2010-2552"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-056 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-056.
+	// TODO: the per-product NA entries below come from MS10-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-056.
 	//   - Microsoft Office Word 2007 Service Pack 2
 	"MS10-056": {
 		CVEAdjustments: []cveAdjustment{
@@ -2212,11 +2320,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2284179", Drop: []string{"CVE-2010-1903"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-058 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-058.
+	// TODO: the per-product NA entries below come from MS10-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-058.
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS10-058": {
 		CVEAdjustments: []cveAdjustment{
@@ -2241,11 +2351,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2290570", Drop: []string{"CVE-2010-1899", "CVE-2010-2730"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-071 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-071.
+	// TODO: the per-product NA entries below come from MS10-071's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-071.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2295,11 +2407,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2346411", Drop: []string{"CVE-2010-3243"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-073 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-073.
+	// TODO: the per-product NA entries below come from MS10-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-073.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	"MS10-073": {
@@ -2313,11 +2427,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems", Drop: []string{"CVE-2010-2549"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-079 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-079.
+	// TODO: the per-product NA entries below come from MS10-079's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-079.
 	//   - Microsoft Word Web App
 	"MS10-079": {
 		CVEAdjustments: []cveAdjustment{
@@ -2363,11 +2479,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Office 2004 for Mac", Drop: []string{"CVE-2010-2572"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-090 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-090.
+	// TODO: the per-product NA entries below come from MS10-090's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-090.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2410,11 +2528,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2360131": {"2416400"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS10-098 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS10-098.
+	// TODO: the per-product NA entries below come from MS10-098's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS10-098.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2452,11 +2572,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2431831", Drop: []string{"CVE-2010-3945", "CVE-2010-3946", "CVE-2010-3949", "CVE-2010-3951", "CVE-2010-3952"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-003 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-003.
+	// TODO: the per-product NA entries below come from MS11-003's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-003.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2483,11 +2605,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2416400": {"2482017"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-011 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-011.
+	// TODO: the per-product NA entries below come from MS11-011's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-011.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2509,11 +2633,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-0045"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-012 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-012.
+	// TODO: the per-product NA entries below come from MS11-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-012.
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-012": {
 		CVEAdjustments: []cveAdjustment{
@@ -2545,8 +2671,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// row only). Ideal fix is per-product Component-Drop entries
 	// (3 entries per the current generator output) — deferred since the
 	// same staleness affects many other bulletins.
-	// MS11-015: Format B (per-product Component-Drop) entries from the
-	// current gen_static_map.py output. The markdown's per-CVE matrix
+	// MS11-015: per-product Component-Drop entries derived from MS11-015's
+	// archive markdown matrix table. The markdown's per-CVE matrix
 	// table marks CVE-2011-0032 NA on Microsoft Windows XP rows and
 	// CVE-2011-0042 NA on Windows Server 2008 R2 rows. Component-Drop
 	// keys use the xlsx affected_product form (with "Microsoft "
@@ -2561,11 +2687,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2011-0042"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-018 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-018.
+	// TODO: the per-product NA entries below come from MS11-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-018.
 	//   - Internet Explorer 8 in Vista Service Pack 1 and Windows Vista Service Pack 2
 	//   - Internet Explorer 8 in Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	"MS11-018": {
@@ -2592,11 +2720,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2482017": {"2497640"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-021 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-021.
+	// TODO: the per-product NA entries below come from MS11-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-021.
 	//   - Microsoft Excel (64-bit editions)
 	"MS11-021": {
 		CVEAdjustments: []cveAdjustment{
@@ -2611,11 +2741,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Excel 2010 (32-bit editions)", Drop: []string{"CVE-2011-0101", "CVE-2011-0103", "CVE-2011-0104", "CVE-2011-0105", "CVE-2011-0978", "CVE-2011-0980"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-022 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-022.
+	// TODO: the per-product NA entries below come from MS11-022's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-022.
 	//   - Microsoft PowerPoint Web App
 	"MS11-022": {
 		CVEAdjustments: []cveAdjustment{
@@ -2634,11 +2766,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2505935", Drop: []string{"CVE-2011-0107"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-027 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-027.
+	// TODO: the per-product NA entries below come from MS11-027's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-027.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2671,11 +2805,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Open XML File Format Converter for Mac", Drop: []string{"CVE-2011-1270"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-042 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-042.
+	// TODO: the per-product NA entries below come from MS11-042's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-042.
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-042": {
@@ -2707,11 +2843,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Excel 2010 (64-bit editions)", Drop: []string{"CVE-2011-1272", "CVE-2011-1274", "CVE-2011-1275", "CVE-2011-1276", "CVE-2011-1277", "CVE-2011-1278", "CVE-2011-1279"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-050 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-050.
+	// TODO: the per-product NA entries below come from MS11-050's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-050.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2749,11 +2887,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2497640": {"2530548"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-054 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-054.
+	// TODO: the per-product NA entries below come from MS11-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-054.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -2785,11 +2925,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// attribution. CVE-2007-0675 is a real ActiveX vulnerability addressed
 	// by the MS08-032 Cumulative ActiveX Kill Bit update.)
 	// MS11-056: off-by-one of CVE-2011-1284 — remap (1284 not in xlsx).
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-056 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-056.
+	// TODO: the per-product NA entries below come from MS11-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-056.
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems and Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-056": {
@@ -2815,11 +2957,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// states "this update addresses a Protected Mode bypass issue,
 	// publicly disclosed". The CVE is not in the main vulnerability
 	// table but the update explicitly addresses it.
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-057 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-057.
+	// TODO: the per-product NA entries below come from MS11-057's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-057.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-057": {
 		CVEAdjustments: []cveAdjustment{
@@ -2843,11 +2987,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2530548": {"2559049"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-058 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-058.
+	// TODO: the per-product NA entries below come from MS11-058's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-058.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-058": {
 		CVEAdjustments: []cveAdjustment{
@@ -2856,11 +3002,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS11-060": {CVEAdjustments: []cveAdjustment{{KB: "2560978", Drop: []string{"CVE-2011-1979"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-064 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-064.
+	// TODO: the per-product NA entries below come from MS11-064's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-064.
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-064": {
 		CVEAdjustments: []cveAdjustment{
@@ -2870,11 +3018,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2011-1965"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-072 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-072.
+	// TODO: the per-product NA entries below come from MS11-072's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-072.
 	//   - Excel Services installed on Microsoft Office SharePoint Server 2010 and Excel Services installed on Microsoft Office SharePoint Server 2010 Service Pack 1
 	//   - Microsoft Excel 2010 and Microsoft Excel 2010 Service Pack 1 (32-bit editions)
 	//   - Microsoft Excel 2010 and Microsoft Excel 2010 Service Pack 1 (64-bit editions)
@@ -2901,11 +3051,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2584066", Drop: []string{"CVE-2011-1980"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-074 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-074.
+	// TODO: the per-product NA entries below come from MS11-074's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-074.
 	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions)
 	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (64-bit editions)
 	//   - Microsoft Office SharePoint Server 2010
@@ -2924,11 +3076,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft SharePoint Foundation 2010 Service Pack 1", Drop: []string{"CVE-2011-0653", "CVE-2011-1890", "CVE-2011-1892", "CVE-2011-1893"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-077 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-077.
+	// TODO: the per-product NA entries below come from MS11-077's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-077.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS11-077": {
 		CVEAdjustments: []cveAdjustment{
@@ -2938,11 +3092,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Windows XP Service Pack 3", Drop: []string{"CVE-2011-2002"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-081 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-081.
+	// TODO: the per-product NA entries below come from MS11-081's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-081.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -2990,11 +3146,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2559049": {"2586448"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-090 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-090.
+	// TODO: the per-product NA entries below come from MS11-090's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-090.
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS11-090": {
@@ -3030,11 +3188,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	"MS11-096": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2011-1986", "CVE-2011-1987", "CVE-2011-3403"}}}},
 	// MS11-099: off-by-one of CVE-2011-3404 — remap (3404 not in xlsx).
 	// CVE-2011-3403 itself appears in MS11-096's markdown.
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-099 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-099.
+	// TODO: the per-product NA entries below come from MS11-099's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-099.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 in Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -3084,11 +3244,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2586448": {"2618444"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS11-100 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS11-100.
+	// TODO: the per-product NA entries below come from MS11-100's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS11-100.
 	//   - Microsoft .NET Framework 1.1 Service Pack 1 when installed on Windows Server 2003 Itanium-based Edition Service Pack 2
 	"MS11-100": {
 		CVEAdjustments: []cveAdjustment{
@@ -3097,11 +3259,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2656358", Drop: []string{"CVE-2011-3415"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-004 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-004.
+	// TODO: the per-product NA entries below come from MS12-004's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-004.
 	//   - Windows Media Center TV Pack for Windows Vista (32-bit editions)
 	//   - Windows Media Center TV Pack for Windows Vista (64-bit editions)
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -3115,11 +3279,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2012-0003"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-009 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-009.
+	// TODO: the per-product NA entries below come from MS12-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-009.
 	//   - Windows Server 2008 R2 for Itanium-based Systems and Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-009": {
@@ -3134,11 +3300,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0149"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-010 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-010.
+	// TODO: the per-product NA entries below come from MS12-010's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-010.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3176,17 +3344,21 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2618444": {"2647516"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-011 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-011.
+	// TODO: the per-product NA entries below come from MS12-011's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-011.
 	//   - Microsoft Office SharePoint Server 2010 and Microsoft Office SharePoint Server 2010 Service Pack 1
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-016 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-016.
+	// TODO: the per-product NA entries below come from MS12-016's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-016.
 	//   - Microsoft .NET Framework 4 when installed on Windows 7 for 32-bit Systems and Windows 7 for 32-bit Systems Service Pack 1
 	//   - Microsoft .NET Framework 4 when installed on Windows 7 for x64-based Systems and Windows 7 for x64-based Systems Service Pack 1
 	//   - Microsoft .NET Framework 4 when installed on Windows Server 2003 Service Pack 2
@@ -3205,11 +3377,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	//   - Microsoft Silverlight 4 when installed on all releases of Microsoft Windows clients
 	//   - Microsoft Silverlight 4 when installed on all releases of Microsoft Windows servers
 	"MS12-016": {CVEAdjustments: []cveAdjustment{{KB: "2668562", Drop: []string{"CVE-2012-0015"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-020 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-020.
+	// TODO: the per-product NA entries below come from MS12-020's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-020.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-020": {
@@ -3224,11 +3398,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0152"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-023 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-023.
+	// TODO: the per-product NA entries below come from MS12-023's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-023.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3277,11 +3453,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2647516": {"2675157"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-030 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-030.
+	// TODO: the per-product NA entries below come from MS12-030's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-030.
 	//   - Microsoft Excel 2010 (64-bit editions)
 	//   - Microsoft Excel 2010 Service Pack 1 (64-bit editions)
 	"MS12-030": {
@@ -3299,11 +3477,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Excel 2010 Service Pack 1 (32-bit editions)", Drop: []string{"CVE-2012-0143"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-032 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-032.
+	// TODO: the per-product NA entries below come from MS12-032's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-032.
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS12-032": {
 		CVEAdjustments: []cveAdjustment{
@@ -3313,11 +3493,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2012-0179"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-034 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-034.
+	// TODO: the per-product NA entries below come from MS12-034's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-034.
 	//   - Microsoft Silverlight 4 when installed on Mac
 	"MS12-034": {
 		CVEAdjustments: []cveAdjustment{
@@ -3327,11 +3509,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2690729", Drop: []string{"CVE-2012-0162", "CVE-2012-0164", "CVE-2012-0165", "CVE-2012-0167", "CVE-2012-0180", "CVE-2012-0181", "CVE-2012-1848"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-037 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-037.
+	// TODO: the per-product NA entries below come from MS12-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-037.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3371,11 +3555,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2708980", Drop: []string{"CVE-2011-3402", "CVE-2012-0159", "CVE-2012-1849"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-041 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-041.
+	// TODO: the per-product NA entries below come from MS12-041's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-041.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -3408,11 +3594,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2699988": {"2719177"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-050 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-050.
+	// TODO: the per-product NA entries below come from MS12-050's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-050.
 	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (32-bit editions)
 	//   - Microsoft Office SharePoint Server 2007 Service Pack 2 (64-bit editions)
 	//   - Microsoft Office SharePoint Server 2007 Service Pack 3 (32-bit editions)
@@ -3432,11 +3620,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft SharePoint Server 2010 Service Pack 1", Drop: []string{"CVE-2012-1862", "CVE-2012-1863"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-052 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-052.
+	// TODO: the per-product NA entries below come from MS12-052's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-052.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3486,11 +3676,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2719177": {"2722913"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-054 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-054.
+	// TODO: the per-product NA entries below come from MS12-054's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-054.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -3539,11 +3731,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows XP Professional x64 Edition Service Pack 2", Drop: []string{"CVE-2012-1853"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-063 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-063.
+	// TODO: the per-product NA entries below come from MS12-063's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-063.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3592,11 +3786,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2722913": {"2744842"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-064 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-064.
+	// TODO: the per-product NA entries below come from MS12-064's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-064.
 	//   - Word Automation Services on Microsoft SharePoint Server 2010
 	"MS12-064": {
 		CVEAdjustments: []cveAdjustment{
@@ -3613,11 +3809,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2744842": {"2761451"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-073 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-073.
+	// TODO: the per-product NA entries below come from MS12-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-073.
 	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2
 	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for 32-bit Systems Service Pack 2 (Server Core installation)
 	//   - Microsoft FTP Service 7.5 for IIS 7.0 when installed on Windows Server 2008 for x64-based Systems Service Pack 2
@@ -3635,11 +3833,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1
 	//   - Microsoft Internet Information Services 7.5 on Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
 	"MS12-073": {CVEAdjustments: []cveAdjustment{{KB: "2716513", Drop: []string{"CVE-2012-2531"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-074 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-074.
+	// TODO: the per-product NA entries below come from MS12-074's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-074.
 	//   - Microsoft .NET Framework 3.5 on Windows 8 for 32-bit Systems
 	//   - Microsoft .NET Framework 3.5 on Windows 8 for x64-based Systems
 	//   - Microsoft .NET Framework 3.5 on Windows Server 2012
@@ -3664,11 +3864,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft .NET Framework 3.5 on Windows Server 2012", Drop: []string{"CVE-2012-1895"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-075 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-075.
+	// TODO: the per-product NA entries below come from MS12-075's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-075.
 	//   - Windows 8 for 64-bit Systems
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
@@ -3702,11 +3904,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Excel 2003 Service Pack 3", Drop: []string{"CVE-2012-2543"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS12-077 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS12-077.
+	// TODO: the per-product NA entries below come from MS12-077's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS12-077.
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
 	//   - Internet Explorer 7 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3747,11 +3951,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS12-080": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2012-3214", "CVE-2012-3217", "CVE-2012-4791"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-002 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-002.
+	// TODO: the per-product NA entries below come from MS13-002's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-002.
 	//   - Microsoft XML Core Services 3.0 on Windows 7 for x64-based Systems
 	//   - Microsoft XML Core Services 3.0 on Windows 7 for x64-based Systems Service Pack 1
 	//   - Microsoft XML Core Services 3.0 on Windows Server 2003 with SP2 for Itanium-based Systems
@@ -3800,11 +4006,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2761465": {"2799329"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-009 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-009.
+	// TODO: the per-product NA entries below come from MS13-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-009.
 	//   - Internet Explorer 10 in Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -3858,11 +4066,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2799329": {"2792100"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-016 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-016.
+	// TODO: the per-product NA entries below come from MS13-016's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-016.
 	//   - Windows 8 for 64-bit Systems
 	"MS13-016": {
 		CVEAdjustments: []cveAdjustment{
@@ -3872,11 +4082,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2012 (Server Core installation)", Drop: []string{"CVE-2013-1250", "CVE-2013-1251", "CVE-2013-1252", "CVE-2013-1253", "CVE-2013-1254", "CVE-2013-1255", "CVE-2013-1256", "CVE-2013-1257", "CVE-2013-1258", "CVE-2013-1259", "CVE-2013-1260", "CVE-2013-1261", "CVE-2013-1262", "CVE-2013-1263", "CVE-2013-1264", "CVE-2013-1265", "CVE-2013-1266", "CVE-2013-1267", "CVE-2013-1268", "CVE-2013-1269", "CVE-2013-1270", "CVE-2013-1271", "CVE-2013-1272", "CVE-2013-1273", "CVE-2013-1274", "CVE-2013-1275", "CVE-2013-1276", "CVE-2013-1277"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-021 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-021.
+	// TODO: the per-product NA entries below come from MS13-021's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-021.
 	//   - Internet Explorer 10 in Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -3927,11 +4139,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2809289": {"2817183"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-031 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-031.
+	// TODO: the per-product NA entries below come from MS13-031's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-031.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -3972,11 +4186,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2646524": {Add: []string{"2820917"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-036 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-036.
+	// TODO: the per-product NA entries below come from MS13-036's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-036.
 	//   - Windows 8 for 64-bit Systems
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	"MS13-036": {
@@ -3993,11 +4209,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS13-037: off-by-one of CVE-2013-1312 — drop, 1312 already in xlsx.
 	// CVE-2013-1313 appears in MS13-020's markdown.
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-037 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-037.
+	// TODO: the per-product NA entries below come from MS13-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-037.
 	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -4068,11 +4286,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Publisher 2010 Service Pack 1 (64-bit editions)", Drop: []string{"CVE-2013-1316", "CVE-2013-1317", "CVE-2013-1318", "CVE-2013-1319", "CVE-2013-1320", "CVE-2013-1321", "CVE-2013-1322", "CVE-2013-1323", "CVE-2013-1327", "CVE-2013-1329"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-046 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-046.
+	// TODO: the per-product NA entries below come from MS13-046's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-046.
 	//   - Windows 8 for 32-bit Systems (ntoskrnl.exe)
 	//   - Windows 8 for 64-bit Systems (ntoskrnl.exe)
 	//   - Windows RT (ntoskrnl.exe)
@@ -4122,11 +4342,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2813170": {Add: []string{"2829361"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-047 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-047.
+	// TODO: the per-product NA entries below come from MS13-047's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-047.
 	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -4218,11 +4440,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2698035": {Add: []string{"2833951"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-053 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-053.
+	// TODO: the per-product NA entries below come from MS13-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-053.
 	//   - Windows 8 for 32-bit Systems (win32k.sys)
 	//   - Windows 8 for 64-bit Systems (win32k.sys)
 	//   - Windows RT(win32k.sys)
@@ -4241,11 +4465,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2827752": {Add: []string{"2843163"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-055 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-055.
+	// TODO: the per-product NA entries below come from MS13-055's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-055.
 	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -4296,11 +4522,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS13-059: off-by-3 of CVE-2013-3184 — drop, 3184 already in xlsx.
 	// CVE-2013-3181 appears in MS13-060's markdown.
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-059 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-059.
+	// TODO: the per-product NA entries below come from MS13-059's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-059.
 	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -4360,11 +4588,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2360937": {Add: []string{"2849470"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-063 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-063.
+	// TODO: the per-product NA entries below come from MS13-063's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-063.
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS13-063": {
@@ -4385,11 +4615,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2790113": {Add: []string{"2859537"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-067 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-067.
+	// TODO: the per-product NA entries below come from MS13-067's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-067.
 	//   - Word Automation Services on Microsoft SharePoint Server 2010 Service Pack 2
 	"MS13-067": {
 		CVEAdjustments: []cveAdjustment{
@@ -4406,8 +4638,8 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	// MS13-069: legacy bulletinArchiveKBNotApplicable entry for KB2870699
-	// dropped all 10 CVEs as if KB-uniformly NA, but the current
-	// gen_static_map.py output has zero KB-keyed NA entries for this
+	// dropped all 10 CVEs as if KB-uniformly NA, but MS13-069's archive
+	// markdown matrix table has zero KB-keyed NA entries for this
 	// bulletin (all narrowing is per-(product, component) in the
 	// markdown's per-CVE IE matrix table). The legacy entry filtered
 	// every CVE from every xlsx row of KB2870699, leaving the bulletin
@@ -4415,15 +4647,17 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// synthetic cveID in scannedCves on Server 2008. The KB2870699
 	// KB-Drop is removed here. IECumChain is retained as-is.
 	// Ideal fix is 41 per-(IE, OS) Component-Drop entries (per the
-	// current generator output) plus a normalizeArchiveComponentKey
+	// archive markdown matrix table) plus a normalizeArchiveComponentKey
 	// special-case that constructs combined "IE X for/in Windows Y"
 	// keys — deferred since the same staleness affects many other
 	// IE Cumulative bulletins.
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-069 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-069.
+	// TODO: the per-product NA entries below come from MS13-069's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-069.
 	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -4508,11 +4742,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2859537": {Add: []string{"2872339", "3033395"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-080 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-080.
+	// TODO: the per-product NA entries below come from MS13-080's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-080.
 	//   - Internet Explorer 10 for Windows 8 for 64-bit Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Internet Explorer 7 Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -4562,11 +4798,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2870699": {"2879017"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-081 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-081.
+	// TODO: the per-product NA entries below come from MS13-081's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-081.
 	//   - Windows 8 for 64-bit Systems
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -4643,11 +4881,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2863253", Drop: []string{"CVE-2013-3128"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-084 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-084.
+	// TODO: the per-product NA entries below come from MS13-084's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-084.
 	//   - Microsoft SharePoint Server 2013
 	"MS13-085": {
 		CVEAdjustments: []cveAdjustment{
@@ -4668,11 +4908,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2827330", Drop: []string{"CVE-2013-3891"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-088 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-088.
+	// TODO: the per-product NA entries below come from MS13-088's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-088.
 	//   - Internet Explorer 11 for Windows 8.1 for 32-bit Systems
 	//   - Internet Explorer 11 for Windows 8.1 for x64-based Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -4737,11 +4979,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Office 2013 RT", Drop: []string{"CVE-2013-0082", "CVE-2013-1325"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-097 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-097.
+	// TODO: the per-product NA entries below come from MS13-097's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-097.
 	//   - Internet Explorer 11 for Windows 8.1 for 32-bit Systems
 	//   - Internet Explorer 11 for Windows 8.1 for x64-based Systems
 	//   - Internet Explorer 6 for Windows Server 2003 with SP2 for Itanium-based Systems
@@ -4797,11 +5041,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2888505": {"2898785"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS13-101 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS13-101.
+	// TODO: the per-product NA entries below come from MS13-101's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS13-101.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
@@ -4887,11 +5133,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2911502", Drop: []string{"CVE-2014-0253", "CVE-2014-0257"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-010 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-010.
+	// TODO: the per-product NA entries below come from MS14-010's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-010.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -4911,11 +5159,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2898785": {"2909921"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-012 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-012.
+	// TODO: the per-product NA entries below come from MS14-012's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-012.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -4949,11 +5199,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2889496": {Add: []string{"2939132"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-018 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-018.
+	// TODO: the per-product NA entries below come from MS14-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-018.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -4998,11 +5250,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2880463", Drop: []string{"CVE-2014-1808"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-028 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-028.
+	// TODO: the per-product NA entries below come from MS14-028's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-028.
 	//   - Windows Server 2012 R2 (Server Core installation)
 	"MS14-028": {
 		CVEAdjustments: []cveAdjustment{
@@ -5021,11 +5275,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2964444": {"2953522"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-035 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-035.
+	// TODO: the per-product NA entries below come from MS14-035's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-035.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5050,11 +5306,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2961851": {"2957689"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-037 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-037.
+	// TODO: the per-product NA entries below come from MS14-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-037.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5102,11 +5360,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	},
 	// MS14-051: off-by-3 of CVE-2014-2796 — drop, 2796 already in xlsx.
 	// CVE-2014-2799 appears in MS14-052's markdown.
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-051 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-051.
+	// TODO: the per-product NA entries below come from MS14-051's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-051.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5131,11 +5391,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2963952": {"2976627"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-052 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-052.
+	// TODO: the per-product NA entries below come from MS14-052's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-052.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5169,11 +5431,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2992965", Drop: []string{"CVE-2014-4070", "CVE-2014-4071"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-056 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-056.
+	// TODO: the per-product NA entries below come from MS14-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-056.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5224,11 +5488,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS14-064": {CVEAdjustments: []cveAdjustment{{KB: "3006226", Drop: []string{"CVE-2014-6352"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-065 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-065.
+	// TODO: the per-product NA entries below come from MS14-065's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-065.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5256,11 +5522,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "2996150", Drop: []string{"CVE-2014-6325", "CVE-2014-6326", "CVE-2014-6336"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS14-080 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS14-080.
+	// TODO: the per-product NA entries below come from MS14-080's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS14-080.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5307,11 +5575,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2909213": {Override: []string{"3012168"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-009 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-009.
+	// TODO: the per-product NA entries below come from MS15-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-009.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5365,11 +5635,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2956097": {"2956098"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-018 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-018.
+	// TODO: the per-product NA entries below come from MS15-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-018.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5417,11 +5689,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2956058": {Override: []string{"2956138"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-023 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-023.
+	// TODO: the per-product NA entries below come from MS15-023's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-023.
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -5441,11 +5715,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-0078"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-025 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-025.
+	// TODO: the per-product NA entries below come from MS15-025's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-025.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2012 R2 (Server Core installation)
@@ -5461,11 +5737,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2012 R2", Drop: []string{"CVE-2015-0075"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-032 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-032.
+	// TODO: the per-product NA entries below come from MS15-032's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-032.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5523,11 +5801,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3049576", Drop: []string{"CVE-2015-1643"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-043 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-043.
+	// TODO: the per-product NA entries below come from MS15-043's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-043.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5618,11 +5898,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2863239": {Add: []string{"3035488"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-053 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-053.
+	// TODO: the per-product NA entries below come from MS15-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-053.
 	//   - JScript and VBScript 5.7 on Windows Vista x64 Edition Service Pack 2
 	//   - VBScript 5.6 on Windows Server 2003 Service Pack 2
 	//   - VBScript 5.6 on Windows Server 2003 with SP2 for Itanium-based Systems
@@ -5650,11 +5932,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3050514": {Add: []string{"3061518"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-056 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-056.
+	// TODO: the per-product NA entries below come from MS15-056's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-056.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5688,11 +5972,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS15-064": {CVEAdjustments: []cveAdjustment{{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2015-2359"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-065 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-065.
+	// TODO: the per-product NA entries below come from MS15-065's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-065.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 6
@@ -5753,11 +6039,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2965155": {Add: []string{"3069392"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-073 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-073.
+	// TODO: the per-product NA entries below come from MS15-073's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-073.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2003 with SP2 for Itanium-based Systems
@@ -5784,11 +6072,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2366", "CVE-2015-2381", "CVE-2015-2382"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-079 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-079.
+	// TODO: the per-product NA entries below come from MS15-079's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-079.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -5859,11 +6149,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3075221", Drop: []string{"CVE-2015-2473"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-084 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-084.
+	// TODO: the per-product NA entries below come from MS15-084's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-084.
 	//   - Microsoft XML Core Services 5.0 on Microsoft Office 2007 Service Pack 3
 	//   - Microsoft XML Core Services 5.0 on Windows Server 2008 for 32-bit Systems Service Pack 2
 	//   - Microsoft XML Core Services 6.0 on Windows 7 for 32-bit Systems Service Pack 1
@@ -5897,11 +6189,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3078071": {"3087985"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-094 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-094.
+	// TODO: the per-product NA entries below come from MS15-094's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-094.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -5930,11 +6224,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3081444": {Add: []string{"3081455"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-097 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-097.
+	// TODO: the per-product NA entries below come from MS15-097's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-097.
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS15-097": {
@@ -5993,11 +6289,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3088502", Drop: []string{"CVE-2015-2521", "CVE-2015-2545"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-101 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-101.
+	// TODO: the per-product NA entries below come from MS15-101's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-101.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -6038,11 +6336,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS15-104": {CVEAdjustments: []cveAdjustment{{KB: "3061064", Drop: []string{"CVE-2015-2532"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-106 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-106.
+	// TODO: the per-product NA entries below come from MS15-106's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-106.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -6096,11 +6396,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3097266", Drop: []string{"CVE-2015-2557"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-111 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-111.
+	// TODO: the per-product NA entries below come from MS15-111's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-111.
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS15-111": {
@@ -6117,11 +6419,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2015-2552", "CVE-2015-2554"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-112 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-112.
+	// TODO: the per-product NA entries below come from MS15-112's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-112.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -6221,11 +6525,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3085583": {Override: []string{"3054793", "3101371"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-118 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-118.
+	// TODO: the per-product NA entries below come from MS15-118's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-118.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -6260,11 +6566,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"2973408": {Add: []string{"3092601"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-124 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-124.
+	// TODO: the per-product NA entries below come from MS15-124's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-124.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -6290,11 +6598,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3105213": {"3116869"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS15-128 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS15-128.
+	// TODO: the per-product NA entries below come from MS15-128's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS15-128.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -6364,11 +6674,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3116900", Drop: []string{"CVE-2015-6175"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-001 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-001.
+	// TODO: the per-product NA entries below come from MS16-001's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-001.
 	//   - Internet Explorer 7
 	//   - Internet Explorer 8
 	"MS16-001": {
@@ -6446,11 +6758,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{KB: "3124266", Drop: []string{"CVE-2016-0020"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-009 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-009.
+	// TODO: the per-product NA entries below come from MS16-009's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-009.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -6473,11 +6787,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Exchange Server 2013 Service Pack 1", Drop: []string{"CVE-2016-0029", "CVE-2016-0031"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-014 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-014.
+	// TODO: the per-product NA entries below come from MS16-014's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-014.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
@@ -6560,11 +6876,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-022": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-0964", "CVE-2016-0965", "CVE-2016-0966", "CVE-2016-0967", "CVE-2016-0968", "CVE-2016-0969", "CVE-2016-0970", "CVE-2016-0971", "CVE-2016-0972", "CVE-2016-0973", "CVE-2016-0974", "CVE-2016-0975", "CVE-2016-0976", "CVE-2016-0977", "CVE-2016-0978", "CVE-2016-0979", "CVE-2016-0980", "CVE-2016-0981", "CVE-2016-0982", "CVE-2016-0983", "CVE-2016-0984", "CVE-2016-0985"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-023 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-023.
+	// TODO: the per-product NA entries below come from MS16-023's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-023.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -6621,11 +6939,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-036": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2015-8652", "CVE-2015-8655", "CVE-2015-8658", "CVE-2016-0960", "CVE-2016-0961", "CVE-2016-0962", "CVE-2016-0963", "CVE-2016-0986", "CVE-2016-0987", "CVE-2016-0988", "CVE-2016-0989", "CVE-2016-0990", "CVE-2016-0991", "CVE-2016-0993", "CVE-2016-0994", "CVE-2016-0995", "CVE-2016-0996", "CVE-2016-1001", "CVE-2016-1005", "CVE-2016-1010"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-037 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-037.
+	// TODO: the per-product NA entries below come from MS16-037's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-037.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -6685,11 +7005,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-050": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-1006", "CVE-2016-1011", "CVE-2016-1012", "CVE-2016-1013", "CVE-2016-1014", "CVE-2016-1015", "CVE-2016-1016", "CVE-2016-1017", "CVE-2016-1018", "CVE-2016-1019"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-051 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-051.
+	// TODO: the per-product NA entries below come from MS16-051's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-051.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 9
@@ -6708,11 +7030,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3148198": {"3154070"},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-053 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-053.
+	// TODO: the per-product NA entries below come from MS16-053's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-053.
 	//   - VBScript 5.7 on Windows Server 2008 for 32-bit Systems Service Pack 2
 	"MS16-053": {CVEAdjustments: []cveAdjustment{{KB: "3158991", Drop: []string{"CVE-2016-0187"}}}},
 	"MS16-054": {
@@ -6768,11 +7092,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"982666": {Add: []string{"3141083"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-062 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-062.
+	// TODO: the per-product NA entries below come from MS16-062's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-062.
 	//   - Windows Server 2008 for Itanium-based Systems Service Pack 2
 	"MS16-062": {
 		CVEAdjustments: []cveAdjustment{
@@ -6793,11 +7119,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Vista x64 Edition Service Pack 2", Drop: []string{"CVE-2016-0176"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-063 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-063.
+	// TODO: the per-product NA entries below come from MS16-063's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-063.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 9
 	"MS16-063": {
@@ -6812,11 +7140,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-064": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-1096", "CVE-2016-1097", "CVE-2016-1098", "CVE-2016-1099", "CVE-2016-1100", "CVE-2016-1101", "CVE-2016-1102", "CVE-2016-1103", "CVE-2016-1104", "CVE-2016-1105", "CVE-2016-1106", "CVE-2016-1107", "CVE-2016-1108", "CVE-2016-1109", "CVE-2016-1110", "CVE-2016-4108", "CVE-2016-4109", "CVE-2016-4110", "CVE-2016-4111", "CVE-2016-4112", "CVE-2016-4113", "CVE-2016-4114", "CVE-2016-4115", "CVE-2016-4116", "CVE-2016-4117"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-067 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-067.
+	// TODO: the per-product NA entries below come from MS16-067's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-067.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	"MS16-067": {
@@ -6830,11 +7160,11 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// MS16-068's CVE summary table documents CVE-2016-3215 as
 	// "Critical / RCE (Only Windows 10 Version 1511 is affected)" in
 	// natural-language narrowing rather than a per-CVE matrix table —
-	// so gen_static_map.py's Format A parser, which looks for explicit
-	// "Not applicable" cells, did not surface this NA. The same xlsx
-	// row of KB3163017 (Win 10 RTM Edge cumulative) appears in both
-	// MS16-073 and MS16-080 where the per-CVE matrix tables *do* mark
-	// it NA, so the legacy global lookup propagated the filter to
+	// so the derivation of KB-keyed NA from the archive markdown, which
+	// looks for explicit "Not applicable" cells, did not surface this NA.
+	// The same xlsx row of KB3163017 (Win 10 RTM Edge cumulative) appears
+	// in both MS16-073 and MS16-080 where the per-CVE matrix tables *do*
+	// mark it NA, so the legacy global lookup propagated the filter to
 	// MS16-068's rows too. Restated here explicitly under MS16-068's
 	// own amendments to preserve the filter under per-bulletin scope.
 	"MS16-068": {CVEAdjustments: []cveAdjustment{{KB: "3163017", Drop: []string{"CVE-2016-3215"}}}},
@@ -6913,11 +7243,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 	// MS16-084: Microsoft retracted CVE-2016-3276 in the V1.1 (2017-03-17)
 	// revision — "Removed CVE-2016-3276 ... because IE 9/10/11 are not
 	// affected." Drop, no correction.
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-084 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-084.
+	// TODO: the per-product NA entries below come from MS16-084's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-084.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11 on Windows 10
 	//   - Internet Explorer 9
@@ -6966,11 +7298,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Microsoft Word for Mac 2011", Drop: []string{"CVE-2016-3284"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-090 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-090.
+	// TODO: the per-product NA entries below come from MS16-090's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-090.
 	//   - Windows 8.1 for 32-bit Systems
 	//   - Windows 8.1 for x64-based Systems
 	//   - Windows Server 2008 R2 for Itanium-based Systems Service Pack 1
@@ -7016,11 +7350,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-093": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4173", "CVE-2016-4174", "CVE-2016-4175", "CVE-2016-4176", "CVE-2016-4177", "CVE-2016-4178", "CVE-2016-4179", "CVE-2016-4182", "CVE-2016-4185", "CVE-2016-4188", "CVE-2016-4222", "CVE-2016-4223", "CVE-2016-4224", "CVE-2016-4225", "CVE-2016-4226", "CVE-2016-4227", "CVE-2016-4228", "CVE-2016-4229", "CVE-2016-4230", "CVE-2016-4231", "CVE-2016-4232", "CVE-2016-4247", "CVE-2016-4248", "CVE-2016-4249"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-095 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-095.
+	// TODO: the per-product NA entries below come from MS16-095's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-095.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 9
 	"MS16-095": {
@@ -7059,11 +7395,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2012 R2 (Server Core installation)", Drop: []string{"CVE-2016-3303", "CVE-2016-3304"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-099 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-099.
+	// TODO: the per-product NA entries below come from MS16-099's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-099.
 	//   - Microsoft OneNote 2016 for Mac
 	"MS16-099": {
 		CVEAdjustments: []cveAdjustment{
@@ -7131,11 +7469,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			"3157569": {Add: []string{"3175887"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-104 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-104.
+	// TODO: the per-product NA entries below come from MS16-104's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-104.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 9
@@ -7291,11 +7631,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-117": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-4271", "CVE-2016-4272", "CVE-2016-4274", "CVE-2016-4275", "CVE-2016-4276", "CVE-2016-4277", "CVE-2016-4278", "CVE-2016-4279", "CVE-2016-4280", "CVE-2016-4281", "CVE-2016-4282", "CVE-2016-4283", "CVE-2016-4284", "CVE-2016-4285", "CVE-2016-4287", "CVE-2016-6921", "CVE-2016-6922", "CVE-2016-6923", "CVE-2016-6924", "CVE-2016-6925", "CVE-2016-6926", "CVE-2016-6927", "CVE-2016-6929", "CVE-2016-6930", "CVE-2016-6931", "CVE-2016-6932"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-118 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-118.
+	// TODO: the per-product NA entries below come from MS16-118's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-118.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 11 on Windows 10
@@ -7481,11 +7823,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS16-141": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2016-7857", "CVE-2016-7858", "CVE-2016-7859", "CVE-2016-7860", "CVE-2016-7861", "CVE-2016-7862", "CVE-2016-7863", "CVE-2016-7864", "CVE-2016-7865"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-142 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-142.
+	// TODO: the per-product NA entries below come from MS16-142's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-142.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 9
 	"MS16-142": {
@@ -7503,11 +7847,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	// MS16-144: no candidate in markdown — drop.
-	// TODO: gen_static_map.py emitted these Format B labels for MS16-144 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS16-144.
+	// TODO: the per-product NA entries below come from MS16-144's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS16-144.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11 on Windows 10
 	//   - Internet Explorer 9
@@ -7608,11 +7954,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 		},
 	},
 	"MS17-005": {CVEAdjustments: []cveAdjustment{{Add: []string{"CVE-2017-2982", "CVE-2017-2984", "CVE-2017-2985", "CVE-2017-2986", "CVE-2017-2987", "CVE-2017-2988", "CVE-2017-2990", "CVE-2017-2991", "CVE-2017-2992", "CVE-2017-2993", "CVE-2017-2994", "CVE-2017-2995", "CVE-2017-2996"}}}},
-	// TODO: gen_static_map.py emitted these Format B labels for MS17-006 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS17-006.
+	// TODO: the per-product NA entries below come from MS17-006's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS17-006.
 	//   - Internet Explorer 10
 	//   - Internet Explorer 11
 	//   - Internet Explorer 9
@@ -7771,11 +8119,13 @@ var bulletinArchiveAmendments = map[string]bulletinArchiveAmendment{
 			{Component: "Windows Server 2008 R2 for x64-based Systems Service Pack 1", Drop: []string{"CVE-2017-0101"}},
 		},
 	},
-	// TODO: gen_static_map.py emitted these Format B labels for MS17-018 but they could not be mapped
-	// to xlsx (affected_product, affected_component) automatically. Manual review needed —
-	// the labels combine features+OS in non-standard forms or use SP-less variants that
-	// xlsx does not carry. Once resolved, add Component-Drop entries below and (if not
-	// already) extend normalizeArchiveComponentKey for MS17-018.
+	// TODO: the per-product NA entries below come from MS17-018's archive markdown
+	// matrix table but could not be mapped to xlsx (affected_product,
+	// affected_component) automatically. Manual review needed — the
+	// markdown labels combine feature+OS in non-standard forms or use
+	// SP-less variants that xlsx does not carry. Once resolved, add
+	// per-product Component-Drop entries below and (if not already)
+	// extend normalizeArchiveComponentKey for MS17-018.
 	//   - Windows Server 2016 for x64-based Systems(Server Core installation)
 	"MS17-018": {
 		CVEAdjustments: []cveAdjustment{
